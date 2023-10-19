@@ -4,7 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/restricted/_difference",
 	"sap/base/util/deepEqual",
@@ -23,7 +25,9 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeStates"
 ], function(
 	Core,
+	Element,
 	Fragment,
+	Lib,
 	isEmptyObject,
 	difference,
 	deepEqual,
@@ -108,14 +112,15 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._oChangeIndicatorRegistry = new ChangeIndicatorRegistry({
 				changeCategories: ChangeCategories.getCategories()
 			});
 
-			Control.prototype.constructor.apply(this, arguments);
+			Control.prototype.constructor.apply(this, aArgs);
 
-			this._oTextBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+			this._oTextBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			this.setModel(new ResourceModel({
 				bundle: this._oTextBundle
 			}), "i18n");
@@ -314,20 +319,18 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._getChangeCategoryLabel = function(sChangeCategoryName, iChangesCount) {
-		var sLabelKey = "TXT_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
+		var sLabelKey = `TXT_CHANGEVISUALIZATION_OVERVIEW_${sChangeCategoryName.toUpperCase()}`;
 		return this._oTextBundle.getText(sLabelKey, [iChangesCount]);
 	};
 
 	ChangeVisualization.prototype._getChangeCategoryButton = function(sChangeCategoryName) {
-		var sButtonKey = "BTN_CHANGEVISUALIZATION_OVERVIEW_" + sChangeCategoryName.toUpperCase();
+		var sButtonKey = `BTN_CHANGEVISUALIZATION_OVERVIEW_${sChangeCategoryName.toUpperCase()}`;
 		return this._oTextBundle.getText(sButtonKey);
 	};
 
 	ChangeVisualization.prototype.openChangeCategorySelectionPopover = function(oEvent) {
-		if (!this._oToolbarButton) {
-			// Event bubbled through the toolbar, get original source
-			this._oToolbarButton = Core.byId(oEvent.getParameter("id"));
-		}
+		// Event bubbled through the toolbar, get original source
+		this._oToolbarButton ||= Element.getElementById(oEvent.getParameter("id"));
 		var oPopover = this.getPopover();
 
 		if (!oPopover) {
@@ -604,7 +607,7 @@ sap.ui.define([
 				oIndicator.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
 				oIndicator.attachDetailPopoverOpened(onDetailPopoverOpened.bind(this));
 
-				var oOverlay = Core.byId(oIndicator.getOverlayId());
+				var oOverlay = Element.getElementById(oIndicator.getOverlayId());
 				// De-selection of connected overlays must happen when the hover/focus leaves the overlay
 				oOverlay.attachBrowserEvent("mouseout", onIndicatorInteraction.bind(this, false));
 				oOverlay.attachBrowserEvent("focusout", onIndicatorInteraction.bind(this, false));
@@ -646,7 +649,7 @@ sap.ui.define([
 			selectChange: this.selectChange.bind(this)
 		});
 		oChangeIndicator.setModel(this._oChangeVisualizationModel);
-		oChangeIndicator.bindElement("/content/" + sSelectorId);
+		oChangeIndicator.bindElement(`/content/${sSelectorId}`);
 		oChangeIndicator.setModel(this.getModel("i18n"), "i18n");
 		this._oChangeIndicatorRegistry.registerChangeIndicator(sSelectorId, oChangeIndicator);
 	};

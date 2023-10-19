@@ -1,8 +1,6 @@
 sap.ui.define(function() {
 	"use strict";
 
-	window.top['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	return {
 		name: "MDCTable related tests", /* Just for a nice title on the pages */
 		defaults: {
@@ -137,6 +135,16 @@ sap.ui.define(function() {
 					}
 				},
 				sinon: false
+			},
+			"DragDropConfig": {
+				group: "DragAndDrop",
+				module: "./DragDropConfig.qunit",
+				ui5: {
+					libs: ["sap.m", "sap.ui.table", "sap.ui.mdc"]
+				},
+				coverage: {
+					only: ["sap/ui/mdc/table/DragDropConfig"]
+				}
 			}
 		}
 	};

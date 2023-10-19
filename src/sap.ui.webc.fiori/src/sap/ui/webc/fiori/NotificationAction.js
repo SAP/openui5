@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.NotificationAction.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/webc/main/library",
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * The <code>sap.ui.webc.fiori.NotificationAction</code> represents an abstract action, used in the <code>sap.ui.webc.fiori.NotificationListItem</code> and the <code>sap.ui.webc.fiori.NotificationListGroupItem</code> items.
@@ -46,17 +46,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the action design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b>
-				 * <ul>
-				 *     <li><code>Default</code></li>
-				 *     <li><code>Emphasized</code></li>
-				 *     <li><code>Positive</code></li>
-				 *     <li><code>Negative</code></li>
-				 *     <li><code>Transparent</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.main.ButtonDesign",
@@ -70,7 +59,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}

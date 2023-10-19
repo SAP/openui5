@@ -15,7 +15,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	QUnit.module("When loading flex response", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -67,7 +67,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("When loading flex settings", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

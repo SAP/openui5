@@ -5,7 +5,7 @@ sap.ui.define([
     'use strict';
 
     function fnGetViewStandAlone() {
-        var sView =
+        const sView =
             '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc" xmlns:mdcat="sap.ui.mdc.actiontoolbar">' +
                 '<mdc:ActionToolbar id="actionToolbarId" width="100%">' +
                     '<mdc:actions>' +
@@ -65,8 +65,8 @@ sap.ui.define([
     }
 */
     function fnGetViewWithChart() {
-        var sDelegate = '\\{"name": "delegates/ChartDelegate"\\}';
-        var sView =
+        const sDelegate = '\\{"name": "delegates/ChartDelegate"\\}';
+        const sView =
             '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:mdc="sap.ui.mdc" xmlns:mdcat="sap.ui.mdc.actiontoolbar" xmlns:mdcc="sap.ui.mdc.chart" xmlns:core="sap.ui.core">' +
                 '<mdc:Chart id="actionToolbarChart" autoBindOnInit="true" noDataText="This is a test noData text" delegate=\'' +  sDelegate + '\' chartType="column" header="Books Chart" height="400px" width="100%">' +
                     '<mdc:actions>' +
@@ -98,8 +98,8 @@ sap.ui.define([
 
     function fnConfirmInitialActionState(sActionToolbarId) {
         return function (oUiComponent, oViewAfterAction, assert) {
-            var oActionToolbar = oViewAfterAction.byId(sActionToolbarId);
-            var aActions = oActionToolbar.getActions();
+            const oActionToolbar = oViewAfterAction.byId(sActionToolbarId);
+            const aActions = oActionToolbar.getActions();
             assert.ok(oActionToolbar, "then the mdc.ActionToolbar exists");
             assert.equal(aActions.length, 5, "then the ActionToolbar has correct amount of actions");
             assert.equal(aActions[0].getId(), "comp---view--Action1", "Action 'comp---view--Action1' on index 0");
@@ -112,8 +112,8 @@ sap.ui.define([
 
     function fnConfirmActionGotMoved(sActionToolbarId, sActionId, iIndex) {
         return function (oUiComponent, oViewAfterAction, assert) {
-            var oActionToolbar = oViewAfterAction.byId(sActionToolbarId);
-            var aActions = oActionToolbar.getActions();
+            const oActionToolbar = oViewAfterAction.byId(sActionToolbarId);
+            const aActions = oActionToolbar.getActions();
             assert.ok(oActionToolbar, "then the mdc.ActionToolbar exists");
             assert.equal(aActions.length, 5, "then the ActionToolbar has correct amount of actions");
             assert.equal(aActions[iIndex].getId(), sActionId, "Action '" + sActionId + "' got moved to index " + iIndex);

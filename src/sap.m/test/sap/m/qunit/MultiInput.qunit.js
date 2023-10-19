@@ -459,6 +459,32 @@ sap.ui.define([
 		oMI.destroy();
 	});
 
+	QUnit.test("Text validation on focus leave", function(assert) {
+		var oMI = new MultiInput({
+			tokens: [
+				new Token({text: "Long text"}),
+				new Token({text: "Very long text"}),
+				new Token({text: "Very, very long text"}),
+				new Token({text: "Very, very, very long text"})
+			]
+		}).placeAt( "qunit-fixture");
+		Core.applyChanges();
+
+		var oValidationSpy = this.spy(oMI, "_validateCurrentText");
+		var oFocusOutSpy = this.spy(oMI, "onsapfocusleave");
+
+		oMI.focus();
+		qutils.triggerKeydown(oMI.getFocusDomRef(), KeyCodes.ARROW_LEFT);
+		Core.applyChanges();
+
+		assert.strictEqual(oValidationSpy.callCount, 0, "_validateCurrentText not invoked when focused is moved to the tokenizer");
+		assert.strictEqual(oFocusOutSpy.callCount, 1, "onsapfocusleave is called");
+
+		oValidationSpy.restore();
+		oFocusOutSpy.restore();
+		oMI.destroy();
+	});
+
 	QUnit.test("test text validation on focus leave", function(assert) {
 		//arrange
 		var testTokenText = "C-Item";
@@ -1833,6 +1859,38 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Add tokens on mobile when there are no suggestions available", function(assert) {
+		// System under test
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Arrange
+		var oMultiInput = new MultiInput({
+			showSuggestion: false,
+			showValueHelp: false
+		}).placeAt("qunit-fixture");
+
+		oMultiInput.addValidator(function(args){
+			var text = args.text;
+			return new Token({text: text});
+		});
+		Core.applyChanges();
+
+		// Act
+		oMultiInput.setValue("test");
+		oMultiInput.onsapfocusleave({});
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "A token is created");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 	QUnit.test("arrow left / top should not throw an error when there are no suggestions", function (assert) {
 		var oMI = new MultiInput({
 			showSuggestion: false
@@ -2512,6 +2570,9 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Clicking on a Token should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
 		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly"),
 			oToken = new Token();
@@ -2533,6 +2594,9 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
+	/**
+	* @deprecated Since 1.119.
+	*/
 	QUnit.test("Clicking on nMore should not trigger Input.prototype._fireValueHelpRequestForValueHelpOnly", function(assert) {
 		var oSpy = this.spy(Input.prototype, "_fireValueHelpRequestForValueHelpOnly");
 

@@ -4,8 +4,8 @@
 
 /*global QUnit*/
 
-sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ],
-		function(Element, Control) {
+sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', "sap/ui/qunit/utils/nextUIUpdate", 'sap/ui/core/Core' /* provides sap.ui.getCore() */ ],
+		function(Element, Control, nextUIUpdate) {
 	"use strict";
 
 	if ( typeof QUnit === "undefined" ) {
@@ -64,7 +64,7 @@ sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core'
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
 	var _checkControl = function(sControlName, fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
 
-		QUnit.test("Control " + sControlName + " should not have any memory leaks", function(assert) {
+		QUnit.test("Control " + sControlName + " should not have any memory leaks", async function(assert) {
 			var oControl1 = fnControlFactory();
 
 			assert.ok(oControl1, "calling fnControlFactory() should return something (a control)");
@@ -88,7 +88,7 @@ sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core'
 			if (oControl1.placeAt && !bControlCannotRender) {
 				try {
 					oControl1.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
+					await nextUIUpdate();
 
 				} catch (e) {
 					// control didn't say it has problems with rendering!
@@ -99,11 +99,11 @@ sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core'
 
 			if (fnSomeAdditionalFunction) {
 				fnSomeAdditionalFunction(oControl1);
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 			}
 
 			oControl1.destroy();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 
 			// Render Control Instance 2 - any new controls leaked?
@@ -114,21 +114,20 @@ sap.ui.define([ 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/core/Core'
 
 			if (oControl2.placeAt && !bControlCannotRender) {
 				oControl2.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 
 				oControl2.rerender(); // just re-render again - this finds problems
-				sap.ui.getCore().applyChanges();
 			}
 
 			if (fnSomeAdditionalFunction) {
 				fnSomeAdditionalFunction(oControl2);
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 			}
 
 			// check what's left after destruction
 
 			oControl2.destroy();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			var mPostElements = getAllAliveControls();
 
 			// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR

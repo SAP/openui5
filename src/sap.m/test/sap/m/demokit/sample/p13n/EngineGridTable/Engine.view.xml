@@ -10,7 +10,7 @@
     controllerName="sap.m.sample.p13n.EngineGridTable.Engine">
 
     <m:Page showHeader="false">
-        <Table id="persoTable" sort="onSort" columnMove="onColumnMove" visibleRowCountMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
+        <Table id="persoTable" sort="onSort" columnResize="onColumnResize" columnMove="onColumnMove" rowMode="Auto" ariaLabelledBy="title" sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex" rows="{/items}">
             <extension>
                 <m:OverflowToolbar>
                     <m:Title id="title" text="Persons"/>
@@ -32,25 +32,25 @@
                 <m:IllustratedMessage enableVerticalResponsiveness="true"/>
             </noData>
             <columns>
-                <Column id="firstName_col" sortProperty="firstName" width="11rem" headerMenu="menu">
+                <Column id="firstName_col" sortProperty="firstName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="First Name" />
                     <template>
                         <m:Text text="{firstName}"/>
                     </template>
                 </Column>
-                <Column id="lastName_col" sortProperty="lastName" width="11rem" headerMenu="menu">
+                <Column id="lastName_col" sortProperty="lastName" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="Last Name" />
                     <template>
                         <m:Text text="{lastName}"/>
                     </template>
                 </Column>
-                <Column id="city_col" sortProperty="city" width="11rem" headerMenu="menu">
+                <Column id="city_col" sortProperty="city" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="City" />
                     <template>
                         <m:Text text="{city}"/>
                     </template>
                 </Column>
-                <Column id="size_col" sortProperty="size" width="11rem" visible="false" headerMenu="menu">
+                <Column id="size_col" sortProperty="size" visible="false" headerMenu="menu" resizable="true" width="11rem" autoResizable="true">
                     <m:Label text="Size" />
                     <template>
                         <m:Text text="{size}"/>

@@ -3,25 +3,25 @@
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	ControlObserver,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that a Button is observed", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oButton = new Button();
 			this.oControlObserver = new ControlObserver({
 				target: this.oButton
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			return nextUIUpdate();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControlObserver.destroy();
 			this.oButton.destroy();
 		}

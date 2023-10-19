@@ -1,34 +1,30 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	UriParameters,
 	ManifestUtils,
-	CompVariantState,
 	FlexInfoSession,
-	ContextBasedAdaptationsAPI,
+	Version,
+	CompVariantState,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	ReloadInfoAPI,
-	Version,
 	VersionsAPI,
+	Layer,
 	LayerUtils,
 	FlexUtils,
-	Layer,
 	sinon
 ) {
 	"use strict";
@@ -36,11 +32,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			this.oCheckSVMStub = sandbox.stub(CompVariantState, "checkSVMControlsForDirty").returns(false);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		}
@@ -209,8 +205,8 @@ sap.ui.define([
 				params: Version.UrlParameter
 			};
 
-			var oUriWithVersionUrlParameter = UriParameters.fromQuery("?" + Version.UrlParameter + "=" + Version.Number.Draft);
-			sandbox.stub(UriParameters, "fromQuery").returns(oUriWithVersionUrlParameter);
+			var oUriWithVersionUrlParameter = new URLSearchParams(`?${Version.UrlParameter}=${Version.Number.Draft}`);
+			sandbox.stub(window, "URLSearchParams").returns(oUriWithVersionUrlParameter);
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
@@ -334,7 +330,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that getReloadMethod is called in FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -344,7 +340,7 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
 			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -457,7 +453,7 @@ sap.ui.define([
 				versioningEnabled: true,
 				activeVersion: "2",
 				URLParsingService: {
-					parseShellHash: function() {
+					parseShellHash() {
 						return {
 							params: {
 								"sap-ui-fl-version": ["2"]
@@ -632,7 +628,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that initialDraftGotActivated is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -640,7 +636,7 @@ sap.ui.define([
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -698,9 +694,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 							"sap-ui-fl-version": [Version.Number.Draft]
@@ -709,7 +705,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -725,9 +721,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasMaxLayerParameterWithValue is called in FLP and the version parameter is in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 							"sap-ui-fl-max-layer": [Layer.CUSTOMER]
@@ -736,7 +732,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -752,9 +748,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is not in the hash", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oURLParsingService = {
-				parseShellHash: function() {
+				parseShellHash() {
 					return {
 						params: {
 						}
@@ -762,7 +758,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -778,7 +774,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that removeInfoSessionStorage is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -802,12 +798,12 @@ sap.ui.define([
 	function checkParameters(oExpectedParameters, oActualParameters, sScenario, assert) {
 		var vParameters = oExpectedParameters;
 		if (sScenario === "standalone") {
-			var oUriParameters = UriParameters.fromQuery(oActualParameters);
+			var oUriParameters = new URLSearchParams(oActualParameters);
 			Object.entries(oExpectedParameters).forEach(function(aKeyValue) {
 				var sActualValue = parseBooleanOrReturnValue(oUriParameters.get(aKeyValue[0]));
 				assert.strictEqual(sActualValue, aKeyValue[1][0], "the parameters are correct");
 			});
-			assert.strictEqual(Object.keys(oExpectedParameters).length, Object.keys(oUriParameters.mParams).length, "the number of params is correct");
+			assert.strictEqual(Array.from(oUriParameters.keys()).length, Object.keys(oExpectedParameters).length, "the number of params is correct");
 		} else {
 			assert.deepEqual(oActualParameters, vParameters, "the parameters are correct");
 		}
@@ -829,21 +825,21 @@ sap.ui.define([
 			oReturn = {};
 			oReturn[sKey] = [sValue];
 		} else {
-			oReturn = "?" + sKey + "=" + sValue;
+			oReturn = `?${sKey}=${sValue}`;
 		}
 		return oReturn;
 	}
 
 	["flp", "standalone"].forEach(function(sScenario) {
-		var sName = sScenario + ": handleParametersOnStart - ";
+		var sName = `${sScenario}: handleParametersOnStart - `;
 		QUnit.module(sName, {
-			beforeEach: function() {
+			beforeEach() {
 				this.oReloadInfo = {
 					parameters: sScenario === "flp" ? {} : "",
 					layer: Layer.CUSTOMER
 				};
 			},
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 			}
 		}, function() {
@@ -876,26 +872,29 @@ sap.ui.define([
 			});
 		});
 
-		var sName2 = sScenario + ": handleUrlParameters - ";
+		var sName2 = `${sScenario}: handleUrlParameters - `;
 		QUnit.module(sName2, {
-			beforeEach: function() {
+			beforeEach() {
 				this.oReloadInfo = {
 					parameters: sScenario === "flp" ? {} : "",
 					layer: Layer.CUSTOMER
 				};
-				sandbox.stub(UriParameters, "fromQuery").callsFake(function() {
-					return UriParameters.fromQuery.wrappedMethod(this.oReloadInfo.parameters);
+				sandbox.stub(window, "URLSearchParams").callsFake(function() {
+					return new URLSearchParams.wrappedMethod(this.oReloadInfo.parameters);
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
+				FlexInfoSession.remove();
 				sandbox.restore();
 			}
 		}, function() {
 			QUnit.test("with max layer param in the url and hasHigherLayerChanges", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
+				assert.equal(FlexInfoSession.get().maxLayer, undefined, "max layer is set correct in session");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
 			});
 
@@ -903,9 +902,11 @@ sap.ui.define([
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.ignoreMaxLayerParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
+				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().maxLayer, Layer.CUSTOMER, "max layer is set correct in session");
 			});
 
 			QUnit.test("without version in url and versionSwitch / version set", function(assert) {
@@ -914,40 +915,49 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in url and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
+				FlexInfoSession.set({version: "1"});
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "1", sScenario);
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with different version in url and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				FlexInfoSession.set({version: "2"});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
 			QUnit.test("with version in url and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
+				FlexInfoSession.set({version: "2"});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in url and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				FlexInfoSession.set({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in url and removeVersionParameter", function(assert) {
@@ -955,6 +965,7 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("without version in url and removeDraft", function(assert) {
@@ -962,14 +973,23 @@ sap.ui.define([
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, false, "no parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with draft version in url and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
 				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
+				FlexInfoSession.set({version: Version.Number.Draft});
 				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
+			});
+
+			QUnit.test("with flex session contains with a different selector", function(assert) {
+				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, "foo");
+				ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				assert.deepEqual(FlexInfoSession.get(), {}, "session is empty");
 			});
 		});
 	});
@@ -1008,9 +1028,9 @@ sap.ui.define([
 		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
 		sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 		return {
-			oReloadInfo: oReloadInfo,
-			oHasHigherLayerChangesAPIStub: oHasHigherLayerChangesAPIStub,
-			oGetResetAndPublishInfoAPIStub: oGetResetAndPublishInfoAPIStub
+			oReloadInfo,
+			oHasHigherLayerChangesAPIStub,
+			oGetResetAndPublishInfoAPIStub
 		};
 	}
 });

@@ -14,18 +14,24 @@ sap.ui.define([
 		'	</App>' +
 		'</mvc:View>';
 
-	Controller.extend("myController", {
-		onPress: function () {
-			throw Error("TestUncaughtError");
-		}
-	});
+        sap.ui.define("myController.controller", function () {
+            return Controller.extend("myController", {
+                onPress: function () {
+                    throw Error("TestUncaughtError");
+                }
+            });
+        });
 
-	View.create({
-		definition: VIEW_DEFINITION,
-		type: library.mvc.ViewType.XML
-	}).then(function(oView) {
-		oView.setViewName("myView");
-		oView.placeAt("content");
-	});
+        Controller.create({ name: "myController" })
+            .then(function () {
+                return View.create({
+                    definition: VIEW_DEFINITION,
+                    type: library.mvc.ViewType.XML
+                });
+            })
+            .then(function (oView) {
+                oView.setViewName("myView");
+                oView.placeAt("content");
+            });
 
 });

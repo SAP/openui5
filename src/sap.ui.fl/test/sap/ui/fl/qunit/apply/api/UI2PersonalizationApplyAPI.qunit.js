@@ -35,18 +35,18 @@ sap.ui.define([
 		var oManifest = new Manifest(oDescriptor);
 		return {
 			name: "testComponent",
-			getManifest: function() {
+			getManifest() {
 				return oManifest;
 			},
-			getId: function() {
+			getId() {
 				return "Control---demo--test";
 			},
-			getLocalId: function() {}
+			getLocalId() {}
 		};
 	}
 
 	QUnit.module("load personalization", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = createAppComponent();
 			this.oGetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "getPersonalization");
 
@@ -54,7 +54,7 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/commons/ColorPicker",
-	"sap/ui/unified/library"
+	"sap/ui/unified/library",
+	"sap/ui/unified/ColorPickerHelper"
 ], function(
 	qutils,
 	createAndAppendDiv,
 	UnifiedColorPicker,
 	ColorPicker,
-	unifiedLibrary
+	unifiedLibrary,
+	ColorPickerHelper
 ) {
 	"use strict";
 
@@ -389,11 +391,11 @@ sap.ui.define([
 		assert.equal(oColorPicker4.oValField.getValue(), "31" , "VALUE (after mouse event 2	): ");
 	});
 
-	QUnit.module("sap.ui.unified._ColorPickerHelper");
+	QUnit.module("sap.ui.unified.ColorPickerHelper");
 
 	QUnit.test("Responsive mode", function (oAssert) {
 		// Arrange
-		var oHelper = unifiedLibrary.ColorPickerHelper,
+		var oHelper = ColorPickerHelper.getHelper(),
 			oFactory = oHelper.factory,
 			oRBGroup,
 			oSlider,
@@ -401,7 +403,6 @@ sap.ui.define([
 
 		// Assert - Properties
 		oAssert.strictEqual(oHelper.isResponsive(), false, "Helper should be in responsive mode");
-		oAssert.notOk(oHelper.bFinal, "Further overwriting of this object is not prohibited");
 
 		// Assert - Factory
 		oAssert.ok(oFactory.createLabel() instanceof sap.ui.commons.Label,

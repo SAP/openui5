@@ -3,7 +3,7 @@
  */
 
 // Provides enumeration sap.ui.mdc.enums.ReasonMode
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 
@@ -16,7 +16,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ReasonMode
 	 */
-	var ReasonMode = {
+	const ReasonMode = {
 		/**
 		 * The applied variant is marked as Apply Automatically.
 		 * @private
@@ -45,6 +45,8 @@ sap.ui.define(function() {
 		 */
 		Unclear: ""
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.ReasonMode", ReasonMode);
 
 	return ReasonMode;
 

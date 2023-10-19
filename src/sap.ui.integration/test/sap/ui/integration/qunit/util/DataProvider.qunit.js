@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/integration/Extension",
 	"sap/ui/integration/library",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Supportability"
 ], function (
 	Core,
 	DataProviderFactory,
@@ -23,7 +23,7 @@ sap.ui.define([
 	Host,
 	Extension,
 	integrationLibrary,
-	Configuration
+	Supportability
 ) {
 	"use strict";
 
@@ -1061,6 +1061,9 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	/**
+	 * @deprecated Since 1.113
+	 */
 	QUnit.test("Host can modify request headers", function (assert) {
 		var done = assert.async(),
 			oDataProvider = this.oDataProviderFactory.create({
@@ -1095,6 +1098,9 @@ sap.ui.define([
 		oDataProvider.triggerDataUpdate();
 	});
 
+	/**
+	 * @deprecated Since 1.113
+	 */
 	QUnit.test("Host can modify request", function (assert) {
 		var done = assert.async(),
 			oDataProvider = this.oDataProviderFactory.create({
@@ -1137,7 +1143,7 @@ sap.ui.define([
 				}
 			}),
 			oHost = new Host(),
-			fnStubStatisticsEnabled = sinon.stub(Configuration, "getStatisticsEnabled").callsFake(function () {
+			fnStubStatisticsEnabled = sinon.stub(Supportability, "isStatisticsEnabled").callsFake(function () {
 				return true;
 			});
 

@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasureItem
+     * @deprecated since 1.120
 	 */
 	var P13nDimMeasureItem = Item.extend("sap.m.P13nDimMeasureItem", /** @lends sap.m.P13nDimMeasureItem.prototype */
 	{

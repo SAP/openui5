@@ -8,7 +8,6 @@ sap.ui.define([
     "sap/ui/ux3/ExactAttribute",
     "sap/ui/thirdparty/jquery",
     "sap/ui/Device",
-    "sap/base/util/UriParameters",
     "sap/ui/dom/containsOrEquals",
     "sap/ui/events/KeyCodes",
     "sap/ui/core/Element",
@@ -22,7 +21,6 @@ sap.ui.define([
 	ExactAttribute,
 	jQuery,
 	Device,
-	UriParameters,
 	containsOrEquals,
 	KeyCodes,
 	Element
@@ -325,7 +323,7 @@ sap.ui.define([
 			);
 			setTimeout(function(){
 				if (navigator.userAgent.indexOf("Windows") >= 0 && Device.browser.safari){
-					if (UriParameters.fromQuery(window.location.search).get("runExpandCheck") != "X"){
+					if (new URLSearchParams(window.location.search).get("runExpandCheck") != "X"){
 						done();
 						return;
 					}

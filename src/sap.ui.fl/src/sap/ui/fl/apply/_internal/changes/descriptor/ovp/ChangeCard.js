@@ -37,7 +37,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			/* logic for changemerger */
 			var oChangedCard = oChange.getContent();
 			var bIsOperationValid = oChangedCard.entityPropertyChange.operation === "UPSERT";

@@ -735,6 +735,25 @@ sap.ui.define([
 		removeAggregation: function (vParent, sAggregationName, oObject) {},
 
 		/**
+		 * Removes the object from an aggregation of the source control and places it into an aggregation of the target control.
+		 * This method is basically a removeAggregation followed by an insertAggregation, but the execution of both steps is
+		 * done synchronously, avoiding issues with having elements without parents in asynchronous processes. The entire process
+		 * is however asynchronous like other modifier actions.
+		 *
+		 * @param {sap.ui.base.ManagedObject|Element} vSourceParent - Control representation of the source parent
+		 * @param {string} sSourceAggregationName - Source aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} vTargetParent - Control representation of the target parent
+		 * @param {string} sTargetAggregationName - Target aggregation name
+		 * @param {sap.ui.base.ManagedObject|Element} oObject - Aggregated object to be moved
+		 * @param {int} iIndex - Index for <code>oObject</code> in the target aggregation
+		 * @param {Element} [oView] - XML node of the view, needed in XML case to potentially create (aggregation) nodes
+		 * @param {boolean} [bSkipAdjustIndex] - true in case of inserting an XML node or element at an extension point, needed only in XML case
+		 * @returns {Promise} resolves when async processing is done
+		 * @public
+		 */
+		moveAggregation: function (vSourceParent, sSourceAggregationName, vTargetParent, sTargetAggregationName, oObject, iIndex, oView, bSkipAdjustIndex) {},
+
+		/**
 		 * Removes all objects from the aggregation of the given control.
 		 * See {@link sap.ui.base.ManagedObject#removeAllAggregation} method.
 		 *
@@ -908,26 +927,30 @@ sap.ui.define([
 
 		/**
 		 * Attaches event on the specified <code>ManagedObject</code>.
+		 * To not rely on globals the function has to be passed in addition to the path.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
 		 * @param {object} vData - Predefined values for event handler function
-		 * @returns {Promise} resolves when async processing is done
+		 * @param {function} fnCallback - Callback function that is located at the function path
+		 * @returns {Promise} Resolves when async processing is done
 		 * @public
 		 */
-		attachEvent: function(vControl, sEventName, sFunctionPath, vData) {},
+		attachEvent: function(vControl, sEventName, sFunctionPath, vData, fnCallback) {},
 
 		/**
 		 * Detaches event from the specified ManagedObject.
+		 * To not rely on globals the function has to be passed in addition to the path.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sEventName - Event name
 		 * @param {string} sFunctionPath - Absolute path to a function
-		 * @returns {Promise} resolves when async processing is done
+		 * @param {function} fnCallback - Callback function that is located at the function path
+		 * @returns {Promise} Resolves when async processing is done
 		 * @public
 		 */
-		detachEvent: function(vControl, sEventName, sFunctionPath) {},
+		detachEvent: function(vControl, sEventName, sFunctionPath, fnCallback) {},
 
 		/**
 		 * Returns an object containing parent control, aggregation name and index for controls to be added of the given extension point.

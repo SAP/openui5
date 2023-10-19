@@ -117,18 +117,14 @@ sap.ui.define([
 		this._bLimitDisabled = this.getLimit() === 0;
 		this.oInnerSelectionPlugin = null;
 		this.oDeselectAllIcon = oIcon;
-		this._oNotificationPopover = null;
 	};
 
 	MultiSelectionPlugin.prototype.exit = function() {
+		SelectionPlugin.prototype.exit.apply(this, arguments);
+
 		if (this.oDeselectAllIcon) {
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
-		}
-
-		if (this._oNotificationPopover) {
-			this._oNotificationPopover.destroy();
-			this._oNotificationPopover = null;
 		}
 	};
 
@@ -148,12 +144,7 @@ sap.ui.define([
 	 */
 	MultiSelectionPlugin.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
 		oTable.setProperty("selectionMode", SelectionMode.None);
-
-		if (this._oNotificationPopover) {
-			this._oNotificationPopover.close();
-		}
 
 		if (this.oInnerSelectionPlugin) {
 			this.oInnerSelectionPlugin.destroy();
@@ -213,13 +204,14 @@ sap.ui.define([
 		}
 	};
 
-	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType) {
+	MultiSelectionPlugin.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") {
-			if (this._bLimitDisabled) {
-				toggleSelection(this);
+			if (this._bLimitDisabled && toggleSelection(this) === false) {
+				oEvent?.setMarked("sapUiTableClearAll");
 			}
 		} else if (sType === "clear") {
 			this.clearSelection();
+			oEvent?.setMarked("sapUiTableClearAll");
 		}
 	};
 
@@ -227,12 +219,15 @@ sap.ui.define([
 	 * If not all indices are selected, all indices are selected, otherwise the selection is removed.
 	 *
 	 * @param {sap.ui.table.plugins.MultiSelectionPlugin} oPlugin The plugin to toggle the selection on.
+	 * @returns {boolean} The selection state. true - all selected, false - all cleared
 	 */
 	function toggleSelection(oPlugin) {
 		if (oPlugin.getSelectableCount() > oPlugin.getSelectedCount()) {
 			oPlugin.selectAll();
+			return true;
 		} else {
 			oPlugin.clearSelection();
+			return false;
 		}
 	}
 
@@ -365,7 +360,7 @@ sap.ui.define([
 			}
 		}
 
-		return loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
+		return TableUtils.loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function() {
 			return {indexFrom: iIndexFrom, indexTo: iIndexTo};
 		});
 	}
@@ -386,6 +381,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.setSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
+		var oTable = this.getTable();
 		var sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -400,7 +396,18 @@ sap.ui.define([
 			this._oCustomEventPayloadTmp = oEventPayload;
 			this.oInnerSelectionPlugin.setSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 			delete this._oCustomEventPayloadTmp;
-			return this._scrollTableToIndex(mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo);
+
+			if (!this.isLimitReached()) {
+				return Promise.resolve();
+			}
+
+			return TableUtils.scrollTableToIndex(oTable, mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo).then(function() {
+				if (!this.getEnableNotification()) {
+					return Promise.resolve();
+				}
+
+				return TableUtils.showNotificationPopoverAtIndex(oTable, mIndices.indexTo, this.getLimit());
+			}.bind(this));
 		}.bind(this));
 	};
 
@@ -433,6 +440,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MultiSelectionPlugin.prototype.addSelectionInterval = function(iIndexFrom, iIndexTo, oEventPayload) {
+		var oTable = this.getTable();
 		var sSelectionMode = this.getSelectionMode();
 
 		if (sSelectionMode === SelectionMode.None) {
@@ -448,142 +456,21 @@ sap.ui.define([
 				this._oCustomEventPayloadTmp = oEventPayload;
 				this.oInnerSelectionPlugin.addSelectionInterval(mIndices.indexFrom, mIndices.indexTo);
 				delete this._oCustomEventPayloadTmp;
-				return this._scrollTableToIndex(mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo);
+
+				if (!this.isLimitReached()) {
+					return Promise.resolve();
+				}
+
+				return TableUtils.scrollTableToIndex(oTable, mIndices.indexTo, mIndices.indexFrom > mIndices.indexTo).then(function() {
+					if (!this.getEnableNotification()) {
+						return Promise.resolve();
+					}
+
+					return TableUtils.showNotificationPopoverAtIndex(oTable, mIndices.indexTo, this.getLimit());
+				}.bind(this));
 			}.bind(this));
 		}
 	};
-
-	/**
-	 * If the limit is reached, the table is scrolled to the <code>iIndex</code>.
-	 * If <code>bReverse</code> is true the <code>firstVisibleRow</code> property of the Table is set to <code>iIndex</code> - 1,
-	 * otherwise to <code>iIndex</code> - row count + 2.
-	 *
-	 * @param {int} iIndex The index of the row to which to scroll to.
-	 * @param {boolean} bReverse Whether the row should be displayed at the bottom of the table.
-	 * @returns {Promise} A promise that resolves when the table is scrolled.
-	 * @private
-	 */
-	MultiSelectionPlugin.prototype._scrollTableToIndex = function(iIndex, bReverse) {
-		var oTable = this.getParent();
-
-		if (!oTable || !this.isLimitReached()) {
-			return Promise.resolve();
-		}
-
-		var iFirstVisibleRow = oTable.getFirstVisibleRow();
-		var mRowCounts = oTable._getRowCounts();
-		var iLastVisibleRow = iFirstVisibleRow + mRowCounts.scrollable - 1;
-		var bExpectRowsUpdatedEvent = false;
-
-		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
-			var iNewIndex = bReverse ? iIndex - mRowCounts.fixedTop - 1 : iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2;
-
-			bExpectRowsUpdatedEvent = oTable._setFirstVisibleRowIndex(Math.max(0, iNewIndex));
-		}
-
-		this._showNotificationPopoverAtIndex(iIndex);
-
-		return new Promise(function(resolve) {
-			if (bExpectRowsUpdatedEvent) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			} else {
-				resolve();
-			}
-		});
-	};
-
-	/**
-	 * Displays a notification Popover beside the row selector that indicates a limited selection. The given index
-	 * references the index of the data context in the binding.
-	 *
-	 * @param {number} iIndex - Index of the data context
-	 * @private
-	 * @returns {Promise} A Promise that resolves after the notification popover has been opened
-	 */
-	MultiSelectionPlugin.prototype._showNotificationPopoverAtIndex = function(iIndex) {
-		var that = this;
-		var oPopover = this._oNotificationPopover;
-		var oTable = this.getParent();
-		var oRow = oTable.getRows()[iIndex - oTable._getFirstRenderedRowIndex()];
-		var sTitle = TableUtils.getResourceText("TBL_SELECT_LIMIT_TITLE");
-		var sMessage = TableUtils.getResourceText("TBL_SELECT_LIMIT", [this.getLimit()]);
-
-		if (!this.getEnableNotification()) {
-			return Promise.resolve();
-		}
-
-		return new Promise(function(resolve) {
-			sap.ui.require([
-				"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
-			], function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
-				if (!oPopover) {
-					oPopover = new Popover(that.getId() + "-notificationPopover", {
-						customHeader: [
-							new Bar({
-								contentMiddle: [
-									new HBox({
-										items: [
-											new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical})
-												.addStyleClass("sapUiTinyMarginEnd"),
-											new Title({text: sTitle, level: coreLib.TitleLevel.H2})
-										],
-										renderType: mLib.FlexRendertype.Bare,
-										justifyContent: mLib.FlexJustifyContent.Center,
-										alignItems: mLib.FlexAlignItems.Center
-									})
-								]
-							})
-						],
-						content: new Text({text: sMessage})
-					});
-
-					oPopover.addStyleClass("sapUiContentPadding");
-					that._oNotificationPopover = oPopover;
-				} else {
-					oPopover.getContent()[0].setText(sMessage);
-				}
-
-				oTable.detachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
-				oTable.attachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
-
-				var oRowSelector = oRow.getDomRefs().rowSelector;
-
-				if (oRowSelector) {
-					oPopover.attachEventOnce("afterOpen", resolve);
-					oPopover.openBy(oRowSelector);
-				} else {
-					resolve();
-				}
-			});
-		});
-	};
-
-	MultiSelectionPlugin.prototype.onFirstVisibleRowChange = function() {
-		if (!this._oNotificationPopover) {
-			return;
-		}
-
-		var oTable = this.getParent();
-		if (oTable) {
-			oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
-		}
-		this._oNotificationPopover.close();
-	};
-
-	function loadContexts(oBinding, iStartIndex, iLength) {
-		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
-		var bContextsAvailable = aContexts.length === Math.min(iLength, oBinding.getLength()) && !aContexts.includes(undefined);
-
-		if (bContextsAvailable) {
-			return Promise.resolve(aContexts);
-		}
-
-		return new Promise(function(resolve) {
-			oBinding.attachEventOnce("dataReceived", function() {
-				resolve(loadContexts(oBinding, iStartIndex, iLength));
-			});
-		});
-	}
 
 	/**
 	 * Removes the complete selection.

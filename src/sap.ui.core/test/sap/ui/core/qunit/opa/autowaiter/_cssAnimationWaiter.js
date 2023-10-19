@@ -7,13 +7,11 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/f/DynamicPage",
 	"sap/m/Toolbar",
-	"sap/m/Button",
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5",
-	"sap/ui/core/Configuration",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		DynamicPage,  Toolbar, Button, opaTest, Opa5, Configuration, jQuery) {
+		DynamicPage,  Toolbar, ControlBehavior, jQuery, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -26,13 +24,13 @@ sap.ui.define([
 			this.oTimeoutWaiterStub.returns(false);
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
-			Configuration.setAnimationMode("full");
+			ControlBehavior.setAnimationMode("full");
 
 			this.oDynamicPage = new DynamicPage({
 				footer: [new Toolbar()]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function () {
@@ -40,7 +38,7 @@ sap.ui.define([
 			this.oXHRWaiterStub.restore();
 			this.oPromiseWaiterStub.restore();
 			this.oDynamicPage.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 

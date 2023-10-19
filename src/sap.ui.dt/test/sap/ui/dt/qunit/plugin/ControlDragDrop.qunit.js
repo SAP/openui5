@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	OverlayUtil,
 	ControlDragDrop,
@@ -15,19 +15,19 @@ sap.ui.define([
 	OverlayRegistry,
 	VerticalLayout,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that a ControlDragDrop is initialized ", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oButton0 = new Button();
 			this.oButton1 = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton0, this.oButton1]});
 			this.oEmptyLayout = new VerticalLayout();
 			this.oParentLayout = new VerticalLayout({content: [this.oLayout, this.oEmptyLayout]});
 			this.oParentLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDragDrop = new ControlDragDrop();
 			this.oDesignTime = new DesignTime({
@@ -51,7 +51,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			OverlayRegistry.getOverlay(this.oParentLayout).destroy();
 			this.oButtonOverlay0.destroy();
 			this.oButtonOverlay1.destroy();

@@ -41,6 +41,7 @@
 				"formFactors": "-",
 				"since": "1.26",
 				"samples": [
+					"sap.uxap.sample.ObjectPageBeforeNavigate",
 					"sap.uxap.sample.ObjectPageOnJSON",
 					"sap.uxap.sample.ObjectPageTabNavigationMode",
 					"sap.uxap.sample.ObjectPageSelectedSection",
@@ -157,6 +158,11 @@
 				"id": "sap.uxap.sample.ObjectPageSection",
 				"name": "Object Page Layout Section sample",
 				"description": "This example explains the rules for the rendering of sections"
+			},
+			{
+				"id": "sap.uxap.sample.ObjectPageBeforeNavigate",
+				"name": "Object Page demonstrating beforeNavigate event",
+				"description": "Object Page demonstrating how beforeNavigate event can be used to prevent default navigation behaviour"
 			},
 			{
 				"id": "sap.uxap.sample.ObjectPageOnJSON",

@@ -1,18 +1,20 @@
 /* global */
 sap.ui.define([
 	"sap/ui/model/type/String",
-    "sap/ui/rta/enablement/elementActionTest"
-], function(StringType, elementActionTest) {
+    "sap/ui/rta/enablement/elementActionTest",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
+], function(StringType, elementActionTest, ConditionValidated, OperatorName) {
     'use strict';
 
 
 	function buildXML(sFilterConditions) {
 
-		var sPropertyInfo = '[\\{"name":"prop2", "label":"Prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "label":"Prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
+		const sPropertyInfo = '[\\{"name":"prop2", "label":"Prop2", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop3", "label":"Prop3", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\},' +
 							 '\\{"name":"prop4", "label":"Prop4", "dataType":"sap.ui.model.type.String", "maxConditions":1\\}, \\{"name":"prop5", "label":"Prop5", "dataType":"sap.ui.model.type.String", "maxConditions":-1\\}]';
-		var sDelegate = '\\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \\{\\}\\}';
+		const sDelegate = '\\{"name": "sap/ui/mdc/qunit/filterbar/sample/FilterBarTest.delegate", "payload": \\{\\}\\}';
 
-		var b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
+		const b = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc">' +
 		'<mdc:FilterBar id="myFilterBar" p13nMode="Value" delegate=\'' +  sDelegate + '\' filterConditions="' + sFilterConditions + '" propertyInfo=\'' + sPropertyInfo + '\'>' +
 		'<mdc:filterItems>' +
 		'<mdc:FilterField id="myFilterBar--prop2" conditions="{$filters>/conditions/prop2}" propertyKey="prop2" maxConditions="1"  dataType="sap.ui.model.type.String"/>' +
@@ -25,14 +27,14 @@ sap.ui.define([
 	}
 
 	function fnConfirm(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 	}
 
 	// -------------------------------------
 
 	function fnOnAfterAction(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 		if (oFB.getMetadata) {
 			assert.deepEqual(oFB.getInternalConditions(), {}, "expected inner conditions found");
@@ -50,9 +52,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated",
+							validated: ConditionValidated.Validated,
 							payload: {}
 						}
 					}
@@ -68,9 +70,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated",
+							validated: ConditionValidated.Validated,
 							payload: {}
 						}
 					}
@@ -86,11 +88,11 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterAction2(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
-			assert.deepEqual(oFB.getInternalConditions(), {prop2: [{operator: "EQ", isEmpty: false, validated: "Validated", values: ["102"]}]}, "expected inner conditions found");
+			assert.deepEqual(oFB.getInternalConditions(), {prop2: [{operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["102"]}]}, "expected inner conditions found");
 		}
 	}
 
@@ -107,9 +109,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -124,9 +126,9 @@ sap.ui.define([
 					content: {
 						name: "prop2",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['101'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -142,11 +144,11 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterAction3(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
-			assert.deepEqual(oFB.getInternalConditions(), {prop3: [{operator: "EQ", isEmpty: false, validated: "Validated", values: ["101"]}, {operator: "EQ", isEmpty: false, validated: "Validated", values: ["103"]}]}, "expected inner conditions found");
+			assert.deepEqual(oFB.getInternalConditions(), {prop3: [{operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["101"]}, {operator: OperatorName.EQ, isEmpty: false, validated: ConditionValidated.Validated, values: ["103"]}]}, "expected inner conditions found");
 		}
 	}
 
@@ -163,9 +165,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -180,9 +182,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['101'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -196,9 +198,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['102'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -212,9 +214,9 @@ sap.ui.define([
 					content: {
 						name: "prop3",
 						condition: {
-							operator: "EQ",
+							operator: OperatorName.EQ,
 							values: ['103'],
-							validated: "Validated"
+							validated: ConditionValidated.Validated
 						}
 					}
 				};
@@ -229,7 +231,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterActionAddRemoveItem(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {
@@ -324,7 +326,7 @@ sap.ui.define([
 	// -------------------------------------
 
 	function fnOnAfterActionAddAddRemoveItem(oUiComponent, oViewAfterAction, assert) {
-		var oFB = oViewAfterAction.byId("myFilterBar");
+		const oFB = oViewAfterAction.byId("myFilterBar");
 		assert.ok(oFB);
 
 		if (oFB.getMetadata) {

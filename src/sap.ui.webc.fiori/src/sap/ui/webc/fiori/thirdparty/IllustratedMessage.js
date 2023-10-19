@@ -25,6 +25,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var IllustratedMessage_1;
+
+  // Styles
+
+  // Template
+
   /**
    * @class
    *
@@ -262,6 +267,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   IllustratedMessage = IllustratedMessage_1 = __decorate([(0, _customElement.default)({
     tag: "ui5-illustrated-message",
     languageAware: true,
+    themeAware: true,
     renderer: _LitRenderer.default,
     styles: _IllustratedMessage.default,
     template: _IllustratedMessageTemplate.default,

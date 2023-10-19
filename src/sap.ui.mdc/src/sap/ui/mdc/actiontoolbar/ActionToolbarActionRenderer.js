@@ -8,7 +8,7 @@ sap.ui.define([], function() {
 	/**
 	 * @namespace
 	 */
-	var ActionToolbarActionRenderer = {
+	const ActionToolbarActionRenderer = {
 		apiVersion: 2
 	};
 
@@ -19,7 +19,7 @@ sap.ui.define([], function() {
 	 * @param {sap.ui.mdc.actiontoolbar.ActionToolbarAction} oActionToolbarAction an object representation of the control that should be rendered
 	 */
     ActionToolbarActionRenderer.render = function(rm, oActionToolbarAction) {
-        var oAction = oActionToolbarAction.getAction();
+        const oAction = oActionToolbarAction.getAction();
         if (oAction) {
             if (oActionToolbarAction.hasStyleClass("sapMBarChild")) {
                 oAction.addStyleClass("sapMBarChild");

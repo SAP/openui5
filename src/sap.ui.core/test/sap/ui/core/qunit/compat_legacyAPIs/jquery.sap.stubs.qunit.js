@@ -144,28 +144,24 @@
 	}
 
 	function getTestConfig() {
-		return new Promise(function (resolve, reject) {
-			sap.ui.require(["sap/base/util/UriParameters"], resolve, reject);
-		}).then(function (UriParameters) {
-			var oParams = UriParameters.fromQuery(document.location.search);
-			var oConfig = {};
+		var oParams = new URLSearchParams(document.location.search);
+		var oConfig = {};
 
-			oConfig.mode = oParams.get("test-mode") || "all";
-			if (oParams.get("chunk")) {
-				oConfig.chunk = parseInt(oParams.get("chunk"));
-			}
+		oConfig.mode = oParams.get("test-mode") || "all";
+		if (oParams.get("chunk")) {
+			oConfig.chunk = parseInt(oParams.get("chunk"));
+		}
 
-			// Chunk paging logic
-			oConfig.i = 0;
-			oConfig.testsDefined = 0;
-			oConfig.runInChunks = !!oConfig.chunk;
-			if (oConfig.chunk) {
-				oConfig.start = ((oConfig.chunk - 1) * 50) + 1;
-				oConfig.end = (oConfig.chunk) * 50;
-			}
+		// Chunk paging logic
+		oConfig.i = 0;
+		oConfig.testsDefined = 0;
+		oConfig.runInChunks = !!oConfig.chunk;
+		if (oConfig.chunk) {
+			oConfig.start = ((oConfig.chunk - 1) * 50) + 1;
+			oConfig.end = (oConfig.chunk) * 50;
+		}
 
-			return oConfig;
-		});
+		return Promise.resolve(oConfig);
 	}
 
 	// Running startup once to define tests

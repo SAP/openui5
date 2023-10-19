@@ -7,6 +7,7 @@ sap.ui.define([
 	"delegates/odata/v4/ValueHelpDelegate",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
 	"sap/ui/core/Core",
@@ -18,6 +19,7 @@ sap.ui.define([
 	ODataV4ValueHelpDelegate,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	StateUtil,
 	deepEqual,
 	Core,
@@ -27,8 +29,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
 	ValueHelpDelegate.adjustSearch = function(oValueHelp, bTypeahead, sSearch) {
 
@@ -44,65 +45,56 @@ sap.ui.define([
 	};
 
 	// If there are no entries to compare, we return true for this condition
-	var _isMatchingPayloadEntry = function (oContext, aConditionPayloadSegments) {
-		var bContainsPayload = aConditionPayloadSegments && aConditionPayloadSegments.length > 0;
+	const _isMatchingPayloadEntry = function (oContext, aConditionPayloadSegments) {
+		const bContainsPayload = aConditionPayloadSegments && aConditionPayloadSegments.length > 0;
 		return bContainsPayload ? aConditionPayloadSegments.find(function (aPayloadSegment) {
 			return aPayloadSegment.length ? aPayloadSegment.find(function (oPayloadEntry) {
-				var aEntryKeys = Object.keys(oPayloadEntry);
-				var bHasKeyValuePairs = !!aEntryKeys.length;
+				const aEntryKeys = Object.keys(oPayloadEntry);
+				const bHasKeyValuePairs = !!aEntryKeys.length;
 				return bHasKeyValuePairs ? aEntryKeys.every(function (sKey) {
-					var oProperty = oContext.getProperty(sKey);
+					const oProperty = oContext.getProperty(sKey);
 					return oProperty === oPayloadEntry[sKey];
 				}) : true;
 			}) : true;
 		}) : true;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
-		var sModelName = oContent.getListBindingInfo().model;
-		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
-		var bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
-
-
-		var oContext = oItem && oItem.getBindingContext(sModelName);
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (ODataV4ValueHelpDelegate.isFilterableListItemSelected(oValueHelp, oContent, oItem, [oCondition])) { // TODO: check for specific EQ operator
-				var oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
+		const bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
+		const bSelectionConsidersPayload = oContent.getModel("settings").getProperty("/selectionConsidersPayload");
+		return BaseValueHelpDelegate.findConditionsForContext.apply(this, arguments).filter(function (oCondition) {
+			const oCurrentListPayload = oCondition.payload && oCondition.payload[oContent.getId()];
 				if (bSelectionConsidersList) {
-					var aPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
+					const aPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
 					if (aPayloadKeys.length && !oCurrentListPayload) {	// if other payload identifier exists we skip this entry
-						continue;
+						return false;
 					}
 				}
-
 				if (bSelectionConsidersPayload && !_isMatchingPayloadEntry(oContext, bSelectionConsidersList ? [oCurrentListPayload] : Object.values(oCondition.payload))) {	// only consider this lists payload, if selected "by payload key"
-					continue;
+					return false;
 				}
-
 				return true;
-			}
-		}
-
-		return false;
+		});
 	};
 
-	function _addContext(oContext, sProperty, oStore) {
-		var vProp = oContext.getProperty(sProperty);
-			if (vProp) {
-				oStore[sProperty] = vProp;
+	function _addContexts(oContext, aContextProperties, oStore) {
+		const oObject = oContext.getObject();
+		for (let index = 0; index < aContextProperties.length; index++) {
+			const sProperty = aContextProperties[index];
+			if (typeof oObject[sProperty] !== 'undefined') {
+				oStore[sProperty] = oObject[sProperty];
 			}
+		}
 	}
 
 	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
-		var sIdentifier = oContent.getId();
-		var oConditionPayload = {};
+		const sIdentifier = oContent.getId();
+		const oConditionPayload = {};
 		oConditionPayload[sIdentifier] = [];
 
 		if (vContext) {
-			var oEntry = {};
-			_addContext(vContext, "salesOrganization", oEntry);
-			_addContext(vContext, "distributionChannel", oEntry);
+			const oEntry = {};
+			_addContexts(vContext, ["salesOrganization", "distributionChannel"], oEntry);
 			if (Object.keys(oEntry).length) {
 				oConditionPayload[sIdentifier].push(oEntry);
 			}
@@ -112,15 +104,15 @@ sap.ui.define([
 
 	function _mergePayloadSegments(oExistingPayload, oNewPayload) {
 
-		var oResultPayload = {};
+		const oResultPayload = {};
 
-		var aAllKeys = Object.keys(oExistingPayload).concat(Object.keys(oNewPayload)).filter(function (value, index, self){
+		const aAllKeys = Object.keys(oExistingPayload).concat(Object.keys(oNewPayload)).filter(function (value, index, self){
 			return self.indexOf(value) === index;
 		});
 
 		aAllKeys.forEach(function (sKey) {
-			var oExistingEntry = oExistingPayload[sKey];
-			var oNewEntry = oNewPayload[sKey];
+			const oExistingEntry = oExistingPayload[sKey];
+			const oNewEntry = oNewPayload[sKey];
 
 			if (oExistingEntry) {
 				if (!oNewEntry) {
@@ -147,14 +139,14 @@ sap.ui.define([
 	// TODO: Share selections between Typeahead and Dialog when similar?
 	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
 
-		var sCreationStrategy = oContent.getModel("settings").getProperty("/conditionCreationStrategy");
-		var bIsModifyingStrategy = ["Merge", "Replace"].indexOf(sCreationStrategy) >= 0;
-		var bIsReplaceStrategy = sCreationStrategy === "Replace";
+		const sCreationStrategy = oContent.getModel("settings").getProperty("/conditionCreationStrategy");
+		const bIsModifyingStrategy = ["Merge", "Replace"].indexOf(sCreationStrategy) >= 0;
+		const bIsReplaceStrategy = sCreationStrategy === "Replace";
 
 		if (bIsModifyingStrategy) {
-			var oChangeCondition = oChange.conditions[0];
-			var oCurrentConditions = oContent.getConditions();
-			var oExistingCondition = oCurrentConditions.find(function (oCondition) {
+			const oChangeCondition = oChange.conditions[0];
+			const oCurrentConditions = oContent.getConditions();
+			const oExistingCondition = oCurrentConditions.find(function (oCondition) {
 				return oCondition.values[0] === oChangeCondition.values[0];
 			});
 
@@ -174,13 +166,13 @@ sap.ui.define([
 			// remove payload from existing condition for this value, or delete the condition if it doesn't contain another payload
 			if (oChange.type === "Remove" && oExistingCondition) {
 
-				var aConditions = oCurrentConditions.slice().map(function (oCondition) {
+				const aConditions = oCurrentConditions.slice().map(function (oCondition) {
 					if (oCondition === oExistingCondition) {
-						var bDeletedPayloadContent = false;
-						var aChangePayload = oChangeCondition.payload[oContent.getId()];
-						var aExistingPayload = oExistingCondition.payload[oContent.getId()];
+						let bDeletedPayloadContent = false;
+						const aChangePayload = oChangeCondition.payload[oContent.getId()];
+						const aExistingPayload = oExistingCondition.payload[oContent.getId()];
 						Object.values(aChangePayload).forEach(function (oChangePayloadEntry) {
-							var oExistingEntryIndex = aExistingPayload.findIndex(function (oExistingPayloadEntry) {
+							const oExistingEntryIndex = aExistingPayload.findIndex(function (oExistingPayloadEntry) {
 								return deepEqual(oExistingPayloadEntry, oChangePayloadEntry);
 							});
 							if (oExistingEntryIndex >= 0) {
@@ -216,14 +208,14 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
-		var oControl = oValueHelp.getControl();
+		const oControl = oValueHelp.getControl();
 
 			if (sReason !== "ControlChange") {
 				return;
 			}
 
 			// find all conditions carrying country information
-			var aAllConditionCountries = oControl && oControl.getConditions().reduce(function (aResult, oCondition) {
+			const aAllConditionCountries = oControl && oControl.getConditions().reduce(function (aResult, oCondition) {
 				if (oCondition.payload) {
 					Object.values(oCondition.payload).forEach(function (aSegments) {
 						aSegments.forEach(function (oSegment) {
@@ -237,15 +229,15 @@ sap.ui.define([
 			}, []);
 
 			if (aAllConditionCountries && aAllConditionCountries.length) {
-				var oFilterBar = Core.byId("FB0");
+				const oFilterBar = Core.byId("FB0");
 				StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
-					var bModify = false;
+					let bModify = false;
 					aAllConditionCountries.forEach(function(sCountry) {
-						var bExists = oState.filter && oState.filter['salesOrganization'] && oState.filter['salesOrganization'].find(function (oCondition) {
+						const bExists = oState.filter && oState.filter['salesOrganization'] && oState.filter['salesOrganization'].find(function (oCondition) {
 							return oCondition.values[0] === sCountry;
 						});
 						if (!bExists) {
-							var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+							const oNewCondition = Condition.createCondition(OperatorName.EQ, [sCountry], undefined, undefined, ConditionValidated.Validated);
 							oState.filter['salesOrganization'] = oState.filter && oState.filter['salesOrganization'] || [];
 							oState.filter['salesOrganization'].push(oNewCondition);
 							bModify = true;
@@ -260,17 +252,17 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		var bIsTypeahead = oContent.isTypeahead();
+		const bIsTypeahead = oContent.isTypeahead();
 
-		var oFilterBar = !bIsTypeahead && oContent.getFilterBar();
-		var bFilterBarHasCountryFilter = oFilterBar && oFilterBar.getFilterItems().find(function (oFilterItem) {
+		const oFilterBar = !bIsTypeahead && oContent.getFilterBar();
+		const bFilterBarHasCountryFilter = oFilterBar && oFilterBar.getFilterItems().find(function (oFilterItem) {
 			return oFilterItem.getBinding("conditions").sPath.indexOf("salesOrganization") >= 0;
 		});
 
-		var aSupportedConditionPaths = bIsTypeahead && oContent.getTable().getColumns().map(function (oColumn) { return oColumn.mAggregations.header.mProperties.text; });
-		var bTypaheadSupportsSalesOrganizationConditions = aSupportedConditionPaths && aSupportedConditionPaths.indexOf("salesOrganization") >= 0;
+		const aSupportedConditionPaths = bIsTypeahead && oContent.getTable().getColumns().map(function (oColumn) { return oColumn.mAggregations.header.mProperties.text; });
+		const bTypaheadSupportsSalesOrganizationConditions = aSupportedConditionPaths && aSupportedConditionPaths.indexOf("salesOrganization") >= 0;
 
 		if (bTypaheadSupportsSalesOrganizationConditions || bFilterBarHasCountryFilter) {
 
@@ -291,10 +283,10 @@ sap.ui.define([
 			} */
 
 			// Example filterbar extraction:
-			var oSourceFilterBar = Core.byId("FB0");
+			const oSourceFilterBar = Core.byId("FB0");
 			return StateUtil.retrieveExternalState(oSourceFilterBar).then(function (oExternalFilterBarState) {
 
-				var aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];
+				const aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];
 				if (aSalesOrganizationConditions && aSalesOrganizationConditions.length) {
 					oConditions["salesOrganization"] = aSalesOrganizationConditions;
 					return oConditions;
@@ -307,12 +299,12 @@ sap.ui.define([
 
 	// optional
 	ValueHelpDelegate.getCount = function (oValueHelp, oContent, aConditions, sGroup) {
-		var bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
+		const bSelectionConsidersList = oContent.getModel("settings").getProperty("/selectionConsidersList");
 
-		var aRelevantContentPayloadKeys = [oContent.getId()];
+		let aRelevantContentPayloadKeys = [oContent.getId()];
 
 		if (sGroup) {
-			var oDialog = oContent.getParent();
+			const oDialog = oContent.getParent();
 			if (oDialog) {
 				aRelevantContentPayloadKeys = oDialog.getContent().filter(function (oContent) {
 					return oContent.getGroup && oContent.getGroup() === sGroup;
@@ -322,11 +314,11 @@ sap.ui.define([
 			}
 		}
 
-		var iCount = 0;
+		let iCount = 0;
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			var aConditionPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
+		for (let i = 0; i < aConditions.length; i++) {
+			const oCondition = aConditions[i];
+			const aConditionPayloadKeys = oCondition.payload && Object.keys(oCondition.payload);
 
 			if (oCondition.isEmpty !== true && oCondition.validated === ConditionValidated.Validated) {
 				// eslint-disable-next-line no-loop-func
@@ -357,15 +349,15 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
 
-		var oConfigPayload = oConfig && oConfig.context && oConfig.context.payload;	// As oConfig is present we are called in a getItemForValue context and would also like to search by payload, if available
+		const oConfigPayload = oConfig && oConfig.context && oConfig.context.payload;	// As oConfig is present we are called in a getItemForValue context and would also like to search by payload, if available
 		if (oConfigPayload) {
 			Object.values(oConfigPayload).forEach(function (aEntries) {
 				aEntries.forEach(function (oEntry) {
 					Object.keys(oEntry).forEach(function (sKey) {
 						oConditions[sKey] = oConditions[sKey] || [];
-						oConditions[sKey].push(Condition.createCondition("EQ", [oEntry[sKey]], undefined, undefined, ConditionValidated.NotValidated));
+						oConditions[sKey].push(Condition.createCondition(OperatorName.EQ, [oEntry[sKey]], undefined, undefined, ConditionValidated.NotValidated));
 					});
 				});
 			});

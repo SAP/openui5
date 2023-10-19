@@ -7,13 +7,23 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/m/MenuItem",
 	"sap/ui/Device",
+	"sap/ui/core/Control",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
 	"sap/ui/table/qunit/TableQUnitUtils" // implicitly used via globals (e.g. createTables)
-], function(TableUtils, MenuUnified, MenuItemUnified, MenuM, MenuItemM, Device, Popup, oCore) {
+], function(
+	TableUtils,
+	MenuUnified,
+	MenuItemUnified,
+	MenuM,
+	MenuItemM,
+	Device,
+	Control,
+	Popup,
+	oCore
+) {
 	"use strict";
 
-	// mapping of global function calls
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -24,10 +34,19 @@ sap.ui.define([
 	var iNumberOfRows = window.iNumberOfRows;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
+	var TestContextMenu = Control.extend("sap.ui.table.test.ContextMenu", {
+		metadata: {
+			interfaces: ["sap.ui.core.IContextMenu"]
+		},
+		constructor: function() {
+			Control.apply(this, arguments);
+			this.openAsContextMenu = sinon.spy();
+		}
+	});
 
-	//************************************************************************
-	// Test Code
-	//************************************************************************
+	function createFakeEventObject(oTarget) {
+		return {target: oTarget};
+	}
 
 	QUnit.module("Misc", {
 		beforeEach: function() {
@@ -108,16 +127,10 @@ sap.ui.define([
 			this.resetSpies();
 		}.bind(this);
 
-		assert.strictEqual(TableUtils.Menu.openContextMenu(), false, "Returned false");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(getSelectAll()[0])), false, "Returned false");
 		test();
 
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable), false, "Returned false");
-		test();
-
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, getSelectAll()), false, "Returned false");
-		test();
-
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, document.getElementsByTagName("body").item(0)), false,
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(document.getElementsByTagName("body").item(0))), false,
 			"Returned false");
 		test();
 	});
@@ -132,11 +145,12 @@ sap.ui.define([
 				new MenuItemM({text: "ContextMenuItem"})
 			]
 		});
-		var oFakeEventObject = {};
+		var oFakeEventObject;
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), false, "Returned false");
-		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], undefined),
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), false, "Returned false");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], oFakeEventObject),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
@@ -147,8 +161,8 @@ sap.ui.define([
 
 		oTable.setContextMenu(oCustomContextMenu);
 		oDomRef = oCellB.getDomRef();
-		oFakeEventObject.target = oDomRef;
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCellB.$(), oFakeEventObject), true, "Returned true");
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), true, "Returned true");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, TableUtils.getCell(oTable, oDomRef)[0], oFakeEventObject),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
@@ -163,7 +177,8 @@ sap.ui.define([
 		});
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), true, "Returned true");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, false);
 		this.resetSpies();
@@ -173,7 +188,8 @@ sap.ui.define([
 		});
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), true, "Returned true");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.notCalled, "_openContentCellContextMenu was not called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
@@ -183,9 +199,10 @@ sap.ui.define([
 		this.resetSpies();
 
 		oDomRef = getRowHeader(0)[0];
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
-		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, undefined),
-			"_openContentCellContextMenu was called");
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), true, "Returned false");
+		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, oFakeEventObject),
+			"_openContentCellContextMenu was not called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: null,
@@ -195,8 +212,8 @@ sap.ui.define([
 
 		oTable.setContextMenu(null);
 		oDomRef = getRowAction(0)[0];
-		oFakeEventObject.target = oDomRef;
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef, oFakeEventObject), false, "Returned false");
+		oFakeEventObject = createFakeEventObject(oDomRef);
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oFakeEventObject), false, "Returned false");
 		assert.ok(this.oUtilsOpenContentCellContextMenu.calledOnceWithExactly(oTable, oDomRef, oFakeEventObject),
 			"_openContentCellContextMenu was called");
 		this.assertEventCalled(assert, this.oBeforeOpenContextMenuEventInfo, true, {
@@ -208,7 +225,7 @@ sap.ui.define([
 
 	QUnit.test("_openContentCellContextMenu", function(assert) {
 		var oCell;
-		var oFakeEventObject = {};
+		var oFakeEventObject;
 		var oOpenCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_openCustomContentCellContextMenu");
 		var oOpenDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_openDefaultContentCellContextMenu");
 		var that = this;
@@ -219,15 +236,17 @@ sap.ui.define([
 			oOpenDefaultContentCellContextMenu.resetHistory();
 		}
 
-		oTable.setVisibleRowCount(iNumberOfRows + 1);
+		oTable.getRowMode().setRowCount(iNumberOfRows + 1);
 		oCore.applyChanges();
-		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, getCell(iNumberOfRows, 0)[0]), false, "Returned false");
+		oCell = getCell(iNumberOfRows, 0)[0];
+		oFakeEventObject = createFakeEventObject(oCell);
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
 		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
 		resetSpies();
 
 		oCell = getCell(0, 0)[0];
-		oFakeEventObject.target = oCell;
+		oFakeEventObject = createFakeEventObject(oCell);
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
 		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
@@ -235,14 +254,15 @@ sap.ui.define([
 		resetSpies();
 
 		oCell = getRowHeader(0)[0];
-		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell), false, "Returned false");
+		oFakeEventObject = createFakeEventObject(oCell);
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
-		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, undefined),
+		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
 			"_openDefaultContentCellContextMenu was called");
 		resetSpies();
 
 		oCell = getRowAction(0)[0];
-		oFakeEventObject.target = oCell;
+		oFakeEventObject = createFakeEventObject(oCell);
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), false, "Returned false");
 		assert.ok(oOpenCustomContentCellContextMenu.notCalled, "_openCustomContentCellContextMenu was not called");
 		assert.ok(oOpenDefaultContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
@@ -256,7 +276,7 @@ sap.ui.define([
 		}));
 
 		oCell = getCell(0, 0)[0];
-		oFakeEventObject.target = oCell;
+		oFakeEventObject = createFakeEventObject(oCell);
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
 		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
 			"_openCustomContentCellContextMenu was called");
@@ -264,7 +284,7 @@ sap.ui.define([
 		resetSpies();
 
 		oCell = getRowHeader(0)[0];
-		oFakeEventObject.target = oCell;
+		oFakeEventObject = createFakeEventObject(oCell);
 		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
 		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
 			"_openCustomContentCellContextMenu was called");
@@ -272,8 +292,9 @@ sap.ui.define([
 		resetSpies();
 
 		oCell = getRowAction(0)[0];
-		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell), true, "Returned true");
-		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, undefined),
+		oFakeEventObject = createFakeEventObject(oCell);
+		assert.strictEqual(TableUtils.Menu._openContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
+		assert.ok(oOpenCustomContentCellContextMenu.calledOnceWithExactly(oTable, oCell, oFakeEventObject),
 			"_openCustomContentCellContextMenu was called");
 		assert.ok(oOpenDefaultContentCellContextMenu.notCalled, "_openDefaultContentCellContextMenu was not called");
 
@@ -282,44 +303,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("_openCustomContentCellContextMenu", function(assert) {
-		var oCell = getCell(0, 0)[0];
-		var oCloseDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_closeDefaultContentCellContextMenu");
 		var that = this;
 
-		function createMenuM() {
-			return new MenuM({
-				items: [
-					new MenuItemM({text: "ContextMenuItem"})
-				]
-			});
-		}
-
-		function createMenuUnified() {
-			return new MenuUnified({
-				items: [
-					new MenuItemUnified({text: "ContextMenuItem"})
-				]
-			});
-		}
-
-		function assertCloseMenuSpiesCalled() {
-			assert.ok(oCloseDefaultContentCellContextMenu.calledOnceWithExactly(oTable), "_closeDefaultContentCellContextMenu was called");
-		}
-
-		function assertCloseMenuSpiesNotCalled() {
-			assert.ok(oCloseDefaultContentCellContextMenu.notCalled, "_closeDefaultContentCellContextMenu was not called");
-		}
-
-		function resetSpies() {
-			that.resetSpies();
-			oCloseDefaultContentCellContextMenu.resetHistory();
-		}
-
-		function test(fnCreateMenu, sModelName, oEvent) {
-			var oMenu = fnCreateMenu();
+		function test(sModelName, oCell) {
+			var oEvent = createFakeEventObject(oCell);
+			var oMenu = new TestContextMenu();
 			var oRowBindingContext = oTable.getRows()[0].getBindingContext(sModelName);
-			var fnOpenAsContextMenu = that.spy(oMenu, "openAsContextMenu");
-			var fnOpen = that.spy(oMenu, oMenu.openBy ? "openBy" : "open");
 
 			oTable.setContextMenu(oMenu);
 			oTable.attachEventOnce("beforeOpenContextMenu", function() {
@@ -328,31 +317,19 @@ sap.ui.define([
 			});
 
 			// "openContextMenu" is called instead of "_openCustomContentCellContextMenu", because we need to check the event parameters.
-			assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCell, oEvent), true, "Returned true");
-
-			assertCloseMenuSpiesCalled();
-
-			if (oEvent) {
-				assert.ok(fnOpenAsContextMenu.calledOnceWithExactly(oEvent, oCell), "#openAsContextMenu called with correct args");
-			} else if (oMenu.openBy) {
-				assert.ok(fnOpen.calledOnceWithExactly(oCell), "#openBy called with correct args");
-			} else {
-				assert.ok(fnOpen.calledOnceWithExactly(null, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell),
-					"#open called with correct args");
-			}
-
-			assert.ok(oTable.getContextMenu().getBindingContext(sModelName) === oRowBindingContext,
+			assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oEvent), true, "Returned true");
+			assert.ok(oMenu.openAsContextMenu.calledOnceWithExactly(oEvent, oCell), "#openAsContextMenu called with correct args");
+			assert.ok(oMenu.getBindingContext(sModelName) === oRowBindingContext,
 				"The binding context is correct after opening the context menu (Model: " + sModelName + ")");
 
-			resetSpies();
+			that.resetSpies();
 			oMenu.destroy();
 		}
 
 		oTable.setEnableCellFilter(true);
 		oTable.getColumns()[0].setFilterProperty("A");
 
-		test(createMenuM);
-		test(createMenuUnified);
+		test(undefined, getCell(0, 0)[0]);
 
 		var oBindingInfo = oTable.getBindingInfo("rows");
 		var sModelName = "myModel";
@@ -364,36 +341,29 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
-			test(createMenuM, sModelName, {
-				target: oCell
-			});
-			test(createMenuUnified, sModelName, {
-				target: oCell
-			});
+			test(sModelName, getCell(0, 0)[0]);
 
-			var oContextMenu = createMenuM();
-			oTable.setContextMenu(oContextMenu);
-			var fnOpenAsContextMenu = that.spy(oContextMenu, "openAsContextMenu");
-			var fnOpen = that.spy(oContextMenu, "openBy");
+			var oMenu = new TestContextMenu();
+			oTable.setContextMenu(oMenu);
 
 			return fakeGroupRow(0).then(function() {
-				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
-				assertCloseMenuSpiesNotCalled();
-				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-				assert.ok(fnOpen.notCalled, "#open was not called");
-				resetSpies();
-				fnOpenAsContextMenu.resetHistory();
-				fnOpen.resetHistory();
+				var oCellInGroupRow = getCell(0, 0)[0];
+				that.resetSpies();
+				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(
+					oTable, oCellInGroupRow, createFakeEventObject(oCellInGroupRow)
+				), false, "Returned false");
+				assert.ok(oMenu.openAsContextMenu.notCalled, "#openAsContextMenu was not called");
+				that.resetSpies();
+				oMenu.openAsContextMenu.resetHistory();
 
-				oCell = getCell(1, 0)[0];
 				return fakeSumRow(1);
 			}).then(function() {
-				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(oTable, oCell), false, "Returned false");
-				assertCloseMenuSpiesNotCalled();
-				assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-				assert.ok(fnOpen.notCalled, "#open was not called");
-
-				oCloseDefaultContentCellContextMenu.restore();
+				var oCellInSumRow = getCell(1, 0)[0];
+				that.resetSpies();
+				assert.strictEqual(TableUtils.Menu._openCustomContentCellContextMenu(
+					oTable, oCellInSumRow, createFakeEventObject(oCellInSumRow)
+				), false, "Returned false");
+				assert.ok(oMenu.openAsContextMenu.notCalled, "#openAsContextMenu was not called");
 			});
 		});
 	});
@@ -402,102 +372,66 @@ sap.ui.define([
 		var aColumns = oTable.getColumns();
 		var oColumn = aColumns[0];
 		var oCell;
-		var oFakeEventObject = {};
-		var that = this;
-		var oCloseCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_closeCustomContentCellContextMenu");
-
-		function assertCloseMenuSpiesCalled() {
-			assert.ok(oCloseCustomContentCellContextMenu.calledOnceWithExactly(oTable), "_closeCustomContentCellContextMenu was called");
-		}
-
-		function assertCloseMenuSpiesNotCalled() {
-			assert.ok(oCloseCustomContentCellContextMenu.notCalled, "_closeCustomContentCellContextMenu was not called");
-		}
-
-		function resetSpies() {
-			that.resetSpies();
-			oCloseCustomContentCellContextMenu.resetHistory();
-		}
+		var oFakeEventObject;
 
 		oCell = getCell(0, 0)[0];
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), false,
+			"Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
-		assertCloseMenuSpiesNotCalled();
-		resetSpies();
 
 		oTable.setEnableCellFilter(true);
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), false,
+			"Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
-		assertCloseMenuSpiesNotCalled();
-		resetSpies();
 
 		oColumn.setFilterProperty("A");
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), true,
+			"Returned true");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
-		assertCloseMenuSpiesCalled();
-		resetSpies();
 
 		var oContentCellContextMenu = oTable._oCellContextMenu;
 		var fnOpenAsContextMenu = this.spy(oContentCellContextMenu, "openAsContextMenu");
-		var fnOpen = this.spy(oContentCellContextMenu, "open");
 
-		oCell = getCell(1, 0)[0];
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), true, "Returned true");
-		assert.strictEqual(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu was reused");
-		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-		assert.ok(fnOpen.calledOnceWithExactly(null, oCell, Popup.Dock.BeginTop, Popup.Dock.BeginBottom, oCell),
-			"#open was called");
-		assertCloseMenuSpiesCalled();
-		resetSpies();
-		fnOpenAsContextMenu.resetHistory();
-		fnOpen.resetHistory();
-
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowHeader(0)[0]), false, "Returned false");
+		oCell = getRowHeader(0)[0];
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), false,
+			"Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
 		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-		assert.ok(fnOpen.notCalled, "#open was not called");
-		assertCloseMenuSpiesNotCalled();
-		resetSpies();
 		fnOpenAsContextMenu.resetHistory();
-		fnOpen.resetHistory();
 
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getRowAction(0)[0]), false, "Returned false");
+		oCell = getRowAction(0)[0];
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), false,
+			"Returned false");
 		this.assertDefaultContentCellContextMenuExists(assert, true);
 		assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-		assert.ok(fnOpen.notCalled, "#open was not called");
-		assertCloseMenuSpiesNotCalled();
-		resetSpies();
 		fnOpenAsContextMenu.resetHistory();
-		fnOpen.resetHistory();
 
 		oCell = getCell(0, 0)[0];
-		oFakeEventObject.target = oCell;
+		oFakeEventObject = createFakeEventObject(oCell);
 		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, oFakeEventObject), true, "Returned true");
 		assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu was reused");
 		assert.ok(fnOpenAsContextMenu.calledOnceWithExactly(oFakeEventObject, oCell), "#openAsContextMenu was called");
-		assertCloseMenuSpiesCalled();
-		resetSpies();
 		fnOpenAsContextMenu.resetHistory();
-		fnOpen.resetHistory();
 
-		return fakeGroupRow(0).then(function() {
-			assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell), false, "Returned false");
+		return fakeGroupRow(0).then(() => {
+			oCell = getCell(0, 0)[0];
+			assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), false,
+				"Returned false");
 			assert.ok(oContentCellContextMenu, oTable._oCellContextMenu, "The cell content context menu still exists");
 			assert.ok(fnOpenAsContextMenu.notCalled, "#openAsContextMenu was not called");
-			assert.ok(fnOpen.notCalled, "#open was not called");
-			assertCloseMenuSpiesNotCalled();
-
-			oCloseCustomContentCellContextMenu.restore();
 		});
 	});
 
 	QUnit.test("Cell filter menu item", function(assert) {
 		var oColumn = oTable.getColumns()[0];
+		var oCell;
 
 		oTable.setEnableCellFilter(true);
 		oColumn.setFilterProperty("A");
 
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+		oCell = getCell(0, 0)[0];
+		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell)), true,
+			"Returned true");
 
 		var oFilter = this.spy(oTable, "filter");
 		oTable._oCellContextMenu.getItems()[0].fireSelect();
@@ -532,11 +466,11 @@ sap.ui.define([
 			"The CustomFilter event handler has been called with the correct arguments");
 	});
 
-	QUnit.test("_closeContentCellContextMenu", function(assert) {
+	QUnit.test("closeContentCellContextMenu", function(assert) {
 		var oCloseCustomContentCellContextMenu = this.spy(TableUtils.Menu, "_closeCustomContentCellContextMenu");
 		var oCloseDefaultContentCellContextMenu = this.spy(TableUtils.Menu, "_closeDefaultContentCellContextMenu");
 
-		TableUtils.Menu._closeContentCellContextMenu(oTable);
+		TableUtils.Menu.closeContentCellContextMenu(oTable);
 		assert.ok(oCloseCustomContentCellContextMenu.calledOnceWithExactly(oTable), "_closeCustomContentCellContextMenu was called");
 		assert.ok(oCloseDefaultContentCellContextMenu.calledOnceWithExactly(oTable), "_closeDefaultContentCellContextMenu was called");
 
@@ -545,38 +479,39 @@ sap.ui.define([
 	});
 
 	QUnit.test("_closeCustomContentCellContextMenu", function(assert) {
-		var oContextMenu = new MenuUnified({
+		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
+		assert.ok(true, "Does not throw an error if there is no context menu");
+
+		oTable.setContextMenu(new TestContextMenu());
+		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
+		assert.ok(true, "Does not throw an error if the context menu does not implement #close");
+
+		oTable.destroyContextMenu();
+		oTable.setContextMenu(new MenuUnified({
 			items: [
 				new MenuItemUnified({text: "ContextMenuItem"})
 			]
-		});
-		var oCloseMenu = this.spy(oContextMenu, "close");
-
-		oTable.setContextMenu(oContextMenu);
-
+		}));
+		this.spy(oTable.getContextMenu(), "close");
 		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
-		assert.ok(oCloseMenu.notCalled, "#close was not called");
-
-		oContextMenu.open();
-
-		TableUtils.Menu._closeCustomContentCellContextMenu(oTable);
-		assert.ok(oCloseMenu.calledOnce, "#close was called");
+		assert.ok(oTable.getContextMenu().close.calledOnce, "#close was called");
 	});
 
 	QUnit.test("_closeDefaultContentCellContextMenu", function(assert) {
+		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
+		assert.ok(true, "Does not throw an error if there is no context menu");
+
 		oTable.setEnableCellFilter(true);
 		oTable.getColumns()[0].setFilterProperty("A");
 
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+		// Creates the default context menu instance.
+		var oCell = getCell(0, 0)[0];
+		TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell));
 
-		var oCloseMenu = this.spy(oTable._oCellContextMenu, "close");
-
-		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
-		assert.ok(oCloseMenu.calledOnce, "#close was called");
-		oCloseMenu.resetHistory();
+		var oCloseMenuSpy = this.spy(oTable._oCellContextMenu, "close");
 
 		TableUtils.Menu._closeDefaultContentCellContextMenu(oTable);
-		assert.ok(oCloseMenu.notCalled, "#close was not called");
+		assert.ok(oCloseMenuSpy.calledOnce, "#close was called");
 	});
 
 	QUnit.test("cleanupDefaultContentCellContextMenu", function(assert) {
@@ -584,7 +519,11 @@ sap.ui.define([
 		oTable.getColumns()[0].setFilterProperty("A");
 
 		TableUtils.Menu.cleanupDefaultContentCellContextMenu(oTable);
-		assert.strictEqual(TableUtils.Menu._openDefaultContentCellContextMenu(oTable, getCell(0, 0)[0]), true, "Returned true");
+		assert.ok(true, "Does not throw if the default cell context menu does not exist");
+
+		// Creates the default context menu instance.
+		var oCell = getCell(0, 0)[0];
+		TableUtils.Menu._openDefaultContentCellContextMenu(oTable, oCell, createFakeEventObject(oCell));
 
 		var oDestroyMenu = this.spy(oTable._oCellContextMenu, "destroy");
 
@@ -635,7 +574,6 @@ sap.ui.define([
 	 * @deprecated As of version 1.54
 	 */
 	QUnit.test("openContextMenu - Header cells", function(assert) {
-		var oDomRef;
 		var oColumnA = oTable.getColumns()[0];
 		var oColumnB = oTable.getColumns()[1];
 		var bOriginalDeviceSystemDesktop = Device.system.desktop;
@@ -644,12 +582,10 @@ sap.ui.define([
 		oColumnA.setFilterProperty("A");
 		oColumnB.setFilterProperty("A");
 
-		oDomRef = oColumnA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnA.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
-		oDomRef = oColumnB.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnB.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		// Prevent the default action. The context menu should not be opened.
@@ -657,16 +593,14 @@ sap.ui.define([
 			oEvent.preventDefault();
 		});
 
-		oDomRef = oColumnA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnA.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		// Make the first column invisible and open the menu of column 2 (which is not the first visible column).
 		oColumnA.setVisible(false);
 		oCore.applyChanges();
 
-		oDomRef = oColumnB.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnB.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		oColumnA.setVisible(true);
@@ -674,15 +608,13 @@ sap.ui.define([
 
 		Device.system.desktop = false;
 
-		oDomRef = oColumnA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnA.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		oTable.attachEventOnce("columnSelect", function(oEvent) {
 			oEvent.preventDefault();
 		});
-		oDomRef = oColumnA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oColumnA.getDomRef())), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
 		Device.system.desktop = bOriginalDeviceSystemDesktop;
@@ -704,10 +636,9 @@ sap.ui.define([
 				new MenuItemM({text: "ContextMenuItem"})
 			]
 		});
-		var oFakeEventObject = {};
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), false, "Returned false");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), false, "Returned false");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
@@ -720,8 +651,7 @@ sap.ui.define([
 
 		oTable.setContextMenu(oCustomContextMenu);
 		oDomRef = oCellB.getDomRef();
-		oFakeEventObject.target = oDomRef;
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oCellB.$(), oFakeEventObject), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 1,
@@ -737,7 +667,7 @@ sap.ui.define([
 		});
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
@@ -753,7 +683,7 @@ sap.ui.define([
 		});
 
 		oDomRef = oCellA.getDomRef();
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, true, {
 			rowIndex: 0,
 			columnIndex: 0,
@@ -765,13 +695,12 @@ sap.ui.define([
 		this.oCellContextMenuEventInfo.handler.resetHistory();
 
 		oDomRef = getRowHeader(0)[0];
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef), true, "Returned true");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), true, "Returned true");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 
-		oTable.setContextMenu(null);
+		oTable.destroyContextMenu();
 		oDomRef = getRowAction(0)[0];
-		oFakeEventObject.target = oDomRef;
-		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, oDomRef, oFakeEventObject), false, "Returned false");
+		assert.strictEqual(TableUtils.Menu.openContextMenu(oTable, createFakeEventObject(oDomRef)), false, "Returned false");
 		this.assertEventCalled(assert, this.oCellContextMenuEventInfo, false);
 	});
 });

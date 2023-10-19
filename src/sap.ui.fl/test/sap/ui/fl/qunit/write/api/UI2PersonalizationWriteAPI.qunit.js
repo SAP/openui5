@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/UI2Personalization/UI2PersonalizationState",
+	"sap/ui/fl/write/_internal/flexState/UI2Personalization/UI2PersonalizationState",
 	"sap/ui/fl/write/api/UI2PersonalizationWriteAPI",
 	"sap/ui/core/Manifest",
 	"sap/ui/fl/Utils",
@@ -20,10 +20,10 @@ sap.ui.define([
 	"use strict";
 
 	document.getElementById("qunit-fixture").style.display = "none";
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	function createAppComponent() {
-		var oDescriptor = {
+		const oDescriptor = {
 			"sap.app": {
 				id: "reference.app",
 				applicationVersion: {
@@ -32,21 +32,21 @@ sap.ui.define([
 			}
 		};
 
-		var oManifest = new Manifest(oDescriptor);
+		const oManifest = new Manifest(oDescriptor);
 		return {
 			name: "testComponent",
-			getManifest: function() {
+			getManifest() {
 				return oManifest;
 			},
-			getId: function() {
+			getId() {
 				return "Control---demo--test";
 			},
-			getLocalId: function() {}
+			getLocalId() {}
 		};
 	}
 
 	QUnit.module("setPersonalization", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = createAppComponent();
 			this.oSetPersonalizationStub = sandbox.stub(UI2PersonalizationState, "setPersonalization");
 			this.oDeletePersonalizationStub = sandbox.stub(UI2PersonalizationState, "deletePersonalization");
@@ -54,131 +54,118 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FlexState, "initialize").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("create is called and complains about too few parameters (no properties except selector property)", function(assert) {
-			return UI2PersonalizationWriteAPI.create({
-				selector: this.oAppComponent
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+		QUnit.test("create is called and complains about too few parameters (no properties except selector property)", async function(assert) {
+			try {
+				await UI2PersonalizationWriteAPI.create({
+					selector: this.oAppComponent
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-			}.bind(this));
+			}
 		});
 
-		QUnit.test("create is called and complains about missing component name", function(assert) {
+		QUnit.test("create is called and complains about missing component name", async function(assert) {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector");
 
-			return UI2PersonalizationWriteAPI.create({
-				selector: this.oAppComponent,
-				containerKey: "someContainerKey",
-				itemName: "someItemName",
-				content: {}
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+			try {
+				await UI2PersonalizationWriteAPI.create({
+					selector: this.oAppComponent,
+					containerKey: "someContainerKey",
+					itemName: "someItemName",
+					content: {}
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-			}.bind(this));
+			}
 		});
 
-		QUnit.test("create is called and complains about too few parameters (no containerKey)", function(assert) {
-			return UI2PersonalizationWriteAPI.create({
-				selector: this.oAppComponent,
-				itemName: "someItemName",
-				content: {}
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+		QUnit.test("create is called and complains about too few parameters (no containerKey)", async function(assert) {
+			try {
+				await UI2PersonalizationWriteAPI.create({
+					selector: this.oAppComponent,
+					itemName: "someItemName",
+					content: {}
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-			}.bind(this));
+			}
 		});
 
-		QUnit.test("create is called and complains about too few parameters (no ItemName)", function(assert) {
-			return UI2PersonalizationWriteAPI.create({
-				selector: this.oAppComponent,
-				containerKey: "someContainerKey",
-				content: {}
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+		QUnit.test("create is called and complains about too few parameters (no ItemName)", async function(assert) {
+			try {
+				await UI2PersonalizationWriteAPI.create({
+					selector: this.oAppComponent,
+					containerKey: "someContainerKey",
+					content: {}
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oSetPersonalizationStub.notCalled, "then UI2PersonalizationState.setPersonalization is not called");
-			}.bind(this));
+			}
 		});
 
-		QUnit.test("create is called and successful", function(assert) {
-			return UI2PersonalizationWriteAPI.create({
+		QUnit.test("create is called and successful", async function(assert) {
+			await UI2PersonalizationWriteAPI.create({
 				selector: this.oAppComponent,
 				containerKey: "someContainerKey",
 				itemName: "someItemName",
 				content: {},
 				category: "someCategory",
 				containerCategory: "someContainerCategory"
-			})
-			.then(function() {
-				assert.ok(this.oSetPersonalizationStub.calledWithExactly({
-					reference: "testComponent",
-					containerKey: "someContainerKey",
-					itemName: "someItemName",
-					content: {},
-					category: "someCategory",
-					containerCategory: "someContainerCategory"
-				}), "then UI2PersonalizationState.setPersonalization is called with correct parameters");
-			}.bind(this));
+			});
+			assert.ok(this.oSetPersonalizationStub.calledWithExactly({
+				reference: "testComponent",
+				containerKey: "someContainerKey",
+				itemName: "someItemName",
+				content: {},
+				category: "someCategory",
+				containerCategory: "someContainerCategory"
+			}), "then UI2PersonalizationState.setPersonalization is called with correct parameters");
 		});
 
-		QUnit.test("deletePersonalization is called and successful", function(assert) {
-			return UI2PersonalizationWriteAPI.deletePersonalization({
+		QUnit.test("deletePersonalization is called and successful", async function(assert) {
+			await UI2PersonalizationWriteAPI.deletePersonalization({
 				selector: this.oAppComponent,
 				containerKey: "someContainerKey",
 				itemName: "someItemName"
-			})
-			.then(function() {
-				assert.ok(this.oDeletePersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"), "then UI2PersonalizationState.deletePersonalization is called with correct parameters");
-			}.bind(this));
+			});
+			assert.ok(
+				this.oDeletePersonalizationStub.calledWithExactly("testComponent", "someContainerKey", "someItemName"),
+				"then UI2PersonalizationState.deletePersonalization is called with correct parameters"
+			);
 		});
 
-		QUnit.test("deletePersonalization is called and complains about missing component name", function(assert) {
+		QUnit.test("deletePersonalization is called and complains about missing component name", async function(assert) {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector");
 
-			return UI2PersonalizationWriteAPI.deletePersonalization({
-				selector: this.oAppComponent,
-				containerKey: "someContainerKey",
-				itemName: "someItemName"
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+			try {
+				await UI2PersonalizationWriteAPI.deletePersonalization({
+					selector: this.oAppComponent,
+					containerKey: "someContainerKey",
+					itemName: "someItemName"
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
-			}.bind(this));
+			}
 		});
 
-		QUnit.test("deletePersonalization gets called and complains about too few parameters (no properties except selector property)", function(assert) {
-			return UI2PersonalizationWriteAPI.deletePersonalization({
-				selector: this.oAppComponent
-			})
-			.then(function() {
-				assert.notOk("Should never succeed!");
-			})
-			.catch(function() {
+		QUnit.test("deletePersonalization gets called and complains about too few parameters (no properties except selector property)", async function(assert) {
+			try {
+				await UI2PersonalizationWriteAPI.deletePersonalization({
+					selector: this.oAppComponent
+				});
+			} catch {
 				assert.ok(true, "a rejection took place");
 				assert.ok(this.oDeletePersonalizationStub.notCalled, "then UI2PersonalizationState.deletePersonalization is not called");
-			}.bind(this));
+			}
 		});
 	});
 });

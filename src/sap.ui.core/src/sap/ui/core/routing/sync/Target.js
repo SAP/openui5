@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/base/Log"], function(Log) {
+sap.ui.define(["sap/base/Log", "sap/ui/core/Element"], function(Log, Element) {
 	"use strict";
 
 	/**
@@ -86,7 +86,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 			//no parent view - see if there is a targetParent in the config
 			if (!oViewContainingTheControl && oOptions.rootView) {
-				oViewContainingTheControl = sap.ui.getCore().byId(oOptions.rootView);
+				oViewContainingTheControl = Element.getElementById(oOptions.rootView);
 
 				if (!oViewContainingTheControl) {
 					Log.error("Did not find the root view with the id " + oOptions.rootView, this);
@@ -104,7 +104,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 
 				if (!oControl) {
 					//Test if control exists in core (without prefix) since it was not found in the parent or root view
-					oControl =  sap.ui.getCore().byId(oOptions.controlId);
+					oControl =  Element.getElementById(oOptions.controlId);
 				}
 
 				if (!oControl) {

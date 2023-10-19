@@ -76,13 +76,9 @@ sap.ui.define([
 					|| aSourceElementIds.indexOf(oCondenserInfo.affectedControl) > -1;
 
 				if (sAggregationName === oCondenserInfo.targetAggregation && bElementPartOfInitialOrTargetUi) {
-					if (!mContainers[sContainerKey]) {
-						mContainers[sContainerKey] = {};
-					}
+					mContainers[sContainerKey] ||= {};
 					var mAggregations = mContainers[sContainerKey];
-					if (!mAggregations[sAggregationName]) {
-						mAggregations[sAggregationName] = [];
-					}
+					mAggregations[sAggregationName] ||= [];
 					var aContainerElements = mAggregations[sAggregationName];
 					aContainerElements.push(oCondenserInfo);
 				}
@@ -190,13 +186,9 @@ sap.ui.define([
 
 		aCondenserInfos.forEach(function(oCondenserInfo) {
 			var sContainerKey = oCondenserInfo.targetContainer;
-			if (!mUISimulatedStates[sContainerKey]) {
-				mUISimulatedStates[sContainerKey] = {};
-			}
+			mUISimulatedStates[sContainerKey] ||= {};
 			var mUIAggregationState = mUISimulatedStates[sContainerKey];
-			if (!mUIAggregationState[sAggregationName]) {
-				mUIAggregationState[sAggregationName] = Utils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
-			}
+			mUIAggregationState[sAggregationName] ||= Utils.initializeArrayWithPlaceholders(0, aInitialUIElementIds.length - 1);
 
 			INDEX_RELATED[oCondenserInfo.classification].simulate(mUIAggregationState[sAggregationName], oCondenserInfo, aInitialUIElementIds);
 		});
@@ -361,7 +353,7 @@ sap.ui.define([
 			}
 
 			if (!bCorrectSortingFound) {
-				throw Error("no correct sorting found for the container: " + sContainerKey);
+				throw Error(`no correct sorting found for the container: ${sContainerKey}`);
 			}
 
 			aCondenserInfos = aCondenserInfos.filter(function(oCondenserInfo) {

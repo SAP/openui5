@@ -833,3 +833,349 @@ html.sapUiMedia-Std-Tablet {
 .fig .fig-codeblock {
     position: relative;
 }
+
+/*!********************************************* DemoKit Header Redesign *********************************************!*/
+.sapUiDemokit {
+	// Adjust borders and spacing in the overall layout
+	&.sapTntToolPage {
+		padding: 0;
+	}
+
+	.sapTntToolPageMain,
+	.sapTntToolHeader.sapMTB,
+	.sapTntSideNavigation,
+	.sapTntToolPageHeaderWrapper.sapTntToolPageHeaderWithSubHeaderWrapper {
+		border-radius: 0;
+	}
+
+	.sapTntToolHeader.sapMTB {
+		border: none;
+	}
+
+	.sapTntToolPageMain,
+	.sapTntToolPageAside {
+		margin: 0;
+	}
+
+	.sapUiDemokitMainHeader {
+		&.sapTntToolHeader.sapMTB {
+			padding: 0 0.75rem;
+		}
+
+		.sapUiDemokitMainHeaderGrid {
+			align-items: center;
+		}
+
+		.sapUiDemoKitHeaderOTB {
+			justify-content: end;
+		}
+
+		&.sapTntToolHeader .sapMBarChild.sapMMenuBtn .sapMBtn:focus .sapMBtnDefault.sapMFocusable::before {
+			outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
+			border: none !important;
+		}
+
+		// Apply more polished box-shadow effect
+		.sapUiDocumentationSearch {
+			.sapMSF .sapMSFF:hover,
+			.sapMSFVal.sapMFocus .sapMSFF {
+				box-shadow:
+					0 0 0.1875rem 0 rgba(85, 107, 130, 0.1),
+					0 0.1875rem 0.3125rem 0 rgba(85, 107, 130, 0.3);
+			}
+		}
+
+		// Apply some spacing between the logo and the search field
+		.sapUiDemokitMainHeaderLogo {
+			display: block;
+			margin-left: 1rem;
+
+			@media screen and (max-width: 37.4375em) { // 599px
+				margin-right: 1rem;
+			}
+		}
+
+		// Align the styles of the MenuButton with the styles of other buttons
+		.sapMIBar .sapMMenuBtn {
+			.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
+				align-items: center;
+				top: -0.1875rem;
+				height: 2rem;
+				padding-right: 0.125rem;
+
+				&:after {
+					content: none;
+				}
+			}
+
+			.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
+				box-shadow: none;
+			}
+
+			.sapMBtn .sapMBtnInner.sapMBtnDefault .sapUiIcon {
+				color: @sapContent_IconColor;
+			}
+
+			&.sapMMenuBtnRegular .sapMBtnInner::after {
+				color: @sapContent_IconColor;
+				height: 2rem;
+				line-height: 2rem;
+			}
+
+			// Button states
+			&:focus .sapMBtnDefault.sapMFocusable {
+				&::before {
+					outline: @sapContent_FocusStyle @sapContent_FocusWidth @sapContent_FocusColor;
+					border: none !important;
+				}
+			}
+
+			&:hover:not(.sapMBtnDisabled) .sapMBtnDefault {
+				background: @sapButton_Lite_Hover_Background;
+			}
+
+			&:active:not(.sapMBtnDisabled) .sapMBtnDefault {
+				background: @sapActiveColor;
+			}
+		}
+
+		// Adjust the style of the version switch button to match the design specifiaction
+		.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
+			display: flex;
+			align-items: center;
+
+			&:after {
+				content: "\e287";
+				font-family: "SAP-icons";
+				margin-left: 0.5rem;
+				margin-right: 0.25rem;
+			}
+		}
+	}
+}
+
+// Align the icons of the menu buttons in overflow popover
+.sapMOTAPopover.sapMPopover .sapMPopoverCont .sapMPopoverScroll {
+	.sapUiDemoKitHeaderActionsVersionSwitch {
+		.sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable {
+			background-color: @sapUiButtonBackground;
+			border: 0.0625rem solid @sapUiButtonBorderColor;
+			color: @sapUiButtonTextColor;
+
+			bdi,
+			.sapMBtnIcon {
+				color:	@sapUiButtonTextColor;
+			}
+
+			&:hover:not(.sapMBtnActive) {
+				background-color: @sapUiButtonHoverBackground;
+				color: sapUiButtonHoverTextColor;
+				box-shadow: @sapContent_Interaction_Shadow;
+
+				.sapMBtnIcon {
+					color: sapUiButtonHoverTextColor;
+				}
+			}
+
+			&.sapMBtnActive {
+				bdi,
+				.sapMBtnIcon {
+					color: @sapUiButtonActiveTextColor;
+				}
+			}
+		}
+	}
+
+	.sapUiDemoKitHeaderActionsMenuButton.sapMMenuBtn {
+		.sapMBtnIcon {
+			margin-left: -0.0625rem;
+		}
+	}
+
+	.sapMBtn.sapMBarChild.sapUiDemoKitHeaderActionsNewsButton {
+		.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+			position: absolute;
+			top: -0.3125rem;
+		}
+	}
+}
+
+.sapUiSizeCompact  .sapUiDemokit .sapUiDemokitMainHeader {
+	.sapMBtn.sapMBarChild.sapUiDemoKitHeaderActionsNewsButton {
+		.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+			top: -0.1875rem;
+		}
+	}
+}
+
+.sapUiSizeCozy .sapUiDemokit .sapUiDemokitMainHeader {
+	.sapMBtn.sapMBarChild.sapUiDemoKitHeaderActionsNewsButton {
+		.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
+			top: -0.125rem;
+		}
+	}
+}
+
+// Media queries
+html.sap-desktop {
+	.sapUiDemokit {
+		&.sapTntToolPage {
+			.sapUiDemokitMainHeader.sapMIBar.sapMTB .sapMBarChild:first-child[style*="width: 100%"] {
+				padding-left: 0;
+			}
+		}
+	}
+
+	&:not(html.sap-combi) .sapUiDemokit.sapTntToolPage {
+		.sapUiDemoKitHeaderOTB {
+			height: 2.25rem;
+		}
+	}
+
+	// Adjust the style of the version switch button to match the design specifiaction
+	&:is(.sapUiMedia-Std-Phone, .sapUiMedia-Std-Tablet) {
+		.sapUiDemokit {
+			.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
+				padding: 0;
+
+				&:after {
+					content: none;
+				}
+
+				.sapMBtnIcon {
+					padding: 0;
+				}
+			}
+
+			.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
+				display: none;
+			}
+		}
+	}
+
+	// Align the menu button with the side menu button
+	&:is(.sapUiMedia-Std-Phone) {
+		.sapUiDemokit {
+			.sapUiDocumentationMasterToggleButton {
+				margin-left: 0;
+			}
+		}
+	}
+
+	// Align the menu button with the side menu button
+	&:is(.sapUiMedia-Std-Tablet, .sapUiMedia-Std-Desktop) {
+		.sapUiDemokit {
+			.sapUiDocumentationMasterToggleButton {
+				margin-left: 1rem;
+			}
+		}
+	}
+}
+
+html.sap-tablet {
+	&:not(html.sap-combi) .sapUiDemokit.sapTntToolPage {
+		padding: 0;
+	}
+
+	.sapUiDemokit {
+		&.sapTntToolPage {
+			padding: 0;
+		}
+
+		.sapTntToolPageMain {
+			margin: 0;
+			border-radius: 0;
+		}
+
+		.sapUiDemokitMainHeader {
+			.sapMIBar .sapMMenuBtn {
+				.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
+					height: 2.5rem;
+					width: 2.5rem;
+					top: -0.125rem;
+
+					.sapUiIcon {
+						margin-left: 0.125rem;
+					}
+				}
+			}
+
+			// Align the menu button with the side menu button
+			.sapUiDocumentationMasterToggleButton {
+				margin-left: 1rem;
+			}
+
+			// Adjust the style of the version switch button to match the design specifiaction
+			.sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner {
+				padding: 0;
+
+				&:after {
+					content: none;
+				}
+
+				.sapMBtnIcon {
+					padding: 0;
+				}
+			}
+
+			.sapUiDemoKitHeaderActionsVersionSwitchTextContent {
+				display: none;
+			}
+		}
+	}
+}
+
+html.sap-phone {
+	.sapUiDemokit {
+		&.sapTntToolPage {
+			padding: 0;
+		}
+
+		.sapTntToolPageAside {
+			z-index: 10;
+		}
+
+		.sapTntToolPageMain {
+			margin: 0;
+			border-radius: 0;
+		}
+
+		.sapUiDemokitMainHeader {
+			.sapMIBar .sapMMenuBtn {
+				.sapMBtn:not(.sapMSBArrow) .sapMBtnInner {
+					height: 2.5rem;
+					width: 2.5rem;
+					top: -0.125rem;
+
+					.sapUiIcon {
+						margin-left: 0.125rem;
+					}
+				}
+			}
+		}
+	}
+
+	// Align the menu button with the side menu button
+	&:is(.sapUiMedia-Std-Phone) {
+		.sapUiDemokit .sapUiDocumentationMasterToggleButton {
+			margin-left: 0.75rem;
+		}
+	}
+
+	// Adjust the style of the version switch button to match the design specifiaction
+	&:not(.sapUiMedia-Std-Desktop) {
+		.sapUiDemokit .sapUiDemoKitHeaderActionsVersionSwitch .sapMBtnInner:after {
+			content: none;
+		}
+	}
+}
+
+html.sap-phone,
+html.sap-tablet {
+	.sapUiDemokit.sapTntToolPage {
+		.sapTntToolPageMain,
+		.sapTntSideNavigation {
+			border-radius: 0;
+		}
+	}
+}

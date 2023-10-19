@@ -37,7 +37,8 @@ sap.ui.define([
 		oSetRegistry[SAP_ILLUSTRATION_SET_NAME] = {
 			sPath: SAP_ILLUSTRATION_SET_PATH,
 			aSymbols: SAP_ILLUSTRATION_SET_SYMBOLS,
-			bIsPending: false
+			bIsPending: false,
+			aCollections: []
 		};
 
 		var aSymbolsInDOM = [], // Array with IDs of the symbols which are already in the DOM
@@ -79,26 +80,34 @@ sap.ui.define([
 		 *
 		 * @param {string} sAssetId The string ID of the asset being loaded
 		 * @param {string} sInstanceId the ID of the Illustration instance which is requiring the asset
+		 * @param {string} sIdPrefix The prefix of the path of the asset being loaded. Used for loading assets from different collections. Used to store the asset ID in the DOM pool, so it can be distinguished from other assets with the same ID.
 		 * @static
 		 * @public
 		 */
-		IllustrationPool.loadAsset = function (sAssetId, sInstanceId) {
-			var sSet;
+		IllustrationPool.loadAsset = function (sAssetId, sInstanceId, sIdPrefix) {
+			var sSet,
+				// the key under which the asset is stored in the registry
+				// it's the same as the asset ID, but with the prefix (if any, e.g. "v5/")
+				sRegistryKey;
+
+			sIdPrefix = sIdPrefix || "";
 
 			if (sAssetId === "") {
 				Log.error("ID of the asset can not be blank/empty.");
 				return;
 			}
 
+			sRegistryKey = sIdPrefix + sAssetId;
+
 			// if the the asset is required by an instance - cache its ID
 			if (sInstanceId) {
-				oRequiredAssets[sInstanceId] = sAssetId;
+				oRequiredAssets[sInstanceId] = sRegistryKey;
 			}
 
-			if (oAssetRegistry[sAssetId]) {
+			if (oAssetRegistry[sRegistryKey]) {
 				Log.info("The asset with ID '" + sAssetId + "' is either loaded or being loaded.");
 				// if the the asset is required by an instance and it's loaded - update the DOM pool
-				if (sInstanceId && oLoadedSymbols[sAssetId]) {
+				if (sInstanceId && oLoadedSymbols[sRegistryKey]) {
 					IllustrationPool._updateDOMPool();
 				}
 				return;
@@ -111,9 +120,27 @@ sap.ui.define([
 				return;
 			}
 
-			oAssetRegistry[sAssetId] = true;
+			oAssetRegistry[sRegistryKey] = true;
 
-			IllustrationPool._requireSVG(sSet, sAssetId, sInstanceId);
+			IllustrationPool._requireSVG(sSet, sAssetId, sInstanceId, sIdPrefix);
+		};
+
+		/**
+		 * Returns the metadata of an Illustration Set.
+		 * The metadata contains the names of the symbols and the theme mappings.
+		 * If the Illustration Set is not registered, an error is logged and null is returned.
+		 * @public
+		 * @param {string} sSet The name of the illustration set
+		 * @returns {object} The metadata of the Illustration Set
+		 * @since 1.116.0
+		 **/
+		IllustrationPool.getIllustrationSetMetadata = function(sSet) {
+			if (!oSetRegistry[sSet]) {
+				Log.error("The illustration set '" + sSet + "' is not registered. Please register it before requiring one of its assets.");
+				return null;
+			}
+
+			return oSetRegistry[sSet];
 		};
 
 		/**
@@ -266,9 +293,11 @@ sap.ui.define([
 		 */
 		IllustrationPool._metadataLoaded = function(sName, oMetadataJSON, bLoadAllResources) {
 			var aSymbols = oMetadataJSON.symbols,
+				aCollections = oMetadataJSON.collections,
 				bHasPatterns = oMetadataJSON.requireCustomPatterns;
 
 			oSetRegistry[sName].aSymbols = aSymbols;
+			oSetRegistry[sName].aCollections = aCollections;
 
 			// Load the patterns (if available) as soon as possible, since they can be used in any of the symbols.
 			if (bHasPatterns) {
@@ -291,10 +320,11 @@ sap.ui.define([
 		 */
 		IllustrationPool._removeAssetFromDOMPool = function(sId) {
 			var oDOMPool = document.getElementById(SAP_ILLUSTRATION_POOL_ID),
+				sExtractedAssetId = sId.split("/").pop(),
 				oAssetDOM;
 
 			if (oDOMPool !== null) {
-				oAssetDOM = document.getElementById(sId);
+				oAssetDOM = document.getElementById(sExtractedAssetId);
 				if (oAssetDOM !== null) {
 					oDOMPool.removeChild(oAssetDOM);
 					aSymbolsInDOM.splice(aSymbolsInDOM.indexOf(sId), 1);
@@ -312,16 +342,20 @@ sap.ui.define([
 		 * @static
 		 * @private
 		 */
-		IllustrationPool._requireSVG = function(sSet, sId, sInstanceId) {
+		IllustrationPool._requireSVG = function(sSet, sId, sInstanceId, sIdPrefix) {
+			var sRegistryKey = sIdPrefix + sId;
+
+			sIdPrefix = sIdPrefix || "";
+
 			return new Promise(function (fnResolve) {
-				jQuery.ajax(oSetRegistry[sSet].sPath + sId + ".svg", {
+				jQuery.ajax(oSetRegistry[sSet].sPath + sIdPrefix + sId + ".svg", {
 					type: "GET",
 					dataType: "html",
 					success: function (sHTML) {
 						// if asset is a symbol, and not a pattern
 						if (sId.indexOf(SAP_ILLUSTRATION_PATTERNS_NAME) === -1) {
 							// cache the loaded symbol
-							oLoadedSymbols[sId] = sHTML;
+							oLoadedSymbols[sRegistryKey] = sHTML;
 
 							// update the DOM if the asset is required by an instance
 							if (sInstanceId) {
@@ -336,7 +370,7 @@ sap.ui.define([
 					},
 					error: function (jqXHR, sStatus) {
 						if (sStatus !== "abort") { // log an error if it isn't aborted
-							delete oAssetRegistry[sId];
+							delete oAssetRegistry[sRegistryKey];
 							Core.getEventBus().publish("sapMIllusPool-assetLdgFailed");
 							Log.error(sId + " asset could not be loaded");
 							fnResolve();

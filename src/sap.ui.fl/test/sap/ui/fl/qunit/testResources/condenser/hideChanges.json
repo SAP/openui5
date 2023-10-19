@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -12,7 +12,7 @@
 	{
 		"fileName": "id_2_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -22,7 +22,7 @@
 	{
 		"fileName": "id_3_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true
@@ -32,7 +32,7 @@
 	{
 		"fileName": "id_4_hideControl",
 		"changeType": "hideControl",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"selector": {
 			"id": "idMain1--GeneralLedgerDocument.Name",
 			"idIsLocal": true

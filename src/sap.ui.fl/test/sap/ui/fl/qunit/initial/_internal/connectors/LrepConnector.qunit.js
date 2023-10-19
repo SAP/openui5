@@ -31,10 +31,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given LrepConnector with a fake XHR", {
-		beforeEach: function() {
+		beforeEach() {
 			this.xhr = sandbox.useFakeXMLHttpRequest();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -204,7 +204,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector without fake server", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

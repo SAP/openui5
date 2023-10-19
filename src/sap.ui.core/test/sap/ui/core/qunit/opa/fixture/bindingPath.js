@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/Input',
 	'sap/ui/layout/VerticalLayout',
-	'sap/ui/model/json/JSONModel'
-], function (List, StandardListItem, Text, Input, VerticalLayout, JSONModel) {
+	'sap/ui/model/json/JSONModel',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (List, StandardListItem, Text, Input, VerticalLayout, JSONModel, nextUIUpdate) {
 	"use strict";
 
 	var mPropertyData = {
@@ -54,7 +55,7 @@ sap.ui.define([
 			this.oCompositePropertyText.placeAt("qunit-fixture");
 			this.oNamedCompositePropertyText.placeAt("qunit-fixture");
 			this.oStaticPropertyText.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {
@@ -93,7 +94,7 @@ sap.ui.define([
 			this.oInput.placeAt("qunit-fixture");
 			this.oNamedInput.placeAt("qunit-fixture");
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {
@@ -136,7 +137,7 @@ sap.ui.define([
 				});
 			});
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		};
 
 		this.afterEach = function () {

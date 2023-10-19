@@ -228,8 +228,8 @@ function (jQuery, Core, Element, IconPool, ObjectPageLayout, ObjectPageHeader, O
 		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getMode(), "Background", "image is in Background mode");
 	});
 
-	QUnit.test("Size of image is 'contain'", function (assert) {
-		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getBackgroundSize(), "contain", "size of image is 'contain'");
+	QUnit.test("Size of image is 'cover'", function (assert) {
+		assert.strictEqual(this._oPage.getHeaderTitle().getAggregation("_objectImage").getBackgroundSize(), "cover", "size of image is 'cover'");
 	});
 
 	QUnit.test("Position of image is 'center'", function (assert) {

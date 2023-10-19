@@ -271,7 +271,7 @@ sap.ui.define([
 						check : function (oControl) {
 							// Locate the message toast using its CSS class name and content
 							var sText = oControl.getModel("i18n").getResourceBundle()
-									.getText(sTextId, sArg0),
+									.getText(sTextId, [sArg0]),
 								sSelector = ".sapMMessageToast:contains('" + sText + "')";
 
 							return !!Opa5.getJQuery()(sSelector).length;

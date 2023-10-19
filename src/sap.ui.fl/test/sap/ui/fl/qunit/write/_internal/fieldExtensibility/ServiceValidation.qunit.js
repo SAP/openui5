@@ -16,21 +16,21 @@ sap.ui.define([
 	QUnit.module("ServiceValidation", {
 		mUShellContainer: {
 			mSystemInfo: {
-				getName: function() {
+				getName() {
 					return "ABC";
 				},
-				getClient: function() {
+				getClient() {
 					return "123";
 				}
 			},
-			getLogonSystem: function() {
+			getLogonSystem() {
 				return this.mSystemInfo;
 			}
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(this.mUShellContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

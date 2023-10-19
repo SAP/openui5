@@ -40,7 +40,10 @@ sap.ui.define([
 			oElement["@$ui5.node.isExpanded"] = undefined;
 			oPlaceholder["@$ui5.node.isExpanded"] = undefined;
 		}
-		this.mock(_Helper).expects("copyPrivateAnnotation")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -64,7 +67,10 @@ sap.ui.define([
 			oPlaceholder = _AggregationHelper.createPlaceholder(0, 42, oCache);
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
-		this.mock(_Helper).expects("copyPrivateAnnotation")
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -82,7 +88,10 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("checkNodeProperty").never();
 		assert.notOk("@$ui5.node.isExpanded" in oPlaceholder);
-		this.mock(_Helper).expects("copyPrivateAnnotation").thrice()
+		const oHelperMock = this.mock(_Helper);
+		oHelperMock.expects("copyPrivateAnnotation").thrice()
+			.withExactArgs(sinon.match.same(oPlaceholder), "cache", sinon.match.same(oElement));
+		oHelperMock.expects("copyPrivateAnnotation").thrice()
 			.withExactArgs(sinon.match.same(oPlaceholder), "spliced", sinon.match.same(oElement));
 
 		// code under test
@@ -171,7 +180,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["descendants", "filter", "predicate"].forEach(function (sAnnotation) {
+["descendants", "predicate"].forEach(function (sAnnotation) {
 	var sTitle = "beforeOverwritePlaceholder: Unexpected structural change: " + sAnnotation;
 
 	QUnit.test(sTitle, function (assert) {
@@ -1157,12 +1166,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[undefined, 1, 2, 3].forEach(function (iExpandTo) {
+[undefined, 1, 2, 3, Number.MAX_SAFE_INTEGER, Infinity].forEach(function (iExpandTo) {
 	[false, true].forEach(function (bStored) {
 		[false, true].forEach(function (bAllLevels) {
 			var sTitle = "buildApply4Hierarchy: top levels of nodes, $select, expandTo : "
 				+ iExpandTo + ", property paths already stored: " + bStored
 				+ ", all levels: " + bAllLevels;
+
+			if (iExpandTo >= Number.MAX_SAFE_INTEGER && bAllLevels) {
+				return;
+			}
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
@@ -1191,24 +1204,21 @@ sap.ui.define([
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions);
 
 		if (bStored) {
+			oAggregation.$DrillStateProperty = "myDrillState";
 			oAggregation.$NodeProperty = "SomeNodeID";
 			oAggregation.$ParentNavigationProperty = "SomeParentNavigation";
 		}
 		if (bAllLevels) {
-			iExpectedLevels = 999;
-			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot"];
+			aExpectedSelect = ["ID", "SomeNodeID", "DistFromRoot", "myDrillState"];
 			oExpectedAggregation = {
 				$DistanceFromRootProperty : "DistFromRoot"
 			};
 			if (bStored) {
 				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
 			}
-		} else if (bStored) {
-			oAggregation.$DrillStateProperty = "myDrillState";
-			if (iExpandTo > 1) {
-				oAggregation.$DistanceFromRootProperty = "DistFromRoot";
-				oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
-			}
+		} else if (bStored && iExpandTo > 1) {
+			oAggregation.$DistanceFromRootProperty = "DistFromRoot";
+			oAggregation.$LimitedDescendantCountProperty = "LtdDescendant_Count";
 		}
 		oAggregationMock.expects("$fetchMetadata").exactly(bStored ? 0 : 1)
 			.withExactArgs("/meta/@Org.OData.Aggregation.V1.RecursiveHierarchy#X")
@@ -1229,6 +1239,7 @@ sap.ui.define([
 			$fetchMetadata : oAggregation.$fetchMetadata, // remember the mock(!)
 			$metaPath : "/meta",
 			$path : "/Foo",
+			$DrillStateProperty : "myDrillState",
 			$NodeProperty : "SomeNodeID",
 			$ParentNavigationProperty : "SomeParentNavigation"
 		}, oExpectedAggregation);
@@ -1237,7 +1248,10 @@ sap.ui.define([
 			// code under test
 			_AggregationHelper.buildApply4Hierarchy(oAggregation, mQueryOptions, bAllLevels),
 			{
-				$apply : "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+				$apply : bAllLevels || iExpandTo >= Number.MAX_SAFE_INTEGER
+					? "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
+					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID')"
+					: "com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root/Foo"
 					+ ",HierarchyQualifier='X',NodeProperty='SomeNodeID',Levels=" + iExpectedLevels
 					+ ")",
 				$select : aExpectedSelect,

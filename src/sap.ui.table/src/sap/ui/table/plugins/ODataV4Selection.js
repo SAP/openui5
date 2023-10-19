@@ -86,7 +86,6 @@ sap.ui.define([
 
 		this._bLimitReached = false;
 		this.oDeselectAllIcon = oIcon;
-		this._oNotificationPopover = null;
 		this._oRangeSelectionStartContext = null;
 	};
 
@@ -97,11 +96,6 @@ sap.ui.define([
 			this.oDeselectAllIcon.destroy();
 			this.oDeselectAllIcon = null;
 		}
-
-		if (this._oNotificationPopover) {
-			this._oNotificationPopover.destroy();
-			this._oNotificationPopover = null;
-		}
 	};
 
 	ODataV4Selection.prototype.onActivate = function(oTable) {
@@ -111,13 +105,8 @@ sap.ui.define([
 
 	ODataV4Selection.prototype.onDeactivate = function(oTable) {
 		SelectionPlugin.prototype.onDeactivate.apply(this, arguments);
-		oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
 		oTable.setProperty("selectionMode", TableSelectionMode.None);
 		this.clearSelection();
-
-		if (this._oNotificationPopover) {
-			this._oNotificationPopover.close();
-		}
 	};
 
 	ODataV4Selection.prototype.setSelected = function(oRow, bSelected, mConfig) {
@@ -129,19 +118,21 @@ sap.ui.define([
 
 		if (mConfig && mConfig.range) {
 			extendLastSelectionTo(this, oRow);
-			// TODO: Multiple consecutive range selections don't work if the selection hits the limit. The "rangeSelectionStartContexts" needs to
-			//  be the last actually selected context.
-			//this._oRangeSelectionStartContext = bSelected && this.getSelectionMode() === SelectionMode.MultiToggle ? oContext : null;
+			return;
+		}
+
+		if (this.isSelected(oRow) === bSelected) {
 			return;
 		}
 
 		if (this.getSelectionMode() === SelectionMode.Single) {
-			this.clearSelection(); // TODO: Fires 2 selectionChange events, first for deselection, then for selection
+			this._bSuppressSelectionChangeEvent = true;
+			this.clearSelection();
 		}
 
 		oContext.setSelected(bSelected);
 		this._oRangeSelectionStartContext = bSelected && this.getSelectionMode() === SelectionMode.MultiToggle ? oContext : null;
-		this.fireSelectionChange(); // TODO: Only fire the event if the selection state has really changed!
+		this.fireSelectionChange();
 	};
 
 	ODataV4Selection.prototype.setSelectedContexts = function(aContexts) {
@@ -199,14 +190,20 @@ sap.ui.define([
 	 * Selects all rows if not all are already selected, otherwise the selection is cleared.
 	 *
 	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The selection plugin.
+	 * @returns {boolean} The state of selection. true - all selected, false - all cleared, undefined - no action
 	 */
 	function toggleSelectAll(oPlugin) {
 		if (areAllRowsSelected(oPlugin)) {
 			oPlugin.clearSelection();
+			return false;
 		} else if (oPlugin._isLimitDisabled()) {
 			var oBinding = oPlugin.getTableBinding();
-			select(oPlugin, 0, oBinding ? oBinding.getLength() - 1 : -1);
+			if (oBinding && oBinding.getLength()) {
+				select(oPlugin, 0, oBinding.getLength() - 1);
+				return true;
+			}
 		}
+		return undefined;
 	}
 
 	/**
@@ -248,13 +245,14 @@ sap.ui.define([
 		}
 	};
 
-	ODataV4Selection.prototype.onKeyboardShortcut = function(sType) {
+	ODataV4Selection.prototype.onKeyboardShortcut = function(sType, oEvent) {
 		if (sType === "toggle") {
-			if (this._isLimitDisabled()) {
-				toggleSelectAll(this);
+			if (this._isLimitDisabled() && toggleSelectAll(this) === false) {
+				oEvent?.setMarked("sapUiTableClearAll");
 			}
 		} else if (sType === "clear") {
 			this.clearSelection();
+			oEvent?.setMarked("sapUiTableClearAll");
 		}
 	};
 
@@ -290,16 +288,23 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates the correct start and end index for the range selection and loads the corresponding contexts.
+	 * Returns <code>true</code> if the selection limit has been reached (only the last selection), <code>false</code> otherwise.
+	 *
+	 * @return {boolean}
+	 */
+	ODataV4Selection.prototype.isLimitReached = function() {
+		return this._bLimitReached;
+	};
+
+	/**
+	 * Calculates the correct start and end index for the range selection, loads the corresponding contexts and sets the selected state.
 	 *
 	 * @param {sap.ui.table.plugins.ODataV4Selection} oPlugin The selection plugin.
 	 * @param {int} iIndexFrom The start index of the range selection.
 	 * @param {int} iIndexTo The end index of the range selection.
-	 * @return {Promise<{indexTo: int, indexFrom: int, contexts: sap.ui.model.odata.v4.Context[]}>}
-	 *   A promise that resolves with the corrected start and end index when the contexts are loaded. The Promise is rejected if the index is out of
-	 *   range.
 	 */
-	function loadLimitedContexts(oPlugin, iIndexFrom, iIndexTo) {
+	function select(oPlugin, iIndexFrom, iIndexTo) {
+		var oTable = oPlugin.getTable();
 		var iLimit = oPlugin.getLimit();
 		var bUpwardSelection = iIndexTo < iIndexFrom; // Indicates whether the selection is made from bottom to top.
 		var iGetContextsStartIndex = bUpwardSelection ? iIndexTo : iIndexFrom;
@@ -318,50 +323,42 @@ sap.ui.define([
 
 				// The table will be scrolled one row further to make it transparent for the user where the selection ends.
 				// load the extra row here to avoid additional batch request.
-				iGetContextsLength = iLimit + 1; // TODO: This additional context is only required for scrolling and must not be selected!
+				iGetContextsLength = iLimit + 1;
 			}
 		}
 
-		return loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function(aContexts) {
-			return {indexFrom: iIndexFrom, indexTo: iIndexTo, contexts: aContexts};
-		});
-	}
-
-	function loadContexts(oBinding, iStartIndex, iLength) {
-		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
-		var bContextsAvailable = aContexts.length === iLength && !aContexts.includes(undefined);
-
-		if (bContextsAvailable) {
-			return Promise.resolve(aContexts);
-		}
-
-		return new Promise(function(resolve) {
-			oBinding.attachEventOnce("dataReceived", function() {
-				resolve(loadContexts(oBinding, iStartIndex, iLength));
-			});
-		});
-	}
-
-	function select(oPlugin, iIndexFrom, iIndexTo) {
-		if (iIndexFrom < 0 || iIndexTo < 0) {
-			return;
-		}
-
-		loadLimitedContexts(oPlugin, iIndexFrom, iIndexTo).then(function(mSelectionInfo) {
-			mSelectionInfo.contexts.forEach(function(oContext) {
-				if (isContextSelectable(oContext)) {
+		var bSelectionChange = false;
+		TableUtils.loadContexts(oPlugin.getTableBinding(), iGetContextsStartIndex, iGetContextsLength).then(function(aContexts) {
+			aContexts.forEach(function(oContext) {
+				if (!isContextSelectable(oContext) || oContext.isSelected()) {
+					return;
+				}
+				if (bUpwardSelection && oContext.getIndex() >= iIndexTo || oContext.getIndex() <= iIndexTo) {
 					oContext.setSelected(true);
+					bSelectionChange = true;
+				}
+				if (oContext.getIndex() === iIndexTo) {
+					oPlugin._oRangeSelectionStartContext = oContext;
 				}
 			});
-			return oPlugin._scrollTableToIndex(mSelectionInfo.indexTo, mSelectionInfo.indexFrom > mSelectionInfo.indexTo);
-		}).then(function() {
-			oPlugin.fireSelectionChange(); // TODO: Only fire if the selection state of a context was really changed!
+
+			if (oPlugin.isLimitReached()) {
+				TableUtils.scrollTableToIndex(oTable, iIndexTo, bUpwardSelection).then(function() {
+					if (oPlugin.getEnableNotification()) {
+						TableUtils.showNotificationPopoverAtIndex(oTable, iIndexTo, oPlugin.getLimit());
+					}
+				});
+			}
+
+			if (bSelectionChange) {
+				oPlugin.fireSelectionChange();
+			}
 		});
 	}
 
 	function isContextSelectable(oContext) {
 		var bIsTree = "hierarchyQualifier" in (oContext.getBinding().getAggregation() || {});
-		return (bIsTree || oContext.getProperty("@$ui5.node.isExpanded") === undefined) && !oContext.getProperty("@$ui5.node.isTotal");
+		return bIsTree || (oContext.getProperty("@$ui5.node.isExpanded") === undefined && !oContext.getProperty("@$ui5.node.isTotal"));
 	}
 
 	ODataV4Selection.prototype.clearSelection = function() {
@@ -374,9 +371,10 @@ sap.ui.define([
 			oContext.setSelected(false);
 		});
 
-		if (bContextDeselected) {
+		if (bContextDeselected && !this._bSuppressSelectionChangeEvent) {
 			this.fireSelectionChange();
 		}
+		this._bSuppressSelectionChangeEvent = false;
 	};
 
 	ODataV4Selection.prototype.getSelectedContexts = function() {
@@ -385,124 +383,6 @@ sap.ui.define([
 		return oBinding ? oBinding.getAllCurrentContexts().filter(function(oContext) {
 			return oContext.isSelected();
 		}) : [];
-	};
-
-	/**
-	 * If the limit is reached, the table is scrolled to the <code>iIndex</code>.
-	 * If <code>bReverse</code> is true the <code>firstVisibleRow</code> property of the Table is set to <code>iIndex</code> - 1,
-	 * otherwise to <code>iIndex</code> - row count + 2.
-	 *
-	 * @param {int} iIndex The index of the row to which to scroll to.
-	 * @param {boolean} bReverse Whether the row should be displayed at the bottom of the table.
-	 * @returns {Promise} A promise that resolves when the table is scrolled.
-	 * @private
-	 * TODO: For reuse between this plugin and MultiSelectionPlugin, move this to utils
-	 */
-	ODataV4Selection.prototype._scrollTableToIndex = function(iIndex, bReverse) {
-		var oTable = this.getParent();
-
-		if (!oTable || !this._bLimitReached) {
-			return Promise.resolve();
-		}
-
-		var iFirstVisibleRow = oTable.getFirstVisibleRow();
-		var mRowCounts = oTable._getRowCounts();
-		var iLastVisibleRow = iFirstVisibleRow + mRowCounts.scrollable - 1;
-		var bExpectRowsUpdatedEvent = false;
-
-		if (iIndex < iFirstVisibleRow || iIndex > iLastVisibleRow) {
-			var iNewIndex = bReverse ? iIndex - mRowCounts.fixedTop - 1 : iIndex - mRowCounts.scrollable - mRowCounts.fixedTop + 2;
-
-			bExpectRowsUpdatedEvent = oTable._setFirstVisibleRowIndex(Math.max(0, iNewIndex));
-		}
-
-		this._showNotificationPopoverAtIndex(iIndex);
-
-		return new Promise(function(resolve) {
-			if (bExpectRowsUpdatedEvent) {
-				oTable.attachEventOnce("rowsUpdated", resolve);
-			} else {
-				resolve();
-			}
-		});
-	};
-
-	/**
-	 * Displays a notification Popover beside the row selector that indicates a limited selection. The given index
-	 * references the index of the data context in the binding.
-	 *
-	 * @param {number} iIndex - Index of the data context
-	 * @private
-	 * @returns {Promise} A Promise that resolves after the notification popover has been opened
-	 */
-	ODataV4Selection.prototype._showNotificationPopoverAtIndex = function(iIndex) {
-		var that = this;
-		var oPopover = this._oNotificationPopover;
-		var oTable = this.getParent();
-		var oRow = oTable.getRows()[iIndex - oTable._getFirstRenderedRowIndex()];
-		var sTitle = TableUtils.getResourceText("TBL_SELECT_LIMIT_TITLE");
-		var sMessage = TableUtils.getResourceText("TBL_SELECT_LIMIT", [this.getLimit()]);
-
-		if (!this.getEnableNotification()) {
-			return Promise.resolve();
-		}
-
-		return new Promise(function(resolve) {
-			sap.ui.require([
-				"sap/m/Popover", "sap/m/Bar", "sap/m/Title", "sap/m/Text", "sap/m/HBox", "sap/ui/core/library", "sap/m/library"
-			], function(Popover, Bar, Title, Text, HBox, coreLib, mLib) {
-				if (!oPopover) {
-					oPopover = new Popover(that.getId() + "-notificationPopover", {
-						customHeader: [
-							new Bar({
-								contentMiddle: [
-									new HBox({
-										items: [
-											new Icon({src: "sap-icon://message-warning", color: coreLib.IconColor.Critical})
-												.addStyleClass("sapUiTinyMarginEnd"),
-											new Title({text: sTitle, level: coreLib.TitleLevel.H2})
-										],
-										renderType: mLib.FlexRendertype.Bare,
-										justifyContent: mLib.FlexJustifyContent.Center,
-										alignItems: mLib.FlexAlignItems.Center
-									})
-								]
-							})
-						],
-						content: new Text({text: sMessage})
-					});
-
-					oPopover.addStyleClass("sapUiContentPadding");
-					that._oNotificationPopover = oPopover;
-				} else {
-					oPopover.getContent()[0].setText(sMessage);
-				}
-
-				oTable.detachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
-				oTable.attachFirstVisibleRowChanged(that.onFirstVisibleRowChange, that);
-
-				var oRowSelector = oRow.getDomRefs().rowSelector;
-
-				if (oRowSelector) {
-					oPopover.attachEventOnce("afterOpen", resolve);
-					oPopover.openBy(oRowSelector);
-				} else {
-					resolve();
-				}
-			});
-		});
-	};
-
-	ODataV4Selection.prototype.onFirstVisibleRowChange = function() {
-		if (!this._oNotificationPopover) {
-			return;
-		}
-
-		var oTable = this.getParent();
-		if (oTable) {
-			oTable.detachFirstVisibleRowChanged(this.onFirstVisibleRowChange, this);
-		}
-		this._oNotificationPopover.close();
 	};
 
 	ODataV4Selection.prototype.onThemeChanged = function() {

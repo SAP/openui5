@@ -91,21 +91,20 @@
 									path: 'ruleSets>/',
 									parameters: {numberOfExpandedLevels: 1}
 								}"
-								collapseRecursive="false"
 								enableColumnReordering="false"
-								cellClick="onCellClick"
 								class="sapUiSizeCondensed"
-								visibleRowCountMode="Auto"
+								rowMode="Auto"
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
 								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
-								showColumnVisibilityMenu="true"
-								columnVisibility="onColumnVisibilityChange"
+								cellClick="onCellClick"
+								rowSelectionChange="onRowSelectionChange"
 								>
 							<t:columns>
 								<t:Column id="rulesColumn"
 										  sortProperty="name"
-										  filterProperty="name">
+										  filterProperty="name"
+										  visible="{tableSettings>/columns/rules/visible}">
 									<m:Label text="Rules ({/selectedRulesCount} selected)"/>
 									<t:template>
 										<m:Text text="{ruleSets>name}" wrapping="false"/>
@@ -114,27 +113,28 @@
 								<t:Column id="categoriesColumn"
 										  width="10rem"
 										  sortProperty="categories"
-										  filterProperty="categories">
-									<m:Label text="Categories"/>
+										  filterProperty="categories"
+										  visible="{tableSettings>/columns/categories/visible}">
+									<m:Label text="{tableSettings>/columns/categories/title}"/>
 									<t:template>
 										<m:Text text="{ruleSets>categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
-										  visible="false"
 										  sortProperty="audiences"
-										  filterProperty="audiences">
-									<m:Label text="Audience"/>
+										  filterProperty="audiences"
+										  visible="{tableSettings>/columns/audience/visible}">
+									<m:Label text="{tableSettings>/columns/audience/title}"/>
 									<t:template>
 										<m:Text text="{ruleSets>audiences}" wrapping="false"/>
 									</t:template>
 								</t:Column>
-								<t:Column id="idsColumn"
+								<t:Column id="ruleIdColumn"
 										  width="10rem"
-										  visible="false"
 										  sortProperty="id"
-										  filterProperty="id">
-									<m:Label text="RuleID"/>
+										  filterProperty="id"
+										  visible="{tableSettings>/columns/ruleId/visible}">
+									<m:Label text="{tableSettings>/columns/ruleId/title}"/>
 									<t:template>
 										<m:Text text="{ruleSets>id}" wrapping="false"/>
 									</t:template>

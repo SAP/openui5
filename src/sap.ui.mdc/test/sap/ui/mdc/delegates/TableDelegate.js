@@ -22,7 +22,6 @@ sap.ui.define([
 	"use strict";
 
 	var TestTableDelegate = Object.assign({}, TableDelegate);
-	TestTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	TestTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
 		return TableDelegateUtils.createColumn(oTable, sPropertyName);
@@ -72,7 +71,6 @@ sap.ui.define([
 
 	TestTableDelegate.getFilterDelegate = function() {
 		return {
-			apiVersion: 2,//CLEANUP_DELEGATE
 			addItem: function(oTable, sPropertyName) {
 				return this.fetchProperties(oTable).then(function(aProperties) {
 					var oProperty = aProperties.find(function(oProperty) {

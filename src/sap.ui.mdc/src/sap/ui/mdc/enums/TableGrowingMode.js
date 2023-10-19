@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableGrowingMode = {
+    const TableGrowingMode = {
         /**
          * Growing does not take place (<code>growing</code> is not set in the responsive table)
          *
@@ -34,6 +34,8 @@ sap.ui.define(function() {
          */
         Scroll: "Scroll"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableGrowingMode", TableGrowingMode);
 
     return TableGrowingMode;
 

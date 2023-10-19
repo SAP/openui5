@@ -7,11 +7,11 @@ sap.ui.define([
 ], function (SelectionController, merge) {
 	"use strict";
 
-	var MDCSelectionController = SelectionController.extend("sap.ui.mdc.p13n.subcontroller.SelectionController");
+	const MDCSelectionController = SelectionController.extend("sap.ui.mdc.p13n.subcontroller.SelectionController");
 
 	MDCSelectionController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent){
 		delete oContent.key;
-		var oAddRemoveChange = {
+		const oAddRemoveChange = {
 			selectorElement: oControl,
 			changeSpecificData: {
 				changeType: sOperation,
@@ -22,7 +22,7 @@ sap.ui.define([
 	};
 
 	MDCSelectionController.prototype.getCurrentState = function(bExternalize){
-		var vState = this.getAdaptationControl().getCurrentState()[this.getStateKey()];
+		let vState = this.getAdaptationControl().getCurrentState()[this.getStateKey()];
 
 		if (vState instanceof Array && !bExternalize) {
 			vState = vState.map(function(o){
@@ -35,7 +35,7 @@ sap.ui.define([
 
 	MDCSelectionController.prototype.getDelta = function(mDeltaConfig){
 		if (mDeltaConfig.changedState instanceof Array) {
-			var aStateMapped = merge([], mDeltaConfig.changedState);
+			const aStateMapped = merge([], mDeltaConfig.changedState);
 			aStateMapped.map(function(oStateItem){
 				oStateItem.key = oStateItem.name;
 				return oStateItem;
@@ -44,7 +44,7 @@ sap.ui.define([
 		}
 
 		if (mDeltaConfig.existingState instanceof Array) {
-			var aExistingStateMapped = merge([], mDeltaConfig.existingState);
+			const aExistingStateMapped = merge([], mDeltaConfig.existingState);
 			aExistingStateMapped.map(function(oStateItem){
 				oStateItem.key = oStateItem.name;
 				return oStateItem;
@@ -56,7 +56,7 @@ sap.ui.define([
 	};
 
 	MDCSelectionController.prototype._createMoveChange = function(sPropertykey, iNewIndex, sMoveOperation, oControl){
-		var oMoveChange =  {
+		const oMoveChange =  {
 			selectorElement: oControl,
 			changeSpecificData: {
 				changeType: sMoveOperation,

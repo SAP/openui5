@@ -13,22 +13,19 @@ sap.ui.define([
 	'sap/ui/model/type/Integer',
 	'sap/ui/model/type/Time',
 	'./utils/TableUtils',
-	'./AnalyticalColumnMenu',
 	"sap/base/Log"
-],
-	function(
-		Column,
-		library,
-		Element,
-		BooleanType,
-		DateTime,
-		Float,
-		Integer,
-		Time,
-		TableUtils,
-		AnalyticalColumnMenu,
-		Log
-	) {
+], function(
+	Column,
+	library,
+	Element,
+	BooleanType,
+	DateTime,
+	Float,
+	Integer,
+	Time,
+	TableUtils,
+	Log
+) {
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
@@ -105,15 +102,6 @@ sap.ui.define([
 		"Boolean": new BooleanType()
 	};
 
-	/*
-	 * Factory method. Creates the column menu.
-	 *
-	 * @returns {sap.ui.table.AnalyticalColumnMenu} The created column menu.
-	 */
-	AnalyticalColumn.prototype._createMenu = function() {
-		return new AnalyticalColumnMenu(this.getId() + "-menu");
-	};
-
 	AnalyticalColumn.prototype._setGrouped = function(bGrouped) {
 		var oTable = this._getTable();
 		var sGroupEventType = bGrouped ? GroupEventType.group : GroupEventType.ungroup;
@@ -134,6 +122,7 @@ sap.ui.define([
 		var oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
+			oParent._bContextsAvailable = false;
 			if (bGrouped) {
 				oParent._addGroupedColumn(this.getId());
 			} else {
@@ -413,9 +402,20 @@ sap.ui.define([
 		return false;
 	};
 
+	AnalyticalColumn.prototype._isGroupableByMenu = function() {
+		return this.isGroupableByMenu();
+	};
+
 	// This column sets its own cell content visibility settings.
 	AnalyticalColumn.prototype._setCellContentVisibilitySettings = function() {};
 
-	return AnalyticalColumn;
+	AnalyticalColumn.prototype._applySorters = function() {
+		// The analytical info must be updated before sorting via the binding. The request will still be correct, but the binding
+		// will create its internal data structure based on the analytical info. We also do not need to get the contexts right
+		// now (therefore "true" is passed"), this will be done later in refreshRows.
+		this._updateTableAnalyticalInfo(true);
+		Column.prototype._applySorters.apply(this, arguments);
+	};
 
+	return AnalyticalColumn;
 });

@@ -9,106 +9,107 @@
 				>
 		</script>
 		<script>
-			try{
-				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
-			}
-
-		    // create the controls in the head
-			var oLayout = new sap.ui.commons.layout.MatrixLayout();
-			oLayout.setLayoutFixed(false);
-			var oButton1 = new sap.ui.commons.Button({
-				text: "Wrap With SAPUI5 Controls",
-				tooltip : "Creates a Control Tree around the existing HTML and places it at the 'target1' div below",
-				press: createOuterControlTree
-			});
-			var oButton2 = new sap.ui.commons.Button({
-				text: "Create Nested Control",
-				tooltip : "Creates a Control and places it within the HTML Container",
-				press: createNestedControlTree
-			});
-			oLayout.createRow(oButton1, oButton2);
-			oLayout.placeAt("controls");
-
-			jQuery(document).ready(
-				function() {
-					jQuery("#embedded span").on("click", (
-							function(event) {
-								var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
-								var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
-								if ( bRed ) {
-									jQuery("<span>red clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
-								} else {
-									jQuery("<span>yellow clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
-								}
-							}
-					);
-					animate();
+			sap.ui.require(["sap/ui/core/Element"], function(Element) {
+				try{
+					sap.ui.getCore().loadLibrary("sap.ui.commons");
+				}catch(e){
+					alert("This test page requires the library 'sap.ui.commons' which is not available.");
+					throw(e);
 				}
-			);
 
-			function createOuterControlTree() {
+				// create the controls in the head
 				var oLayout = new sap.ui.commons.layout.MatrixLayout();
-				var oButton = new sap.ui.commons.Button({ text: "Some Button", tooltip : "Just a sample for a SAPUI5 Control", press: function() { oTextField.setValue("" + new Date().getTime()); }});
-				var oTextField = new sap.ui.commons.TextField({ value : "Some Initial Value"});
-				oLayout.createRow(oButton, oTextField);
-				var oHTML = new sap.ui.core.HTML({ id : "embedded" });
-				oLayout.createRow(oHTML);
-
-				/*var oPanel = new sap.ui.commons.Panel({
-					title : new sap.ui.core.Title({text:"A SAPUI5 Panel"}),
-					content : [oLayout]
+				oLayout.setLayoutFixed(false);
+				var oButton1 = new sap.ui.commons.Button({
+					text: "Wrap With SAPUI5 Controls",
+					tooltip : "Creates a Control Tree around the existing HTML and places it at the 'target1' div below",
+					press: createOuterControlTree
 				});
-				oPanel.placeAt("target1");*/
-
-				/**/
-				var oDialog = new sap.ui.commons.Dialog({
-					title : "A SAPUI5 Dialog",
-					content: oLayout,
-					buttons : [ new sap.ui.commons.Button({text:"OK"}) ],
-					showCloseButton : true
+				var oButton2 = new sap.ui.commons.Button({
+					text: "Create Nested Control",
+					tooltip : "Creates a Control and places it within the HTML Container",
+					press: createNestedControlTree
 				});
-				// oDialog.placeAt("target1")
-				oDialog.open();
-				/**/
-			};
+				oLayout.createRow(oButton1, oButton2);
+				oLayout.placeAt("controls");
 
-			var delta = 10;
+				jQuery(document).ready(
+					function() {
+						jQuery("#embedded span").on("click", {
+								function(event) {
+									var sColor = event.target && jQuery.css(event.target, "background-color").toLowerCase();
+									var bRed = sColor == "#ff0000" || sColor == "rgb(255, 0, 0)";
+									if ( bRed ) {
+										jQuery("<span>red clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
+									} else {
+										jQuery("<span>yellow clicked" + new Date() + "</span><br>").appendTo(jQuery("#log"));
+									}
+								}
+						});
+						animate();
+					}
+				);
 
-			function createNestedControlTree() {
-				var oButton = new sap.ui.commons.Button({
-					text: "Inner Button", tooltip : "Just a sample for a SAPUI5 Control",
-					press: function() {
-						delta = delta <= 2 ? 2 : delta-1;
-					}});
-				oButton.placeAt(jQuery(".x").get(0));
-			};
+				function createOuterControlTree() {
+					var oLayout = new sap.ui.commons.layout.MatrixLayout();
+					var oButton = new sap.ui.commons.Button({ text: "Some Button", tooltip : "Just a sample for a SAPUI5 Control", press: function() { oTextField.setValue("" + new Date().getTime()); }});
+					var oTextField = new sap.ui.commons.TextField({ value : "Some Initial Value"});
+					oLayout.createRow(oButton, oTextField);
+					var oHTML = new sap.ui.core.HTML({ id : "embedded" });
+					oLayout.createRow(oHTML);
 
-			function animate() {
-				var html5 = jQuery("#embedded");
-				html5.css("-webkit-perspective", 500);
-				d = 0.0;
-				setTimeout(step, 50);
-			}
+					/*var oPanel = new sap.ui.commons.Panel({
+						title : new sap.ui.core.Title({text:"A SAPUI5 Panel"}),
+						content : [oLayout]
+					});
+					oPanel.placeAt("target1");*/
 
-			function step() {
-				var html5 = jQuery("#embedded > div");
-		        html5.css("-webkit-transform", "rotateY(" + d + "deg)");
-		        d = d + delta;
-		        if ( d >= 360 ) d = 0;
-		        setTimeout(step, 50);
-			}
+					/**/
+					var oDialog = new sap.ui.commons.Dialog({
+						title : "A SAPUI5 Dialog",
+						content: oLayout,
+						buttons : [ new sap.ui.commons.Button({text:"OK"}) ],
+						showCloseButton : true
+					});
+					// oDialog.placeAt("target1")
+					oDialog.open();
+					/**/
+				};
 
-			new sap.ui.core.HTML("myhtml", {content : ""}).placeAt("empty-content");
-			new sap.ui.commons.Button({text:"Set Content As String (red)", press: function() {
-				sap.ui.getCore().byId("myhtml").setContent("<div style='background-color:red;width:16px;height:16px;'></div>");
-			}}).placeAt("empty-content");
-			new sap.ui.commons.Button({text:"Set Content as DOM (green)", press: function() {
-				sap.ui.getCore().byId("myhtml").setDOMContent(jQuery("<div style='background-color:green;width:16px;height:16px;'></div>").get(0));
-			}}).placeAt("empty-content");
+				var delta = 10;
 
+				function createNestedControlTree() {
+					var oButton = new sap.ui.commons.Button({
+						text: "Inner Button", tooltip : "Just a sample for a SAPUI5 Control",
+						press: function() {
+							delta = delta <= 2 ? 2 : delta-1;
+						}});
+					oButton.placeAt(jQuery(".x").get(0));
+				};
+
+				function animate() {
+					var html5 = jQuery("#embedded");
+					html5.css("-webkit-perspective", 500);
+					d = 0.0;
+					setTimeout(step, 50);
+				}
+
+				function step() {
+					var html5 = jQuery("#embedded > div");
+					html5.css("-webkit-transform", "rotateY(" + d + "deg)");
+					d = d + delta;
+					if ( d >= 360 ) d = 0;
+					setTimeout(step, 50);
+				}
+
+				new sap.ui.core.HTML("myhtml", {content : ""}).placeAt("empty-content");
+				new sap.ui.commons.Button({text:"Set Content As String (red)", press: function() {
+					Element.getElementById("myhtml").setContent("<div style='background-color:red;width:16px;height:16px;'></div>");
+				}}).placeAt("empty-content");
+				new sap.ui.commons.Button({text:"Set Content as DOM (green)", press: function() {
+					Element.getElementById("myhtml").setDOMContent(jQuery("<div style='background-color:green;width:16px;height:16px;'></div>").get(0));
+				}}).placeAt("empty-content");
+			});
 		</script>
 	</head>
 	<body class="sapUiBody">

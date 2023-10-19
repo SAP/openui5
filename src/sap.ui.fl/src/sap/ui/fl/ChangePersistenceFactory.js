@@ -15,7 +15,7 @@ sap.ui.define([
 	 * Factory to get or create a new instances of {sap.ui.fl.ChangePersistence}
 	 * @constructor
 	 * @alias sap.ui.fl.ChangePersistenceFactory
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private

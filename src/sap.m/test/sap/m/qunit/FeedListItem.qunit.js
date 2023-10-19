@@ -332,11 +332,7 @@ sap.ui.define([
 	});
 	QUnit.test("Default src - icon size", function (assert) {
 		assert.ok(oFeedList.getItems()[4].oAvatar.$().hasClass("sapFAvatarS"), "Avatar has class sapAvatarS applied");
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "24px", "Avatar icon font size is 2 rem");
-	});
-	QUnit.test("List Item Image Properties", function (assert) {
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("line-height"), "72px", "Line Height is 72px");
-		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("letter-spacing"), "-8px", "Letter spacing is -8px");
+		assert.equal(oFeedList.getItems()[4].oAvatar.$().css("font-size"), "32px", "Avatar icon font size is 2 rem");
 	});
 	QUnit.test("Default src - icon color", function (assert) {
 		this.oNonActiveItem = oFeedList.getItems().filter(function(oListItem) {
@@ -1246,6 +1242,7 @@ sap.ui.define([
 			oFeedListItem = new FeedListItem({
 				sender: "George Washington",
 				info: "Reply",
+				icon: "sap-icon://edit",
 				timestamp: "March 04 2013",
 				text: "Lorem ipsum dolor sit amet, <strong class=\"malicious\" style=\"position: absolute !important\">consetetur</strong> sadipscing elitr, <a class=\"malicious\" href=\"https://sap.com\" style=\"position: fixed !important\">sed diam nonumy</a> eirmod tempor invidunt ut labore." +
 						"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore." +
@@ -1273,6 +1270,7 @@ sap.ui.define([
 		assert.strictEqual(aMaliciousNodes.length, 2, "there are 2 'malicious' nodes");
 		assert.strictEqual(aMaliciousNodes[0].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the first 'malicious' node");
 		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
+		assert.strictEqual(oFeedListItem.getDomRef("figure").getAttribute("style"), null, "There is no stile added to the item icon");
 
 		// Act - toggle to full text
 		oFeedListItem._toggleTextExpanded();
@@ -1286,6 +1284,7 @@ sap.ui.define([
 		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
 		assert.strictEqual(aMaliciousNodes[2].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the third 'malicious' node");
 		assert.strictEqual(aMaliciousNodes[3].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the fourth 'malicious' node");
+		assert.strictEqual(oFeedListItem.getDomRef("figure").getAttribute("style"), null, "There is no stile added to the item icon");
 
 		// Act - toggle back to short text
 		oFeedListItem._toggleTextExpanded();
@@ -1297,6 +1296,7 @@ sap.ui.define([
 		assert.strictEqual(aMaliciousNodes.length, 2, "there are 2 'malicious' nodes");
 		assert.strictEqual(aMaliciousNodes[0].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the first 'malicious' node");
 		assert.strictEqual(aMaliciousNodes[1].getAttribute("style"), "position: static !important;", "There is 'position: static !important' added as style attribute to the second 'malicious' node");
+		assert.strictEqual(oFeedListItem.getDomRef("figure").getAttribute("style"), null, "There is no stile added to the item icon");
 
 		// Cleanup
 		oFeedListItem.destroy();

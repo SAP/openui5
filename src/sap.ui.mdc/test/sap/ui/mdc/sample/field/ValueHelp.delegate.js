@@ -6,19 +6,20 @@ sap.ui.define([
 	"./ValueHelpODataV2.delegate",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual"
 ], function(
 	MDCValueHelpDelegate,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	merge,
 	deepEqual
 ) {
 	"use strict";
 
 	var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 		var oPayload = oValueHelp.getPayload();
@@ -77,7 +78,7 @@ sap.ui.define([
 				var oCondition;
 				var aConditions = [];
 				if (oIn.hasOwnProperty("value")) {
-					oCondition = Condition.createCondition("EQ", [oIn.value], undefined, undefined, ConditionValidated.Validated, undefined);
+					oCondition = Condition.createCondition(OperatorName.EQ, [oIn.value], undefined, undefined, ConditionValidated.Validated, undefined);
 					aConditions.push(oCondition);
 				} else if (oIn.hasOwnProperty("source")) {
 					if (oIn.source.startsWith("conditions/")) {
@@ -95,10 +96,10 @@ sap.ui.define([
 							vValue = oContext.getProperty(oIn.source);
 						}
 						if (oIn.initialValueFilterEmpty && !vValue) {
-							oCondition = Condition.createCondition("Empty", []);
+							oCondition = Condition.createCondition(OperatorName.Empty, []);
 							aConditions.push(oCondition);
 						} else if (vValue) { // TODO: also select for empty string?
-							oCondition = Condition.createCondition("EQ", [vValue], undefined, undefined, ConditionValidated.Validated, undefined);
+							oCondition = Condition.createCondition(OperatorName.EQ, [vValue], undefined, undefined, ConditionValidated.Validated, undefined);
 							aConditions.push(oCondition);
 						}
 					}
@@ -162,7 +163,7 @@ sap.ui.define([
 							}
 						}
 						if (oOut.target.startsWith("conditions/") && bUpdate) {
-							var oNewCondition = Condition.createCondition("EQ", [vNewValue], undefined, undefined, ConditionValidated.Validated, undefined);
+							var oNewCondition = Condition.createCondition(OperatorName.EQ, [vNewValue], undefined, undefined, ConditionValidated.Validated, undefined);
 							oCM.addCondition(oOut.target.slice(11), oNewCondition); // will be checked if allready exist inside
 						}
 					}
@@ -210,56 +211,42 @@ sap.ui.define([
 		return undefined;
 	};
 
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
 		var oPayload = oValueHelp.getPayload();
-		if (oPayload.in) {
-			var sModelName = oContent.getListBindingInfo().model;
-			var oContext = oItem && oItem.getBindingContext(sModelName);
-			var oItemData = oContent.getItemFromContext(oContext);
-			var oInConditions = this.getFilterConditions(oValueHelp, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
-			aConditions = merge([], aConditions);
-			_mapInOutToPayload(aConditions, oPayload);
-
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
-				if (oCondition.validated === ConditionValidated.Validated && oItemData.key === oCondition.values[0]) { // TODO: check for specific EQ operator
-					if (oCondition.payload && oCondition.payload.in && oItemData.payload && oItemData.payload.in) {
-						if (deepEqual(oCondition.payload.in, oItemData.payload.in)) {
-							return true;
-						}
-					} else if (oItemData.payload && oItemData.payload.in) { // check with global inParameters
-						var bSelected = true;
-						for (var sIn in oItemData.payload.in) {
-							if (oInConditions.hasOwnProperty(sIn)) {
-								var bFound = false;
-								for (var j = 0; j < oInConditions[sIn].length; j++) {
-									var oInCondition = oInConditions[sIn][j];
-									if (oInCondition.operator === "EQ" && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
-										// at least one in-condition fit to the item
-										// TODO: check payload of there coditions too?
-										bFound = true;
-										break;
-									}
-								}
-								if (!bFound) {
-									// not fit at least one in-parameter
-									bSelected = false;
+		return MDCValueHelpDelegate.findConditionsForContext.apply(this, arguments).filter(function (oCondition) {
+			if (oPayload && oPayload.in) {
+				var oItemData = oContent.getItemFromContext(oContext);
+				var oInConditions = ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, {control: oContent && oContent.getControl()}); // to use if no payload is provided
+				if (oCondition.payload && oCondition.payload.in && oItemData.payload && oItemData.payload.in) {
+					return deepEqual(oCondition.payload.in, oItemData.payload.in);
+				} else if (oItemData.payload && oItemData.payload.in) { // check with global inParameters
+					var bSelected = true;
+					for (var sIn in oItemData.payload.in) {
+						if (oInConditions.hasOwnProperty(sIn)) {
+							var bFound = false;
+							for (var j = 0; j < oInConditions[sIn].length; j++) {
+								var oInCondition = oInConditions[sIn][j];
+								if (oInCondition.operator === OperatorName.EQ && oInCondition.values[0] === oItemData.payload.in[sIn]) { // TODO: check for other operators than EQ
+									// at least one in-condition fit to the item
+									// TODO: check payload of there coditions too?
+									bFound = true;
 									break;
 								}
 							}
+							if (!bFound) {
+								// not fit at least one in-parameter
+								bSelected = false;
+								break;
+							}
 						}
-						return bSelected;
-					} else {
-						return true;
 					}
+					return bSelected;
+				} else {
+					return true;
 				}
 			}
-		} else {
-			return MDCValueHelpDelegate.isFilterableListItemSelected.apply(this, arguments);
-		}
-
-		return false;
-
+			return true;
+		});
 	};
 
 	function _mapInOutToPayload(aConditions, oPayload) {

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	DtPerformanceTestUtil,
 	RtaPerformanceTestUtil,
@@ -19,7 +19,7 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	oCore
+	Element
 ) {
 	"use strict";
 
@@ -28,11 +28,11 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		onAfterRendering: function() {
-			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("opLayout")));
+		onAfterRendering() {
+			window.fnResolve(RtaPerformanceTestUtil.startRta(Element.getElementById("opLayout")));
 		},
 
-		createContent: function() {
+		createContent() {
 			var oHeaderLayout = new Panel("layout-header");
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 1, 10, true /* visible */);
 			DtPerformanceTestUtil.addMixedControlsTo(oHeaderLayout, 11, 20, false /* invisible */);

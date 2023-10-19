@@ -2,7 +2,7 @@ sap.ui.define(['sap/ui/test/Opa5'], function (Opa5) {
 	"use strict";
 
 	// All the arrangements for all Opa tests are defined here
-	var Common = Opa5.extend("sap.ui.mdc.integrations.pages.Common", {
+	const Common = Opa5.extend("sap.ui.mdc.integrations.pages.Common", {
 
 		iStartMyApp: function (tableType) {
 			tableType = tableType ? tableType : "ResponsiveTable";

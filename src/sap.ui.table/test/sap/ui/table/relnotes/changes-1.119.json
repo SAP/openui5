@@ -1,0 +1,38 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "ee7a520d77f68ea00b2cedf55b1a1165486ffbdd",
+        "type": "FEATURE",
+        "text": " Introduce Element.getElementById as replacement for deprecated sap.ui.getCore().byId"
+      },
+      {
+        "id": "8f779bd4c62d85002d6c0e9da3c5aa79ad47dfda",
+        "type": "FIX",
+        "text": " sap.ui.table: Adjusted _closeContentCellContextMenu method name",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370045220"
+          }
+        ]
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      }
+    ]
+  }
+}

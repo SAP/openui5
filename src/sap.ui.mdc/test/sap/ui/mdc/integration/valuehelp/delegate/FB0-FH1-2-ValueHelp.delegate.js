@@ -11,13 +11,13 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Dialog")) {
 

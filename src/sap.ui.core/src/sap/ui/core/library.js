@@ -8,10 +8,11 @@
 sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/ui/core/Lib',
+	'sap/ui/core/message/MessageType',
 	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
 	'./CalendarType' // provides sap.ui.core.CalendarType
 ],
-	function(DataType, Library, ViewType) {
+	function(DataType, Library, MessageType, ViewType, CalendarType) {
 	"use strict";
 
 	/**
@@ -31,6 +32,11 @@ sap.ui.define([
 		 name: "sap.ui.core",
 		 version: "${version}",
 		 designtime: "sap/ui/core/designtime/library.designtime",
+		 // "apiVersion" is still WIP and in 1.120 restricted to the sap.ui.core library only!
+		 // TODO: Remove spread operator once UI5 Tooling can validate this new property
+		 ...{
+			"apiVersion": 2
+		 },
 		 types: [
 
 			 // builtin types
@@ -108,14 +114,20 @@ sap.ui.define([
 			 "sap.ui.core.LocalBusyIndicator",
 			 "sap.ui.core.ScrollBar",
 			 "sap.ui.core.TooltipBase",
+			 /** @deprecated since 1.88 */
 			 "sap.ui.core.XMLComposite",
+			 /** @deprecated since 1.108 */
 			 "sap.ui.core.mvc.HTMLView",
+			 /** @deprecated since 1.120 */
 			 "sap.ui.core.mvc.JSONView",
+			 /** @deprecated since 1.90 */
 			 "sap.ui.core.mvc.JSView",
+			 /** @deprecated since 1.56 */
 			 "sap.ui.core.mvc.TemplateView",
 			 "sap.ui.core.mvc.View",
 			 "sap.ui.core.mvc.XMLView",
 			 "sap.ui.core.tmpl.DOMElement",
+			 /** @deprecated since 1.56 */
 			 "sap.ui.core.tmpl.TemplateControl",
 			 "sap.ui.core.util.Export"
 		 ],
@@ -148,6 +160,9 @@ sap.ui.define([
 					 "sap/ui/core/support/plugins/Trace",
 					 "sap/ui/core/support/plugins/Selector",
 					 "sap/ui/core/support/plugins/Breakpoint",
+					 /**
+					  * @deprecated As of version 1.117
+					  */
 					 "sap/ui/core/support/plugins/ViewInfo",
 					 "sap/ui/core/support/plugins/LocalStorage",
 					 "sap/ui/core/support/plugins/Interaction",
@@ -603,6 +618,7 @@ sap.ui.define([
 		TreeItem : "TreeItem"
 
 	};
+	DataType.registerEnum("sap.ui.core.AccessibleRole", thisLib.AccessibleRole);
 
 	/**
 	 * Defines the accessible landmark roles for ARIA support. This enumeration is used with the AccessibleRole control property.
@@ -696,6 +712,7 @@ sap.ui.define([
 		ContentInfo : "ContentInfo"
 
 	};
+	DataType.registerEnum("sap.ui.core.AccessibleLandmarkRole", thisLib.AccessibleLandmarkRole);
 
 	thisLib.aria = thisLib.aria || {};
 
@@ -747,6 +764,7 @@ sap.ui.define([
 		Dialog : "Dialog"
 
 	};
+	DataType.registerEnum("sap.ui.core.aria.HasPopup", thisLib.aria.HasPopup);
 
 	/**
 	 * The object contains accessibility information for a control.
@@ -829,6 +847,7 @@ sap.ui.define([
 		NEGATIVE : "NEGATIVE"
 
 	};
+	DataType.registerEnum("sap.ui.core.BarColor", thisLib.BarColor);
 
 	/**
 	 * Configuration options for the <code>BusyIndicator</code> size.
@@ -867,10 +886,11 @@ sap.ui.define([
 		 */
 		Section : "Section"
 	};
+	DataType.registerEnum("sap.ui.core.BusyIndicatorSize", thisLib.BusyIndicatorSize);
 
-	// Note: the imported module sap/ui/core/CalendarType already defines the global sap.ui.core.CalendarType,
-	// this assignment here is only kept as a reminder
-	// thisLib.CalendarType = CalendarType;
+	// this assignment here is kept so that imports via the library module continue to work
+	// even when the export via globals is abandoned
+	thisLib.CalendarType = CalendarType;
 
 	/**
 	 * @classdesc A string type that represents CSS color values (CSS Color Level 3).
@@ -1024,6 +1044,7 @@ sap.ui.define([
 		Monospace : "Monospace"
 
 	};
+	DataType.registerEnum("sap.ui.core.Design", thisLib.Design);
 
 
 	/**
@@ -1087,6 +1108,7 @@ sap.ui.define([
 		Center : "Center"
 
 	};
+	DataType.registerEnum("sap.ui.core.HorizontalAlign", thisLib.HorizontalAlign);
 
 
 	/**
@@ -1191,6 +1213,7 @@ sap.ui.define([
 		Marker : "Marker"
 
 	};
+	DataType.registerEnum("sap.ui.core.IconColor", thisLib.IconColor);
 
 
 	/**
@@ -1228,6 +1251,8 @@ sap.ui.define([
 		Disabled : "Disabled"
 
 	};
+	DataType.registerEnum("sap.ui.core.ImeMode", thisLib.ImeMode);
+
 	/**
 	 * Marker interface for controls which are suitable for use as label.
 	 *
@@ -1297,51 +1322,93 @@ sap.ui.define([
 		 * @public
 		 * @since 1.75
 		 */
-		Indication08 : "Indication08"
+		Indication08 : "Indication08",
+
+		/**
+		 * Indication Color 9
+		 * @public
+		 * @since 1.120
+		 */
+		Indication09 : "Indication09",
+
+		/**
+		 * Indication Color 10
+		 * @public
+		 * @since 1.120
+		 */
+		Indication10 : "Indication10",
+
+		/**
+		 * Indication Color 11
+		 * @public
+		 * @since 1.120
+		 */
+		Indication11 : "Indication11",
+
+		/**
+		 * Indication Color 12
+		 * @public
+		 * @since 1.120
+		 */
+		Indication12 : "Indication12",
+
+		/**
+		 * Indication Color 13
+		 * @public
+		 * @since 1.120
+		 */
+		Indication13 : "Indication13",
+
+		/**
+		 * Indication Color 14
+		 * @public
+		 * @since 1.120
+		 */
+		Indication14 : "Indication14",
+
+		/**
+		 * Indication Color 15
+		 * @public
+		 * @since 1.120
+		 */
+		Indication15 : "Indication15",
+
+		/**
+		 * Indication Color 16
+		 * @public
+		 * @since 1.120
+		 */
+		Indication16 : "Indication16",
+
+		/**
+		 * Indication Color 17
+		 * @public
+		 * @since 1.120
+		 */
+		Indication17 : "Indication17",
+
+		/**
+		 * Indication Color 18
+		 * @public
+		 * @since 1.120
+		 */
+		Indication18 : "Indication18",
+
+		/**
+		 * Indication Color 19
+		 * @public
+		 * @since 1.120
+		 */
+		Indication19 : "Indication19",
+
+		/**
+		 * Indication Color 20
+		 * @public
+		 * @since 1.120
+		 */
+		Indication20 : "Indication20"
 	};
-
-
-	/**
-	 * Defines the different message types.
-	 *
-	 * @enum {string}
-	 * @public
-	 * @since 1.10
-	 */
-	thisLib.MessageType = {
-
-		/**
-		 * Message should be just an information
-		 * @public
-		 */
-		Information : "Information",
-
-		/**
-		 * Message is a warning
-		 * @public
-		 */
-		Warning : "Warning",
-
-		/**
-		 * Message is an error
-		 * @public
-		 */
-		Error : "Error",
-
-		/**
-		 * Message has no specific level
-		 * @public
-		 */
-		None : "None",
-
-		/**
-		 * Message is a success message
-		 * @public
-		 */
-		Success : "Success"
-
-	};
-
+	DataType.registerEnum("sap.ui.core.IndicationColor", thisLib.IndicationColor);
 
 	/**
 	 * Defines the different possible states of an element that can be open or closed and does not only
@@ -1377,7 +1444,7 @@ sap.ui.define([
 		CLOSING : "CLOSING"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.OpenState", thisLib.OpenState);
 
 	/**
 	 * Orientation of a UI element.
@@ -1401,6 +1468,7 @@ sap.ui.define([
 		Vertical : "Vertical"
 
 	};
+	DataType.registerEnum("sap.ui.core.Orientation", thisLib.Orientation);
 
 	/**
 	 * @classdesc A string type that represents a percentage value.
@@ -1450,6 +1518,7 @@ sap.ui.define([
 		 */
 		High: "High"
 	};
+	DataType.registerEnum("sap.ui.core.Priority", thisLib.Priority);
 
 
 	/**
@@ -1497,7 +1566,7 @@ sap.ui.define([
 		Drag : "Drag"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.ScrollBarAction", thisLib.ScrollBarAction);
 
 	/**
 	 * Defines the possible values for horizontal and vertical scrolling behavior.
@@ -1532,7 +1601,7 @@ sap.ui.define([
 		Hidden : "Hidden"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.Scrolling", thisLib.Scrolling);
 
 	/**
 	 * Sort order of a column.
@@ -1563,6 +1632,7 @@ sap.ui.define([
 		Descending : "Descending"
 
 	};
+	DataType.registerEnum("sap.ui.core.SortOrder", thisLib.SortOrder);
 
 
 	/**
@@ -1611,6 +1681,7 @@ sap.ui.define([
 		Initial : "Initial"
 
 	};
+	DataType.registerEnum("sap.ui.core.TextAlign", thisLib.TextAlign);
 
 
 	/**
@@ -1640,6 +1711,7 @@ sap.ui.define([
 		Inherit : "Inherit"
 
 	};
+	DataType.registerEnum("sap.ui.core.TextDirection", thisLib.TextDirection);
 
 
 	/**
@@ -1694,6 +1766,7 @@ sap.ui.define([
 		H6 : "H6"
 
 	};
+	DataType.registerEnum("sap.ui.core.TitleLevel", thisLib.TitleLevel);
 
 	/**
 	 *
@@ -2061,6 +2134,7 @@ sap.ui.define([
 		None : "None"
 
 	};
+	DataType.registerEnum("sap.ui.core.ValueState", thisLib.ValueState);
 
 
 	/**
@@ -2104,7 +2178,7 @@ sap.ui.define([
 		Inherit : "Inherit"
 
 	};
-
+	DataType.registerEnum("sap.ui.core.VerticalAlign", thisLib.VerticalAlign);
 
 	/**
 	 * Configuration options for text wrapping.
@@ -2139,6 +2213,7 @@ sap.ui.define([
 		Off : "Off"
 
 	};
+	DataType.registerEnum("sap.ui.core.Wrapping", thisLib.Wrapping);
 
 
 	thisLib.dnd = thisLib.dnd || {};
@@ -2170,6 +2245,7 @@ sap.ui.define([
 		 */
 		OnOrBetween : "OnOrBetween"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropPosition", thisLib.dnd.DropPosition);
 
 	/**
 	 * Drop positions relative to a dropped element.
@@ -2198,6 +2274,7 @@ sap.ui.define([
 		 */
 		After : "After"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.RelativeDropPosition", thisLib.dnd.RelativeDropPosition);
 
 	/**
 	 * Configuration options for the layout of the droppable controls.
@@ -2225,6 +2302,7 @@ sap.ui.define([
 		 */
 		Horizontal : "Horizontal"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropLayout", thisLib.dnd.DropLayout);
 
 	/**
 	 * Configuration options for visual drop effects that are given during a drag and drop operation.
@@ -2259,8 +2337,23 @@ sap.ui.define([
 		 */
 		None : "None"
 	};
+	DataType.registerEnum("sap.ui.core.dnd.DropEffect", thisLib.dnd.DropEffect);
 
 	thisLib.mvc = thisLib.mvc || {};
+
+	/**
+	 * Specifies possible message types.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @name sap.ui.core.MessageType
+	 * @borrows module:sap/ui/core/message/MessageType.Information as Information
+	 * @borrows module:sap/ui/core/message/MessageType.Error as Error
+	 * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
+	 * @borrows module:sap/ui/core/message/MessageType.Success as Success
+	 * @borrows module:sap/ui/core/message/MessageType.None as None
+	 */
+	thisLib.MessageType = MessageType;
 
 	/**
 	 * Specifies possible view types.
@@ -2341,6 +2434,7 @@ sap.ui.define([
 		Container : "Container"
 
 	};
+	DataType.registerEnum("sap.ui.core.ComponentLifecycle", thisLib.ComponentLifecycle);
 
 	/**
 	 * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
@@ -2366,6 +2460,7 @@ sap.ui.define([
 		Assertive : "Assertive"
 
 	};
+	DataType.registerEnum("sap.ui.core.InvisibleMessageMode", thisLib.InvisibleMessageMode);
 
 	/**
 	 * @deprecated since 1.56 as lazy loading implies sync loading
@@ -2384,6 +2479,7 @@ sap.ui.define([
 		}
 
 		// lazy imports
+		lazy("sap.ui.core.message.MessageManager");
 		lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 		lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 		lazy("sap.ui.core.Fragment", "registerType byId createId");

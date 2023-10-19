@@ -43,8 +43,8 @@ sap.ui.define([
 		assert.ok(!this.oColumn._oTemplateClone, "No template clone exists initially");
 		assert.ok(!this.oColumn._oCreationTemplateClone, "No creationTemplate clone exists initially");
 
-		var oTemplate = new Text({text: "foo"});
-		var oCreationTemplate = new Text({text: "bar"});
+		const oTemplate = new Text({text: "foo"});
+		const oCreationTemplate = new Text({text: "bar"});
 
 		this.oColumn.setTemplate(oTemplate);
 		this.oColumn.setCreationTemplate(oCreationTemplate);
@@ -52,11 +52,11 @@ sap.ui.define([
 		assert.strictEqual(this.oColumn.getTemplateClone(), undefined, "No template clone created if not a child of a table");
 		assert.strictEqual(this.oColumn.getCreationTemplateClone(), undefined, "No creation template clone created if not a child of a table");
 
-		var oTable = new Table({columns: this.oColumn});
-		var oTemplateClone = this.oColumn.getTemplateClone();
-		var oCreationTemplateClone = this.oColumn.getCreationTemplateClone();
-		var oTemplateCloneDestroySpy = sinon.spy(oTemplateClone, "destroy");
-		var oCreationTemplateCloneDestroySpy = sinon.spy(oCreationTemplateClone, "destroy");
+		const oTable = new Table({columns: this.oColumn});
+		const oTemplateClone = this.oColumn.getTemplateClone();
+		const oCreationTemplateClone = this.oColumn.getCreationTemplateClone();
+		const oTemplateCloneDestroySpy = sinon.spy(oTemplateClone, "destroy");
+		const oCreationTemplateCloneDestroySpy = sinon.spy(oCreationTemplateClone, "destroy");
 
 		assert.strictEqual(this.oColumn._oTemplateClone, oTemplateClone, "Reference to the template clone is saved");
 		assert.strictEqual(this.oColumn.getTemplateClone(), oTemplateClone, "Existing template clone is returned");
@@ -88,7 +88,7 @@ sap.ui.define([
 
 		this.oColumn.setHeader("Text1");
 
-		var oTooltip = new TooltipBase();
+		const oTooltip = new TooltipBase();
 		this.oColumn.setTooltip(oTooltip);
 		assert.ok(!this.oColumn.getTooltip(), "TooltipBase tooltips are not supported");
 		this.oColumn.setTooltip("Tooltip1");
@@ -97,16 +97,16 @@ sap.ui.define([
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
 		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
 
-		var oTable = new Table({type: "ResponsiveTable", columns: this.oColumn, enableColumnResize: false});
+		const oTable = new Table({type: "ResponsiveTable", columns: this.oColumn, enableColumnResize: false});
 
 		return oTable.initialized().then(function() {
-			var oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
+			const oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
 
 			assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Hyphenated", "wrapping type of label control");
 			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), true, "wrapping set on label control according to headerVisible");
-			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
+			assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "default width set on the label control");
 			assert.strictEqual(this.oColumn.getInnerColumn().getPopinDisplay(), "Inline", "popinDisplay is Inline for the inner column");
 			assert.strictEqual(this.oColumn.getId() + "-innerColumn", this.oColumn.getInnerColumn().getId(), "Inner column set with ID of column with `innercolumn` suffix");
 			assert.ok(oColumnHeaderLabel.getTooltip() === "Tooltip1", "tooltip set also on column label");
@@ -160,7 +160,7 @@ sap.ui.define([
 
 		this.oColumn.setHeader("Text1");
 
-		var oTooltip = new TooltipBase();
+		const oTooltip = new TooltipBase();
 		this.oColumn.setTooltip(oTooltip);
 		assert.ok(!this.oColumn.getTooltip(), "TooltipBase tooltips are not supported");
 		this.oColumn.setTooltip("Tooltip1");
@@ -169,16 +169,16 @@ sap.ui.define([
 		assert.ok(!this.oColumn._oColumnHeaderLabel, "Still no Column Header Label defined so far.");
 		assert.strictEqual(this.oColumn._getColumnHeaderLabel(), undefined, "No column header label created if not a child of a table");
 
-		var oTable = new Table({columns: this.oColumn});
+		const oTable = new Table({columns: this.oColumn});
 
 		return oTable.initialized().then(function() {
-			var oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
+			const oColumnHeaderLabel = this.oColumn._getColumnHeaderLabel().getLabel();
 
 			assert.strictEqual(oColumnHeaderLabel.getWrappingType(), "Normal" /*Default*/, "wrapping type of label control");
 			assert.strictEqual(oColumnHeaderLabel.getText(), this.oColumn.getHeader(), "header text forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getTextAlign(), this.oColumn.getHAlign(), "hAlign forwarded to label control");
 			assert.strictEqual(oColumnHeaderLabel.getWrapping(), false, "no wrapping set on label control");
-			assert.ok(!oColumnHeaderLabel.getWidth(), "width set on label control according to headerVisible");
+			assert.strictEqual(oColumnHeaderLabel.getWidth(), "100%", "default width set on the label control");
 			assert.strictEqual(this.oColumn.getInnerColumn().getTooltip(), "Tooltip1", "tooltip forwarded to inner column control");
 			assert.ok(!oColumnHeaderLabel.getTooltip(), "no tooltip on column label");
 

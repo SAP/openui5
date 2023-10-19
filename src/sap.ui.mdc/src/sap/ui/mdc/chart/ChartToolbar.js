@@ -11,7 +11,7 @@ sap.ui.define([
         "sap/m/Title",
         "sap/ui/mdc/chart/ChartTypeButton",
         "./ChartSelectionDetails",
-        "sap/m/ToolbarSeparator",
+        "sap/ui/core/InvisibleText",
         "sap/m/OverflowToolbarLayoutData",
         "sap/ui/core/library",
         "sap/ui/Device",
@@ -27,7 +27,7 @@ sap.ui.define([
         Title,
         ChartTypeButton,
         ChartSelectionDetails,
-        ToolbarSeparator,
+        InvisibleText,
         OverflowToolbarLayoutData,
         coreLibrary,
         Device,
@@ -37,7 +37,7 @@ sap.ui.define([
         "use strict";
 
 		// shortcut for sap.ui.core.aria.HasPopup
-		var AriaHasPopup = coreLibrary.aria.HasPopup;
+		const AriaHasPopup = coreLibrary.aria.HasPopup;
 
         /**
          * Constructor for a new ChartToolbar.
@@ -54,7 +54,7 @@ sap.ui.define([
          * @since 1.88
          * @alias sap.ui.mdc.chart.ChartToolbar
          */
-        var ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
+        const ChartToolbar = ActionToolbar.extend("sap.ui.mdc.chart.ChartToolbar", /** @lends sap.ui.mdc.chart.ChartToolbar.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 interfaces: [],
@@ -67,7 +67,7 @@ sap.ui.define([
             renderer: OverflowToolbarRenderer
         });
 
-        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
         /**
          * Initialises the MDC Chart Selection Details
@@ -89,14 +89,21 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc
          */
         ChartToolbar.prototype.createToolbarContent = function (oChart) {
+            this._oChart = oChart;
+
             //Keep track of chart buttons to enable them later on
             this._chartInternalButtonsToEnable = [];
+
+            this._oInvTitle = new InvisibleText(oChart.getId() + "-invTitle", {text: oChart.getHeader()});
+            this._oInvTitle.toStatic();
+			this.addAriaLabelledBy(this._oInvTitle);
 
             /**add beginning**/
             this._oTitle = new Title(oChart.getId() + "-title", {
                 text: oChart.getHeader(),
                 level: oChart.getHeaderLevel(),
-                width: oChart.getHeaderVisible() ? undefined : "0px"
+                titleStyle: oChart.getHeaderStyle(),
+                visible: oChart.getHeaderVisible()
             });
             this.addBegin(this._oTitle);
 
@@ -116,7 +123,7 @@ sap.ui.define([
             }
 
             //Check p13n mode property on the chart and enable only desired buttons
-			var aP13nMode = oChart.getP13nMode() || [];
+			const aP13nMode = oChart.getP13nMode() || [];
 
             if (  aP13nMode.indexOf("Item") > -1 && (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(ChartToolbarActionType.DrillDownUp) < 0)) {
                 this._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
@@ -183,8 +190,8 @@ sap.ui.define([
                     text: MDCRb.getText('chart.SETTINGS'),
                     enabled: false,
                     press: function (oEvent) {
-                        var aP13nMode = oChart.getP13nMode();
-                        var iIdx = aP13nMode.indexOf("Type");
+                        const aP13nMode = oChart.getP13nMode();
+                        const iIdx = aP13nMode.indexOf("Type");
 						if (iIdx > -1) {
 							aP13nMode.splice(iIdx, 1);
 						}
@@ -212,17 +219,20 @@ sap.ui.define([
             }
 
             if (oChart._getTypeBtnActive()) {
-                this._oChartTypeBtn = new ChartTypeButton(oChart, {
+                this._oChartTypeBtn = new ChartTypeButton(this.getId() + "-btnChartType", {
+                    type: "Transparent",
+                    enabled: false,
                     ariaHasPopup: AriaHasPopup.ListBox,
                     layoutData: new OverflowToolbarLayoutData({
                         closeOverflowOnInteraction: false
-                    })
+                    }),
+                    chart: oChart
                 });
-                this._oChartTypeBtn.setEnabled(false);
                 this.addEnd(this._oChartTypeBtn);
                 this._chartInternalButtonsToEnable.push(this._oChartTypeBtn);
             }
 
+            this._updateVariantManagement();
         };
 
         /**
@@ -242,6 +252,8 @@ sap.ui.define([
 
                 this._oVariantManagement = oVariantManagement;
                 this.addBetween(this._oVariantManagement);
+
+                this._updateVariantManagement();
             }
 
         };
@@ -255,7 +267,7 @@ sap.ui.define([
          * @ui5-restricted sap.ui.mdc, sap.fe
          */
         ChartToolbar.prototype.toggleZoomButtons = function (oChart) {
-            var oZoomInfo = this._getZoomEnablement(oChart);
+            const oZoomInfo = this._getZoomEnablement(oChart);
 
             if (oZoomInfo.enabled) {
                 this.oZoomInButton.setEnabled(oZoomInfo.enabledZoomIn);
@@ -289,7 +301,7 @@ sap.ui.define([
                 this._toolbarInitialUpdated = true;
             }
 
-            var oSelectionHandler = oChart.getSelectionHandler();
+            const oSelectionHandler = oChart.getSelectionHandler();
             if (oSelectionHandler && oChart.getShowSelectionDetails()) {
                 this._oChartSelectionDetails.attachSelectionHandler(oSelectionHandler.eventId, oSelectionHandler.listener);
             }
@@ -300,7 +312,7 @@ sap.ui.define([
         };
 
         ChartToolbar.prototype._getZoomEnablement = function (oChart) {
-            var zoomInfo;
+            let zoomInfo;
 
             try {
                 zoomInfo = oChart.getZoomState();
@@ -311,7 +323,7 @@ sap.ui.define([
 
 
             if (zoomInfo && zoomInfo.hasOwnProperty("currentZoomLevel") && zoomInfo.currentZoomLevel != null && zoomInfo.enabled) {
-                var toolbarZoomInfo = {enabled: true};
+                const toolbarZoomInfo = {enabled: true};
 
                 //TODO: Move this to the delegate since we don't know how other chart librariers handle this
                 toolbarZoomInfo.enabledZoomOut = zoomInfo.currentZoomLevel > 0;
@@ -329,14 +341,15 @@ sap.ui.define([
                 return;
             }
 
-            var oSelectionDetailsActions = oChart.getSelectionDetailsActions(), oClone;
+            const oSelectionDetailsActions = oChart.getSelectionDetailsActions();
+            let oClone;
 
             if (oSelectionDetailsActions) {
                 // Update item actions
-                var aSelectionItems = this._oChartSelectionDetails.getItems();
+                const aSelectionItems = this._oChartSelectionDetails.getItems();
 
                 aSelectionItems.forEach(function (oItem) {
-                    var aItemActions = oSelectionDetailsActions.getDetailsItemActions();
+                    const aItemActions = oSelectionDetailsActions.getDetailsItemActions();
                     aItemActions.forEach(function (oAction) {
                         oClone = oAction.clone();
                         oItem.addAction(oClone);
@@ -344,7 +357,7 @@ sap.ui.define([
                 });
 
                 // Update list actions
-                var aDetailsActions = oSelectionDetailsActions.getDetailsActions();
+                const aDetailsActions = oSelectionDetailsActions.getDetailsActions();
                 this._oChartSelectionDetails.removeAllActions();
                 aDetailsActions.forEach(function (oAction) {
                     oClone = oAction.clone();
@@ -352,7 +365,7 @@ sap.ui.define([
                 }.bind(this));
 
                 // Update group actions
-                var aActionGroups = oSelectionDetailsActions.getActionGroups();
+                const aActionGroups = oSelectionDetailsActions.getActionGroups();
                 this._oChartSelectionDetails.removeAllActionGroups();
                 aActionGroups.forEach(function (oActionGroup) {
                     oClone = oActionGroup.clone();
@@ -362,13 +375,32 @@ sap.ui.define([
 
         };
 
-        ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
-            this._oTitle.setLevel(sHeaderLevel);
+        ChartToolbar.prototype._setHeader = function(sHeader) {
+            this._oTitle?.setText(sHeader);
+            this._oInvTitle?.setText(sHeader);
         };
 
-        ChartToolbar.prototype.setHeaderVisible = function(bVisible) {
-            if (this._oTitle) {
-                this._oTitle.setWidth(bVisible ? undefined : "0px");
+        ChartToolbar.prototype._setHeaderLevel = function(sHeaderLevel) {
+            this._oTitle?.setLevel(sHeaderLevel);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._setHeaderStyle = function(sHeaderStyle) {
+            this._oTitle?.setTitleStyle(sHeaderStyle);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._setHeaderVisible = function(bVisible) {
+            // this._oTitle?.setWidth(bVisible ? undefined : "0px");
+            this._oTitle?.setVisible(bVisible);
+            this._updateVariantManagement();
+        };
+
+        ChartToolbar.prototype._updateVariantManagement = function() {
+            if (this._oVariantManagement && this._oChart) {
+                this._oVariantManagement.setShowAsText(this._oChart.getHeaderVisible());
+                this._oVariantManagement.setTitleStyle(this._oChart.getHeaderStyle());
+                this._oVariantManagement.setHeaderLevel(this._oChart.getHeaderLevel());
             }
         };
 
@@ -378,6 +410,15 @@ sap.ui.define([
          */
         ChartToolbar.prototype.getSettingsButton = function() {
             return this._oSettingsBtn;
+        };
+
+        ChartToolbar.prototype.exit = function () {
+            ActionToolbar.prototype.exit.apply(this, arguments);
+
+            if (this._oInvTitle) {
+                this._oInvTitle.destroy();
+                this._oInvTitle = null;
+            }
         };
 
         return ChartToolbar;

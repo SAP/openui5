@@ -7,6 +7,7 @@ sap.ui.define([
 	"./View",
 	"./ViewType",
 	"./XMLViewRenderer",
+	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/strings/hash",
 	"sap/base/util/LoaderExtensions",
@@ -28,6 +29,7 @@ sap.ui.define([
 		View,
 		ViewType,
 		XMLViewRenderer,
+		BaseConfig,
 		Log,
 		hash,
 		LoaderExtensions,
@@ -293,7 +295,12 @@ sap.ui.define([
 	 * @private
 	 * @since 1.44
 	 */
-	XMLView._bUseCache = Configuration.getViewCache() && Cache._isSupportedEnvironment();
+	XMLView._bUseCache = BaseConfig.get({
+		name: "sapUiXxViewCache",
+		type: BaseConfig.Type.Boolean,
+		defaultValue: true,
+		external: true
+	}) && Cache._isSupportedEnvironment();
 
 	function validatexContent(xContent) {
 		if (xContent.parseError.errorCode !== 0) {

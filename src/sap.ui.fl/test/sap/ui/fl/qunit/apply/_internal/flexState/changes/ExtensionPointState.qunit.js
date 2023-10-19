@@ -32,10 +32,10 @@ sap.ui.define([
 
 	function mockChangePersistance(aChanges, bChangeMapCreated, fnAddChangeAndUpadateDependencies) {
 		var oChangePersistence = {
-			getChangesForComponent: function() {
+			getChangesForComponent() {
 				return Promise.resolve(aChanges || []);
 			},
-			isChangeMapCreated: function() {
+			isChangeMapCreated() {
 				return bChangeMapCreated || false;
 			},
 			addChangeAndUpdateDependencies: fnAddChangeAndUpadateDependencies || function() {}
@@ -57,7 +57,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given 'enhanceExtensionPointChanges' is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPanel = new Panel("PanelId");
 			this.mExtensionPointInfo = createExtensionPoint({id: "ViewId"}, "ExtensionPointName", this.oPanel, "content", 0);
 			this.mPropertyBag = {
@@ -65,7 +65,7 @@ sap.ui.define([
 			};
 			sandbox.stub(ChangesUtils, "filterChangeByView").returns(true);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.destroy();
 			sandbox.restore();
 		}
@@ -122,14 +122,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given 'getChangesForExtensionPoint' is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPanel = new Panel("PanelId");
 			this.mExtensionPointInfo = createExtensionPoint({id: "ViewId"}, "ExtensionPointName", this.oPanel, "content", 0);
 			this.mPropertyBag = {
 				extensionPointName: this.mExtensionPointInfo.name
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.destroy();
 			sandbox.restore();
 		}

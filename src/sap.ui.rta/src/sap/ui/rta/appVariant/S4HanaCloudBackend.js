@@ -20,8 +20,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta"
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 		}
 	});
 
@@ -36,7 +37,12 @@ sap.ui.define([
 	 *                    or rejects if the required ODATA service /sap/opu/odata/sap/APS_IAM_APP_SRV is not there
 	 * @async
 	 */
-	S4HanaCloudBackend.prototype.notifyFlpCustomizingIsReady = function(sIamAppId, bAppVarCreation, iCheckIntervallMsec, iMaxNumberOfChecks) {
+	S4HanaCloudBackend.prototype.notifyFlpCustomizingIsReady = function(
+		sIamAppId,
+		bAppVarCreation,
+		iCheckIntervallMsec,
+		iMaxNumberOfChecks
+	) {
 		var that = this;
 		return new Promise(function(resolve, reject) {
 			// Check inputs and determine defaults
@@ -64,7 +70,7 @@ sap.ui.define([
 				// ... Reject if publishing return an error or is locked
 				}).catch(function(oError) {
 					var sText = bAppVarCreation ? "creation" : "deletion";
-					Log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
+					Log.error(`Catalog publishing failed for app variant ${sText}. AppVarStatus is ${oError.message}`);
 					reject({ iamAppId: sIamAppId, error: oError.message});
 				});
 			}
@@ -77,7 +83,7 @@ sap.ui.define([
 	S4HanaCloudBackend._isAppReady = function(oAppStatusResponse, bAppVarCreation) {
 		var aCatalogList = oAppStatusResponse.data.results;
 		if (!Array.isArray(aCatalogList)) {
-			throw new Error(oAppStatusResponse.requestUri + " returned unexpected result: " + oAppStatusResponse);
+			throw new Error(`${oAppStatusResponse.requestUri} returned unexpected result: ${oAppStatusResponse}`);
 		}
 
 		var bIsUnpublished = aCatalogList.every(function(oCatalog) {
@@ -109,18 +115,16 @@ sap.ui.define([
 	};
 
 	S4HanaCloudBackend._getODataModel = function() {
-		if (!oModelPromise) {
-			oModelPromise = new Promise(function(resolve, reject) {
-				var oModel = new ODataModel("/sap/opu/odata/sap/APS_IAM_APP_SRV");
-				oModel.attachMetadataFailed(function(oError) {
-					reject(oError);
-					oModelPromise = null;
-				});
-				oModel.metadataLoaded().then(function() {
-					resolve(oModel);
-				});
+		oModelPromise ||= new Promise(function(resolve, reject) {
+			var oModel = new ODataModel("/sap/opu/odata/sap/APS_IAM_APP_SRV");
+			oModel.attachMetadataFailed(function(oError) {
+				reject(oError);
+				oModelPromise = null;
 			});
-		}
+			oModel.metadataLoaded().then(function() {
+				resolve(oModel);
+			});
+		});
 		return oModelPromise;
 	};
 
@@ -133,7 +137,7 @@ sap.ui.define([
 				reject(oError);
 			};
 
-			oModel.read("/aps_iam_app_ddl('" + sIamAppId + "')/to_BusinessCatalogAssignment", {success: fnSuccess, error: fnFailure});
+			oModel.read(`/aps_iam_app_ddl('${sIamAppId}')/to_BusinessCatalogAssignment`, {success: fnSuccess, error: fnFailure});
 		});
 	};
 

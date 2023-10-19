@@ -296,7 +296,7 @@ sap.ui.define([
 		var oPopover = new ResponsivePopover(this.getId() + "-responsivePopover", {
 			title: this.getTitle(),
 			horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
-			verticalScrolling: !bUseContainer,
+			verticalScrolling: !bUseContainer && !(aPanels[0] && aPanels[0].getVerticalScrolling instanceof Function && aPanels[0].getVerticalScrolling()),
 			contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "30rem",
 			resizable: mDialogSettings.hasOwnProperty("resizable") ? mDialogSettings.resizable : true,
 			contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "35rem",
@@ -332,7 +332,7 @@ sap.ui.define([
 			initialFocus: oInitialFocusedControl,
 			title: this.getTitle(),
 			horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
-			verticalScrolling: !bUseContainer,
+			verticalScrolling: !bUseContainer && !(aPanels[0] && aPanels[0].getVerticalScrolling instanceof Function && aPanels[0].getVerticalScrolling()),
 			contentWidth: mDialogSettings.contentWidth ? mDialogSettings.contentWidth : "40rem",
 			contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "55rem",
 			draggable: true,
@@ -377,6 +377,7 @@ sap.ui.define([
 		var fnReset = this.getReset();
 		var sTitle = this.getTitle();
 		var sWarningText = this.getWarningText();
+        var oPopup = this;
 
 		var oBar;
 
@@ -407,6 +408,7 @@ sap.ui.define([
 								// --> focus "OK" button after 'reset' has been triggered
 								oDialog.getButtons()[0].focus();
 								oEvt.getSource().setEnabled(false);
+								oPopup._resetPanels();
 								fnReset(oControl);
 							}
 						}
@@ -418,6 +420,19 @@ sap.ui.define([
 
 		return oBar;
 
+	};
+
+	/**
+	 * Trigger the <code>#onReset</code> method on the aggregated panels to apply certain updates such as clearing search values.
+	 *
+	 * @private
+	 */
+	Popup.prototype._resetPanels = function() {
+		this.getPanels().forEach((oPanel) => {
+			if (oPanel.onReset instanceof Function) {
+				oPanel.onReset();
+			}
+		});
 	};
 
 	Popup.prototype._getContainer = function(oSource) {

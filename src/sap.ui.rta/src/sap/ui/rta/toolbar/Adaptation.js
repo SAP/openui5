@@ -5,13 +5,16 @@
 sap.ui.define([
 	"./AdaptationRenderer",
 	"sap/base/Log",
+	"sap/m/MessageBox",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Popup",
-	"sap/ui/core/Core",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement",
 	"sap/ui/rta/appVariant/Feature",
 	"sap/ui/rta/toolbar/Base",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
@@ -19,17 +22,20 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
 	"sap/ui/rta/Utils",
-	"sap/m/MessageBox"
+	"sap/ui/VersionInfo"
 ], function(
 	AdaptationRenderer,
 	Log,
+	MessageBox,
 	BusyIndicator,
+	Element,
 	Fragment,
 	Popup,
-	Core,
-	ContextBasedAdaptationsAPI,
+	FlexRuntimeInfoAPI,
 	Version,
+	ContextBasedAdaptationsAPI,
 	JSONModel,
+	Measurement,
 	AppVariantFeature,
 	Base,
 	ManageAdaptations,
@@ -37,7 +43,7 @@ sap.ui.define([
 	Translation,
 	Versioning,
 	Utils,
-	MessageBox
+	VersionInfo
 ) {
 	"use strict";
 
@@ -55,7 +61,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Adaptation
-	 * @experimental Since 1.48. This class is experimental. API might be changed in future.
 	 */
 	var Adaptation = Base.extend("sap.ui.rta.toolbar.Adaptation", {
 		renderer: AdaptationRenderer,
@@ -90,11 +95,11 @@ sap.ui.define([
 	// Size of three icons + spacing in pixels
 	var SWITCHER_ICON_WIDTH = 124;
 
-	Adaptation.prototype.init = function() {
+	Adaptation.prototype.init = function(...aArgs) {
 		this._mSizeLimits = {
 			switchToIcons: undefined
 		};
-		this._pFragmentLoaded = Base.prototype.init.apply(this, arguments)
+		this._pFragmentLoaded = Base.prototype.init.apply(this, aArgs)
 		.then(function() {
 			this._onResize = this._onResize.bind(this);
 			window.addEventListener("resize", this._onResize);
@@ -111,12 +116,12 @@ sap.ui.define([
 		return this._pFragmentLoaded;
 	};
 
-	Adaptation.prototype.exit = function() {
+	Adaptation.prototype.exit = function(...aArgs) {
 		window.removeEventListener("resize", this._onResize);
 		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
 			oInstersectionObserver.disconnect();
 		});
-		Base.prototype.exit.apply(this, arguments);
+		Base.prototype.exit.apply(this, aArgs);
 	};
 
 	Adaptation.prototype._restoreHiddenElements = function() {
@@ -145,11 +150,11 @@ sap.ui.define([
 
 	Adaptation.prototype.adjustToolbarSectionWidths = function() {
 		// The middle section (switcher) is used as base for the other calculations
-		this.getControl(Adaptation.MIDDLE_SECTION).setWidth((this._iSwitcherToolbarWidth) + "px");
+		this.getControl(Adaptation.MIDDLE_SECTION).setWidth(`${this._iSwitcherToolbarWidth}px`);
 		[Adaptation.LEFT_SECTION, Adaptation.RIGHT_SECTION].forEach(function(sSectionName) {
 			this.getControl(sSectionName).getDomRef().style.setProperty(
 				"width",
-				"calc(50% - " + Math.ceil(this._iSwitcherToolbarWidth / 2) + "px)",
+				`calc(50% - ${Math.ceil(this._iSwitcherToolbarWidth / 2)}px)`,
 				"important"
 			);
 		}.bind(this));
@@ -243,7 +248,7 @@ sap.ui.define([
 		var oButton = oEvent.getSource();
 		if (!this._oActionsMenuFragment) {
 			return Fragment.load({
-				id: this.getId() + "_actionsMenu_fragment",
+				id: `${this.getId()}_actionsMenu_fragment`,
 				name: "sap.ui.rta.toolbar.ActionsMenu",
 				controller: {
 					openDownloadTranslationDialog: onOpenDownloadTranslationDialog.bind(this),
@@ -252,7 +257,7 @@ sap.ui.define([
 					overviewForKeyUser: onOverviewForKeyUserPressed.bind(this),
 					overviewForDeveloper: onOverviewForDeveloperPressed.bind(this),
 					restore: this.eventHandler.bind(this, "Restore"),
-					formatSaveAsEnabled: formatSaveAsEnabled,
+					formatSaveAsEnabled,
 					saveAs: onSaveAsPressed.bind(this)
 				}
 			}).then(function(oMenu) {
@@ -300,7 +305,7 @@ sap.ui.define([
 	Adaptation.prototype.buildControls = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.Adaptation",
-			id: this.getId() + "_fragment",
+			id: `${this.getId()}_fragment`,
 			controller: {
 				activate: this._openVersionTitleDialog.bind(this),
 				discardDraft: this.eventHandler.bind(this, "DiscardDraft"),
@@ -372,11 +377,14 @@ sap.ui.define([
 
 	function performMigration(oRtaInformation) {
 		BusyIndicator.show();
+		Measurement.start("onCBAMigration", "Measurement of migration to context-based adaptation");
 		return ContextBasedAdaptationsAPI.migrate({
 			control: oRtaInformation.rootControl,
 			layer: oRtaInformation.flexSettings.layer
 		})
 		.finally(function() {
+			Measurement.end("onCBAMigration");
+			Measurement.getActive() && Log.info(`onCBAMigration: ${Measurement.getMeasurement("onCBAMigration").time} ms`);
 			BusyIndicator.hide();
 		})
 		.then(Utils.showMessageBox.bind(undefined, "information", "DAC_DIALOG_MIGRATION_SUCCESSFULL_DESCRIPTION", {
@@ -401,8 +409,11 @@ sap.ui.define([
 	function onSaveAsAdaptation() {
 		var oRtaInformation = this.getRtaInformation();
 		Utils.checkDraftOverwrite(this.getModel("versions")).then(function() {
+			Measurement.start("onCBACanMigrate", "Measurement if its possible to migrate to context-based adaptation");
 			return ContextBasedAdaptationsAPI.canMigrate({ control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer });
 		}).then(function(bCanMigrate) {
+			Measurement.end("onCBACanMigrate");
+			Measurement.getActive() && Log.info(`onCBACanMigrate: ${Measurement.getMeasurement("onCBACanMigrate").time} ms`);
 			if (bCanMigrate) {
 				confirmMigration.call(this, oRtaInformation);
 			} else {
@@ -423,7 +434,7 @@ sap.ui.define([
 	function handleError(oError) {
 		if (oError !== "cancel") {
 			Utils.showMessageBox("error", "MSG_LREP_TRANSFER_ERROR", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		}
 	}
 
@@ -448,7 +459,7 @@ sap.ui.define([
 			if (sTitle === "") {
 				return this.getTextResources().getText("TXT_DEFAULT_APP");
 			}
-			return this.getTextResources().getText("BTN_ADAPTING_FOR", sTitle);
+			return this.getTextResources().getText("BTN_ADAPTING_FOR", [sTitle]);
 		}
 		return this.getTextResources().getText("BTN_ADAPTING_FOR_ALL_USERS");
 	}
@@ -466,10 +477,10 @@ sap.ui.define([
 	}
 
 	Adaptation.prototype.getControl = function(sName) {
-		var oControl = sap.ui.getCore().byId(this.getId() + "_fragment--sapUiRta_" + sName);
+		var oControl = Element.getElementById(`${this.getId()}_fragment--sapUiRta_${sName}`);
 		// Control is inside the ActionsMenu
 		if (!oControl && this._oActionsMenuFragment) {
-			oControl = sap.ui.getCore().byId(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
+			oControl = Element.getElementById(this._oActionsMenuFragment.getId().replace("sapUiRta_actions", "sapUiRta_") + sName);
 		}
 		return oControl;
 	};
@@ -477,27 +488,28 @@ sap.ui.define([
 	/**
 	 * @inheritDoc
 	 */
-	Adaptation.prototype.hide = function() {
+	Adaptation.prototype.hide = function(...aArgs) {
 		this._aIntersectionObservers.forEach(function(oInstersectionObserver) {
 			oInstersectionObserver.disconnect();
 		});
-		return Base.prototype.hide.apply(this, arguments);
+		return Base.prototype.hide.apply(this, aArgs);
 	};
 
-	Adaptation.prototype.showFeedbackForm = function() {
+	Adaptation.prototype.showFeedbackForm = async function() {
 		// Get Connector Type
-		var sConnector = Core.getConfiguration().getFlexibilityServices()[0].connector;
+		var sConnector = FlexRuntimeInfoAPI.getConfiguredFlexServices()[0].connector;
 
 		// Set URL
 		var sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";
 		var sURLPart2 = "SV_4MANxRymEIl9K06";
 		var sURL = sURLPart1 + sURLPart2;
 		var oUrlParams = new URLSearchParams();
-		oUrlParams.set("version", Core.getConfiguration().getVersion().toString());
+		const oVersion = await VersionInfo.load();
+		oUrlParams.set("version", oVersion.version);
 		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
 
 		var oFeedbackDialogModel = new JSONModel({
-			url: sURL + "?" + oUrlParams.toString()
+			url: `${sURL}?${oUrlParams.toString()}`
 		});
 
 		return Fragment.load({

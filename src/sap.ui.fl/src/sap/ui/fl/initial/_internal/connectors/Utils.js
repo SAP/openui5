@@ -3,23 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/base/security/encodeURLParameters",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Lib",
+	"sap/base/i18n/Localization",
+	"sap/base/security/encodeURLParameters"
 ], function(
-	encodeURLParameters,
-	Configuration
+	Lib,
+	Localization,
+	encodeURLParameters
 ) {
 	"use strict";
-
-	/**
-	 * Util class for Connector implementations (apply).
-	 *
-	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
-	 * @since 1.70
-	 * @version ${version}
-	 * @private
-	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
-	 */
 
 	var DEFAULT_TIMEOUT = 20000; // 20 seconds
 
@@ -44,9 +36,18 @@ sap.ui.define([
 	 * @returns {string} Text value
 	 */
 	var _getTextFromResourceBundle = function(sTextKey) {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
+		return Lib.getResourceBundleFor("sap.ui.fl").getText(sTextKey);
 	};
 
+	/**
+	 * Util class for Connector implementations (apply).
+	 *
+	 * @namespace sap.ui.fl.initial._internal.connectors.Utils
+	 * @since 1.70
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted sap.ui.fl.initial._internal.connectors, sap.ui.fl.write._internal.connectors, sap.ui.fl.write._internal.transport
+	 */
 	return {
 		/**
 		 * Adds current BCP-47 standard language code into request parameters as value of <code>sap-language</code> parameter.
@@ -54,11 +55,11 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addLanguageInfo: function(mParameters) {
+		addLanguageInfo(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
-			mParameters["sap-language"] = Configuration.getLanguage();
+			mParameters["sap-language"] = Localization.getLanguage();
 		},
 
 		/**
@@ -67,11 +68,11 @@ sap.ui.define([
 		 * @param {object} mParameters - Parameters of the request
 		 * @ui5-restricted sap.ui.fl.apply._internal, sap.ui.fl.write._internal
 		 */
-		addSAPLogonLanguageInfo: function(mParameters) {
+		addSAPLogonLanguageInfo(mParameters) {
 			if (!mParameters) {
 				throw new Error("No parameters map were passed");
 			}
-			mParameters["sap-language"] = Configuration.getSAPLogonLanguage();
+			mParameters["sap-language"] = Localization.getSAPLogonLanguage();
 		},
 
 		/**
@@ -86,10 +87,9 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.fileName] Filename of an existing flex object
 		 * @param {object} [mParameters] Query-parameters which will be added to the url
 		 * @returns {string} Complete request url
-		 * @private
 		 * @ui5-restricted sap.ui.fl.initial._internal, sap.ui.fl.write._internal
 		 */
-		getUrl: function(sRoute, mPropertyBag, mParameters) {
+		getUrl(sRoute, mPropertyBag, mParameters) {
 			if (!sRoute || !mPropertyBag.url) {
 				throw new Error("Not all necessary parameters were passed");
 			}
@@ -97,7 +97,7 @@ sap.ui.define([
 
 			// If any of the following properties are available in mPropertyBag we append them to the Url
 			if (mPropertyBag.cacheKey) {
-				sUrl += "~" + mPropertyBag.cacheKey + "~/";
+				sUrl += `~${mPropertyBag.cacheKey}~/`;
 			}
 			if (mPropertyBag.reference) {
 				sUrl += mPropertyBag.reference;
@@ -115,7 +115,7 @@ sap.ui.define([
 				var sQueryParameters = encodeURLParameters(mParameters);
 
 				if (sQueryParameters.length > 0) {
-					sUrl += "?" + sQueryParameters;
+					sUrl += `?${sQueryParameters}`;
 				}
 			}
 			return sUrl;
@@ -135,8 +135,8 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.siteId] <code>sideId</code> that belongs to actual component
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest: function(sUrl, sMethod, mPropertyBag) {
-			sMethod = sMethod || "GET";
+		sendRequest(sUrl, sMethod, mPropertyBag) {
+			sMethod ||= "GET";
 			sMethod = sMethod.toUpperCase();
 
 			return new Promise(function(resolve, reject) {
@@ -208,7 +208,7 @@ sap.ui.define([
 							var oResponse = typeof xhr.response === "string" ? JSON.parse(xhr.response) : xhr.response;
 							if (Array.isArray(oResponse.messages) && oResponse.messages.length) {
 								sErrorMessage = oResponse.messages.reduce(function(sConcatenatedMessage, oErrorResponse) {
-									return sConcatenatedMessage.concat(oErrorResponse.severity === "Error" ? oErrorResponse.text + "\n" : "");
+									return sConcatenatedMessage.concat(oErrorResponse.severity === "Error" ? `${oErrorResponse.text}\n` : "");
 								}, sErrorMessage);
 							}
 						} catch (e) {

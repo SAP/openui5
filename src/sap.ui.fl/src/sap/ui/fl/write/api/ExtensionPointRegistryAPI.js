@@ -13,7 +13,6 @@ sap.ui.define([
 	 * Provides an API to handle specific information about the extension points into the application.
 	 *
 	 * @namespace sap.ui.fl.write.api.ExtensionPointRegistryAPI
-	 * @experimental Since 1.78
 	 * @since 1.78
 	 * @private
 	 * @ui5-restricted
@@ -27,7 +26,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.view - View object
 		 * @returns {object} mExtensionPointInfo - Map of extension point information
 		 */
-		getExtensionPointInfo: function(mPropertyBag) {
+		getExtensionPointInfo(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfo(mPropertyBag.name, mPropertyBag.view);
 		},
 
@@ -37,7 +36,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.viewId - ID of the view
 		 * @returns {object} map of extension points
 		 */
-		getExtensionPointInfoByViewId: function(mPropertyBag) {
+		getExtensionPointInfoByViewId(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByViewId(mPropertyBag.viewId);
 		},
 
@@ -48,7 +47,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.parentId - ID of the extension point parent control
 		 * @returns {Array} Array of extension point information
 		 */
-		getExtensionPointInfoByParentId: function(mPropertyBag) {
+		getExtensionPointInfoByParentId(mPropertyBag) {
 			return ExtensionPointRegistry.getExtensionPointInfoByParentId(mPropertyBag.parentId);
 		},
 
@@ -59,7 +58,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.viewId - ID of the view
 		 * @param {string[]} mPropertyBag.createdControlsIds - Array with the IDs of the created controls
 		 */
-		addCreatedControlsToExtensionPointInfo: function(mPropertyBag) {
+		addCreatedControlsToExtensionPointInfo(mPropertyBag) {
 			ExtensionPointRegistry.addCreatedControls(
 				mPropertyBag.name,
 				mPropertyBag.viewId,

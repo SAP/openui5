@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-/*global globalThis, QUnit */
-sap.ui.define([
+/*global QUnit */
+sap.ui.require([
 	"sap/base/config",
 	"sap/base/Log",
 	"sap/base/config/GlobalConfigurationProvider",
@@ -291,126 +291,160 @@ sap.ui.define([
 	});
 
 	QUnit.test("Configuration freeze", function(assert) {
-		assert.expect(11);
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamD",
-			type: BaseConfiguration.Type.String,
-			external: true,
-			freeze: true
-		}), "global", "BaseConfiguration.get for param 'sapUiParamD' returns value 'global'");
+		assert.expect(87);
+		var oGlobalProviderGetSpy = sinon.spy(GlobalConfigurationProvider, "get");
+		var oWritableBootInstance = BaseConfiguration.getWritableBootInstance();
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamE",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "xx-global", "BaseConfiguration.get for param 'paramE' returns correct value 'xx-global'");
+		// BaseConfiguration and WritableBootInstance use both the identical get function, therefore
+		// the result should be always the same, but the first call could be either answered by cache
+		// or by provider whether the second call must always be answered by cache.
+		function assertBaseConfigGet(sName, vResult, sMessage, bFreeze) {
+			assert.strictEqual(oWritableBootInstance.get({
+				name: sName,
+				type: BaseConfiguration.Type.String,
+				external: true,
+				freeze: bFreeze
+			}), vResult, "WritableBootInstance: " + sMessage);
+			assert.strictEqual(BaseConfiguration.get({
+				name: sName,
+				type: BaseConfiguration.Type.String,
+				external: true
+			}), vResult, "BaseConfiguration: " + sMessage);
+		}
+		// Params provided and changed via globalThis['sap-ui-config']
+		assertBaseConfigGet("sapUiParamD", "global", "get: for param 'sapUiParamD' returns value 'global'", true);
+		assertBaseConfigGet("sapUiXxParamE", "xx-global", "get: for param 'xxParamE' returns correct value 'xx-global'");
+		// Params provided via globalThis['sap-ui-config'] and changed via WritableBootInstance.set
+		assertBaseConfigGet("sapUiParamG", "global", "get: for param 'paramG' returns correct value 'global'", true);
+		assertBaseConfigGet("sapUiParamH", "global", "get: for param 'paramH' returns correct value 'global'");
+		// Params not provided at all and changed via WritableBootInstance.set
+		assertBaseConfigGet("sapUiNotProvidedParamA", "", "get: for param 'notProvidedParamA' returns correct value ''", true);
+		assertBaseConfigGet("sapUiNotProvidedParamB", "", "get: for param 'notProvidedParamB' returns correct value ''");
+		// Params not provided at all and changed via WritableBootInstance.set and globalThis['sap-ui-config']
+		assertBaseConfigGet("sapUiNotProvidedParamC", "", "get: for param 'notProvidedParamC' returns correct value ''", true);
+		assertBaseConfigGet("sapUiNotProvidedParamD", "", "get: for param 'notProvidedParamD' returns correct value ''");
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamProvidedAfterGet",
-			type: BaseConfiguration.Type.String,
-			freeze: true,
-			external: true
-		}), "", "BaseConfiguration.get for param 'paramProvidedAfterGet' returns correct value ''");
+		// Param is provided via globalThis['sap-ui-config'] in lowercase and the param should not become frozen
+		assertBaseConfigGet("sapUiParamLowercase", "lowercase", "get: for param 'paramlowercase' returns correct value 'lowercase'");
 
-		globalThis["sap-ui-config"]["paramD"] = "hubelDubel";
-		globalThis["sap-ui-config"]["paramE"] = "hubelDubel";
-		globalThis["sap-ui-config"]["paramProvidedAfterGet"] = "hubelDubel";
-		BaseConfiguration._.invalidate();
+		assert.strictEqual(oGlobalProviderGetSpy.callCount, 13, "No entries in cache. All 'get' calls to the provider, eigth regular and four times for the 'xx'-fallback. BaseConfiguration already reads from cache within 'assertBaseConfigGet'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(0).calledWithExactly("sapUiParamD", true), "1st call was for 'sapUiParamD' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(1).calledWithExactly("sapUiXxParamE", undefined), "2nd call was for 'sapUiXxParamE' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(2).calledWithExactly("sapUiParamG", true), "3rd call was for 'sapUiParamG' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(3).calledWithExactly("sapUiParamH", undefined), "4th call was for 'sapUiParamH' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(4).calledWithExactly("sapUiNotProvidedParamA", true), "5th call was for 'sapUiNotProvidedParamA' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(5).calledWithExactly("sapUiXxNotProvidedParamA", true), "6th call was for 'sapUiXxNotProvidedParamA' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(6).calledWithExactly("sapUiNotProvidedParamB", undefined), "7th call was for 'sapUiNotProvidedParamB' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(7).calledWithExactly("sapUiXxNotProvidedParamB", undefined), "8th call was for 'sapUiXxNotProvidedParamB' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(8).calledWithExactly("sapUiNotProvidedParamC", true), "9th call was for 'sapUiNotProvidedParamC' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(9).calledWithExactly("sapUiXxNotProvidedParamC", true), "10th call was for 'sapUiXxNotProvidedParamC' with additional parameter freeze 'true'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(10).calledWithExactly("sapUiNotProvidedParamD", undefined), "11th call was for 'sapUiNotProvidedParamD' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(11).calledWithExactly("sapUiXxNotProvidedParamD", undefined), "12th call was for 'sapUiXxNotProvidedParamD' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(12).calledWithExactly("sapUiParamLowercase", undefined), "12th call was for 'sapUiParamLowercase' with additional parameter freeze 'undefined'.");
+		oGlobalProviderGetSpy.reset();
 
 		var oLogSpy = sinon.spy(sap.ui.loader._.logger, "error");
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamD",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "global", "BaseConfiguration.get for param 'sapUiParamD' still returns value 'global'");
+		// Change some parameter using the globalThis['sap-ui-config'] object
+		globalThis["sap-ui-config"]["paramD"] = "hubelDubel";
+		globalThis["sap-ui-config"]["xx-paramE"] = "hubelDubel";
+		globalThis["sap-ui-config"]["notProvidedParamC"] = "hubelDubel";
+		globalThis["sap-ui-config"]["notProvidedParamD"] = "hubelDubel";
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamE",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "xx-global", "BaseConfiguration.get for param 'paramE' still returns correct value 'xx-global'");
+		// Change some parameter using WritableBootInstance.set
+		oWritableBootInstance.set("sapUiParamG", "HubelDubel");
+		oWritableBootInstance.set("sapUiParamH", "HubelDubel");
+		oWritableBootInstance.set("sapUiNotProvidedParamA", "HubelDubel");
+		oWritableBootInstance.set("sapUiNotProvidedParamB", "HubelDubel");
+		oWritableBootInstance.set("sapUiNotProvidedParamC", "HubelDubel");
+		oWritableBootInstance.set("sapUiNotProvidedParamD", "HubelDubel");
+		assert.strictEqual(oLogSpy.callCount, 3, "There should be 3 log messages.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamG' was frozen and cannot be changed to HubelDubel!"), "Correct error message logged.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiNotProvidedParamA' was frozen and cannot be changed to HubelDubel!"), "Correct error message logged.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiNotProvidedParamC' was frozen and cannot be changed to HubelDubel!"), "Correct error message logged.");
+		oLogSpy.reset();
+
+		assertBaseConfigGet("sapUiParamD", "global", "BaseConfiguration.get for param 'sapUiParamD' still returns value 'global'");
+		assertBaseConfigGet("sapUiXxParamE", "xx-global", "BaseConfiguration.get for param 'paramE' still returns correct value 'xx-global'");
+		assertBaseConfigGet("sapUiParamG", "global", "BaseConfiguration.get for param 'paramG' returns correct value 'global'");
+		assertBaseConfigGet("sapUiParamH", "HubelDubel", "BaseConfiguration.get for param 'paramH' returns correct value 'HubelDubel'");
+		assertBaseConfigGet("sapUiNotProvidedParamA", "", "BaseConfiguration.get for param 'notProvidedParamA' returns correct value ''");
+		assertBaseConfigGet("sapUiNotProvidedParamB", "HubelDubel", "BaseConfiguration.get for param 'notProvidedParamB' returns correct value 'HubelDubel'");
+		assertBaseConfigGet("sapUiNotProvidedParamC", "", "BaseConfiguration.get for param 'notProvidedParamC' returns correct value ''");
+		assertBaseConfigGet("sapUiNotProvidedParamD", "HubelDubel", "BaseConfiguration.get for param 'notProvidedParamD' returns correct value 'HubelDubel'");
+
+		assert.strictEqual(oGlobalProviderGetSpy.callCount, 10, "All entries were cached, but WriteabelConfig.set clears the cache. There are only two 'xx'-fallback because 'sapUiParamG' and 'sapUiParamH' are not evaluated before freeze of provider.");
+		oGlobalProviderGetSpy.reset();
 
 		GlobalConfigurationProvider.freeze();
-		BaseConfiguration._.invalidate();
-		assert.strictEqual(oLogSpy.callCount, 2, "There should be 2 log messages.");
+		// Set after freeze should not change any parameter
+		oWritableBootInstance.set("sapUiParamLowercase", "HubelDubel");
+		assert.strictEqual(oLogSpy.callCount, 3, "There should be 3 log messages.");
 		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamD' was frozen and cannot be changed to hubelDubel!"), "Correct error message logged.");
-		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamProvidedAfterGet' was frozen and cannot be changed to hubelDubel!"), "Correct error message logged.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiNotProvidedParamC' was frozen and cannot be changed to hubelDubel!"), "Correct error message logged.");
+		assert.ok(oLogSpy.calledWith("Configuration option 'sapUiParamLowercase' was frozen and cannot be changed to HubelDubel!"), "Correct error message logged.");
+		oLogSpy.reset();
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamD",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "global", "After freeze: BaseConfiguration.get for param 'sapUiParamD' returns default value 'global'");
+		assertBaseConfigGet("sapUiParamD", "global", "get (after freeze): for param 'sapUiParamD' returns default value 'global'");
+		assertBaseConfigGet("sapUiXxParamE", "hubelDubel", "get (after freeze): for param 'sapUiParamE' returns correct value 'hubelDubel'");
+		assertBaseConfigGet("sapUiParamG", "global", "get (after freeze): for param 'sapUiParamG' returns correct value 'hubelDubel'");
+		assertBaseConfigGet("sapUiParamH", "HubelDubel", "get (after freeze): for param 'sapUiParamH' returns correct value 'HubelDubel'");
+		assertBaseConfigGet("sapUiNotProvidedParamA", "", "get (after freeze): for param 'sapUiNotProvidedParamA' returns correct value ''");
+		assertBaseConfigGet("sapUiNotProvidedParamB", "HubelDubel", "get (after freeze): for param 'sapUiNotProvidedParamB' returns correct value 'HubelDubel'");
+		assertBaseConfigGet("sapUiNotProvidedParamC", "", "get (after freeze): for param 'sapUiNotProvidedParamC' returns correct value ''");
+		assertBaseConfigGet("sapUiNotProvidedParamD", "HubelDubel", "get (after freeze): for param 'sapUiNotProvidedParamD' returns correct value 'HubelDubel'");
+		assertBaseConfigGet("sapUiParamLowercase", "lowercase", "get (after freeze): for param 'sapUiParamLowercase' returns correct value 'lowercase'");
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamE",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "hubelDubel", "After freeze: BaseConfiguration.get for param 'sapUiParamE' returns correct value 'hubelDubel'");
+		assert.strictEqual(oGlobalProviderGetSpy.callCount, 11, "The cache should be emtpy again after freeze. There are two 'xx'-fallback calls because frozen value of 'sapUiNotProvidedParamA' and 'sapUiNotProvidedParamC' is 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(0).calledWithExactly("sapUiParamD", undefined), "1st call was for 'sapUiParamD' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(1).calledWithExactly("sapUiXxParamE", undefined), "2nd call was for 'sapUiXxParamE' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(2).calledWithExactly("sapUiParamG", undefined), "3rd call was for 'sapUiParamG' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(3).calledWithExactly("sapUiParamH", undefined), "4th call was for 'sapUiParamH' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(4).calledWithExactly("sapUiNotProvidedParamA", undefined), "5th call was for 'sapUiNotProvidedParamA' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(5).calledWithExactly("sapUiXxNotProvidedParamA", undefined), "6th call was for 'sapUiXxNotProvidedParamA' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(6).calledWithExactly("sapUiNotProvidedParamB", undefined), "7th call was for 'sapUiNotProvidedParamB' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(7).calledWithExactly("sapUiNotProvidedParamC", undefined), "8th call was for 'sapUiNotProvidedParamC' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(8).calledWithExactly("sapUiXxNotProvidedParamC", undefined), "9th call was for 'sapUiXxNotProvidedParamC' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(9).calledWithExactly("sapUiNotProvidedParamD", undefined), "10th call was for 'sapUiNotProvidedParamD' with additional parameter freeze 'undefined'.");
+		assert.ok(oGlobalProviderGetSpy.getCall(10).calledWithExactly("sapUiParamLowercase", undefined), "11th call was for 'sapUiParamLowercase' with additional parameter freeze 'undefined'.");
 
-		assert.strictEqual(BaseConfiguration.get({
-			name: "sapUiParamProvidedAfterGet",
-			type: BaseConfiguration.Type.String,
-			external: true
-		}), "", "After freeze: BaseConfiguration.get for param 'sapUiParamProvidedAfterGet' returns correct value ''");
+		oGlobalProviderGetSpy.restore();
+		oLogSpy.restore();
 	});
 
 	QUnit.test("Configuration write", function(assert) {
 		assert.expect(5);
 
-		var oWriteableInstance1 = BaseConfiguration.getWritableInstance();
-		var oWriteableInstance2 = BaseConfiguration.getWritableInstance();
+		var oWritableInstance1 = BaseConfiguration.getWritableInstance();
+		var oWritableInstance2 = BaseConfiguration.getWritableInstance();
 
-		oWriteableInstance1.set("myNewParameter", true);
-		oWriteableInstance2.set("myNewParameter", false);
+		oWritableInstance1.set("myNewParameter", true);
+		oWritableInstance2.set("myNewParameter", false);
 
-		assert.strictEqual(oWriteableInstance1.get({
+		assert.strictEqual(oWritableInstance1.get({
 			name: "myNewParameter",
-			type: oWriteableInstance2.Type.Boolean
+			type: oWritableInstance2.Type.Boolean
 		}), true, "WritableInstance1.get for param 'myNewParameter' returns value 'true'");
-		assert.strictEqual(oWriteableInstance2.get({
+		assert.strictEqual(oWritableInstance2.get({
 			name: "myNewParameter",
-			type: oWriteableInstance2.Type.Boolean,
+			type: oWritableInstance2.Type.Boolean,
 			defaultValue: true
 		}), false, "WritableInstance2.get for param 'myNewParameter' returns value 'false'");
 
-		oWriteableInstance1.set("sapUiParamA", "write");
-		assert.strictEqual(oWriteableInstance1.get({
+		oWritableInstance1.set("sapUiParamA", "write");
+		assert.strictEqual(oWritableInstance1.get({
 			name: "sapUiParamA",
-			type: oWriteableInstance2.Type.String,
+			type: oWritableInstance2.Type.String,
 			external: true
 		}), "write", "WritableInstance1.get for param 'sapUiParamA' returns value 'write'");
-		assert.strictEqual(oWriteableInstance2.get({
+		assert.strictEqual(oWritableInstance2.get({
 			name: "sapUiParamA",
-			type: oWriteableInstance2.Type.String,
+			type: oWritableInstance2.Type.String,
 			external: true
 		}), "url", "WritableInstance2.get for param 'sapUiParamA' returns value 'url'");
 
 		assert.throws(function () {
-			oWriteableInstance1.set("sap-ui-param1", true);
-		}, new TypeError("Invalid configuration key 'sap-ui-param1'!"), "oWriteableInstance1.set for param 'sap-ui-param1' throws error 'Invalid configuration key 'sap-ui-param1'!'");
-	});
-	QUnit.test("Configuration write boot", function(assert) {
-		var oWriteableBootInstance = BaseConfiguration.getWritableBootInstance();
-
-		function fnAssert(sParamName, sConfigResult, sMessage, bFreeze) {
-			assert.strictEqual(oWriteableBootInstance.get({
-				name: sParamName,
-				type: oWriteableBootInstance.Type.String,
-				freeze: bFreeze
-			}), sConfigResult, sMessage);
-		}
-
-		fnAssert("sapUiParamNotProvided", "", "get for not existing parameter should return type default ''");
-
-		oWriteableBootInstance.set("sapUiParamnotprovided", "valueForNotFrozenParam");
-
-		fnAssert("sapUiParamNotProvided", "valueForNotFrozenParam", "get with 'freeze' after value was set should return the provided value 'valueForNotFrozenParam' and freeze 'sapUiParamNotProvided'", true);
-
-		oWriteableBootInstance.set("sapUiParamnotprovided", "valueForFrozenParam");
-
-		fnAssert("sapUiParamNotProvided", "valueForNotFrozenParam", "get should still return value 'valueForNotFrozenParam' and ignore the parameter provided after get with param freeze");
-
+			oWritableInstance1.set("sap-ui-param1", true);
+		}, new TypeError("Invalid configuration key 'sap-ui-param1'!"), "oWritableInstance1.set for param 'sap-ui-param1' throws error 'Invalid configuration key 'sap-ui-param1'!'");
 	});
 });

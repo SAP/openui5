@@ -1,4 +1,8 @@
 /*global QUnit */
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define(["sap/base/Log",
 	"test-resources/sap/ui/support/TestHelper",
 	"sap/ui/core/mvc/View",

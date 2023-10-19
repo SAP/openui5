@@ -9,7 +9,7 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
-	'sap/ui/core/UIArea',
+	'sap/ui/core/StaticArea',
 	'sap/ui/Device',
 	'./ResponsivePopoverRenderer',
 	'./Toolbar',
@@ -22,7 +22,7 @@ sap.ui.define([
 		library,
 		Control,
 		IconPool,
-		UIArea,
+		StaticArea,
 		Device,
 		ResponsivePopoverRenderer,
 		Toolbar,
@@ -406,7 +406,7 @@ sap.ui.define([
 			var aPages, i;
 			if ((sAggregationName === "content") && (oChild && oChild.isA("sap.m.NavContainer"))) {
 				aPages = oChild.getPages();
-				for (i = 0 ; i < aPages.length ; i++) {
+				for (i = 0; i < aPages.length; i++) {
 					aPages[i].removeEventDelegate(that._oPageDelegate);
 				}
 				oChild.detachEvent("navigate", that._fnOnNavigate, that);
@@ -425,8 +425,7 @@ sap.ui.define([
 	 */
 	ResponsivePopover.prototype.openBy = function(oParent){
 		if (!this._bAppendedToUIArea && !this.getParent()) {
-			var oStatic = sap.ui.getCore().getStaticAreaRef();
-			oStatic = UIArea.registry.get(oStatic.id);
+			var oStatic = StaticArea.getUIArea();
 			oStatic.addContent(this, true);
 			this._bAppendedToUIArea = true;
 		}
@@ -570,7 +569,7 @@ sap.ui.define([
 	 */
 	ResponsivePopover.prototype._lastIndexOfUpperCaseLetter = function(sValue){
 		var i, sChar;
-		for (i = sValue.length - 1 ; i >= 0; i--) {
+		for (i = sValue.length - 1; i >= 0; i--) {
 			sChar = sValue.charAt(i);
 			if (sChar === sChar.toUpperCase()) {
 				return i;
@@ -634,8 +633,15 @@ sap.ui.define([
 				oOldButton = this[sGetterName](),
 				oFooter = this._createButtonFooter(),
 				sPrivateName = "_o" + this._firstLetterUpperCase(sPos) + "Button",
-				iIndex = (sPos.toLowerCase() === "begin" ? 0 : 1),
-				sOtherGetterName = (sPos.toLowerCase() === "begin" ? "getEndButton" : "getBeginButton");
+				sOtherGetterName = (sPos.toLowerCase() === "begin" ? "getEndButton" : "getBeginButton"),
+				iIndex;
+
+			if (sPos.toLowerCase() === "begin") {
+				iIndex = 0;
+			} else {
+				// place end button as first when no begin button is availble
+				iIndex = this.getBeginButton() ? 1 : 0;
+			}
 
 			if (oOldButton) {
 				oFooter.removeContent(oOldButton);
@@ -739,13 +745,15 @@ sap.ui.define([
 	// forward all aggregation methods to the inner instance, either the popover or the dialog.
 	["bindAggregation", "validateAggregation", "setAggregation", "getAggregation", "indexOfAggregation", "insertAggregation",
 		"addAggregation", "removeAggregation", "removeAllAggregation", "destroyAggregation", "setAssociation", "getAssociation",
-		"addAssociation", "removeAssociation", "removeAllAssociation"].forEach(function(sName){
+		"addAssociation", "removeAssociation", "removeAllAssociation, addDependent, removeDependent, removeAllDependents, destroyDependents, getDependents, indexOfDependent"].forEach(function(sName){
 			ResponsivePopover.prototype[sName] = function(){
 				var iLastUpperCase = this._lastIndexOfUpperCaseLetter(sName),
 					sMethodName, res;
 				if (typeof arguments[0] === "string") {
 					if (iLastUpperCase !== -1) {
 						sMethodName = sName.substring(0, iLastUpperCase) + this._firstLetterUpperCase(arguments[0]);
+						// in case of adding 'dependents' aggregation the call to this function is made with wrong plural argument by the Element class
+						sMethodName = sMethodName === "addDependents" ? "addDependent" : sMethodName;
 						//_oControl can be already destroyed in exit method
 						if (this._oControl && this._oControl[sMethodName]) {
 							res = this._oControl[sMethodName].apply(this._oControl, Array.prototype.slice.call(arguments, 1));

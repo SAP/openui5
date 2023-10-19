@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	CommandFactory,
@@ -19,7 +19,7 @@ sap.ui.define([
 	XMLView,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -28,7 +28,7 @@ sap.ui.define([
 			split: {
 				changeType: "splitStuff",
 				changeOnRelevantContainer: true,
-				getControlsCount: function() {
+				getControlsCount() {
 					return 3;
 				}
 			}
@@ -43,7 +43,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and split plugin are instantiated", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oSplitPlugin = new SplitPlugin({
@@ -62,7 +62,7 @@ sap.ui.define([
 			});
 
 			this.oView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oButton1 = this.oView.byId("button1");
 			this.oButton2 = this.oView.byId("button2");
@@ -82,7 +82,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oView.destroy();
 			this.oDesignTime.destroy();
@@ -119,7 +119,7 @@ sap.ui.define([
 						changeType: "splitStuff",
 						changeOnRelevantContainer: true,
 						isEnabled: true,
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}
@@ -153,7 +153,7 @@ sap.ui.define([
 						changeType: "splitStuff",
 						changeOnRelevantContainer: true,
 						isEnabled: true,
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}
@@ -189,10 +189,10 @@ sap.ui.define([
 					split: {
 						changeType: "splitField",
 						changeOnRelevantContainer: true,
-						isEnabled: function() {
+						isEnabled() {
 							return true;
 						},
-						getControlsCount: function() {
+						getControlsCount() {
 							return 1;
 						}
 					}
@@ -222,7 +222,7 @@ sap.ui.define([
 					split: {
 						changeType: "splitField",
 						changeOnRelevantContainer: true,
-						isEnabled: function() {
+						isEnabled() {
 							return true;
 						}
 					}
@@ -288,7 +288,7 @@ sap.ui.define([
 				assert.strictEqual(oStub2.callCount, 1, "fireElementModified is called once with correct arguments");
 			})
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -305,7 +305,7 @@ sap.ui.define([
 				actions: {
 					split: {
 						changeType: "splitStuff",
-						getControlsCount: function() {
+						getControlsCount() {
 							return 2;
 						}
 					}

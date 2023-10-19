@@ -103,8 +103,8 @@ sap.ui.define([
 		width : "250px",
 		delimiter : "-",
 		displayFormat : "dd+MM+yyyy",
-		from : dateFrom,
-		to : dateTo1,
+		dateValue : dateFrom,
+		secondDateValue : dateTo1,
 		change: handleChange
 	}).placeAt("uiArea2");
 
@@ -602,6 +602,46 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oSpyLogError.notCalled, "Error is not logged");
+	});
+
+	QUnit.test("Change date with keyboard when 'value' binding with type is used", function(assert) {
+		// prepare
+		var oModel = new JSONModel({
+				start: UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
+				end: UI5Date.getInstance(2022, 10, 15, 10, 15, 10)
+			}),
+			oDRS = new DateRangeSelection({
+				value: {
+					type: "sap.ui.model.type.DateInterval",
+					parts: [
+						{ path: "/start" },
+						{ path: "/end" }
+					],
+					formatOptions: {
+						format: "yMEd"
+					}
+				}
+			}),
+			oFakeEvent = {
+				target: {
+					id: oDRS.getId() + "-inner",
+					which: KeyCodes.PAGE_UP
+				},
+				preventDefault: function() {}
+			};
+		oDRS.setModel(oModel);
+		oDRS.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		oDRS._$input.cursorPos(15);
+
+		// act
+		oDRS.onsappageup(oFakeEvent);
+
+		// assert
+		assert.equal(oDRS.getDateValue().getUTCDate(), 10, "Date is incremented");
+
+		// clean
+		oDRS.destroy();
 	});
 
 	QUnit.test("Change date with page up key when 'date' value isn't set", function(assert) {
@@ -1148,8 +1188,8 @@ sap.ui.define([
 				var oSut = view.byId("drs_odata");
 
 				//Assert
-				//char code 8211 is a dash
-				assert.equal(oSut._$input.val(), "Sat, 12/23/2017 " + String.fromCharCode(8211) + " Mon, 1/1/2018", oSut._$input.val() + " is correct");
+				//char code \u2009 is a thin space (introduced with CLDR version 43), \u2013 is a dash
+				assert.equal(oSut._$input.val(), "Sat, 12/23/2017\u2009\u2013\u2009Mon, 1/1/2018", oSut._$input.val() + " is correct");
 				assert.equal(oSut.getDateValue().toString(), oDateLocalDate.toString(), "dateValue should be always a local date");
 				assert.equal(oSut.getSecondDateValue().toString(), oDate2Localdate.toString(), "secondDateValue should be always a local date");
 				done();
@@ -1277,10 +1317,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("value binding with timestamps", function(assert) {
+		var oTestStartDate = UI5Date.getInstance(2022, 10, 10),
+			oTestEndDate = UI5Date.getInstance(2022,10, 15 );
 
 		var oModel = new JSONModel({
-				start: 1668038400000,
-				end: 1668470400000
+				start: oTestStartDate.getTime(),
+				end: oTestEndDate.getTime()
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
@@ -1298,8 +1340,8 @@ sap.ui.define([
 			}),
 			oNormalizeResult,
 			aParseResult,
-			sDash = String.fromCharCode(8211), // Dash character (separator)
-			sDateRange = "Nov 10, 2022 " + sDash + " Nov 15, 2022";
+			//char code \u2009 is a thin space (introduced with CLDR version 43), \u2013 is a dash
+			sDateRange = "Nov 10, 2022\u2009\u2013\u2009Nov 15, 2022";
 
 		oDRS.setModel(oModel);
 		oDRS.placeAt('qunit-fixture');

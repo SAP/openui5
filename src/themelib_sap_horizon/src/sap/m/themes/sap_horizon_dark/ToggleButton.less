@@ -6,6 +6,8 @@
 /* hover and down on toggled button */
 .sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
 .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
+	box-shadow: none;
+
 	&.sapMBtnReject {
 		background-color: @sapUiButtonRejectSelectedHoverBackground;
 		border-color: @sapUiButtonRejectSelectedHoverBorderColor;
@@ -66,26 +68,6 @@ span.sapMBtnInner.sapMToggleBtnPressed .sapMBtnIcon,
 span.sapMBtnInner.sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon,
 html.sap-desktop .sapMToggleBtnPressed.sapMBtnTransparent > .sapMBtnIcon {
 	color: @sapUiButtonSelectedTextColor;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive) {
-	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnEmphasized {
-	box-shadow: 0 0 0.125rem 0 fade(@sapInformativeColor, 72);
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnAccept {
-	box-shadow: 0 0 0.125rem 0 fade(@sapPositiveColor, 72);
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnReject {
-	box-shadow: 0 0 0.125rem 0 fade(@sapNegativeColor, 72);
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnActive).sapMBtnAttention {
-	box-shadow: 0 0 0.125rem 0 fade(@sapCriticalColor, 72);
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMToggleBtnPressed.sapMFocusable {

@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/field/content/DateContent",
-	"sap/ui/mdc/util/DateUtil",
-	"sap/base/util/merge",
-	"sap/base/util/ObjectPath"
-], function(DefaultContent, DateContent, DateUtil, merge, ObjectPath) {
+	'sap/ui/mdc/field/content/DefaultContent',
+	'sap/ui/mdc/field/content/DateContent',
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/util/DateUtil',
+	'sap/base/util/merge'
+], function(DefaultContent, DateContent, OperatorName, DateUtil, merge) {
 	"use strict";
 
 	/**
@@ -22,22 +22,22 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.DateTimeContent
 	 * @extends sap.ui.mdc.field.content.DateContent
 	 */
-	var DateTimeContent = Object.assign({}, DateContent, {
+	const DateTimeContent = Object.assign({}, DateContent, {
 		getEditOperator: function() {
 			return {
-				"EQ": { name: "sap/m/DateTimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
+				[OperatorName.EQ]: { name: "sap/m/DateTimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
 			};
 		},
 		createEditMultiLine: function() {
 			throw new Error("sap.ui.mdc.field.content.DateTimeContent - createEditMultiLine not defined!");
 		},
 		_createDatePickerControl: function(oContentFactory, aControlClasses, sId) {
-			var aControls = DateContent._createDatePickerControl.apply(this, arguments);
-			var oType = oContentFactory.getDateOriginalType() || oContentFactory.getDataType(); // if no clone-type created use original type
+			const aControls = DateContent._createDatePickerControl.apply(this, arguments);
+			const oType = oContentFactory.getDateOriginalType() || oContentFactory.getDataType(); // if no clone-type created use original type
 
 			if (DateUtil.showTimezone(oType)) {
 				// bind timezone to timezone part; handle as "unit"
-				var oUnitConditionsType = oContentFactory.getUnitConditionsType();
+				const oUnitConditionsType = oContentFactory.getUnitConditionsType();
 				aControls[0].bindProperty("timezone", { path: "$field>/conditions", type: oUnitConditionsType, targetType: "sap.ui.mdc.raw:1" }); // use own target type to allow special handling in ConditionType (DateTimePicker needs the raw value of the timezone, not translated)
 				aControls[0].setShowTimezone(true);
 			}
@@ -45,8 +45,8 @@ sap.ui.define([
 			return aControls;
 		},
 		_adjustDataTypeForDate: function(oContentFactory) {
-			var oType = oContentFactory.retrieveDataType();
-			var oFormatOptions = oType.getFormatOptions();
+			const oType = oContentFactory.retrieveDataType();
+			let oFormatOptions = oType.getFormatOptions();
 
 			if (DateUtil.showTimezone(oType)) {
 				// create internal type without showing timezone
@@ -61,9 +61,8 @@ sap.ui.define([
 				oFormatOptions.showDate = false;
 				oFormatOptions.showTime = false;
 				oFormatOptions.showTimezone = true;
-				var oConstraints = oType.getConstraints();
-				var sName = oType.getMetadata().getName();
-				var TypeClass = ObjectPath.get(sName);
+				const oConstraints = oType.getConstraints();
+				const TypeClass = oType.getMetadata().getClass();
 				oContentFactory.setUnitType(new TypeClass(oFormatOptions, oConstraints));
 			} else {
 				DateContent._adjustDataTypeForDate.apply(this, arguments);

@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Log,
 	XMLView,
@@ -17,7 +17,7 @@ sap.ui.define([
 	ABAPAccess,
 	ABAPExtensibilityVariantFactory,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -25,42 +25,42 @@ sap.ui.define([
 
 	QUnit.module("Interface Functions", {
 		oControl: {
-			getBindingContext: function() {
+			getBindingContext() {
 				return {
-					getPath: function() {
+					getPath() {
 						return "/someService/someEntity";
 					}
 				};
 			},
-			getModel: function() {
+			getModel() {
 				return {
 					sServiceUrl: "/someService",
 					oMetadata: {
-						_getEntitySetByPath: function() {
+						_getEntitySetByPath() {
 							return {
 								name: "someEntitySet"
 							};
 						},
-						_getEntityTypeByPath: function() {
+						_getEntityTypeByPath() {
 							return {
 								name: "someEntityType"
 							};
 						}
 					},
-					metadataLoaded: function() {
+					metadataLoaded() {
 						return Promise.resolve();
 					},
-					isA: function() {
+					isA() {
 						return true;
 					}
 				};
 			}
 		},
 		oCrossApp: {
-			hrefForExternal: function(mIntentWithParameter) {
+			hrefForExternal(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
-			isNavigationSupported: function(aIntents) {
+			isNavigationSupported(aIntents) {
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: oIntent.semanticObject === "CustomField" || false
@@ -71,7 +71,7 @@ sap.ui.define([
 		},
 		oGetTextStub: null,
 		oServer: null,
-		beforeEach: function() {
+		beforeEach() {
 			ABAPAccess.reset();
 			ABAPExtensibilityVariantFactory.reset();
 			oSandbox.stub(ExtUtils, "getText").callsFake(function(sTextKey) {
@@ -92,7 +92,7 @@ sap.ui.define([
 				}
 			}));
 		},
-		afterEach: function() {
+		afterEach() {
 			oSandbox.restore();
 			this.oServer.restore();
 		}
@@ -137,7 +137,7 @@ sap.ui.define([
 		QUnit.test("isExtensibilityEnabled with navigation URI", function(assert) {
 			var done = assert.async();
 			var oExtensibilityVariant = {
-				getNavigationUri: function() {
+				getNavigationUri() {
 					return Promise.resolve("validUri");
 				}
 			};
@@ -152,7 +152,7 @@ sap.ui.define([
 		QUnit.test("isExtensibilityEnabled without navigation URI", function(assert) {
 			var done = assert.async();
 			var oExtensibilityVariant = {
-				getNavigationUri: function() {
+				getNavigationUri() {
 					return Promise.resolve(null);
 				}
 			};
@@ -204,7 +204,7 @@ sap.ui.define([
 				ABAPAccess.isServiceOutdated(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 
@@ -219,7 +219,7 @@ sap.ui.define([
 				ABAPAccess.setServiceValid(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 
@@ -234,17 +234,17 @@ sap.ui.define([
 				ABAPAccess.setServiceInvalid(mService);
 				assert.propEqual(oStub.lastCall.args[0], mService, "the function was called with the correct parameters");
 			} catch (oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			}
 		});
 	});
 
 	QUnit.module("Given a complex test view with oData Model...", {
 		oCrossApp: {
-			hrefForExternal: function(mIntentWithParameter) {
+			hrefForExternal(mIntentWithParameter) {
 				return JSON.stringify(mIntentWithParameter);
 			},
-			isNavigationSupported: function(aIntents) {
+			isNavigationSupported(aIntents) {
 				var aResults = aIntents.map(function(oIntent) {
 					return {
 						supported: oIntent.semanticObject === "CustomField" || false
@@ -255,26 +255,26 @@ sap.ui.define([
 		},
 		oServer: null,
 		oView: null,
-		before: function() {
+		before() {
 			return XMLView.create({
 				id: "idMain1",
 				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			ABAPExtensibilityVariantFactory.reset();
 			oSandbox.stub(FlexUtils, "getUShellService").withArgs("CrossApplicationNavigation").returns(Promise.resolve(this.oCrossApp));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oServer.restore();
 			oSandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 		}
 	}, function() {

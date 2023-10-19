@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/base/Event",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Theming",
+	"sap/ui/core/theming/ThemeHelper",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
 	BaseConfig,
 	BaseEvent,
 	URLConfigurationProvider,
 	Theming,
+	ThemeHelper,
 	themeApplied
 ) {
 	"use strict";
@@ -51,29 +53,37 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Theming", {
-		beforeEach: function (assert) {
-			mConfigStubValues = {};
-			mEventCalls = {
-				aChange: [],
-				aApplied: []
-			};
-			oURLConfigurationProviderStub = sinon.stub(URLConfigurationProvider, "get");
-			oURLConfigurationProviderStub.callsFake(function(sKey) {
-					return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
-			});
-			Theming.attachChange(checkChange);
-			Theming.attachApplied(checkApplied);
-			if (bThemeManagerNotActive) {
-				assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
-				mEventCalls.aApplied.pop();
-			}
-		},
-		afterEach: function () {
-			Theming.detachChange(checkChange);
-			Theming.detachApplied(checkApplied);
-			oURLConfigurationProviderStub.restore();
+	function setupTestsBeforeEach(assert) {
+		mConfigStubValues = {};
+		oURLConfigurationProviderStub = sinon.stub(URLConfigurationProvider, "get");
+		oURLConfigurationProviderStub.callsFake(function(sKey) {
+				return mConfigStubValues.hasOwnProperty(sKey) ? mConfigStubValues[sKey] : oURLConfigurationProviderStub.wrappedMethod.call(this, sKey);
+		});
+		mEventCalls = {
+			aChange: [],
+			aApplied: []
+		};
+		Theming.attachChange(checkChange);
+		Theming.attachApplied(checkApplied);
+		if (bThemeManagerNotActive) {
+			assert.strictEqual(mEventCalls.aApplied[0].theme, Theming.getTheme(), "In case there is no ThemeManager, the applied event should be called immediately.");
+			mEventCalls.aApplied.pop();
 		}
+		mEventCalls = {
+			aChange: [],
+			aApplied: []
+		};
+	}
+
+	function setupTestsAfterEach() {
+		Theming.detachChange(checkChange);
+		Theming.detachApplied(checkApplied);
+		oURLConfigurationProviderStub.restore();
+	}
+
+	QUnit.module("Initial Configuration", {
+		beforeEach: setupTestsBeforeEach,
+		afterEach: setupTestsAfterEach
 	});
 
 	/**
@@ -83,27 +93,31 @@ sap.ui.define([
 	 * Before fixing this regression, an empty string lead to a "Maximum call stack size exceeded" error.
 	 */
 	QUnit.test("Initial Theme - empty string fallback", function(assert) {
-		assert.equal(Theming.getTheme(), "base", "Initial Theme after bootstrapping should be 'base'");
+		const sExpectedDefaultTheme = ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME;
+		assert.equal(Theming.getTheme(), sExpectedDefaultTheme, `Initial Theme after bootstrapping should be ${sExpectedDefaultTheme}`);
 	});
 
 	QUnit.test("getTheme", function (assert) {
 		assert.expect(bThemeManagerNotActive ? 28 : 27);
 		BaseConfig._.invalidate();
+
+		const sExpectedDefaultTheme = ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME;
+
 		mConfigStubValues = {
-			"sapTheme": "sap_test_theme_1",
-			"sapUiTheme": "sap_test_theme_2"
+			"sapTheme": "sap_horizon",
+			"sapUiTheme": "sap_fiori_3"
 		};
 		// sapTheme should be first
-		return fnAssert("sap_test_theme_1").then(function() {
+		return fnAssert("sap_horizon").then(function() {
 			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = undefined;
 			// if there is no sapTheme sapUiTheme should be used
-			return fnAssert("sap_test_theme_2");
+			return fnAssert("sap_fiori_3");
 		}).then(function() {
 			BaseConfig._.invalidate();
 			mConfigStubValues["sapUiTheme"] = undefined;
-			// use default value 'base' in case there is no theming parameter at all
-			return fnAssert("base");
+			// internally we determine a valid default theme in case there is no theme given at all
+			return fnAssert(sExpectedDefaultTheme);
 		}).then(function() {
 			BaseConfig._.invalidate();
 			mConfigStubValues["sapTheme"] = "sap_test_theme_3@/sap/test/themeroot";
@@ -132,8 +146,9 @@ sap.ui.define([
 		}).then(function() {
 			// sap_corbu theme should be normalized to sap_fiori_3 theme
 			BaseConfig._.invalidate();
+			// sap_corbu theme should be normalized to the latest default theme
 			mConfigStubValues["sapTheme"] = "sap_corbu";
-			return fnAssert("sap_fiori_3");
+			return fnAssert(sExpectedDefaultTheme);
 		}).then(function() {
 			// sap_corbu theme with specific themeroots should not be normalized and themeroots for sap_corbu should trigger a change event
 			BaseConfig._.invalidate();
@@ -148,12 +163,23 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Theming runtime behavior", {
+		beforeEach: async function (assert) {
+			// make sure we have a fixed theme to begin with
+			Theming.setTheme("sap_horizon");
+			await themeApplied();
+
+			setupTestsBeforeEach(assert);
+		},
+		afterEach: setupTestsAfterEach
+	});
+
 	QUnit.test("setTheme", function(assert) {
 		Theming.setTheme("sap_hcb");
 
 		return fnAssert("sap_hcb", [{
 			theme: {
-				"old": "base",
+				"old": ThemeHelper.getDefaultThemeInfo().DEFAULT_THEME,
 				"new": "sap_hcb"
 			}
 		}], [{
@@ -175,22 +201,22 @@ sap.ui.define([
 		var sOldTheme = Theming.getTheme();
 		var sExpectedOldThemeRoot;
 		var sExpectedNewThemeRoot;
-		Theming.setTheme("sap_test_theme_4");
+		Theming.setTheme("my_private_theme");
 
-		return fnAssert("sap_test_theme_4", [{
+		return fnAssert("my_private_theme", [{
 			theme: {
 				"old": sOldTheme,
-				"new": "sap_test_theme_4"
+				"new": "my_private_theme"
 			}
 		}], [{
-			theme: "sap_test_theme_4"
+			theme: "my_private_theme"
 		}]).then(function() {
 			assert.strictEqual(Theming.getThemeRoot(), sExpectedNewThemeRoot, "ThemeRoot without parameter should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
-			assert.strictEqual(Theming.getThemeRoot("sap_test_theme_4"), sExpectedNewThemeRoot, "ThemeRoot for current theme should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
+			assert.strictEqual(Theming.getThemeRoot("my_private_theme"), sExpectedNewThemeRoot, "ThemeRoot for current theme should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
 
 			sExpectedNewThemeRoot = "sap/another/themeroot";
-			Theming.setThemeRoot("sap_test_theme_4", "sap/another/themeroot", true);
-			return fnAssert("sap_test_theme_4", [{
+			Theming.setThemeRoot("my_private_theme", "sap/another/themeroot", true);
+			return fnAssert("my_private_theme", [{
 				themeRoots: {
 					"new": sExpectedNewThemeRoot,
 					"old": sExpectedOldThemeRoot,
@@ -199,12 +225,12 @@ sap.ui.define([
 			}]);
 		}).then(function() {
 			assert.strictEqual(Theming.getThemeRoot(), sExpectedNewThemeRoot, "ThemeRoot without parameter should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
-			assert.strictEqual(Theming.getThemeRoot("sap_test_theme_4"), sExpectedNewThemeRoot, "ThemeRoot for current theme should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
+			assert.strictEqual(Theming.getThemeRoot("my_private_theme"), sExpectedNewThemeRoot, "ThemeRoot for current theme should return the expected themeRoot '" + sExpectedNewThemeRoot + "'");
 
 			sExpectedOldThemeRoot = sExpectedNewThemeRoot;
 			sExpectedNewThemeRoot = "sap/themeroot/for/libs";
-			Theming.setThemeRoot("sap_test_theme_4", "sap/themeroot/for/libs", ["sap_test_lib1", "sap_test_lib2"], true);
-			return fnAssert("sap_test_theme_4", [{
+			Theming.setThemeRoot("my_private_theme", "sap/themeroot/for/libs", ["sap_test_lib1", "sap_test_lib2"], true);
+			return fnAssert("my_private_theme", [{
 				themeRoots: {
 					"old": {
 						"": sExpectedOldThemeRoot
@@ -221,27 +247,39 @@ sap.ui.define([
 	});
 
 	QUnit.test("setThemeRoot - Initial 'string' value must be overridable by API", function(assert) {
-		var sThemeName = "sap_initialThemeRoot";
+		var sThemeName = "theme_with_initial_themeRoot";
 		var sInitialThemeRoot = "/somewhere/outside";
 
 		assert.strictEqual(Theming.getThemeRoot(sThemeName), sInitialThemeRoot, "ThemeRoot for '" + sThemeName + "' should return the expected themeRoot '" + sInitialThemeRoot + "'");
 
 		// Regression test: must not fail when initial theme-root is given only as a string, e.g.
 		//                  themeRoots: {
-		//                      "sap_initialThemeRoot": "/somewhere/outside"
+		//                      "theme_with_initial_themeRoot": "/somewhere/outside"
 		//                  }
 		Theming.setThemeRoot(sThemeName, "https://back/inside");
 	});
 
-	QUnit.test("isApplied", function(assert) {
-		assert.ok(Theming.isApplied(), "Theming should be applied.");
+	QUnit.test("isApplied", async function(assert) {
+		function isApplied() {
+			var bApplied = false;
+			function fnCheckApplied() {
+				bApplied = true;
+			}
+			// if theme is applied fnCheckApplied is called sync
+			Theming.attachApplied(fnCheckApplied);
+			Theming.detachApplied(fnCheckApplied);
+			return bApplied;
+		}
 
-		Theming.setTheme("sap_test_theme_5");
-		assert.strictEqual(Theming.isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
+		assert.ok(isApplied(), "Theming should be applied.");
 
-		return themeApplied().then(function() {
-			assert.ok(Theming.isApplied(), "Theming should be applied.");
-		});
+		// check if isApplied flag is reset after setting a new theme
+		Theming.setTheme("my_test_theme_for_applied");
+		assert.strictEqual(isApplied(), bThemeManagerNotActive, "'true' if ThemeManager is active; else 'false'");
+
+		await themeApplied();
+
+		assert.ok(isApplied(), "Theming should be applied.");
 	});
 
 });

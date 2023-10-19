@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -17,6 +18,7 @@ sap.ui.define([
 	merge,
 	Log,
 	JsControlTreeModifier,
+	Lib,
 	ElementUtil,
 	OverlayRegistry,
 	DelegateMediatorAPI,
@@ -33,7 +35,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.94
-	 * @experimental Since 1.94. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ActionExtractor = {};
 
@@ -41,7 +42,7 @@ sap.ui.define([
 		var aLoadLibraryPromises = [];
 		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
 		aRequiredLibraries.forEach(function(sLibrary) {
-			var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
+			var oLoadLibraryPromise = Lib.load({name: sLibrary})
 			.then(function() {
 				return Promise.resolve(sLibrary);
 			})
@@ -248,9 +249,7 @@ sap.ui.define([
 							} else {
 								bRevealEnabled = true;
 							}
-							if (!mRevealAction.getAggregationName) {
-								mRevealAction.getAggregationName = defaultGetAggregationName;
-							}
+							mRevealAction.getAggregationName ||= defaultGetAggregationName;
 
 							// Check if the invisible element can be moved to the target aggregation
 							if (bRevealEnabled && (sSourceAggregation !== sTargetAggregation)) {
@@ -327,7 +326,7 @@ sap.ui.define([
 		]).then(function(aAllActions) {
 			// join and condense all action data
 			var mAllActions = merge(aAllActions[0], aAllActions[1]);
-			oSourceElementOverlay._mAddActions = oSourceElementOverlay._mAddActions || {asSibling: {}, asChild: {}};
+			oSourceElementOverlay._mAddActions ||= {asSibling: {}, asChild: {}};
 			oSourceElementOverlay._mAddActions[sSiblingOrChild] = mAllActions;
 			return mAllActions;
 		});
@@ -427,9 +426,7 @@ sap.ui.define([
 					.then(function(mAction) {
 						if (mAction) {
 							mAction.addPropertyActionData.relevantContainer = mParents.relevantContainer;
-							if (!oReturn[mAction.aggregationName]) {
-								oReturn[mAction.aggregationName] = {};
-							}
+							oReturn[mAction.aggregationName] ||= {};
 							oReturn[mAction.aggregationName].addViaDelegate = mAction.addPropertyActionData;
 						}
 						return oReturn;

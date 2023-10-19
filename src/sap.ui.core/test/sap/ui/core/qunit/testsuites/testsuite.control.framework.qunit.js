@@ -30,10 +30,6 @@ sap.ui.define(function() {
 			"util/BusyIndicator": {
 				title: "sap.ui.core.BusyIndicator"
 			},
-			"util/BusyIndicatorNoCore": {
-				title: "sap.ui.core.BusyIndicator (no core)",
-				bootCore: false
-			},
 			"util/BusyIndicatorRTL": {
 				title: "sap.ui.core.BusyIndicator (RTL)",
 				ui5: {

@@ -3,7 +3,7 @@
  */
 
 // Provides enumeration sap.ui.mdc.enums.ValueHelpSelectionType
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 
@@ -16,7 +16,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ValueHelpSelectionType
 	 */
-	var ValueHelpSelectionType = {
+	const ValueHelpSelectionType = {
 		/**
 		 * The given conditions are set and replace the existing ones.
 		 * @private
@@ -38,6 +38,8 @@ sap.ui.define(function() {
 		 */
 		Remove: "Remove"
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.ValueHelpSelectionType", ValueHelpSelectionType);
 
 	return ValueHelpSelectionType;
 

@@ -216,13 +216,16 @@ sap.ui.define([
 				oldElement.destroy();
 			} else {
 				var sMsg = "adding element with duplicate id '" + sId + "'";
-				// duplicate ID detected => fail or at least log a warning
-				if (Configuration.getNoDuplicateIds()) {
-					Log.error(sMsg);
-					throw new Error("Error: " + sMsg);
-				} else {
+				/**
+				 * duplicate ID detected => fail or at least log a warning
+				 * @deprecated As of Version 1.120.
+				 */
+				if (!Configuration.getNoDuplicateIds()) {
 					Log.warning(sMsg);
+					return;
 				}
+				Log.error(sMsg);
+				throw new Error("Error: " + sMsg);
 			}
 		}
 	});
@@ -1070,11 +1073,11 @@ sap.ui.define([
 	Element.prototype._refreshTooltipBaseDelegate = function (oTooltip) {
 		var oOldTooltip = this.getTooltip();
 		// if the old tooltip was a Tooltip object, remove it as a delegate
-		if (BaseObject.isA(oOldTooltip, "sap.ui.core.TooltipBase")) {
+		if (BaseObject.isObjectA(oOldTooltip, "sap.ui.core.TooltipBase")) {
 			this.removeDelegate(oOldTooltip);
 		}
 		// if the new tooltip is a Tooltip object, add it as a delegate
-		if (BaseObject.isA(oTooltip, "sap.ui.core.TooltipBase")) {
+		if (BaseObject.isObjectA(oTooltip, "sap.ui.core.TooltipBase")) {
 			oTooltip._currentControl = this;
 			this.addDelegate(oTooltip);
 		}
@@ -1459,6 +1462,13 @@ sap.ui.define([
 	 * @private
 	 */
 	Element._CustomData = CustomData;
+
+	/**
+	 * Define CustomData class as the default for the built-in "customData" aggregation.
+	 * We need to do this here via the aggregation itself, since the CustomData class is
+	 * an Element subclass and thus cannot be directly referenced in Element's metadata definition.
+	 */
+	Element.getMetadata().getAggregation("customData").defaultClass = CustomData;
 
 	/*
 	 * Alternative implementation of <code>Element#data</code> which is applied after an element has been
@@ -1858,7 +1868,7 @@ sap.ui.define([
 	 *  UI5 Element by traversing up the DOM tree
 	 * @param {boolean} [bIncludeRelated=false] Whether the <code>data-sap-ui-related</code> attribute is also accepted
 	 *  as a selector for a UI5 Element, in addition to <code>data-sap-ui</code>
-	 * @returns {sap.ui.core.Element} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
+	 * @returns {sap.ui.core.Element|undefined} The UI5 Element that wraps the given DOM element. <code>undefined</code> is
 	 *  returned when no UI5 Element can be found.
 	 * @public
 	 * @since 1.106
@@ -1900,7 +1910,43 @@ sap.ui.define([
 			sId = sId || oDomRef.getAttribute("id");
 		}
 
-		return Element.registry.get(sId);
+		return Element.getElementById(sId);
+	};
+
+	/**
+	 * Returns the registered element with the given ID, if any.
+	 *
+	 * The ID must be the globally unique ID of an element, the same as returned by <code>oElement.getId()</code>.
+	 *
+	 * When the element has been created from a declarative source (e.g. XMLView), that source might have used
+	 * a shorter, non-unique local ID. A search for such a local ID cannot be executed with this method.
+	 * It can only be executed on the corresponding scope (e.g. on an XMLView instance), by using the
+	 * {@link sap.ui.core.mvc.View#byId View#byId} method of that scope.
+	 *
+	 * @param {sap.ui.core.ID|null|undefined} sId ID of the element to search for
+	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
+	 * @public
+	 * @function
+	 * @since 1.119
+	 */
+	Element.getElementById = Element.registry.get;
+
+	/**
+	 * Returns the element currently in focus.
+	 *
+	 * @returns {sap.ui.core.Element|undefined} The currently focused element
+	 * @public
+	 * @since 1.119
+	 */
+	Element.getActiveElement = () => {
+		try {
+			var $Act = jQuery(document.activeElement);
+			if ($Act.is(":focus")) {
+				return Element.closestTo($Act[0]);
+			}
+		} catch (err) {
+			//escape eslint check for empty block
+		}
 	};
 
 	/**
@@ -1946,7 +1992,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.ID} id ID of the element to retrieve
 	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
-	 * @name sap.ui.core.Element.registry.get
+	 * @name sap.ui.core.Element.getElementById
 	 * @function
 	 * @public
 	 */

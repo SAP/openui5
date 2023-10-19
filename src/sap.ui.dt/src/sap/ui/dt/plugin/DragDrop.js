@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/ui/core/Element",
 	"sap/ui/dt/Plugin",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/OverlayUtil",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/Device"
 ], function(
 	BaseObject,
+	Element,
 	Plugin,
 	DOMUtil,
 	OverlayUtil,
@@ -40,7 +42,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.DragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DragDrop = Plugin.extend("sap.ui.dt.plugin.DragDrop", /** @lends sap.ui.dt.plugin.DragDrop.prototype */ {
 		metadata: {
@@ -57,7 +58,7 @@ sap.ui.define([
 	var bPreventScrollOnTouch = false;
 
 	// previous target overlay drag enter was called for
-	var oPreviosTargetOverlayForTouch;
+	var oPreviousTargetOverlayForTouch;
 
 	/*
 	 * @private
@@ -71,8 +72,8 @@ sap.ui.define([
 	/*
 	 * @private
 	 */
-	DragDrop.prototype.init = function() {
-		Plugin.prototype.init.apply(this, arguments);
+	DragDrop.prototype.init = function(...aArgs) {
+		Plugin.prototype.init.apply(this, aArgs);
 
 		// We want to prevent the page from scrolling before getting to its children (=> useCapture "true")
 		document.addEventListener("touchmove", this._preventScrollOnTouch, true);
@@ -85,8 +86,8 @@ sap.ui.define([
 	/*
 	 * @private
 	 */
-	DragDrop.prototype.exit = function() {
-		Plugin.prototype.exit.apply(this, arguments);
+	DragDrop.prototype.exit = function(...aArgs) {
+		Plugin.prototype.exit.apply(this, aArgs);
 
 		document.removeEventListener("touchmove", this._preventScrollOnTouch);
 
@@ -326,13 +327,13 @@ sap.ui.define([
 	};
 
 	DragDrop.prototype._getTargetOverlay = function(oElement) {
-		if (BaseObject.isA(oElement, "sap.ui.dt.Overlay")) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.dt.Overlay")) {
 			// target overlay is the overlay that we could drop on and therefore have to fire events for
 			var oTargetOverlay;
 			// is overlay a targetZone AggregationOverlay
-			if (BaseObject.isA(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
+			if (BaseObject.isObjectA(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
 				oTargetOverlay = oElement;
-			} else if (BaseObject.isA(oElement, "sap.ui.dt.ElementOverlay") && OverlayUtil.isInTargetZoneAggregation(oElement)) {
+			} else if (BaseObject.isObjectA(oElement, "sap.ui.dt.ElementOverlay") && OverlayUtil.isInTargetZoneAggregation(oElement)) {
 				oTargetOverlay = oElement;
 			}
 
@@ -343,7 +344,7 @@ sap.ui.define([
 	DragDrop.prototype._findTargetOverlayFromCoordinates = function(pageX, pageY) {
 		var oDomNode = document.elementFromPoint(pageX, pageY);
 
-		var oElement = oDomNode ? sap.ui.getCore().byId(oDomNode.id) : undefined;
+		var oElement = oDomNode ? Element.getElementById(oDomNode.id) : undefined;
 
 		return this._getTargetOverlay(oElement);
 	};
@@ -356,8 +357,8 @@ sap.ui.define([
 		// changedTouches will have the information related to the moved finger, because it’s what caused the event "touchmove"
 		var aTouches = oEvent.touches || oEvent.changedTouches;
 
-		var pageX = aTouches[0].pageX;
-		var pageY = aTouches[0].pageY;
+		var {pageX} = aTouches[0];
+		var {pageY} = aTouches[0];
 
 		var oTargetOverlay = this._findTargetOverlayFromCoordinates(pageX, pageY);
 
@@ -365,24 +366,24 @@ sap.ui.define([
 			return;
 		}
 
-		if (oTargetOverlay !== oPreviosTargetOverlayForTouch) {
-			if (oPreviosTargetOverlayForTouch) {
-				if (BaseObject.isA(oPreviosTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
-					this.onAggregationDragLeave(oPreviosTargetOverlayForTouch);
+		if (oTargetOverlay !== oPreviousTargetOverlayForTouch) {
+			if (oPreviousTargetOverlayForTouch) {
+				if (BaseObject.isObjectA(oPreviousTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
+					this.onAggregationDragLeave(oPreviousTargetOverlayForTouch);
 				} else {
-					this.onDragLeave(oPreviosTargetOverlayForTouch);
+					this.onDragLeave(oPreviousTargetOverlayForTouch);
 				}
 			}
-			oPreviosTargetOverlayForTouch = oTargetOverlay;
+			oPreviousTargetOverlayForTouch = oTargetOverlay;
 
-			if (BaseObject.isA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+			if (BaseObject.isObjectA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 				this.onAggregationDragEnter(oTargetOverlay);
 			} else {
 				this.onDragEnter(oTargetOverlay);
 			}
 		}
 
-		if (BaseObject.isA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isObjectA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 			this.onAggregationDragOver(oTargetOverlay);
 		} else {
 			this.onDragOver(oTargetOverlay);
@@ -392,7 +393,7 @@ sap.ui.define([
 	};
 
 	DragDrop.prototype._getValidTargetZoneAggregationOverlay = function(oOverlay) {
-		if (BaseObject.isA(oOverlay, "sap.ui.dt.AggregationOverlay") && oOverlay.getTargetZone()) {
+		if (BaseObject.isObjectA(oOverlay, "sap.ui.dt.AggregationOverlay") && oOverlay.getTargetZone()) {
 			return oOverlay;
 		}
 		return this._getValidTargetZoneAggregationOverlay(oOverlay.getParent());
@@ -410,7 +411,7 @@ sap.ui.define([
 		this.onDragEnd(oOverlay);
 		this._detachTouchDragEvents(oOverlay);
 
-		oPreviosTargetOverlayForTouch = undefined;
+		oPreviousTargetOverlayForTouch = undefined;
 
 		bPreventScrollOnTouch = false;
 	};
@@ -559,6 +560,8 @@ sap.ui.define([
 			if (!this.onDragLeave(oOverlay)) {
 				oEvent.stopPropagation();
 			}
+		} else {
+			oEvent.stopPropagation();
 		}
 
 		oEvent.preventDefault();
@@ -574,6 +577,8 @@ sap.ui.define([
 			if (!this.onDragOver(oOverlay)) {
 				oEvent.stopPropagation();
 			}
+		} else {
+			oEvent.stopPropagation();
 		}
 
 		oEvent.preventDefault();
@@ -771,7 +776,7 @@ sap.ui.define([
 	 */
 	DragDrop.prototype._attachDragScrollHandler = function(oEventOrAggregationOverlay) {
 		var oAggregationOverlay;
-		if (BaseObject.isA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isObjectA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
 			oAggregationOverlay = oEventOrAggregationOverlay;
 		} else {
 			oAggregationOverlay = oEventOrAggregationOverlay.srcControl;
@@ -789,7 +794,7 @@ sap.ui.define([
 	 */
 	DragDrop.prototype._removeDragScrollHandler = function(oEventOrAggregationOverlay) {
 		var oAggregationOverlay;
-		if (BaseObject.isA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isObjectA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
 			oAggregationOverlay = oEventOrAggregationOverlay;
 		} else {
 			oAggregationOverlay = oEventOrAggregationOverlay.srcControl;

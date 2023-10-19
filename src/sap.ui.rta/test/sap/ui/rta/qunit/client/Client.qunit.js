@@ -39,13 +39,13 @@ function(
 	}
 
 	QUnit.module("Initialisation", {
-		beforeEach: function() {
+		beforeEach() {
 			return getPostMessageBus(window)
 			.then(function(oPostMessageBus) {
 				this.oPostMessageBus = oPostMessageBus;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPostMessageBus.destroy();
 		}
 	}, function() {
@@ -61,7 +61,7 @@ function(
 			assert.throws(function() {
 				// eslint-disable-next-line no-new
 				new RTAClient({
-					window: window,
+					window,
 					origin: "http://example.com"
 				});
 			});
@@ -170,13 +170,13 @@ function(
 	});
 
 	QUnit.module("Handshake", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return createIframe("test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework").then(function(oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
@@ -184,16 +184,15 @@ function(
 
 			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
 			.then(function(aPostMessageBus) {
-				this.oPostMessageBus = aPostMessageBus[0];
-				this.oPostMessageBusInIframe = aPostMessageBus[1];
+				[this.oPostMessageBus, this.oPostMessageBusInIframe] = aPostMessageBus;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPostMessageBus.destroy();
 			this.oPostMessageBusInIframe.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		}
 	}, function() {
@@ -312,7 +311,7 @@ function(
 	});
 
 	QUnit.module("Ignore irrelevant events", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return Promise.all([
 				createIframe("test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework").then(function(oIframe) {
@@ -323,7 +322,7 @@ function(
 				}.bind(this))
 			]);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow1,
 				origin: this.oIframeWindow1.location.origin
@@ -331,18 +330,16 @@ function(
 
 			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow1), getPostMessageBus(this.oIframeWindow2)])
 			.then(function(aPostMessageBus) {
-				this.oPostMessageBus = aPostMessageBus[0];
-				this.oPostMessageBusInIframe1 = aPostMessageBus[1];
-				this.oPostMessageBusInIframe2 = aPostMessageBus[2];
+				[this.oPostMessageBus, this.oPostMessageBusInIframe1, this.oPostMessageBusInIframe2] = aPostMessageBus;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPostMessageBus.destroy();
 			this.oPostMessageBusInIframe1.destroy();
 			this.oPostMessageBusInIframe2.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		}
 	}, function() {
@@ -619,13 +616,13 @@ function(
 	});
 
 	QUnit.module("API - getService()", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return createIframe("test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework").then(function(oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
@@ -633,16 +630,15 @@ function(
 
 			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
 			.then(function(aPostMessageBus) {
-				this.oPostMessageBus = aPostMessageBus[0];
-				this.oPostMessageBusInIframe = aPostMessageBus[1];
+				[this.oPostMessageBus, this.oPostMessageBusInIframe] = aPostMessageBus;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPostMessageBus.destroy();
 			this.oPostMessageBusInIframe.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		}
 	}, function() {
@@ -1049,13 +1045,13 @@ function(
 	});
 
 	QUnit.module("API - Events", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return createIframe("test-resources/sap/ui/rta/qunit/client/iframe.html?loadframework").then(function(oIframe) {
 				this.oIframeWindow = oIframe.contentWindow;
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRTAClient = new RTAClient({
 				window: this.oIframeWindow,
 				origin: this.oIframeWindow.location.origin
@@ -1063,8 +1059,7 @@ function(
 
 			return Promise.all([getPostMessageBus(window), getPostMessageBus(this.oIframeWindow)])
 			.then(function(aPostMessageBus) {
-				this.oPostMessageBus = aPostMessageBus[0];
-				this.oPostMessageBusInIframe = aPostMessageBus[1];
+				[this.oPostMessageBus, this.oPostMessageBusInIframe] = aPostMessageBus;
 				this.oPublishStub = sandbox.stub(this.oPostMessageBus, "publish")
 				.callThrough()
 				// getService events
@@ -1104,12 +1099,12 @@ function(
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPostMessageBus.destroy();
 			this.oPostMessageBusInIframe.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 		}
 	}, function() {

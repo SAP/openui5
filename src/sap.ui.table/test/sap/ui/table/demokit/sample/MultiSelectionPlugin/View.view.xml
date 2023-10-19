@@ -14,7 +14,6 @@
 		<m:content>
 			<Table
 				id="table"
-				visibleRowCount="7"
 				rows="{
                     path: '/ProductSet',
                     parameters: {operationMode: 'Server'}
@@ -22,13 +21,14 @@
 				threshold="15"
 				enableBusyIndicator="true"
 				ariaLabelledBy="title">
-				<plugins>
+				<dependents>
 					<plugins:MultiSelectionPlugin
 						limit="{path: 'config>/limit', type: 'sap.ui.model.type.Integer'}"
 						enableNotification="true"
 						showHeaderSelector="{config>/showHeaderSelector}"
+						selectionMode="{config>/selectionMode}"
 						selectionChange="onSelectionChange"/>
-				</plugins>
+				</dependents>
 				<extension>
 					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
@@ -38,8 +38,7 @@
 							id="select1"
 							width="20%"
 							items="{config>/selectionModes}"
-							selectedKey="MultiToggle"
-							change="onSelectionModeChange">
+							selectedKey="{config>/selectionMode}">
 							<c:Item key="{config>key}" text="{config>text}"/>
 						</m:Select>
 						<m:Label text="Limit" labelFor="input1"/>

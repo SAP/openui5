@@ -226,6 +226,7 @@ function(
 				 * If set to true, direct text input is disabled and the control will trigger the event "valueHelpRequest" for all user interactions. The properties "showValueHelp", "editable", and "enabled" must be set to true, otherwise the property will have no effect.
 				 * In this scenario, the <code>showItems</code> API will not work.
 				 * @since 1.21.0
+				 * @deprecated As of version 1.119 The property valueHelpOnly should not be used anymore
 				 */
 				valueHelpOnly : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -399,7 +400,7 @@ function(
 				 * <b>Note:</b> If <code>suggestionItems</code> & <code>suggestionRows</code> are set in parallel, the last aggeragtion to come would overwrite the previous ones.
 				 * @since 1.21.1
 				 */
-				suggestionRows : {type : "sap.m.ColumnListItem", altTypes: ["sap.m.GroupHeaderListItem"], multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
+				suggestionRows : {type : "sap.m.ITableItem", multiple : true, singularName : "suggestionRow", bindable : "bindable", forwarding: {getter: "_getSuggestionsTable", aggregation: "items"}},
 
 				/**
 				 * The suggestion popup (can be a Dialog or Popover); aggregation needed to also propagate the model and bindings to the content of the popover
@@ -614,7 +615,7 @@ function(
 		// phase of the life cycle. Without this line, initially the condition fails and fires liveChange event
 		// even though there is no user input (check Input.prototype.onsapright).
 		this._setTypedInValue("");
-
+		this._bDoTypeAhead = false;
 
 		// indicates whether input is clicked (on mobile) or the clear button
 		// used for identifying whether dialog should be open.
@@ -678,10 +679,8 @@ function(
 		this.$().off("click");
 	};
 
-	/**
+	/*
 	 * Overwrites the onBeforeRendering.
-	 *
-	 * @public
 	 */
 	Input.prototype.onBeforeRendering = function() {
 		var sSelectedKey = this.getSelectedKey(),
@@ -1133,25 +1132,29 @@ function(
 				decorative: false,
 				noTabStop: true,
 				press: function (oEvent) {
-					// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
-					if (!that.getValueHelpOnly()) {
-						var oParent = this.getParent(),
-							$input;
+					/**
+					 * @deprecated As of version 1.119
+					 */
+					 if (that.getValueHelpOnly()) {
+						// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
+						return;
+					 }
+					var oParent = this.getParent(),
+						$input;
 
-						if (Device.support.touch) {
-							// prevent opening the soft keyboard
-							$input = oParent.$('inner');
-							$input.attr('readonly', 'readonly');
-							oParent.focus();
-							$input.removeAttr('readonly');
-						} else {
-							oParent.focus();
-						}
-
-						that.bValueHelpRequested = true;
-
-						that._fireValueHelpRequest(false);
+					if (Device.support.touch) {
+						// prevent opening the soft keyboard
+						$input = oParent.$('inner');
+						$input.attr('readonly', 'readonly');
+						oParent.focus();
+						$input.removeAttr('readonly');
+					} else {
+						oParent.focus();
 					}
+
+					that.bValueHelpRequested = true;
+
+					that._fireValueHelpRequest(false);
 				}
 			});
 		} else if (this._oValueHelpIcon.getSrc() !== sIconSrc) {
@@ -1225,7 +1228,7 @@ function(
 
 	/**
 	 * Fire valueHelpRequest event if conditions for ValueHelpOnly property are met.
-	 *
+	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
 	 * @private
 	 */
 	Input.prototype._fireValueHelpRequestForValueHelpOnly = function() {
@@ -1247,6 +1250,9 @@ function(
 	Input.prototype.ontap = function(oEvent) {
 		InputBase.prototype.ontap.call(this, oEvent);
 
+		/**
+		* @deprecated As of version 1.119
+		*/
 		if (this.isValueHelpOnlyOpener(oEvent.target)) {
 			this._fireValueHelpRequestForValueHelpOnly();
 		}
@@ -1442,6 +1448,7 @@ function(
 		var bPopupOpened = this._isSuggestionsPopoverOpen(),
 			bFocusInPopup = !this.hasStyleClass("sapMFocus") && bPopupOpened,
 			aItems = this._hasTabularSuggestions() ? this.getSuggestionRows() : this.getSuggestionItems(),
+			bFireSubmit = this.getEnabled() && this.getEditable(),
 			iValueLength, oSelectedItem;
 
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
@@ -1466,7 +1473,12 @@ function(
 
 		!bFocusInPopup && InputBase.prototype.onsapenter.apply(this, arguments);
 
-		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bFireSubmit = bFireSubmit && !(this.getShowValueHelp() && this.getValueHelpOnly());
+
+		if (bFireSubmit) {
 			this.fireSubmit({value: this.getValue()});
 		}
 
@@ -1984,7 +1996,14 @@ function(
 		oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
 		iSuggestionsLength = oFilterResults.items.length;
 
-		if (iSuggestionsLength > 0 && !this.getValueHelpOnly()) {
+		var bOpenSuggestionsPopup = iSuggestionsLength > 0;
+
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bOpenSuggestionsPopup = bOpenSuggestionsPopup && !this.getValueHelpOnly();
+
+		if (bOpenSuggestionsPopup) {
 			this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
 		} else {
 			this._hideSuggestionPopup();
@@ -2005,6 +2024,13 @@ function(
 
 		this._synchronizeSuggestions();
 		this._createSuggestionPopupContent();
+
+		return this;
+	};
+
+	Input.prototype.updateSuggestionRows = function () {
+		this.updateAggregation("suggestionRows");
+		this._refreshItemsDelayed();
 
 		return this;
 	};
@@ -2173,6 +2199,29 @@ function(
 	};
 
 	/**
+	 * We check both the main and the inner (mobile) input for stored typeahead information
+	 * as the _handleTypeAhead could be called in both contexts depending on the different cases.
+	 *
+	 * For example when we have delayed (dynamically) loaded items on mobile devices the typeahead
+	 * information is stored on the inner dialog's input on user interaction, but when the items
+	 * are updated it is async and the typeahead is handled by the main sap.m.Input instance
+	 *
+	 * @param {sap.m.Input} oInput Input's instance to which the type ahead would be applied. For example: this OR Dialog's Input instance.
+	 * @returns {null|boolean} Should type-ahead be performed or null if no type-ahead info is available.
+	 * @private
+	 */
+	Input.prototype._getEffectiveTypeAhead = function () {
+		var oSuggestionsPopover = this._getSuggestionsPopover();
+		var oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput();
+
+		if (!this.isMobileDevice() || this._bDoTypeAhead !== null) {
+			return this._bDoTypeAhead && document.activeElement === this.getFocusDomRef();
+		}
+
+		return oPopupInput._bDoTypeAhead && (!!oPopupInput && document.activeElement === oPopupInput.getFocusDomRef());
+	};
+
+	/**
 	 * Handles Input's specific type ahead logic.
 	 *
 	 * @param {sap.m.Input} oInput Input's instance to which the type ahead would be applied. For example: this OR Dialog's Input instance.
@@ -2188,7 +2237,13 @@ function(
 		};
 		var oListDelegate;
 		var oList = oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getItemsContainer();
-		this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
+		var bDoTypeAhead = this._getEffectiveTypeAhead();
+
+		if (oDomRef.selectionStart !== oDomRef.selectionEnd) {
+			this._setTypedInValue(oDomRef.value.substring(0, oDomRef.selectionStart));
+		} else {
+			this._setTypedInValue(oDomRef.value);
+		}
 
 		// check if typeahead is already performed
 		if ((oInput && oInput.getValue().toLowerCase()) === (this._getProposedItemText() && this._getProposedItemText().toLowerCase())) {
@@ -2197,9 +2252,7 @@ function(
 
 		oInput._setProposedItemText(null);
 
-		if (!this._bDoTypeAhead || sValue === "" ||
-			sValue.length < this.getStartSuggestion() || document.activeElement !== this.getFocusDomRef()) {
-
+		if (!bDoTypeAhead) {
 			return;
 		}
 
@@ -2240,6 +2293,10 @@ function(
 		mTypeAheadInfo.selectedItem = aItemsToSelect[0];
 
 		oInput._setProposedItemText(mTypeAheadInfo.value);
+
+		// This method could be called multiple times in cases when the items are loaded with delay (dynamically)
+		// and also in the context of the dialog's inner input when on mobile so we have to keep the typeahead info
+		this._mTypeAheadInfo = mTypeAheadInfo;
 
 		return mTypeAheadInfo;
 	};
@@ -2322,7 +2379,7 @@ function(
 
 	/**
 	 * Event handler for input select.
-	 *
+	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
 	 * @private
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
@@ -3078,9 +3135,11 @@ function(
 					}
 
 					if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
-						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", "40rem");
+						oSuggPopover.getPopover().addStyleClass("sapMSuggestionPopoverDefaultWidth");
 					} else {
 						oSuggPopover.getPopover().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+						oSuggPopover.getPopover().addStyleClass("sapMSuggestionPopoverInputWidth");
+
 					}
 
 					oSuggPopover.getPopover().getDomRef().style.setProperty("min-width", iInputWidth + "px");
@@ -3128,10 +3187,16 @@ function(
 	 */
 	Input.prototype.showItems = function (fnFilter) {
 		var oFilterResults, iSuggestionsLength,
-			fnFilterStore = this._getFilterFunction();
+			fnFilterStore = this._getFilterFunction(),
+			bShowItems = !this.getEnabled() || !this.getEditable();
+
+		/**
+		 * @deprecated As of version 1.119
+		 */
+		bShowItems = bShowItems || this.getValueHelpOnly();
 
 		// in case of a non-editable or disabled, the popup cannot be opened
-		if (!this.getEnabled() || !this.getEditable() || this.getValueHelpOnly()) {
+		if (bShowItems) {
 			return;
 		}
 
@@ -3245,6 +3310,7 @@ function(
 	 * In the context of the Input, all targets are valid.
 	 *
 	 * @protected
+	 * @deprecated As of version 1.119 the property valueHelpOnly should not be used anymore
 	 * @param {HTMLElement|undefined} oTarget The target of the event.
 	 * @returns {boolean} Boolean indicating if the target is a valid opener.
 	 */
@@ -3266,7 +3332,24 @@ function(
 	 */
 	Input.prototype._getFilteredSuggestionItems = function (sValue) {
 		var oFilterResults,
-			oList = this._getSuggestionsPopover().getItemsContainer();
+			oSuggestionsPopover = this._getSuggestionsPopover(),
+			oList = oSuggestionsPopover.getItemsContainer(),
+			oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput(),
+			bDoTypeAhead = false;
+
+		// Check if the typeahead should be performed in case of newly fetched items
+		// We check both the main input and the input of the inner dialog when on mobile devices
+		// because type ahead handling is being called in both context depending on whether it
+		// is called after input event or newly loaded items
+		if (this.isMobileDevice()) {
+			bDoTypeAhead = (!oPopupInput._getProposedItemText() && !oPopupInput._mTypeAheadInfo) || (oPopupInput._mTypeAheadInfo && !oPopupInput._mTypeAheadInfo.value);
+		} else {
+			bDoTypeAhead = (this._getProposedItemText() && !this._mTypeAheadInfo) || (this._mTypeAheadInfo && !this._mTypeAheadInfo.value);
+		}
+
+		if (bDoTypeAhead) {
+			this._handleTypeAhead(this);
+		}
 
 		if (this._hasTabularSuggestions()) {
 			// show list on phone (is hidden when search string is empty)

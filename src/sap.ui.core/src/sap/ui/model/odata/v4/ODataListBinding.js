@@ -143,7 +143,7 @@ sap.ui.define([
 		// #destroyPreviousContexts after the next call to #createContexts.
 		// A kept-alive context may be parked here for a longer time, with undefined index.
 		this.mPreviousContextsByPath = {};
-		this.aPreviousData = [];
+		this.aPreviousData = null; // no previous data for E.C.D. known yet
 		this.bRefreshKeptElements = false; // refresh kept elements when resuming?
 		this.sResumeAction = undefined; // a special resume action for $$sharedRequest
 		this.bSharedRequest = "$$sharedRequest" in mParameters
@@ -279,7 +279,7 @@ sap.ui.define([
 		 * @param {string} sNewPath - The path with the transient predicate replaced
 		 */
 		function adjustPreviousData(sOldPath, sNewPath) {
-			var iIndex = that.aPreviousData.indexOf(sOldPath);
+			var iIndex = that.aPreviousData?.indexOf(sOldPath);
 
 			if (iIndex >= 0) {
 				that.aPreviousData[iIndex] = sNewPath;
@@ -374,7 +374,9 @@ sap.ui.define([
 	 * detailed reason as parameters.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *    The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'change' event is
 	 *   <ul>
@@ -406,6 +408,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context The affected context
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createActivate
@@ -421,7 +425,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context
 	 *   The context for the created entity
 	 * @param {boolean} oEvent.getParameters.success
@@ -440,7 +445,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters.context
 	 *   The context for the created entity
 	 *
@@ -470,9 +476,11 @@ sap.ui.define([
 	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 *    The event object
 	 * @param {function} oEvent.cancelBubble
 	 *   A callback function to prevent that the event is bubbled up to the model
-	 * @param {object} oEvent.getParameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
@@ -511,7 +519,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether all PATCHes are successfully processed
 	 *
@@ -542,7 +551,9 @@ sap.ui.define([
 	 * binding. Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *    The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'refresh' event could be
 	 *   <ul>
@@ -652,13 +663,15 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended
 	 *
 	 * @private
 	 * @see #expand
 	 */
-	ODataListBinding.prototype.collapse = function (oContext) {
+	ODataListBinding.prototype.collapse = function (oContext, bSilent) {
 		var aContexts = this.aContexts,
 			iCount = this.oCache.collapse(
 				_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())),
@@ -668,7 +681,9 @@ sap.ui.define([
 
 		if (iCount > 0) {
 			aContexts.splice(iModelIndex + 1, iCount).forEach(function (oContext) {
-				that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				if (!oContext.created()) {
+					that.mPreviousContextsByPath[oContext.getPath()] = oContext;
+				} // else: created (even persisted) is kept inside "context" annotation
 			});
 			for (i = iModelIndex + 1; i < aContexts.length; i += 1) {
 				if (aContexts[i]) {
@@ -676,7 +691,9 @@ sap.ui.define([
 				}
 			}
 			this.iMaxLength -= iCount;
-			this._fireChange({reason : ChangeReason.Change});
+			if (!bSilent) {
+				this._fireChange({reason : ChangeReason.Change});
+			}
 		} // else: collapse before expand has finished
 	};
 
@@ -738,12 +755,10 @@ sap.ui.define([
 	 * of <code>Error</code>, even if the deep create succeeds. This error always has the property
 	 * <code>canceled</code> with the value <code>true</code>.
 	 *
-	 * Since 1.117.0 deep create also supports single-valued navigation properties; no API call is
+	 * Since 1.118.0 deep create also supports single-valued navigation properties; no API call is
 	 * required in this case. Simply bind properties of the related entity relative to a transient
 	 * context. An update to the property adds it to the POST request of the parent entity, and by
 	 * this the create becomes deep.
-	 *
-	 * <b>Note</b>: Deep create for single-valued navigation properties is <b>experimental</b>.
 	 *
 	 * Deep create requires the <code>autoExpandSelect</code> parameter at the
 	 * {@link sap.ui.model.odata.v4.ODataModel#constructor model}. The refresh after a deep create
@@ -761,11 +776,14 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.Context} instance given as
 	 * <code>oInitialData["@$ui5.node.parent"]</code>. <code>oAggregation.expandTo</code> (see
 	 * {@link #setAggregation}) must be one, <code>bSkipRefresh</code> must be set, but both
-	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation must be
-	 * pending, and no other modification (including collapse of some ancestor node) must happen
-	 * while this creation is pending!
+	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation or
+	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
+	 * (including collapse of some ancestor node) must happen while this creation is pending!
+	 * Creating a new root works the same way with <code>oInitialData["@$ui5.node.parent"]</code>
+	 * being <code>null</code> or absent; <code>oAggregation.expandTo</code> does not matter then
+	 * (@experimental as of version 1.120.0).
 	 *
-	 * @param {object} [oInitialData={}]
+	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
 	 * @param {boolean} [bSkipRefresh]
 	 *   Whether an automatic refresh of the created entity will be skipped.
@@ -825,14 +843,13 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.create = function (oInitialData, bSkipRefresh, bAtEnd, bInactive) {
 		var oAggregation = this.mParameters.$$aggregation,
-			iChildIndex,
+			iChildIndex, // used only in case of recursive hierarchy
 			oContext,
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
 			oEntityData,
 			sGroupId = this.getUpdateGroupId(),
 			oGroupLock,
-			oParentContext,
 			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + _Helper.uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
@@ -878,24 +895,28 @@ sap.ui.define([
 		// remove any property starting with "@$ui5."
 		oEntityData = _Helper.publicClone(oInitialData, true) || {};
 		if (oAggregation) {
-			if (oAggregation.expandTo > 1) {
-				throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-			}
 			if (!bSkipRefresh) {
 				throw new Error("Missing bSkipRefresh");
 			}
 			if (arguments.length > 2) {
 				throw new Error("Only the parameters oInitialData and bSkipRefresh are supported");
 			}
-			oParentContext = oInitialData["@$ui5.node.parent"];
-			iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
-			if (iChildIndex <= 0) {
-				throw new Error("Invalid parent context: " + oParentContext);
+			const oParentContext = oInitialData?.["@$ui5.node.parent"];
+			if (oParentContext) {
+				if (oAggregation.expandTo > 1) {
+					throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+				}
+				iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
+				if (iChildIndex <= 0) {
+					throw new Error("Invalid parent context: " + oParentContext);
+				}
+				if (oParentContext.isExpanded() === false) {
+					throw new Error("Unsupported collapsed parent: " + oParentContext);
+				}
+				oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
+			} else {
+				iChildIndex = 0;
 			}
-			if (oParentContext.isExpanded() === false) {
-				throw new Error("Unsupported collapsed parent: " + oParentContext);
-			}
-			oEntityData["@$ui5.node.parent"] = oParentContext.getCanonicalPath().slice(1);
 		} else {
 			this.iCreatedContexts += 1;
 		}
@@ -955,8 +976,7 @@ sap.ui.define([
 		});
 
 		oContext = Context.create(this.oModel, this, sTransientPath,
-			oParentContext ? iChildIndex : -this.iCreatedContexts,
-			oCreatePromise, bInactive);
+			iChildIndex ?? -this.iCreatedContexts, oCreatePromise, bInactive);
 		if (this.isTransient()) {
 			oContext.created().catch(this.oModel.getReporter());
 		}
@@ -968,7 +988,7 @@ sap.ui.define([
 			} // else: context already destroyed
 		});
 
-		if (oParentContext) {
+		if (iChildIndex !== undefined) {
 			this.aContexts.splice(iChildIndex, 0, oContext);
 			for (i = this.aContexts.length - 1; i > iChildIndex; i -= 1) {
 				if (this.aContexts[i]) {
@@ -1054,6 +1074,10 @@ sap.ui.define([
 					delete this.mPreviousContextsByPath[sContextPath];
 					oContext.iIndex = i$skipIndex;
 					oContext.checkUpdate();
+				} else if (_Helper.hasPrivateAnnotation(aResults[i], "context")) {
+					// created persisted contexts can be restored from their data, for example in
+					// case of Recursive Hierarchy maintenance
+					oContext = _Helper.getPrivateAnnotation(aResults[i], "context");
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
@@ -1094,20 +1118,29 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.delete = function (oGroupLock, sEditUrl, oContext, oETagEntity,
 			bDoNotRequestCount, fnUndelete) {
-		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
-		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
-		// created() promise, because doReplaceWith places a context w/o the promise here.
-		var bCreated = oContext.iIndex < 0,
-			sPath = oContext.iIndex === undefined
-				// context is not in aContexts -> use the predicate
-				? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
-				: String(oContext.iIndex),
-			bReset = false,
+		var bReset = false,
 			that = this;
 
+		if (this.mParameters.$$aggregation && oContext.iIndex === undefined) {
+			throw new Error("Unsupported kept-alive context: " + oContext);
+		}
 		if (oContext.isDeleted()) {
 			return oContext.oDeletePromise; // do not delete twice
 		}
+
+		const bExpanded = oContext.isExpanded();
+		if (bExpanded) {
+			this.collapse(oContext, /*bSilent*/true);
+		}
+
+		// When deleting a context with negative index, iCreatedContexts et al. must be adjusted.
+		// However, when re-inserting, the context has lost its index. Beware: Do NOT use the
+		// created() promise, because doReplaceWith places a context w/o the promise here.
+		const bCreated = oContext.iIndex < 0;
+		const sPath = oContext.iIndex === undefined
+			// context is not in aContexts -> use the predicate
+			? _Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath())
+			: String(oContext.getModelIndex());
 
 		this.iDeletedContexts += 1;
 
@@ -1179,6 +1212,10 @@ sap.ui.define([
 				that.oCache.reset(that.getKeepAlivePredicates());
 				that.reset(ChangeReason.Change);
 			} else {
+				if (bExpanded) {
+					// runs synchronously because it was expanded before
+					that.expand(oContext, /*bSilent*/true).unwrap();
+				}
 				that._fireChange({reason : ChangeReason.Add});
 			}
 			throw oError;
@@ -1442,6 +1479,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context corresponding to the group node
+	 * @param {boolean} [bSilent]
+	 *   Whether no ("change") events should be fired
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that is resolved when the expand is successful and rejected when it fails
 	 * @throws {Error}
@@ -1450,45 +1489,29 @@ sap.ui.define([
 	 * @private
 	 * @see #collapse
 	 */
-	ODataListBinding.prototype.expand = function (oContext) {
-		var bDataRequested = false,
-			that = this;
-
+	ODataListBinding.prototype.expand = function (oContext, bSilent) {
 		this.checkSuspended();
+		let bDataRequested = false;
 
 		return this.oCache.expand(this.lockGroup(),
 			_Helper.getRelativePath(oContext.getPath(), this.oHeaderContext.getPath()),
-			function () {
+			/*fnDataRequested*/ () => {
 				bDataRequested = true;
-				that.fireDataRequested();
+				this.fireDataRequested();
 			}
-		).then(function (iCount) {
-			var aContexts = that.aContexts,
-				iModelIndex,
-				oMovingContext,
-				i;
-
-			if (iCount > 0) {
-				iModelIndex = oContext.getModelIndex(); // already destroyed if !iCount
-				for (i = aContexts.length - 1; i > iModelIndex; i -= 1) {
-					oMovingContext = aContexts[i];
-					if (oMovingContext) {
-						oMovingContext.iIndex += iCount;
-						aContexts[i + iCount] = oMovingContext;
-						delete aContexts[i]; // Note: iCount > 0
-					}
-					// else: nothing to do because !(i in aContexts) and aContexts[i + iCount]
-					// has been deleted before (loop works backwards)
+		).then((iCount) => {
+			if (iCount) {
+				this.insertGap(oContext.getModelIndex(), iCount);
+				if (!bSilent) {
+					this._fireChange({reason : ChangeReason.Change});
 				}
-				that.iMaxLength += iCount;
-				that._fireChange({reason : ChangeReason.Change});
-			} // else: collapse before expand has finished
+			} // else: collapse before expand has finished, oContext already destroyed
 			if (bDataRequested) {
-				that.fireDataReceived({});
+				this.fireDataReceived({});
 			}
-		}, function (oError) {
+		}, (oError) => {
 			if (bDataRequested) {
-				that.fireDataReceived({error : oError});
+				this.fireDataReceived({error : oError});
 			}
 
 			throw oError;
@@ -1591,7 +1614,7 @@ sap.ui.define([
 
 			if (oCache) {
 				if (!oCache.hasSentRequest() && ODataListBinding.isBelowCreated(oContext)) {
-					aElements = oContext.getAndRemoveValue(that.sPath);
+					aElements = oContext.getAndRemoveCollection(that.sPath);
 					if (aElements) { // there is a collection from a finished deep create
 						// copy the created elements into the newly created cache
 						oCache.setPersistedCollection(aElements);
@@ -2033,6 +2056,9 @@ sap.ui.define([
 	 *     <li> "$DistanceFromRootProperty" holds the path to the property which provides the raw
 	 *       value for "@$ui5.node.level" (minus one) and should be used only to interpret the
 	 *       response retrieved via {@link #getDownloadUrl}.
+	 *     <li> "$DrillStateProperty" holds the path to the property which provides the raw value
+	 *       for "@$ui5.node.isExpanded" and should be used only to interpret the response retrieved
+	 *       via {@link #getDownloadUrl}.
 	 *     <li> "$NodeProperty" holds the path to the property which provides the hierarchy node
 	 *       value. That property is always $select'ed automatically and can be accessed as usual.
 	 *   </ul>
@@ -2046,7 +2072,8 @@ sap.ui.define([
 	ODataListBinding.prototype.getAggregation = function (bVerbose) {
 		return _Helper.clone(this.mParameters.$$aggregation, function (sKey, vValue) {
 			return sKey[0] === "$"
-				&& !(bVerbose && ["$DistanceFromRootProperty", "$NodeProperty"].includes(sKey))
+				&& !(bVerbose && ["$DistanceFromRootProperty", "$DrillStateProperty",
+					"$NodeProperty"].includes(sKey))
 				? undefined
 				: vValue;
 		});
@@ -2223,7 +2250,7 @@ sap.ui.define([
 		}
 
 		if (!this.isResolved()) { // unresolved relative binding
-			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
+			this.aPreviousData = null; // compute diff from scratch when binding is resolved again
 			return [];
 		}
 
@@ -2291,7 +2318,7 @@ sap.ui.define([
 					};
 				}
 				if (bFireChange) {
-					if (bChanged || (that.oDiff && that.oDiff.aDiff.length)) {
+					if (bChanged || (that.oDiff && that.oDiff.aDiff?.length)) {
 						that._fireChange({reason : sChangeReason});
 					} else { // we cannot keep a diff if we do not tell the control to fetch it!
 						that.oDiff = undefined;
@@ -2465,7 +2492,7 @@ sap.ui.define([
 	 *   The length of the range requested in getContexts
 	 * @returns {object}
 	 *   The array of differences which is the comparison of current versus previous data as given
-	 *   by {@link #getContextData}.
+	 *   by {@link #getContextData}, or <code>null</code> in case no previous data is known.
 	 *
 	 * @private
 	 */
@@ -2477,7 +2504,7 @@ sap.ui.define([
 			return that.getContextData(oContext);
 		});
 
-		return this.diffData(aPreviousData, this.aPreviousData);
+		return aPreviousData ? this.diffData(aPreviousData, this.aPreviousData) : null;
 	};
 
 	/**
@@ -2799,6 +2826,42 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the parent node of a given child node (in case of a recursive hierarchy, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
+	 * <code>oAggregation.expandTo</code> must be equal to one).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode
+	 *   Some node which could have a parent
+	 * @returns {sap.ui.model.odata.v4.Context|null}
+	 *   The parent node, or <code>null</code> if the given node is a root node and thus has no
+	 *   parent
+	* @throws {Error} If
+	 *   <ul>
+	 *     <li> the given node is not part of a recursive hierarchy,
+	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *    </ul>
+	 *
+	 * @private
+	 * @see #requestParent
+	 */
+	ODataListBinding.prototype.getParent = function (oNode) {
+		const oAggregation = this.mParameters.$$aggregation;
+
+		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (oAggregation.expandTo > 1) {
+			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+		}
+		if (this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+		}
+		const iParentIndex = this.oCache.getParentIndex(oNode.iIndex);
+
+		return iParentIndex < 0 ? null : this.aContexts[iParentIndex];
+	};
+
+	/**
 	 * Returns the query options of the binding.
 	 *
 	 * @param {boolean} [bWithSystemQueryOptions]
@@ -2924,6 +2987,55 @@ sap.ui.define([
 	};
 
 	/**
+	 * Inserts a new gap into <code>this.aContexts</code> just after the given index and with the
+	 * given positive length.
+	 *
+	 * @param {number} iPreviousIndex - Last index just before the new gap
+	 * @param {number} iLength - Positive length of the new gap
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.insertGap = function (iPreviousIndex, iLength) {
+		const aContexts = this.aContexts;
+		for (let i = aContexts.length - 1; i > iPreviousIndex; i -= 1) {
+			const oMovingContext = aContexts[i];
+			if (oMovingContext) {
+				oMovingContext.iIndex += iLength;
+				aContexts[i + iLength] = oMovingContext;
+				delete aContexts[i]; // Note: iLength > 0
+			}
+			// else: nothing to do because !(i in aContexts) and aContexts[i + iLength]
+			// has been deleted before (loop works backwards)
+		}
+		this.iMaxLength += iLength;
+	};
+
+	/**
+	 * Tells whether the first given node is an ancestor of (or the same as) the second given node
+	 * (in case of a recursive hierarchy).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oAncestor - Some node which may be an ancestor
+	 * @param {sap.ui.model.odata.v4.Context} oDescendant - Some node which may be a descendant
+	 * @returns {boolean} Whether the assumed ancestor relation holds
+	 * @throws {Error} If either context does not represent a node in a recursive hierarchy
+	 *   according to its current expansion state
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.isAncestorOf = function (oAncestor, oDescendant) {
+		if (!this.mParameters.$$aggregation || !this.mParameters.$$aggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		[oAncestor, oDescendant].forEach((oNode) => {
+			if (this.aContexts[oNode.iIndex] !== oNode) {
+				throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+			}
+		});
+
+		return this.oCache.isAncestorOf(oAncestor.iIndex, oDescendant.iIndex);
+	};
+
+	/**
 	 * Returns whether the overall position of created entries is at the end of the list; this is
 	 * determined by the first call to {@link #create}.
 	 *
@@ -3013,6 +3125,19 @@ sap.ui.define([
 			),
 			that = this;
 
+		/**
+		 * Keeps and requests created contexts, destroys others.
+		 *
+		 * @param {sap.ui.model.odata.v4.Context} oContext0 - A context, maybe created
+		 */
+		function keepOrDestroy(oContext0) {
+			if (oContext0.created()) { // e.g. Recursive Hierarchy maintenance
+				aContexts.push(oContext0);
+			} else {
+				that.destroyLater(oContext0);
+			}
+		}
+
 		// add kept-alive contexts outside collection
 		Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
 			var oContext = that.mPreviousContextsByPath[sPath];
@@ -3026,14 +3151,84 @@ sap.ui.define([
 		this.aContexts.slice(this.iCreatedContexts, this.iCurrentBegin)
 			.forEach(function (oContext0, i) {
 				delete that.aContexts[that.iCreatedContexts + i];
-				that.destroyLater(oContext0);
+				keepOrDestroy(oContext0);
 			});
 		if (this.aContexts.length > this.iCurrentEnd && this.iCurrentEnd >= this.iCreatedContexts) {
-			this.aContexts.slice(this.iCurrentEnd).forEach(that.destroyLater.bind(that));
+			this.aContexts.slice(this.iCurrentEnd).forEach(keepOrDestroy);
 			this.aContexts.length = this.iCurrentEnd;
 		}
 
 		return aContexts;
+	};
+
+	/**
+	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
+	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
+	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
+	 * @param {sap.ui.model.odata.v4.Context} oParentContext - The new parent's context
+	 * @returns {sap.ui.base.SyncPromise<void>}
+	 *   A promise which is resolved without a defined result when the move is finished, or
+	 *   rejected in case of an error
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.move = function (oChildContext, oParentContext) {
+		/*
+		 * Sets the <code>iIndex</code> of every context instance inside the given range.
+		 *
+		 * @param {number} iFrom - Start index
+		 * @param {number} iToInclusive - Inclusive end index
+		 */
+		const setIndices = (iFrom, iToInclusive) => {
+			for (let i = iFrom; i <= iToInclusive; i += 1) {
+				if (this.aContexts[i]) {
+					this.aContexts[i].iIndex = i;
+				}
+			}
+		};
+
+		const bExpanded = oChildContext.isExpanded();
+		if (bExpanded) {
+			this.collapse(oChildContext, /*bSilent*/true);
+		}
+
+		const sChildPath = oChildContext.getCanonicalPath().slice(1);
+		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
+		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
+
+		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then((iCount) => {
+			if (iCount > 1) {
+				iCount -= 1; // skip oChildContext which is treated below
+				this.insertGap(oParentContext.getModelIndex(), iCount);
+			}
+
+			const iChildIndex = this.aContexts.indexOf(oChildContext);
+			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
+			if (iChildIndex < iParentIndex) {
+				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
+				this.aContexts.splice(iChildIndex, 1); // parent moves to lower index!
+				setIndices(iChildIndex, iParentIndex);
+			} else if (iChildIndex > iParentIndex + 1) {
+				this.aContexts.splice(iChildIndex, 1); // parent unaffected!
+				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
+				setIndices(iParentIndex + 1, iChildIndex);
+			} // else: iChildIndex === iParentIndex + 1 => nothing to do
+			if (!oChildContext.created()) {
+				oChildContext.setCreatedPersisted();
+			}
+			if (bExpanded) {
+				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
+			} else {
+				this._fireChange({reason : ChangeReason.Change});
+			}
+		}, (oError) => {
+			if (bExpanded) {
+				this.expand(oChildContext, /*bSilent*/true).unwrap(); // guaranteed to be sync!
+			}
+			throw oError;
+		});
 	};
 
 	/**
@@ -3639,6 +3834,50 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the parent node of a given child node (in case of a recursive hierarchy, see
+	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
+	 * <code>oAggregation.expandTo</code> must be equal to one).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode
+	 *   Some node which could have a parent
+	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
+	 *   <ul>
+	 *     <li> Resolves if successful with either the parent node or <code>null</code> for a root
+	 *       node that has no parent</li>
+	 *     <li> Rejects with an <code>Error</code> instance otherwise</li>
+	 *   </ul>
+	 * @throws {Error} If
+	 *   <ul>
+	 *     <li> the given node is not part of a recursive hierarchy,
+	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
+	 *    </ul>
+	 *
+	 * @private
+	 * @see #getParent
+	 */
+	ODataListBinding.prototype.requestParent = function (oNode) {
+		const oAggregation = this.mParameters.$$aggregation;
+
+		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (oAggregation.expandTo > 1) {
+			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+		}
+		if (this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+		}
+
+		const iParentIndex = this.oCache.getParentIndex(oNode.iIndex);
+		if (iParentIndex < 0) {
+			return Promise.resolve(null);
+		}
+		return this.requestContexts(iParentIndex, 1).then(function (aResult) {
+			return aResult[0];
+		});
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
@@ -3941,7 +4180,8 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.v4.Context#expand} (@experimental as of version 1.105.0;
 	 *   available for read-only hierarchies since 1.117.0), supported only if a
 	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
-	 *   only root nodes are available; they are not yet expanded.
+	 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
+	 *   <code>Number.MAX_SAFE_INTEGER</code> can be used to expand all levels.
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,

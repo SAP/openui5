@@ -7,12 +7,12 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/thirdparty/sinon-4"
@@ -22,12 +22,12 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Control,
-	oCore,
 	UIComponent,
 	DesignTime,
 	ElementDesignTimeMetadata,
 	PersistenceWriteAPI,
 	VerticalLayout,
+	nextUIUpdate,
 	ReloadManager,
 	RuntimeAuthoring,
 	sinon
@@ -38,7 +38,7 @@ sap.ui.define([
 
 	// TODO: split big monolithic test into simple parts - 1 feature = 1 test case, not all at once!
 	QUnit.module("Given that RuntimeAuthoring and Property service are created", {
-		before: function() {
+		async before() {
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
@@ -50,7 +50,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("mainPage");
 				}
 			});
@@ -72,7 +72,6 @@ sap.ui.define([
 			oPage.addContent(
 				this.oLayout = new VerticalLayout("layout1", {
 					content: [
-						// FIXME: don't create an instance of an abstract class!
 						this.oControl = new Control("mockControl")
 					]
 				})
@@ -82,7 +81,7 @@ sap.ui.define([
 				component: this.oComp
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -91,31 +90,31 @@ sap.ui.define([
 
 			this.oMockDesignTime = {
 				name: {
-					singular: function() {
+					singular() {
 						return "Singular Control Name";
 					},
-					plural: function() {
+					plural() {
 						return "Plural Control Name";
 					}
 				},
-				getLabel: function(oControl) {
+				getLabel(oControl) {
 					return oControl.getId() === "mockControl" ? "Vertical Layout Label" : "";
 				},
 				links: {
 					developer: [
 						{
 							href: "links1.html",
-							text: function(oControl) {
+							text(oControl) {
 								return oControl.getId() === "mockControl" ? "Links 1 Text" : "";
 							}
 						},
 						{
 							href: "notSerializable.html",
-							text: function(oControl) {
+							text(oControl) {
 								if (oControl.getId() === "mockControl") {
 									return {
 										prop: {
-											subProp: function() {} // NOT_SERIALIZABLE inside sub object property
+											subProp() {} // NOT_SERIALIZABLE inside sub object property
 										}
 									};
 								}
@@ -126,7 +125,7 @@ sap.ui.define([
 					guidelines: [
 						{
 							href: "links2.html",
-							text: function() {
+							text() {
 								return new Promise(function(fnResolve) {
 									setTimeout(fnResolve.bind(null, "Links 2 Text"), 100);
 								});
@@ -146,7 +145,7 @@ sap.ui.define([
 					},
 					dtMetadataProperty3: {
 						// dt-metadata property not serializable
-						mockKey3: {subProp: function() {}} // NOT_SERIALIZABLE inside sup property
+						mockKey3: {subProp() {}} // NOT_SERIALIZABLE inside sup property
 					},
 					metadataProperty2: {
 					// metadata property ignored
@@ -158,10 +157,10 @@ sap.ui.define([
 						name: "Virtual Property Name 1",
 						group: "Virtual Property Group 1",
 						nullable: true,
-						get: function(oControl) {
+						get(oControl) {
 							return oControl.getId() === "mockControl" ? "Virtual property value 1" : "";
 						},
-						ignore: function(oControl) {
+						ignore(oControl) {
 							return oControl.getId() !== "mockControl"; // false
 						},
 						possibleValues: [
@@ -183,10 +182,10 @@ sap.ui.define([
 						virtual: true,
 						name: "Virtual Property Name 2",
 						group: "Virtual Property Group 2",
-						get: function(oControl) {
+						get(oControl) {
 							return oControl.getId() === "mockControl" ? "Virtual property value 2" : "";
 						},
-						ignore: function(oControl) {
+						ignore(oControl) {
 							return oControl.getId() === "mockControl"; // true
 						},
 						possibleValues: [{
@@ -202,10 +201,10 @@ sap.ui.define([
 						name: "Virtual Property Name 3",
 						group: "Virtual Property Group 3",
 						nullable: false,
-						get: function() {
+						get() {
 							return null;
 						},
-						possibleValues: function(oControl) {
+						possibleValues(oControl) {
 							if (oControl.getId() === "mockControl") {
 								var mPossibleValues1 = new Map();
 								mPossibleValues1.set("possibleKey4", {displayName: "Possible Value 4"});
@@ -226,17 +225,17 @@ sap.ui.define([
 						name: "Virtual Property Name 4",
 						group: "Virtual Property Group 4",
 						nullable: false,
-						get: function() {
+						get() {
 							var mMap = new Map();
-							mMap.set("prop", {subProp: function() {}});
+							mMap.set("prop", {subProp() {}});
 							return mMap; // NOT_SERIALIZABLE inside map
 						},
-						possibleValues: function(oControl) {
+						possibleValues(oControl) {
 							return oControl.getId() === "mockControl"
 								? [
 									{
 										possibleKey4: {
-											displayName: function() {} // NOT_SERIALIZABLE direct
+											displayName() {} // NOT_SERIALIZABLE direct
 										}
 									}
 								]
@@ -250,7 +249,7 @@ sap.ui.define([
 					// annotation not ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation1",
-						ignore: function(oControl) {
+						ignore(oControl) {
 							return oControl.getId() !== "mockControl"; // false
 						},
 						appliesTo: ["Page/Button"],
@@ -258,7 +257,7 @@ sap.ui.define([
 							developer: [
 								{
 									href: "annotation1.html",
-									text: function(oControl) {
+									text(oControl) {
 										return oControl.getId() === "mockControl" ? "Annotation 1 Text 1" : "";
 									}
 								},
@@ -268,7 +267,7 @@ sap.ui.define([
 								},
 								{
 									href: "notSerializable.html",
-									text: function(oControl) {
+									text(oControl) {
 										if (oControl.getId() === "mockControl") {
 											return ["serializable", function() {}]; // NOT_SERIALIZABLE inside array
 										}
@@ -282,7 +281,7 @@ sap.ui.define([
 					// annotation ignored
 						namespace: "com.sap.mock.vocabularies",
 						annotation: "annotation2",
-						ignore: function(oControl) {
+						ignore(oControl) {
 							return oControl.getId() === "mockControl"; // true
 						},
 						appliesTo: ["Page/Button"],
@@ -304,7 +303,7 @@ sap.ui.define([
 			sandbox.stub(this.oControl, "getProperty")
 			.withArgs("metadataProperty1").returns("metadataPropertyValue1")
 			.withArgs("metadataProperty2").returns("metadataPropertyValue2")
-			.withArgs("metadataProperty3").returns({subProp: function() {}}); // NOT_SERIALIZABLE inside sub property
+			.withArgs("metadataProperty3").returns({subProp() {}}); // NOT_SERIALIZABLE inside sub property
 
 			// control metadata properties
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
@@ -356,10 +355,10 @@ sap.ui.define([
 					],
 					bindingString: "bindingString",
 					binding: {
-						getOriginalValue: function() {
+						getOriginalValue() {
 							return "Original Binding Value";
 						},
-						getValue: function() {
+						getValue() {
 							return "Binding Value";
 						}
 					}
@@ -374,7 +373,7 @@ sap.ui.define([
 						}
 					],
 					binding: {
-						getValue: function() {
+						getValue() {
 							return "Binding Value";
 						}
 					}
@@ -394,7 +393,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		after: function() {
+		after() {
 			sandbox.restore();
 			return this.oRta.stop().then(function() {
 				this.oComp.destroy();
@@ -462,7 +461,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("get()", function() {
-		QUnit.test("when control's bindings are not initialized", function(assert) {
+		QUnit.test("when control's bindings are not initialized", async function(assert) {
 			var oButton = new Button("button", {
 				visible: false,
 				text: "{i18n>ButtonName}"
@@ -479,7 +478,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("page", {
 						content: [
 							oButton
@@ -495,7 +494,7 @@ sap.ui.define([
 			});
 			oComponentContainer.placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,

@@ -16,10 +16,10 @@ sap.ui.define([
 	"sap/ui/performance/Measurement",
 	"sap/base/Log",
 	"sap/base/util/extend",
+	"./ControlBehavior",
 	"./InvisibleRenderer",
 	"./Patcher",
-	"./FocusHandler",
-	"sap/ui/core/Configuration"
+	"./FocusHandler"
 ], function(
 	LabelEnablement,
 	BaseObject,
@@ -33,14 +33,16 @@ sap.ui.define([
 	Measurement,
 	Log,
 	extend,
+	ControlBehavior,
 	InvisibleRenderer,
 	Patcher,
-	FocusHandler,
-	Configuration
+	FocusHandler
 ) {
 
 	"use strict";
 	/*global SVGElement*/
+
+	var Element;
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering", "accessibilityState", "icon"];
 
@@ -82,8 +84,8 @@ sap.ui.define([
 	 * Creates an instance of the RenderManager.
 	 *
 	 * Applications or controls must not call the <code>RenderManager</code> constructor on their own
-	 * but should use the {@link sap.ui.core.Core#createRenderManager sap.ui.getCore().createRenderManager()}
-	 * method to create an instance for their exclusive use.
+	 * but should rely on the re-rendering initiated by the framework lifecycle based on invalidation.
+	 * See {@link module:sap/ui/core/Element#invalidate} and {@link module:sap/ui/core/Control#invalidate}.
 	 *
 	 * @class A class that handles the rendering of controls.
 	 *
@@ -234,6 +236,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @alias sap.ui.core.RenderManager
+	 * @hideconstructor
 	 * @public
 	 */
 	function RenderManager() {
@@ -516,7 +519,7 @@ sap.ui.define([
 		 *  the actual writing of classes happens when {@link sap.ui.core.RenderManager#openEnd} or {@link sap.ui.core.RenderManager#voidEnd} are used.
 		 */
 		this.writeClasses = function(oElement) {
-			assert(!oElement || typeof oElement === "boolean" || BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
+			assert(!oElement || typeof oElement === "boolean" || BaseObject.isObjectA(oElement, 'sap.ui.core.Element'), "oElement must be empty, a boolean, or an sap.ui.core.Element");
 			writeClasses(oElement);
 			return this;
 		};
@@ -551,7 +554,7 @@ sap.ui.define([
 				if (typeof vControlOrId == "string") {
 					this.attr("id", vControlOrId);
 				} else {
-					assert(vControlOrId && BaseObject.isA(vControlOrId, 'sap.ui.core.Element'), "vControlOrId must be an sap.ui.core.Element");
+					assert(vControlOrId && BaseObject.isObjectA(vControlOrId, 'sap.ui.core.Element'), "vControlOrId must be an sap.ui.core.Element");
 
 					this.attr("id", vControlOrId.getId());
 					renderElementData(this, vControlOrId);
@@ -976,7 +979,7 @@ sap.ui.define([
 		 * @since 1.22.9
 		 */
 		this.cleanupControlWithoutRendering = function(oControl) {
-			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl) {
 				return;
 			}
@@ -1116,7 +1119,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
-			assert(!oControl || BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
+			assert(!oControl || BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control or empty");
 			if (!oControl) {
 				return this;
 			}
@@ -1227,7 +1230,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.getHTML = function(oControl) {
-			assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+			assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 
 			var tmp = aBuffer;
 			var aResult = aBuffer = this.aBuffer = [];
@@ -1474,7 +1477,7 @@ sap.ui.define([
 		 * @public
 		 */
 		this.render = function(oControl, oTargetDomNode) {
-			assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
+			assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be a control");
 			assert(typeof oTargetDomNode === "object" && oTargetDomNode.ownerDocument == document, "oTargetDomNode must be a DOM element");
 			if ( bLocked ) {
 				Log.error("Render must not be called within Before or After Rendering Phase. Call ignored.", null, this);
@@ -1606,7 +1609,7 @@ sap.ui.define([
 	 * @deprecated Since 1.92. Instead, use the {@link sap.ui.core.Core#getConfiguration} API.
 	 */
 	RenderManager.prototype.getConfiguration = function() {
-		return Configuration;
+		return sap.ui.require("sap/ui/core/Configuration");
 	};
 
 	/**
@@ -1645,7 +1648,7 @@ sap.ui.define([
 	 *  of the {@link sap.ui.core.RenderManager Semantic Rendering API} and pass the desired control data as the second parameter to the new API.
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
-		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		this.writeElementData(oControl);
 		return this;
 	};
@@ -1660,7 +1663,7 @@ sap.ui.define([
 	 *  of the {@link sap.ui.core.RenderManager Semantic Rendering API} and pass the desired element data as the second parameter to the new API.
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
-		assert(oElement && BaseObject.isA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
+		assert(oElement && BaseObject.isObjectA(oElement, 'sap.ui.core.Element'), "oElement must be an sap.ui.core.Element");
 
 		this.attr("id", oElement.getId());
 		renderElementData(this, oElement);
@@ -1741,11 +1744,11 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.accessibilityState = function(oElement, mProps) {
-		if (!Configuration.getAccessibility()) {
+		if (!ControlBehavior.isAccessibilityEnabled()) {
 			return this;
 		}
 
-		if (arguments.length == 1 && !(BaseObject.isA(oElement, 'sap.ui.core.Element'))) {
+		if (arguments.length == 1 && !(BaseObject.isObjectA(oElement, 'sap.ui.core.Element'))) {
 			mProps = oElement;
 			oElement = null;
 		}
@@ -1825,7 +1828,7 @@ sap.ui.define([
 		}
 
 		// allow parent (e.g. FormElement) to overwrite or enhance aria attributes
-		if (BaseObject.isA(oElement, 'sap.ui.core.Element')) {
+		if (BaseObject.isObjectA(oElement, 'sap.ui.core.Element')) {
 			var oParent = oElement.getParent();
 			if (oParent && oParent.enhanceAccessibilityState) {
 				var mOldAriaProps = Object.assign({}, mAriaProps);
@@ -1836,7 +1839,7 @@ sap.ui.define([
 				if (mAriaProps.canSkipRendering == false
 					|| (
 						mAriaProps.canSkipRendering == undefined
-						&& BaseObject.isA(oElement, "sap.ui.core.Control")
+						&& BaseObject.isObjectA(oElement, "sap.ui.core.Control")
 						&& RenderManager.canSkipRendering(oElement)
 						&& JSON.stringify(mOldAriaProps) != JSON.stringify(mAriaProps)
 					)
@@ -2029,6 +2032,10 @@ sap.ui.define([
 			mAttributes.id = uid();
 		}
 
+		if (mAttributes.role === "presentation") {
+			mAttributes["aria-hidden"] = true;
+		}
+
 		if (bIconURI) {
 			sLabel = mAttributes.alt || mAttributes.title || oIconInfo.text || oIconInfo.name;
 			sInvTextId = mAttributes.id + "-label";
@@ -2105,7 +2112,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.prototype.getRenderer = function(oControl) {
-		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 		return RenderManager.getRenderer(oControl);
 	};
 
@@ -2161,7 +2168,7 @@ sap.ui.define([
 	 * @public
 	 */
 	RenderManager.getRenderer = function(oControl) {
-		assert(oControl && BaseObject.isA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
+		assert(oControl && BaseObject.isObjectA(oControl, 'sap.ui.core.Control'), "oControl must be an sap.ui.core.Control");
 
 		return oControl.getMetadata().getRenderer();
 	};
@@ -2293,6 +2300,8 @@ sap.ui.define([
 	RenderManager.preserveContent = function(oRootNode, bPreserveRoot, bPreserveNodesWithId, oControlBeforeRerender /* private */) {
 		assert(typeof oRootNode === "object" && oRootNode.ownerDocument == document, "oRootNode must be a DOM element");
 
+		Element = Element ? Element : sap.ui.require("sap/ui/core/Element");
+
 		aPreserveContentListeners.forEach(function(oListener) {
 			oListener.fn.call(oListener.context || RenderManager, {domNode : oRootNode});
 		});
@@ -2345,11 +2354,11 @@ sap.ui.define([
 
 			var sPreserveMarker = candidate.getAttribute(ATTR_PRESERVE_MARKER);
 			if ( sPreserveMarker )  { // node is marked with the preserve marker
-
+				let oCandidateControl;
 				// before the re-rendering, UIArea moves all "to-be-preserved" nodes to the preserved area
 				// except the control dom nodes which must be moved to preserved area via control rendering cycle
 				if ( oControlBeforeRerender ) {
-					var oCandidateControl = sap.ui.getCore().byId(sPreserveMarker);
+					oCandidateControl = Element.getElementById(sPreserveMarker);
 
 					// let the rendering cycle of the control handles the preserving
 					// but only when the control stack and the dom stack are in sync
@@ -2552,7 +2561,7 @@ sap.ui.define([
 		var sId = oElement.getId();
 		oRm.attr("data-sap-ui", sId);
 
-		if (BaseObject.isA(oElement, "sap.ui.core.Control") && !RenderManager.canSkipRendering(oElement)) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.Control") && !RenderManager.canSkipRendering(oElement)) {
 			oRm.attr(ATTR_DO_NOT_SKIP_RENDERING_MARKER, "");
 		}
 

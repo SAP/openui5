@@ -18,10 +18,22 @@ sap.ui.define([
     "use strict";
 
     // shortcut for sap.m.ListType
-    var ListType = mLibrary.ListType;
+    const ListType = mLibrary.ListType;
 
-    var LinkSelectionPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.LinkSelectionPanel", {
+    // shortcut for sap.m.MultiSelectMode
+	const MultiSelectMode = mLibrary.MultiSelectMode;
+
+    const LinkSelectionPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.LinkSelectionPanel", {
         metadata: {
+            properties: {
+                /**
+				 * Defines the multi-selection mode for the inner list control.
+				 */
+				multiSelectMode: {
+					type: "sap.m.MultiSelectMode",
+					defaultValue: MultiSelectMode.Default
+				}
+            },
 			library: "sap.ui.mdc",
             /**
              * This event is fired when a Link on the SelectionPanel is pressed.
@@ -81,7 +93,7 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._getSearchField = function() {
-		var oSearchField = SelectionPanel.prototype._getSearchField.apply(this, arguments);
+		const oSearchField = SelectionPanel.prototype._getSearchField.apply(this, arguments);
 
 		oSearchField.getLayoutData().setMaxWidth(undefined);
 
@@ -89,19 +101,15 @@ sap.ui.define([
 	};
 
     LinkSelectionPanel.prototype._onLinkPressed = function(oEvent) {
-        var bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
+        const bCtrlKeyPressed = oEvent.getParameters().ctrlKey || oEvent.getParameters().metaKey;
         if (oEvent.getSource().getTarget() !== "_blank" && !bCtrlKeyPressed) {
             oEvent.preventDefault();
             this.fireLinkPressed(oEvent);
         }
     };
 
-    LinkSelectionPanel.prototype.setMultiSelectMode = function(sMultiSelectMode) {
-        this._oListControl.setMultiSelectMode(sMultiSelectMode);
-    };
-
     LinkSelectionPanel.prototype._filterList = function(bShowSelected, sSarch) {
-		var oSearchFilter = [], oSelectedFilter = [];
+		let oSearchFilter = [], oSelectedFilter = [];
 		if (bShowSelected) {
 			oSelectedFilter = new Filter(this.PRESENCE_ATTRIBUTE, "EQ", true);
 		}

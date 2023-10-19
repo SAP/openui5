@@ -17,13 +17,13 @@
 		</script>
 
 		<script>
-
-			sap.ui.getCore().attachInit(function () {
-				sap.ui.require([
-					"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService/mockserver",
-					"sap/m/Shell",
-					"sap/ui/core/ComponentContainer"
-				], function (mockserver, Shell, ComponentContainer) {
+			sap.ui.require([
+				"sap/ui/core/Core",
+				"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService/mockserver",
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (Core, mockserver, Shell, ComponentContainer) {
+				Core.ready().then(function () {
 					mockserver.init();
 					new Shell({
 						app: new ComponentContainer({
@@ -34,7 +34,6 @@
 					}).placeAt("content");
 				});
 			});
-
 		</script>
 
 	</head>

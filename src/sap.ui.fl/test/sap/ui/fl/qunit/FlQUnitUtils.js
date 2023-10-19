@@ -57,7 +57,8 @@ sap.ui.define([
 	 */
 	FlQUnitUtils.stubSapUiRequireDynamically = function(sandbox, fnCheck, oStub) {
 		var oRequireStub = sandbox.stub(sap.ui, "require");
-		oRequireStub.callsFake(function(vModuleName, fnSuccess) {
+		oRequireStub.callsFake(function(...aArgs) {
+			const [vModuleName, fnSuccess] = aArgs;
 			if (fnCheck(vModuleName)) {
 				if (oStub) {
 					fnSuccess(oStub);
@@ -65,7 +66,7 @@ sap.ui.define([
 					fnSuccess();
 				}
 			} else {
-				oRequireStub.wrappedMethod.apply(this, arguments);
+				oRequireStub.wrappedMethod.apply(this, aArgs);
 			}
 		});
 		return oRequireStub;

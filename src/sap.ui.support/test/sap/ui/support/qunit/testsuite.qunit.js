@@ -15,7 +15,6 @@ sap.ui.define(function() {
 			ui5: {
 				language: "en-US",
 				rtl: false,
-				async: false,
 				libs: ["sap.ui.support"],
 				"xx-waitForTheme": true
 			},
@@ -58,7 +57,11 @@ sap.ui.define(function() {
 					useFakeTimers: true
 				}
 			},
-			"report/DataCollector": {},
+			"report/DataCollector": {
+				sinon: {
+					version: 4
+				}
+			},
 			"util/EvalUtils": {
 				module: "./util/EvalUtils.qunit",
 				sinon: {

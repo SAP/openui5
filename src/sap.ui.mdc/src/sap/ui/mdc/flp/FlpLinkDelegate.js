@@ -10,8 +10,9 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	"sap/ui/mdc/link/SemanticObjectMapping",
 	"sap/ui/mdc/link/SemanticObjectMappingItem",
-	"sap/ui/mdc/link/SemanticObjectUnavailableAction"
-], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction) {
+	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
+	"sap/ui/mdc/enums/LinkType"
+], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -23,9 +24,9 @@ sap.ui.define([
 	 * @experimental
 	 * @since 1.74
 	 * @alias sap.ui.mdc.flp.FlpLinkDelegate
+	 * @deprecated since version 1.120 - please see {@link sap.ui.mdc.ushell.LinkDelegate}
 	 */
-	var FlpLinkDelegate = Object.assign({}, LinkDelegate);
-	FlpLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+	const FlpLinkDelegate = Object.assign({}, LinkDelegate);
 
 	/**
 	 * Fetches the relevant {@link sap.ui.mdc.link.LinkItem} for the Link and returns them.
@@ -36,9 +37,9 @@ sap.ui.define([
 	 * @returns {Promise} once resolved an array of {@link sap.ui.mdc.link.LinkItem} is returned
 	 */
 	FlpLinkDelegate.fetchLinkItems = function(oLink, oBindingContext, oInfoLog) {
-		var oPayload = oLink.getPayload();
-		var oContextObject = oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
-		var aItemsToReturn = [];
+		const oPayload = oLink.getPayload();
+		const oContextObject = oBindingContext ? oBindingContext.getObject(oBindingContext.getPath()) : undefined;
+		const aItemsToReturn = [];
 		if (oInfoLog) {
 			oInfoLog.initialize(FlpLinkDelegate._getSemanticObjects(oPayload));
 			aItemsToReturn.forEach(function(oItem) {
@@ -48,7 +49,7 @@ sap.ui.define([
 				});
 			});
 		}
-		var oSemanticAttributes = FlpLinkDelegate._calculateSemanticAttributes(oContextObject, oPayload, oInfoLog);
+		const oSemanticAttributes = FlpLinkDelegate._calculateSemanticAttributes(oContextObject, oPayload, oInfoLog);
 		return FlpLinkDelegate._retrieveNavigationTargets("", oSemanticAttributes, oPayload, oInfoLog).then(function(aLinks, oOwnNavigationLink) {
 			return Promise.resolve(aLinks);
 		});
@@ -65,24 +66,24 @@ sap.ui.define([
 	 * In case oLinkType.type is 2 the Link will get rendered as a Link and will open a Popover (default)
 	 */
 	FlpLinkDelegate.fetchLinkType = function(oLink) {
-		var mSemanticObjects = {};
-		var oPromise = null;
-		var oPayload = oLink.getPayload();
+		const mSemanticObjects = {};
+		let oPromise = null;
+		const oPayload = oLink.getPayload();
 
-		var fnHaveBeenRetrievedAllSemanticObjects = function(aSemanticObjects) {
+		const fnHaveBeenRetrievedAllSemanticObjects = function(aSemanticObjects) {
 			return aSemanticObjects.filter(function(sSemanticObject) {
 				return !mSemanticObjects[sSemanticObject];
 			}).length === 0;
 		};
-		var fnAtLeastOneExistsSemanticObject = function(aSemanticObjects) {
+		const fnAtLeastOneExistsSemanticObject = function(aSemanticObjects) {
 			return aSemanticObjects.some(function(sSemanticObject) {
 				return mSemanticObjects[sSemanticObject] && (mSemanticObjects[sSemanticObject].exists === true);
 			});
 		};
-		var fnRetrieveDistinctSemanticObjects = function() {
+		const fnRetrieveDistinctSemanticObjects = function() {
 			if (!oPromise) {
 				oPromise = new Promise(function(resolve) {
-					var oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
+					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
 					if (!oCrossApplicationNavigation) {
 						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
 						resolve({});
@@ -104,7 +105,7 @@ sap.ui.define([
 			}
 			return oPromise;
 		};
-		var fnHasDistinctSemanticObject = function(aSemanticObjects) {
+		const fnHasDistinctSemanticObject = function(aSemanticObjects) {
 			if (fnHaveBeenRetrievedAllSemanticObjects(aSemanticObjects)) {
 				return Promise.resolve(fnAtLeastOneExistsSemanticObject(aSemanticObjects));
 			}
@@ -116,7 +117,7 @@ sap.ui.define([
 		if (oPayload && oPayload.semanticObjects) {
 			return fnHasDistinctSemanticObject(oPayload.semanticObjects).then(function(bHasDisctinctSemanticObject) {
 				return Promise.resolve({
-					type: bHasDisctinctSemanticObject ? 2 : 0,
+					type: bHasDisctinctSemanticObject ? LinkType.Popover : LinkType.Text,
 					directLink: undefined
 				});
 			});
@@ -134,20 +135,20 @@ sap.ui.define([
 	 * @returns {Object} two dimensional array which maps a given SemanticObject name together with a given attribute name to the value of that given attribute
 	 */
 	FlpLinkDelegate._calculateSemanticAttributes = function(oContextObject, oPayload, oInfoLog) {
-		var aSemanticObjects = FlpLinkDelegate._getSemanticObjects(oPayload);
-		var mSemanticObjectMappings = FlpLinkDelegate._convertSemanticObjectMapping(FlpLinkDelegate._getSemanticObjectMappings(oPayload));
+		const aSemanticObjects = FlpLinkDelegate._getSemanticObjects(oPayload);
+		const mSemanticObjectMappings = FlpLinkDelegate._convertSemanticObjectMapping(FlpLinkDelegate._getSemanticObjectMappings(oPayload));
 		if (!aSemanticObjects.length) {
 			aSemanticObjects.push("");
 		}
 
-		var oResults = {};
+		const oResults = {};
 		aSemanticObjects.forEach(function(sSemanticObject) {
 			if (oInfoLog) {
 				oInfoLog.addContextObject(sSemanticObject, oContextObject);
 			}
 			oResults[sSemanticObject] = {};
-			for (var sAttributeName in oContextObject) {
-				var oAttribute = null, oTransformationAdditional = null;
+			for (const sAttributeName in oContextObject) {
+				let oAttribute = null, oTransformationAdditional = null;
 				if (oInfoLog) {
 					oAttribute = oInfoLog.getSemanticObjectAttribute(sSemanticObject, sAttributeName);
 					if (!oAttribute) {
@@ -178,7 +179,7 @@ sap.ui.define([
 
 				// Map the attribute name only if 'semanticObjectMapping' is defined.
 				// Note: under defined 'semanticObjectMapping' we also mean an empty annotation or an annotation with empty record
-				var sAttributeNameMapped = (mSemanticObjectMappings && mSemanticObjectMappings[sSemanticObject] && mSemanticObjectMappings[sSemanticObject][sAttributeName]) ? mSemanticObjectMappings[sSemanticObject][sAttributeName] : sAttributeName;
+				const sAttributeNameMapped = (mSemanticObjectMappings && mSemanticObjectMappings[sSemanticObject] && mSemanticObjectMappings[sSemanticObject][sAttributeName]) ? mSemanticObjectMappings[sSemanticObject][sAttributeName] : sAttributeName;
 
 				if (oAttribute && sAttributeName !== sAttributeNameMapped) {
 					oTransformationAdditional = {
@@ -200,7 +201,7 @@ sap.ui.define([
 				if (oAttribute) {
 					if (oTransformationAdditional) {
 						oAttribute.transformations.push(oTransformationAdditional);
-						var aAttributeNew = oInfoLog.createAttributeStructure();
+						const aAttributeNew = oInfoLog.createAttributeStructure();
 						aAttributeNew.transformations.push({
 							value: oContextObject[sAttributeName],
 							description: "\u2139 The attribute " + sAttributeNameMapped + " with the value " + oContextObject[sAttributeName] + " has been added due to a mapping rule regarding the attribute " + sAttributeName + " in FlpLinkDelegate."
@@ -229,9 +230,9 @@ sap.ui.define([
 				resolve([]);
 			});
 		}
-		var aSemanticObjects = oPayload.semanticObjects;
-		var sSourceControlId = oPayload.sourceControl;
-		var oNavigationTargets = {
+		const aSemanticObjects = oPayload.semanticObjects;
+		const sSourceControlId = oPayload.sourceControl;
+		const oNavigationTargets = {
 			ownNavigation: undefined,
 			availableActions: []
 		};
@@ -242,15 +243,15 @@ sap.ui.define([
 				sap.ui.require([
 					'sap/ui/fl/Utils'
 				], function(Utils) {
-					var oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
-					var oURLParsing = Factory.getService("URLParsing");
+					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
+					const oURLParsing = Factory.getService("URLParsing");
 					if (!oCrossApplicationNavigation || !oURLParsing) {
 						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
 						return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 					}
-					var oControl = sap.ui.getCore().byId(sSourceControlId);
-					var oAppComponent = Utils.getAppComponentForControl(oControl);
-					var aParams = aSemanticObjects.map(function(sSemanticObject) {
+					const oControl = sap.ui.getCore().byId(sSourceControlId);
+					const oAppComponent = Utils.getAppComponentForControl(oControl);
+					const aParams = aSemanticObjects.map(function(sSemanticObject) {
 						return [
 							{
 								semanticObject: sSemanticObject,
@@ -268,9 +269,9 @@ sap.ui.define([
 							if (!aLinks || !aLinks.length) {
 								return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 							}
-							var aSemanticObjectUnavailableActions = FlpLinkDelegate._getSemanticObjectUnavailableActions(oPayload);
-							var oUnavailableActions = FlpLinkDelegate._convertSemanticObjectUnavailableAction(aSemanticObjectUnavailableActions);
-							var sCurrentHash = oCrossApplicationNavigation.hrefForExternal();
+							const aSemanticObjectUnavailableActions = FlpLinkDelegate._getSemanticObjectUnavailableActions(oPayload);
+							const oUnavailableActions = FlpLinkDelegate._convertSemanticObjectUnavailableAction(aSemanticObjectUnavailableActions);
+							let sCurrentHash = oCrossApplicationNavigation.hrefForExternal();
 							if (sCurrentHash && sCurrentHash.indexOf("?") !== -1) {
 								// sCurrentHash can contain query string, cut it off!
 								sCurrentHash = sCurrentHash.split("?")[0];
@@ -289,15 +290,15 @@ sap.ui.define([
 							// 	}
 							// };
 
-							var fnIsUnavailableAction = function(sSemanticObject, sAction) {
+							const fnIsUnavailableAction = function(sSemanticObject, sAction) {
 								return !!oUnavailableActions && !!oUnavailableActions[sSemanticObject] && oUnavailableActions[sSemanticObject].indexOf(sAction) > -1;
 							};
-							var fnAddLink = function(oLink) {
-								var oShellHash = oURLParsing.parseShellHash(oLink.intent);
+							const fnAddLink = function(oLink) {
+								const oShellHash = oURLParsing.parseShellHash(oLink.intent);
 								if (fnIsUnavailableAction(oShellHash.semanticObject, oShellHash.action)) {
 									return;
 								}
-								var sHref = oCrossApplicationNavigation.hrefForExternal({ target: { shellHash: oLink.intent } }, oAppComponent);
+								const sHref = oCrossApplicationNavigation.hrefForExternal({ target: { shellHash: oLink.intent } }, oAppComponent);
 
 								if (oLink.intent && oLink.intent.indexOf(sCurrentHash) === 0) {
 									// Prevent current app from being listed
@@ -310,7 +311,7 @@ sap.ui.define([
 									});
 									return;
 								}
-								var oLinkItem = new LinkItem({
+								const oLinkItem = new LinkItem({
 									// As the retrieveNavigationTargets method can be called several time we can not create the LinkItem instance with the same id
 									key: (oShellHash.semanticObject && oShellHash.action) ? (oShellHash.semanticObject + "-" + oShellHash.action) : undefined,
 									text: oLink.text,
@@ -330,7 +331,7 @@ sap.ui.define([
 									});
 								}
 							};
-							for (var n = 0; n < aSemanticObjects.length; n++) {
+							for (let n = 0; n < aSemanticObjects.length; n++) {
 								aLinks[n][0].forEach(fnAddLink);
 							}
 							return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
@@ -361,7 +362,7 @@ sap.ui.define([
 	 * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectUnavailableAction}
 	 */
 	FlpLinkDelegate._getSemanticObjectUnavailableActions = function(oPayload) {
-		var aSemanticObjectUnavailableActions = [];
+		const aSemanticObjectUnavailableActions = [];
 		if (oPayload.semanticObjectUnavailableActions) {
 			oPayload.semanticObjectUnavailableActions.forEach(function(oSemanticObjectUnavailableAction) {
 				aSemanticObjectUnavailableActions.push(new SemanticObjectUnavailableAction({
@@ -380,8 +381,8 @@ sap.ui.define([
 	 * @returns {Object[]} of type {@link sap.ui.mdc.link.SemanticObjectMapping}
 	 */
 	FlpLinkDelegate._getSemanticObjectMappings = function(oPayload) {
-		var aSemanticObjectMappings = [];
-		var aSemanticObjectMappingItems = [];
+		const aSemanticObjectMappings = [];
+		let aSemanticObjectMappingItems = [];
 		if (oPayload.semanticObjectMappings) {
 			oPayload.semanticObjectMappings.forEach(function(oSemanticObjectMapping) {
 				aSemanticObjectMappingItems = [];
@@ -412,7 +413,7 @@ sap.ui.define([
 		if (!aSemanticObjectMappings.length) {
 			return undefined;
 		}
-		var mSemanticObjectMappings = {};
+		const mSemanticObjectMappings = {};
 		aSemanticObjectMappings.forEach(function(oSemanticObjectMapping) {
 			if (!oSemanticObjectMapping.getSemanticObject()) {
 				throw Error("FlpLinkDelegate: 'semanticObject' property with value '" + oSemanticObjectMapping.getSemanticObject() + "' is not valid");
@@ -435,7 +436,7 @@ sap.ui.define([
 		if (!aSemanticObjectUnavailableActions.length) {
 			return undefined;
 		}
-		var mSemanticObjectUnavailableActions = {};
+		const mSemanticObjectUnavailableActions = {};
 		aSemanticObjectUnavailableActions.forEach(function(oSemanticObjectUnavailableActions) {
 			if (!oSemanticObjectUnavailableActions.getSemanticObject()) {
 				throw Error("FlpLinkDelegate: 'semanticObject' property with value '" + oSemanticObjectUnavailableActions.getSemanticObject() + "' is not valid");

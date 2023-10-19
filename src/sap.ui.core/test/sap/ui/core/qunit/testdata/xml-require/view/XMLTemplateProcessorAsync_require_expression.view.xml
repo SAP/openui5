@@ -4,7 +4,8 @@
 	<App>
 		<Page title="Hello" core:require="{
 				Foo:'testdata/xml-require/helper/OutputText',
-				Bar:'testdata/xml-require/helper/OutputText'
+				Bar:'testdata/xml-require/helper/OutputText',
+				myDateType:'sap/ui/model/type/Date'
 			}">
 			<Label id="foo" text="{= ${/amount} > 1000 ? Foo.foo() : Bar.bar()}"/>
 			<Label id="bar" visible="{= ${/foobar} === Foo.foo()}"/>
@@ -18,6 +19,22 @@
 			<List core:require="{
 					Factory:'testdata/xml-require/helper/Factory'
 				}" id="list" items="{path:'/items', factory:'Factory.createItem'}"></List>
+			<Button id="button" text="Use variable for type" press=".onButtonPress(${
+					path: '/date',
+					type: 'myDateType',
+					formatOptions: {
+						pattern: 'yyyy-MM',
+						source: {pattern: 'timestamp'}
+					}
+				})" />
+			<Button id="button1" text="Use namespace+name for type" press=".onButtonPress(${
+					path: '/date',
+					type: 'sap.ui.model.type.Date',
+					formatOptions: {
+						pattern: 'yyyy',
+						source: {pattern: 'timestamp'}
+					}
+				})" />
 		</Page>
 	</App>
 </mvc:View>

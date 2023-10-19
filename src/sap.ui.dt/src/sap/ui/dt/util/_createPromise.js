@@ -6,7 +6,6 @@ sap.ui.define(function() {
 
 	/**
 	 * @function
-	 * @experimental
 	 * @param {function} fn - Function that should be wrapped in a promise
 	 * @returns {object} Cancelable Promise
 	 * @private
@@ -18,18 +17,18 @@ sap.ui.define(function() {
 		var fnCancelReject;
 		var oPromise = new Promise(function(fnResolve, fnReject) {
 			fn(
-				function() {
+				function(...aArgs) {
 					if (!bCancelled) {
-						fnResolve.apply(this, arguments);
+						fnResolve.apply(this, aArgs);
 					} else if (fnCancelResolve) {
-						fnCancelResolve.apply(this, arguments);
+						fnCancelResolve.apply(this, aArgs);
 					}
 				},
-				function() {
+				function(...aArgs) {
 					if (!bCancelled) {
-						fnReject.apply(this, arguments);
+						fnReject.apply(this, aArgs);
 					} else if (fnCancelReject) {
-						fnCancelReject.apply(this, arguments);
+						fnCancelReject.apply(this, aArgs);
 					}
 				}
 			);
@@ -37,14 +36,12 @@ sap.ui.define(function() {
 
 		return {
 			promise: oPromise,
-			cancel: function() {
+			cancel() {
 				bCancelled = true;
-				if (!oCancelPromise) {
-					oCancelPromise = new Promise(function(fnResolve, fnReject) {
-						fnCancelResolve = fnResolve;
-						fnCancelReject = fnReject;
-					});
-				}
+				oCancelPromise ||= new Promise(function(fnResolve, fnReject) {
+					fnCancelResolve = fnResolve;
+					fnCancelReject = fnReject;
+				});
 				return oCancelPromise;
 			}
 		};

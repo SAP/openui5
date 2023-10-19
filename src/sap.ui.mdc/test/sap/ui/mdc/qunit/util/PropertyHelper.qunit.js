@@ -14,9 +14,7 @@ sap.ui.define([
 ], function(_PropertyHelper, ManagedObject, StringType, merge, Log) {
 	"use strict";
 
-	window.top['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: false};
-
-	var PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
+	const PropertyHelper = _PropertyHelper.extend("sap.ui.mdc.util.test.PropertyHelper", {
 		constructor: function(aProperties, oParent, mAdditionalAttributes) {
 			_PropertyHelper.call(this, aProperties, oParent, Object.assign({
 				filterable: true,
@@ -823,7 +821,7 @@ sap.ui.define([
 
 	QUnit.module("Setting defaults and cloning of property infos", {
 		deepEqualProperties: function(assert, oPropertyHelper, aExpected, sMessage) {
-			var mSimpleDefaults = {
+			const mSimpleDefaults = {
 				visible: true,
 				sortable: true,
 				filterable: true,
@@ -838,7 +836,7 @@ sap.ui.define([
 				formatOptions: null,
 				constraints: null
 			};
-			var mComplexDefaults = {
+			const mComplexDefaults = {
 				propertyInfos: [],
 				visible: true,
 				sortable: false,
@@ -848,7 +846,7 @@ sap.ui.define([
 				tooltip: "",
 				exportSettings: {}
 			};
-			var aExpectedWithDefaults = aExpected.map(function(oProperty) {
+			const aExpectedWithDefaults = aExpected.map(function(oProperty) {
 				if ("propertyInfos" in oProperty) {
 					return Object.assign({}, mComplexDefaults, oProperty);
 				}
@@ -861,7 +859,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Basic defaults", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
@@ -871,7 +869,7 @@ sap.ui.define([
 			tooltip: "Complex custom tooltip",
 			propertyInfos: ["prop"]
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
@@ -888,7 +886,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Extended defaults", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "propA",
 			label: "Property A",
 			dataType: "String",
@@ -915,7 +913,7 @@ sap.ui.define([
 			label: "Unit",
 			dataType: "String"
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: "string",
 				"default": {value: "AttributeDefault"},
@@ -975,12 +973,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex settings object not set", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -999,13 +997,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex settings object set to 'undefined'", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String",
 			additionalAttribute: undefined
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -1024,13 +1022,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("Complex settings object set to 'null'", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String",
 			additionalAttribute: null
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			additionalAttribute: {
 				type: {
 					foo: {type: "string"}
@@ -1049,7 +1047,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property reference in a nested attribute defaults to another attribute", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "complexProp",
 			label: "Complex property",
 			propertyInfos: ["prop"]
@@ -1073,7 +1071,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property reference in a nested attribute defaults to another nested attribute", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
 			dataType: "String",
@@ -1116,7 +1114,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Circular property reference", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "propA",
 			label: "Property A",
 			dataType: "String",
@@ -1146,7 +1144,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property reference cache", function(assert) {
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "Property",
 			dataType: "String",
@@ -1191,7 +1189,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Propagation of 'allowed for complex property' to child attributes", function(assert){
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
@@ -1237,7 +1235,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Prevent propagation of 'allowed for complex property' to child attributes", function(assert){
-		var oPropertyHelper = new PropertyHelper([{
+		const oPropertyHelper = new PropertyHelper([{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
@@ -1271,7 +1269,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Ignore default values if ignoreIfNull = true", function(assert){
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "propX",
 			label: "prop X",
 			dataType: "String",
@@ -1309,7 +1307,7 @@ sap.ui.define([
 			propertyInfos: ["propZ"],
 			foo: undefined
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
 			foo: {
 				type: {
 					bar: {
@@ -1382,7 +1380,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Not modifying original property infos", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
@@ -1391,7 +1389,7 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
@@ -1417,8 +1415,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cloning original property infos", function(assert) {
-		var oStringType = new StringType();
-		var aPropertyInfos = [{
+		const oStringType = new StringType();
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String",
@@ -1431,8 +1429,8 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
-		var aClonedProperties = oPropertyHelper.getProperties();
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos);
+		const aClonedProperties = oPropertyHelper.getProperties();
 
 		assert.notStrictEqual(aClonedProperties, aPropertyInfos, "Property info array was cloned");
 		assert.notStrictEqual(aClonedProperties[0], aPropertyInfos[0], "Property object was cloned");
@@ -1446,7 +1444,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Changing original property infos", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String",
@@ -1459,7 +1457,7 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		aPropertyInfos.push({
 			name: "newProperty",
@@ -1487,7 +1485,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Cloning of non-enumerable attributes", function(assert) {
-		var aPropertyInfos = [{
+		const aPropertyInfos = [{
 			name: "prop",
 			label: "prop",
 			dataType: "String"
@@ -1495,7 +1493,7 @@ sap.ui.define([
 		Object.defineProperty(aPropertyInfos[0], "foo", {
 			value: "bar"
 		});
-		var oPropertyHelper = new PropertyHelper(aPropertyInfos);
+		const oPropertyHelper = new PropertyHelper(aPropertyInfos);
 
 		this.deepEqualProperties(assert, oPropertyHelper, [{
 			name: "prop",
@@ -1510,7 +1508,7 @@ sap.ui.define([
 	QUnit.module("Reference to a parent");
 
 	QUnit.test("Without a parent", function(assert) {
-		var oPropertyHelper = new PropertyHelper([]);
+		let oPropertyHelper = new PropertyHelper([]);
 		assert.strictEqual(oPropertyHelper.getParent(), null, "The property helper has no parent");
 		oPropertyHelper.destroy();
 
@@ -1520,8 +1518,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("With a valid parent", function(assert) {
-		var oParent = new ManagedObject();
-		var oPropertyHelper = new PropertyHelper([], oParent);
+		const oParent = new ManagedObject();
+		const oPropertyHelper = new PropertyHelper([], oParent);
 
 		assert.strictEqual(oPropertyHelper.getParent(), oParent, "#getParent returns the reference to the parent");
 
@@ -1576,9 +1574,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property", function(assert) {
-		var oProp = this.oPropertyHelper.getProperty("prop");
-		var oComplexProp = this.oPropertyHelper.getProperty("complexProp");
-		var oOtherProp = this.oPropertyHelper.getProperty("otherProp");
+		const oProp = this.oPropertyHelper.getProperty("prop");
+		const oComplexProp = this.oPropertyHelper.getProperty("complexProp");
+		const oOtherProp = this.oPropertyHelper.getProperty("otherProp");
 
 		assert.ok(Object.isFrozen(oProp, "Simple property is frozen"));
 		assert.ok(Object.isFrozen(oComplexProp), "Complex property is frozen");
@@ -1598,7 +1596,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property info array", function(assert) {
-		var aProperties = this.oPropertyHelper.getProperties();
+		const aProperties = this.oPropertyHelper.getProperties();
 
 		assert.ok(Object.isFrozen(aProperties), "The property infos array is frozen");
 		assert.ok(Object.isFrozen(aProperties[0]), "Simple property is frozen");
@@ -1614,7 +1612,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property info map", function(assert) {
-		var mPropertyMap = this.oPropertyHelper.getPropertyMap();
+		const mPropertyMap = this.oPropertyHelper.getPropertyMap();
 
 		assert.ok(Object.isFrozen(mPropertyMap), "The property map is frozen");
 		assert.ok(Object.isFrozen(mPropertyMap.prop), "Simple property is frozen");
@@ -1683,7 +1681,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getProperties", function(assert) {
-		var aProperties = this.oPropertyHelper.getProperties();
+		const aProperties = this.oPropertyHelper.getProperties();
 
 		assert.equal(aProperties.length, this.aOriginalProperties.length,
 			"The property array contains as many entries as there are properties");
@@ -1698,10 +1696,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("setProperties", function(assert) {
-		var oValidatePropertiesSpy = sinon.spy();
-		var oValidatePropertySpy = sinon.spy();
+		const oValidatePropertiesSpy = sinon.spy();
+		const oValidatePropertySpy = sinon.spy();
 
-		var aReplacementProperties = [{
+		const aReplacementProperties = [{
 			name: "ReplacedPropA",
 			label: "Replaced Property A",
 			dataType: "String",
@@ -1717,7 +1715,7 @@ sap.ui.define([
 			visible: false
 		}];
 
-		var MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
+		const MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
 			validateProperties: function() {
 				PropertyHelper.prototype.validateProperties.apply(this, arguments);
 				oValidatePropertiesSpy.apply(this, merge([], arguments));
@@ -1727,12 +1725,12 @@ sap.ui.define([
 				oValidatePropertySpy.apply(this, merge([], arguments));
 			}
 		});
-		var oMyPropertyHelper = new MyPropertyHelper(this.aOriginalProperties);
+		const oMyPropertyHelper = new MyPropertyHelper(this.aOriginalProperties);
 
 		oValidatePropertiesSpy.resetHistory();
 		oValidatePropertySpy.resetHistory();
 		oMyPropertyHelper.setProperties(aReplacementProperties);
-		var aProperties = oMyPropertyHelper.getProperties();
+		const aProperties = oMyPropertyHelper.getProperties();
 
 		assert.equal(aProperties.length, aReplacementProperties.length,
 			"The property array contains as many entries as there are replaced properties");
@@ -1756,7 +1754,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getPropertyMap", function(assert) {
-		var mProperties = this.oPropertyHelper.getPropertyMap();
+		const mProperties = this.oPropertyHelper.getPropertyMap();
 
 		assert.equal(Object.keys(mProperties).length, this.aOriginalProperties.length,
 			"The property map contains as many entries as there are properties");
@@ -1906,10 +1904,10 @@ sap.ui.define([
 			this.oPropertyHelper.destroy();
 		},
 		assertProperty: function(assert, oProperty) {
-			var aExpectedMethods = [
+			const aExpectedMethods = [
 				"isComplex", "getSimpleProperties", "getSortableProperties", "getFilterableProperties", "getVisibleProperties"
 			];
-			var aActualMethods = [];
+			const aActualMethods = [];
 
 			assert.ok(Object.getPrototypeOf(oProperty) === Object.prototype, "The property inherits directly from Object");
 
@@ -1936,7 +1934,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isComplex", function(assert) {
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		assert.strictEqual(this.oPropertyHelper.getProperty("prop").isComplex(), false, "Simple property");
 		assert.strictEqual(oComplexProperty.isComplex(), true, "Complex property");
@@ -1947,8 +1945,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getSimpleProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		assert.deepEqual(oSimpleProperty.getSimpleProperties(), [oSimpleProperty], "Simple property");
 		assert.deepEqual(oComplexProperty.getSimpleProperties(), [oSimpleProperty], "Complex property");
@@ -1962,8 +1960,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getSortableProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		oSimpleProperty.getSortableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
 		assert.deepEqual(oSimpleProperty.getSortableProperties(), [oSimpleProperty], "Sortable simple property");
@@ -1979,8 +1977,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getFilterableProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		oSimpleProperty.getFilterableProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
 		assert.deepEqual(oSimpleProperty.getFilterableProperties(), [oSimpleProperty], "Filterable simple property");
@@ -1996,8 +1994,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("getVisibleProperties", function(assert) {
-		var oSimpleProperty = this.oPropertyHelper.getProperty("prop");
-		var oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
+		const oSimpleProperty = this.oPropertyHelper.getProperty("prop");
+		const oComplexProperty = this.oPropertyHelper.getProperty("complexProp");
 
 		oSimpleProperty.getVisibleProperties().push("s"); // Returned array must not be influenced by changes to previously returned arrays.
 		assert.deepEqual(oSimpleProperty.getVisibleProperties(), [oSimpleProperty], "Visible simple property");
@@ -2019,9 +2017,9 @@ sap.ui.define([
 	QUnit.module("Inheritance");
 
 	QUnit.test("Property validation", function(assert) {
-		var oValidatePropertiesSpy = sinon.spy();
-		var oValidatePropertySpy = sinon.spy();
-		var aProperties = [{
+		const oValidatePropertiesSpy = sinon.spy();
+		const oValidatePropertySpy = sinon.spy();
+		const aProperties = [{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -2030,7 +2028,7 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
+		const MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
 			validateProperties: function() {
 				PropertyHelper.prototype.validateProperties.apply(this, arguments);
 				oValidatePropertiesSpy.apply(this, merge([], arguments));
@@ -2040,7 +2038,7 @@ sap.ui.define([
 				PropertyHelper.prototype.validateProperty.apply(this, arguments);
 			}
 		});
-		var oMyPropertyHelper = new MyPropertyHelper(aProperties);
+		const oMyPropertyHelper = new MyPropertyHelper(aProperties);
 
 		assert.ok(oValidatePropertiesSpy.calledOnceWithExactly(aProperties, undefined), "#validateProperties called once with the correct arguments");
 		assert.equal(oValidatePropertySpy.callCount, 2, "#validateProperty called twice");
@@ -2051,8 +2049,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Property preparation", function(assert) {
-		var oPreparePropertySpy = sinon.spy();
-		var aProperties = [{
+		const oPreparePropertySpy = sinon.spy();
+		const aProperties = [{
 			name: "prop",
 			label: "Property",
 			dataType: "String"
@@ -2061,8 +2059,8 @@ sap.ui.define([
 			label: "Complex property",
 			propertyInfos: ["prop"]
 		}];
-		var oCustomPropertyAttribute = {prop: "value"};
-		var MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
+		const oCustomPropertyAttribute = {prop: "value"};
+		const MyPropertyHelper = PropertyHelper.extend("sap.ui.mdc.test.table.PropertyHelper", {
 			prepareProperty: function(oProperty) {
 				oPreparePropertySpy.apply(this, merge([], arguments));
 				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
@@ -2072,8 +2070,8 @@ sap.ui.define([
 				oProperty.isComplex = function() {return "isComplex modified";};
 			}
 		});
-		var oMyPropertyHelper = new MyPropertyHelper(aProperties);
-		var oProperty = oMyPropertyHelper.getProperties()[0];
+		const oMyPropertyHelper = new MyPropertyHelper(aProperties);
+		const oProperty = oMyPropertyHelper.getProperties()[0];
 
 		assert.equal(oPreparePropertySpy.callCount, 2, "#prepareProperty called twice");
 		assert.ok(oPreparePropertySpy.firstCall.calledWithExactly(aProperties[0]), "Arguments of first #prepareProperty call");

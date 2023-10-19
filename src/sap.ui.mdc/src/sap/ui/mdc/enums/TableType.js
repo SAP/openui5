@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableType = {
+    const TableType = {
         /**
          * Grid table ({@link sap.ui.table.Table} control) is used (default)
          *
@@ -35,6 +35,8 @@ sap.ui.define(function() {
          */
         ResponsiveTable: "ResponsiveTable"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableType", TableType);
 
     return TableType;
 

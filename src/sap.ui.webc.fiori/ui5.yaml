@@ -45,7 +45,7 @@ customConfiguration:
   ui5-tooling-webc:
     packages:
       # fiori
-      '@ui5/webcomponents-fiori':
+      "@ui5/webcomponents-fiori":
         aliases: # used to convert ES6 imports to UI5 module paths
           "^@ui5\/webcomponents-fiori\/dist\/(.*?).js$": "sap/ui/webc/fiori/thirdparty/$1"
           "^@zxing\/library\/umd\/index.min.js$": "sap/ui/webc/fiori/lib/zxing"

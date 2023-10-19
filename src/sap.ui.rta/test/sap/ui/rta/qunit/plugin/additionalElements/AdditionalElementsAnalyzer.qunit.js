@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/comp/designtime/smartfield/SmartField.designtime",
 	"./TestUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	AdditionalElementsAnalyzer,
 	BindingsExtractor,
@@ -15,7 +15,7 @@ sap.ui.define([
 	DelegateMediatorAPI,
 	SmartFieldDesignTime,
 	TestUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -31,12 +31,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a test view", TestUtils.commonHooks(), function() {
-		QUnit.test("checks if navigation and absolute binding work (form example)", function(assert) {
+		QUnit.test("checks if navigation and absolute binding work (form example)", async function(assert) {
 			var oGroupElement1 = this.oView.byId("EntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("EntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = this.oView.byId("EntityType02.AbsoluteBinding"); // Absolute binding
 			var oGroupElement4 = this.oView.byId("EntityType02.technicalInvisibleProp"); // UI.Hidden Annotation binding
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oGroup = oGroupElement4.getParent();
 			return registerTestOverlaysWithRelevantContainer.call(this,	oGroup)
 			.then(function() {
@@ -77,11 +77,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("checks if navigation and absolute binding work (object page layout example)", function(assert) {
+		QUnit.test("checks if navigation and absolute binding work (object page layout example)", async function(assert) {
 			var oSection1 = this.oView.byId("ObjectPageSectionWithForm");
 			var oSection2 = this.oView.byId("DelegateObjectPageSectionWithForm");
 			var oSection3 = this.oView.byId("ObjectPageSectionAbsoluteBindingList");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oElementWithHideFromRevealProperty = this.oView.byId("EntityType01.technicalInvisibleProp");
 			return registerTestOverlaysWithRelevantContainer.call(this, oElementWithHideFromRevealProperty)
 			.then(function() {
@@ -119,10 +119,10 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("skip adding oData information if AddViaDelegate is not available", function(assert) {
+		QUnit.test("skip adding oData information if AddViaDelegate is not available", async function(assert) {
 			var oSection1 = this.oView.byId("ObjectPageSectionForNavigation");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 			return registerTestOverlaysWithRelevantContainer.call(this, oSection1)
 			.then(function() {
 				var oActionsObject = {
@@ -143,11 +143,11 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("checks if navigation and absolute binding work with delegate", function(assert) {
+		QUnit.test("checks if navigation and absolute binding work with delegate", async function(assert) {
 			var oGroupElement1 = this.oView.byId("DelegateEntityType02.NavigationProperty"); // With correct navigation binding
 			var oGroupElement2 = this.oView.byId("DelegateEntityType02.IncorrectNavigationProperty"); // With incorrect navigation binding
 			var oGroupElement3 = this.oView.byId("DelegateEntityType02.AbsoluteBinding"); // Absolute binding
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -429,14 +429,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when checking group elements to find original label in add dialog, after renaming custom label and removing group elements", function(assert) {
+		QUnit.test("when checking group elements to find original label in add dialog, after renaming custom label and removing group elements", async function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType02");
 			var oGroupElement1 = this.oView.byId("ComplexBindingCase");
 			oGroupElement1.setLabel("Renamed Label");
 			oGroupElement1.setVisible(false);
 			var oGroupElement2 = this.oView.byId("EntityType02.CompProp1");
 			oGroupElement2.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -468,11 +468,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing a removed field with absolute binding pointing to another entity", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with absolute binding pointing to another entity", async function(assert) {
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -494,18 +494,18 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when an invisible element has a feature control binding", function(assert) {
+		QUnit.test("when an invisible element has a feature control binding", async function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType01");
 			var oGroupElement = this.oView.byId("EntityType01.Prop11");
 
 			// Simulate that the field control property is returned after the regular value property
 			var oDelegateMediatorStub = this.sandbox.stub(DelegateMediatorAPI, "getDelegateForControl");
-			function getDelegateForControl() {
-				return oDelegateMediatorStub.wrappedMethod.apply(this, arguments)
+			function getDelegateForControl(...aArgs) {
+				return oDelegateMediatorStub.wrappedMethod.apply(this, aArgs)
 				.then(function(oDelegateInfo) {
 					var fnGetPropertyInfo = oDelegateInfo.instance.getPropertyInfo;
-					oDelegateInfo.instance.getPropertyInfo = function() {
-						return fnGetPropertyInfo.apply(this, arguments)
+					oDelegateInfo.instance.getPropertyInfo = function(...aArgs) {
+						return fnGetPropertyInfo.apply(this, aArgs)
 						.then(function(aProperties) {
 							return aProperties.concat({
 								name: "UxFcThatMakeFieldVisible",
@@ -524,7 +524,7 @@ sap.ui.define([
 			oDelegateMediatorStub.callsFake(getDelegateForControl);
 
 			oGroupElement.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -623,11 +623,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting invisible elements of a bound group containing a removed field with bindings in another binding context", function(assert) {
+		QUnit.test("when getting invisible elements of a bound group containing a removed field with bindings in another binding context", async function(assert) {
 			var oGroup = this.oView.byId("OtherGroup");
 			var oGroupElement1 = this.oView.byId("NavForm.EntityType01.Prop1");
 			oGroupElement1.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -644,8 +644,8 @@ sap.ui.define([
 				}
 			};
 
-			this.sandbox.stub(oGroup, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/group"; }});
-			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath: function() { return "/fake/binding/path/groupElement1"; }});
+			this.sandbox.stub(oGroup, "getBindingContext").returns({ getPath() { return "/fake/binding/path/group"; }});
+			this.sandbox.stub(oGroupElement1, "getBindingContext").returns({ getPath() { return "/fake/binding/path/groupElement1"; }});
 			this.sandbox.stub(BindingsExtractor, "getBindings").returns(["fakeBinding"]);
 
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oGroup, oActionsObject).then(function(aAdditionalElements) {
@@ -730,7 +730,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when renaming a smart element", function(assert) {
+		QUnit.test("when renaming a smart element", async function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType02");
 			var oGroupElement1 = oGroup.getGroupElements()[3];
 			oGroupElement1.setVisible(false);
@@ -739,7 +739,7 @@ sap.ui.define([
 			var oGroupElement2 = oGroup.getGroupElements()[0];
 			oGroupElement2.setVisible(false);
 			oGroupElement2.getLabelControl().setText("RenamedLabel");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -804,11 +804,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("when getting a property that has a bound field control property hidden by annotation", function(assert) {
+		QUnit.test("when getting a property that has a bound field control property hidden by annotation", async function(assert) {
 			var oGroup = this.oView.byId("GroupEntityType02");
 			var oGroupElement1 = oGroup.getGroupElements()[14];
 			oGroupElement1.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oActionsObject = {
 				aggregation: "formElements",
@@ -837,7 +837,7 @@ sap.ui.define([
 			var mAddViaDelegateAction = {
 				action: {
 					aggregation: "items",
-					getLabel: function() {
+					getLabel() {
 						return "testLabel";
 					}
 				},

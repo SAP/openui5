@@ -18,10 +18,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			sandbox.restore();
 		}
@@ -35,7 +35,7 @@ sap.ui.define([
 					var oSaveAsCommand;
 					var sVariantId = "variant";
 					var oVariant = {
-						getVariantId: function() {
+						getVariantId() {
 							return sVariantId;
 						}
 					};

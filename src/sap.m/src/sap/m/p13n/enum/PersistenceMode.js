@@ -19,7 +19,7 @@ sap.ui.define(function () {
      * @since 1.104
      * @alias sap.m.p13n.enum.PersistenceMode
      * @private
-     * @ui5-restricted
+     * @ui5-restricted sap.ui.mdc, sap.fe
      */
     var PersistenceMode = {
         /**

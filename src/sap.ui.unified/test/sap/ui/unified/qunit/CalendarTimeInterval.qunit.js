@@ -233,11 +233,12 @@ sap.ui.define([
 		assert.ok(!jQuery("#Cal2--TimesRow-201508131200").hasClass("sapUiCalItemType02"), "20150813-1200 is not special month of Type02");
 		assert.ok(jQuery("#Cal2--TimesRow-201508131400").hasClass("sapUiCalItemType02"), "20150813-1400 is special month of Type02");
 		assert.equal(jQuery("#Cal2--TimesRow-201508131400").attr("title"), "Text", "20150813-1400 has special days tooltip");
-		assert.equal(jQuery("#Cal2--TimesRow-201508131400").attr("aria-label"), "August 13, 2015 at 2:00 PM; Type 2", "20150813-1400 aria-label");
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(jQuery("#Cal2--TimesRow-201508131400").attr("aria-label"), "August 13, 2015, 2:00\u202fPM; Type 2", "20150813-1400 aria-label");
 		assert.ok(jQuery("#Cal2--TimesRow-201508131600").hasClass("sapUiCalItemType02"), "20150813-1600 is special month of Type02");
 		assert.ok(jQuery("#Cal2--TimesRow-201508131800").hasClass("sapUiCalItemType02"), "20150813-1800 is special month of Type02");
 		assert.ok(!jQuery("#Cal2--TimesRow-201508132000").hasClass("sapUiCalItemType02"), "20150813-2000 is not special month of Type02");
-		assert.equal(jQuery("#Cal2--TimesRow-201508132000").attr("aria-label"), "August 13, 2015 at 8:00 PM", "20150813-2000 aria-label");
+		assert.equal(jQuery("#Cal2--TimesRow-201508132000").attr("aria-label"), "August 13, 2015, 8:00\u202fPM", "20150813-2000 aria-label");
 
 		assert.ok(jQuery("#Cal2--TimesRow-201508140000").hasClass("sapUiCalItemType01"), "20150814-0000 is special month of Type01");
 		assert.ok(jQuery("#Cal2--TimesRow-201508140200").hasClass("sapUiCalItemType01"), "20150814-0200 is special month of Type01");

@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Control",
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
@@ -23,7 +22,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	LoaderExtensions,
-	UriParameters,
 	Control,
 	UIComponent,
 	States,
@@ -51,7 +49,7 @@ sap.ui.define([
 	var sReference = "odata.app";
 
 	QUnit.module("SmartVariantManagementWriteAPI", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			if (oControl) {
 				oControl.destroy();
@@ -85,18 +83,18 @@ sap.ui.define([
 			apiFunctionName: "setDefaultVariantId",
 			compVariantStateFunctionName: "setDefault"
 		}].forEach(function(testData) {
-			QUnit.test("When " + testData.details + " is called", function(assert) {
+			QUnit.test(`When ${testData.details} is called`, function(assert) {
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
 				var oSVMControl = {
-					getPersonalizableControlPersistencyKey: function() {
+					getPersonalizableControlPersistencyKey() {
 						return sPersistencyKey;
 					}
 				};
 				var oControl = oSVMControl;
 				if (testData.bIsNoSVM) {
 					oControl = {
-						getVariantManagement: function() {
+						getVariantManagement() {
 							return oSVMControl;
 						}
 					};
@@ -359,7 +357,7 @@ sap.ui.define([
 				}
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called, " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -664,7 +662,7 @@ sap.ui.define([
 				variantAdaptationId: undefined
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called with adaptationId, " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called with adaptationId, ${testData.details}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -769,7 +767,7 @@ sap.ui.define([
 			packageName: "PACKAGE_A",
 			expectedChange: true
 		}].forEach(function(oTestData) {
-			QUnit.test("When updateVariant is called " + oTestData.testDetails, function(assert) {
+			QUnit.test(`When updateVariant is called ${oTestData.testDetails}`, function(assert) {
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 				var oAppComponent = new UIComponent();
 				oControl = new Control("controlId1");
@@ -804,10 +802,10 @@ sap.ui.define([
 					}
 				}));
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isVersioningEnabled: function() {
+					isVersioningEnabled() {
 						return false;
 					},
-					getUserId: function() {}
+					getUserId() {}
 				});
 				return FlexState.initialize({
 					reference: sReference,
@@ -1081,7 +1079,7 @@ sap.ui.define([
 				action: undefined
 			}
 		}].forEach(function(testData) {
-			QUnit.test("When updateVariant is called with " + testData.details, function(assert) {
+			QUnit.test(`When updateVariant is called with ${testData.details}`, function(assert) {
 				testData.propertyBag.reference = sReference;
 				testData.propertyBag.persistencyKey = sPersistencyKey;
 				oControl = new Control("controlId1");
@@ -1205,12 +1203,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("loadVariants with legacy content", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			FlexState.clearState();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl && this.oControl.destroy();
 		}
@@ -1224,7 +1222,9 @@ sap.ui.define([
 
 			var mFlexData = Object.assign(StorageUtils.getEmptyFlexDataResponse(), LoaderExtensions.loadResource({
 				dataType: "json",
-				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json")
+				url: sap.ui.require.toUrl(
+					"test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json"
+				)
 			}));
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
@@ -1235,7 +1235,7 @@ sap.ui.define([
 				standardVariant: {}
 			})
 			.then(function(oResponse) {
-				oVariant = oResponse.variants[0]; // user variant with 2 legacy changes (addFavorite & removeFavorite)
+				[oVariant] = oResponse.variants; // user variant with 2 legacy changes (addFavorite & removeFavorite)
 			})
 			.then(function() {
 				SmartVariantManagementWriteAPI.updateVariant({
@@ -1254,12 +1254,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("revert", {
-		beforeEach: function() {
+		beforeEach() {
 			if (oControl) {
 				oControl.destroy();
 			}
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1410,12 +1410,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("discardVariantContent", {
-		beforeEach: function() {
+		beforeEach() {
 			if (oControl) {
 				oControl.destroy();
 			}
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1438,7 +1438,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("_getTransportSelection", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1458,11 +1458,7 @@ sap.ui.define([
 			// Stub to check for the actual call of the TransportSelection function (no direct stubbing due to the .call usage)
 			// returns empty to not trigger further functionality within the selectTransport
 			var oUtilsStub = sandbox.stub(Utils, "getLrepUrl").returns("");
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function() {
-					return Layer.VENDOR;
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns(Layer.VENDOR);
 
 			return new Promise(function(resolve) {
 				var oTransportSelection = SmartVariantManagementWriteAPI._getTransportSelection();

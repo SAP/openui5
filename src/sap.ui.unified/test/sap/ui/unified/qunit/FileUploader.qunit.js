@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
 	"sap/ui/unified/library",
+	"sap/ui/core/StaticArea",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(qutils, FileUploader, unifiedLibrary, TooltipBase, InvisibleText, Label, Text, Device, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/thirdparty/jquery"
+], function(qutils, FileUploader, unifiedLibrary, StaticArea, TooltipBase, InvisibleText, Label, Text, Device, oCore, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.unified.FileUploaderHttpRequestMethod
@@ -114,7 +116,7 @@ sap.ui.define([
 	QUnit.test("Destroy: cleans the file uploader input filed from static area", function(assert) {
 		// prepare
 		var oFileUploader = new FileUploader(),
-			oStaticArea = oCore.getStaticAreaRef();
+			oStaticArea = StaticArea.getDomRef();
 
 		oFileUploader.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -1124,6 +1126,61 @@ sap.ui.define([
 	testInputRerender("setEnabled", false);
 	testInputRerender("setPlaceholder", "placeholder");
 
+	QUnit.test("Drop file over the browse button", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		var oEventParams = {
+			originalEvent: {
+				dataTransfer: {
+					files: new DataTransfer().files
+				}
+			},
+			preventDefault: () => {},
+			stopPropagation: () => {}
+		};
+		var oHandleChangeSpy = this.spy(oFileUploader, "handlechange");
+		var oPreventDefaultSpy = this.spy(oEventParams, "preventDefault");
+		var oStopPropagationSpy = this.spy(oEventParams, "stopPropagation");
+
+		// act
+		qutils.triggerEvent("drop", oFileUploader.oBrowse.getId(), oEventParams);
+
+		// assert
+		assert.ok(oPreventDefaultSpy.calledOnce, "The default is prevented");
+		assert.ok(oStopPropagationSpy.calledOnce, "The default is prevented");
+		assert.ok(oHandleChangeSpy.calledOnce, "Change event is triggered");
+
+		// clean
+		oFileUploader.destroy();
+		oHandleChangeSpy.restore();
+		oPreventDefaultSpy.restore();
+	});
+
+	QUnit.test("Input type file element has the proper events registered", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader();
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+		var oEvents = jQuery._data(oFileUploader.oBrowse.getDomRef(), "events");
+		// assert
+		assert.ok(oEvents.mouseover, "mouseover registed");
+		assert.strictEqual(oEvents.mouseover.length, 1, "mouseover registed once");
+		assert.ok(oEvents.click, "click registed");
+		assert.strictEqual(oEvents.click.length, 1, "click registed once");
+		assert.ok(oEvents.dragover, "dragover registed");
+		assert.strictEqual(oEvents.dragover.length, 1, "dragover registed once");
+		assert.ok(oEvents.dragenter, "dragenter registed");
+		assert.strictEqual(oEvents.dragenter.length, 1, "dragenter registed once");
+		assert.ok(oEvents.drop, "drop registed");
+		assert.strictEqual(oEvents.drop.length, 1, "drop registed once");
+
+		// clean
+		oFileUploader.destroy();
+	});
+
 	QUnit.module("BlindLayer", {
 		beforeEach: function() {
 			this.oFileUploader = createFileUploader();
@@ -1142,7 +1199,7 @@ sap.ui.define([
 		var $Frame = this.oFileUploader.$("frame");
 
 		var oParentRef = $Frame.parent().get(0);
-		var oStatic = oCore.getStaticAreaRef();
+		var oStatic = StaticArea.getDomRef();
 
 		assert.equal($Frame.length, 1, "iFrame was inserted into DOM");
 		assert.equal(oParentRef, oStatic, "FileUploader's Blindlayer UI-area is the static UI-area");

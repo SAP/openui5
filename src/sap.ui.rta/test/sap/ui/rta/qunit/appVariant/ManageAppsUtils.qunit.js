@@ -24,24 +24,24 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oUshellContainerStub = {
-				getServiceAsync: function() {
+				getServiceAsync() {
 					return Promise.resolve({
-						getLinks: function() {
+						getLinks() {
 							return Promise.resolve([{
 								result: "success"
 							}]);
 						}
 					});
 				},
-				setDirtyFlag: function() {
+				setDirtyFlag() {
 					return "";
 				}
 			};
 			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -651,11 +651,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AppVariantOverviewUtils is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oUshellContainerStub = {
-				getServiceAsync: function() {
+				getServiceAsync() {
 					return Promise.resolve({
-						getLinks: function() {
+						getLinks() {
 							return Promise.resolve([]);
 						}
 					});
@@ -663,7 +663,7 @@ sap.ui.define([
 			};
 			sandbox.stub(FlUtils, "getUshellContainer").returns(this.oUshellContainerStub);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

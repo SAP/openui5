@@ -21,8 +21,8 @@ sap.ui.define([
 	 * @ui5-restricted ui5 support tools
 	 */
 	var SupportAPI = /** @lends sap.ui.fl.support.api.SupportAPI */{
-		getChangeDependencies: getChangeDependencies,
-		getFlexSettings: getFlexSettings
+		getChangeDependencies,
+		getFlexSettings
 	};
 
 	return SupportAPI;

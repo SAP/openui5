@@ -2,7 +2,7 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 
 	"use strict";
 
-	var mConfig = {
+	const mConfig = {
 		name: "Library 'sap.ui.mdc' - Testsuite Field",	/* Just for a nice title on the pages */
 		defaults: {
 			group: "Field",
@@ -67,7 +67,12 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 			},
 			"FieldInfo": {
 				module: "./FieldInfo.qunit",
-				sinon: false
+				sinon: false,
+				loader: {
+					paths: {
+						"testutils/link": "test-resources/sap/ui/mdc/testutils/link"
+					}
+				}
 			},
 			"FilterField": {
 				module: "./FilterField.qunit",

@@ -82,14 +82,6 @@ sap.ui.define([
 
 	// bind propety to this._oControl
 	VizBase.prototype.bindPropertyToControl = function (sProperty, oBindingInfo) {
-		if (sProperty === "value") {
-			var oControlBindingInfo = merge({}, oBindingInfo);
-			this._oControl.bindProperty("value", oControlBindingInfo);
-		}
-		if (sProperty === "editable") {
-			var oControlBindingInfo = merge({}, oBindingInfo);
-			this._oControl.bindProperty("editable", oControlBindingInfo);
-		}
 	};
 
 	return VizBase;

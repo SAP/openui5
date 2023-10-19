@@ -1105,43 +1105,67 @@ sap.ui.define([
 			 */
 			function getResolvedBinding(sValue, oElement, oWithControl, bMandatory,
 					fnCallIfConstant) {
-				var vBindingInfo,
-					oPromise;
+				let vParseResult;
+
+				function resolveBinding (vBindingInfo) {
+					let oPromise;
+
+					if (vBindingInfo.functionsNotFound) {
+						if (bMandatory) {
+							warn(oElement, 'Function name(s)',
+								vBindingInfo.functionsNotFound.join(", "), 'not found');
+						}
+						Measurement.end(sPerformanceGetResolvedBinding);
+						return null; // treat incomplete bindings as unrelated
+					}
+
+					if (typeof vBindingInfo === "object") {
+						oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
+							!oViewInfo.sync);
+						if (bMandatory && !oPromise) {
+							warn(oElement, 'Binding not ready');
+						} else if (oViewInfo.sync && oPromise && oPromise.isPending()) {
+							error("Async formatter in sync view in " + sValue + " of ", oElement);
+						}
+					} else {
+						oPromise = SyncPromise.resolve(vBindingInfo);
+						if (fnCallIfConstant) { // string
+							fnCallIfConstant();
+						}
+					}
+					Measurement.end(sPerformanceGetResolvedBinding);
+
+					return oPromise;
+				}
 
 				Measurement.average(sPerformanceGetResolvedBinding, "", aPerformanceCategories);
-				try {
-					vBindingInfo
+				if (oViewInfo.sync) {
+					try {
+						vParseResult
 						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true)
-						|| sValue; // in case there is no binding and nothing to unescape
+							|| sValue; // in case there is no binding and nothing to unescape
+					} catch (e) {
+						return SyncPromise.reject(e);
+					}
+					return resolveBinding(vParseResult);
+				}
+
+				try {
+					vParseResult
+						= BindingParser.complexParser(sValue, oScope, bMandatory, true, true, true,
+							null, true);
 				} catch (e) {
 					return SyncPromise.reject(e);
 				}
-
-				if (vBindingInfo.functionsNotFound) {
-					if (bMandatory) {
-						warn(oElement, 'Function name(s)',
-							vBindingInfo.functionsNotFound.join(", "), 'not found');
-					}
-					Measurement.end(sPerformanceGetResolvedBinding);
-					return null; // treat incomplete bindings as unrelated
+				if (!vParseResult) { // no binding and nothing to unescape
+					return resolveBinding(sValue);
 				}
-
-				if (typeof vBindingInfo === "object") {
-					oPromise = getAny(oWithControl, vBindingInfo, mSettings, oScope,
-						!oViewInfo.sync);
-					if (bMandatory && !oPromise) {
-						warn(oElement, 'Binding not ready');
-					} else if (oViewInfo.sync && oPromise && oPromise.isPending()) {
-						error("Async formatter in sync view in " + sValue + " of ", oElement);
-					}
-				} else {
-					oPromise = SyncPromise.resolve(vBindingInfo);
-					if (fnCallIfConstant) { // string
-						fnCallIfConstant();
-					}
+				if (!vParseResult.wait) { // nothing to wait for
+					return resolveBinding(vParseResult.bindingInfo);
 				}
-				Measurement.end(sPerformanceGetResolvedBinding);
-				return oPromise;
+				return vParseResult.resolved.then(function (/*no results*/) {
+					return resolveBinding(vParseResult.bindingInfo);
+				});
 			}
 
 			/**
@@ -1336,6 +1360,9 @@ sap.ui.define([
 					if (!oViewInfo.sync) {
 						return asyncRequire();
 					}
+					/**
+					 * @deprecated As of version 1.120
+					 */
 					aURNs.forEach(sap.ui.requireSync); // legacy-relevant: Sync path
 				}
 				return oSyncPromiseResolved;

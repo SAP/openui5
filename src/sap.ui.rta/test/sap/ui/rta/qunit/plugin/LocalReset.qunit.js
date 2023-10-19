@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	LocalResetPlugin,
 	CommandFactory,
@@ -25,17 +25,17 @@ sap.ui.define([
 	MessageToast,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and localReset plugin are instantiated", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.oVariantModel = {
-				getCurrentVariantReference: function() {
+				getCurrentVariantReference() {
 					return undefined;
 				}
 			};
@@ -51,7 +51,7 @@ sap.ui.define([
 				items: [this.oNestedForm]
 			});
 			this.oSimpleForm.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oSimpleForm],
@@ -64,7 +64,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oDesignTime.destroy();
@@ -116,7 +116,7 @@ sap.ui.define([
 				actions: {
 					localReset: {
 						changeType: "localReset",
-						isEnabled: function(oElementInstance) {
+						isEnabled(oElementInstance) {
 							return oElementInstance.getMetadata().getName() !== "sap.m.VBox";
 						}
 					}
@@ -149,7 +149,7 @@ sap.ui.define([
 				actions: {
 					localReset: {
 						changeType: "localReset",
-						isEnabled: function(oElementInstance) {
+						isEnabled(oElementInstance) {
 							return oElementInstance.getMetadata().getName() === "sap.ui.core.Control";
 						}
 					}

@@ -528,30 +528,32 @@ sap.ui.define([
 											}
 										}
 									}
-									assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
-									assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
-									oResetButton1.firePress();
 									wait().then(function () {
-										assert.ok(!oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button disabled");
-										assert.ok(!oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button disabled");
-										oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 50, "oTranslationListPage1 Content: length");
-										for (var i = 0; i < oLanguageItems1.length; i++) {
-											var oCustomData = oLanguageItems1[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationListPage1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
+										assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
+										oResetButton1.firePress();
+										wait().then(function () {
+											assert.ok(!oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button disabled");
+											assert.ok(!oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button disabled");
+											oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.equal(oLanguageItems1.length, 50, "oTranslationListPage1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationListPage1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
 											}
-										}
-										oNewObject = JSON.parse(oTextArea.getValue());
-										assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
-										var sUUID = oNewObject._dt._uuid;
-										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-										assert.ok(!sTranslationTextOfEN, "Texts: no value");
-										destroyEditor(that.oEditor);
-										resolve();
+											oNewObject = JSON.parse(oTextArea.getValue());
+											assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+											var sUUID = oNewObject._dt._uuid;
+											var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+											assert.ok(!sTranslationTextOfEN, "Texts: no value");
+											destroyEditor(that.oEditor);
+											resolve();
+										});
 									});
 								});
 							});
@@ -664,38 +666,40 @@ sap.ui.define([
 											break;
 										}
 									}
-									assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
-									assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
-									oSaveButton1.firePress();
 									wait().then(function () {
-										oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
-										for (var i = 0; i < oLanguageItems1.length; i++) {
-											var oCustomData = oLanguageItems1[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												if (sLanguage === "en") {
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-											}
-										}
-										var oNewObject = JSON.parse(oTextArea.getValue());
-										assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
-										var sUUID = oNewObject._dt._uuid;
-										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-										oTranslationListPage1._navBtn.firePress();
+										assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
+										assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
+										oSaveButton1.firePress();
 										wait().then(function () {
-											oCancelButtonInPopover.firePress();
+											oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													if (sLanguage === "en") {
+														sExpectedValue = "string1 en";
+													}
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											var oNewObject = JSON.parse(oTextArea.getValue());
+											assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+											var sUUID = oNewObject._dt._uuid;
+											var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+											assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+											oTranslationListPage1._navBtn.firePress();
 											wait().then(function () {
-												assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
-												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-												assert.ok(!sTranslationTextOfEN, "Texts: no value");
-												destroyEditor(that.oEditor);
-												resolve();
+												oCancelButtonInPopover.firePress();
+												wait().then(function () {
+													assert.ok(deepEqual(oField._getCurrentProperty("value"), oValue03), "Field 1: Value");
+													sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+													assert.ok(!sTranslationTextOfEN, "Texts: no value");
+													destroyEditor(that.oEditor);
+													resolve();
+												});
 											});
 										});
 									});
@@ -807,67 +811,69 @@ sap.ui.define([
 											}
 										}
 									}
-									assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
-									assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
-									oSaveButton1.firePress();
 									wait().then(function () {
-										oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
-										for (var i = 0; i < oLanguageItems1.length; i++) {
-											var oCustomData = oLanguageItems1[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												if (sLanguage === "en") {
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-											}
-										}
-										var oNewObject = JSON.parse(oTextArea.getValue());
-										assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
-										var sUUID = oNewObject._dt._uuid;
-										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-										oTranslationListPage1._navBtn.firePress();
+										assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
+										assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
+										oSaveButton1.firePress();
 										wait().then(function () {
-											oAddButtonInPopover.firePress();
+											oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													if (sLanguage === "en") {
+														sExpectedValue = "string1 en";
+													}
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											var oNewObject = JSON.parse(oTextArea.getValue());
+											assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+											var sUUID = oNewObject._dt._uuid;
+											var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+											assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+											oTranslationListPage1._navBtn.firePress();
 											wait().then(function () {
-												assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
-												// scroll to the bottom
-												oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
+												oAddButtonInPopover.firePress();
 												wait().then(function () {
-													var oNewObjectValue = deepClone(oNewObject, 500);
-													delete oNewObjectValue._dt._selected;
-													assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObjectValue), "Field 1: Value changed to new object");
-													var oRow5 = oTable.getRows()[4];
-													assert.ok(deepEqual(oRow5.getBindingContext().getObject(), oNewObject), "Table: new object is the last row");
-													var oKeyCell = oRow5.getCells()[1];
-													assert.equal(oKeyCell.getText(), "string1 en", "Row: Key cell value");
-													sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-													assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-													var oDeleteButton = oToolbar.getContent()[3];
-													assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");
-													oTable.setSelectedIndex(8);
-													oTable.fireRowSelectionChange({
-														rowIndex: 8,
-														userInteraction: true
-													});
-													assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
-													oDeleteButton.firePress();
+													assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
+													// scroll to the bottom
+													oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
 													wait().then(function () {
-														var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-														var oMessageBox = Core.byId(sMessageBoxId);
-														var oOKButton = oMessageBox._getToolbar().getContent()[1];
-														oOKButton.firePress();
+														var oNewObjectValue = deepClone(oNewObject, 500);
+														delete oNewObjectValue._dt._selected;
+														assert.ok(deepEqual(oField._getCurrentProperty("value"), oNewObjectValue), "Field 1: Value changed to new object");
+														var oRow5 = oTable.getRows()[4];
+														assert.ok(deepEqual(oRow5.getBindingContext().getObject(), oNewObject), "Table: new object is the last row");
+														var oKeyCell = oRow5.getCells()[1];
+														assert.equal(oKeyCell.getText(), "string1 en", "Row: Key cell value");
+														sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+														assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+														var oDeleteButton = oToolbar.getContent()[3];
+														assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button not enabled");
+														oTable.setSelectedIndex(8);
+														oTable.fireRowSelectionChange({
+															rowIndex: 8,
+															userInteraction: true
+														});
+														assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
+														oDeleteButton.firePress();
 														wait().then(function () {
-															assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
-															sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-															assert.ok(!sTranslationTextOfEN, "Texts: no value");
-															assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value deleted");
-															destroyEditor(that.oEditor);
-															resolve();
+															var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
+															var oMessageBox = Core.byId(sMessageBoxId);
+															var oOKButton = oMessageBox._getToolbar().getContent()[1];
+															oOKButton.firePress();
+															wait().then(function () {
+																assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
+																sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+																assert.ok(!sTranslationTextOfEN, "Texts: no value");
+																assert.ok(!oField._getCurrentProperty("value"), "Field 1: Value deleted");
+																destroyEditor(that.oEditor);
+																resolve();
+															});
 														});
 													});
 												});
@@ -985,45 +991,47 @@ sap.ui.define([
 											break;
 										}
 									}
-									assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
-									assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
-									oSaveButton1.firePress();
 									wait().then(function () {
-										oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
-										for (var i = 0; i < oLanguageItems1.length; i++) {
-											var oCustomData = oLanguageItems1[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												if (sLanguage === "en") {
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-											}
-										}
-										var oNewObject = JSON.parse(oTextArea.getValue());
-										assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
-										var sUUID = oNewObject._dt._uuid;
-										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-										oTranslationListPage1._navBtn.firePress();
+										assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
+										assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
+										oSaveButton1.firePress();
 										wait().then(function () {
-											oFormField.setValue("string value 2");
-											oFormField.fireChange({ value: "string value 2"});
+											oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													if (sLanguage === "en") {
+														sExpectedValue = "string1 en";
+													}
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											var oNewObject = JSON.parse(oTextArea.getValue());
+											assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+											var sUUID = oNewObject._dt._uuid;
+											var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+											assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+											oTranslationListPage1._navBtn.firePress();
 											wait().then(function () {
-												oNewObject = JSON.parse(oTextArea.getValue());
-												assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string value 2"})), "SimpleForm: Value updated");
-												assert.equal(oFormField.getValue(), "string value 2", "SimpleForm field 1: Has new value");
-												assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
-												oValueHelpIcon1 = oFormField._oValueHelpIcon;
-												assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
-												assert.ok(!oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon not visible");
-												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-												assert.ok(!sTranslationTextOfEN, "Texts: no value");
-												destroyEditor(that.oEditor);
-												resolve();
+												oFormField.setValue("string value 2");
+												oFormField.fireChange({ value: "string value 2"});
+												wait().then(function () {
+													oNewObject = JSON.parse(oTextArea.getValue());
+													assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "string value 2"})), "SimpleForm: Value updated");
+													assert.equal(oFormField.getValue(), "string value 2", "SimpleForm field 1: Has new value");
+													assert.ok(!oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp false");
+													oValueHelpIcon1 = oFormField._oValueHelpIcon;
+													assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
+													assert.ok(!oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon not visible");
+													sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+													assert.ok(!sTranslationTextOfEN, "Texts: no value");
+													destroyEditor(that.oEditor);
+													resolve();
+												});
 											});
 										});
 									});
@@ -1138,61 +1146,63 @@ sap.ui.define([
 											break;
 										}
 									}
-									assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
-									assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
-									oSaveButton1.firePress();
 									wait().then(function () {
-										oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-										assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
-										for (var i = 0; i < oLanguageItems1.length; i++) {
-											var oCustomData = oLanguageItems1[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												if (sLanguage === "en") {
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-											}
-										}
-										var oNewObject = JSON.parse(oTextArea.getValue());
-										assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
-										var sUUID = oNewObject._dt._uuid;
-										var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-										oTranslationListPage1._navBtn.firePress();
+										assert.ok(oSaveButton1.getEnabled(), "TranslationListPage1 footer: save button enabled");
+										assert.ok(oResetButton1.getEnabled(), "TranslationListPage1 footer: reset button enabled");
+										oSaveButton1.firePress();
 										wait().then(function () {
-											oFormField.setValue("{i18n>string2}");
-											oFormField.fireChange({ value: "{i18n>string2}"});
-											wait().then(function () {
-												oNewObject = JSON.parse(oTextArea.getValue());
-												assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string2}"})), "SimpleForm: Value updated");
-												assert.equal(oFormField.getValue(), "{i18n>string2}", "SimpleForm field 1: Has new value");
-												assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
-												oValueHelpIcon1 = oFormField._oValueHelpIcon;
-												assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
-												assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon visible");
-												sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
-												assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-												oValueHelpIcon1.firePress();
-												wait().then(function () {
-													oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
-													assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
-													for (var i = 0; i < oLanguageItems1.length; i++) {
-														var oCustomData = oLanguageItems1[i].getCustomData();
-														if (oCustomData && oCustomData.length > 0) {
-															var sLanguage = oCustomData[0].getKey();
-															var sExpectedValue = _oOriginExpectedValues["string2"][sLanguage] || _oOriginExpectedValues["string2"]["default"];
-															if (sLanguage === "en"){
-																sExpectedValue = "string1 en";
-															}
-															var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
-															assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-														}
+											oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+											assert.equal(oLanguageItems1.length, 51, "oTranslationListPage1 Content: length");
+											for (var i = 0; i < oLanguageItems1.length; i++) {
+												var oCustomData = oLanguageItems1[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													if (sLanguage === "en") {
+														sExpectedValue = "string1 en";
 													}
-													destroyEditor(that.oEditor);
-													resolve();
+													var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											var oNewObject = JSON.parse(oTextArea.getValue());
+											assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string1}"})), "SimpleForm: Value updated");
+											var sUUID = oNewObject._dt._uuid;
+											var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+											assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+											oTranslationListPage1._navBtn.firePress();
+											wait().then(function () {
+												oFormField.setValue("{i18n>string2}");
+												oFormField.fireChange({ value: "{i18n>string2}"});
+												wait().then(function () {
+													oNewObject = JSON.parse(oTextArea.getValue());
+													assert.ok(deepEqual(cleanUUID(oNewObject), Object.assign(deepClone(oDefaultNewObject, 500), {"key": "{i18n>string2}"})), "SimpleForm: Value updated");
+													assert.equal(oFormField.getValue(), "{i18n>string2}", "SimpleForm field 1: Has new value");
+													assert.ok(oFormField.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
+													oValueHelpIcon1 = oFormField._oValueHelpIcon;
+													assert.ok(oValueHelpIcon1, "SimpleForm field 1: Value help icon exist");
+													assert.ok(oValueHelpIcon1.getVisible(), "SimpleForm field 1: Value help icon visible");
+													sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "key");
+													assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+													oValueHelpIcon1.firePress();
+													wait().then(function () {
+														oLanguageItems1 = oTranslationListPage1.getContent()[0].getItems();
+														assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");
+														for (var i = 0; i < oLanguageItems1.length; i++) {
+															var oCustomData = oLanguageItems1[i].getCustomData();
+															if (oCustomData && oCustomData.length > 0) {
+																var sLanguage = oCustomData[0].getKey();
+																var sExpectedValue = _oOriginExpectedValues["string2"][sLanguage] || _oOriginExpectedValues["string2"]["default"];
+																if (sLanguage === "en"){
+																	sExpectedValue = "string1 en";
+																}
+																var sCurrentValue = oLanguageItems1[i].getContent()[0].getItems()[1].getValue();
+																assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover1 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+															}
+														}
+														destroyEditor(that.oEditor);
+														resolve();
+													});
 												});
 											});
 										});

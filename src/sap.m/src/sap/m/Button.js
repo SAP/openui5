@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/core/LabelEnablement",
 	"sap/m/BadgeEnabler",
 	"sap/ui/core/InvisibleText",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/m/Image"
 ], function(
 	library,
 	Core,
@@ -36,7 +37,8 @@ sap.ui.define([
 	LabelEnablement,
 	BadgeEnabler,
 	InvisibleText,
-	Log
+	Log,
+	Image
 ) {
 	"use strict";
 
@@ -569,7 +571,7 @@ sap.ui.define([
 
 	/**
 	 * Function is called when tap occurs on button.
-	 * @param {jQuery.Event} oEvent - the touch event.
+	 * @param {jQuery.Event} oEvent - the touch event
 	 * @private
 	 */
 	Button.prototype.ontap = function(oEvent, bFromTouchEnd) {
@@ -588,6 +590,9 @@ sap.ui.define([
 					this.focus();
 			}
 
+			/**
+			 * @deprecated As of version 1.20 the <code>tap</code> event has been replaced by the <code>press</code> event
+			 */
 			this.fireTap({/* no parameters */}); // (This event is deprecated, use the "press" event instead)
 			this.firePress({/* no parameters */ });
 		}
@@ -814,7 +819,7 @@ sap.ui.define([
 				// do not use default tooltip in icon as the button renders it's own tooltip
 				useIconTooltip: false
 
-			}, sap.m.Image).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);
+			}, Image).addStyleClass("sapMBtnCustomIcon").setParent(this, null, true);
 		}
 
 		// add style classes to the object
@@ -849,7 +854,7 @@ sap.ui.define([
 				// do not use default tootip in icon as the button renders it's own tooltip
 				useIconTooltip: false
 
-			}, sap.m.Image).setParent(this, null, true);
+			}, Image).setParent(this, null, true);
 		}
 
 		// add style classes to the object

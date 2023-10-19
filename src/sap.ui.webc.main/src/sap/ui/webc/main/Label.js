@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Label.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/LabelEnablement",
 	"./thirdparty/Label"
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -89,11 +89,8 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines how the text of a component will be displayed when there is not enough space. Available options are:
-				 * <ul>
-				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-				 * </ul>
+				 * Defines how the text of a component will be displayed when there is not enough space. <br>
+				 * <b>Note:</b> for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
 				 */
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",

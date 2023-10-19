@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/DynamicDateRange",
 	"sap/ui/mdc/condition/OperatorDynamicDateOption",
 	"sap/ui/mdc/field/DynamicDateRangeConditionsType",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/DynamicDateFormat",
 	"sap/ui/model/json/JSONModel",
@@ -33,6 +34,7 @@ sap.ui.define([
 	DynamicDateRange,
 	OperatorDynamicDateOption,
 	DynamicDateRangeConditionsType,
+	OperatorName,
 	mobileLibrary,
 	DynamicDateFormat,
 	JSONModel,
@@ -42,7 +44,7 @@ sap.ui.define([
 
 	Field.prototype.checkCreateInternalContent = function() {}; // prevent creating internal control by itself
 
-	var oControlMap = {
+	const oControlMap = {
 		"Display": {
 			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
@@ -91,9 +93,9 @@ sap.ui.define([
 		}
 	};
 
-	var aControlMapKeys = Object.keys(oControlMap);
+	const aControlMapKeys = Object.keys(oControlMap);
 
-	var oModel = new JSONModel({ // just to fake ManagedObjectModel of Field to test bindings
+	const oModel = new JSONModel({ // just to fake ManagedObjectModel of Field to test bindings
 		conditions: [],
 		placeholder: "placeholder",
 		editMode: "Editable",
@@ -103,9 +105,9 @@ sap.ui.define([
 		tooltip: "Tooltip",
 		textAlign: "Initial",
 		textDirection: "Inherit",
-		_operators: ["EQ", "TODAY", "BT", "NOTBT"]
+		_operators: [OperatorName.EQ, OperatorName.TODAY, OperatorName.BT, OperatorName.NOTBT]
 	});
-	var oStub = sinon.stub(oModel, "getProperty");
+	const oStub = sinon.stub(oModel, "getProperty");
 	oStub.withArgs("/").callsFake(function(sPath, oContext) { // fake behaviour of ManagedObjectModel
 		return oContext;
 	});
@@ -114,30 +116,30 @@ sap.ui.define([
 	QUnit.module("Getters");
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		QUnit.test(oValue.getPathsFunction, function(assert) {
 			assert.deepEqual(DateContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
 	});
 
 	QUnit.test("getEditOperator", function(assert) {
-		var oEditOperator = DateContent.getEditOperator();
-		assert.equal(oEditOperator["EQ"].name, "sap/m/DatePicker", "Correct editOperator 'EQ' name returned.");
-		assert.equal(oEditOperator["EQ"].create, DateContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
+		const oEditOperator = DateContent.getEditOperator();
+		assert.equal(oEditOperator[OperatorName.EQ].name, "sap/m/DatePicker", "Correct editOperator 'EQ' name returned.");
+		assert.equal(oEditOperator[OperatorName.EQ].create, DateContent._createDatePickerControl, "Correct editOperator 'EQ' create function returned.");
 
-		assert.equal(oEditOperator["BT"].name, "sap/m/DateRangeSelection", "Correct editOperator 'BT' name returned.");
-		assert.equal(oEditOperator["BT"].create, DateContent._createDateRangePickerControl, "Correct editOperator 'BT' create function returned.");
+		assert.equal(oEditOperator[OperatorName.BT].name, "sap/m/DateRangeSelection", "Correct editOperator 'BT' name returned.");
+		assert.equal(oEditOperator[OperatorName.BT].create, DateContent._createDateRangePickerControl, "Correct editOperator 'BT' create function returned.");
 	});
 
 	QUnit.test("getUseDefaultEnterHandler", function(assert) {
 		assert.ok(DateContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		var oUseDefaultFieldHelp = DateContent.getUseDefaultFieldHelp();
-		assert.equal(oUseDefaultFieldHelp.name, "defineConditions", "Correct useDefaultFieldHelp.name value returned.");
-		assert.notOk(oUseDefaultFieldHelp.oneOperatorSingle, "Correct useDefaultFieldHelp.oneOperatorSingle value returned.");
-		assert.ok(oUseDefaultFieldHelp.oneOperatorMulti, "Correct useDefaultFieldHelp.oneOperatorMulti value returned.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		const oUseDefaultValueHelp = DateContent.getUseDefaultValueHelp();
+		assert.equal(oUseDefaultValueHelp.name, "defineConditions", "Correct useDefaultValueHelp.name value returned.");
+		assert.notOk(oUseDefaultValueHelp.oneOperatorSingle, "Correct useDefaultValueHelp.oneOperatorSingle value returned.");
+		assert.ok(oUseDefaultValueHelp.oneOperatorMulti, "Correct useDefaultValueHelp.oneOperatorMulti value returned.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {
@@ -151,8 +153,8 @@ sap.ui.define([
 		assert.deepEqual(DateContent.getControlNames("EditMultiValue"), ["sap/ui/mdc/field/FieldMultiInput", "sap/m/Token"], "Correct controls returned for ContentMode 'EditMultiValue'");
 		assert.deepEqual(DateContent.getControlNames("EditMultiLine"), [null], "Correct controls returned for ContentMode 'EditMultiLine'");
 		assert.deepEqual(DateContent.getControlNames("EditOperator"), [null], "Correct controls returned for ContentMode 'EditOperator'");
-		assert.deepEqual(DateContent.getControlNames("EditOperator", "EQ"), ["sap/m/DatePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
-		assert.deepEqual(DateContent.getControlNames("EditOperator", "BT"), ["sap/m/DateRangeSelection"], "Correct controls returned for ContentMode 'EditOperator' and 'BT'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", OperatorName.EQ), ["sap/m/DatePicker"], "Correct controls returned for ContentMode 'EditOperator' and 'EQ'");
+		assert.deepEqual(DateContent.getControlNames("EditOperator", OperatorName.BT), ["sap/m/DateRangeSelection"], "Correct controls returned for ContentMode 'EditOperator' and 'BT'");
 		assert.deepEqual(DateContent.getControlNames("EditForHelp"), ["sap/ui/mdc/field/FieldInput"], "Correct controls returned for ContentMode 'Edit'");
 	});
 
@@ -165,7 +167,7 @@ sap.ui.define([
 			this.oField.destroy();
 			delete this.oField;
 			while (this.aControls.length > 0) {
-				var oControl = this.aControls.pop();
+				const oControl = this.aControls.pop();
 				if (oControl) {
 					oControl.destroy();
 				}
@@ -173,39 +175,39 @@ sap.ui.define([
 		}
 	});
 
-	var fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
+	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
 		return DateContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
 	};
 
-	var fnSpyOnCreateFunction = function(sContentMode) {
+	const fnSpyOnCreateFunction = function(sContentMode) {
 		return oControlMap[sContentMode].createFunction ? sinon.spy(DateContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
-	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
+	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
 			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
 	QUnit.test("create", function(assert) {
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
-			var aDisplayControls = oControlMap["Display"].instances;
-			var aEditControls = oControlMap["Edit"].instances;
-			var aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
-			var aEditForHelpControls = oControlMap["EditForHelp"].instances;
+			const aDisplayControls = oControlMap["Display"].instances;
+			const aEditControls = oControlMap["Edit"].instances;
+			const aEditMultiValueControls = oControlMap["EditMultiValue"].instances;
+			const aEditForHelpControls = oControlMap["EditForHelp"].instances;
 
-			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
-			var fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
+			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
+			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
+			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
+			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
+			const fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
 
-			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			var aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
-			var aCreatedEditForHelpControls = fnCreateControls(oContentFactory, "EditForHelp", "-create");
+			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
+			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
+			const aCreatedEditMultiValueControls = fnCreateControls(oContentFactory, "EditMultiValue", "-create");
+			const aCreatedEditForHelpControls = fnCreateControls(oContentFactory, "EditForHelp", "-create");
 
 			assert.throws(
 				function() {
@@ -219,8 +221,8 @@ sap.ui.define([
 				},
 				"createEditMultiLine throws an error.");
 
-			var aCreatedEditOperatorEQControls = DateContent.create(oContentFactory, "EditOperator", "EQ", [DatePicker], "EditOperatorEQ-create");
-			var aCreatedEditOperatorBTControls = DateContent.create(oContentFactory, "EditOperator", "BT", [DateRangeSelection], "EditOperatorBT-create");
+			const aCreatedEditOperatorEQControls = DateContent.create(oContentFactory, "EditOperator", OperatorName.EQ, [DatePicker], "EditOperatorEQ-create");
+			const aCreatedEditOperatorBTControls = DateContent.create(oContentFactory, "EditOperator", OperatorName.BT, [DateRangeSelection], "EditOperatorBT-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
@@ -241,23 +243,23 @@ sap.ui.define([
 	});
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction && !oValue.throwsError) {
 			QUnit.test(oValue.createFunction, function(assert) {
-				var done = assert.async();
-				var oContentFactory = this.oField._oContentFactory;
+				const done = assert.async();
+				const oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
 					this.oField.setMaxConditions(oValue.maxConditions);
-					var oInstance = oValue.instances[0];
-					var aControls = DateContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
+					const oInstance = oValue.instances[0];
+					const aControls = DateContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
 					assert.ok(aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
 					aControls[0].setModel(oModel, "$field"); // to create bindings
 
 					if (oValue.boundProperty || oValue.boundAggregation) {
-						var oBindingInfo = aControls[0].getBindingInfo(oValue.boundAggregation || oValue.boundProperty);
+						let oBindingInfo = aControls[0].getBindingInfo(oValue.boundAggregation || oValue.boundProperty);
 						assert.ok(oBindingInfo, "Control BindingInfo created");
-						var sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
+						const sPath = oBindingInfo.path || oBindingInfo.parts[0].path;
 						assert.equal(sPath, "/conditions", "BindingInfo path");
 						if (oValue.boundAggregation) {
 							oBindingInfo = oBindingInfo.template.getBindingInfo(oValue.boundProperty);
@@ -274,10 +276,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("_createDatePickerControl", function(assert) {
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
-			var aControls = DateContent._createDatePickerControl(oContentFactory, [DatePicker], "createDatePickerControl");
+			const aControls = DateContent._createDatePickerControl(oContentFactory, [DatePicker], "createDatePickerControl");
 
 			assert.ok(aControls[0] instanceof DatePicker, "Correct control created in '_createDatePickerControl'.");
 			assert.equal(aControls[0].getSecondaryCalendarType(), this.oField.getDataTypeFormatOptions().secondaryCalendarType, "secondaryCalendarType property forwarded.");
@@ -286,10 +288,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("_createDateRangePickerControl", function(assert) {
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
-			var aControls = DateContent._createDateRangePickerControl(oContentFactory, [DateRangeSelection], "createDateRangePickerControl");
+			const aControls = DateContent._createDateRangePickerControl(oContentFactory, [DateRangeSelection], "createDateRangePickerControl");
 
 			assert.ok(aControls[0] instanceof DateRangeSelection, "Correct control created in '_createDateRangePickerControl'.");
 			assert.equal(aControls[0].getSecondaryCalendarType(), this.oField.getDataTypeFormatOptions().secondaryCalendarType, "secondaryCalendarType property forwarded.");
@@ -298,7 +300,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createEditMultiLine", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.throws(
 				function() {
@@ -317,13 +319,13 @@ sap.ui.define([
 
 	function _checkDynamicDateRange(assert, aControls) {
 
-		var oDynamicDateRange = aControls[0];
-		var oFormatter = oDynamicDateRange.getFormatter();
-		var aStandardOptions = oDynamicDateRange.getStandardOptions();
-		var aCustomOptions = oDynamicDateRange.getCustomOptions();
-		var oData = oModel.getData();
-		var aOperators = oData._operators;
-		var aDefaultOperators = this.oField.getSupportedOperators();
+		const oDynamicDateRange = aControls[0];
+		const oFormatter = oDynamicDateRange.getFormatter();
+		let aStandardOptions = oDynamicDateRange.getStandardOptions();
+		let aCustomOptions = oDynamicDateRange.getCustomOptions();
+		const oData = oModel.getData();
+		const aOperators = oData._operators;
+		const aDefaultOperators = this.oField.getSupportedOperators();
 
 		assert.deepEqual(oFormatter.oOriginalFormatOptions.date, {style: "long"}, "Formatter set on DynamicDateRange");
 		// check only some specific operators, not every single one
@@ -334,8 +336,8 @@ sap.ui.define([
 		// TODAY ist just taken
 		assert.ok(aStandardOptions.indexOf("TODAY") >= 0, "TODAY option created");
 		// NOTBT needs to be mapped as custom Option
-		var oOption;
-		for (var i = 0; i < aCustomOptions.length; i++) {
+		let oOption;
+		for (let i = 0; i < aCustomOptions.length; i++) {
 			if (aCustomOptions[i].getKey() === "Date-NOTBT") {
 				oOption = aCustomOptions[i];
 			}

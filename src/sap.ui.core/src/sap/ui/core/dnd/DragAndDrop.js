@@ -5,11 +5,12 @@ sap.ui.define([
 	"../library",
 	"sap/ui/Device",
 	"sap/ui/core/Element",
+	"sap/ui/core/StaticArea",
 	"../UIArea",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
 ],
-function(lib, Device, Element, UIArea, jQuery, Configuration) {
+function(lib, Device, Element, StaticArea, UIArea, jQuery, Configuration) {
 	"use strict";
 
 	var RelativeDropPosition = lib.dnd.RelativeDropPosition;
@@ -293,7 +294,7 @@ function(lib, Device, Element, UIArea, jQuery, Configuration) {
 		}
 
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
+		jQuery(StaticArea.getDomRef()).append($DropIndicator);
 		return $DropIndicator;
 	}
 
@@ -310,7 +311,7 @@ function(lib, Device, Element, UIArea, jQuery, Configuration) {
 			return;
 		}
 
-		var mClientRect = oValidDropControl.getDropAreaRect ? oValidDropControl.getDropAreaRect() : oDropTarget.getBoundingClientRect(),
+		var mClientRect = oValidDropControl.getDropAreaRect ? oValidDropControl.getDropAreaRect(sDropLayout) : oDropTarget.getBoundingClientRect(),
 			mIndicatorConfig = oEvent.dragSession && oEvent.dragSession.getIndicatorConfig(),
 			iPageYOffset = window.pageYOffset,
 			iPageXOffset = window.pageXOffset,

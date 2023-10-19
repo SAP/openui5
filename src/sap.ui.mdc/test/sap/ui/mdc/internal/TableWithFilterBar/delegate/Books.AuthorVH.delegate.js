@@ -14,7 +14,6 @@ sap.ui.define([
 ], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);
-	Delegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	Delegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
 		var aCurrentContent = oContainer && oContainer.getContent();

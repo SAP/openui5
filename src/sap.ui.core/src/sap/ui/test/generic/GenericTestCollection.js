@@ -156,6 +156,11 @@ sap.ui.define([], function() {
 					ControlMemoryLeaks: {
 						title: "QUnit Page for memory leak detection in UI5 controls"
 					},
+					/**
+					 * @deprecated As of 1.120
+					 * sap.ui.requireSync is deprecated, therefore it's not needed to test that no sync request is sent
+					 * when control renderer is retrieved.
+					 */
 					ControlRenderer: {
 						title: "QUnit Page for Control Renderer Tests"
 					},

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "org-chart";
-  const pathData = "M484 341q28 0 28 28v113q0 13-7.5 21t-20.5 8H313q-13 0-20.5-8t-7.5-21V369q0-28 28-28h57v-57H143v57h57q28 0 28 28v113q0 13-7.5 21t-20.5 8H29q-13 0-20.5-8T1 482V369q0-28 28-28h57v-86q0-28 29-28h113v-57h-85q-28 0-28-28V28q0-28 28-28h227q28 0 28 28v114q0 28-28 28h-85v57h113q13 0 21 7.5t8 20.5v86h57zM171 113h171V57H171v56zm0 284H58v57h113v-57zm284 0H342v57h113v-57z";
+  const pathData = "M486 352q11 0 18.5 7.5T512 378v108q0 11-7.5 18.5T486 512H314q-11 0-18.5-7.5T288 486V378q0-11 7.5-18.5T314 352h60v-77H138v77h60q11 0 18.5 7.5T224 378v108q0 11-7.5 18.5T198 512H26q-11 0-18.5-7.5T0 486V378q0-11 7.5-18.5T26 352h61V250q0-11 7-18.5t18-7.5h118v-64h-76q-11 0-18.5-7.5T128 134V26q0-11 7.5-18.5T154 0h204q11 0 18.5 7.5T384 26v108q0 11-7.5 18.5T358 160h-76v64h118q11 0 18.5 7.5T426 250v102h60zM179 109h154V51H179v58zm-6 294H51v58h122v-58zm288 0H339v58h122v-58z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

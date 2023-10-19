@@ -1,0 +1,99 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "95f0130fa0fbd6cec11081864d9f7618234f8f88",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: fixed resize loop when SidePanel is in DynamicPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114272"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "a2b27bbc43ea5b0c1a6b32cfffb99ebdf873dc1e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Unstable test fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370087973"
+          }
+        ]
+      },
+      {
+        "id": "3ad200bd09682a383523f837e8d5e42ea22ce2dc",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Unstable test temp FIX",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370087973"
+          }
+        ]
+      },
+      {
+        "id": "de86ff82072e8271295519c180ed5bfc81fa6499",
+        "type": "FIX",
+        "text": " Integration Cards: Background of Actions strip set to \"Transparent\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079886"
+          }
+        ]
+      },
+      {
+        "id": "269692e706d3fbd90f5ef7fa0d3821acd3b50eb3",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Back tab nav fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370052810"
+          }
+        ]
+      },
+      {
+        "id": "aabe3489f27aeb059c98104985cb2c85e8b1ba0d",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "9658ade2bf1c727f0527190dadf0ba095e9aed71",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "bb79937653ee953740bd8da4c2fc47a6299797b2",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: Adjust splitter bar themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370073881"
+          }
+        ]
+      },
+      {
+        "id": "027e5b34cb26da44f4e4818e8afd7171c36c817f",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Content height fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380073093"
+          }
+        ]
+      }
+    ]
+  }
+}

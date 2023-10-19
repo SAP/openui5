@@ -61,7 +61,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.ElementOverlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ElementOverlay = Overlay.extend("sap.ui.dt.ElementOverlay", {
 		metadata: {
@@ -188,9 +187,10 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._aMetadataEnhancers = [];
-			Overlay.apply(this, arguments);
+			Overlay.apply(this, aArgs);
 		}
 	});
 
@@ -322,10 +322,10 @@ sap.ui.define([
 		}
 	};
 
-	ElementOverlay.prototype._getAttributes = function() {
+	ElementOverlay.prototype._getAttributes = function(...aArgs) {
 		return merge(
 			{},
-			Overlay.prototype._getAttributes.apply(this, arguments),
+			Overlay.prototype._getAttributes.apply(this, aArgs),
 			{
 				"data-sap-ui-dt-for": this.getElement().getId(),
 				draggable: this.getMovable()
@@ -333,16 +333,16 @@ sap.ui.define([
 		);
 	};
 
-	ElementOverlay.prototype.render = function() {
+	ElementOverlay.prototype.render = function(...aArgs) {
 		this.addStyleClass("sapUiDtElementOverlay");
-		return Overlay.prototype.render.apply(this, arguments);
+		return Overlay.prototype.render.apply(this, aArgs);
 	};
 
 	/**
 	 * Called when the ElementOverlay is destroyed
 	 * @protected
 	 */
-	ElementOverlay.prototype.exit = function() {
+	ElementOverlay.prototype.exit = function(...aArgs) {
 		this._unsubscribeFromMutationObserver();
 		this._destroyControlObserver();
 
@@ -350,7 +350,7 @@ sap.ui.define([
 			window.cancelAnimationFrame(this._iApplyStylesRequest);
 		}
 
-		Overlay.prototype.exit.apply(this, arguments);
+		Overlay.prototype.exit.apply(this, aArgs);
 	};
 
 	ElementOverlay.prototype._loadDesignTimeMetadata = function() {
@@ -372,12 +372,8 @@ sap.ui.define([
 			throw Util.propagateError(
 				vError,
 				"ElementOverlay#loadDesignTimeMetadata",
-				Util.printf(
-					"Can't load designtime metadata data for overlay with id='{1}', element id='{2}': {3}",
-					this.getId(),
-					this.getAssociation("element"), // Can't use this.getElement(), because the element might be destroyed already
-					Util.wrapError(vError).message
-				)
+				// Can't use this.getElement(), because the element might be destroyed already
+				`Can't load designtime metadata data for overlay with id='${this.getId()}', element id='${this.getAssociation("element")}': ${Util.wrapError(vError).message}`
 			);
 		}.bind(this));
 	};
@@ -385,18 +381,23 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ElementOverlay.prototype._setPosition = function($Target, oGeometry, $Parent, bForceScrollbarSync) {
+	ElementOverlay.prototype._setPosition = function(...aArgs) {
+		const [, , , bForceScrollbarSync] = aArgs;
 		// Apply Overlay position first, then extra logic based on this new position
-		Overlay.prototype._setPosition.apply(this, arguments);
+		Overlay.prototype._setPosition.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
-			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(this.getElement(), mScrollContainer.domRef) || jQuery();
+			var $ScrollContainerDomRef = this.getDesignTimeMetadata().getAssociatedDomRef(
+				this.getElement(),
+				mScrollContainer.domRef
+			) || jQuery();
 			var $ScrollContainerOverlayDomRef = this.getScrollContainerById(iIndex);
 
 			if ($ScrollContainerDomRef.length) {
 				var oScrollContainerDomRef = $ScrollContainerDomRef.get(0);
 				var mScrollContainerGeometry = DOMUtil.getGeometry(oScrollContainerDomRef);
+				this._ensureVisibility($ScrollContainerOverlayDomRef);
 				this._setSize($ScrollContainerOverlayDomRef, mScrollContainerGeometry);
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, mScrollContainerGeometry, this.$());
 				this._handleOverflowScroll(mScrollContainerGeometry, $ScrollContainerOverlayDomRef, this, bForceScrollbarSync);
@@ -408,8 +409,8 @@ sap.ui.define([
 		}, this);
 	};
 
-	ElementOverlay.prototype._applySizes = function() {
-		return Overlay.prototype._applySizes.apply(this, arguments)
+	ElementOverlay.prototype._applySizes = function(...aArgs) {
+		return Overlay.prototype._applySizes.apply(this, aArgs)
 		.then(function() {
 			this._sortChildren(this.getChildrenDomRef());
 			if (!this.bIsDestroyed) {
@@ -592,8 +593,8 @@ sap.ui.define([
 	 * @return {jQuery[]} - returns array of children DOM Nodes each wrapped into jQuery object.
 	 * @private
 	 */
-	ElementOverlay.prototype._renderChildren = function() {
-		var a$Children = Overlay.prototype._renderChildren.apply(this, arguments);
+	ElementOverlay.prototype._renderChildren = function(...aArgs) {
+		var a$Children = Overlay.prototype._renderChildren.apply(this, aArgs);
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			var $ScrollContainer = jQuery("<div></div>", {
@@ -626,7 +627,7 @@ sap.ui.define([
 	 * @return {jQuery} - returns DOM Node of scroll container by its index
 	 */
 	ElementOverlay.prototype.getScrollContainerById = function(iIndex) {
-		return jQuery(this.getChildrenDomRef()).find(">." + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
+		return jQuery(this.getChildrenDomRef()).find(`>.${S_SCROLLCONTAINER_CLASSNAME}[data-sap-ui-dt-scrollcontainerindex="${iIndex}"]`);
 	};
 
 	/**
@@ -636,11 +637,9 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getAssociatedDomRef = function() {
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
-		var vDomRef = oDesignTimeMetadata.getDomRef();
-		var oDomRef = oDesignTimeMetadata.getAssociatedDomRef(this.getElement(), vDomRef);
-		if (!oDomRef) {
-			oDomRef = ElementUtil.getDomRef(this.getElement());
-		}
+		var vDomRef = oDesignTimeMetadata?.getDomRef();
+		var oDomRef = oDesignTimeMetadata?.getAssociatedDomRef(this.getElement(), vDomRef);
+		oDomRef ||= ElementUtil.getDomRef(this.getElement());
 
 		if (oDomRef) {
 			return jQuery(oDomRef);
@@ -799,12 +798,13 @@ sap.ui.define([
 	 * and a new child is added to that aggregation. We then render the aggregation here.
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - The aggregation overlay where the child is being added.
 	 */
-	ElementOverlay.prototype.addChild = function(oAggregationOverlay) {
+	ElementOverlay.prototype.addChild = function(...aArgs) {
+		const [oAggregationOverlay] = aArgs;
 		// Since we can't check whether the listener was attached before or not, we re-attach it to avoid multiple listeners
 		oAggregationOverlay.detachChildAdded(this._onChildAdded, this);
 		oAggregationOverlay.attachChildAdded(this._onChildAdded, this);
 
-		Overlay.prototype.addChild.apply(this, arguments);
+		Overlay.prototype.addChild.apply(this, aArgs);
 	};
 
 	/**
@@ -862,7 +862,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ElementOverlay.prototype.getAggregationOverlay = function(sAggregationName, sAggregationType) {
-		var sGetterFunction = "get" + (sAggregationType || "Children");
+		var sGetterFunction = `get${sAggregationType || "Children"}`;
 		return this[sGetterFunction]().filter(function(oAggregationOverlay) {
 			return oAggregationOverlay.getAggregationName() === sAggregationName;
 		}).pop();
@@ -888,7 +888,7 @@ sap.ui.define([
 	 */
 	ElementOverlay.prototype.getParentAggregationOverlay = function() {
 		var oParentAggregationOverlay = this.getParent();
-		return BaseObject.isA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
+		return BaseObject.isObjectA(oParentAggregationOverlay, "sap.ui.dt.AggregationOverlay") ? oParentAggregationOverlay : null;
 	};
 
 	/**
@@ -982,9 +982,9 @@ sap.ui.define([
 		return bVisible;
 	};
 
-	ElementOverlay.prototype.isVisible = function() {
+	ElementOverlay.prototype.isVisible = function(...aArgs) {
 		return (
-			Overlay.prototype.isVisible.apply(this, arguments)
+			Overlay.prototype.isVisible.apply(this, aArgs)
 			&& this.isElementVisible()
 		);
 	};

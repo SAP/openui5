@@ -3,10 +3,11 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/mvc/View"
-], function(Log, ManagedObject, Component, ComponentContainer, UIComponent, UIComponentMetadata, View) {
+	"sap/ui/core/mvc/View",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, ManagedObject, Component, ComponentContainer, Element, UIComponent, View, nextUIUpdate) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -136,16 +137,16 @@ sap.ui.define([
 
 		return Component.create({
 			manifest : "/anylocation/manifest.json"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
-			var oButton = sap.ui.getCore().byId("theButton");
+			var oButton = Element.getElementById("theButton");
 			assert.ok(!!oButton, "Button was prefixed with Component id!");
 
 			oComponentContainer.destroy();
@@ -160,16 +161,16 @@ sap.ui.define([
 
 		return Component.create({
 			manifest : "/anylocation/manifest.json"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(oComponent.getAutoPrefixId(), true, "AutoPrefixId is true!");
 
-			var oButton = sap.ui.getCore().byId(oComponent.createId("theButton"));
+			var oButton = Element.getElementById(oComponent.createId("theButton"));
 			assert.ok(!!oButton, "Button was prefixed with Component id!");
 
 			oComponentContainer.destroy();
@@ -184,16 +185,16 @@ sap.ui.define([
 
 		return Component.create({
 			manifest : "/anylocation/manifest.json"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.equal(oComponent.getAutoPrefixId(), false, "AutoPrefixId is false!");
 
-			var oButton = sap.ui.getCore().byId("theButton");
+			var oButton = Element.getElementById("theButton");
 			assert.ok(!!oButton, "Button was not prefixed with Component id!");
 
 			oComponentContainer.destroy();
@@ -593,12 +594,12 @@ sap.ui.define([
 	QUnit.test("UIComponent with Typed-View as Root Control", function(assert) {
 		return Component.create({
 			name: "error.test"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oRootControl = oComponent.getRootControl();
 			assert.equal(oRootControl.getViewName(), "module:error/test/JSView.view", "The correct view is displayed!");
@@ -611,12 +612,12 @@ sap.ui.define([
 	QUnit.test("UIComponent check for not prefixing the views' auto id", function(assert) {
 		return Component.create({
 			name: "my.own.autoid"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oRootControl = oComponent.getRootControl();
 			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -630,12 +631,12 @@ sap.ui.define([
 	QUnit.test("UIComponent check for not prefixing the views' auto id (manifest first)", function(assert) {
 		return Component.create({
 			manifest: "/anylocation/mf1st/autoid/manifest.json"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oRootControl = oComponent.getRootControl();
 			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -649,12 +650,12 @@ sap.ui.define([
 	QUnit.test("UIComponent check for prefixing view id", function(assert) {
 		return Component.create({
 			name: "my.own.prefixid"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oRootControl = oComponent.getRootControl();
 			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -671,12 +672,12 @@ sap.ui.define([
 	QUnit.test("UIComponent check for prefixing view id (manifest first)", function(assert) {
 		return Component.create({
 			manifest: "/anylocation/mf1st/prefixid/manifest.json"
-		}).then(function (oComponent) {
+		}).then(async function (oComponent) {
 			var oComponentContainer = new ComponentContainer({
 				component: oComponent
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oRootControl = oComponent.getRootControl();
 			assert.equal(oRootControl.getViewName(), "my.own.View", "The correct view is displayed!");
@@ -853,6 +854,9 @@ sap.ui.define([
 						"type": "sap.ui.model.resource.ResourceModel",
 						"uri": "i18n/i18n.properties"
 					},
+					/**
+					 * @deprecated as of version 1.48
+					 */
 					"odm1": {
 						"type": "sap.ui.model.odata.ODataModel",
 						"uri": "./some/odata/service"
@@ -860,6 +864,10 @@ sap.ui.define([
 					"odm2": {
 						"type": "sap.ui.model.odata.v2.ODataModel",
 						"uri": "./some/odata/service"
+					},
+					"odm4": {
+						"type": "sap.ui.model.odata.v4.ODataModel",
+						"uri": "./some/odata/service/"
 					}
 				},
 				"routing": {
@@ -886,17 +894,31 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
+					/**
+					 * @deprecated as of version 1.120
+					 */
 					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
+					/**
+					 * @deprecated as of version 1.48
+					 */
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
 					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v4/ODataModel"]), "ODataModel v4 required");
 
+					/**
+					 * @deprecated as of version 1.120
+					 */
 					assert.ok(sap.ui.require("sap/ui/core/mvc/JSONView"), "JSONView type loaded");
 					assert.ok(sap.ui.require("sap/ui/model/resource/ResourceModel"), "ResourceModel loaded");
 					assert.ok(sap.ui.require("sap/ui/core/routing/Router"), "Router loaded");
+					/**
+					 * @deprecated as of version 1.48
+					 */
 					assert.ok(sap.ui.require("sap/ui/model/odata/ODataModel"), "ODataModel loaded");
 					assert.ok(sap.ui.require("sap/ui/model/odata/v2/ODataModel"), "ODataModel v2 loaded");
+					assert.ok(sap.ui.require("sap/ui/model/odata/v4/ODataModel"), "ODataModel v4 loaded");
 
 					UIComponent.apply(this, arguments);
 				}
@@ -1027,8 +1049,8 @@ sap.ui.define([
 					manifest: "json"
 				},
 				constructor: function() {
-					assert.ok(logWarningSpy.calledWith('Can not preload module "sap/ui/model/odata/ODataModelNotExists". This will most probably cause an error once the module is used later on.'), "Model not found");
-					assert.ok(logWarningSpy.calledWith('Can not preload module "someRouterNotExists". This will most probably cause an error once the module is used later on.'), "Router not found");
+					assert.ok(logWarningSpy.calledWith("Cannot load module 'sap/ui/model/odata/ODataModelNotExists'. This will most probably cause an error once the module is used later on."), "Model not found");
+					assert.ok(logWarningSpy.calledWith("Cannot load module 'someRouterNotExists'. This will most probably cause an error once the module is used later on."), "Router not found");
 					UIComponent.apply(this, arguments);
 				}
 			});

@@ -6,11 +6,11 @@ sap.ui.define([
 ], function(TableDelegate, Column, Text, VBox) {
 	"use strict";
 
-	var CustomTableDelegate = Object.assign({}, TableDelegate);
+	const CustomTableDelegate = Object.assign({}, TableDelegate);
 
 	CustomTableDelegate.fetchProperties = function(oTable) {
 		return TableDelegate.fetchProperties.apply(this, arguments).then(function(aProperties) {
-			var oProductIdName = {
+			const oProductIdName = {
 				name: "ProductID_Name",
 				label: "Product Name & Id",
 				propertyInfos: ["ProductID", "Name"],
@@ -19,14 +19,14 @@ sap.ui.define([
 				}
 			};
 
-			var oNoDataCol1 = {
+			const oNoDataCol1 = {
 				name: "NoDataCol1",
 				label: "NoDataColumn1",
 				sortable: false,
 				filterable: false
 			};
 
-			var oNoDataCol2 = {
+			const oNoDataCol2 = {
 				name: "NoDataCol2",
 				label: "NoDataColumn2",
 				sortable: false,
@@ -42,7 +42,7 @@ sap.ui.define([
 	};
 
 	CustomTableDelegate.addItem = function(sPropertyName, oTable, mPropertyBag) {
-		var oPropertyHelper = oTable.getPropertyHelper();
+		const oPropertyHelper = oTable.getPropertyHelper();
 		if (oPropertyHelper.getProperty(sPropertyName).isComplex()) {
 			return this._createComplexColumn(sPropertyName, oTable);
 		}
@@ -52,15 +52,15 @@ sap.ui.define([
 
 	CustomTableDelegate._createComplexColumn = function(sPropertyInfoName, oTable) {
 		return oTable.awaitPropertyHelper().then(function(oPropertyHelper) {
-			var oPropertyInfo = oPropertyHelper.getProperty(sPropertyInfoName);
+			const oPropertyInfo = oPropertyHelper.getProperty(sPropertyInfoName);
 
 			if (!oPropertyInfo) {
 				return null;
 			}
 
 			return this._createComplexColumnTemplate(oPropertyInfo).then(function(oTemplate) {
-				var sPropertyName = oPropertyInfo.name;
-				var oColumnInfo = {
+				const sPropertyName = oPropertyInfo.name;
+				const oColumnInfo = {
 					header: oPropertyInfo.label,
 					tooltip: oPropertyInfo.label,
 					propertyKey: sPropertyName,
@@ -72,12 +72,12 @@ sap.ui.define([
 	};
 
 	CustomTableDelegate._createComplexColumnTemplate = function(oPropertyInfo) {
-		var oVBox = new VBox({
+		const oVBox = new VBox({
 			renderType: "Bare"
 		});
 
 		oPropertyInfo.getSimpleProperties().forEach(function(oSimplePropertyInfo) {
-			var oText = new Text({
+			const oText = new Text({
 				text: {
 					path: oSimplePropertyInfo.path
 				}

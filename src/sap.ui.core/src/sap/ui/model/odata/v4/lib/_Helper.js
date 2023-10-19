@@ -34,6 +34,18 @@ sap.ui.define([
 		 */
 		_Helper;
 
+	/**
+	 * Ensures that the key predicates in the given URL are not %-encoded.
+	 *
+	 * @param {string} sUrl - The URL
+	 * @returns {string} The converted URL
+	 */
+	function preserveKeyPredicates(sUrl) {
+		return sUrl.replace(rEscapedTick, "'")
+			.replace(rEscapedOpenBracket, "(")
+			.replace(rEscapedCloseBracket, ")");
+	}
+
 	_Helper = {
 		/**
 		 * Adds an item to the given map by path.
@@ -1613,16 +1625,18 @@ sap.ui.define([
 		 * @param {string} sAnnotation
 		 *   The unqualified name of a private client-side instance annotation (hidden inside
 		 *   namespace "@$ui5._")
+		 * @param {any} [vDefault]
+		 *   The default value to be used instead of <code>undefined</code>
 		 * @returns {any}
-		 *   The annotation's value or <code>undefined</code> if no such annotation exists (e.g.
+		 *   The annotation's value or the given default if no such annotation exists (e.g.
 		 *   because the private namespace object does not exist)
 		 *
 		 * @public
 		 */
-		getPrivateAnnotation : function (oObject, sAnnotation) {
-			var oPrivateNamespace = oObject["@$ui5._"];
+		getPrivateAnnotation : function (oObject, sAnnotation, vDefault) {
+			const vResult = oObject["@$ui5._"]?.[sAnnotation];
 
-			return oPrivateNamespace && oPrivateNamespace[sAnnotation];
+			return vResult === undefined ? vDefault : vResult;
 		},
 
 		/**
@@ -1695,26 +1709,6 @@ sap.ui.define([
 				}
 			}
 			return sPath;
-		},
-
-		/**
-		 * Returns the path for the return value context. Supports bound operations on an entity or
-		 * a collection.
-		 *
-		 * @param {string} sPath
-		 *   The bindings's path; either a resolved model path or a resource path; for example:
-		 *   "/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)" or
-		 *   "/Artists/special.cases.Create(...)", the leading "/" can be omitted.
-		 * @param {string} sResponsePredicate The key predicate of the response entity
-		 * @returns {string} The path for the return value context.
-		 *
-		 * @public
-		 */
-		getReturnValueContextPath : function (sPath, sResponsePredicate) {
-			var sBoundParameterPath = sPath.slice(0, sPath.lastIndexOf("/")),
-				i = sBoundParameterPath.indexOf("(");
-
-			return (i < 0 ? sBoundParameterPath : sPath.slice(0, i)) + sResponsePredicate;
 		},
 
 		/**
@@ -2116,10 +2110,24 @@ sap.ui.define([
 		 * @public
 		 */
 		makeAbsolute : function (sUrl, sBase) {
-			return new URI(sUrl).absoluteTo(sBase).toString()
-				.replace(rEscapedTick, "'")
-				.replace(rEscapedOpenBracket, "(")
-				.replace(rEscapedCloseBracket, ")");
+			return preserveKeyPredicates(new URI(sUrl).absoluteTo(sBase).toString());
+		},
+
+		/**
+		 * Make the given absolute URL relative to the given base URL. The URLs must not contain a
+		 * host or protocol part. Ensures that key predicates are not %-encoded.
+		 *
+		 * @param {string} sUrl
+		 *   The URL
+		 * @param {string} sBase
+		 *   The base URL
+		 * @returns {string}
+		 *   The relative URL
+		 *
+		 * @public
+		 */
+		makeRelativeUrl : function (sUrl, sBase) {
+			return preserveKeyPredicates(new URI(sUrl).relativeTo(sBase).toString());
 		},
 
 		/**
@@ -2767,6 +2775,12 @@ sap.ui.define([
 				aNestedCreatedEntities.$count = undefined; // -> setCount must fire a change event
 				aNestedCreatedEntities.$created = 0;
 				aNestedCreatedEntities.$byPredicate = {};
+				// If mSelectForMetaPath has query options, the corresponding nested ODLB will get a
+				// cache later and must transfer the data to its own cache; otherwise, the nested
+				// binding has no cache and must not lose its data (BCP: 2380101762)
+				if (mSelectForMetaPath[sSegment]) {
+					aNestedCreatedEntities.$transfer = true;
+				}
 				const sCollectionPath = sPath + "/" + sSegment;
 				_Helper.setCount(mChangeListeners, sCollectionPath, aNestedCreatedEntities,
 					aNestedCreatedEntities.length);

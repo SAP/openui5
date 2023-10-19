@@ -3,6 +3,7 @@
 sap.ui.define([
 	"../RtaQunitUtils",
 	"sap/m/Button",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
@@ -15,11 +16,11 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	RtaQunitUtils,
 	Button,
+	Lib,
 	VersionsAPI,
 	VerticalLayout,
 	JSONModel,
@@ -32,7 +33,7 @@ function(
 	Image,
 	Log,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -56,7 +57,7 @@ function(
 				return {
 					getShellHeader: function() {
 						return {
-							getLogo: function() {
+							getLogo() {
 								return "logo";
 							},
 							addStyleClass: function(sText) {
@@ -65,7 +66,7 @@ function(
 							removeStyleClass: function(sText) {
 								this.sRemove = sText;
 							}.bind(this),
-							getShowLogo: function() {
+							getShowLogo() {
 								return true;
 							},
 							$: function() {
@@ -83,14 +84,14 @@ function(
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function(assert) {
-			oCore.applyChanges();
+		async beforeEach(assert) {
+			await nextUIUpdate();
 
 			this.oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 			stubFioriRenderer.call(this, assert);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oImage.destroy();
 			sandbox.restore();
 		}
@@ -99,7 +100,7 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
@@ -132,12 +133,12 @@ function(
 			var done = assert.async();
 
 			this.oToolbar = new Fiori({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			this.oToolbar.setModel(this.oToolbarControlsModel, "controls");
 
-			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function() {
-				oAdaptationDestroyStub.wrappedMethod.apply(this, arguments);
+			var oAdaptationDestroyStub = sandbox.stub(Adaptation.prototype, "destroy").callsFake(function(...aArgs) {
+				oAdaptationDestroyStub.wrappedMethod.apply(this, aArgs);
 				assert.ok(true, "then the destroy is executed without errors");
 			});
 
@@ -174,14 +175,14 @@ function(
 			}
 		});
 		return this.oRta.start()
-		.then(function() {
+		.then(async function() {
 			this.oToolbar = this.oRta.getToolbar();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		}.bind(this));
 	}
 
 	QUnit.module("Different Screen Sizes", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			sandbox.stub(BaseToolbar.prototype, "placeToContainer").callsFake(function() {
 				this.placeAt("qunit-fixture");
 			});
@@ -193,7 +194,7 @@ function(
 			sandbox.stub(VersionsAPI, "initialize").resolves(oVersionsModel);
 			stubFioriRenderer.call(this, assert);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.destroy();
 			this.oComponent.destroy();
 			this.oRta.destroy();
@@ -212,8 +213,8 @@ function(
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "600px";
 			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
-			.callsFake(function() {
-				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is not visible");
 				fnDone();
 			}.bind(this));
@@ -224,11 +225,11 @@ function(
 			var fnDone = assert.async();
 			document.getElementById("qunit-fixture").style.width = "1600px";
 			var oSetLogoVisibilityStub = sandbox.stub(Fiori.prototype, "_setLogoVisibility")
-			.callsFake(function() {
-				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+			.callsFake(function(...aArgs) {
+				oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 				assert.notOk(this.oToolbar.getControl("iconBox").getVisible(), "then the logo disappears");
-				oSetLogoVisibilityStub.callsFake(function() {
-					oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, arguments);
+				oSetLogoVisibilityStub.callsFake(function(...aArgs) {
+					oSetLogoVisibilityStub.wrappedMethod.apply(this.oToolbar, aArgs);
 					assert.ok(this.oToolbar.getControl("iconBox").getVisible(), "then the logo is visible again");
 					fnDone();
 				}.bind(this));

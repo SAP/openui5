@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -20,7 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerStorage",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChangeFactory",
-	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils"
 ], function(
 	_omit,
@@ -28,8 +28,8 @@ sap.ui.define([
 	Log,
 	JsControlTreeModifier,
 	Component,
-	Core,
 	Element,
+	Lib,
 	DescriptorChangeTypes,
 	Applier,
 	Reverter,
@@ -40,7 +40,7 @@ sap.ui.define([
 	ChangeHandlerStorage,
 	ContextBasedAdaptationsAPI,
 	AppVariantInlineChangeFactory,
-	FlexControllerFactory,
+	ChangePersistenceFactory,
 	Utils
 ) {
 	"use strict";
@@ -49,8 +49,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to create, apply and revert {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}.
 	 *
 	 * @namespace sap.ui.fl.write.api.ChangesWriteAPI
-	 * @experimental Since 1.68
 	 * @since 1.68
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
@@ -184,21 +184,19 @@ sap.ui.define([
 			return Promise.reject("Please provide an Element");
 		}
 
-		var oFlexController = FlexControllerFactory.createForSelector(mPropertyBag.element);
 		mPropertyBag.appComponent = Utils.getAppComponentForSelector(mPropertyBag.element);
-		if (!mPropertyBag.modifier) {
-			mPropertyBag.modifier = JsControlTreeModifier;
-		}
+		mPropertyBag.modifier ||= JsControlTreeModifier;
 		// TODO: Descriptor apply function
 		return Applier.applyChangeOnControl(mPropertyBag.change, mPropertyBag.element, _omit(mPropertyBag, ["element", "change"]))
 		.then(function(oResult) {
-			var aDependentChanges = oFlexController.getOpenDependentChangesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mPropertyBag.element);
+			var aDependentChanges = oChangePersistence.getOpenDependentChangesForControl(mPropertyBag.change.getSelector(), mPropertyBag.appComponent);
 			if (aDependentChanges.length > 0) {
 				return ChangesWriteAPI.revert({
 					change: mPropertyBag.change,
 					element: mPropertyBag.element
 				}).then(function() {
-					var oFlResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+					var oFlResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 					var sDependentChangesFileNames = aDependentChanges.map(function(oChange) {
 						return oChange.getId();
 					}).join(", ");

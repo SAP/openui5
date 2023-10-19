@@ -1,15 +1,16 @@
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
+	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/IconPool", // to avoid sync loading within RenderManager#icon
+	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/RenderManager",
-	"sap/ui/core/InvisibleText",
-	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/model/json/JSONModel"
-], function(Core, Control, Element, Renderer, RenderManager, InvisibleText, EnabledPropagator, DragInfo, createAndAppendDiv, JSONModel) {
+], function(Control, Element, EnabledPropagator, _IconPool, InvisibleText, Renderer, RenderManager, DragInfo, createAndAppendDiv, nextUIUpdate, JSONModel) {
 
 	"use strict";
 	/*global QUnit,sinon*/
@@ -141,7 +142,7 @@ sap.ui.define([
 
 	QUnit.test("Custom RM writing text nodes and styles", function(assert) {
 		var oRoot = document.createElement("div");
-		var oRM = Core.createRenderManager();
+		var oRM = new RenderManager();
 		oRM.openStart("div").style("width", "100px").openEnd().text("DivText").close("div");
 		oRM.text("TextNode");
 		oRM.unsafeHtml("<b>BoldText</b>");
@@ -153,7 +154,7 @@ sap.ui.define([
 
 	QUnit.test("Custom RM writing svg elements", function(assert) {
 		var oRoot = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		var oRM = Core.createRenderManager();
+		var oRM = new RenderManager();
 		oRM.openStart("circle", "circle").openEnd().close("circle");
 		oRM.flush(oRoot, false, true);
 
@@ -167,7 +168,7 @@ sap.ui.define([
 		assert.notEqual(oRoot.namespaceURI, oRoot.firstChild.namespaceURI, "div element within the foreignObject is created different than SVG context");
 	});
 
-	QUnit.test("String rendering output and events", function(assert) {
+	QUnit.test("String rendering output and events", async function(assert) {
 		var oStringControl = new StringControl();
 		var onBeforeRenderingSpy = sinon.spy();
 		var onAfterRenderingSpy = sinon.spy();
@@ -183,7 +184,7 @@ sap.ui.define([
 		});
 
 		oStringControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called");
@@ -206,14 +207,14 @@ sap.ui.define([
 		assert.equal(oDomRef.lastChild.tagName, "HR", "void hr tag is rendered");
 
 		oStringControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called again");
 		assert.equal(onBeforeRenderingSpy.callCount, 2, "onBeforeRendering is called again");
 
 		oStringControl.destroy();
 	});
 
-	QUnit.test("String rendering style checks", function(assert) {
+	QUnit.test("String rendering style checks", async function(assert) {
 		var oStringControl = new StringControl("root", {
 			width: "99.9%",
 			items: [new StringControl("child1", {
@@ -224,7 +225,7 @@ sap.ui.define([
 		});
 
 		oStringControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
 		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
@@ -233,7 +234,7 @@ sap.ui.define([
 		oStringControl.destroy();
 	});
 
-	QUnit.test("New rendering output and events", function(assert) {
+	QUnit.test("New rendering output and events", async function(assert) {
 		var oPatchingControl = new PatchingControl();
 		var onBeforeRenderingSpy = sinon.spy();
 		var onAfterRenderingSpy = sinon.spy();
@@ -249,7 +250,7 @@ sap.ui.define([
 		});
 
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called");
@@ -271,14 +272,14 @@ sap.ui.define([
 		assert.equal(oDomRef.lastChild.tagName, "HR", "void hr tag is rendered");
 
 		oPatchingControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called again");
 		assert.equal(onBeforeRenderingSpy.callCount, 2, "onBeforeRendering is called again");
 
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("DOM rendering style checks", function(assert) {
+	QUnit.test("DOM rendering style checks", async function(assert) {
 		var oPatchingControl = new PatchingControl("root", {
 			width: "99.9%",
 			items: [new PatchingControl("child1", {
@@ -289,22 +290,22 @@ sap.ui.define([
 		});
 
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
 		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
 		assert.notEqual(document.getElementById("child2").style.width, "500px", "Width is not set for the 2nd child since we initially do dom-based rendering");
 		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
 
-		Core.byId("child2").setWidth('300px;" hack="true"');
-		Core.applyChanges();
+		Element.getElementById("child2").setWidth('300px;" hack="true"');
+		await nextUIUpdate();
 		assert.notEqual(document.getElementById("child2").style.width, "300px", "Width is not set for the 2nd child since patching encodes semicolon");
 		assert.notOk(document.getElementById("child2").hasAttribute("hack"), "Hack attribute is not set");
 
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("Create RenderManager during the rendering", function(assert) {
+	QUnit.test("Create RenderManager during the rendering", async function(assert) {
 		var oPatchingControl = new PatchingControl({
 			header: "root",
 			items: new PatchingControl({
@@ -313,10 +314,10 @@ sap.ui.define([
 		});
 
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oPatchingControl.setHeader("root2").getItems()[0].setDoSomething(function() {
-			var oRM = Core.createRenderManager();
+			var oRM = new RenderManager();
 			var oNew = new PatchingControl({ header: "new" });
 			var oDom = document.createElement("section");
 
@@ -325,13 +326,13 @@ sap.ui.define([
 			oRM.destroy();
 		}).setHeader("child2");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(oPatchingControl.getDomRef().textContent, "root2child2");
 
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("Mix rendering style checks", function(assert) {
+	QUnit.test("Mix rendering style checks", async function(assert) {
 		var oPatchingControl = new PatchingControl("root", {
 			width: "99.9%",
 			items: [new StringControl("child1", {
@@ -342,7 +343,7 @@ sap.ui.define([
 		});
 
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(document.getElementById("root").style.width, "99.9%", "Width is set correctly for the root");
 		assert.equal(document.getElementById("child1").style.width, "calc(-3rem + 50vw)", "Width is set correctly for the 1st child");
@@ -351,7 +352,7 @@ sap.ui.define([
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("Invalidation in the onBeforeRendering", function(assert) {
+	QUnit.test("Invalidation in the onBeforeRendering", async function(assert) {
 		var oPatchingControl = new PatchingControl({
 			items: new PatchingControl()
 		});
@@ -367,24 +368,24 @@ sap.ui.define([
 			onBeforeRendering: onBeforeRenderingSpy
 		});
 
-		setTimeout(function() {
+		oPatchingControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+		setTimeout(async function() {
 			assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called only once");
 			onBeforeRenderingSpy.resetHistory();
+			oPatchingControl.invalidate();
+			await nextUIUpdate();
 			setTimeout(function() {
 				assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called only once");
 				done();
 			});
-			oPatchingControl.invalidate();
-			Core.applyChanges();
 		});
-		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
 	});
 
-	QUnit.test("Rerendering mutations", function(assert) {
+	QUnit.test("Rerendering mutations", async function(assert) {
 		var oRemovedChild = null;
 		var fnCreateRenderManager = function() {
-			var oRM = Core.createRenderManager();
+			var oRM = new RenderManager();
 			oRM.openStart("div").openEnd().close("div");
 			oRM.destroy();
 		};
@@ -394,11 +395,14 @@ sap.ui.define([
 		oPatchingControl.data("KEY", "VALUE");
 
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aMutations;
 		var oDomRef = oPatchingControl.getDomRef();
-		var oObserver = new MutationObserver(function() {});
+		var aMutations = [];
+		var oObserver = new MutationObserver(function(mutations) {
+			aMutations = [];
+			aMutations = mutations;
+		});
 
 		oObserver.observe(oDomRef, {
 			characterDataOldValue: true,
@@ -410,160 +414,143 @@ sap.ui.define([
 		});
 
 		oPatchingControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		aMutations = oObserver.takeRecords();
 		assert.equal(aMutations.length, 0, "Rerendering needs no mutation");
 
 		oPatchingControl.setHeader("H/");
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/", "Header is changed");
 		assert.equal(aMutations.length, 1, "Only header is changed");
 
 		oPatchingControl.setTooltip("T");
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.title, "T", "Title is changed");
 		assert.equal(aMutations.length, 1, "Only title is changed");
 
 		oPatchingControl.setWidth("100px");
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.style.width, "100px", "Width is changed");
 		assert.equal(aMutations.length, 1, "Only width is changed");
 
 		oPatchingControl.addStyleClass("A").invalidate();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.ok(oDomRef.classList.contains("A"), "Class A is added");
 		assert.equal(aMutations.length, 1, "Only class is changed");
 
 		oPatchingControl.addStyleClass("Z").invalidate();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.ok(oDomRef.classList.contains("A"), "Class Z is added");
 		assert.equal(aMutations.length, 1, "Only class is changed");
 
 		oPatchingControl.data("key", "value", true).invalidate();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.getAttribute("data-key"), "value", "Data attribute is set");
 		assert.equal(aMutations.length, 1, "Only data-key attribute is set");
 
 		oPatchingControl.addItem(new PatchingControl({header: "A", doSomething: fnCreateRenderManager}));
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.lastChild.textContent, "A", "Child A is added");
 		assert.equal(aMutations.length, 1, "Only child A is added");
 
 		oPatchingControl.addItem(new PatchingControl({header: "B"}));
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.lastChild.textContent, "B", "Child B is added");
 		assert.equal(aMutations.length, 1, "Only child B is added");
 
 		oPatchingControl.addItem(new PatchingControl({header: "C"}));
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.lastChild.textContent, "C", "Child C is added");
 		assert.equal(aMutations.length, 1, "Only child C is added");
 
 		assert.equal(oDomRef.textContent, "H/ABC", "Rendering is valid after PatchingControls are added");
 
 		oPatchingControl.getItems()[1].setVisible(false);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/AC", "Child B is not visible");
 		assert.equal(aMutations.length, 1, "Child B DOM is replaced with the invisible placeholder");
 
+		aMutations = [];
 		oPatchingControl.invalidate();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(aMutations.length, 0, "No DOM update");
 
 		oPatchingControl.getItems()[1].setVisible(true);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/ABC", "Child B is visible again");
 		assert.equal(aMutations.length, 1, "Invisible placeholder is replaced with Child B");
 		assert.ok(aMutations[0].removedNodes[0].id.endsWith(aMutations[0].addedNodes[0].id), "Invisible placeholder is replaced via old rendering");
 
 		oRemovedChild = oPatchingControl.removeItem(0);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/BC", "Child A is removed");
 		assert.equal(aMutations.length, 5, "Remove B from 2nd, Insert B to 1st / Remove C from 3nd, Insert C to 1st / Remove A");
 
 		oPatchingControl.insertItem(oRemovedChild, 0);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/ABC", "Child A is inserted to the 1st position");
 		assert.equal(aMutations.length, 1, "Only Child A is inserted");
 
 		oRemovedChild = oPatchingControl.removeItem(1);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/AC", "Child B is removed");
 		assert.equal(aMutations.length, 3, "A is not changed / Remove C from 3nd, Insert C to 1st / Remove B");
 
 		oPatchingControl.insertItem(oRemovedChild, 1);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/ABC", "Child B is inserted to the 2nd position");
 		assert.equal(aMutations.length, 1, "Only Child B is inserted");
 
 		oRemovedChild = oPatchingControl.removeItem(2);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/AB", "Child C is removed");
 		assert.equal(aMutations.length, 1, "A is not changed / B is not changed / Remove C");
 
 		oPatchingControl.insertItem(oRemovedChild, 2);
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(oDomRef.textContent, "H/ABC", "Child C is inserted to the 3nd position");
 		assert.equal(aMutations.length, 1, "Only Child C is inserted");
 
+		aMutations = [];
 		oPatchingControl.invalidate();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
 		assert.equal(aMutations.length, 0, "No DOM update");
 
 		oPatchingControl.addItem(new StringControl({header: "X", doSomething: fnCreateRenderManager}));
-		Core.applyChanges();
-		aMutations = cleanupMutations(oObserver.takeRecords());
+		await nextUIUpdate();
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(oDomRef.lastChild.textContent, "X", "Child X is added via String Rendering");
 		assert.equal(aMutations.length, 1, "Only child X is added");
 
 		assert.equal(oDomRef.textContent, "H/ABCX", "Rendering is valid after StringControl is added");
 
 		oPatchingControl.invalidate();
-		Core.applyChanges();
-		aMutations = cleanupMutations(oObserver.takeRecords());
+		await nextUIUpdate();
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(aMutations.length, 2, "StringControl is replaced(removed from DOM and added again)");
 
 		oPatchingControl.setWidth("200px");
-		Core.applyChanges();
-		aMutations = cleanupMutations(oObserver.takeRecords());
+		await nextUIUpdate();
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(oDomRef.style.width, "200px", "Width is changed");
 		assert.equal(aMutations.length, 3, "Only width of Patching control is changed and StringControl is replaced");
 
 		oRemovedChild = oPatchingControl.removeItem(3);
 		oPatchingControl.insertItem(oRemovedChild, 2);
-		Core.applyChanges();
-		aMutations = cleanupMutations(oObserver.takeRecords());
+		await nextUIUpdate();
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(oDomRef.textContent, "H/ABXC", "Child X inserted to right position");
 		assert.equal(aMutations.length, 2, "StringControl is added to 3rd position and old one is removed");
 
 		oPatchingControl.insertItem(new StringControl({header: "Y"}), 0);
-		Core.applyChanges();
-		aMutations = cleanupMutations(oObserver.takeRecords());
+		await nextUIUpdate();
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(oDomRef.textContent, "H/YABXC", "Child Y inserted to first position");
 		assert.equal(aMutations.length, 3, "StringControl Y is added to first position, StringControl X is replaced");
 
 		oPatchingControl.removeAllItems();
-		Core.applyChanges();
-		aMutations = oObserver.takeRecords();
+		await nextUIUpdate();
+		oObserver.takeRecords();
 		assert.equal(aMutations.length, 5, "All children are removed");
 		assert.equal(oDomRef.textContent, "H/", "Parent is alone");
 
@@ -571,14 +558,14 @@ sap.ui.define([
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("UIArea Rendering", function(assert) {
+	QUnit.test("UIArea Rendering", async function(assert) {
 		var oPatchingControl = new PatchingControl();
 		oPatchingControl.placeAt("uiArea1");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oPatchingControl.setHeader("New Header");
 		oPatchingControl.placeAt("uiArea2");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = oPatchingControl.getDomRef();
 		assert.equal(oDomRef.textContent, "New Header", "Header is updated");
@@ -588,7 +575,7 @@ sap.ui.define([
 		oPatchingControl.destroy();
 	});
 
-	QUnit.test("No Rendering Output", function(assert) {
+	QUnit.test("No Rendering Output", async function(assert) {
 		var onBeforeRenderingSpy = sinon.spy();
 		var onAfterRenderingSpy = sinon.spy();
 		var oRootControl = new PatchingControl({
@@ -611,7 +598,7 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oDomRef = oRootControl.getDomRef();
 
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called");
@@ -619,31 +606,31 @@ sap.ui.define([
 		assert.equal(oDomRef.textContent, "R/", "Children have no output");
 
 		oRootControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called");
 		assert.equal(onBeforeRenderingSpy.callCount, 4, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/", "Children have still no output");
 
 		oRootControl.getItems()[0].setRenderNothing(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 6, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/S", "StringControl child has output");
 
 		oRootControl.getItems()[0].setRenderNothing(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is not called");
 		assert.equal(onBeforeRenderingSpy.callCount, 7, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/", "StringControl has no output anymore");
 
 		oRootControl.getItems()[1].setRenderNothing(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is called");
 		assert.equal(onBeforeRenderingSpy.callCount, 9, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/P", "PatchingControl child has output");
 
 		oRootControl.getItems()[1].setRenderNothing(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 2, "onAfterRendering is not called");
 		assert.equal(onBeforeRenderingSpy.callCount, 10, "onBeforeRendering is called");
 		assert.equal(oDomRef.textContent, "R/", "PatchingControl child has no output anymore");
@@ -651,7 +638,7 @@ sap.ui.define([
 		oRootControl.destroy();
 	});
 
-	QUnit.test("Invisible Rendering", function(assert) {
+	QUnit.test("Invisible Rendering", async function(assert) {
 		var onBeforeRenderingSpy = sinon.spy();
 		var onAfterRenderingSpy = sinon.spy();
 		var oRootControl = new PatchingControl({
@@ -679,7 +666,7 @@ sap.ui.define([
 		}
 
 		oRootControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var oDomRef = oRootControl.getDomRef();
 
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called");
@@ -695,7 +682,7 @@ sap.ui.define([
 		onAfterRenderingSpy.resetHistory();
 
 		oRootControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called during rerender");
 		assert.equal(onBeforeRenderingSpy.callCount, 2, "onBeforeRendering is called during rerender");
 		assert.equal(oDomRef.textContent, "R/", "Children have still no output");
@@ -709,7 +696,7 @@ sap.ui.define([
 		onAfterRenderingSpy.resetHistory();
 
 		oRootControl.getItems()[0].setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called for string rendering, visible=true");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called for string rendering, visible=true");
 		assert.equal(oDomRef.textContent, "R/S", "StringControl child has output");
@@ -717,7 +704,7 @@ sap.ui.define([
 		onAfterRenderingSpy.resetHistory();
 
 		oRootControl.getItems()[0].setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called for string rendering, visible=false");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called for string rendering, visible=false");
 		assert.equal(oDomRef.textContent, "R/", "StringControl has no output anymore");
@@ -725,7 +712,7 @@ sap.ui.define([
 		onAfterRenderingSpy.resetHistory();
 
 		oRootControl.getItems()[1].setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 1, "onAfterRendering is called  for patching control, visible=true");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called for patching control, visible=true");
 		assert.equal(oDomRef.textContent, "R/P", "PatchingControl child has output");
@@ -733,7 +720,7 @@ sap.ui.define([
 		onAfterRenderingSpy.resetHistory();
 
 		oRootControl.getItems()[1].setVisible(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.equal(onAfterRenderingSpy.callCount, 0, "onAfterRendering is not called for patching control, visible=false");
 		assert.equal(onBeforeRenderingSpy.callCount, 1, "onBeforeRendering is called for patching control, visible=false");
 		assert.equal(oDomRef.textContent, "R/", "PatchingControl child has no output anymore");
@@ -743,7 +730,7 @@ sap.ui.define([
 		oRootControl.destroy();
 	});
 
-	QUnit.test("Nested Mixture Rendering", function(assert) {
+	QUnit.test("Nested Mixture Rendering", async function(assert) {
 		var oBeforeRenderingSpy = sinon.spy();
 		var oDelegate = { onBeforeRendering: oBeforeRenderingSpy };
 		var oRootControl = new PatchingControl({
@@ -774,19 +761,23 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var o1_1P = oRootControl.getItems()[0].getItems()[0];
 		assert.notOk(oBeforeRenderingSpy.getCall(0).args[0].domInterface, "domInterface=false for the 1.1P/ because its string rendering parent 1S/ force it to render string as well");
 		oBeforeRenderingSpy.resetHistory();
 
 		o1_1P.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		o1_1P.removeEventDelegate(oDelegate);
 		oBeforeRenderingSpy.resetHistory();
 
+		var aMutations = [];
 		var oDomRef = oRootControl.getDomRef();
-		var oObserver = new MutationObserver(function() {});
+		var oObserver = new MutationObserver(function(mutations) {
+			aMutations = [];
+			aMutations = mutations;
+		});
 
 		oObserver.observe(oDomRef, {
 			characterDataOldValue: true,
@@ -797,13 +788,12 @@ sap.ui.define([
 			subtree: true
 		});
 
-		var oDomRef = oRootControl.getDomRef();
 		assert.equal(oDomRef.textContent, "R/1S/1.1P/1.2S/2P/2.1S/2.2P/", "Content is correct after initial rendering");
 
 		oRootControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
-		var aMutations = cleanupMutations(oObserver.takeRecords());
+		aMutations = cleanupMutations(aMutations);
 		assert.equal(aMutations.length, 4, "Only 1S/ and 2.1S/ String controls need to be replaced");
 		assert.equal(aMutations[0].addedNodes[0].textContent, "1S/1.1P/1.2S/", "New 1S/ String control is inserted with its children");
 		assert.equal(aMutations[1].removedNodes[0].textContent, "1S/1.1P/1.2S/", "Old 1S/ String control is removed with its childre");
@@ -815,15 +805,15 @@ sap.ui.define([
 		oRootControl.destroy();
 	});
 
-	QUnit.test("Preserved Area and Patching", function(assert) {
+	QUnit.test("Preserved Area and Patching", async function(assert) {
 		var oPatchingControl = new PatchingControl();
 		oPatchingControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oPatchingControl.getDomRef().setAttribute("data-sap-ui-preserve", oPatchingControl.getId());
 		RenderManager.preserveContent(oPatchingControl.getDomRef(), true);
 		oPatchingControl.setHeader("New Header");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(oPatchingControl.getDomRef().textContent, "PatchingControl", "PatchingControl control in the preserved area is not patched");
 
@@ -898,7 +888,7 @@ sap.ui.define([
 		assert.equal(RenderManager.getApiVersion(NewestPatchingControlRenderer), 1, "apiVersion is not inherited from the base class");
 	});
 
-	QUnit.test("Focus Handler for Patching Controls", function(assert) {
+	QUnit.test("Focus Handler for Patching Controls", async function(assert) {
 		var oChild1 = new PatchingControl({
 			header: "1P"
 		});
@@ -912,7 +902,7 @@ sap.ui.define([
 			]
 		});
 		oRootControl.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oChild1GetFocusInfoSpy = sinon.spy(oChild1, "getFocusInfo");
 		var oChild1ApplyFocusInfoSpy = sinon.spy(oChild1, "applyFocusInfo");
@@ -921,20 +911,20 @@ sap.ui.define([
 
 		oChild1.focus();
 		oChild1.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oChild1GetFocusInfoSpy.called, "Child1.getFocusInfo is called");
 		assert.ok(oChild1ApplyFocusInfoSpy.called, "Child1.applyFocusInfo is called");
 		assert.equal(document.activeElement, oChild1.getFocusDomRef(), "Child1 has still focus after rendering");
 
 		oChild2.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oChild2GetFocusInfoSpy.called, "Child2.getFocusInfo is not called");
 		assert.notOk(oChild2ApplyFocusInfoSpy.called, "Child2.applyFocusInfo is not called");
 		assert.equal(document.activeElement, oChild1.getFocusDomRef(), "Child1 has still focus after Child2 rendering");
 
 		oChild2.focus();
 		oRootControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.ok(oChild2GetFocusInfoSpy.called, "Child2.getFocusInfo is called");
 		assert.ok(oChild2ApplyFocusInfoSpy.called, "Child2.applyFocusInfo is called");
 		assert.equal(document.activeElement, oChild2.getFocusDomRef(), "Child2 has still focus after parent rendering");
@@ -953,14 +943,18 @@ sap.ui.define([
 				this.oApiVerionStub = sinon.stub(PatchingControl.getMetadata().getRenderer(), "apiVersion").value(4);
 				this.oBeforeRenderingSpy = sinon.spy(Control.prototype, "onBeforeRendering");
 			},
-			beforeEach: function() {
+			beforeEach: async function() {
 				this.initControlTree();
 				this.oRootControl.placeAt("qunit-fixture");
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				this.oBeforeRenderingSpy.resetHistory();
 				this.oDomRef = this.oRootControl.getDomRef();
-				this.oObserver = new MutationObserver(function() {});
+				this.aMutations = [];
+				this.oObserver = new MutationObserver(function(mutations) {
+					this.aMutations = [];
+					this.aMutations = mutations;
+				}.bind(this));
 				this.oObserver.observe(this.oDomRef, {
 					characterData: true,
 					attributes: true,
@@ -968,11 +962,10 @@ sap.ui.define([
 					subtree: true
 				});
 			},
-			act: function(fnAct) {
+			act: async function(fnAct) {
 				this.oBeforeRenderingSpy.resetHistory();
-				this.oObserver.takeRecords();
 				fnAct.call(this);
-				Core.applyChanges();
+				await nextUIUpdate();
 			},
 			afterEach: function() {
 				this.oObserver.disconnect();
@@ -1008,42 +1001,42 @@ sap.ui.define([
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2P/", "Content is correct after initial rendering");
 	});
 
-	QUnit.test("Insert a new aggregation", function(assert) {
+	QUnit.test("Insert a new aggregation", async function(assert) {
 		var oNewControl = new PatchingControl({header: "2P/"});
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.addItem(oNewControl);
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2P/2P/", "The new control has been rendered correctly");
-		assert.equal(this.oObserver.takeRecords().length, 1, "Only the new control has been rendered");
+		assert.equal(this.aMutations.length, 1, "Only the new control has been rendered");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is only called for the root and new control");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the root control");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(oNewControl), "oBeforeRenderingSpy is called on the new control");
 	});
 
-	QUnit.test("Make a parent control invisible and then visible", function(assert) {
-		this.act(function() {
+	QUnit.test("Make a parent control invisible and then visible", async function(assert) {
+		await this.act(function() {
 			this.o1P.setVisible(false);
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/", "1P/ control and its children are not rendered");
-		assert.equal(this.oObserver.takeRecords().length, 1, "Control 1P/ DOM node and its children replaced with the invisible placeholder");
+		assert.equal(this.aMutations.length, 1, "Control 1P/ DOM node and its children replaced with the invisible placeholder");
 		assert.ok(document.getElementById(RenderManager.createInvisiblePlaceholderId(this.o1P)), "Invisible placeholder has been rendered");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P Control");
 
-		this.act(function() {
+		await this.act(function() {
 			this.o1P.setVisible(true);
 		});
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2P/", "Visible item and its children are rendered correctly");
-		assert.equal(this.oObserver.takeRecords().length, 1, "invisible placeholder DOM is replaced with the item DOM that contains children");
+		assert.equal(this.aMutations.length, 1, "invisible placeholder DOM is replaced with the item DOM that contains children");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 3, "oBeforeRenderingSpy is called for the root invisible control and its children");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.o1P), "oBeforeRenderingSpy is called for the root invisible item 1P/");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1_1P), "oBeforeRenderingSpy is called for the invisible item 1.1P/");
 		assert.ok(this.oBeforeRenderingSpy.getCall(2).calledOn(this.o1_2P), "oBeforeRenderingSpy is called for the invisible item 1.2P/");
 	});
 
-	QUnit.test("Child invalidation while parent rendering can be skipped", function(assert) {
-		this.act(function() {
+	QUnit.test("Child invalidation while parent rendering can be skipped", async function(assert) {
+		await this.act(function() {
 			this.oRootControl.setHeader("RNew/");
 			this.o1_1P.setHeader("1.1PNew/");
 			assert.ok(this.oRootControl._bNeedsRendering, "parent of 1P/ is invalidated");
@@ -1052,20 +1045,20 @@ sap.ui.define([
 		});
 
 		assert.equal(this.oDomRef.textContent, "RNew/1P/1.1PNew/1.2P/", "New headers are rendered correctly");
-		assert.equal(this.oObserver.takeRecords().length, 2, "Header for the root control and header for 1.1P/ are set");
+		assert.equal(this.aMutations.length, 2, "Header for the root control and header for 1.1P/ are set");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is only called for the root control and the 1.1P/ control");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the root control");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1_1P), "oBeforeRenderingSpy is called on the 1.1P/ control");
 	});
 
-	QUnit.test("Make an invisible child visible while parent rendering can be skipped", function(assert) {
-		this.act(function() {
+	QUnit.test("Make an invisible child visible while parent rendering can be skipped", async function(assert) {
+		await this.act(function() {
 			this.o1_1P.setVisible(false);
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.2P/", "1.1P/ control made invisible");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.setHeader("RNew/");
 			this.o1_1P.setVisible(true);
 		});
@@ -1073,19 +1066,19 @@ sap.ui.define([
 		assert.equal(this.oDomRef.textContent, "RNew/1P/1.1P/1.2P/", "New header is rendered correctly and 1.1P/ control is now visible");
 	});
 
-	QUnit.test("Rearrange aggregations", function(assert) {
-		this.act(function() {
+	QUnit.test("Rearrange aggregations", async function(assert) {
+		await this.act(function() {
 			this.o1P.insertItem(this.o1P.removeItem(0), 1); // swap 1.1P/ and 1.2P/
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.2P/1.1P/", "Reordered items  are rendered correctly");
-		assert.equal(this.oObserver.takeRecords().length, 2, "Only reordered item DOM nodes are swapped");
+		assert.equal(this.aMutations.length, 2, "Only reordered item DOM nodes are swapped");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 1, "oBeforeRenderingSpy is called only once for the parent control 1P/");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P/ control, moving items do not invalidate items");
 	});
 
-	QUnit.test("Invalidations while controls are not in a UIArea", function(assert) {
-		this.act(function() {
+	QUnit.test("Invalidations while controls are not in a UIArea", async function(assert) {
+		await this.act(function() {
 			var o1P = this.oRootControl.removeItem(0);
 			assert.notOk(o1P.getUIArea(), "1P/ has no UIArea");
 			o1P.getItems()[0].setHeader("1.1PNew/");
@@ -1093,47 +1086,50 @@ sap.ui.define([
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1PNew/1.2P/", "Header of the item is applied correctly, even invalidation is happened while the control had no UIArea");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 1, "Only the text content of the item is changed");
+		assert.equal(cleanupMutations(this.aMutations).length, 1, "Only the text content of the item is changed");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 3, "oBeforeRenderingSpy is called on the root control, 1P/ and 1.1P/");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the RootControl");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P/ since invalidation of child bubbled while child has no UIArea ");
 		assert.ok(this.oBeforeRenderingSpy.getCall(2).calledOn(this.o1_1P), "oBeforeRenderingSpy is called on the 1.1P/");
 	});
 
-	QUnit.test("Rendering event delegates and data-sap-ui-render marker", function(assert) {
-		["onAfterRendering", "onBeforeRendering"].forEach(function(sRenderingDelegate) {
-			var oDelegate = {};
-			oDelegate[sRenderingDelegate] = Function.prototype;
+	QUnit.test("Rendering event delegates and data-sap-ui-render marker", async function(assert) {
+			async function addDelegate(sRenderingDelegate) {
+				var oDelegate = {};
+				oDelegate[sRenderingDelegate] = Function.prototype;
 
-			assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not yet set for the 1P/");
-			this.o1P.addEventDelegate(oDelegate);
-			assert.ok(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is set for the 1P/ after the rendering delegate is added");
+				assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not yet set for the 1P/");
+				this.o1P.addEventDelegate(oDelegate);
+				assert.ok(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is set for the 1P/ after the rendering delegate is added");
 
-			this.act(function() {
-				this.oRootControl.invalidate();
-			});
-			assert.ok(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is set for the 1P/ after rerendering");
-			assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is called on the root and 1P/ since data-sap-ui-render marker does not allow skipping for 1P/");
+				await this.act(function() {
+					this.oRootControl.invalidate();
+				});
+				assert.ok(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is set for the 1P/ after rerendering");
+				assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is called on the root and 1P/ since data-sap-ui-render marker does not allow skipping for 1P/");
 
-			this.o1P.removeEventDelegate(oDelegate);
-			assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is removed since there is no more rendering delegate for the 1P/");
+				this.o1P.removeEventDelegate(oDelegate);
+				assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is removed since there is no more rendering delegate for the 1P/");
 
-			oDelegate.canSkipRendering = true;
-			this.o1P.addEventDelegate(oDelegate);
-			assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not set since canSkipRendering is true");
+				oDelegate.canSkipRendering = true;
+				this.o1P.addEventDelegate(oDelegate);
+				assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not set since canSkipRendering is true");
 
-			this.act(function() {
-				this.oRootControl.invalidate();
-			});
-			assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is still not set for the 1P/ after rerendering");
-			assert.equal(this.oBeforeRenderingSpy.callCount, 1, "oBeforeRenderingSpy is called only on the root control since 1P/ rendering can be skipped");
-		}, this);
+				await this.act(function() {
+					this.oRootControl.invalidate();
+				});
+				assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is still not set for the 1P/ after rerendering");
+				assert.equal(this.oBeforeRenderingSpy.callCount, 1, "oBeforeRenderingSpy is called only on the root control since 1P/ rendering can be skipped");
+			}
+
+			await addDelegate.call(this, "onBeforeRendering");
+			await addDelegate.call(this, "onAfterRendering");
 	});
 
-	QUnit.test("enhanceAccessibilityState and data-sap-ui-render marker", function(assert) {
+	QUnit.test("enhanceAccessibilityState and data-sap-ui-render marker", async function(assert) {
 		assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not yet set for the 1P/");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.enhanceAccessibilityState = function(oItem, mAriaProps) {
 				mAriaProps.role = "RoleFromParent";
 			};
@@ -1142,14 +1138,14 @@ sap.ui.define([
 		assert.ok(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is set for the 1P/ because parent implements the enhanceAccessibilityState");
 		assert.equal(this.o1P.getDomRef().getAttribute("role"), "RoleFromParent", "role attribute of 1P/ is taken from the parent#enhanceAccessibilityState");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.enhanceAccessibilityState = function(oItem, mAriaProps) { /*nothing is changed here intentionally for testing */ };
 			this.o1P.invalidate();
 		});
 		assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not set because the enhanceAccessibilityState does not change anything");
 		assert.notOk(this.o1P.getDomRef().getAttribute("role"), "There is no role set for the 1P/ since parent#enhanceAccessibilityState is empty");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.enhanceAccessibilityState = function(oItem, mAriaProps) {
 				mAriaProps.role = "RoleFromParent";
 				mAriaProps.canSkipRendering = true;
@@ -1159,14 +1155,14 @@ sap.ui.define([
 		assert.notOk(this.o1P.getDomRef().hasAttribute("data-sap-ui-render"), "data-sap-ui-render marker is not set because the enhanceAccessibilityState uses canSkipRendering flag");
 	});
 
-	QUnit.test("enhanceAccessibilityState and rendering skip", function(assert) {
+	QUnit.test("enhanceAccessibilityState and rendering skip", async function(assert) {
 		this.oRootControl.enhanceAccessibilityState = function(oItem, mAriaProps) {
 			mAriaProps.role = "newRoleFromParent";
 			mAriaProps.setsize = this.getItems().length;
 			mAriaProps.posinset = this.indexOfItem(oItem) + 1;
 		};
 
-		this.act(function() {
+		await this.act(function() {
 			this.o1P.invalidate();
 		});
 		assert.equal(this.o1P.getDomRef().getAttribute("role"), "newRoleFromParent", "enhanceAccessibilityState is called on the parent and role is set correctly for 1P/");
@@ -1174,7 +1170,7 @@ sap.ui.define([
 		assert.equal(this.o1P.getDomRef().getAttribute("aria-setsize"), 1, "enhanceAccessibilityState is called on the parent and setsize is set correctly for 1P/");
 
 		var oNewControl = new PatchingControl({header: "0P/"});
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.insertItem(oNewControl, 0);
 		});
 		assert.equal(this.oDomRef.textContent, "R/0P/1P/1.1P/1.2P/", "The new 0P/ control is rendered in correct position");
@@ -1186,18 +1182,18 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("DragInfo and DragInfo invalidations", function(assert) {
+	QUnit.test("DragInfo and DragInfo invalidations", async function(assert) {
 		var oDragInfo = new DragInfo({
 			sourceAggregation: "items"
 		});
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.addDragDropConfig(oDragInfo);
 		});
 		assert.ok(this.o1P.getDomRef().draggable, "Item is draggable after rendering, although invalidation was only on the root control the rendering of the item is not skipped");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is called on the root and 1P/");
 
-		this.act(function() {
+		await this.act(function() {
 			oDragInfo.setEnabled(false);
 		});
 		assert.notOk(this.o1P.getDomRef().draggable, "Item is not draggable, although invalidation was only on the root control the rendering of the item is not skipped");
@@ -1227,14 +1223,14 @@ sap.ui.define([
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2S/", "Content is correct after initial rendering");
 	});
 
-	QUnit.test("Insert a new aggregation", function(assert) {
+	QUnit.test("Insert a new aggregation", async function(assert) {
 		var oNewControl = new PatchingControl({header: "2P/"});
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.addItem(oNewControl);
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2S/2P/", "New control (2P) is rendered correctly");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 3, "The new control (2P) is rendered and string control(1.2S) is replaced(removed+inserted)");
+		assert.equal(cleanupMutations(this.aMutations).length, 3, "The new control (2P) is rendered and string control(1.2S) is replaced(removed+inserted)");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 4, "oBeforeRenderingSpy is called for all controls except the PatchingControl 1.1P/");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the root control, since it contains a StringControl we cannot skip its rendering");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P, since it contains a StringControl we cannot skip its rendering");
@@ -1242,8 +1238,8 @@ sap.ui.define([
 		assert.ok(this.oBeforeRenderingSpy.getCall(3).calledOn(oNewControl), "oBeforeRenderingSpy is called on the new control");
 	});
 
-	QUnit.test("Child invalidation while parent rendering can be skipped", function(assert) {
-		this.act(function() {
+	QUnit.test("Child invalidation while parent rendering can be skipped", async function(assert) {
+		await this.act(function() {
 			this.oRootControl.setHeader("RNew/");
 			this.o1_1P.setHeader("1.1PNew/");
 			assert.ok(this.oRootControl._bNeedsRendering, "parent of 1P/ is invalidated");
@@ -1252,7 +1248,7 @@ sap.ui.define([
 		});
 
 		assert.equal(this.oDomRef.textContent, "RNew/1P/1.1PNew/1.2S/", "New headers are rendered correctly");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 4, "Characterdata for root/child are set and the StringControl is replaced even though its parent is not invalidated");
+		assert.equal(cleanupMutations(this.aMutations).length, 4, "Characterdata for root/child are set and the StringControl is replaced even though its parent is not invalidated");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 4, "oBeforeRenderingSpy is called for all controls");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the root control, since it contains StringControl");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1P), "oBeforeRenderingSpy is called on the first child control(1P), since it contains StringControl");
@@ -1260,21 +1256,21 @@ sap.ui.define([
 		assert.ok(this.oBeforeRenderingSpy.getCall(3).calledOn(this.o1_2S), "oBeforeRenderingSpy is called on the StringControl");
 	});
 
-	QUnit.test("Re-rendering", function(assert) {
-		this.act(function() {
+	QUnit.test("Re-rendering", async function(assert) {
+		await this.act(function() {
 			this.oRootControl.invalidate();
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.1P/1.2S/", "Content is not changed after rerendering");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 3, "oBeforeRenderingSpy is called for the StringControl and its parents, since rendering skip is blocked by the StringControl");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 2, "The StringControl is replaced(removed+inserted)");
+		assert.equal(cleanupMutations(this.aMutations).length, 2, "The StringControl is replaced(removed+inserted)");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.oRootControl), "oBeforeRenderingSpy is called on the root control, since it contains StringControl");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1P), "oBeforeRenderingSpy is called on the first child control(1P), since it contains StringControl");
 		assert.ok(this.oBeforeRenderingSpy.getCall(2).calledOn(this.o1_2S), "oBeforeRenderingSpy is called on the StringControl");
 	});
 
-	QUnit.test("EnabledPropagator", function(assert) {
-		this.act(function() {
+	QUnit.test("EnabledPropagator", async function(assert) {
+		await this.act(function() {
 			this.oRootControl.setEnabled(false);
 		});
 
@@ -1283,7 +1279,7 @@ sap.ui.define([
 		assert.ok(this.o1_1P.$().hasClass("Disabled"), "Grand child PatchingControl(1.1P/) is disabled via EnabledPropagator as well");
 		assert.notOk(this.o1_2S.$().hasClass("Disabled"), "StringControl is not disabled since EnabledPropagator is not implemented by the StringControl");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.setEnabled(true);
 		});
 
@@ -1292,7 +1288,7 @@ sap.ui.define([
 		assert.notOk(this.o1_1P.$().hasClass("Disabled"), "Grand child PatchingControl(1.1PNew) is enabled via EnabledPropagator as well");
 		assert.notOk(this.o1_2S.$().hasClass("Disabled"), "StringControl was not disabled anyway since EnabledPropagator was not implemented by the StringControl");
 
-		this.act(function() {
+		await this.act(function() {
 			this.o1_1P.useEnabledPropagator(false);
 			this.oRootControl.setEnabled(false);
 		});
@@ -1301,29 +1297,29 @@ sap.ui.define([
 		assert.notOk(this.o1_1P.$().hasClass("Disabled"), "Control 1.1P/ is not disabled since it is excluded from the EnabledPropagator with useEnabledPropagator method");
 	});
 
-	QUnit.test("Rearrange aggregations", function(assert) {
-		this.act(function() {
+	QUnit.test("Rearrange aggregations", async function(assert) {
+		await this.act(function() {
 			this.o1P.insertItem(this.o1P.removeItem(0), 1); // swap 1.1P/ and 1.2S/
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/1P/1.2S/1.1P/", "Reordered items are rendered correctly");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 2, "String control DOM node is not reused, a new string control DOM created and the original one is removed");
+		assert.equal(cleanupMutations(this.aMutations).length, 2, "String control DOM node is not reused, a new string control DOM created and the original one is removed");
 		assert.equal(this.oBeforeRenderingSpy.callCount, 2, "oBeforeRenderingSpy is called for the parent control 1P/ but also for the String control");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P/ control, moving items do not invalidate items");
 		assert.ok(this.oBeforeRenderingSpy.getCall(1).calledOn(this.o1_2S), "oBeforeRenderingSpy is called on the string control since its rendering cannot be skipped");
 	});
 
-	QUnit.test("Make a parent control invisible", function(assert) {
-		this.act(function() {
+	QUnit.test("Make a parent control invisible", async function(assert) {
+		await this.act(function() {
 			this.o1P.setVisible(false);
 		});
 
 		assert.equal(this.oDomRef.textContent, "R/", "1P/ control and its children are not rendered");
-		assert.equal(this.oObserver.takeRecords().length, 1, "Control 1P/ DOM node and its children replaced with the invisible placeholder");
+		assert.equal(this.aMutations.length, 1, "Control 1P/ DOM node and its children replaced with the invisible placeholder");
 		assert.ok(document.getElementById(RenderManager.createInvisiblePlaceholderId(this.o1P)), "Invisible placeholder has been rendered");
 		assert.ok(this.oBeforeRenderingSpy.getCall(0).calledOn(this.o1P), "oBeforeRenderingSpy is called on the 1P Control");
 
-		this.act(function() {
+		await this.act(function() {
 			this.oRootControl.invalidate();
 		});
 
@@ -1333,14 +1329,14 @@ sap.ui.define([
 		assert.equal(this.oObserver.takeRecords().length, 0, "No mutation parent control is a Patching control");
 	});
 
-	QUnit.test("No rendering skip", function(assert) {
-		this.act(function() {
+	QUnit.test("No rendering skip", async function(assert) {
+		await this.act(function() {
 			this.oApiVerionStub.restore();
 			this.oRootControl.invalidate();
 		});
 
 		assert.equal(this.oBeforeRenderingSpy.callCount, 4, "oBeforeRenderingSpy is called for the root control and every control within the root control");
-		assert.equal(cleanupMutations(this.oObserver.takeRecords()).length, 2, "String rendering control must be removed and inserted on parent rerendering");
+		assert.equal(cleanupMutations(this.aMutations).length, 2, "String rendering control must be removed and inserted on parent rerendering");
 	});
 
 	QUnit.module("invalidation during rendering", {
@@ -1446,7 +1442,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("child invalidates while parent renders initially, but before parent renders it", function(assert) {
+	QUnit.test("child invalidates while parent renders initially, but before parent renders it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			invalidatesBefore: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1456,7 +1452,7 @@ sap.ui.define([
 		});
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1468,7 +1464,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child in an element container invalidates while parent renders initially, but before parent renders it", function(assert) {
+	QUnit.test("child in an element container invalidates while parent renders initially, but before parent renders it", async function(assert) {
 		var oContainer = new this.InvalidatingChildContainer({
 			content: this.oChild
 		});
@@ -1481,7 +1477,7 @@ sap.ui.define([
 		});
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent that contains element only rendered once");
@@ -1492,7 +1488,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child invalidates while parent renders initially, but after parent has rendered it", function(assert) {
+	QUnit.test("child invalidates while parent renders initially, but after parent has rendered it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			invalidatesAfter: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1502,7 +1498,7 @@ sap.ui.define([
 		});
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1513,7 +1509,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child invalidates while parent renders initially, but parent does never render it", function(assert) {
+	QUnit.test("child invalidates while parent renders initially, but parent does never render it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			neverRendered: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1523,7 +1519,7 @@ sap.ui.define([
 		});
 
 		// act
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1534,7 +1530,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child invalidates while parent re-renders, but before parent renders it", function(assert) {
+	QUnit.test("child invalidates while parent re-renders, but before parent renders it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			invalidatesBefore: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1542,13 +1538,13 @@ sap.ui.define([
 		oParent.addEventDelegate({
 			onBeforeRendering: oParentOnBeforeRenderingSpy
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.onBeforeRenderingSpy.resetHistory();
 		oParentOnBeforeRenderingSpy.resetHistory();
 
 		// act
 		oParent.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1559,7 +1555,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child invalidates while parent re-renders, but after parent has rendered it", function(assert) {
+	QUnit.test("child invalidates while parent re-renders, but after parent has rendered it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			invalidatesAfter: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1567,13 +1563,13 @@ sap.ui.define([
 		oParent.addEventDelegate({
 			onBeforeRendering: oParentOnBeforeRenderingSpy
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.onBeforeRenderingSpy.resetHistory();
 		oParentOnBeforeRenderingSpy.resetHistory();
 
 		// act
 		oParent.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1584,7 +1580,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("child invalidates while parent re-renders, but parent does never render it", function(assert) {
+	QUnit.test("child invalidates while parent re-renders, but parent does never render it", async function(assert) {
 		var oParent = new this.ParentWithInvalidatingChildren({
 			neverRendered: this.oChild
 		}).placeAt("qunit-fixture");
@@ -1592,13 +1588,13 @@ sap.ui.define([
 		oParent.addEventDelegate({
 			onBeforeRendering: oParentOnBeforeRenderingSpy
 		});
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.onBeforeRenderingSpy.resetHistory();
 		oParentOnBeforeRenderingSpy.resetHistory();
 
 		// act
 		oParent.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// assert
 		assert.strictEqual(oParentOnBeforeRenderingSpy.callCount, 1, "parent only rendered once");
@@ -1614,7 +1610,7 @@ sap.ui.define([
 			this.oApiVerionStub = sinon.stub(PatchingControl.getMetadata().getRenderer(), "apiVersion").value(4);
 			this.oJSONModel = new JSONModel([{ header: "Header1"}, { header: "Header2"} ]);
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oParent = new PatchingControl({
 				models: this.oJSONModel,
 				items: {
@@ -1625,7 +1621,7 @@ sap.ui.define([
 				}
 			});
 			this.oParent.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oParent.destroy();
@@ -1636,7 +1632,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Insert aggregation with bSupressInvalidate=true and binding propagation should be reflected in the child", function(assert) {
+	QUnit.test("Insert aggregation with bSupressInvalidate=true and binding propagation should be reflected in the child", async function(assert) {
 		var oChild = this.oParent.getItems()[0];
 		var sId = oChild.getId();
 		this.oParent.destroyAggregation("items", "KeepDom");
@@ -1655,14 +1651,14 @@ sap.ui.define([
 		assert.ok(oNewChildInvalidateSpy.calledOnce, "Invalidate is called for the header property change on the child");
 
 		this.oParent.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.strictEqual(oNewChild.getDomRef().textContent, "Header2", "new child dom is rendered correctly");
 
 		oNewChildInvalidateSpy.restore();
 		oParentInvalidateSpy.restore();
 	});
 
-	QUnit.test("Move aggregation with bSupressInvalidate=true and rendering should start for the child only once", function(assert) {
+	QUnit.test("Move aggregation with bSupressInvalidate=true and rendering should start for the child only once", async function(assert) {
 		var oAnotherParent = new PatchingControl({
 			models: this.oJSONModel,
 			items: {
@@ -1673,10 +1669,10 @@ sap.ui.define([
 			}
 		});
 		oAnotherParent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oAnotherParent.destroyItems();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		var oBinding = this.oParent.getBinding("items");
 		var oSecondContext = oBinding.getContexts(1, 1)[0];
@@ -1686,7 +1682,7 @@ sap.ui.define([
 		oChild.onAfterRendering = sinon.spy();
 		oAnotherParent.addAggregation("items", oChild, true);
 		oAnotherParent.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(oChild.getDomRef().textContent, "Header2", "child dom is rendered correctly");
 		assert.ok(oChild.onAfterRendering.calledOnce, "oChild.onAfterRendering is called only once");

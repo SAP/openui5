@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
 	ElementOverlay,
@@ -18,18 +18,18 @@ sap.ui.define([
 	Panel,
 	Device,
 	jQuery,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that an Overlay is created on RTL mode", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oOverlay = new ElementOverlay({
 				element: this.oButton,
@@ -41,7 +41,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -67,7 +67,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created on RTL mode and scrolling is present", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			this.oButton = new Button({
 				text: "Button"
@@ -88,7 +88,7 @@ sap.ui.define([
 			});
 
 			this.oOuterPanel.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var iScrollLeftValue = -20;
 			// Chrome uses positive leftScroll
 			if (Device.browser.blink) {
@@ -111,7 +111,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oOuterPanel.destroy();
 		}

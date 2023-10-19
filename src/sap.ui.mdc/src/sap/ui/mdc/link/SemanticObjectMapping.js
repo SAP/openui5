@@ -19,8 +19,9 @@ sap.ui.define([
 	 * @private
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.SemanticObjectMapping
+	 * @deprecated since version 1.120 - please see {@link sap.ui.mdc.ushell.SemanticObjectMapping}
 	 */
-	var SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */
+	const SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

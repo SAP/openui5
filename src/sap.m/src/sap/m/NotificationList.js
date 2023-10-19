@@ -42,8 +42,6 @@ function(
 
 	NotificationList.prototype.onItemFocusIn = function() { };
 
-	NotificationList.prototype.setItemFocusable  = function() { };
-
 	NotificationList.prototype._startItemNavigation = function () {
 		ListBase.prototype._startItemNavigation.call(this);
 

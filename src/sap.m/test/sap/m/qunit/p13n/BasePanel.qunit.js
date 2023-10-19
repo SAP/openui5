@@ -285,7 +285,6 @@ sap.ui.define([
 		assert.equal(oPanel.getP13nData()[3].name, "test2", "2. item is at last position");
 	});
 
-
 	QUnit.module("BasePanel API change special reasoning", {
 		beforeEach: function() {
 			this.oBasePanel = new BasePanel();

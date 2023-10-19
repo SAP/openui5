@@ -92,6 +92,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.34.0
 	 * @alias sap.m.P13nDimMeasurePanel
+     * @deprecated since 1.120
 	 */
 	var P13nDimMeasurePanel = P13nPanel.extend("sap.m.P13nDimMeasurePanel", /** @lends sap.m.P13nDimMeasurePanel.prototype */
 	{

@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
+	"sap/ui/base/Object",
 	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
 ],
 function(
@@ -51,7 +52,8 @@ function(
 	Log,
 	jQuery,
 	KeyCodes,
-	Configuration
+	Configuration,
+	BaseObject
 ) {
 		"use strict";
 
@@ -1112,7 +1114,7 @@ function(
 		TabStrip.prototype._createSelectItemFromTabStripItem = function (oTabStripItem) {
 			var oSelectItem;
 
-			if (!oTabStripItem && !(oTabStripItem instanceof sap.m.TabContainerItem)) {
+			if (!oTabStripItem && !(BaseObject.isObjectA(oTabStripItem, "sap.m.TabContainerItem"))) {
 				Log.error('Expecting instance of "sap.m.TabContainerItem": instead of ' + oTabStripItem + ' given.');
 				return;
 			}

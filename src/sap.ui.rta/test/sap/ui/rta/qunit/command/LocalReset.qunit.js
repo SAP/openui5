@@ -28,13 +28,13 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a SimpleForm with designtime metadata for localReset ...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oSimpleForm = new Control();
 			var oOverlay = new ElementOverlay({element: this.oSimpleForm});
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oSimpleForm.destroy();
 			sandbox.restore();
 		}
@@ -100,7 +100,7 @@ sap.ui.define([
 				assert.strictEqual(oRestoreChangesStub.args[0][0], aChanges, "...with the correct array of changes");
 			})
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 

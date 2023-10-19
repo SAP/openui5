@@ -280,27 +280,33 @@ sap.ui.define([
 				} else if (mRegistry[sName]) {
 					return Controller;
 				} else {
-					//legacy controller
+					/** @deprecated since 1.120 */
 					return ObjectPath.get(sName);
 				}
 			}
 
-			if (bAsync) {
-				return new Promise(function(resolve, reject) {
-					if (!ControllerClass) {
-						sap.ui.require([sControllerName], function (ControllerClass) {
-							resolve(resolveClass(ControllerClass));
-						}, reject);
-					} else {
-						resolve(ControllerClass);
-					}
-				});
-			} else if (!ControllerClass) {
-				ControllerClass = sap.ui.requireSync(sControllerName); // legacy-relevant: Sync path
-				return resolveClass(ControllerClass);
-			} else {
-				return ControllerClass;
+			/**
+			 * Sync class resolution
+			 * @deprecated since 1.120
+			 */
+			if (!bAsync) {
+				if (!ControllerClass) {
+					ControllerClass = sap.ui.requireSync(sControllerName); // legacy-relevant: Sync path
+					return resolveClass(ControllerClass);
+				} else {
+					return ControllerClass;
+				}
 			}
+
+			return new Promise(function(resolve, reject) {
+				if (!ControllerClass) {
+					sap.ui.require([sControllerName], function (ControllerClass) {
+						resolve(resolveClass(ControllerClass));
+					}, reject);
+				} else {
+					resolve(ControllerClass);
+				}
+			});
 		}
 
 		/*

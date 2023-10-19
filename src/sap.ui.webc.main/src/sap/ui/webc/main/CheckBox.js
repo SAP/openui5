@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.webc.main.CheckBox.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/CheckBox",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/CheckBox"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -103,7 +103,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -194,12 +194,7 @@ sap.ui.define([
 
 				/**
 				 * Defines whether the component text wraps when there is not enough space. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code> - The text will be truncated with an ellipsis.</li>
-				 *     <li><code>Normal</code> - The text will wrap. The words will not be broken based on hyphenation.</li>
-				 * </ul>
+				 * <b>Note:</b> for option "Normal" the text will wrap and the words will not be broken based on hyphenation.
 				 */
 				wrappingType: {
 					type: "sap.ui.webc.main.WrappingType",

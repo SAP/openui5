@@ -21,23 +21,17 @@ sap.ui.define([
 	 * @since 1.60
 	 * @alias sap.ui.mdc.odata.v4.FilterBarDelegate
 	 */
-	var FB0Delegate = Object.assign({}, FilterBarDelegate);
+	const FB0Delegate = Object.assign({}, FilterBarDelegate);
 
     FB0Delegate.fetchProperties = function (oFilterBar) {
        return Promise.resolve(["salesOrganization", "distributionChannel", "division"].map(function (sProp) {
 			return {
 				caseSensitive: false,
-				filterable: true,
-				groupable: false,
-				key: sProp === "key",
 				label: sProp,
 				maxConditions: -1,
 				name: sProp,
 				path: sProp,
-				sortable: true,
-				text: undefined,
-				typeConfig: FB0Delegate.getTypeMap().getTypeConfig("String"),
-				unit: undefined
+				dataType: "String"
 			};
 		}));
 	};

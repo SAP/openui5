@@ -20,6 +20,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.appComponent App component
 	 * @param {object} mPropertyBag.view Root view
 	 * @return {Promise} Promise resolving to true if change has been reverted successfully
+	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, oControl, mPropertyBag) {
@@ -36,7 +37,7 @@ sap.ui.define([
 					sControlId = vRevertData;
 				} else {
 					sControlId = vRevertData.id;
-					sAggregationName = sAggregationName || vRevertData.aggregationName;
+					sAggregationName ||= vRevertData.aggregationName;
 				}
 				// when we apply the change in XML and revert in JS, the saved ID is not yet concatenated with the view
 				return oModifier.bySelector(sControlId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sControlId));

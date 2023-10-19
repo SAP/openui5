@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/util/changeVisualization/ChangeVisualizationUtils",
 	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
+	Lib,
 	ChangeVisualizationUtils,
 	JsControlTreeModifier
 ) {
@@ -25,9 +27,9 @@ sap.ui.define([
 	 * @returns {object} Localized description text and button text
 	 */
 	MoveVisualization.getDescription = function(mPayload, sLabel, mPropertyBag) {
-		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", ChangeVisualizationUtils.shortenString(sLabel));
-		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", sLabel);
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		var sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [ChangeVisualizationUtils.shortenString(sLabel)]);
+		var sDescriptionTooltip = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE_WITHIN", [sLabel]);
 		var sButtonText;
 		var oAppComponent = mPropertyBag.appComponent;
 
@@ -41,8 +43,8 @@ sap.ui.define([
 		);
 
 		if (sSourceId !== sTargetId) {
-			sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", ChangeVisualizationUtils.shortenString(sLabel));
-			sDescriptionTooltip = (sSourceId && oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", sLabel)) || "";
+			sDescriptionText = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", [ChangeVisualizationUtils.shortenString(sLabel)]);
+			sDescriptionTooltip = (sSourceId && oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CHANGE_MOVE", [sLabel])) || "";
 			sButtonText = sSourceId && oRtaResourceBundle.getText("BTN_CHANGEVISUALIZATION_SHOW_DEPENDENT_CONTAINER_MOVE");
 		}
 		return { descriptionText: sDescriptionText, descriptionTooltip: sDescriptionTooltip, buttonText: sButtonText };

@@ -29,6 +29,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 			},
 
 			_getIndices: function (aLibs, oDocIndicies, fnComponentLoadCallback) {
+				var aInternalCategoryAllowList = [
+					"_PRIVATE_"
+				];
 
 				var aCategoryAllowList = [
 					"Action",
@@ -52,7 +55,8 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 					"Data Visualization",
 					"Map",
 					"Utility",
-					"Web Components"
+					"Web Components",
+					"Smart Controls"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
 				var oFilterSets = {
@@ -173,7 +177,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 						}
 
 						// check category allowlist
-						if (aCategoryAllowList.indexOf(oEnt.category) === -1) {
+						if (aCategoryAllowList.indexOf(oEnt.category) === -1 && aInternalCategoryAllowList.indexOf(oEnt.category) === -1) {
 							Log.error("explored: cannot register entity '" + oEnt.id + "'. category '" + oEnt.category + "' is not allowed");
 							return;
 						}
@@ -210,7 +214,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", 'sap/ui/documentation/library', "sap/
 						oEnt.library = oDoc.library;
 
 						// add entity
-						data.entities.push(oEnt);
+						if (aCategoryAllowList.indexOf(oEnt.category) > -1) {
+							data.entities.push(oEnt);
+						}
 					});
 				});
 

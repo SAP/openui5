@@ -1,21 +1,25 @@
 /*global QUnit*/
 sap.ui.define([
 	"./helper/_timezones",
+	"sap/base/Log",
+	"sap/base/i18n/Localization",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/format/TimezoneUtil",
-	"sap/base/util/LoaderExtensions"
-], function(timezones, CalendarType, Configuration, Locale, LocaleData, CalendarWeekNumbering,
-		TimezoneUtil, LoaderExtensions) {
+	"sap/ui/core/format/TimezoneUtil"
+], function(timezones, Log, Localization, LoaderExtensions, CalendarType, Configuration, Locale,
+		LocaleData, CalendarWeekNumbering, TimezoneUtil) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
 		beforeEach: function(assert) {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			this.loadResourceSpy = this.spy(LoaderExtensions, "loadResource");
-
 		}, afterEach: function(assert) {
 			this.loadResourceSpy.restore();
 		}
@@ -195,11 +199,30 @@ sap.ui.define([
 			oLocaleData = new LocaleData(oLocale);
 		var oLanguagesObject = oLocaleData.getLanguages();
 		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Cyrl-x-sapufmt");
-		assert.equal(oLocaleData.getCurrentLanguageName(), "српски", "current language is present for locale: sr-Cyrl-x-sapufmt");
+		assert.strictEqual(oLocaleData.getCurrentLanguageName(), "српски (ћирилица)",
+			"used derived script name for locale sr-Cyrl-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName: calls getLanguageName", function(assert) {
+		const oLocaleData = {
+			oLocale: {
+				toString() {
+					return "~Locale#toString()";
+				}
+			},
+			getLanguageName() {}
+		};
+		this.mock(oLocaleData).expects("getLanguageName").withExactArgs("~Locale#toString()").returns("~name");
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCurrentLanguageName.call(oLocaleData), "~name");
 	});
 
 	QUnit.module("Locale data types", {
 		beforeEach: function(assert) {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			//ensure custom unit mappings and custom units are reset
 			this.oFormatSettings = Configuration.getFormatSettings();
 			this.oFormatSettings.setUnitMappings();
@@ -267,7 +290,8 @@ sap.ui.define([
 		oFormatSettings.setLegacyTimeFormat("0");
 		assert.equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
-		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm a", "short pattern for Islamic calendar type should be fetched from locale data");
+		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm\u202fa",
+			"short pattern for Islamic calendar type should be fetched from locale data");
 
 		oFormatSettings.setLegacyDateFormat("A");
 		assert.equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
@@ -662,6 +686,9 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.core.LocaleData", {
 		beforeEach: function () {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			LocaleData._mTimezoneTranslations = {};
 		},
 		after: function () {
@@ -1100,4 +1127,311 @@ sap.ui.define([
 		// clean up configuration
 		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 	});
+
+	//*********************************************************************************************
+[
+	{fallbackPattern: "{0} \u2013 {1}", result: "~pattern \u2013 ~pattern"},
+	{fallbackPattern: "{0} - {1}", result: "~pattern - ~pattern"},
+	{fallbackPattern: "{0}-{1}", result: "~pattern-~pattern"},
+	{fallbackPattern: "{0} a el {1}", result: "~pattern 'a el' ~pattern"},
+	{fallbackPattern: "{0}\u2013{1}", result: "~pattern\u2013~pattern"},
+	{fallbackPattern: "{0} \u2018al\u2019 {1}", result: "~pattern '\u2018al\u2019' ~pattern"},
+	{fallbackPattern: "{0} \u062a\u0627 {1}", result: "~pattern \u062a\u0627 ~pattern"},
+	{fallbackPattern: "du {0} au {1}", result: "'du' ~pattern 'au' ~pattern"},
+	{fallbackPattern: "{0}\uff5e{1}", result: "~pattern\uff5e~pattern"},
+	{fallbackPattern: "{0} ~ {1}", result: "~pattern ~ ~pattern"},
+	{fallbackPattern: "{0}\u81f3{1}", result: "~pattern\u81f3~pattern"}
+].forEach((oFixture, i) => {
+	QUnit.test("getCombinedIntervalPattern: integrative #" + i, function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(oLocaleData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
+			.returns({intervalFormatFallback: oFixture.fallbackPattern});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocaleData, "~pattern", "~calendar"),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getCombinedIntervalPattern", function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(oLocaleData).expects("_get").withExactArgs("ca-~calendar", "dateTimeFormats", "intervalFormats")
+			.returns({intervalFormatFallback: "prefix{0}infix{1}suffix"});
+		const oLocaleDataMock = this.mock(LocaleData);
+		oLocaleDataMock.expects("_escapeIfNeeded").withExactArgs("prefix").returns("~p");
+		oLocaleDataMock.expects("_escapeIfNeeded").withExactArgs("infix").returns("~i");
+		oLocaleDataMock.expects("_escapeIfNeeded").withExactArgs("suffix").returns("~s");
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getCombinedIntervalPattern.call(oLocaleData, "~pattern", "~calendar"),
+			"~p~pattern~i~pattern~s");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_escapeIfNeeded: value contains a CLDR symbol -> escape", function (assert) {
+		// all CLDR symbols in alphabetic order
+		Array.from("ABDEFGHKLMOQSUVWXYZabcdeghkmqrsuvwxyz").forEach((sSymbol) => {
+			const sValue = "~" + sSymbol + "~";
+
+			// code under test
+			assert.strictEqual(LocaleData._escapeIfNeeded(sValue), "'" + sValue + "'", sSymbol);
+
+			["\t", " ", "\u00a0", "\u2009", "\u202f"].forEach((sSpace) => {
+				const sValueWithSpaces = sSpace + sSpace + sValue + sSpace + sSpace;
+
+				// code under test
+				assert.strictEqual(LocaleData._escapeIfNeeded(sValueWithSpaces),
+					sSpace + "'" + sSpace + sValue + sSpace + "'" + sSpace,
+					"\\u" + sSpace.charCodeAt(0).toString(16).padStart(4, "0"));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_escapeIfNeeded: value does not contain a CLDR symbol -> no escaping", function (assert) {
+		// some characters that aren't a CLDR symbol
+		Array.from("CIJNPRTfijlnopt\u2013-~\uff5e\u81f3").forEach((sSymbol) => {
+			const sValue = "~" + sSymbol + "~";
+
+			// code under test
+			assert.strictEqual(LocaleData._escapeIfNeeded(sValue), sValue, sSymbol);
+
+			["\t", " ", "\u00a0", "\u2009", "\u202f"].forEach((sSpace) => {
+				const sValueWithSpaces = sSpace + sSpace + sValue + sSpace + sSpace;
+				// code under test
+				assert.strictEqual(LocaleData._escapeIfNeeded(sValueWithSpaces), sValueWithSpaces,
+					"\\u" + sSpace.charCodeAt(0).toString(16).padStart(4, "0"));
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: throws TypeError for wrong language tag", function (assert) {
+		// code under test
+		assert.throws(() => {
+			LocaleData.prototype.getLanguageName.call({/*oLocaleData*/}, "wronglanguage");
+		}, TypeError);
+	});
+
+	//*********************************************************************************************
+[
+	{languageTag: "en", result: "~EN"},
+	{languageTag: "en_US", result: "~EN~US"},
+	{languageTag: "en-US", result: "~EN~US"}
+].forEach((oFixture, i) => {
+	QUnit.test(`getLanguageName: found in languages object, ${oFixture.languageTag}`, function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+		this.mock(oLocaleData).expects("_get").withExactArgs("languages").returns({"en": "~EN", "en_US": "~EN~US"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{languageTag: "zh_Hant", result: "~Chinese (~Traditional)"},
+	{languageTag: "zh-Hant", result: "~Chinese (~Traditional)"}
+].forEach((oFixture, i) => {
+	QUnit.test(`getLanguageName: using script, ${oFixture.languageTag}`, function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("zh").returns("zh");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"zh": "~Chinese"});
+		oLocaleDataMock.expects("_get").withExactArgs("scripts").returns({"Hant": "~Traditional"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{languageTag: "en_AU", result: "~ENGLISH (~Australia)"},
+	{languageTag: "en-AU", result: "~ENGLISH (~Australia)"}
+].forEach((oFixture, i) => {
+	QUnit.test(`getLanguageName: using territories, ${oFixture.languageTag}`, function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+		oLocaleDataMock.expects("_get").withExactArgs("territories").returns({"AU": "~Australia"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, oFixture.languageTag),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: language not found", function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("zz").returns("zz");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "zz"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: tag with region but language not found", function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("zz").returns("zz");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "zz_AU"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: language found but script not", function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+		oLocaleDataMock.expects("_get").withExactArgs("scripts").returns({});
+		oLocaleDataMock.expects("_get").withExactArgs("territories").never();
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "en_Scri"), "~ENGLISH");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: language found but territory not", function (assert) {
+		const oLocaleData = {_get() {}};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("en").returns("en");
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns({"en": "~ENGLISH"});
+		oLocaleDataMock.expects("_get").withExactArgs("scripts").never();
+		oLocaleDataMock.expects("_get").withExactArgs("territories").returns({});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "en_ZZ"), "~ENGLISH");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: special modern language different", function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("iw").returns("he");
+		this.mock(oLocaleData).expects("_get").withExactArgs("languages").returns({"he": "~HE"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "iw"), "~HE");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getLanguageName: special cases sr_Latn", function (assert) {
+		const oLocaleData = {_get() {}};
+		this.mock(Localization).expects("getModernLanguage").withExactArgs("sr").returns("sr");
+		this.mock(oLocaleData).expects("_get").withExactArgs("languages").returns({"sh": "~SH"});
+
+		// code under test
+		assert.strictEqual(LocaleData.prototype.getLanguageName.call(oLocaleData, "sr_Latn"), "~SH");
+	});
+
+	/** @deprecated As of version 1.120.0 */
+	QUnit.test("getLanguages: ensure missing entries are added", function (assert) {
+		const oLocaleData = {
+			_get() {},
+			getLanguageName() {}
+		};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oLanguages = {de: "~DE", en: "~EN"};
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
+		[
+			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+		].forEach((sLanguageTag) => {
+			oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag).returns("~" + sLanguageTag);
+		});
+		const oExpectedResult = {
+			"de": "~DE",
+			"en": "~EN",
+			"ar_001": "~ar_001",
+			"de_AT": "~de_AT",
+			"de_CH": "~de_CH",
+			"en_AU": "~en_AU",
+			"en_CA": "~en_CA",
+			"en_GB": "~en_GB",
+			"en_US": "~en_US",
+			"es_419": "~es_419",
+			"es_ES": "~es_ES",
+			"es_MX": "~es_MX",
+			"fa_AF": "~fa_AF",
+			"fr_CA": "~fr_CA",
+			"fr_CH": "~fr_CH",
+			"nds_NL": "~nds_NL",
+			"nl_BE": "~nl_BE",
+			"pt_BR": "~pt_BR",
+			"pt_PT": "~pt_PT",
+			"ro_MD": "~ro_MD",
+			"sw_CD": "~sw_CD",
+			"zh_Hans": "~zh_Hans",
+			"zh_Hant": "~zh_Hant"
+		};
+
+		// code under test
+		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
+
+		// original languages object has been enhanced - no need to do replacement twice
+		assert.deepEqual(oExpectedResult, oLanguages);
+	});
+
+/** @deprecated As of version 1.120.0 */
+[
+	"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+	"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+].forEach((sLanguageTag) => {
+	QUnit.test(`getLanguages: don't overwrite existing entry ${sLanguageTag}`, function (assert) {
+		const oLocaleData = {
+			_get() {},
+			getLanguageName() {}
+		};
+		const oLocaleDataMock = this.mock(oLocaleData);
+		const oLanguages = {};
+		oLanguages[sLanguageTag] = "~" + sLanguageTag + "_original";
+		oLocaleDataMock.expects("_get").withExactArgs("languages").returns(oLanguages);
+		[
+			"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+			"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+		].forEach((sLanguageTag0) => {
+			if (sLanguageTag0 !== sLanguageTag) {
+				oLocaleDataMock.expects("getLanguageName").withExactArgs(sLanguageTag0).returns("~" + sLanguageTag0);
+			}
+		});
+		const oExpectedResult = {
+			"ar_001": "~ar_001",
+			"de_AT": "~de_AT",
+			"de_CH": "~de_CH",
+			"en_AU": "~en_AU",
+			"en_CA": "~en_CA",
+			"en_GB": "~en_GB",
+			"en_US": "~en_US",
+			"es_419": "~es_419",
+			"es_ES": "~es_ES",
+			"es_MX": "~es_MX",
+			"fa_AF": "~fa_AF",
+			"fr_CA": "~fr_CA",
+			"fr_CH": "~fr_CH",
+			"nds_NL": "~nds_NL",
+			"nl_BE": "~nl_BE",
+			"pt_BR": "~pt_BR",
+			"pt_PT": "~pt_PT",
+			"ro_MD": "~ro_MD",
+			"sw_CD": "~sw_CD",
+			"zh_Hans": "~zh_Hans",
+			"zh_Hant": "~zh_Hant"
+		};
+		oExpectedResult[sLanguageTag] = "~" + sLanguageTag + "_original"; // don't overwrite existing entry
+
+		// code under test
+		assert.deepEqual(LocaleData.prototype.getLanguages.call(oLocaleData), oExpectedResult);
+	});
+});
 });

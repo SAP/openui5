@@ -4,19 +4,16 @@
 
 sap.ui.define([
 	"./TableTypeBase",
-	"sap/ui/core/library",
 	"sap/m/table/Util",
 	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	TableTypeBase,
-	coreLibrary,
 	MTableUtil,
 	TableRowCountMode
 ) {
 	"use strict";
 
-	var InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
-	var SortOrder = coreLibrary.SortOrder;
+	let InnerTable, InnerColumn, InnerRowAction, InnerRowActionItem, InnerFixedRowMode, InnerAutoRowMode, InnerRowSettings;
 
 	/**
 	 * Constructor for a new <code>GridTableType</code>.
@@ -30,7 +27,7 @@ sap.ui.define([
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.GridTableType
 	 */
-	var GridTableType = TableTypeBase.extend("sap.ui.mdc.table.GridTableType", {
+	const GridTableType = TableTypeBase.extend("sap.ui.mdc.table.GridTableType", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -96,28 +93,26 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateTableByProperty = function(sProperty, vValue) {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oGridTable) {
 			return;
 		}
 
 		if (sProperty === "rowCountMode") {
-			var oRowMode = oGridTable.getRowMode();
-			var bHideEmptyRows = false;
+			let oRowMode = oGridTable.getRowMode();
+			let bHideEmptyRows = false;
 
-			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.FixedRowMode") ||
-							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.AutoRowMode"))) {
+			if (oRowMode && (vValue === TableRowCountMode.Fixed && !oRowMode.isA("sap.ui.table.rowmodes.Fixed") ||
+							 vValue === TableRowCountMode.Auto && !oRowMode.isA("sap.ui.table.rowmodes.Auto"))) {
 				bHideEmptyRows = oRowMode.getHideEmptyRows();
 				oRowMode.destroy();
 				oRowMode = null;
 			}
 
 			if (!oRowMode) {
-				var RowMode = vValue === TableRowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
-				oGridTable.setRowMode(new RowMode({
-					hideEmptyRows: bHideEmptyRows
-				}));
+				const RowMode = vValue === TableRowCountMode.Fixed ? InnerFixedRowMode : InnerAutoRowMode;
+				oGridTable.setRowMode(new RowMode().setHideEmptyRows(bHideEmptyRows));
 			}
 
 			this._updateTableRowCount();
@@ -129,7 +124,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._updateTableRowCount = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (this.getRowCountMode() === TableRowCountMode.Fixed) {
 			oGridTable.getRowMode().setRowCount(this.getRowCount());
@@ -154,7 +149,7 @@ sap.ui.define([
 			return new Promise(function(resolve, reject) {
 				sap.ui.require([
 					"sap/ui/table/Table", "sap/ui/table/Column", "sap/ui/table/RowAction", "sap/ui/table/RowActionItem",
-					"sap/ui/table/rowmodes/FixedRowMode", "sap/ui/table/rowmodes/AutoRowMode", "sap/ui/table/RowSettings"
+					"sap/ui/table/rowmodes/Fixed", "sap/ui/table/rowmodes/Auto", "sap/ui/table/RowSettings"
 				], function(GridTable, GridColumn, RowAction, RowActionItem, FixedRowMode, AutoRowMode, RowSettings) {
 					InnerTable = GridTable;
 					InnerColumn = GridColumn;
@@ -172,28 +167,27 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.createTable = function(sId) {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 
 		if (!oTable || !InnerTable) {
 			return null;
 		}
 
-		var oInnerTable = new InnerTable(sId, this.getTableSettings());
+		const oInnerTable = new InnerTable(sId, this.getTableSettings());
 		oInnerTable._setHideStandardTooltips(true);
 		return oInnerTable;
 	};
 
 	GridTableType.prototype.getTableSettings = function() {
-		var oTable = this.getTable();
-		var mSelectionBehaviorMap = {
+		const oTable = this.getTable();
+		const mSelectionBehaviorMap = {
 			SingleMaster: "RowOnly"
 		};
 
-		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), {
+		const mSettings = {
 			enableBusyIndicator: true,
 			enableColumnReordering: false,
 			threshold: this.getThreshold(),
-			cellClick: [this._onCellClick, this],
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
@@ -205,7 +199,13 @@ sap.ui.define([
 					return mSelectionBehaviorMap[sSelectionMode]; // Default is "RowSelector"
 				}
 			}
-		});
+		};
+
+		if (oTable.hasListeners("rowPress")) {
+			mSettings.cellClick = [this._onCellClick, this];
+		}
+
+		return Object.assign({}, TableTypeBase.prototype.getTableSettings.apply(this, arguments), mSettings);
 	};
 
 	GridTableType.prototype._onCellClick = function(oEvent) {
@@ -219,8 +219,8 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.enableColumnResize = function() {
-		var oTable = this.getTable();
-		var oGridTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oTable || !oGridTable) {
 			return;
@@ -235,8 +235,8 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.disableColumnResize = function() {
-		var oTable = this.getTable();
-		var oGridTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oTable || !oGridTable) {
 			return;
@@ -250,12 +250,12 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._onColumnResize = function(oEvent) {
-		var oTable = this.getTable();
-		var oGridTable = this.getInnerTable();
-		var oGridTableColumn = oEvent.getParameter("column");
-		var sWidth = oEvent.getParameter("width");
-		var iIndex = oGridTable.indexOfColumn(oGridTableColumn);
-		var oColumn = oTable.getColumns()[iIndex];
+		const oTable = this.getTable();
+		const oGridTable = this.getInnerTable();
+		const oGridTableColumn = oEvent.getParameter("column");
+		const sWidth = oEvent.getParameter("width");
+		const iIndex = oGridTable.indexOfColumn(oGridTableColumn);
+		const oColumn = oTable.getColumns()[iIndex];
 
 		this.callHook("ColumnResize", oTable, {
 			column: oColumn,
@@ -264,7 +264,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateRowSettings = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oGridTable) {
 			return;
@@ -276,13 +276,13 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateRowActions = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oGridTable) {
 			return;
 		}
 
-		var oRowSettings = this.getTable().getRowSettings();
+		const oRowSettings = this.getTable().getRowSettings();
 
 		this._removeRowActions();
 
@@ -290,10 +290,10 @@ sap.ui.define([
 			return;
 		}
 
-		var oRowActions = oRowSettings.getAllActions();
+		const oRowActions = oRowSettings.getAllActions();
 
 		if ("templateInfo" in oRowActions) {
-			var oTemplateInfo = oRowActions.templateInfo;
+			const oTemplateInfo = oRowActions.templateInfo;
 			// Set template for inner row actions using temporary metadata
 			oRowActions.items.template = new InnerRowActionItem({
 				type: oTemplateInfo.type,
@@ -306,7 +306,7 @@ sap.ui.define([
 			delete oRowActions.templateInfo;
 		} else {
 			oRowActions.items = oRowActions.items.map(function(oRowActionItem) {
-				var oInnerRowActionItem = new InnerRowActionItem({
+				const oInnerRowActionItem = new InnerRowActionItem({
 					type: oRowActionItem.isBound("type") ? oRowActionItem.getBindingInfo("type") : oRowActionItem.getType(),
 					visible: oRowActionItem.isBound("visible") ? oRowActionItem.getBindingInfo("visible") : oRowActionItem.getVisible(),
 					icon: oRowActionItem.isBound("icon") ? oRowActionItem.getBindingInfo("icon") : oRowActionItem._getIcon(),
@@ -324,8 +324,8 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._removeRowActions = function() {
-		var oGridTable = this.getInnerTable();
-		var oInnerRowAction = oGridTable.getRowActionTemplate();
+		const oGridTable = this.getInnerTable();
+		const oInnerRowAction = oGridTable.getRowActionTemplate();
 
 		if (oInnerRowAction) {
 			oInnerRowAction.destroy();
@@ -336,14 +336,14 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype._onRowActionPress = function(oEvent) {
-		var oTable = this.getTable();
-		var oInnerRowActionItem = oEvent.getParameter("item");
-		var oRowSettings = oTable.getRowSettings();
-		var oRowActionsInfo = oRowSettings.getAllActions();
+		const oTable = this.getTable();
+		const oInnerRowActionItem = oEvent.getParameter("item");
+		const oRowSettings = oTable.getRowSettings();
+		const oRowActionsInfo = oRowSettings.getAllActions();
 
 		if (oRowSettings.isBound("rowActions")) {
-			var sActionModel = oRowActionsInfo.items.model;
-			var oActionContext = oInnerRowActionItem.getBindingContext(sActionModel);
+			const sActionModel = oRowActionsInfo.items.model;
+			const oActionContext = oInnerRowActionItem.getBindingContext(sActionModel);
 
 			// Create a one time clone for the MDC RowAction and 'switch' binding context based on press action
 			if (!this._oRowActionItem) {
@@ -363,8 +363,24 @@ sap.ui.define([
 		});
 	};
 
+	GridTableType.prototype.prepareRowPress = function() {
+		const oGridTable = this.getInnerTable();
+		if (oGridTable && !oGridTable.hasListeners("cellClick")) {
+			// Only add cellClick listener, if none has been registered yet
+			oGridTable.attachEvent("cellClick", this._onCellClick, this);
+		}
+	};
+
+	GridTableType.prototype.cleanupRowPress = function() {
+		const oTable = this.getTable();
+		if (!oTable.hasListeners("rowPress")) {
+			// Only detach cellClick listener, if table has no rowPress event listener anymore
+			this.getInnerTable()?.detachEvent("cellClick", this._onCellClick, this);
+		}
+	};
+
 	GridTableType.prototype.removeToolbar = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (oGridTable) {
 			oGridTable.removeExtension(this.getTable()._oToolbar);
@@ -372,8 +388,8 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.scrollToIndex = function(iIndex) {
-		var oTable = this.getTable();
-		var oGridTable = this.getInnerTable();
+		const oTable = this.getTable();
+		const oGridTable = this.getInnerTable();
 
 		if (!oGridTable) {
 			return Promise.reject();
@@ -395,12 +411,12 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.getRowBinding = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 		return oGridTable ? oGridTable.getBinding() : undefined;
 	};
 
 	GridTableType.prototype.bindRows = function(oBindingInfo) {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (oGridTable) {
 			oGridTable.bindRows(oBindingInfo);
@@ -408,12 +424,12 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.isTableBound = function() {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 		return oGridTable ? oGridTable.isBound("rows") : false;
 	};
 
 	GridTableType.prototype.insertFilterInfoBar = function(oFilterInfoBar, sAriaLabelId) {
-		var oGridTable = this.getInnerTable();
+		const oGridTable = this.getInnerTable();
 
 		if (oGridTable) {
 			oGridTable.insertExtension(oFilterInfoBar, 1);
@@ -425,10 +441,7 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {
-		var oGridColumn = oColumn.getInnerColumn();
-
-		oGridColumn.setSorted(sSortOrder !== SortOrder.None);
-		oGridColumn.setSortOrder(sSortOrder === SortOrder.None ? undefined : sSortOrder);
+		oColumn.getInnerColumn().setSortOrder(sSortOrder);
 	};
 
 	GridTableType.prototype.getContextMenuParameters = function(oEvent) {
@@ -436,6 +449,16 @@ sap.ui.define([
 			bindingContext: this.getInnerTable().getContextByIndex(oEvent.getParameters().rowIndex),
 			column: this.getTable().getColumns()[oEvent.getParameters().columnIndex]
 		};
+	};
+
+	GridTableType.prototype.getTableStyleClasses = function() {
+		const aStyleClasses = TableTypeBase.prototype.getTableStyleClasses.apply(this, arguments);
+
+		if (this.getRowCountMode() === TableRowCountMode.Auto) {
+			aStyleClasses.push("sapUiMdcTableFitContainer");
+		}
+
+		return aStyleClasses;
 	};
 
 	return GridTableType;

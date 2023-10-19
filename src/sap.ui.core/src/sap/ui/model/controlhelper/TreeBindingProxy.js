@@ -73,58 +73,64 @@ sap.ui.define(["sap/base/assert", "sap/base/Log"], function (assert, Log) {
 	/**
 	 * Retrieves a node object by an index.
 	 * @param {int} iIndex Index of the node
-	 * @returns {undefined|sap.ui.model.Context|object} Returns <code>undefined</code>
-	 * if no binding is given, a binding context if the binding is a OData V4 binding
-	 * and by default a node object.
+	 * @returns {null|sap.ui.model.Context|object} A binding context if the binding is an OData V4 binding
+	 * and by default a node object if one exists at the provided index.
 	 */
 	TreeBindingProxy.prototype.getNodeByIndex = function(iIndex) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
+		var oNode = null;
 
 		if (iIndex < 0) {
-			return undefined;
+			return oNode;
 		}
 
 		switch (sTreeBinding) {
 			case undefined:
-				return undefined;
+				break;
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+				} else {
+					oNode = this.getContextByIndex(iIndex);
 				}
-				return this.getContextByIndex(iIndex);
+				break;
 			default:
-				return oBinding.getNodeByIndex(iIndex);
+				oNode = oBinding.getNodeByIndex(iIndex);
 		}
+
+		return oNode || null;
 	};
 
 	/**
 	 * Retrieves the context of a node by an index.
 	 * @param {int} iIndex Index of the node
-	 * @returns {undefined|sap.ui.model.Context} Binding context of the node or undefined
-	 * if no binding exists
+	 * @returns {null|sap.ui.model.Context} A binding context if one exists at the provided index.
 	 */
 	TreeBindingProxy.prototype.getContextByIndex = function (iIndex) {
 		var oBinding = this._oControl.getBinding();
 		var sTreeBinding = this._getBindingName(oBinding);
+		var oContext = null;
 
 		if (iIndex < 0) {
-			return undefined;
+			return oContext;
 		}
 
 		switch (sTreeBinding) {
 			case undefined:
-				return undefined;
+				break;
 			case "sap.ui.model.odata.v4.ODataListBinding":
 				if (!this._bEnableV4) {
 					Log.error("UnsupportedOperationException: OData V4 is not supported");
-					return;
+				} else {
+					oContext = oBinding.getContexts(iIndex, 1, 0, true)[0];
 				}
-				return oBinding.getContexts(iIndex, 1, 0, true)[0];
+				break;
 			default:
-				return oBinding.getContextByIndex(iIndex);
+				oContext = oBinding.getContextByIndex(iIndex);
 		}
+
+		return oContext || null;
 	};
 
 	/**

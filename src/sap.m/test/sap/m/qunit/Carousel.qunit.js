@@ -1197,6 +1197,7 @@ sap.ui.define([
 	QUnit.test("F7", function (assert) {
 		// Arrange
 		this.oCarousel.setActivePage("keyTestPage2");
+		this.oCarousel.getFocusDomRef().focus();
 		Core.applyChanges();
 
 		var oInteractiveElementInsidePage = this.oCarousel.getPages()[1].getContent()[2].getDomRef();

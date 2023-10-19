@@ -63,7 +63,7 @@ sap.ui.define([
 		if (oResult.changeHandler === "default") {
 			oResult.changeHandler = mPredefinedChangeHandlers.defaultChangeHandlers[sChangeType];
 		} else if (Object.keys(mPredefinedChangeHandlers.developerChangeHandlers || {}).includes(sChangeType)) {
-			throw Error("You can't use a custom change handler for the following Developer Mode change type: " + sChangeType + ". Please use 'default' instead.");
+			throw Error(`You can't use a custom change handler for the following Developer Mode change type: ${sChangeType}. Please use 'default' instead.`);
 		}
 		return oResult;
 	}
@@ -88,7 +88,7 @@ sap.ui.define([
 		if (oChangeHandler.layers) {
 			each(oChangeHandler.layers, function(sLayer, bLayerPermission) {
 				if (mLayerPermissions[sLayer] === undefined) {
-					throw Error("The Layer '" + sLayer + "' is not supported. Please only use supported layers");
+					throw Error(`The Layer '${sLayer}' is not supported. Please only use supported layers`);
 				}
 				mLayerPermissions[sLayer] = bLayerPermission;
 			});
@@ -108,7 +108,7 @@ sap.ui.define([
 		var oRegistryItem = createChangeRegistryItem(sControlType, sChangeType, oChangeHandler);
 
 		if (oRegistryItem) {
-			mRegisteredItems[sControlType] = mRegisteredItems[sControlType] || {};
+			mRegisteredItems[sControlType] ||= {};
 			mRegisteredItems[sControlType][sChangeType] = oRegistryItem;
 		}
 	}
@@ -118,9 +118,9 @@ sap.ui.define([
 		var sSkipNext = "ChangeHandlerStorage.registerChangeHandlersForControl.skip_next_then";
 
 		if (typeof mChangeHandlers === "string") {
-			oPromise = requireAsync(mChangeHandlers + ".flexibility")
+			oPromise = requireAsync(`${mChangeHandlers}.flexibility`)
 			.catch(function(oError) {
-				Log.error("Flexibility change handler registration failed.\nControlType: " + sControlType + "\n" + oError.message);
+				Log.error(`Flexibility change handler registration failed.\nControlType: ${sControlType}\n${oError.message}`);
 				return Promise.resolve(sSkipNext); // continue without a registration
 			});
 		}
@@ -147,7 +147,7 @@ sap.ui.define([
 		sLayer = sLayer === Layer.PUBLIC ? Layer.USER : sLayer;
 
 		if (!oRegistryItem.layers[sLayer]) {
-			throw Error("Change type " + sChangeType + " not enabled for layer " + sLayer);
+			throw Error(`Change type ${sChangeType} not enabled for layer ${sLayer}`);
 		}
 
 		return oRegistryItem;
@@ -165,7 +165,7 @@ sap.ui.define([
 				return createChangeRegistryItem(sControlType, sChangeType, vChangeHandler);
 			}
 		}).catch(function(oError) {
-			Log.error("Flexibility registration for control " + oModifier.getId(oControl) + " failed to load module " + sChangeHandlerModulePath + "\n" + oError.message);
+			Log.error(`Flexibility registration for control ${oModifier.getId(oControl)} failed to load module ${sChangeHandlerModulePath}\n${oError.message}`);
 		});
 	}
 

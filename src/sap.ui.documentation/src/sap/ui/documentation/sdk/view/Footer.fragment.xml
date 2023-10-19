@@ -31,7 +31,7 @@
 						<Link
 								text="{i18n>FOOTER_TERMS}"
 								href="https://www.sap.com/corporate/en/legal/terms-of-use.html"
-								visible="{=!${versionData>/isOpenUI5}}"
+								visible="{= !${versionData>/isOpenUI5} &amp;&amp; !${versionData>/isDevEnv} }"
 								target="_blank"/>
 						<Link
 								class="sapUiTinyMarginBottom sapUiLargeMarginEnd"

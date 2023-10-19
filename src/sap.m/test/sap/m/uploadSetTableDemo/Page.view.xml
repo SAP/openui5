@@ -11,132 +11,112 @@
 >
 <m:App id="app">
     <m:Page showHeader="false">
-         <m:HBox class="sapUiSmallMarginTop">
-            <!-- <vm:VariantManagement for="UploadSetTable" id="uploadSetVariant" class="sapUiMediumMarginBegin" titleStyle="H3" /> -->
-        </m:HBox>
-        <UploadSetTable
-            id="UploadSetTable"
+        <UploadSetwithTable
+            id="UploadSetWithTable"
             maxFileNameLength="60"
             uploadUrl="/uploadFiles"
-            multiple="false"
+            enableVariantManagement="true"
+            multiple="true"
+            sticky="ColumnHeaders,HeaderToolbar"
+            growing="true"
+            width="auto"
             items="{path: '/items', templateShareable: false}"
             mode="MultiSelect"
             fixedLayout="false"
             selectionChange="onSelectionChange"
             uploadCompleted="onUploadCompleted"
-            afterItemRemoved="onAfterItemRemoved"
-            noDataText="No documents available"
-            sap.ui.fl:flexibility="sap/m/flexibility/EngineFlex"
-            noDataDescription="Drag and Drop files here to upload"
-            uploadButtonInvisible="true"
-            instantUpload="true"
-            customDropFilesHandler=".selectedFilesFromHandler"
             inset="true"
             beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
             beforeUploadStarts="onBeforeUploadStarts"
+            itemValidationHandler=".itemValidationCallback"
+            itemRenamed="onDocumentRenamedSuccess"
         >
             <!-- ToolBar for Table -->
             <headerToolbar>
                 <m:OverflowToolbar>
+                    <ActionsPlaceholder placeholderFor="VariantManagementPlaceholder" />
                     <m:Title
                         text="{/documentTableTitle} ({= ${/items}.length})"
                         level="H2"
                     />
                     <m:ToolbarSpacer />
-                    <m:SearchField width="15%">
+                    <m:SearchField width="15%" liveChange=".onSearch">
                         <m:layoutData>
                             <m:OverflowToolbarLayoutData
                                 priority="NeverOverflow"
                             />
                         </m:layoutData>
                     </m:SearchField>
-                    <m:Button
-                        id="advancedSearch"
-                        text="Advanced Search"
-                    />
                     <m:ToolbarSeparator />
-                     <m:Button
-                        id="uploadButton"
-                        text="Upload"
-                        press="uploadFilesHandler"
-                    />
-                    <UploadSetToolbarPlaceholder />
+                    <ActionsPlaceholder placeholderFor="UploadButtonPlaceholder" />
                     <m:Button
                         id="downloadSelectedButton"
                         text="Download"
                         enabled="false"
                         press="onDownloadFiles"
                     />
-                     <m:Button
+                    <m:Button
                         id="changeStatusButton"
                         text="Change Status"
                         enabled="false"
                         press="onChangeStatus"
                     />
+
                      <m:Button
                         id="createRevisionButton"
                         text="Create Revision"
                         enabled="false"
                         press="onCreateRevision"
                     />
-
                     <m:ToggleButton icon="sap-icon://overflow" press="onOverflowPress"/>
                     <m:ToolbarSeparator />
-                    <m:Button
-                        icon="sap-icon://action-settings"
-                        press="onPersoButtonPressed"
-                    >
-                        <m:layoutData>
-                            <m:OverflowToolbarLayoutData
-                                priority="NeverOverflow"
-                            />
-                        </m:layoutData>
-                    </m:Button>
+                    <ActionsPlaceholder placeholderFor="PersonalizationSettingsPlaceholder" />
                 </m:OverflowToolbar>
             </headerToolbar>
 
             <columns>
-                <m:Column id="fileName">
-                    <m:header>
+                <Column id="fileName" columnPersonalizationText="File Name" path="fileName">
+                    <header>
                         <m:Label text="File Name" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="id">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="id" columnPersonalizationText="ID">
+                    <header>
                         <m:Label text="ID" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="revision">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="revision" columnPersonalizationText="Revision" path="revision">
+                    <header>
                         <m:Label text="Revision" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="status">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="status" columnPersonalizationText="Status" path="status">
+                    <header>
                         <m:Label text="Status" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="fileSize">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="fileSize" columnPersonalizationText="File Size" path="fileSize">
+                    <header>
                         <m:Label text="File Size" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="lastModified">
-                    <m:header>
+                    </header>
+                </Column>
+                <Column id="lastModified" columnPersonalizationText="Last Modified" path="lastModifiedBy">
+                    <header>
                         <m:Label text="Last Modified" />
-                    </m:header>
-                </m:Column>
-                <m:Column id="actionButton" />
+                    </header>
+                </Column>
+                <Column id="actionButton" columnPersonalizationText="Action Button"/>
             </columns>
 
             <items>
-                <UploadSetTableItem
+                <UploadSetwithTableItem
                     fileName="{fileName}"
                     mediaType="{mediaType}"
                     url="{url}"
                     type="Navigation"
                     highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
                     previewable="{previewable}"
+                    fileSize="{fileSize}"
                 >
                 <cells>
                 
@@ -190,12 +170,9 @@
                         />
                     </m:HBox>
                 </cells>
-                </UploadSetTableItem>
+                </UploadSetwithTableItem>
             </items>
-            <previewDialogAdditionalFooterButtons>
-                <m:Button text="Check-Out" press=".onCheckOutClick" />
-            </previewDialogAdditionalFooterButtons>
-        </UploadSetTable>
+        </UploadSetwithTable>
     </m:Page>
 </m:App>
 </mvc:View>

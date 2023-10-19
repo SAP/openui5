@@ -26,9 +26,7 @@ function() {
 			// perform animation in the next animation frame, normally 16-17ms later.
 			var iTimestampInitial;
 			var fnAnimCallback = function(iTimestamp) {
-				if (!iTimestampInitial) {
-					iTimestampInitial = iTimestamp;
-				}
+				iTimestampInitial ||= iTimestamp;
 				if (iTimestamp !== iTimestampInitial) {
 					fnCallback();
 				} else {

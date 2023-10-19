@@ -28,7 +28,6 @@ function(
 	 * @private
 	 * @since 1.69
 	 * @alias sap.ui.dt.TaskManager
-	 * @experimental Since 1.69. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var TaskRunner = function(mParam) {
 		if (!mParam || !mParam.taskManager || !(mParam.taskManager instanceof TaskManager)) {
@@ -80,7 +79,7 @@ function(
 				}.bind(this))
 				.catch(function(vError) {
 					this._oTaskManager.complete(oTask.id);
-					BaseLog.error(DtUtil.errorToString(vError) + " / related task: " + JSON.stringify(oTask));
+					BaseLog.error(`${DtUtil.errorToString(vError)} / related task: ${JSON.stringify(oTask)}`);
 				}.bind(this));
 			}
 		}.bind(this));

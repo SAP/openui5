@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange = new AppDescriptorChange({
 				content: {
 					"abstract": false
@@ -27,7 +27,7 @@ sap.ui.define([
 			this.oChangeEmpty = new AppDescriptorChange({ content: { } });
 			this.oChangeError = new AppDescriptorChange({ content: { otherFlag: "test" } });
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @param {boolean} [vFilterInfo.caseSensitive]
 	 *   Indicates whether a string value should be compared case sensitive or not. The handling of
 	 *   <code>undefined</code> depends on the model implementation.
-	 * @param {sap.ui.model.FilterOperator|function(any):boolean|boolean} [vOperator]
+	 * @param {sap.ui.model.FilterOperator|boolean|function(any):boolean} [vOperator]
 	 *   Either a filter operator or a custom filter function or
 	 *   a <code>boolean</code> flag that defines how to combine multiple filters
 	 * @param {any} [vValue1]
@@ -168,6 +168,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.FilterOperator.BT "BT" between} and
 	 *   {@link sap.ui.model.FilterOperator.NB "NB" not between} filter operators
 	 * @throws {Error}
+	 *   If <code>vFilterInfo</code> or <code>vFilterInfo.filters</code> are arrays containing the
+	 *   {@link sap.ui.model.Filter.NONE}, or
+	 *   if <code>vFilterInfo.condition</code> is {@link sap.ui.model.Filter.NONE}, or
 	 *   for the following incorrect combinations of filter operators and conditions:
 	 *   <ul>
 	 *     <li>"Any", if only a lambda variable or only a condition is given
@@ -186,6 +189,7 @@ sap.ui.define([
 	 */
 	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
 		constructor : function(vFilterInfo, vOperator, vValue1, vValue2){
+			BaseObject.call(this);
 			//There are two different ways of specifying a filter
 			//It can be passed in only one object or defined with parameters
 			if (typeof vFilterInfo === "object" && !Array.isArray(vFilterInfo)) {
@@ -221,7 +225,11 @@ sap.ui.define([
 					throw new Error("The filter operators 'Any' and 'All' are only supported with the parameter object notation.");
 				}
 			}
-
+			if (this.aFilters?.includes(Filter.NONE)) {
+				throw new Error("Filter.NONE not allowed in multiple filter");
+			} else if (this.oCondition && this.oCondition === Filter.NONE) {
+				throw new Error("Filter.NONE not allowed as condition");
+			}
 			if (this.sOperator === FilterOperator.Any) {
 				// for the Any operator we only have to further check the arguments if both are given
 				if (this.sVariable && this.oCondition) {
@@ -249,6 +257,18 @@ sap.ui.define([
 			}
 		}
 	});
+
+	/**
+	 * A filter instance that is never fulfilled. When used to filter a list, no back-end request is
+	 * sent and only transient entries remain.
+	 *
+	 * <b>Note:</b> Not all model implementations support this filter.
+	 *
+	 * @type {sap.ui.model.Filter}
+	 * @public
+ 	 * @since 1.120.0
+	 */
+	Filter.NONE = new Filter({path : "/", test : () => false});
 
 	/**
 	 * Checks the types of the arguments for a lambda operator.
@@ -303,6 +323,8 @@ sap.ui.define([
 	 * @param {boolean} bIncludeOrigin Whether the origin should be included in the AST
 	 *
 	 * @returns {object} An AST for the filter
+	 * @throws {Error} If this filter has no or an unknown operator
+	 *
 	 * @private
 	 */
 	Filter.prototype.getAST = function (bIncludeOrigin) {

@@ -22,19 +22,20 @@ sap.ui.define(function() {
 			},
 			ui5: {
 				animation: false,
-				compatVersion: "edge",
-				logLevel: "INFO"
+				compatVersion: "edge"
 			}
 		},
 		tests: {
 			"dataTableUtils": {},
 			"GherkinTestGenerator": {},
 			"opa5TestHarness": {
+				page: "test-resources/sap/ui/core/qunit/gherkin/opa5TestHarness.qunit.html?sap-ui-log-level=info&sap-ui-animation=false",
 				qunit: {
 					noglobals: false
 				}
 			},
 			"qUnitTestHarness": {
+				page: "test-resources/sap/ui/core/qunit/gherkin/qUnitTestHarness.qunit.html?sap-ui-log-level=info&sap-ui-animation=false",
 				qunit: {
 					noglobals: false
 				}

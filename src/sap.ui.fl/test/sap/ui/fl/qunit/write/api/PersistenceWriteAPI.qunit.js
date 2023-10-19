@@ -16,14 +16,14 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector"
 ], function(
 	_omit,
@@ -45,10 +45,10 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	ChangePersistence,
 	FlexControllerFactory,
+	FlexConfiguration,
 	Layer,
 	Utils,
 	sinon,
-	Core,
 	KeyUserConnector
 ) {
 	"use strict";
@@ -79,9 +79,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given PersistenceWriteAPI", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = {
-				getId: function() {return "appComponent";}
+				getId() {return "appComponent";}
 			};
 			this.vSelector = {
 				elementId: "selector",
@@ -96,7 +96,7 @@ sap.ui.define([
 				fileName: "id_1445501120486_26",
 				fileType: "change",
 				changeType: "hideControl",
-				reference: "reference.app.Component",
+				reference: "reference.app",
 				packageName: "$TMP",
 				content: {},
 				selector: {
@@ -104,7 +104,7 @@ sap.ui.define([
 				},
 				layer: Layer.CUSTOMER,
 				texts: {},
-				namespace: "reference.app.Component",
+				namespace: "reference.app",
 				creation: "2018-10-16T08:00:02",
 				originalLanguage: "EN",
 				conditions: {},
@@ -117,9 +117,9 @@ sap.ui.define([
 
 			this.oUIChange = FlexObjectFactory.createFromFileContent(this.oUIChangeSpecificData);
 
-			window.sessionStorage.removeItem("sap.ui.fl.info." + this.oAppComponent.getId());
+			window.sessionStorage.removeItem(`sap.ui.fl.info.${this.oAppComponent.getId()}`);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			delete this.vSelector;
 		}
@@ -132,7 +132,7 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present, but not in a higher layer",
 			persistencyChanges: [{
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			}],
@@ -145,7 +145,7 @@ sap.ui.define([
 				persistencyKey: {
 					byId: {
 						changeId: {
-							getLayer: function() {
+							getLayer() {
 								return Layer.CUSTOMER;
 							}
 						}
@@ -156,7 +156,7 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, but none in a higher layer",
 			persistencyChanges: [{
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			}],
@@ -164,7 +164,7 @@ sap.ui.define([
 				persistencyKey: {
 					byId: {
 						changeId: {
-							getLayer: function() {
+							getLayer() {
 								return Layer.CUSTOMER_BASE;
 							}
 						}
@@ -175,7 +175,7 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistency has changes present in a higher layer",
 			persistencyChanges: [{
-				getLayer: function() {
+				getLayer() {
 					return Layer.USER;
 				}
 			}],
@@ -188,7 +188,7 @@ sap.ui.define([
 				persistencyKey: {
 					byId: {
 						changeId: {
-							getLayer: function() {
+							getLayer() {
 								return Layer.USER;
 							}
 						}
@@ -199,7 +199,7 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, one in higher layer",
 			persistencyChanges: [{
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			}],
@@ -207,7 +207,7 @@ sap.ui.define([
 				persistencyKey: {
 					byId: {
 						changeId: {
-							getLayer: function() {
+							getLayer() {
 								return Layer.USER;
 							}
 						}
@@ -218,7 +218,7 @@ sap.ui.define([
 		}, {
 			testName: "when hasHigherLayerChanges is called and the ChangePersistence AND CompVariantState have changes present, all in higher layer",
 			persistencyChanges: [{
-				getLayer: function() {
+				getLayer() {
 					return Layer.USER;
 				}
 			}],
@@ -226,7 +226,7 @@ sap.ui.define([
 				persistencyKey: {
 					byId: {
 						changeId: {
-							getLayer: function() {
+							getLayer() {
 								return Layer.USER;
 							}
 						}
@@ -250,7 +250,7 @@ sap.ui.define([
 
 				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
 				.then(function(bHasHigherLayerChanges) {
-					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, "it resolves with " + testSetup.expectedResult);
+					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, `it resolves with ${testSetup.expectedResult}`);
 				});
 			});
 		});
@@ -427,7 +427,7 @@ sap.ui.define([
 		QUnit.test("when add is called with a flex change", function(assert) {
 			var mPropertyBag = {
 				change: {
-					getChangeType: function() { return "flexChange"; }
+					getChangeType() { return "flexChange"; }
 				},
 				selector: this.vSelector
 			};
@@ -444,8 +444,8 @@ sap.ui.define([
 		QUnit.test("when add is called with multiple flex objects", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [
-					{getChangeType: function() { return "flexChange"; }},
-					{getChangeType: function() { return "flexChange"; }}
+					{getChangeType() { return "flexChange"; }},
+					{getChangeType() { return "flexChange"; }}
 				],
 				selector: this.vSelector
 			};
@@ -467,12 +467,12 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
 
 			var oChange = {
-				_getMap: function() {
+				_getMap() {
 					return {
 						changeType: sDescriptorChangeType
 					};
 				},
-				store: function() {
+				store() {
 					assert.ok(true, "then changes's store() was called");
 					done();
 				}
@@ -486,13 +486,13 @@ sap.ui.define([
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("appComponentId");
 
 			var oChange = {
-				_getMap: function() {
+				_getMap() {
 					return {
 						changeType: sDescriptorChangeType
 					};
 				},
-				store: function() {
-					return "storeWasCalled" + i++;
+				store() {
+					return `storeWasCalled${i++}`;
 				}
 			};
 			var aChanges = [oChange, oChange];
@@ -505,14 +505,14 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				flexObjects: [
-					{getChangeType: function() { return "flexChange"; }},
+					{getChangeType() { return "flexChange"; }},
 					{
-						_getMap: function() {
+						_getMap() {
 							return {
 								changeType: sDescriptorChangeType
 							};
 						},
-						store: function() {
+						store() {
 							return "storeWasCalled";
 						}
 					}
@@ -550,7 +550,7 @@ sap.ui.define([
 					getSelector: function() {
 						return this.vSelector;
 					}.bind(this),
-					getChangeType: function() {
+					getChangeType() {
 						return "";
 					}
 				},
@@ -587,17 +587,17 @@ sap.ui.define([
 		QUnit.test("when remove is called for multiple flex objects", function(assert) {
 			var mPropertyBag = {
 				flexObjects: [{
-					getSelector: function() {
+					getSelector() {
 						return "selector1";
 					},
-					getChangeType: function() {
+					getChangeType() {
 						return "flexChange";
 					}
 				}, {
-					getSelector: function() {
+					getSelector() {
 						return "selector2";
 					},
-					getChangeType: function() {
+					getChangeType() {
 						return "flexChange";
 					}
 				}],
@@ -682,7 +682,7 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				change: {
-					_getMap: function() {
+					_getMap() {
 						return {
 							changeType: sDescriptorChangeType
 						};
@@ -707,13 +707,13 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				flexObjects: [{
-					_getMap: function() {
+					_getMap() {
 						return {
 							changeType: sDescriptorChangeType
 						};
 					}
 				}, {
-					_getMap: function() {
+					_getMap() {
 						return {
 							changeType: sDescriptorChangeType
 						};
@@ -743,14 +743,14 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				flexObjects: [{
-					getSelector: function() {
+					getSelector() {
 						return "selector1";
 					},
-					getChangeType: function() {
+					getChangeType() {
 						return "flexChange";
 					}
 				}, {
-					_getMap: function() {
+					_getMap() {
 						return {
 							changeType: sDescriptorChangeType
 						};
@@ -807,7 +807,7 @@ sap.ui.define([
 			var sDescriptorChangeType = DescriptorChangeTypes.getChangeTypes()[0];
 			var mPropertyBag = {
 				change: {
-					_getMap: function() {
+					_getMap() {
 						return {
 							changeType: sDescriptorChangeType
 						};
@@ -816,7 +816,7 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			sandbox.stub(Core.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "sap.com"}
 			]);
 
@@ -964,7 +964,7 @@ sap.ui.define([
 				isResetEnabled: true,
 				isPublishEnabled: false
 			};
-			window.sessionStorage.setItem("sap.ui.fl.info." + sReference, JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem(`sap.ui.fl.info.${sReference}`, JSON.stringify(oFlexInfoResponse));
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
 
 			var oFlexInfo = PersistenceWriteAPI.getResetAndPublishInfoFromSession(this.vSelector);
@@ -1051,7 +1051,7 @@ sap.ui.define([
 			var aChanges = [];
 			var mPropertyBag = {};
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports: function() {return true;}});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports() {return true;}});
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {
 				assert.ok(oMessage.showWarning, "then the warning is shown");
@@ -1063,7 +1063,7 @@ sap.ui.define([
 			var aChanges = [];
 			var mPropertyBag = {};
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
-			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports: function() {return false;}});
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({isProductiveSystemWithTransports() {return false;}});
 			return PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {
 				assert.equal(oMessage.showWarning, false);
@@ -1080,10 +1080,10 @@ sap.ui.define([
 
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aChanges);
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isProductiveSystem: function() {return true;},
-				isProductiveSystemWithTransports: function() {return true;},
-				getSystem: function() {return "pSystem";},
-				getClient: function() {return "bar";}
+				isProductiveSystem() {return true;},
+				isProductiveSystemWithTransports() {return true;},
+				getSystem() {return "pSystem";},
+				getClient() {return "bar";}
 			});
 			return	PersistenceWriteAPI.getChangesWarning(mPropertyBag)
 			.then(function(oMessage) {

@@ -2,11 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/table/rowmodes/Type",
 	"./TableHelper.support",
 	"sap/ui/support/library",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(SupportHelper, SupportLibrary, Device, jQuery) {
+], function(
+	RowModeType,
+	SupportHelper,
+	SupportLibrary,
+	Device,
+	jQuery
+) {
 	"use strict";
 
 	var Categories = SupportLibrary.Categories;
@@ -135,7 +142,7 @@ sap.ui.define([
 	});
 
 	/*
-	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with <code>visibleRowCountMode=Auto</code>, the
+	 * Checks the configuration of the sap.f.DynamicPage. If the DynamicPage contains a table with row mode <code>Auto</code>, the
 	 * <code>fitContent</code> property of the DynamicPage should be set to true, otherwise false.
 	 */
 	var oDynamicPageConfiguration = SupportHelper.normalizeRule({
@@ -144,7 +151,7 @@ sap.ui.define([
 		categories: [Categories.Usage],
 		title: "Table environment validation - 'sap.f.DynamicPage'",
 		description: "Verifies that the DynamicPage is configured correctly from the table's perspective.",
-		resolution: "If a table with visibleRowCountMode=Auto is placed inside a sap.f.DynamicPage, the fitContent property of the DynamicPage"
+		resolution: "If a table with row mode 'Auto' is placed inside a sap.f.DynamicPage, the fitContent property of the DynamicPage"
 					+ " should be set to true, otherwise false.",
 		resolutionurls: [
 			SupportHelper.createDocuRef("API Reference: sap.f.DynamicPage#getFitContent", "#/api/sap.f.DynamicPage/methods/getFitContent")
@@ -162,13 +169,25 @@ sap.ui.define([
 			}
 
 			function checkConfiguration(oTable, oDynamicPage) {
-				if (oTable._getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode") && !oDynamicPage.getFitContent()) {
+				var vRowMode = oTable.getRowMode();
+				var bIsTableInAutoMode = false;
+
+				/**
+				 * @deprecated As of version 1.119
+				 */
+				if (!vRowMode) {
+					bIsTableInAutoMode = oTable.getVisibleRowCountMode() === "Auto";
+				}
+
+				if (vRowMode) {
+					bIsTableInAutoMode = vRowMode === RowModeType.Auto || vRowMode.isA("sap.ui.table.rowmodes.Auto");
+				}
+
+				if (bIsTableInAutoMode && !oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with an auto row mode is placed inside a sap.f.DynamicPage with fitContent=\"false\"",
 						Severity.High, oTable.getId());
-				} else if ((oTable._getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode")
-							|| oTable._getRowMode().isA("sap.ui.table.rowmodes.InteractiveRowMode"))
-						   && oDynamicPage.getFitContent()) {
+				} else if (!bIsTableInAutoMode && oDynamicPage.getFitContent()) {
 					SupportHelper.reportIssue(oIssueManager,
 						"A table with a fixed or interactive row mode is placed inside a sap.f.DynamicPage with fitContent=\"true\"",
 						Severity.Low, oTable.getId());

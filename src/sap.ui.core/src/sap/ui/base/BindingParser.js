@@ -211,7 +211,7 @@ sap.ui.define([
 		 * The name is resolved locally (against oEnv.oContext) if it starts with a '.', otherwise against
 		 * the oEnv.mLocals and if it's still not resolved, against the global context (window).
 		 *
-		 * The resolution is done inplace. If the name resolves to a function, it is assumed to be the
+		 * The resolution is done in place. If the name resolves to a function, it is assumed to be the
 		 * constructor of a data type. A new instance will be created, using the values of the
 		 * properties 'constraints' and 'formatOptions' as parameters of the constructor.
 		 * Both properties will be removed from <code>o</code>.
@@ -223,7 +223,10 @@ sap.ui.define([
 			var sType = o.type;
 			if (typeof sType === "string" ) {
 				FNType = resolveReference(sType, mVariables, {
-					bindContext: false
+					bindContext: false,
+					// only when types aren't expected to be loaded asynchronously, we try to use a
+					// probing-require to fetch it in case it can't be resolved with 'mVariables'
+					useProbingRequire: !oEnv.aTypePromises
 				});
 
 				var fnInstantiateType = function(TypeClass) {
@@ -591,7 +594,8 @@ sap.ui.define([
 				// parse result contains additionally a Promise with all asynchronously loaded types
 				return {
 					bindingInfo: oBindingInfo,
-					resolved: Promise.all(oEnv.aTypePromises)
+					resolved: Promise.all(oEnv.aTypePromises),
+					wait : oEnv.aTypePromises.length > 0
 				};
 			}
 

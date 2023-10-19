@@ -83,14 +83,14 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell title="75% width cell" width="3">
 					<form:SimpleForm editable="true" backgroundDesign="Transparent" layout="ResponsiveGridLayout">
-						<Label text="Name on card" required="true" />
-						<Input value="{/CreditCard/Name}" liveChange="checkCreditCardStep" valueLiveUpdate="true" />
+						<Label text="Name on card"/>
+						<Input/>
 						<Label text="Card number" />
-						<Input value="{/CardNumber}" />
+						<Input/>
 						<Label text="Security code" />
-						<Input value="{/CreditCard/SecurityCode}" />
+						<Input/>
 						<Label text="Expiration date" />
-						<DatePicker value="{/CreditCard/Expire}" />
+						<DatePicker/>
 					</form:SimpleForm>
 					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr." />
 				</l:BlockLayoutCell>

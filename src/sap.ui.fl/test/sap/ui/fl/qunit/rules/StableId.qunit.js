@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/support/Bootstrap",
 	"sap/ui/support/RuleAnalyzer",
 	"test-resources/sap/ui/support/TestHelper",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	UIComponent,
 	ComponentContainer,
@@ -29,17 +29,17 @@ sap.ui.define([
 	Bootstrap,
 	RuleAnalyzer,
 	testRule,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 	/**
 	 * @deprecated Since version 1.54. Due to <code>sap.ui.dt.ElementOverlay.getAggregationOverlays</code> deprecation
 	 */
 	QUnit.module("Base functionality for app component's root view", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId"),
 						content: [
@@ -66,13 +66,13 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 		}
 	}, function() {
@@ -85,10 +85,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Base functionality for popups", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId")
 					});
@@ -138,7 +138,7 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDialog.attachAfterOpen(function() {
 				this.oPopover.attachAfterOpen(function() {
@@ -158,7 +158,7 @@ sap.ui.define([
 			}.bind(this));
 			this.oDialog.open();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPopover.destroy();
 			this.oPopoverAdaptationDisabled.destroy();
 			this.oDialog.destroy();
@@ -192,10 +192,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via template", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: this.createId("view"),
 						viewContent:
@@ -225,13 +225,13 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}
@@ -245,10 +245,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregation Binding via factory function", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: this.createId("view"),
 						viewContent:
@@ -283,13 +283,13 @@ sap.ui.define([
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			Bootstrap.initSupportRules(["true", "silent"], {
 				onReady: fnDone
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 			this.oComponent.destroy();
 		}

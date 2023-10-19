@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/rta/util/BindingsExtractor",
 	"sap/m/Button",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	XMLView,
 	BindingsExtractor,
 	Button,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -25,23 +25,23 @@ sap.ui.define([
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				id: "idMain1",
 				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
 			}).then(function(oView) {
 				this.oView = oView;
 				return oView.loaded();
-			}.bind(this)).then(function() {
+			}.bind(this)).then(async function() {
 				this.oView.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 		}
 	}, function() {
@@ -177,7 +177,7 @@ sap.ui.define([
 
 		QUnit.test("when collectBindingPaths is called for element with bindings not containing a path property", function(assert) {
 			var oElement = {
-				getParent: function() {
+				getParent() {
 					return undefined;
 				}
 			};

@@ -2,17 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-    'sap/ui/core/Control',
-    'sap/m/Button',
-    'sap/m/library',
-    'sap/ui/core/Core',
-    'sap/m/SearchField'
+	"sap/ui/core/Core",
+    "sap/ui/core/Control",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
+	"sap/m/library",
+    "sap/m/Button",
+    "sap/m/SearchField"
 ], function(
-    Control,
-    Button,
-    mobileLibrary,
-    Core,
-    SearchField
+	Core,
+	Control,
+	Device,
+	jQuery,
+	mobileLibrary,
+	Button,
+	SearchField
 ) {
     "use strict";
 		/**
@@ -121,12 +125,16 @@ sap.ui.define([
             }
         };
 
-        Search.prototype.onsapescape = function() {
-            // close global search when esc key is pressed.
-            if (this.getIsOpen()) {
-                this._toggleOpen(false);
-            }
-        };
+		// Close the global search when escape key is pressed
+		// This is relevant only for devices less than 1024px
+		Search.prototype.onsapescape = function(oEvent) {
+			var viewportWidth = jQuery(window).width(),
+				bDesktopSize = viewportWidth >= Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1];
+
+			if (this.getIsOpen() && !bDesktopSize) {
+				this._toggleOpen(false);
+			}
+		};
 
 		Search.prototype.getValue = function() {
 			return this._lazyLoadSearchField().getValue();
@@ -191,12 +199,12 @@ sap.ui.define([
             if (!this.getAggregation("_openingButton")) {
                 var oBtn = new Button(this.getId() + "-openingBtn", {
                     icon: "sap-icon://search",
-                    type: mobileLibrary.ButtonType.Transparent,
+                    type: mobileLibrary.ButtonType.Default,
                     press: function() {
                         this._toggleOpen(true);
                     }.bind(this)
-                });
-                oBtn.addStyleClass("sdkHeaderSearchButton"); //TODO
+                }).addStyleClass("sapUiDemokitSearchOpeningButton sapMBarChild");
+
                 this.setAggregation("_openingButton", oBtn, bSuppressInvalidate);
             }
             return this.getAggregation("_openingButton");
@@ -206,15 +214,16 @@ sap.ui.define([
             if (!this.getAggregation("_closingButton")) {
                 var oBtn = new Button(this.getId() + "-closingBtn", {
                     text: Core.getLibraryResourceBundle("sap.ui.documentation").getText("APP_SEARCH_FIELD_CLOSE"),
-                    type: mobileLibrary.ButtonType.Transparent,
+                    type: mobileLibrary.ButtonType.Default,
                     press: function() {
-
                         this._minimizeSearchField().then(function() {
                             this._toggleOpen(false);
+							this.setValue("");
                         }.bind(this));
 
                     }.bind(this)
-                });
+                }).addStyleClass("sapMBarChild");
+
                 this.setAggregation("_closingButton", oBtn, bSuppressInvalidate);
             }
             return this.getAggregation("_closingButton");
@@ -223,6 +232,7 @@ sap.ui.define([
         Search.prototype._lazyLoadSearchField = function(bSuppressInvalidate) {
             if (!this.getAggregation("_searchField")) {
                 var oSrch = new SearchField(this.getId() + "-searchField", {
+					placeholder: Core.getLibraryResourceBundle("sap.ui.documentation").getText("APP_HEADER_SEARCH_FIELD_PLACEHOLDER"),
                     showSearchButton: true,
                     search: function(oEvent) {
                         var oParameters = oEvent.getParameters();

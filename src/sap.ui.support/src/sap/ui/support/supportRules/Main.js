@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/VersionInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
+	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
 	"sap/ui/support/supportRules/ExecutionScope",
@@ -22,11 +22,27 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSetLoader",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
-],
-function (Log, VersionInfo, ManagedObject, Core, Element, Component, Analyzer, CoreFacade,
-		  ExecutionScope, Highlighter, CommunicationBus,
-		  IssueManager, History, DataCollector, channelNames,
-		  constants, RuleSetLoader, RuleSerializer, library) {
+], function (
+	Log,
+	ManagedObject,
+	Core,
+	Element,
+	Component,
+	Supportability,
+	Analyzer,
+	CoreFacade,
+	ExecutionScope,
+	Highlighter,
+	CommunicationBus,
+	IssueManager,
+	History,
+	DataCollector,
+	channelNames,
+	constants,
+	RuleSetLoader,
+	RuleSerializer,
+	library
+) {
 	"use strict";
 
 	var IFrameController = null;
@@ -112,7 +128,7 @@ function (Log, VersionInfo, ManagedObject, Core, Element, Component, Analyzer, C
 		var aSupportModeConfig = this._aSupportModeConfig;
 		this._pluginStarted = true;
 
-		this._supportModeConfig = aSupportModeConfig = aSupportModeConfig || Core.getConfiguration().getSupportMode();
+		this._supportModeConfig = aSupportModeConfig = aSupportModeConfig || Supportability.getSupportSettings();
 		CommunicationBus.bSilentMode = aSupportModeConfig.indexOf("silent") > -1;
 		this._setCommunicationSubscriptions();
 
@@ -265,13 +281,7 @@ function (Log, VersionInfo, ManagedObject, Core, Element, Component, Analyzer, C
 
 		CommunicationBus.subscribe(channelNames.ON_INIT_ANALYSIS_CTRL, function () {
 			RuleSetLoader.updateRuleSets(function () {
-				VersionInfo.load().then(function (oVersionInfo) {
-					CommunicationBus.publish(channelNames.POST_APPLICATION_INFORMATION, {
-						// Sends info about the application under test
-						versionInfo: oVersionInfo
-					});
-					this.fireEvent("ready");
-				}.bind(this));
+				this.fireEvent("ready");
 			}.bind(this));
 		}, this);
 

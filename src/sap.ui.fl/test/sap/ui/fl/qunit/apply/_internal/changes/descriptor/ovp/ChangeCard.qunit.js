@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oManifest = {
 				"sap.ovp": {
 					cards: {
@@ -24,7 +24,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

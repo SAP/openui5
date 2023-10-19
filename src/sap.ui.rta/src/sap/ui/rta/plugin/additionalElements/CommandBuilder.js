@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.94
-	 * @experimental Since 1.94. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CommandBuilder = {};
 
@@ -61,9 +60,9 @@ sap.ui.define([
 			if (oMoveCommandForInvisible) {
 				oCompositeCommand.addCommand(oMoveCommandForInvisible);
 			} else {
-				Log.warning("No move action configured for "
-						+ mParents.parent.getMetadata().getName()
-						+ ", aggregation: " + oSelectedElement.aggregation, "sap.ui.rta");
+				Log.warning(`No move action configured for ${
+						 mParents.parent.getMetadata().getName()
+						 }, aggregation: ${oSelectedElement.aggregation}`, "sap.ui.rta");
 			}
 			return oCompositeCommand;
 		});
@@ -277,7 +276,7 @@ sap.ui.define([
 								createCommandsForAddViaDelegate.bind(this, mPropertyBag));
 							break;
 						default:
-							Log.error("Can't create command for untreated element.type " + oSelectedElement.type);
+							Log.error(`Can't create command for untreated element.type ${oSelectedElement.type}`);
 					}
 				}, this);
 				return oPromise.then(function() { return oCompositeCommand; });

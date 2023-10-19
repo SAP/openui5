@@ -16,10 +16,10 @@ sap.ui.define([
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.fl.support.apps.contentbrowser.Component", {
-		init: function() {
+		init(...aArgs) {
 			var that = this;
 			// call the init function of the parent
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 
 			// set i18n
 			var oI18nModel = new ResourceModel({

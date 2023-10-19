@@ -35,7 +35,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	*/
-	var PropertyHelperMixin = {};
+	const PropertyHelperMixin = {};
 
 	PropertyHelperMixin.init = function (fnInit) {
 		return function () {
@@ -191,12 +191,12 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	 *
 	 */
 	PropertyHelperMixin._setupPropertyInfoStore = function(sPropertyName) {
-		var oProperties = this.getMetadata().getAllProperties();
-		var oPropertyInfoProperty = oProperties && oProperties[sPropertyName];
+		const oProperties = this.getMetadata().getAllProperties();
+		const oPropertyInfoProperty = oProperties && oProperties[sPropertyName];
 		if (!oPropertyInfoProperty) {
 			throw new Error("PropertyHelperMixin: Property '" + sPropertyName + "' not found.");
 		}
-		var oJSONKeys = this.getMetadata().getJSONKeys()[sPropertyName];
+		const oJSONKeys = this.getMetadata().getJSONKeys()[sPropertyName];
 		this._oPropertyInfoStoreMutatorOverride = {key: oJSONKeys._sMutator, mutator: this[oJSONKeys._sMutator]};
 
 		this[oJSONKeys._sMutator] = function () {
@@ -226,7 +226,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	};
 
 	PropertyHelperMixin._getPropertyByNameAsync = function(sName) {
-		var oProperty = this._getPropertyByName(sName);
+		const oProperty = this._getPropertyByName(sName);
 
 		if (!oProperty) {
 			return this.finalizePropertyHelper().then(function (oPropertyHelper) {
@@ -262,7 +262,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 			this._pHelperFinalizationPromise = this._oPropertyHelperDeferred.promise;
 		}
 
-		var oDelegate;
+		let oDelegate;
 
 		// we need to initialize the delegate for PropertyHelper overrides first
 		return this._oApplySettingsDeferred.promise.then(function () {
@@ -282,8 +282,8 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 				return undefined;
 			}
 
-			var aProperties = aResult[0];
-			var PropertyHelper = aResult[1];
+			const aProperties = aResult[0];
+			const PropertyHelper = aResult[1];
 			this._oPropertyHelper = new PropertyHelper(aProperties, this);
 			this._bPropertyHelperInitializing = false;
 			if (bFinal) {
@@ -314,7 +314,7 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 	function _getDelegateProperties (oControl) {
 		return oControl.initControlDelegate().then(function () {
 			// not using arg as some unit tests override "getControlDelegate"
-			var oDelegate = oControl.getControlDelegate(oControl);
+			const oDelegate = oControl.getControlDelegate(oControl);
 
 			return oDelegate.fetchProperties(oControl).then(function(aProperties) {
 				if (oControl.isDestroyed()) {
@@ -327,8 +327,8 @@ sap.ui.define(["sap/base/util/Deferred", "sap/ui/mdc/util/loadModules", "sap/bas
 
 	function fetchPropertyHelperClass(oControl, oDelegate) {
 		if (oDelegate && typeof oDelegate.getPropertyHelperClass === "function") {
-			var oDelegatePropertyHelperClass = oDelegate.getPropertyHelperClass();
-			var sBaseClass = oControl._oPropertyHelperClass ? oControl._oPropertyHelperClass.getMetadata().getName() : "sap.ui.mdc.util.PropertyHelper";
+			const oDelegatePropertyHelperClass = oDelegate.getPropertyHelperClass();
+			const sBaseClass = oControl._oPropertyHelperClass ? oControl._oPropertyHelperClass.getMetadata().getName() : "sap.ui.mdc.util.PropertyHelper";
 
 			if (!oDelegatePropertyHelperClass || !oDelegatePropertyHelperClass.getMetadata || !oDelegatePropertyHelperClass.getMetadata().isA(sBaseClass)) {
 				throw new Error("The property helper class must be " + sBaseClass + " or a subclass of it.");

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/values",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Utils",
@@ -16,6 +17,7 @@ sap.ui.define([
 	objectValues,
 	Log,
 	JsControlTreeModifier,
+	Element,
 	ControlVariantApplyAPI,
 	ChangesWriteAPI,
 	FlUtils,
@@ -37,8 +39,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.FlexCommand
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var FlexCommand = BaseCommand.extend("sap.ui.rta.command.FlexCommand", {
 		metadata: {
@@ -106,7 +106,7 @@ sap.ui.define([
 			oSelector = {
 				id: mFlexSettings.templateSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.templateSelector))
+				controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.templateSelector))
 			};
 			this.setSelector(oSelector);
 		} else if (!this.getSelector() && this.getElement()) {
@@ -241,10 +241,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.UIChange|Object} vChange Change object or map containing the change object
 	 * @returns {Promise} Returns an empty promise
 	 */
-	FlexCommand.prototype._applyChange = function(vChange) {
-		// TODO: remove the following compatibility code when concept is implemented
-		var oChange = vChange.change || vChange;
-
+	FlexCommand.prototype._applyChange = function(oChange) {
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = JsControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
 
@@ -268,7 +265,7 @@ sap.ui.define([
 			return {
 				id: mFlexSettings.originalSelector,
 				appComponent: this.getAppComponent(),
-				controlType: FlUtils.getControlType(sap.ui.getCore().byId(mFlexSettings.originalSelector))
+				controlType: FlUtils.getControlType(Element.getElementById(mFlexSettings.originalSelector))
 			};
 		}
 		return this.getElement() || this.getSelector();

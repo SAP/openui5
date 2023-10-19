@@ -97,7 +97,6 @@ sap.ui.define([
 	 * Class for loading Flex Data from the backend via the Connectors.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.Loader
-	 * @experimental
 	 * @since 1.74
 	 * @version ${version}
 	 * @private
@@ -123,7 +122,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.allContexts] - Includes also restricted context
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			var sComponentName = ManifestUtils.getBaseComponentNameFromManifest(mPropertyBag.manifest);
 
 			if (mPropertyBag.partialFlexData) {

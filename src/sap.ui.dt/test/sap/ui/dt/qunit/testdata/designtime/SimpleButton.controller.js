@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("dt.view.SimpleButton", {
-		onInit: function() {
+		onInit() {
 		}
 	});
 });

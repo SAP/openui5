@@ -1,8 +1,6 @@
 sap.ui.define(["sap/ui/Device"], function (Device) {
 	"use strict";
 
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	return {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {

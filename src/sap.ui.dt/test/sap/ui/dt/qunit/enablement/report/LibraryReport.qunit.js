@@ -15,7 +15,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given that a sap.m Library is tested", {
-		beforeEach: function() {
+		beforeEach() {
 			function fnCreate() {
 				return new SimpleScrollControl();
 			}
@@ -31,7 +31,7 @@ function(
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLibraryReport.destroy();
 		}
 	}, function() {

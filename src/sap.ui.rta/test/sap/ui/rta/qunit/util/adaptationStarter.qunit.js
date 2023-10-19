@@ -1,10 +1,10 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Utils",
@@ -13,10 +13,10 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	UriParameters,
 	Log,
 	MessageBox,
 	Control,
+	Lib,
 	FeaturesAPI,
 	PersistenceWriteAPI,
 	FlexUtils,
@@ -29,7 +29,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	var oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
-	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function setIsKeyUser(bIsKeyUser) {
 		sandbox.stub(FeaturesAPI, "isKeyUser").resolves(bIsKeyUser);
@@ -46,7 +46,7 @@ sap.ui.define([
 			assert.strictEqual(
 				stubbedMessageCall.args[0].mAggregations.content.map(function(item, index) {
 					if (index === 1) {
-						return "[" + item.getText() + "]" + "(" + item.getHref() + ")";
+						return `[${item.getText()}]` + `(${item.getHref()})`;
 					}
 					return item.getText();
 				}).join(""),
@@ -57,12 +57,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("When adaptationStarter is called... ", {
-		beforeEach: function() {
+		beforeEach() {
 			this.fnRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start").resolves();
 			this.fnMessageBoxStub = sandbox.stub(MessageBox, "warning");
 			setIsKeyUser(true);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -205,7 +205,7 @@ sap.ui.define([
 					flexEnabled: false
 				}
 			});
-			sandbox.stub(UriParameters.prototype, "get")
+			sandbox.stub(URLSearchParams.prototype, "get")
 			.callThrough()
 			.withArgs("fiori-tools-rta-mode")
 			.returns("true");
@@ -223,12 +223,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Negative Tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRtaStartStub = sandbox.stub(RuntimeAuthoring.prototype, "start");
 			this.fnMessageBoxStub = sandbox.stub(MessageBox, "error");
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

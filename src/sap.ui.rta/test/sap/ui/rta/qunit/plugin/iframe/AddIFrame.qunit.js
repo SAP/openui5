@@ -2,6 +2,8 @@
 
 sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Utils",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/dt/DesignTime",
@@ -19,9 +21,11 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/Button",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	XMLView,
+	IconPool,
+	Lib,
 	Utils,
 	VerticalLayout,
 	DesignTime,
@@ -39,14 +43,14 @@ sap.ui.define([
 	uid,
 	Button,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
-	var TEST_URL = "http://www.sap.com";
-	var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
+	const TEST_URL = "http://www.sap.com";
+	const viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
 
-	var oMockedViewWithStableId;
+	let oMockedViewWithStableId;
 	XMLView.create({
 		id: "mockview",
 		definition: viewContent
@@ -55,10 +59,11 @@ sap.ui.define([
 		QUnit.start();
 	});
 
-	var sandbox = sinon.createSandbox();
+	const sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a designTime and addIFrame plugin are instantiated for an ObjectPageLayout", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
+			const done = assert.async();
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			this.oOpenStub = sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function() {
@@ -90,8 +95,6 @@ sap.ui.define([
 				content: [this.oObjectPageLayout, this.oButton]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
-
 			this.sNewControlID = oMockedViewWithStableId.createId(uid());
 			this.oNewObjectPageSection = new ObjectPageSection(this.sNewControlID);
 			this.oObjectPageLayout.addSection(this.oNewObjectPageSection);
@@ -101,7 +104,7 @@ sap.ui.define([
 				plugins: [this.oAddIFrame]
 			});
 
-			var done = assert.async();
+			await nextUIUpdate();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
@@ -113,7 +116,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVerticalLayout.destroy();
@@ -121,14 +124,16 @@ sap.ui.define([
 		}
 
 	}, function() {
-		QUnit.test("when the getMenuItems() is called to check texts, with addIFrame defined on more than one aggregations", function(assert) {
-			var sExpectedSectionText = "Section text";
-			var sExpectedHeaderText = "Header text";
+		QUnit.test("when the getMenuItems() is called to check texts, with addIFrame defined on more than one aggregations", async function(assert) {
+			const sExpectedSectionText = "Section text";
+			const sExpectedHeaderText = "Header text";
+			const oRegisterFontSpy = sandbox.spy(IconPool, "registerFont");
+			const oFontLoadedSpy = sandbox.spy(IconPool, "fontLoaded");
 
-			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+			const oRtaTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(oRtaTextResources, "getText")
-			.withArgs("CTX_ADDIFRAME", "as foo").returns(sExpectedSectionText)
-			.withArgs("CTX_ADDIFRAME", "as bar").returns(sExpectedHeaderText);
+			.withArgs("CTX_ADDIFRAME", ["as foo"]).returns(sExpectedSectionText)
+			.withArgs("CTX_ADDIFRAME", ["as bar"]).returns(sExpectedHeaderText);
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
@@ -151,29 +156,33 @@ sap.ui.define([
 				}
 			});
 
-			var aMenuItems = this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay]);
+			const aMenuItems = await this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay]);
 
-			assert.strictEqual(aMenuItems[0].text(this.oObjectPageLayoutOverlay), sExpectedSectionText, "the Section text via the designtime is correct");
-			assert.strictEqual(aMenuItems[1].text(this.oObjectPageLayoutOverlay), sExpectedHeaderText, "the header text via the aggregation names is correct");
+			assert.strictEqual(oRegisterFontSpy.callCount, 1, "the font was registered");
+			assert.ok(oFontLoadedSpy.calledWith("tnt"), "the font was waited for");
+			assert.strictEqual(
+				aMenuItems[0].text(this.oObjectPageLayoutOverlay), sExpectedSectionText,
+				"the Section text via the designtime is correct"
+			);
+			assert.strictEqual(
+				aMenuItems[1].text(this.oObjectPageLayoutOverlay), sExpectedHeaderText,
+				"the header text via the aggregation names is correct"
+			);
 		});
 
-		QUnit.test("when an overlay has no addIFrame action designTimeMetadata", function(assert) {
+		QUnit.test("when an overlay has no addIFrame action designTimeMetadata", async function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({});
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and it returns false");
-				assert.strictEqual(this.oAddIFrame.isEnabled("dummyAggregation", [this.oObjectPageLayoutOverlay]), false, "then isEnabled is called and it returns false");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and it returns false");
+			assert.strictEqual(this.oAddIFrame.isEnabled("dummyAggregation", [this.oObjectPageLayoutOverlay]), false, "then isEnabled is called and it returns false");
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
+			assert.notOk(bIsEditable, "then the overlay is not editable");
 		});
 
-		QUnit.test("when an overlay has addIFrame action in designTimeMetadata, but has no isEnabled property defined", function(assert) {
+		QUnit.test("when an overlay has addIFrame action in designTimeMetadata, but has no isEnabled property defined", async function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
@@ -189,18 +198,14 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns true");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.ok(bIsEditable, "then the overlay is editable");
-			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true, "then isAvailable is called and it returns true");
+			assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns true");
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
+			assert.ok(bIsEditable, "then the overlay is editable");
 		});
 
-		QUnit.test("when an overlay has addIFrame action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
+		QUnit.test("when an overlay has addIFrame action designTime metadata, has no changeType and isEnabled property is true", async function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
@@ -216,20 +221,16 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and then it returns false");
-				assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and then it returns correct value");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), false, "then isAvailable is called and then it returns false");
+			assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and then it returns correct value");
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
+			assert.notOk(bIsEditable, "then the overlay is not editable");
 		});
 
-		QUnit.test("when an overlay has addIFrame action on a responsible element", function(assert) {
+		QUnit.test("when an overlay has addIFrame action on a responsible element", async function(assert) {
 			assert.expect(9);
-			var sText = "as Section";
+			const sText = "as Section";
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
@@ -243,9 +244,9 @@ sap.ui.define([
 				}
 			});
 
-			var sExpectedText = "Section text";
-			var oRtaTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
-			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", sText).returns(sExpectedText);
+			const sExpectedText = "Section text";
+			const oRtaTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+			sandbox.stub(oRtaTextResources, "getText").withArgs("CTX_ADDIFRAME", [sText]).returns(sExpectedText);
 
 			this.oButtonOverlay.setDesignTimeMetadata({
 				actions: {
@@ -261,8 +262,8 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oButtonOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oButtonOverlay);
 
-			function checkMenuItemWhenActionAvailable(oPlugin, oSourceOverlay, oResponsibleElementOverlay) {
-				var aMenuItems = oPlugin.getMenuItems([oSourceOverlay]);
+			async function checkMenuItemWhenActionAvailable(oPlugin, oSourceOverlay, oResponsibleElementOverlay) {
+				const aMenuItems = await oPlugin.getMenuItems([oSourceOverlay]);
 				assert.equal(aMenuItems.length, 1, "then one menu item was returned when the action is available on the responsible element overlay");
 
 				assert.strictEqual(aMenuItems[0].enabled([oSourceOverlay]), true, "then the menu item is enabled");
@@ -273,26 +274,25 @@ sap.ui.define([
 				assert.deepEqual(aMenuItems[0].responsible[0], oResponsibleElementOverlay, "then the menu item contains the responsible element overlay");
 			}
 
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], true), true, "then isAvailable returns true as a sibling");
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], false), false, "then isAvailable returns false when it's not a sibling");
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], true), true, "then isAvailable returns true as a sibling");
+			assert.strictEqual(this.oAddIFrame.isAvailable([this.oButtonOverlay], false), false, "then isAvailable returns false when it's not a sibling");
 
-				var bAvailable = true;
-				sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bSibling) {
-					if (bSibling === true && aElementOverlays[0] === this.oButtonOverlay) {
-						return bAvailable;
-					}
-				}.bind(this));
-
-				checkMenuItemWhenActionAvailable(this.oAddIFrame, this.oButtonOverlay, this.oObjectPageSectionOverlay);
-
-				bAvailable = false;
-				assert.equal(this.oAddIFrame.getMenuItems([this.oButtonOverlay]).length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
+			let bAvailable = true;
+			sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bSibling) {
+				if (bSibling === true && aElementOverlays[0] === this.oButtonOverlay) {
+					return bAvailable;
+				}
 			}.bind(this));
+
+			await checkMenuItemWhenActionAvailable(this.oAddIFrame, this.oButtonOverlay, this.oObjectPageSectionOverlay);
+
+			bAvailable = false;
+			const aMenuItems = await this.oAddIFrame.getMenuItems([this.oButtonOverlay]);
+			assert.equal(aMenuItems.length, 0, "then no menu item was returned when the action is not available on the responsible element overlay");
 		});
 
-		QUnit.test("when an overlay has an addIFrame action in designTimeMetadata, and isEnabled property is a function", function(assert) {
+		QUnit.test("when an overlay has an addIFrame action in designTimeMetadata, and isEnabled property is a function", async function(assert) {
 			assert.expect(27);
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
@@ -300,7 +300,7 @@ sap.ui.define([
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								isEnabled: function(oElement) {
+								isEnabled(oElement) {
 									return oElement.getMetadata().getName() === "sap.uxap.ObjectPageLayout";
 								},
 								text: "foo"
@@ -312,64 +312,63 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				assert.strictEqual(this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true, "then isAvailable is called and it returns true");
-				assert.strictEqual(this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true, "then isEnabled is called and it returns correct value from function call");
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.ok(bIsEditable, "then the overlay is editable");
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			assert.strictEqual(
+				this.oAddIFrame.isAvailable([this.oObjectPageLayoutOverlay], false), true,
+				"then isAvailable is called and it returns true"
+			);
+			assert.strictEqual(
+				this.oAddIFrame.isEnabled("sections", [this.oObjectPageLayoutOverlay]), true,
+				"then isEnabled is called and it returns correct value from function call"
+			);
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, false);
+			assert.ok(bIsEditable, "then the overlay is editable");
 
-				var aOverlaySiblingRequests;
-				var oCheckOverlay;
-				var bIsAvailable = true;
+			let aOverlaySiblingRequests;
+			let oCheckOverlay;
+			let bIsAvailable = true;
 
-				sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bOverlayIsSibling) {
-					aOverlaySiblingRequests.push(bOverlayIsSibling); // Not assuming any order
-					assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
-					return bIsAvailable;
-				});
+			sandbox.stub(this.oAddIFrame, "isAvailable").callsFake(function(aElementOverlays, bOverlayIsSibling) {
+				aOverlaySiblingRequests.push(bOverlayIsSibling); // Not assuming any order
+				assert.deepEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "the 'available' function calls isAvailable with the correct overlay");
+				return bIsAvailable;
+			});
 
-				sandbox.stub(this.oAddIFrame, "isEnabled").callsFake(function(sAggregationName, aElementOverlays) {
-					var sExpectedAggregationName;
-					if (this.callCount === 1) {
-						sExpectedAggregationName = "sections";
-					}
-					assert.strictEqual(sExpectedAggregationName, sAggregationName, "then enabled() was called with the correct aggregation");
-					assert.strictEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "then handler() was called with the correct overlay");
-				}.bind(this.oAddIFrame.isEnabled));
+			sandbox.stub(this.oAddIFrame, "isEnabled").callsFake(function(sAggregationName, aElementOverlays) {
+				const sExpectedAggregationName = this.callCount === 1 ? "sections" : undefined;
+				assert.strictEqual(sExpectedAggregationName, sAggregationName, "then enabled() was called with the correct aggregation");
+				assert.strictEqual(aElementOverlays[0].getId(), oCheckOverlay.getId(), "then handler() was called with the correct overlay");
+			}.bind(this.oAddIFrame.isEnabled));
 
-				function getMenuItems(oOverlay) {
-					aOverlaySiblingRequests = [];
-					oCheckOverlay = oOverlay;
-					var aResultMenuItems = this.oAddIFrame.getMenuItems([oOverlay]);
-					assert.strictEqual(aOverlaySiblingRequests.length, 2, "the 'available' function was called twice");
-					assert.ok(includes(aOverlaySiblingRequests, true), "the 'available' function was called twice with bOverlayIsSibling=true");
-					assert.ok(includes(aOverlaySiblingRequests, false), "the 'available' function was called twice with bOverlayIsSibling=false");
-					return aResultMenuItems;
-				}
+			async function getMenuItems(oOverlay) {
+				aOverlaySiblingRequests = [];
+				oCheckOverlay = oOverlay;
+				const aResultMenuItems = await this.oAddIFrame.getMenuItems([oOverlay]);
+				assert.strictEqual(aOverlaySiblingRequests.length, 2, "the 'available' function was called twice");
+				assert.ok(includes(aOverlaySiblingRequests, true), "the 'available' function was called twice with bOverlayIsSibling=true");
+				assert.ok(includes(aOverlaySiblingRequests, false), "the 'available' function was called twice with bOverlayIsSibling=false");
+				return aResultMenuItems;
+			}
 
-				var aMenuItems = getMenuItems.call(this, this.oObjectPageLayoutOverlay);
+			let aMenuItems = await getMenuItems.call(this, this.oObjectPageLayoutOverlay);
 
-				assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
-				assert.equal(aMenuItems[0].id, "CTX_CREATE_CHILD_IFRAME_SECTIONS", "there is an entry for create child section");
-				aMenuItems[0].handler([this.oObjectPageLayoutOverlay]);
-				aMenuItems[0].enabled([this.oObjectPageLayoutOverlay]);
+			assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
+			assert.equal(aMenuItems[0].id, "CTX_CREATE_CHILD_IFRAME_SECTIONS", "there is an entry for create child section");
+			aMenuItems[0].handler([this.oObjectPageLayoutOverlay]);
+			aMenuItems[0].enabled([this.oObjectPageLayoutOverlay]);
 
-				aMenuItems = getMenuItems.call(this, this.oNewObjectPageSectionOverlay);
-				assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
-				assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there is an entry for create child section");
-				aMenuItems[0].handler([this.oNewObjectPageSectionOverlay]);
-				aMenuItems[0].enabled([this.oNewObjectPageSectionOverlay]);
+			aMenuItems = await getMenuItems.call(this, this.oNewObjectPageSectionOverlay);
+			assert.strictEqual(aMenuItems.length, 1, "Only one menu item is returned");
+			assert.equal(aMenuItems[0].id, "CTX_CREATE_SIBLING_IFRAME", "there is an entry for create child section");
+			aMenuItems[0].handler([this.oNewObjectPageSectionOverlay]);
+			aMenuItems[0].enabled([this.oNewObjectPageSectionOverlay]);
 
-				bIsAvailable = false;
-				aMenuItems = getMenuItems.call(this, this.oObjectPageLayoutOverlay);
-				assert.equal(aMenuItems.length, 0, "and if plugin is not available for the overlay, no menu items are returned");
-			}.bind(this));
+			bIsAvailable = false;
+			aMenuItems = await getMenuItems.call(this, this.oObjectPageLayoutOverlay);
+			assert.equal(aMenuItems.length, 0, "and if plugin is not available for the overlay, no menu items are returned");
 		});
 
-		QUnit.test("when an overlay has an addIFrame action with changeOnRelevantContainer true, but its relevant container has no stable ID", function(assert) {
+		QUnit.test("when an overlay has an addIFrame action with changeOnRelevantContainer true, but its relevant container has no stable ID", async function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					sections: {
@@ -393,16 +392,12 @@ sap.ui.define([
 
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
-			return DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				return this.oAddIFrame._isEditableCheck(this.oObjectPageSectionOverlay, true);
-			}.bind(this))
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageSectionOverlay, true);
+			assert.notOk(bIsEditable, "then the overlay is not editable");
 		});
 
-		QUnit.test("when a sibling overlay has an addIFrame action designTimeMetadata, but for another aggregation", function(assert) {
+		QUnit.test("when a sibling overlay has an addIFrame action designTimeMetadata, but for another aggregation", async function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
 					toolBar: {
@@ -418,22 +413,20 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageLayoutOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
-			return this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, true)
-			.then(function(bIsEditable) {
-				assert.notOk(bIsEditable, "then the overlay is not editable");
-			});
+			const bIsEditable = await this.oAddIFrame._isEditableCheck(this.oObjectPageLayoutOverlay, true);
+			assert.notOk(bIsEditable, "then the overlay is not editable");
 		});
 
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
-			var vAction = {
+			const vAction = {
 				aggregationName: "sections",
-				getIndex: function(oForm, oFormContainer) {
-					var sAggregationName = vAction.aggregationName;
-					var oMetadata = oForm.getMetadata();
-					var oAggregation = oMetadata.getAggregation(sAggregationName);
-					var sGetter = oAggregation._sGetter;
-					var aContainers = oForm[sGetter]();
-					var iIndex;
+				getIndex(oForm, oFormContainer) {
+					const sAggregationName = vAction.aggregationName;
+					const oMetadata = oForm.getMetadata();
+					const oAggregation = oMetadata.getAggregation(sAggregationName);
+					const sGetter = oAggregation._sGetter;
+					const aContainers = oForm[sGetter]();
+					let iIndex;
 					if (oFormContainer) {
 						iIndex = aContainers.indexOf(oFormContainer) + 1;
 					} else {
@@ -447,7 +440,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
-			var vAction = {
+			const vAction = {
 				aggregationName: "sections",
 				changeType: "addIFrame"
 			};
@@ -456,8 +449,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
-			var vAction = {
-				getCreatedContainerId: function(sNewControlID) {
+			const vAction = {
+				getCreatedContainerId(sNewControlID) {
 					return sNewControlID;
 				}
 			};
@@ -468,7 +461,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
-			var vAction = {
+			const vAction = {
 				changeType: "addIFrame"
 			};
 
@@ -477,8 +470,8 @@ sap.ui.define([
 				"then the correct id is returned");
 		});
 
-		QUnit.test("when the the menu item handler is called with the parent overlay", function(assert) {
-			var fnDone = assert.async();
+		QUnit.test("when the menu item handler is called with the parent overlay", async function(assert) {
+			const fnDone = assert.async();
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
 				aggregations: {
@@ -496,23 +489,21 @@ sap.ui.define([
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageLayoutOverlay);
 
 			this.oAddIFrame.attachEventOnce("elementModified", function(oEvent) {
-				var oCommand = oEvent.getParameter("command");
+				const oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.AddIFrame", "and command is of the correct type");
 				assert.notOk(oEvent.getParameter("action"), "then the action is not in the event");
 				fnDone();
 			});
 
-			DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				var oMenuItem = this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay])[0];
-				oMenuItem.handler([this.oObjectPageLayoutOverlay]);
-			}.bind(this));
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			const aMenuItems = await this.oAddIFrame.getMenuItems([this.oObjectPageLayoutOverlay]);
+			aMenuItems[0].handler([this.oObjectPageLayoutOverlay]);
 		});
 
-		QUnit.test("when the the menu item handler is called with the sibling overlay", function(assert) {
-			var fnDone = assert.async();
-			var sTitle = "Potato";
+		QUnit.test("when the menu item handler is called with the sibling overlay", async function(assert) {
+			const fnDone = assert.async();
+			const sTitle = "Potato";
 
 			this.oOpenStub.callsFake(function() {
 				return Promise.resolve({
@@ -527,7 +518,7 @@ sap.ui.define([
 						actions: {
 							addIFrame: {
 								changeType: "addIFrame",
-								getCreatedContainerId: function() {},
+								getCreatedContainerId() {},
 								text: "foo"
 							}
 						}
@@ -536,7 +527,7 @@ sap.ui.define([
 			});
 
 			this.oAddIFrame.attachEventOnce("elementModified", function(oEvent) {
-				var oCommand = oEvent.getParameter("command");
+				const oCommand = oEvent.getParameter("command");
 				assert.ok(oCommand, "then command is available");
 				assert.strictEqual(oCommand.getMetadata().getName(), "sap.ui.rta.command.AddIFrame", "and command is of the correct type");
 				assert.ok(oEvent.getParameter("action"), "then the action is in the event");
@@ -548,11 +539,9 @@ sap.ui.define([
 			this.oAddIFrame.deregisterElementOverlay(this.oObjectPageSectionOverlay);
 			this.oAddIFrame.registerElementOverlay(this.oObjectPageSectionOverlay);
 
-			DtUtil.waitForSynced(this.oDesignTime)()
-			.then(function() {
-				var oMenuItem = this.oAddIFrame.getMenuItems([this.oObjectPageSectionOverlay])[0];
-				oMenuItem.handler([this.oObjectPageSectionOverlay]);
-			}.bind(this));
+			await DtUtil.waitForSynced(this.oDesignTime)();
+			const oMenuItems = await this.oAddIFrame.getMenuItems([this.oObjectPageSectionOverlay]);
+			oMenuItems[0].handler([this.oObjectPageSectionOverlay]);
 		});
 	});
 

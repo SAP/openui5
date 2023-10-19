@@ -1,18 +1,18 @@
 <mvc:View
 	controllerName="sap.ui.core.sample.odata.v4.ListBindingTemplate.Main"
-	template:require="{Helper : 'sap/ui/core/sample/odata/v4/ListBindingTemplate/Helper',
-		AnnotationHelper : 'sap/ui/model/odata/v4/AnnotationHelper'}"
+	template:require="{AH : 'sap/ui/model/odata/v4/AnnotationHelper',
+		Helper : 'sap/ui/core/sample/odata/v4/ListBindingTemplate/Helper'}"
 	xmlns="sap.m"
 	xmlns:ce="sap.ui.codeeditor"
 	xmlns:core="sap.ui.core"
 	xmlns:demo="sap.ui.core.sample.common"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
-	<template:alias name="getValueListType" value="AnnotationHelper.getValueListType">
+	<template:alias name="getValueListType" value="AH.getValueListType">
 	<template:alias name="stringify" value="Helper.stringify">
-	<template:alias name="format" value="AnnotationHelper.format">
-	<template:alias name="value" value="AnnotationHelper.value">
-	<template:alias name="label" value="AnnotationHelper.label">
+	<template:alias name="format" value="AH.format">
+	<template:alias name="value" value="AH.value">
+	<template:alias name="label" value="AH.label">
 	<VBox>
 		<HBox>
 			<ToggleButton icon="sap-icon://syntax" press="onSourceCode"
@@ -123,7 +123,7 @@
 				<Label text="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value"/>
 				<Text text="{path : 'meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path@com.sap.vocabularies.Common.v1.QuickInfo@@value', formatter : 'stringify'}"/>
 
-				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AnnotationHelper.resolve$Path" var="value">
+				<template:with path="meta>/Equipments/@com.sap.vocabularies.UI.v1.LineItem/4/Value/$Path" helper="AH.resolve$Path" var="value">
 					<Label text="value>@com.sap.vocabularies.Common.v1.QuickInfo@@format"/>
 					<Text text="{path : 'value>@com.sap.vocabularies.Common.v1.QuickInfo@@format', formatter : 'stringify'}"/>
 				</template:with>

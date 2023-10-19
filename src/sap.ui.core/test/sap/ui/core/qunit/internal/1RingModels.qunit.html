@@ -20,6 +20,7 @@
 		<script src="resources/ui5loader.js"></script>
 		<script src="test-resources/sap/ui/core/qunit/internal/1Ring_handleAbort.js"></script>
 		<script id="sap-ui-bootstrap" src="resources/ui5loader-autoconfig.js"
+			data-sap-ui-async="true"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceroots='{
@@ -33,13 +34,11 @@
 		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
-		<script src="resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"
-			data-sap-ui-cover-never="[.qunit.js]"
-			data-sap-ui-cover-only="[/odata/type/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel]">
+		<script src="resources/sap/ui/test/ModuleTracking.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-coverage-istanbul.js"
+			data-sap-ui-cover-never="[.qunit.js,/model/base/,/model/controlhelper/,/odata/v4/]"
+			data-sap-ui-cover-only="[CalendarType,ExpressionParser,LocaleData,/core/date/,/core/format/,/ui/model/]">
 		</script>
-		<script src="resources/sap/ui/test/BranchTracking.js"
-			data-threshold="100"></script>
 
 		<script src="test-resources/sap/ui/core/qunit/internal/1RingModels.qunit.js"></script>
 	</head>

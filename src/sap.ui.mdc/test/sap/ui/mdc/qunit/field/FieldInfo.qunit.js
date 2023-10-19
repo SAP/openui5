@@ -6,31 +6,31 @@ sap.ui.define([
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/Field",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/mdc/link/FakeFlpConnector",
+	"testutils/link/FakeUShellConnector",
 	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/mdc/link/ContactDetails",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/m/Button",
 	"sap/ui/mdc/Link",
 	"sap/ui/core/Core",
-	"sap/ui/core/Element"
+	"sap/ui/core/Element",
+	"sap/ui/mdc/enums/LinkType"
 ], function(
 	qutils,
 	Device,
 	FieldEditMode,
 	Field,
 	MockServer,
-	FakeFlpConnector,
+	FakeUShellConnector,
 	ODataModel,
-	ContactDetails,
 	LinkItem,
 	Button,
 	Link,
 	oCore,
-	Element) {
+	Element,
+	LinkType) {
 	"use strict";
 
-	var oMockServer;
+	let oMockServer;
 
 	function startMockServer(sMetadataPath, sMockdataBaseUrl, sRootUri) {
 		oMockServer = new MockServer({
@@ -51,12 +51,12 @@ sap.ui.define([
 		oMockServer = null;
 	}
 
-	function enableFakeFlpConnector(oSetting) {
-		FakeFlpConnector.enableFakeConnector(oSetting);
+	function enableFakeUShellConnector(oSetting) {
+		FakeUShellConnector.enableFakeConnector(oSetting);
 	}
 
-	function disableFakeFlpConnector() {
-		FakeFlpConnector.disableFakeConnector();
+	function disableFakeUShellConnector() {
+		FakeUShellConnector.disableFakeConnector();
 	}
 
 	QUnit.module("sap.ui.mdc.field.FieldInfo: API", {
@@ -95,18 +95,18 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
 	});
 
-	var fnTestRenderAsAText = function(assert, oField) {
+	const fnTestRenderAsAText = function(assert, oField) {
 		// act
-		var done = assert.async();
+		const done = assert.async();
 		oField.setFieldInfo(new Link({
 			delegate: {
-				name: "sap/ui/mdc/flp/FlpLinkDelegate",
+				name: "sap/ui/mdc/ushell/LinkDelegate",
 				payload: {
 					semanticObjects: ["SODummy"]
 				}
@@ -120,13 +120,13 @@ sap.ui.define([
 	};
 
 	QUnit.test("no semantic object, no content", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 
 		fnTestRenderAsAText(assert, this.oField);
 	});
 
 	QUnit.test("no semantic object, no content", function(assert) {
-		enableFakeFlpConnector({
+		enableFakeUShellConnector({
 			SO1: {
 				links: []
 			}
@@ -154,22 +154,22 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
 	});
 
 	QUnit.test("direct link with target='_blank'", function(assert) {
-		var sTarget = "_blank";
-		var done = assert.async();
-		enableFakeFlpConnector({});
-		var oLink = new Link({
+		const sTarget = "_blank";
+		const done = assert.async();
+		enableFakeUShellConnector({});
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
 					linkType: {
-						type: 1,
+						type: LinkType.DirectLink,
 						directLink: new LinkItem({
 							href: "#action01",
 							target: sTarget
@@ -192,15 +192,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("item: with 'href'", function(assert) {
-		var sTarget = "_self";
-		var done = assert.async();
-		enableFakeFlpConnector({});
-		var oLink = new Link({
+		const sTarget = "_self";
+		const done = assert.async();
+		enableFakeUShellConnector({});
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/field/FieldInfoLinkDelegate",
 				payload: {
 					linkType: {
-						type: 1,
+						type: LinkType.DirectLink,
 						directLink: new LinkItem({
 							href: "#action01"
 						})
@@ -240,16 +240,16 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
 	});
 
 	QUnit.test("no links, no popover", function(assert) {
-		var done = assert.async();
-		var oField = this.oField;
-		enableFakeFlpConnector({
+		const done = assert.async();
+		const oField = this.oField;
+		enableFakeUShellConnector({
 			SO1: {
 				links: []
 			}
@@ -262,7 +262,7 @@ sap.ui.define([
 				}
 			},
 			popoverAfterOpen: function (oEvent) {
-				var oPopover = oEvent.getSource().getDependents().find(function(oDependent) {
+				const oPopover = oEvent.getSource().getDependents().find(function(oDependent) {
 					return oDependent.isA("sap.m.ResponsivePopover");
 				});
 				assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 1);
@@ -300,18 +300,18 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			stopMockServer();
-			disableFakeFlpConnector();
+			disableFakeUShellConnector();
 			this.oField.destroy();
 			this.oODataModel.destroy();
 		}
 	});
 
-	var fnTestOpenNotEmptyPopover = function(assert, fnCheckPopover) {
+	const fnTestOpenNotEmptyPopover = function(assert, fnCheckPopover) {
 		// act
-		var done = assert.async();
+		const done = assert.async();
 
 		return function(oEvent) {
-			var oFieldInfo = oEvent.getSource();
+			const oFieldInfo = oEvent.getSource();
 			fnCheckPopover(oFieldInfo);
 			done();
 		};
@@ -319,7 +319,7 @@ sap.ui.define([
 
 	/* Not needed as we navigate directly in case of a mdc.Link as FieldInfo. Keeping the coding in as we might implement other FieldInfos in the future.
 	QUnit.test("item: with 'text'", function(assert) {
-		enableFakeFlpConnector({});
+		enableFakeUShellConnector({});
 		var oField = this.oField;
 		var fnForPopoverAfterOpen = function(oFieldInfo) {
 			var oPopover = oFieldInfo.getDependents()[1];
@@ -357,10 +357,10 @@ sap.ui.define([
 	*/
 
 	QUnit.test("content", function(assert) {
-		enableFakeFlpConnector({});
-		var oField = this.oField;
-		var fnForPopoverAfterOpen = function(oFieldInfo) {
-			var oPopover = oFieldInfo.getDependents()[0];
+		enableFakeUShellConnector({});
+		const oField = this.oField;
+		const fnForPopoverAfterOpen = function(oFieldInfo) {
+			const oPopover = oFieldInfo.getDependents()[0];
 			assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 0);
 			assert.equal(oPopover.$().find("a").length, 0);
 			assert.equal(oPopover.$().find(".sapMLabel:visible").length, 0);
@@ -389,10 +389,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("multiple content", function(assert) {
-		enableFakeFlpConnector({});
-		var oField = this.oField;
-		var fnForPopoverAfterOpen = function(oFieldInfo) {
-			var oPopover = oFieldInfo.getDependents()[0];
+		enableFakeUShellConnector({});
+		const oField = this.oField;
+		const fnForPopoverAfterOpen = function(oFieldInfo) {
+			const oPopover = oFieldInfo.getDependents()[0];
 			assert.equal(oPopover.$().find(".mdcbaseinfoPanelDefaultAdditionalContent").length, 0);
 			assert.equal(oPopover.$().find("a").length, 0);
 			assert.equal(oPopover.$().find(".sapMLabel:visible").length, 0);

@@ -163,7 +163,7 @@ sap.ui.define([
 	});
 
 	TableQUnitUtils.setDefaultSettings({
-		plugins: [new MultiSelectionPlugin()],
+		dependents: [new MultiSelectionPlugin()],
 		models: new ODataModel(sServiceURI)
 	});
 
@@ -176,7 +176,7 @@ sap.ui.define([
 				})
 			});
 			this.oTable.bindRows({path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
@@ -222,7 +222,7 @@ sap.ui.define([
 				]
 			});
 			this.oTable.bindRows({path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"});
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {

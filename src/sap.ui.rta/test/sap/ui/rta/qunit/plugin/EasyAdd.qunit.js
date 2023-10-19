@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	DesignTime,
 	CommandFactory,
@@ -29,7 +30,8 @@ sap.ui.define([
 	QUnitUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
@@ -37,7 +39,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -71,7 +73,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox],
@@ -87,7 +89,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -96,7 +98,7 @@ sap.ui.define([
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Layout", function(assert) {
 			var done = assert.async();
 
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
+			var oButton = Element.getElementById(`${this.oLayoutOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button of the Layout is displayed");
 
 			this.oEasyAddPlugin.getDialog().attachOpened(function() {
@@ -112,7 +114,7 @@ sap.ui.define([
 
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used on the Section", function(assert) {
 			var done = assert.async();
-			var oButton = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = Element.getElementById(`${this.oSectionOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button of the Layout is displayed");
 
 			this.oEasyAddPlugin.getDialog().attachOpened(function() {
@@ -127,8 +129,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the second section gets added and removed", function(assert) {
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
-			var oButton2 = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = Element.getElementById(`${this.oLayoutOverlay.getId()}-AddButton`);
+			var oButton2 = Element.getElementById(`${this.oSectionOverlay.getId()}-AddButton`);
 
 			assert.ok(oButton.getVisible(), "then the Add-Button on the layout is still there");
 			assert.ok(oButton.getEnabled(), "then the Button is enabled");
@@ -151,10 +153,8 @@ sap.ui.define([
 				oVisibleStub.restore();
 				sandbox.stub(this.oSectionOverlay2, "isVisible").returns(false);
 				this.oSection2.setVisible(false);
-				oCore.applyChanges();
 			}.bind(this));
 			this.oSection2.setVisible(true);
-			oCore.applyChanges();
 		});
 
 		QUnit.test("when the overlay for the section and layout get deregistered", function(assert) {
@@ -178,7 +178,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -189,7 +189,7 @@ sap.ui.define([
 			this.oVBox = new VBox({
 				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox],
@@ -202,20 +202,20 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
 	}, function() {
 		QUnit.test("when the ObjectPageLayout has no Sections initially", function(assert) {
-			var oButton = oCore.byId(this.oLayoutOverlay.getId() + "-AddButton");
+			var oButton = Element.getElementById(`${this.oLayoutOverlay.getId()}-AddButton`);
 			assert.ok(oButton.getVisible(), "then the Add-Button is displayed on the layout");
 			assert.notOk(oButton.getEnabled(), "then the Add-Button is disabled");
 		});
 	});
 
 	QUnit.module("Given a designTime and AddPlugin plugin are instantiated with a OP without stableID", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
@@ -231,7 +231,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
@@ -244,13 +244,13 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyAddPlugin is used", function(assert) {
-			var oButton = oCore.byId(this.oSectionOverlay.getId() + "-AddButton");
+			var oButton = Element.getElementById(`${this.oSectionOverlay.getId()}-AddButton`);
 			assert.notOk(oButton, "then the Add-Button is not displayed");
 		});
 	});

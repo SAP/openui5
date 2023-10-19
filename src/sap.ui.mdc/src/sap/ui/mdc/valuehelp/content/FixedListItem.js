@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @since 1.114.0
 	 * @alias sap.ui.mdc.valuehelp.content.FixedListItem
 	 */
-	var FixedListItem = ListItem.extend("sap.ui.mdc.valuehelp.content.FixedListItem", /** @lends sap.ui.mdc.valuehelp.content.FixedListItem.prototype */ { metadata : {
+	const FixedListItem = ListItem.extend("sap.ui.mdc.valuehelp.content.FixedListItem", /** @lends sap.ui.mdc.valuehelp.content.FixedListItem.prototype */ { metadata : {
 
 		library: "sap.ui.mdc",
 		properties: {

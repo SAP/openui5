@@ -22,7 +22,7 @@ sap.ui.define([
     "use strict";
 
     // shortcut for sap.m.BarDesign
-    var BarDesign = mLibrary.BarDesign;
+    const BarDesign = mLibrary.BarDesign;
 
     /**
 	 * Constructor for a new AdaptFiltersPanel
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.AdaptFiltersPanel
 	 */
-	var AdaptFiltersPanel = AbstractContainer.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
+	const AdaptFiltersPanel = AbstractContainer.extend("sap.ui.mdc.p13n.panels.AdaptFiltersPanel", {
 		metadata: {
             library: "sap.ui.mdc",
             properties: {
@@ -72,6 +72,15 @@ sap.ui.define([
     AdaptFiltersPanel.prototype.LIST_KEY = "list";
     AdaptFiltersPanel.prototype.P13N_MODEL = "$p13n";
 
+    /**
+     * Interface function for <code>sap.m.p13n.Popup</code> to determine that the <code>AdaptFiltersPanel</code> provides its own scrolling capabilites.
+     *
+     * @returns {boolean} The enablement of the vertical scrolling
+     */
+    AdaptFiltersPanel.prototype.getVerticalScrolling = function() {
+        return true;
+    };
+
     AdaptFiltersPanel.prototype.applySettings = function(mSettings) {
 
         this.addView(new AbstractContainerItem({
@@ -99,11 +108,11 @@ sap.ui.define([
 
         this.getView(this.LIST_KEY).getContent().setEnableReorder(this.getEnableReorder());
 
-        var oQuickFilter = this._getQuickFilter();
-        var oViewSwitch = this._getViewSwitch();
-        var oShowHideBtn = this._getShowHideBtn();
+        const oQuickFilter = this._getQuickFilter();
+        const oViewSwitch = this._getViewSwitch();
+        const oShowHideBtn = this._getShowHideBtn();
 
-        var oHeader = new Bar({
+        const oHeader = new Bar({
             contentMiddle: [
                 oQuickFilter,
                 new ToolbarSpacer(),
@@ -116,7 +125,7 @@ sap.ui.define([
         this.setHeader(oHeader);
 
 
-        var oSubHeader = new Bar({
+        const oSubHeader = new Bar({
             contentMiddle: [
                 this._getSearchField()
             ]
@@ -141,7 +150,7 @@ sap.ui.define([
     AdaptFiltersPanel.prototype.setItemFactory = function(fnItemFactory) {
         this.setProperty("itemFactory", fnItemFactory);
         this.getViews().forEach(function(oView){
-            var oPanel = oView.getContent();
+            const oPanel = oView.getContent();
             oPanel.setItemFactory(fnItemFactory);
         });
 
@@ -155,7 +164,7 @@ sap.ui.define([
      */
     AdaptFiltersPanel.prototype.switchView = function(sKey) {
 
-        var sSwitchId = sKey;
+        const sSwitchId = sKey;
 
         AbstractContainer.prototype.switchView.call(this, sSwitchId);
 
@@ -186,12 +195,12 @@ sap.ui.define([
 	 *
 	 */
 	AdaptFiltersPanel.prototype.addCustomView = function (mViewSettings) {
-		var oItem = mViewSettings.item;
-		var sKey = oItem.getKey();
-		var oContent = mViewSettings.content;
-		var fnOnSearch = mViewSettings.search;
-		var fnSelectionChange = mViewSettings.selectionChange;
-        var fnDropDownChange = mViewSettings.filterSelect;
+		const oItem = mViewSettings.item;
+		const sKey = oItem.getKey();
+		const oContent = mViewSettings.content;
+		const fnOnSearch = mViewSettings.search;
+		const fnSelectionChange = mViewSettings.selectionChange;
+        const fnDropDownChange = mViewSettings.filterSelect;
 
 		if (!sKey) {
 			throw new Error("Please provide an item of type sap.m.SegmentedButtonItem with a key");
@@ -237,7 +246,7 @@ sap.ui.define([
             content: oContent.addStyleClass("sapUiMDCPanelPadding")
         }));
 
-        var oViewSwitch = this._getViewSwitch();
+        const oViewSwitch = this._getViewSwitch();
 
 		oViewSwitch.addItem(oItem);
     };
@@ -282,7 +291,7 @@ sap.ui.define([
     };
 
     AdaptFiltersPanel.prototype.setP13nData = function(oP13nData) {
-        var oP13nModel = this.getP13nModel();
+        const oP13nModel = this.getP13nModel();
         if (!oP13nModel) {
             this.setP13nModel(new JSONModel(oP13nData));
         } else {
@@ -313,15 +322,15 @@ sap.ui.define([
 	};
 
     AdaptFiltersPanel.prototype._getShowHideBtn = function() {
-        var sShowText = this._getResourceText("filterbar.ADAPT_SHOW_VALUE");
-        var sHideText = this._getResourceText("filterbar.ADAPT_HIDE_VALUE");
+        const sShowText = this._getResourceText("filterbar.ADAPT_SHOW_VALUE");
+        const sHideText = this._getResourceText("filterbar.ADAPT_HIDE_VALUE");
 
         if (!this._oShowHideBtn) {
             this._oShowHideBtn = new Button({
                 press: function(oEvt) {
                     this.showFactory(!this.getCurrentViewContent()._getShowFactory());
-                    var oBtn = oEvt.oSource;
-                    var sNewText = oBtn.getText() === sShowText ? sHideText : sShowText;
+                    const oBtn = oEvt.oSource;
+                    const sNewText = oBtn.getText() === sShowText ? sHideText : sShowText;
                     oBtn.setText(sNewText);
                 }.bind(this)
             });
@@ -405,7 +414,7 @@ sap.ui.define([
                     if (this.getCurrentViewKey() === this.LIST_KEY) {
                         this.getCurrentViewContent()._removeMoveButtons();
                     }
-                    var sKey = oEvt.getParameter("item").getKey();
+                    const sKey = oEvt.getParameter("item").getKey();
                     this.switchView(sKey);
                 }.bind(this)
             });
@@ -427,7 +436,7 @@ sap.ui.define([
         this._sSearchString = this._getSearchField().getValue();
 
         //Create model filter based on search & mode filter
-        var aFilters = this._createFilterQuery();
+        const aFilters = this._createFilterQuery();
 
         //Update value - necessary due to view switch
         this._getSearchField().setValue(this._sSearchString);
@@ -454,7 +463,7 @@ sap.ui.define([
     }*/
 
     AdaptFiltersPanel.prototype._createFilterQuery = function() {
-		var aFiltersSearch = [], vFilterMode = [], vQueryFilter = [];
+		let aFiltersSearch = [], vFilterMode = [], vQueryFilter = [];
 
         // 1) Check if there is a "search" filtering
 		if (this._sSearchString){
@@ -488,7 +497,7 @@ sap.ui.define([
         }
 
         // 3) always add the 'visibleInDialog' filter to the query
-        var oVisibleInDialogFilter = new Filter("visibleInDialog", "EQ", true);
+        const oVisibleInDialogFilter = new Filter("visibleInDialog", "EQ", true);
 
         return new Filter([].concat(vQueryFilter, vFilterMode, oVisibleInDialogFilter), true);
     };

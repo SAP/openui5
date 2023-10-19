@@ -159,6 +159,22 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Overridden version of the 'exit' method to explicit remove the DOM element when the control is rendered
+	 * in the static UIArea because the control's DOM can't be removed when its parent gets invalidated
+	 *
+	 * @private
+	 */
+	InvisibleText.prototype.exit = function() {
+		var oDomRef = this.getDomRef();
+		if (oDomRef && StaticArea.contains(oDomRef)) {
+			// when a InvisibleText is rendered in the static UIArea, it has to remove itself when getting
+			// destroyed because its potential parent can't remove it since it's not rendered within its
+			// parent
+			oDomRef.remove();
+		}
+	};
+
 	// map of text IDs
 	var mTextIds = Object.create(null);
 
@@ -178,17 +194,14 @@ sap.ui.define([
 	 * @public
 	 */
 	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
-		var sTextId = "", sKey, oBundle, oText, oLibrary;
+		var sTextId = "", sKey, oBundle, oText;
 
 		if ( ControlBehavior.isAccessibilityEnabled() && sTextKey ) {
 			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
 			sKey = sLibrary + "|" + sTextKey;
 			sTextId = mTextIds[sKey];
 			if ( sTextId == null ) {
-				oLibrary = Library.get(sLibrary);
-				if (oLibrary) {
-					oBundle = oLibrary.getResourceBundle();
-				}
+				oBundle = Library.getResourceBundleFor(sLibrary);
 				oText = new InvisibleText().setText(oBundle ? oBundle.getText(sTextKey) : sTextKey);
 				oText.toStatic();
 				sTextId = mTextIds[sKey] = oText.getId();
@@ -207,7 +220,7 @@ sap.ui.define([
 		for ( sKey in mTextIds ) {
 			p = sKey.indexOf('|');
 			oBundle = Library.getResourceBundleFor(sKey.slice(0, p));
-			oText = Element.registry.get(mTextIds[sKey]);
+			oText = Element.getElementById(mTextIds[sKey]);
 			oText && oText.setText(oBundle.getText(sKey.slice(p + 1)));
 		}
 	});

@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.ChangePersistenceFactory", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			Component._fnManifestLoadCallback = null;
 		}

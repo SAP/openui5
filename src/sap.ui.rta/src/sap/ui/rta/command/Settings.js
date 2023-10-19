@@ -15,8 +15,6 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 * @private
 	 * @since 1.44
 	 * @alias sap.ui.rta.command.Settings
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Settings = FlexCommand.extend("sap.ui.rta.command.Settings", {
 		metadata: {
@@ -35,9 +33,9 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	/**
 	 * @override
 	 */
-	Settings.prototype.execute = function() {
+	Settings.prototype.execute = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.execute.apply(this, arguments);
+			return FlexCommand.prototype.execute.apply(this, aArgs);
 		}
 		return Promise.resolve();
 	};
@@ -45,9 +43,9 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	/**
 	 * @override
 	 */
-	Settings.prototype.undo = function() {
+	Settings.prototype.undo = function(...aArgs) {
 		if (this.getElement()) {
-			return FlexCommand.prototype.undo.apply(this, arguments);
+			return FlexCommand.prototype.undo.apply(this, aArgs);
 		}
 		return Promise.resolve();
 	};

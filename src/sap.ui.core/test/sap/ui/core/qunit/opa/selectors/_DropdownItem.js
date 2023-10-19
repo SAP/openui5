@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
-	"sap/ui/core/Item"
-], function (_DropdownItem, _ControlSelectorGenerator, JSONModel, Select, Item) {
+	"sap/ui/core/Item",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_DropdownItem, _ControlSelectorGenerator, JSONModel, Select, Item, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_DropdownItem", {
@@ -23,7 +24,7 @@ sap.ui.define([
 				})
 			});
 			this.oSelect.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			sap.ui.getCore().setModel();

@@ -37,6 +37,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Tokenizer_1;
+
+  // Styles
+
+  // reuse suggestions focus styling for NMore popup
+
   var ClipboardDataOperation;
   _exports.ClipboardDataOperation = ClipboardDataOperation;
   (function (ClipboardDataOperation) {
@@ -73,6 +78,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
     onBeforeRendering() {
       this._nMoreCount = this.overflownTokens.length;
+      this._tokensCount = this._getTokens().length;
+      this._tokens.forEach(token => {
+        token.singleToken = this._tokens.length === 1;
+      });
+      if (!this._tokens.length) {
+        this.closeMorePopover();
+      }
     }
     onEnterDOM() {
       _ResizeHandler.default.register(this.contentDom, this._resizeHandler);
@@ -80,12 +92,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     onExitDOM() {
       _ResizeHandler.default.deregister(this.contentDom, this._resizeHandler);
     }
-    async _openOverflowPopover() {
-      if (this.showPopover) {
-        const popover = await this.getPopover();
-        popover.showAt(this.morePopoverOpener || this);
+    async _openMorePopoverAndFireEvent() {
+      if (!this.preventPopoverOpen) {
+        await this.openMorePopover();
       }
       this.fireEvent("show-more-items-press");
+    }
+    async openMorePopover() {
+      (await this.getPopover()).showAt(this.morePopoverOpener || this);
     }
     _getTokens() {
       return this.getSlottedNodes("tokens");
@@ -93,8 +107,23 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _tokens() {
       return this.getSlottedNodes("tokens");
     }
-    get showPopover() {
-      return !!Object.keys(this.morePopoverOpener).length;
+    _onmousedown(e) {
+      if (e.target.hasAttribute("ui5-token")) {
+        const target = e.target;
+        if (!target.toBeDeleted) {
+          this._itemNav.setCurrentItem(target);
+        }
+      }
+    }
+    onTokenSelect() {
+      const tokens = this._getTokens();
+      if (tokens.length === 1 && tokens[0].isTruncatable) {
+        if (tokens[0].selected) {
+          this.openMorePopover();
+        } else {
+          this.closeMorePopover();
+        }
+      }
     }
     _getVisibleTokens() {
       if (this.disabled) {
@@ -105,7 +134,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       });
     }
     async onAfterRendering() {
-      if (this.showPopover && !this._getTokens().length) {
+      if (!this._getTokens().length) {
         const popover = await this.getPopover();
         popover.close();
       }
@@ -123,6 +152,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       if (!e.detail) {
         // if there are no details, the event is triggered by a click
         this._tokenClickDelete(e, target);
+        if (this._getTokens().length) {
+          this.closeMorePopover();
+        }
         return;
       }
       if (this._selectedTokens.length) {
@@ -183,11 +215,34 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         ref: token
       });
     }
-    itemDelete(e) {
+    async itemDelete(e) {
       const token = e.detail.item.tokenRef;
-      this.fireEvent("token-delete", {
-        ref: token
-      });
+      // delay the token deletion in order to close the popover before removing token of the DOM
+      if (this._getTokens().length === 1 && this._getTokens()[0].isTruncatable) {
+        const morePopover = await this.getPopover();
+        morePopover.addEventListener("ui5-after-close", () => {
+          this.fireEvent("token-delete", {
+            ref: token
+          });
+        }, {
+          once: true
+        });
+        morePopover.close();
+      } else {
+        this.fireEvent("token-delete", {
+          ref: token
+        });
+      }
+    }
+    handleBeforeClose() {
+      if ((0, _Device.isPhone)()) {
+        this._getTokens().forEach(token => {
+          token.selected = false;
+        });
+      }
+    }
+    handleBeforeOpen() {
+      this.fireEvent("before-more-popover-open");
     }
     _onkeydown(e) {
       if ((0, _Keys.isSpaceShift)(e)) {
@@ -299,15 +354,6 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _click(e) {
       this._handleTokenSelection(e);
     }
-    _onmousedown(e) {
-      if (e.target.hasAttribute("ui5-token")) {
-        const target = e.target;
-        if (!target.toBeDeleted) {
-          this._itemNav.setCurrentItem(target);
-          this._scrollToToken(target);
-        }
-      }
-    }
     _toggleTokenSelection(tokens) {
       if (!tokens || !tokens.length) {
         return;
@@ -380,11 +426,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       }
     }
     async closeMorePopover() {
-      const popover = await this.getPopover();
-      popover.close();
+      (await this.getPopover()).close(false, false, true);
     }
     get _nMoreText() {
-      return Tokenizer_1.i18nBundle.getText(_i18nDefaults.MULTIINPUT_SHOW_MORE_TOKENS, this._nMoreCount);
+      if (this._getVisibleTokens().length) {
+        return Tokenizer_1.i18nBundle.getText(_i18nDefaults.MULTIINPUT_SHOW_MORE_TOKENS, this._nMoreCount);
+      }
+      return Tokenizer_1.i18nBundle.getText(_i18nDefaults.TOKENIZER_SHOW_ALL_ITEMS, this._nMoreCount);
     }
     get showNMore() {
       return !this.expanded && this.showMore && !!this.overflownTokens.length;
@@ -417,10 +465,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return this._getTokens().filter(token => {
         const parentRect = this.contentDom.getBoundingClientRect();
         const tokenRect = token.getBoundingClientRect();
-        const tokenEnd = tokenRect.right;
-        const parentEnd = parentRect.right;
-        const tokenStart = tokenRect.left;
-        const parentStart = parentRect.left;
+        const tokenEnd = Number(tokenRect.right.toFixed(2));
+        const parentEnd = Number(parentRect.right.toFixed(2));
+        const tokenStart = Number(tokenRect.left.toFixed(2));
+        const parentStart = Number(parentRect.left.toFixed(2));
         token.overflows = !this.expanded && (tokenStart < parentStart || tokenEnd > parentEnd);
         return token.overflows;
       });
@@ -463,7 +511,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         },
         popoverValueState: {
           "ui5-valuestatemessage-root": true,
-          "ui5-responsive-popover-header": this.showPopover,
+          "ui5-responsive-popover-header": true,
           "ui5-valuestatemessage--success": this.valueState === _ValueState.default.Success,
           "ui5-valuestatemessage--error": this.valueState === _ValueState.default.Error,
           "ui5-valuestatemessage--warning": this.valueState === _ValueState.default.Warning,
@@ -525,6 +573,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   })], Tokenizer.prototype, "disabled", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
+  })], Tokenizer.prototype, "preventPopoverOpen", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
   })], Tokenizer.prototype, "expanded", void 0);
   __decorate([(0, _property.default)({
     type: Object
@@ -539,6 +590,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   __decorate([(0, _property.default)({
     validator: _Integer.default
   })], Tokenizer.prototype, "_nMoreCount", void 0);
+  __decorate([(0, _property.default)({
+    validator: _Integer.default
+  })], Tokenizer.prototype, "_tokensCount", void 0);
   __decorate([(0, _slot.default)({
     type: HTMLElement,
     "default": true,
@@ -566,6 +620,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         type: HTMLElement
       }
     }
+  }), (0, _event.default)("before-more-popover-open", {
+    detail: {}
   })], Tokenizer);
   Tokenizer.define();
   var _default = Tokenizer;

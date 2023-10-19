@@ -16,6 +16,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @return {Promise} Promise resolving with target aggregation index to insert the control
+	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, oControl, mPropertyBag) {

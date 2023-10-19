@@ -1,0 +1,83 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.HierarchyBindAction.Main"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
+
+	<TreeTable id="table" ariaLabelledBy="title"
+		rows="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
+			parameters : {$count : true, $$patchWithoutSideEffects : true}, suspended : true}"
+		selectionMode="None" threshold="0">
+		<extension>
+			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
+				<m:Title id="title" level="H1" text="{header>$count} Items"/>
+			</m:Toolbar>
+		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="10" minRowCount="2"/>
+		</rowMode>
+		<Column width="20em">
+			<m:Label text="ID"/>
+			<template>
+				<m:Text text="{Id}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Parent's ID"/>
+			<template>
+				<m:Text text="{ParentId}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Sibling Order"/>
+			<template>
+				<m:Text text="{SiblingOrder}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Description"/>
+			<template>
+				<m:Input value="{Description}"/>
+			</template>
+		</Column>
+		<Column>
+			<m:Label text="Hierarchy"/>
+			<template>
+				<m:Text text="{Hierarchy}" wrapping="false"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
+					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="cut" icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
+			</template>
+		</Column>
+	</TreeTable>
+
+	<mvc:dependents>
+		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
+			items="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
+				parameters : {$count : true, $$sharedRequest : true}, suspended : true}"
+			title="Select New Parent For {Id}">
+			<!-- description="{Description}" -->
+			<m:StandardListItem title="{Id}" type="Active" />
+		</m:SelectDialog>
+	</mvc:dependents>
+</mvc:View>

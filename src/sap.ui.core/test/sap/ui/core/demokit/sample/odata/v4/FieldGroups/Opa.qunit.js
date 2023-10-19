@@ -3,17 +3,18 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/FieldGroups/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/sample/odata/v4/FieldGroups/SandboxModel" // preload only
+], function (Core, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/FieldGroups/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils",
-		"sap/ui/core/sample/odata/v4/FieldGroups/SandboxModel" // preload only
-	], function (Helper, Any, Main, opaTest, TestUtils) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.FieldGroups");
 
 		if (TestUtils.isRealOData()) {
@@ -28,6 +29,8 @@ sap.ui.getCore().attachInit(function () {
 						name : "sap.ui.core.sample.odata.v4.FieldGroups"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 				Then.onTheMainPage.checkField("firstName", "Karl");
 				Then.onTheMainPage.checkField("lastName", "Müller");
 
@@ -41,7 +44,6 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 
 			opaTest("Enter a last name, leave field group and request side effects",
@@ -52,6 +54,8 @@ sap.ui.getCore().attachInit(function () {
 						name : "sap.ui.core.sample.odata.v4.FieldGroups"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 				Then.onTheMainPage.checkField("firstName", "Karl");
 				Then.onTheMainPage.checkField("lastName", "Müller");
 
@@ -68,7 +72,6 @@ sap.ui.getCore().attachInit(function () {
 				]);
 
 				Then.onAnyPage.checkLog();
-				Then.iTeardownMyUIComponent();
 			});
 
 			QUnit.start();

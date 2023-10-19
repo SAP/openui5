@@ -149,13 +149,6 @@ sap.ui.define([
 		});
 	};
 
-	ObjectListField.prototype.addNewObject = function (oEvent) {
-		var that = this;
-		var oControl = oEvent.getSource();
-		that._newObjectTemplate._dt._uuid = Utils.generateUuidV4();
-		that.openObjectDetailsPopover(that._newObjectTemplate, oControl, "add");
-	};
-
 	ObjectListField.prototype.onSelectionColumnClick = function(oEvent) {
 		var that = this;
 		var bIsSelected = oEvent.getParameter("selected");
@@ -254,9 +247,9 @@ sap.ui.define([
 		var oConfig = that.getConfiguration();
 		var oTable = that.getAggregation("_field");
 		var oModel = oTable.getModel();
+		var sPath = oTable.getBinding("rows").getPath();
 		if (Array.isArray(oConfig.value) && oConfig.value.length > 0) {
-			var aValues = deepClone(oConfig.value, 500),
-				sPath = oTable.getBinding("rows").getPath();
+			var aValues = deepClone(oConfig.value, 500);
 			if (Array.isArray(tResult) && tResult.length > 0) {
 				that._positionCount = oConfig.value.length + 1;
 				var aUUIDs = [];
@@ -324,6 +317,8 @@ sap.ui.define([
 					oResult._dt._position = that._positionCount;
 					that._positionCount++;
 				});
+			} else {
+				oModel.setProperty(sPath, []);
 			}
 			oModel.setProperty("/_allSelected", false);
 		}

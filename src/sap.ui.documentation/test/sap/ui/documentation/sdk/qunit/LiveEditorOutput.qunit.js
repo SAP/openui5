@@ -183,6 +183,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
+		/**
+		 * @deprecated Since 1.56
+		 */
 		QUnit.test("loads view content when view created with sap.ui.xmlview", function(assert) {
 
 			var done = assert.async(),
@@ -216,6 +219,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
+		/**
+		 * @deprecated Since 1.56
+		 */
 		QUnit.test("loads view content when view created with sap.ui.xmlview async", function(assert) {
 
 			var done = assert.async(),
@@ -249,6 +255,9 @@ sap.ui.define(["sap/ui/thirdparty/URI"],
 			oFrame.src = sFrameURL;
 		});
 
+		/**
+		 * @deprecated Since 1.56
+		 */
 		QUnit.test("executes controller", function(assert) {
 
 			var done = assert.async(),

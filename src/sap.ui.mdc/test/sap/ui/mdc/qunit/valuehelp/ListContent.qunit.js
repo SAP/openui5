@@ -31,9 +31,9 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oContent;
+	let oContent;
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oContent.destroy();
 		oContent = null;
 	};
@@ -46,7 +46,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("EQ operator determination", function(assert) {
-		var aConditions = [
+		const aConditions = [
 			Condition.createItemCondition("A", "Validated A"),
 			Condition.createItemCondition("B", "Validated B"),
 			Condition.createItemCondition("C")

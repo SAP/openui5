@@ -26,7 +26,6 @@ sap.ui.define([
 	/**
 	 * Includes functionality for testing purposes. Must not be used in productive coding
 	 *
-	 * @experimental
 	 * @since 1.77
 	 * @version ${version}
 	 * @private
@@ -100,7 +99,7 @@ sap.ui.define([
 		if (mPropertyBag.appComponent) {
 			mPropertyBag.selector.appComponent = mPropertyBag.appComponent;
 		}
-		mPropertyBag.changeSpecificData.layer = mPropertyBag.changeSpecificData.layer || Layer.CUSTOMER;
+		mPropertyBag.changeSpecificData.layer ||= Layer.CUSTOMER;
 		return ChangesWriteAPI.create({
 			changeSpecificData: mPropertyBag.changeSpecificData,
 			selector: mPropertyBag.selector
@@ -143,7 +142,7 @@ sap.ui.define([
 				return;
 			}
 			var oFlexObject = JSON.parse(oStorage.getItem(sKey));
-			if (oFlexObject.reference === sReference || oFlexObject.reference + ".Component" === sReference) {
+			if (oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference) {
 				iCount++;
 			}
 		});

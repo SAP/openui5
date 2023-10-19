@@ -5,8 +5,10 @@ sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Util",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Action",
 	"test-resources/sap/ui/mdc/qunit/p13n/OpaTests/utility/Assertion",
-	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary'
-], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary) {
+	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
+], function (Opa5, opaTest, Arrangement, TestUtil, Action, Assertion, TestLibrary, ConditionValidated, OperatorName) {
 	"use strict";
 
 	Opa5.extendConfig({
@@ -17,7 +19,7 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aTableItems = [
+	const aTableItems = [
 		{p13nItem: "Name", selected: true},
 		{p13nItem: "Founding Year", selected: true},
 		{p13nItem: "Changed By", selected: true},
@@ -32,7 +34,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", selected: false}
 	];
 
-	var aSortItems = [
+	let aSortItems = [
 		{p13nItem: "artistUUID", descending: false},
 		{p13nItem: "Breakout Year", descending: false},
 		{p13nItem: "Changed By", descending: false},
@@ -46,7 +48,7 @@ sap.ui.define([
 		{p13nItem: "regionOfOrigin_code", descending: false}
 	];
 
-	var sTableID = "IDTableOfInternalSampleApp_01";
+	const sTableID = "IDTableOfInternalSampleApp_01";
 
 	// ----------------------------------------------------------------
 	// Check if the application is running normaly
@@ -215,13 +217,13 @@ sap.ui.define([
 		]);
 	});
 
-	var oTableConditions = {
+	const oTableConditions = {
 		foundingYear:[
-			{operator:"EQ",values:["1989"],validated:"NotValidated"},
-			{operator:"EQ",values:["1904"],validated:"NotValidated"}
+			{operator: OperatorName.EQ, values: ["1989"], validated: ConditionValidated.NotValidated},
+			{operator: OperatorName.EQ, values: ["1904"], validated: ConditionValidated.NotValidated}
 		],
 		name:[
-			{operator:"Contains",values:["S"],validated:"NotValidated"}
+			{operator: OperatorName.Contains, values: ["S"], validated: ConditionValidated.NotValidated}
 		]
 	};
 

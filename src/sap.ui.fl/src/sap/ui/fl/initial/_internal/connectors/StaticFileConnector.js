@@ -5,21 +5,22 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Component",
+	"sap/ui/core/Supportability"
 ], function(
 	Log,
 	LoaderExtensions,
-	Configuration
+	Component,
+	Supportability
 ) {
 	"use strict";
 
-	function _getBundle(sReference, sBundleName) {
-		var sBundleResourcePath = sReference.replace(/\./g, "/") + "/changes/" + sBundleName + ".json";
+	function getBundle(sReference, sBundleName) {
+		var sBundleResourcePath = `${sReference.replace(/\./g, "/")}/changes/${sBundleName}.json`;
 		var bBundleLoaded = !!sap.ui.loader._.getModuleState(sBundleResourcePath);
-		var oConfiguration = Configuration;
 		// the bundle is usually part of the component-preload
 		// if the preload is suppressed, we send a potentially failing request
-		if (bBundleLoaded || oConfiguration.getDebug() || oConfiguration.getComponentPreload() === "off") {
+		if (bBundleLoaded || Supportability.isDebugModeEnabled() || Component.getComponentPreloadMode() === "off") {
 			try {
 				return LoaderExtensions.loadResource(sBundleResourcePath);
 			} catch (e) {
@@ -27,7 +28,7 @@ sap.ui.define([
 				if (e.name.includes("SyntaxError")) {
 					Log.error(e);
 				}
-				Log.warning("flexibility did not find a " + sBundleName + ".json for the application: " + sReference);
+				Log.warning(`flexibility did not find a ${sBundleName}.json for the application: ${sReference}`);
 			}
 		}
 	}
@@ -50,15 +51,13 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.componentName] Component name of the current application which may differ in case of an app variant
 		 * @returns {Promise<Object>} Resolving with an object containing a data contained in the bundle
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			var sComponentName = mPropertyBag.componentName;
 
-			if (!sComponentName) {
-				// fallback in case the loadFlexData was called without passing the component name
-				sComponentName = mPropertyBag.reference.replace(/.Component/g, "");
-			}
+			// fallback in case the loadFlexData was called without passing the component name
+			sComponentName ||= mPropertyBag.reference.replace(/.Component/g, "");
 
-			var oFlexBundle = _getBundle(sComponentName, "flexibility-bundle");
+			var oFlexBundle = getBundle(sComponentName, "flexibility-bundle");
 			if (oFlexBundle) {
 				// TODO: remove as soon as the client also does the separation of compVariants and changes
 				oFlexBundle.changes = oFlexBundle.changes.concat(oFlexBundle.compVariants);
@@ -66,7 +65,7 @@ sap.ui.define([
 				return Promise.resolve(oFlexBundle);
 			}
 
-			var oChangesBundle = _getBundle(sComponentName, "changes-bundle");
+			var oChangesBundle = getBundle(sComponentName, "changes-bundle");
 			if (oChangesBundle) {
 				return Promise.resolve({
 					changes: oChangesBundle

@@ -251,6 +251,7 @@ function(
 				/**
 				 * If set to true, this control remembers and retains the selection of the items after a binding update has been performed (e.g. sorting, filtering).
 				 * <b>Note:</b> This feature works only if two-way data binding for the <code>selected</code> property of the item is not used. It also needs to be turned off if the binding context of the item does not always point to the same entry in the model, for example, if the order of the data in the <code>JSONModel</code> is changed.
+				 * <b>Note:</b> This feature leverages the built-in selection mechanism of the corresponding binding context when the OData V4 model is used. Therefore, all binding-relevant limitations apply in this context as well. For more details, see the {@link sap.ui.model.odata.v4.Context#setSelected setSelected}, the {@link sap.ui.model.odata.v4.ODataModel#bindList bindList}, and the {@link sap.ui.model.odata.v4.ODataMetaModel#requestValueListInfo requestValueListInfo} API documentation. Do not enable this feature when <code>$$SharedRequests</code> is active.
 				 * @since 1.16.6
 				 */
 				rememberSelections : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -258,7 +259,6 @@ function(
 				/**
 				 * Defines keyboard handling behavior of the control.
 				 * @since 1.38.0
-				 * @deprecated Since version 1.118. This has no more effect on the keyboard handling.
 				 */
 				keyboardMode : {type : "sap.m.ListKeyboardMode", group : "Behavior", defaultValue : "Navigation" },
 
@@ -963,9 +963,9 @@ function(
 	 * @since 1.18.6
 	 */
 	ListBase.prototype.getSelectedContexts = function(bAll) {
-		var oBindingInfo = this.getBindingInfo("items"),
-			sModelName = (oBindingInfo || {}).model,
-			oModel = this.getModel(sModelName);
+		const oBindingInfo = this.getBindingInfo("items");
+		const sModelName = oBindingInfo?.model;
+		const oModel = this.getModel(sModelName);
 
 		// only deal with binding case
 		if (!oBindingInfo || !oModel) {
@@ -974,15 +974,19 @@ function(
 
 		// return binding contexts from all selection paths
 		if (bAll && this.getRememberSelections()) {
-			return this._aSelectedPaths.map(function(sPath) {
-				return oModel.getContext(sPath);
-			});
+
+			// in ODataV4Model getAllCurrentContexts will also include previously selected contexts
+			if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
+				const aContexts = this.getBinding("items").getAllCurrentContexts() || [];
+				return aContexts.filter((oContext) => this._aSelectedPaths.includes(oContext.getPath()));
+			}
+
+			// for all other models, ask model to provide context over binding path
+			return this._aSelectedPaths.map((sPath) => oModel.getContext(sPath));
 		}
 
 		// return binding context of current selected items
-		return this.getSelectedItems().map(function(oItem) {
-			return oItem.getBindingContext(sModelName);
-		});
+		return this.getSelectedItems().map((oItem) => oItem.getBindingContext(sModelName));
 	};
 
 
@@ -997,7 +1001,14 @@ function(
 	ListBase.prototype.removeSelections = function(bAll, bFireEvent, bDetectBinding) {
 		var aChangedListItems = [];
 		this._oSelectedItem = null;
-		bAll && (this._aSelectedPaths = []);
+		if (bAll) {
+			this._aSelectedPaths = [];
+			if (!bDetectBinding) {
+				const oBinding = this.getBinding("items");
+				const aContexts = oBinding?.getAllCurrentContexts() || [];
+				aContexts[0]?.setSelected && aContexts.forEach((oContext) => oContext.setSelected(false));
+			}
+		}
 		this.getItems(true).forEach(function(oItem) {
 			if (!oItem.getSelected()) {
 				return;
@@ -1669,17 +1680,23 @@ function(
 			return;
 		}
 
-		var sPath = oItem.getBindingContextPath();
+		const sModelName = this.getBindingInfo("items").model;
+		const oBindingContext = oItem.getBindingContext(sModelName);
+		const sPath = oBindingContext?.getPath();
 		if (!sPath) {
 			return;
 		}
 
+		const iIndex = this._aSelectedPaths.indexOf(sPath);
 		bSelect = (bSelect === undefined) ? oItem.getSelected() : bSelect;
-		var iIndex = this._aSelectedPaths.indexOf(sPath);
 		if (bSelect) {
 			iIndex < 0 && this._aSelectedPaths.push(sPath);
 		} else {
 			iIndex > -1 && this._aSelectedPaths.splice(iIndex, 1);
+		}
+
+		if (oBindingContext.setSelected && !oBindingContext.isTransient()) {
+			oBindingContext.setSelected(bSelect);
 		}
 	};
 
@@ -2174,6 +2191,7 @@ function(
 
 			// set the tab index of navigation root
 			this._oItemNavigation.setTabIndex0(0);
+			this._oItemNavigation.iActiveTabIndex = -1;
 
 			// explicitly setting table mode with one column
 			// to disable up/down reaction on events of the cell
@@ -2235,28 +2253,6 @@ function(
 		return this._oItemNavigation;
 	};
 
-	ListBase.prototype._setItemNavigationTabIndex = function(iTabIndex) {
-		// this will be deleted
-	};
-
-	/*
-	 * Makes the given ListItem(row) focusable via ItemNavigation
-	 *
-	 * @since 1.26
-	 * @protected
-	 */
-	ListBase.prototype.setItemFocusable = function(oListItem) {
-		if (!this._oItemNavigation) {
-			return;
-		}
-
-		var aItemDomRefs = this._oItemNavigation.getItemDomRefs();
-		var iIndex = aItemDomRefs.indexOf(oListItem.getDomRef());
-		if (iIndex >= 0) {
-			this._oItemNavigation.setFocusedIndex(iIndex);
-		}
-	};
-
 	/*
 	 * Forward tab before or after List
 	 * This function should be called before tab key is pressed
@@ -2271,26 +2267,15 @@ function(
 		this.$(bForward ? "after" : "before").trigger("focus");
 	};
 
-	// move focus out of the table for nodata row
-	ListBase.prototype.onsaptabnext = function(oEvent) {
-		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger") || oEvent.target.id == this.getId("nodata")) {
-			return;
-		}
-
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
-			this.forwardTab(true);
-			oEvent.setMarked();
-		}
-	};
-
-	// move focus out of the table for nodata row
-	ListBase.prototype.onsaptabprevious = function(oEvent) {
+	// move focus out of the list
+	ListBase.prototype.onsaptabnext = ListBase.prototype.onsaptabprevious = function(oEvent) {
 		if (oEvent.isMarked() || oEvent.target.id == this.getId("trigger")) {
 			return;
 		}
 
-		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
-			this.forwardTab(false);
+		if (oEvent.target.matches(".sapMLIBFocusable,.sapMTblCellFocusable") ||
+			oEvent.target === jQuery(this.getNavigationRoot()).find(":sapTabbable").get(oEvent.type == "saptabnext" ? -1 : 0)) {
+			this.forwardTab(oEvent.type == "saptabnext");
 			oEvent.setMarked();
 		}
 	};
@@ -2466,7 +2451,12 @@ function(
 		var $LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]);
 
 		this.bAnnounceDetails = true;
-		$LastFocused.trigger("focus");
+		if (this.getKeyboardMode() == "Edit") {
+			var $Tabbable = $LastFocused.find(":sapTabbable").first();
+			$Tabbable[0] ? $Tabbable.trigger("focus") : $LastFocused.trigger("focus");
+		} else {
+			$LastFocused.trigger("focus");
+		}
 	};
 
 	// Handles focus to reposition the focus to correct place
@@ -2492,6 +2482,21 @@ function(
 				sDescription = ListItemBase.getAccessibilityText(vNoData);
 			}
 			this.updateInvisibleText(sDescription, oTarget);
+		} else if (oTarget.id == this.getId("listUl") && this.getKeyboardMode() == "Edit") {
+			this.focusPrevious();
+			oEvent.stopImmediatePropagation(true);
+			return;
+		}
+
+		// update the focused index of item navigation when inner elements are focused
+		if (this._oItemNavigation && !oTarget.matches(".sapMLIBFocusable,.sapMTblCellFocusable")) {
+			var oFocusableItem = oTarget.closest(".sapMLIBFocusable,.sapMTblCellFocusable");
+			if (oFocusableItem) {
+				var iFocusableIndex = this._oItemNavigation.getItemDomRefs().indexOf(oFocusableItem);
+				if (iFocusableIndex >= 0) {
+					this._oItemNavigation.iFocusedIndex = (this.getKeyboardMode() == "Edit") ? iFocusableIndex : iFocusableIndex - iFocusableIndex % this._oItemNavigation.iColumns;
+				}
+			}
 		}
 
 		// handle only for backward navigation

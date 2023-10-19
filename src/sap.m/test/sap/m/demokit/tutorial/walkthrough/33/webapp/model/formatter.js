@@ -1,10 +1,9 @@
-sap.ui.define([], function () {
+sap.ui.define([], () => {
 	"use strict";
 
 	return {
-
-		statusText: function (sStatus) {
-			var oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
+		statusText(sStatus) {
+			const oResourceBundle = this.getOwnerComponent().getModel("i18n").getResourceBundle();
 
 			switch (sStatus) {
 				case "A":

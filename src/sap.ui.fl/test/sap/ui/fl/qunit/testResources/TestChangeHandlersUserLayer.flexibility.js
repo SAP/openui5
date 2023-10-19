@@ -8,11 +8,11 @@ sap.ui.define([], function() {
 	return {
 		doSomething: {
 			changeHandler: {
-				applyChange: function() {
+				applyChange() {
 				},
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				revertChange: function() {
+				revertChange() {
 				},
 				dummyId: "testChangeHandler-doSomething"
 			},
@@ -23,11 +23,11 @@ sap.ui.define([], function() {
 		},
 		doSomethingElse: {
 			changeHandler: {
-				applyChange: function() {
+				applyChange() {
 				},
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				revertChange: function() {
+				revertChange() {
 				}
 			},
 			layers: {

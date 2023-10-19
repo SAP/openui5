@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode"
 ], function(
-	Settings,
 	ChangePersistenceFactory,
-	Storage,
-	Version,
 	Utils,
+	Version,
+	Settings,
+	Storage,
 	JSONModel,
 	BindingMode
 ) {
@@ -161,7 +161,8 @@ sap.ui.define([
 		};
 
 		if (mPropertyBag.reference) {
-			var oChangePersistenceForAppDescriptorChanges = ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
+			var oChangePersistenceForAppDescriptorChanges =
+				ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 			if (oChangePersistenceForAppDescriptorChanges.getDirtyChanges().length > 0) {
 				oDirtyChangesInfo.dirtyChangesExist = true;
 				oDirtyChangesInfo.changePersistences.push(oChangePersistenceForAppDescriptorChanges);
@@ -230,8 +231,8 @@ sap.ui.define([
 				return createModel(bVersionsEnabled, aVersions);
 			})
 			.then(function(oModel) {
-				_mInstances[sReference] = _mInstances[sReference] || {};
-				_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+				_mInstances[sReference] ||= {};
+				_mInstances[sReference][sLayer] ||= {};
 				_mInstances[sReference][sLayer] = oModel;
 				return _mInstances[sReference][sLayer];
 			});
@@ -251,7 +252,7 @@ sap.ui.define([
 		var sLayer = mPropertyBag.layer;
 
 		if (!Versions.hasVersionsModel(mPropertyBag)) {
-			throw Error("Versions Model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+			throw Error(`Versions Model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
 		}
 
 		var oDirtyChangesInfo = _getDirtyChangesInfo(mPropertyBag);
@@ -264,7 +265,7 @@ sap.ui.define([
 	Versions.hasVersionsModel = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
-		return _mInstances[sReference] && _mInstances[sReference][sLayer];
+		return !!(_mInstances[sReference] && _mInstances[sReference][sLayer]);
 	};
 
 	Versions.clearInstances = function() {
@@ -280,7 +281,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.fl.Version>} Promise resolving with the updated version model for the application from the backend
 	 */
 	Versions.updateModelFromBackend = function(mPropertyBag) {
-		if (Versions.hasVersionsModel(mPropertyBag)) {
+		if (Versions.hasVersionsModel(mPropertyBag) && Versions.getVersionsModel(mPropertyBag).getProperty("/versioningEnabled")) {
 			mPropertyBag.limit = BACKEND_REQUEST_LIMIT;
 			return Storage.versions.load(mPropertyBag)
 			.then(function(aVersions) {
@@ -288,6 +289,7 @@ sap.ui.define([
 				return _prepareVersionsModel(oVersionsModel.getProperty("/versioningEnabled"), aVersions, oVersionsModel);
 			});
 		}
+		return undefined;
 	};
 
 	/**

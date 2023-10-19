@@ -7,30 +7,34 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/strings/formatMessage",
 	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/rta/Utils",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/performance/Measurement"
 ], function(
 	ManagedObject,
 	Log,
 	formatMessage,
 	BusyIndicator,
+	Element,
 	Fragment,
 	coreLibrary,
 	Layer,
 	ContextBasedAdaptationsAPI,
 	ContextSharingAPI,
 	Utils,
-	JSONModel
+	JSONModel,
+	Measurement
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	/**
 	 * Controller for the <code>sap.ui.rta.toolbar.contextBased.SaveAsAdaptation</code> controls.
@@ -54,8 +58,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 			this.oTextResources = this.getToolbar().getTextResources();
 		}
 	});
@@ -65,7 +70,7 @@ sap.ui.define([
 		if (!this._oAddAdaptationDialogPromise) {
 			this._oAddAdaptationDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.contextBased.SaveAsAdaptationDialog",
-				id: this.getToolbar().getId() + "_fragment--sapUiRta_addAdaptationDialog",
+				id: `${this.getToolbar().getId()}_fragment--sapUiRta_addAdaptationDialog`,
 				controller: {
 					onAdaptationTitleChange: onAdaptationTitleChange.bind(this),
 					onSaveAsAdaptation: onSaveAsAdaptation.bind(this),
@@ -163,6 +168,7 @@ sap.ui.define([
 		oContextBasedAdaptation.priority = getAdaptationPriority.call(this);
 		var oRtaInformation = this.getToolbar().getRtaInformation();
 		if (this._bIsEditMode) {
+			Measurement.start("onCBAUpdateAdaptation", "Measurement of updating a context-based adaptation");
 			oContextBasedAdaptation.adaptationId = this._mEditProperties.adaptationId;
 			ContextBasedAdaptationsAPI.update({
 				control: oRtaInformation.rootControl,
@@ -173,6 +179,8 @@ sap.ui.define([
 			.then(function(oContextBasedAdaptation, oResponse) {
 				if (oResponse.status === 200) {
 					this.oAdaptationsModel.updateAdaptationContent(oContextBasedAdaptation);
+					Measurement.end("onCBAUpdateAdaptation");
+					Measurement.getActive() && Log.info(`onCBAUpdateAdaptation: ${Measurement.getMeasurement("onCBAUpdateAdaptation").time} ms`);
 				}
 			}.bind(this, oContextBasedAdaptation))
 			.catch(function(oError) {
@@ -183,6 +191,7 @@ sap.ui.define([
 				Utils.showMessageBox("error", sMessage, oOptions);
 			});
 		} else {
+			Measurement.start("onCBASaveAsAdaptation", "Measurement of saving a context-based adaptation");
 			BusyIndicator.show();
 			ContextBasedAdaptationsAPI.create({
 				control: oRtaInformation.rootControl,
@@ -191,6 +200,8 @@ sap.ui.define([
 			}).then(function() {
 				BusyIndicator.hide();
 				this.getToolbar().fireEvent("switchAdaptation", {adaptationId: oContextBasedAdaptation.id, trigger: "SaveAs"});
+				Measurement.end("onCBASaveAsAdaptation");
+				Measurement.getActive() && Log.info(`onCBASaveAsAdaptation: ${Measurement.getMeasurement("onCBASaveAsAdaptation").time} ms`);
 			}.bind(this)).catch(function(oError) {
 				BusyIndicator.hide();
 				Log.error(oError.stack);
@@ -252,7 +263,7 @@ sap.ui.define([
 			this._oContextComponentInstance = oContextSharingComponent.getComponentInstance();
 			this._oContextComponentInstance.resetSelectedContexts();
 			this._oAddAdaptationDialog.addContent(this._oContextComponent);
-			var oContextsList = sap.ui.getCore().byId("contextSharing---ContextVisibility--selectedContextsList");
+			var oContextsList = Element.getElementById("contextSharing---ContextVisibility--selectedContextsList");
 			oContextsList.attachUpdateFinished(onContextRoleChange.bind(this));
 			oContextsList.getHeaderToolbar().getContent()[0].setRequired(true);
 			this._oContextComponentInstance.setEmptyListTextWithAdvice();

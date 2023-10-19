@@ -15,6 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	var sServiceUri = "/MockSrv/";
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	var sServiceUri3 = "/DOESNOTEXIST/";
 
 	var sDataRootPath =  "test-resources/sap/ui/core/qunit/model/";
@@ -30,6 +31,7 @@ sap.ui.define([
 		return oMockServer;
 	}
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	function initModel(sUri) {
 		oModel = new V1ODataModel(sUri, true);
 		return oModel;
@@ -47,6 +49,8 @@ sap.ui.define([
 		assert.ok(oServer,"Server initialized");
 	});
 
+/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
+(function() {
 	QUnit.test("init Model", function(assert) {
 		var oModel = initModel(sServiceUri);
 		assert.ok(oModel,"Model initialized");
@@ -103,6 +107,7 @@ sap.ui.define([
 		oServer.stop();
 		oServer.destroy();
 	});
+}());
 
 	// Usually we should not test internal methods, but these might be candidates to be made publicly available
 	QUnit.module("ODataMetadata: Internal methods");
@@ -314,11 +319,12 @@ sap.ui.define([
 
 	oServer = initServer(sServiceUri, "model/metadata1.xml", sDataRootPath);
 
-	var oModelV1 = initModel(sServiceUri);
-	var pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
-		oModelV1.attachMetadataLoaded(fnResolve);
-		oModelV1.attachMetadataFailed(fnReject);
-	});
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
+	var oModelV1 = initModel(sServiceUri),
+		pModelV1MetadataLoaded = new Promise(function(fnResolve, fnReject) {
+			oModelV1.attachMetadataLoaded(fnResolve);
+			oModelV1.attachMetadataFailed(fnReject);
+		});
 	var oModelV2 = initModelV2(sServiceUri);
 
 
@@ -328,7 +334,9 @@ sap.ui.define([
 			oModel.metadataLoaded().then(function () {
 				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
 			});
-		} else {
+		}
+		/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
+		if (!(oModel instanceof V2ODataModel)) {
 			pModelV1MetadataLoaded.then(function () {
 				fnRealTest.apply(this, [assert, done].concat([].slice.call(arguments)));
 			});
@@ -341,6 +349,7 @@ sap.ui.define([
 			continue;
 		}
 
+		/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 		QUnit.test("V1: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV1)));
 		QUnit.test("V2: " + sTest, fnWrapMetadataReady.bind(this, mInternalTests[sTest].bind(mInternalTests, oModelV2)));
 	}
@@ -422,8 +431,9 @@ sap.ui.define([
 		done();
 	};
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	QUnit.test("V1: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
-	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV1)));
+	QUnit.test("V2: _getAnnotation method", fnWrapMetadataReady.bind(this, fnTestAnnotations.bind(this, oModelV2)));
 
 
 	QUnit.module("ODataMetadata: sap-cancel-on-close header handling");

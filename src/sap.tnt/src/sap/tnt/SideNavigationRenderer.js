@@ -43,6 +43,11 @@ sap.ui.define([
 
 		rm.openStart('div', control);
 
+		const width = control.getWidth();
+		if (width && isExpanded) {
+			rm.style("width", width);
+		}
+
 		rm.attr("role", 'navigation');
 		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION"));
 

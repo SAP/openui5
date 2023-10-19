@@ -4,26 +4,28 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel', 'sap/base/util/UriParameters'
-], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel, SAPUriParameters) {
+	'sap/ui/mdc/filterbar/IFilterContainer','sap/m/Table', 'sap/m/Column', 'sap/m/Text', 'sap/m/VBox', 'sap/ui/mdc/p13n/panels/FilterPanel'
+], function(IFilterContainer, Table, Column, Text, VBox, FilterPanel) {
 	"use strict";
 
 	/**
 	 * Constructor for a new filterBar/p13n/TableContainer.
-     * Used for a simple FilterBar table like view, should be used in combination with <code>FilterGroupLayout</code>
+     *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @class The TableContainer is a IFilterContainer implementation for <code>sap.m.Table</code>
+	 * @class
+	 * The TableContainer is a IFilterContainer implementation for <code>sap.m.Table</code>.
+	 * It is used for a simple FilterBar table like view and should be used in combination with <code>FilterGroupLayout</code>.
 	 * @extends sap.ui.mdc.filterbar.IFilterContainer
 	 * @constructor
 	 * @private
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.p13n.TableContainer
 	 */
-	var TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
+	const TableContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.TableContainer");
 
 	TableContainer.prototype.init = function() {
 		IFilterContainer.prototype.init.apply(this, arguments);
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		this._oTable = new Table({
 			sticky: ["ColumnHeaders"],
 			growing: true,
@@ -44,8 +46,8 @@ sap.ui.define([
 		this.oLayout = new FilterPanel({
 			enableReorder: false,
 			itemFactory: function(oItem){
-				var sKey = oItem.name;
-				var oFilterItem = this.mFilterItems[sKey];
+				const sKey = oItem.name;
+				const oFilterItem = this.mFilterItems[sKey];
 				return oFilterItem;
 			}.bind(this)
 		});
@@ -55,8 +57,8 @@ sap.ui.define([
 	};
 
 	TableContainer.prototype.insertFilterField = function(oControl, iIndex) {
-		var oFilterBar = oControl._oFilterField.getParent();
-		var oProperty = oFilterBar._getPropertyByName(oControl._getFieldPath());
+		const oFilterBar = oControl._oFilterField.getParent();
+		const oProperty = oFilterBar._getPropertyByName(oControl._getFieldPath());
 		if (oProperty) {
 			this.mFilterItems[oProperty.name] = oControl;
 		}

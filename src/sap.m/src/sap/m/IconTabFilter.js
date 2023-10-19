@@ -1358,7 +1358,7 @@ sap.ui.define([
 				oRbArgs = [sText, oRootTab.getText()];
 			} else {
 				sRbKey = "ICONTABFILTER_BADGE_MSG";
-				oRbArgs = sText;
+				oRbArgs = [sText];
 			}
 		}
 

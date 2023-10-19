@@ -84,7 +84,7 @@ sap.ui.define([
 			oYearPicker = this._getYearPicker(),
 			oFocusedDate = this._getFocusedDate();
 
-		oFocusedDate.setYear(oYearPicker.getYear());
+		oFocusedDate.setYear(oYearPicker.getDate().getFullYear());
 		oMonthPicker._setYear(oFocusedDate.getYear());
 		oMonthPicker._setDate(oFocusedDate);
 

@@ -3,21 +3,26 @@
 	controllerName="sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy"
 	xmlns="sap.ui.table"
 	xmlns:m="sap.m"
-	xmlns:mvc="sap.ui.core.mvc">
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:rm="sap.ui.table.rowmodes">
 
-	<Table id="table" ariaLabelledBy="title" minAutoRowCount="2"
+	<Table id="table" ariaLabelledBy="title"
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
+		selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="Organizational Chart"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronize" press="onSynchronize"
 					tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="5" minRowCount="2"/>
+		</rowMode>
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
@@ -27,11 +32,11 @@
 		<Column width="4em">
 			<template>
 				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
-					id="expand"
 					icon="{= %{@$ui5.node.isExpanded} === true
 						? 'sap-icon://collapse'
 						: (%{@$ui5.node.isExpanded} === false
 							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					id="expand"
 					press=".onToggleExpand"
 					tooltip="{= %{@$ui5.node.isExpanded} === true
 						? 'Collapse'
@@ -65,25 +70,35 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="create"
-					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="create" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://move" id="move" press=".onMove" tooltip="Move"/>
 			</template>
 		</Column>
 	</Table>
 
-	<TreeTable id="treeTable" ariaLabelledBy="treeTitle" minAutoRowCount="2"
+	<TreeTable id="treeTable" ariaLabelledBy="treeTitle"
 		rows="{path : '/EMPLOYEES',
 			parameters : {$count : false, $orderby : 'AGE', $$patchWithoutSideEffects : true},
 			suspended : true}"
-		selectionMode="None" threshold="0" visibleRowCount="5" visibleRowCountMode="Interactive">
+		selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="treeTitle" level="H1" text="Organizational Chart - TreeTable"/>
 				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRootInTreeTable"
+					tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" id="synchronizeTreeTable"
 					press="onSynchronizeTreeTable" tooltip="SynchronizeTreeTable"/>
 			</m:Toolbar>
 		</extension>
+		<rowMode>
+			<rm:Interactive rowCount="5" minRowCount="2"/>
+		</rowMode>
 		<Column>
 			<m:Label text="ID"/>
 			<template>
@@ -116,10 +131,23 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" id="createInTreeTable"
-					icon="sap-icon://create" press=".onCreate" tooltip="Create New Child"/>
+				<m:Button enabled="{= %{@$ui5.node.isExpanded} !== false}" icon="sap-icon://create"
+					id="createInTreeTable" press=".onCreate" tooltip="Create New Child"/>
+			</template>
+		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button icon="sap-icon://move" id="moveInTreeTable" press=".onMove"
+					tooltip="Move"/>
 			</template>
 		</Column>
 	</TreeTable>
 
+	<mvc:dependents>
+		<m:SelectDialog confirm=".onMoveConfirm" draggable="true" id="moveDialog"
+			items="{path : '/EMPLOYEES', parameters : {$count : true}, suspended : true}"
+			title="Select New Parent For {ID} ({Name})">
+			<m:StandardListItem title="{ID} ({Name})" type="Active" />
+		</m:SelectDialog>
+	</mvc:dependents>
 </mvc:View>

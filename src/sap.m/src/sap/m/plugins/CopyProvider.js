@@ -3,8 +3,10 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton) {
+sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton", "../library"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton, library) {
 	"use strict";
+
+	const CopyPreference = library.plugins.CopyPreference;
 
 	/**
 	 * Constructor for a new CopyProvider plugin that can be used to copy table rows to the clipboard.
@@ -21,6 +23,15 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	 * the <code>MultiSelectionPlugin</code>.<br>
 	 * <b>Note:</b> This plugin requires a secure origin, either HTTPS or localhost, in order to access the browser's clipboard API.
 	 * For more information, see {@link https://w3c.github.io/webappsec-secure-contexts/}.
+	 * It is recommended to check whether the application executes in a secure context before adding the <code>CopyProvider</code> plugin and
+	 * related functionality, such as the {@link #sap.m.plugins.CellSelector}.
+	 *
+	 * @example <caption>Check secure context</caption>
+	 * <pre>
+	 *   if (window.isSecureContext) {
+	 *     oTable.addDependent(new CopyProvider());
+	 *   }
+	 * </pre>
 	 *
 	 * @extends sap.ui.core.Element
 	 * @author SAP SE
@@ -84,7 +95,20 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			 *
 			 * @since 1.114
 			 */
-			visible: { type: "boolean", defaultValue: true, invalidate: false }
+			visible: { type: "boolean", defaultValue: true, invalidate: false },
+
+			/**
+			 * This property determines the copy preference when performing a copy operation.
+			 *
+			 * If the property is set to <code>Full</code>, all selected content is copied. This includes selected rows and cells.
+			 *
+			 * If the property is set to <code>Cells</code>, cell selection takes precedence during copying. If cells are selected along
+			 * with rows, only the cell selection is copied.
+			 * If no cells are selected, the row selection is copied.
+			 *
+			 * @since 1.119
+			 */
+			copyPreference: { type: "sap.m.plugins.CopyPreference", defaultValue: CopyPreference.Cells, invalidate: false }
 		},
 		events: {
 			/**
@@ -120,7 +144,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		}
 	}
 
-	function copyMatrixForSpreadSheet(aMatrix) {
+	function copyMatrixForSpreadSheet(oCopyProvider, aMatrix) {
+		if (!navigator.clipboard) {
+			throw new Error(oCopyProvider + " requires a secure context in order to access the clipboard API.");
+		}
+
 		var sClipboardText = aMatrix.map(function(aRows) {
 			return aRows.map(stringifyForSpreadSheet).join("\t");
 		}).join("\n");
@@ -135,9 +163,6 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	};
 
 	CopyProvider.prototype.isApplicable = function() {
-		if (!navigator.clipboard) {
-			throw new Error(this + " requires a secure context in order to access the clipboard API.");
-		}
 		if (this._shouldManageExtractData()){
 			if (this.getExtractData()) {
 				throw new Error("extractData property must not be defined for " + this);
@@ -222,7 +247,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	CopyProvider.prototype.getSelectionData = function() {
 		var oControl = this.getControl();
 		var fnExtractData = this.getExtractData();
-		if (!oControl || !fnExtractData || !navigator.clipboard) {
+		if (!oControl || !fnExtractData) {
 			return [];
 		}
 
@@ -238,21 +263,23 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		}
 
 		var aSelectionData = [];
+		var aSelectedRowContexts = [];
 		var aAllSelectedRowContexts = [];
 		var bCopySparse = this.getCopySparse();
 		var fnExludeContext = this.getExcludeContext();
-		var oCellSelectorPlugin = PluginBase.getPlugin(oControl, "sap.m.plugins.CellSelector");
+		var oCellSelectorPlugin = PluginBase.getPlugin(this.getParent(), "sap.m.plugins.CellSelector") ?? PluginBase.getPlugin(oControl, "sap.m.plugins.CellSelector");
 		var mCellSelectionRange = oCellSelectorPlugin && oCellSelectorPlugin.getSelectionRange();
 		var aCellSelectorRowContexts = mCellSelectionRange ? oCellSelectorPlugin.getSelectedRowContexts() : [];
 		var bCellSelectorRowContextsMustBeMerged = Boolean(aCellSelectorRowContexts.length);
 		var bSelectedRowContextsMustBeSparse = bCellSelectorRowContextsMustBeMerged || bCopySparse;
-		var aSelectedRowContexts = this.getConfig("selectedContexts", oControl, bSelectedRowContextsMustBeSparse);
+
+		if (this.getCopyPreference() == CopyPreference.Full || !bCellSelectorRowContextsMustBeMerged) {
+			aSelectedRowContexts = this.getConfig("selectedContexts", oControl, bSelectedRowContextsMustBeSparse);
+			Object.assign(aAllSelectedRowContexts, aSelectedRowContexts);
+		}
 
 		if (bCellSelectorRowContextsMustBeMerged) {
-			aCellSelectorRowContexts = Array(mCellSelectionRange.from.rowIndex).concat(aCellSelectorRowContexts);
-			Object.assign(aAllSelectedRowContexts, aSelectedRowContexts, aCellSelectorRowContexts);
-		} else {
-			aAllSelectedRowContexts = aSelectedRowContexts;
+			Object.assign(aAllSelectedRowContexts, Array(mCellSelectionRange.from.rowIndex).concat(aCellSelectorRowContexts));
 		}
 
 		for (var iContextIndex = 0; iContextIndex < aAllSelectedRowContexts.length; iContextIndex++) {
@@ -267,7 +294,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 				var aRowData = [];
 				var bContextFromSelectedRows = (oRowContext == aSelectedRowContexts[iContextIndex]);
 				aSelectableColumns.forEach(function(oColumn, iColumnIndex) {
-					if (bContextFromSelectedRows || (iColumnIndex >= mCellSelectionRange.from.colIndex && iColumnIndex <= mCellSelectionRange.to.colIndex)) {
+					if (bContextFromSelectedRows || (iColumnIndex >= mCellSelectionRange?.from.colIndex && iColumnIndex <= mCellSelectionRange?.to.colIndex)) {
 						var vCellData = fnExtractData(oRowContext, oColumn);
 						if (isCellValueCopyable(vCellData)) {
 							aRowData.push[Array.isArray(vCellData) ? "apply" : "call"](aRowData, vCellData);
@@ -288,10 +315,11 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	/**
 	 * Writes the selection data to the system clipboard and returns a <code>Promise</code> which resolves once the clipboard's content has been updated.
 	 *
-	 * <b>Note: </b> The user has to interact with the page or a UI element when this API gets called.
-	 *
+	 * <b>Note:</b> The user has to interact with the page or a UI element when this API gets called.
+	 * <b>Note:</b> This plugin requires a secure context in order to access the browser's clipboard API.
 	 * @param {boolean} [bFireCopyEvent=false] Whether the <code>copy</code> event should be triggered or not
 	 * @returns {Promise} A <code>Promise</code> that is resolved after the selection data has been written to the clipboard
+	 * @throws {Error} If the <code>CopyProvider</code> is used in a non-secure context.
 	 * @public
 	 */
 	CopyProvider.prototype.copySelectionData = function(bFireCopyEvent) {
@@ -300,7 +328,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			return Promise.resolve();
 		}
 
-		return copyMatrixForSpreadSheet(aSelectionData);
+		return copyMatrixForSpreadSheet(this, aSelectionData);
 	};
 
 	CopyProvider.prototype.onkeydown = function(oEvent) {

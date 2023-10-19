@@ -24,12 +24,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
+	const sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
 	QUnit.module("popinLayout");
 
 	QUnit.test("default popinLayout - ResponsiveTable type (before table creation)", function (assert) {
-		var oTable = new Table({
+		const oTable = new Table({
 			type: new ResponsiveTableType({
 				popinLayout: "Block"
 			})
@@ -42,7 +42,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("non-default popinLayout - ResponsiveTable type (before table creation)", function (assert) {
-		var oTable = new Table({
+		const oTable = new Table({
 			type: new ResponsiveTableType({
 				popinLayout: "GridSmall"
 			})
@@ -55,14 +55,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("popinLayout - ResponsiveTable type (after table creation)", function (assert) {
-		var oTable = new Table({
+		const oTable = new Table({
 			type: new ResponsiveTableType({
 			})
 		});
 
 		return oTable.initialized().then(function () {
 			assert.equal(oTable._oTable.getPopinLayout(), "Block", "popinLayout set to Block type on the inner table");
-			var oType = oTable.getType();
+			const oType = oTable.getType();
 			oType.setPopinLayout("GridSmall");
 			assert.equal(oTable._oTable.getPopinLayout(), "GridSmall", "popinLayout is set to GridSmall type on the inner table");
 			oTable.destroy();
@@ -72,7 +72,7 @@ sap.ui.define([
 	QUnit.module("extendedSettings");
 
 	QUnit.test("Merge cell", function (assert) {
-		var oModel = new JSONModel();
+		const oModel = new JSONModel();
 		oModel.setData({
 			testPath: [{
 				text1: "AA",
@@ -93,7 +93,7 @@ sap.ui.define([
 			}]
 		});
 
-		var oTable = new Table({
+		const oTable = new Table({
 			type: "ResponsiveTable",
 			delegate: {
 				name: sDelegatePath,
@@ -139,7 +139,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		return TableQUnitUtils.waitForBindingInfo(oTable).then(function () {
-			var aColumns = oTable._oTable.getColumns();
+			const aColumns = oTable._oTable.getColumns();
 
 			assert.ok(aColumns[0].getMergeDuplicates(), "First column property mergeDuplicates = true");
 			assert.strictEqual(aColumns[0].getMergeFunctionName(), "getText", "First column property mergeFunctionName = getText");

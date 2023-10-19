@@ -79,10 +79,14 @@ sap.ui.define([
 	}
 
 	function checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag) {
-		var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
+		// in case of changes in templates, the original control is not always available at this point
+		// example: rename on a control created by a change inside a template
+		var oOriginalControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag).control;
 		var oModifier = mPropertyBag.modifier;
-		var bHasAppliedCustomData = !!FlexCustomData.getAppliedCustomDataValue(mControl.control, oChange, oModifier);
-		var bIsCurrentlyAppliedOnControl = FlexCustomData.hasChangeApplyFinishedCustomData(mControl.control, oChange, oModifier);
+		var bHasAppliedCustomData = oOriginalControl
+			&& !!FlexCustomData.getAppliedCustomDataValue(oOriginalControl, oChange, oModifier);
+		var bIsCurrentlyAppliedOnControl = oOriginalControl
+			&& FlexCustomData.hasChangeApplyFinishedCustomData(oOriginalControl, oChange, oModifier);
 		var bChangeStatusAppliedFinished = oChange.isApplyProcessFinished();
 		var oAppComponent = mPropertyBag.appComponent;
 		if (bChangeStatusAppliedFinished && !bIsCurrentlyAppliedOnControl) {
@@ -98,7 +102,7 @@ sap.ui.define([
 			// scenario: viewCache
 			if (bHasAppliedCustomData) {
 				// if the change was applied, set the revert data fetched from the custom data
-				oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(mControl.control, oChange, oModifier));
+				oChange.setRevertData(FlexCustomData.getParsedRevertDataFromCustomData(oOriginalControl, oChange, oModifier));
 				oChange.markSuccessful();
 			} else {
 				oChange.markFailed();
@@ -200,16 +204,16 @@ sap.ui.define([
 	function logApplyChangeError(oError, oChange) {
 		var sChangeType = oChange.getChangeType();
 		var sTargetControlId = oChange.getSelector().id;
-		var fullQualifiedName = oChange.getNamespace() + oChange.getId() + "." + oChange.getFileType();
+		var fullQualifiedName = `${oChange.getNamespace() + oChange.getId()}.${oChange.getFileType()}`;
 
 		var sWarningMessage = "A flexibility change could not be applied.";
 		sWarningMessage += "\nThe displayed UI might not be displayed as intedend.";
 		if (oError.message) {
-			sWarningMessage += "\n   occurred error message: '" + oError.message + "'";
+			sWarningMessage += `\n   occurred error message: '${oError.message}'`;
 		}
-		sWarningMessage += "\n   type of change: '" + sChangeType + "'";
-		sWarningMessage += "\n   LRep location of the change: " + fullQualifiedName;
-		sWarningMessage += "\n   id of targeted control: '" + sTargetControlId + "'.";
+		sWarningMessage += `\n   type of change: '${sChangeType}'`;
+		sWarningMessage += `\n   LRep location of the change: ${fullQualifiedName}`;
+		sWarningMessage += `\n   id of targeted control: '${sTargetControlId}'.`;
 
 		Log.warning(sWarningMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 	}
@@ -264,7 +268,7 @@ sap.ui.define([
 		 *
 		 * @param {Promise} oPromise - Promise which is resolved when precondition fulfilled
 		 */
-		addPreConditionForInitialChangeApplying: function(oPromise) {
+		addPreConditionForInitialChangeApplying(oPromise) {
 			oLastPromise = oLastPromise.then(function() {
 				return oPromise;
 			});
@@ -282,7 +286,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.appComponent - Component instance that is currently loading
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario
 		 */
-		applyChangeOnControl: function(oChange, oControl, mPropertyBag) {
+		applyChangeOnControl(oChange, oControl, mPropertyBag) {
 			var mControl = Utils.getControlIfTemplateAffected(oChange, oControl, mPropertyBag);
 			var pHandlerPromise = mPropertyBag.changeHandler
 				? Promise.resolve(mPropertyBag.changeHandler)
@@ -337,7 +341,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} oControl Instance of the control to which changes should be applied
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Resolves as soon as all changes for the control are applied
 		 */
-		applyAllChangesForControl: function(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
+		applyAllChangesForControl(fnGetChangesMap, oAppComponent, oFlexController, oControl) {
 			// the changes have to be queued synchronously
 			var mChangesMap = fnGetChangesMap();
 			var sControlId = oControl.getId();
@@ -412,9 +416,9 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject[]} aChanges List of flexibility changes on controls for the current processed view
 		 * @returns {Promise|sap.ui.fl.Utils.FakePromise} Promise that is resolved after all changes were reverted in asynchronous case or FakePromise for the synchronous processing scenario including view object in both cases
 		 */
-		applyAllChangesForXMLView: function(mPropertyBag, aChanges) {
+		applyAllChangesForXMLView(mPropertyBag, aChanges) {
 			if (!Array.isArray(aChanges)) {
-				var sErrorMessage = "No list of changes was passed for processing the flexibility on view: " + mPropertyBag.view + ".";
+				var sErrorMessage = `No list of changes was passed for processing the flexibility on view: ${mPropertyBag.view}.`;
 				Log.error(sErrorMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 				aChanges = [];
 			}

@@ -2,13 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/rta/util/showMessageBox",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/m/MessageBox",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
 	showMessageBox,
-	oCore,
+	Element,
 	MessageBox,
 	sinon
 ) {
@@ -26,9 +25,9 @@ function(
 	}
 
 	QUnit.module("Basic functionality", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -39,7 +38,7 @@ function(
 			var messageBoxSpy = sandbox.spy(MessageBox, sType);
 			fnTriggerMessageBox(sMessage, sType);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.getElementById("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
@@ -52,14 +51,14 @@ function(
 		var aMessageBoxTypes = ["show", "alert", "confirm", "error", "information", "success", "warning"];
 
 		aMessageBoxTypes.forEach(function(sType) {
-			QUnit.test("call with a link - " + sType, function(assert) {
+			QUnit.test(`call with a link - ${sType}`, function(assert) {
 				var fnDone = assert.async();
 				var sMessageWithLink = "My [custom](http://example.com/) message";
 				var messageBoxSpy = sandbox.spy(MessageBox, sType);
 
 				fnTriggerMessageBox(sMessageWithLink, sType);
 
-				var oMessageBoxDialog = oCore.byId("messagebox");
+				var oMessageBoxDialog = Element.getElementById("messagebox");
 
 				oMessageBoxDialog.attachAfterOpen(function() {
 					var sMessage = "My custom message";
@@ -84,7 +83,7 @@ function(
 
 			fnTriggerMessageBox(sMessageWithLink, sType);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.getElementById("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);
@@ -122,7 +121,7 @@ function(
 				}
 			);
 
-			var oMessageBoxDialog = oCore.byId("messagebox");
+			var oMessageBoxDialog = Element.getElementById("messagebox");
 
 			oMessageBoxDialog.attachAfterOpen(function() {
 				assert.strictEqual(document.getElementById("messagebox-cont").textContent, sMessage);

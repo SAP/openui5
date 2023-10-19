@@ -118,8 +118,10 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 }
 
 .sapMSlt.sapMSltReadonly {
-    background: @sapUiFieldReadOnlyBackground;
-    border-bottom: dashed @sapUiElementBorderWidth @sapUiFieldReadOnlyBorderColor;
+    border-color: @sapUiFieldReadOnlyBorderColor;
+    background:@sapUiFieldReadOnlyBackgroundStyle;
+    background-color: @sapUiFieldReadOnlyBackground;
+    box-shadow: none;
 }
 
 div.sapMSltPicker .sapMSltPickerValueState {
@@ -164,6 +166,10 @@ div.sapMSltPicker .sapMSltPickerValueState {
 .sapMSltArrow {
     width: 2.25rem;
     height: 2.25rem;
+
+	&:hover {
+		box-shadow: @sapUiFieldHoverShadow;
+	}
 }
 
 .sapUiSizeCompact .sapMSltArrow {
@@ -174,7 +180,6 @@ div.sapMSltPicker .sapMSltPickerValueState {
 .sapMSltPressed >.sapMSltArrow,
 .sapMSlt:hover > .sapMSltArrow {
     background-color: @sapUiButtonActiveBackground;
-    box-shadow: @sapUiFieldHoverShadow;
     overflow: none;
     border-radius: 0.125rem;
 }

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/ControlMessageProcessor",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/util/MockServer",
@@ -14,9 +15,10 @@ sap.ui.define([
 	"sap/ui/model/DataState",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Float"
-], function(deepEqual, deepExtend, Button, Input, Text, Configuration, library, ControlMessageProcessor,
-		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Float) {
+], function(deepEqual, deepExtend, Button, Input, Text, Configuration, library, Messaging, ControlMessageProcessor,
+		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Currency, Float) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -1088,8 +1090,8 @@ sap.ui.define([
 				var oComositeBinding = oCompositeControl.getBinding("value");
 
 
-				sap.ui.getCore().getMessageManager().registerObject(oInputField, true);
-				sap.ui.getCore().getMessageManager().registerObject(oCompositeControl, true);
+				Messaging.registerObject(oInputField, true);
+				Messaging.registerObject(oCompositeControl, true);
 
 				Promise.resolve().then(function() {
 					return testDataState(
@@ -1204,7 +1206,7 @@ sap.ui.define([
 			}
 		});
 		//let the message manager control the vertical layout for messages
-		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
+		Messaging.registerObject(oVerticalLayout, true);
 
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
@@ -1262,7 +1264,7 @@ sap.ui.define([
 									oNameInput.getBinding("value"),
 									function() {
 										oNameInput.setValue("Test1"); //async
-										sap.ui.getCore().getMessageManager().addMessages(oMessage1);
+										Messaging.addMessages(oMessage1);
 									},
 									{
 										originalValue : "Flyer",
@@ -1274,7 +1276,7 @@ sap.ui.define([
 									"Added warning and Error on Name input",
 									function () {
 										oNameInput.setValue("Test2");
-										sap.ui.getCore().getMessageManager().addMessages(oMessage2);
+										Messaging.addMessages(oMessage2);
 
 										testDataState(
 											assert,
@@ -1294,7 +1296,7 @@ sap.ui.define([
 													assert,
 													oNameInput.getBinding("value"),
 													function() {
-														sap.ui.getCore().getMessageManager().removeMessages(oMessage1);
+														Messaging.removeMessages(oMessage1);
 													},
 													{
 														originalValue : "Flyer",
@@ -1305,7 +1307,7 @@ sap.ui.define([
 													},
 													"Remove warning and Error on Name input",
 													function () {
-														sap.ui.getCore().getMessageManager().removeMessages(oMessage2);
+														Messaging.removeMessages(oMessage2);
 														testDataState(
 															assert,
 															oNameInput.getBinding("value"),
@@ -1357,7 +1359,7 @@ sap.ui.define([
 					}
 				});
 		//let the message manager control the vertical layout for messages
-		sap.ui.getCore().getMessageManager().registerObject(oVerticalLayout, true);
+		Messaging.registerObject(oVerticalLayout, true);
 
 		oVerticalLayout.addContent(oFloatInput);
 		oVerticalLayout.addContent(oNameInput);
@@ -1385,7 +1387,7 @@ sap.ui.define([
 					oCompositeInput.getBinding("value"),
 					function() {
 						oCompositeInput.setValue("Test1 2");
-						sap.ui.getCore().getMessageManager().addMessages(oMessage1);
+						Messaging.addMessages(oMessage1);
 					},
 					{
 						originalValue : ["Flyer", 1],
@@ -1397,7 +1399,7 @@ sap.ui.define([
 					"Added Messages to Composite input",
 					function() {
 						oCompositeInput.setValue("Test2 3");
-						sap.ui.getCore().getMessageManager().addMessages(oMessage2);
+						Messaging.addMessages(oMessage2);
 						testDataState(
 							assert,
 							oCompositeInput.getBinding("value"),
@@ -1443,11 +1445,10 @@ sap.ui.define([
 			}
 		});
 		//let the message manager control the vertical layout for messages
-		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
+		Messaging.registerObject(oInput, true);
 		var oMessageProcessor = new ControlMessageProcessor();
-		var oMessageManager  = sap.ui.getCore().getMessageManager();
 
-		oMessageManager.registerMessageProcessor(oMessageProcessor);
+		Messaging.registerMessageProcessor(oMessageProcessor);
 
 		oInput.placeAt("content");
 		oInput.setModel(oModel);
@@ -1478,7 +1479,7 @@ sap.ui.define([
 				}, "Initial status of Composite input after read"
 			)
 			.then(function() {
-				oMessageManager.addMessages(oMessage1);
+				Messaging.addMessages(oMessage1);
 				return testDataState(
 					assert,
 					oBinding,
@@ -1537,7 +1538,7 @@ sap.ui.define([
 				);
 			})
 			.then(function() {
-				oMessageManager.removeMessages(oMessage1);
+				Messaging.removeMessages(oMessage1);
 				return testDataState(
 					assert,
 					oBinding,
@@ -1565,15 +1566,14 @@ sap.ui.define([
 					{ path: "/ProductSet('AD-1000')/Price" },
 					{ path: "/ProductSet('AD-1000')/CurrencyCode" }
 				],
-				type: 'sap.ui.model.type.Currency'
+				type: Currency.getMetadata().getName()
 			}
 		});
 		//let the message manager control the vertical layout for messages
-		sap.ui.getCore().getMessageManager().registerObject(oInput, true);
+		Messaging.registerObject(oInput, true);
 		var oMessageProcessor = new ControlMessageProcessor();
-		var oMessageManager  = sap.ui.getCore().getMessageManager();
 
-		oMessageManager.registerMessageProcessor(oMessageProcessor);
+		Messaging.registerMessageProcessor(oMessageProcessor);
 
 		oInput.placeAt("content");
 		oInput.setModel(oModel);
@@ -1604,7 +1604,7 @@ sap.ui.define([
 				}, "Initial status of Composite input after read"
 			)
 			.then(function() {
-				oMessageManager.addMessages(oMessage1);
+				Messaging.addMessages(oMessage1);
 				return testDataState(
 					assert,
 					oBinding,

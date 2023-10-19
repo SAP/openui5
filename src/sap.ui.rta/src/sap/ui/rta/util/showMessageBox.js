@@ -23,7 +23,7 @@ sap.ui.define([
 	}
 
 	function isLink(sText) {
-		var oRegex = new RegExp("^" + sLinkRegex + "$");
+		var oRegex = new RegExp(`^${sLinkRegex}$`);
 		return Array.isArray(oRegex.exec(sText));
 	}
 
@@ -88,6 +88,7 @@ sap.ui.define([
 						}
 					});
 
+					// eslint-disable-next-line prefer-spread
 					aSymbols.splice.apply(aSymbols, [i, 1].concat(aInsert));
 					i += aInsert.length;
 				}

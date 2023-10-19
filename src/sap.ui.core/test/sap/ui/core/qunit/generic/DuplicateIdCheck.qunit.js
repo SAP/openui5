@@ -5,8 +5,9 @@
 
 sap.ui.define([
 	"sap/ui/test/generic/TestBase",
-	"sap/ui/test/generic/Utils"
-], function (TestBase, Utils) {
+	"sap/ui/test/generic/Utils",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (TestBase, Utils, nextUIUpdate) {
 	"use strict";
 
 	/**
@@ -75,15 +76,15 @@ sap.ui.define([
 					Utils.fillControlAggregations(oControl1, this.getObjectCapabilities()),
 					Utils.fillControlProperties(oControl2, oObjectCapabilities),
 					Utils.fillControlAggregations(oControl2, this.getObjectCapabilities())
-				]).then(function() {
+				]).then(async function() {
 					if (bCanRender) {
 						oControl1.placeAt("qunit-fixture");
 						oControl2.placeAt("qunit-fixture");
-						sap.ui.getCore().applyChanges();
+						await nextUIUpdate();
 
 						oControl1.rerender();
 						oControl2.rerender();
-						sap.ui.getCore().applyChanges();
+						await nextUIUpdate();
 
 						assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");
 					} else {
@@ -93,7 +94,7 @@ sap.ui.define([
 					// cleanup
 					oControl1.destroy();
 					oControl2.destroy();
-					sap.ui.getCore().applyChanges();
+					await nextUIUpdate();
 				});
 			}.bind(this));
 		}

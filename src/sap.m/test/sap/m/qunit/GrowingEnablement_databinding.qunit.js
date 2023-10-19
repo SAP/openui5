@@ -173,6 +173,19 @@ sap.ui.define([
 		assert.equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
 	});
 
+	QUnit.test("Group/Ungroup", function(assert) {
+		var oBinding = gl.getBinding("items");
+		oBinding.sort(new Sorter("", false, function(oContext){
+			return oContext.getProperty("name").charAt(0);
+		}));
+		oCore.applyChanges();
+		assert.ok(info(0).header, "First item should be a group header");
+
+		oBinding.sort();
+		oCore.applyChanges();
+		assert.notOk(info(0).header, "The group header should be removed");
+	});
+
 	QUnit.module("OData V4", {
 		before: function() {
 			// The TestUtils FakeServer Cannot be used together with the sap.ui.core.util.MockServer!
@@ -200,6 +213,7 @@ sap.ui.define([
 			this.oList = new List({
 				growing: true,
 				growingThreshold: 2,
+				mode: "MultiSelect",
 				items: {
 					path: "",
 					template: new StandardListItem({title: "{CompanyName}"})
@@ -241,6 +255,69 @@ sap.ui.define([
 			});
 		}).then(function() {
 			assert.ok(that.oList.getItems().length === 2, "List has items");
+		});
+	});
+
+	QUnit.test("rememberSelections", function(assert) {
+		const oList = this.oList;
+		const oBinding = oList.getBinding("items");
+
+		return new Promise(function(resolve) {
+			oList.attachEventOnce("updateFinished", resolve);
+		}).then(() => {
+			assert.equal(oList.getItems().length, 2, "List has 2 items");
+			const aContexts = oBinding.getAllCurrentContexts();
+			const fnContextClass = aContexts[0].constructor.prototype;
+			const oContextSetSelectedSpy = this.spy(fnContextClass, "setSelected");
+			const oGetAllCurrentContextsSpy = this.spy(oBinding, "getAllCurrentContexts");
+
+			oList.selectAll();
+			assert.ok(oContextSetSelectedSpy.firstCall.calledOn(aContexts[0]), "setSelected is called on the first context");
+			assert.ok(oContextSetSelectedSpy.firstCall.calledWith(true), "setSelected(true) is called on the first context");
+			assert.ok(oContextSetSelectedSpy.secondCall.calledOn(aContexts[1]), "setSelected is called on the second context");
+			assert.ok(oContextSetSelectedSpy.secondCall.calledWith(true), "setSelected(true) is called on the second context");
+			oContextSetSelectedSpy.resetHistory();
+
+			oList.getSelectedContexts();
+			assert.ok(oGetAllCurrentContextsSpy.notCalled, "getAllCurrentContexts is not called since bAll parameter is not set");
+
+			assert.deepEqual(oList.getSelectedContexts(true), aContexts, "all contexts are selected");
+			assert.ok(oGetAllCurrentContextsSpy.called, "getAllCurrentContexts is called to retrieve selected contexts");
+			oGetAllCurrentContextsSpy.resetHistory();
+
+			oList.removeSelections();
+			assert.ok(oGetAllCurrentContextsSpy.notCalled, "getAllCurrentContexts is not called since bAll parameter is not set");
+
+			oList.removeSelections(true);
+			assert.ok(oContextSetSelectedSpy.firstCall.calledOn(aContexts[0]), "setSelected is called on the first context");
+			assert.ok(oContextSetSelectedSpy.firstCall.calledWith(false), "setSelected(false) is called on the first context");
+			assert.ok(oContextSetSelectedSpy.secondCall.calledOn(aContexts[1]), "setSelected is called on the second context");
+			assert.ok(oContextSetSelectedSpy.secondCall.calledWith(false), "setSelected(false) is called on the second context");
+			assert.ok(oGetAllCurrentContextsSpy.called, "getAllCurrentContexts is called to retrieve selected contexts");
+			oGetAllCurrentContextsSpy.resetHistory();
+			oContextSetSelectedSpy.resetHistory();
+
+			oList.getItems()[1].setSelected(true);
+			assert.ok(oContextSetSelectedSpy.calledOn(aContexts[1]), "setSelected is called on the second context");
+			assert.ok(oContextSetSelectedSpy.calledWith(true), "setSelected(true) is called on the second context");
+			oContextSetSelectedSpy.resetHistory();
+
+			assert.deepEqual(
+				oList.getSelectedContexts(true),
+				oBinding.getAllCurrentContexts().filter((oContext) => oContext.isSelected()),
+				"The list and the binding reports the same selected contexts"
+			);
+
+			oList.getItems()[1].setSelected(false);
+			assert.ok(oContextSetSelectedSpy.calledOn(aContexts[1]), "setSelected is called on the second context");
+			assert.ok(oContextSetSelectedSpy.calledWith(false), "setSelected(false) is called on the second context");
+			oContextSetSelectedSpy.resetHistory();
+
+			assert.deepEqual(
+				oList.getSelectedContexts(true),
+				oBinding.getAllCurrentContexts().filter((oContext) => oContext.isSelected()),
+				"The list and the binding reports the same selected contexts"
+			);
 		});
 	});
 });

@@ -1,0 +1,34 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "4b864d99e6f6ab26a1ebb1d8aad73b78aacc3e09",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      },
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
+      }
+    ]
+  }
+}

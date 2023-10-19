@@ -7,21 +7,27 @@ sap.ui.define([
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/util/Common',
 	'sap/m/p13n/enum/PersistenceMode',
 	'sap/m/p13n/Engine',
 	'sap/base/util/merge',
-	'sap/ui/mdc/p13n/StateUtil'
+	'sap/ui/mdc/p13n/StateUtil',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/base/Log'
 ], function(
 	loadModules,
 	ListContent,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	Common,
 	PersistenceMode,
 	Engine,
 	merge,
-	StateUtil
+	StateUtil,
+	FilterOperatorUtil,
+	Log
 ) {
 	"use strict";
 
@@ -41,7 +47,7 @@ sap.ui.define([
 	 * @since 1.95.0
 	 * @alias sap.ui.mdc.valuehelp.base.FilterableListContent
 	 */
-	var FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */
+	const FilterableListContent = ListContent.extend("sap.ui.mdc.valuehelp.base.FilterableListContent", /** @lends sap.ui.mdc.valuehelp.base.FilterableListContent.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -127,7 +133,7 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype.handleFilterValueUpdate = function (oChanges) {
-		if (this._bContentBound) {
+		if ((this.isContainerOpening() || this.isContainerOpen()) && this._bContentBound) {
 			Promise.resolve(this.applyFilters()).finally(function () {
 				ListContent.prototype.handleFilterValueUpdate.apply(this, arguments);
 			}.bind(this));
@@ -145,7 +151,7 @@ sap.ui.define([
 
 	FilterableListContent.prototype._prettyPrintFilters = function (oFilter) {
 
-		var sRes;
+		let sRes;
 		if (!oFilter) {
 			return "";
 		}
@@ -160,7 +166,7 @@ sap.ui.define([
 			return "(" + sRes + ")";
 		} else if (oFilter._bMultiFilter) {
 			sRes = "";
-			var bAnd = oFilter.bAnd;
+			const bAnd = oFilter.bAnd;
 			oFilter.aFilters.forEach(function(oFilter, iIndex, aFilters) {
 				sRes += this._prettyPrintFilters(oFilter);
 				if (aFilters.length - 1 != iIndex) {
@@ -186,10 +192,10 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype.getItemFromContext = function (oBindingContext, oOptions) {
 
-		var sKeyPath = (oOptions && oOptions.keyPath) || this.getKeyPath();
-		var sDescriptionPath = (oOptions && oOptions.descriptionPath) || this.getDescriptionPath();
-		var vKey;
-		var sDescription;
+		const sKeyPath = (oOptions && oOptions.keyPath) || this.getKeyPath();
+		const sDescriptionPath = (oOptions && oOptions.descriptionPath) || this.getDescriptionPath();
+		let vKey;
+		let sDescription;
 		//var sPath;
 
 		if (!sKeyPath) {
@@ -205,7 +211,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var oPayload = this.createConditionPayload([vKey, sDescription], oBindingContext);
+		const oPayload = this.createConditionPayload([vKey, sDescription], oBindingContext);
 
 
 		return {key: vKey, description: sDescription, payload: oPayload};
@@ -219,26 +225,46 @@ sap.ui.define([
 	 * @protected
 	 */
 	FilterableListContent.prototype.createConditionPayload = function(aValues, vContext) {
-		var oConditionPayload;
-		var oDelegate = this.getValueHelpDelegate();
+		let oConditionPayload;
+		const oDelegate = this.getValueHelpDelegate();
 
 		if (oDelegate) {
-			var oValueHelp = this.getValueHelpInstance();
+			const oValueHelp = this.getValueHelpInstance();
 			oConditionPayload = {};
 			oConditionPayload = oDelegate.createConditionPayload(oValueHelp, this, aValues, vContext);
 		}
 		return oConditionPayload;
 	};
 
-	/**
-	 * Checks if an item is selected.
-	 * @param {sap.ui.core.Element} oItem Entry of a given list
-	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
-	 * @returns {boolean} True, if item is selected
-	 */
-	FilterableListContent.prototype._isItemSelected = function (oItem, aConditions) {
-		var oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
-		return oDelegate ? oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, oItem, aConditions) : false;
+	FilterableListContent.prototype._isContextSelected = function (oContext, aConditions) {
+		return !!oContext && !!this._findConditionsForContext(oContext, aConditions).length;
+	};
+
+	FilterableListContent.prototype._findConditionsForContext = function (oContext, aConditions) {
+		const oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
+		if (oContext && oDelegate) {
+			// <!-- Support for deprecated delegate method isFilterableListItemSelected
+			if (oDelegate.isFilterableListItemSelected) {
+				Log.warning("MDC.ValueHelp", "Delegate method 'isFilterableListItemSelected' is deprecated, please implement 'findConditionsForContext' instead.");
+
+				const bRepresentsConditions = oDelegate.isFilterableListItemSelected(this.getValueHelpInstance(), this, { getBindingContext: function () {
+					return oContext; // Dirty way to simulate listitem.getBindingContext()
+				} }, aConditions);
+
+				if (bRepresentsConditions) {
+					const oValues = this.getItemFromContext(oContext);
+					const oContextCondition = oValues && this.createCondition(oValues.key, oValues.description, oValues.payload);
+
+					return aConditions.filter(function (oCondition) {
+						return FilterOperatorUtil.compareConditions(oCondition, oContextCondition);
+					});
+				}
+				return [];
+			}
+			// -->
+			return oDelegate.findConditionsForContext(this.getValueHelpInstance(), this, oContext, aConditions);
+		}
+		return [];
 	};
 
 	/**
@@ -249,8 +275,11 @@ sap.ui.define([
 		return loadModules([
 			"sap/ui/mdc/filterbar/vh/FilterBar"
 		]).then(function(aModules) {
-			var FilterBar = aModules[0];
-			var oFilterBar = new FilterBar(this.getId() + "-FB", {
+			if (this.isDestroyStarted()) {
+				return null;
+			}
+			const FilterBar = aModules[0];
+			const oFilterBar = new FilterBar(this.getId() + "-FB", {
 				liveMode: false, // !oWrapper.isSuspended(), // if suspended, no live search
 				showGoButton: true
 			});
@@ -261,22 +290,22 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._handleSearch = function (oEvent) {
-		var oFilterBar = oEvent.getSource();
+		const oFilterBar = oEvent.getSource();
 		this._setLocalFilterValue(oFilterBar.getSearch());
 		this.applyFilters();
 
 	};
 
 	function _setBasicSearch(oFilterBar) {
-		var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
-		var sFilterFields =  this.getFilterFields();
+		const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
+		const sFilterFields =  this.getFilterFields();
 		if (!oExistingBasicSearchField && sFilterFields) { // TODO: use isSearchSupported but here Delegate needs to be loaded
 			if (!this._oSearchField) {
 				return loadModules([
 					"sap/ui/mdc/FilterField"
 				]).then(function (aModules){
 					if (!oFilterBar.isDestroyed()) {
-						var FilterField = aModules[0];
+						const FilterField = aModules[0];
 						this._oSearchField = new FilterField(this.getId() + "-search", {
 							conditions: "{$filters>/conditions/" + sFilterFields + "}",
 							propertyKey: sFilterFields,
@@ -314,11 +343,11 @@ sap.ui.define([
 
 	FilterableListContent.prototype.observeChanges = function (oChanges) {
 		if (oChanges.object == this) {
-			var oFilterBar;
+			let oFilterBar;
 
 			if (["_defaultFilterBar", "filterBar"].indexOf(oChanges.name) !== -1) {
 				oFilterBar = oChanges.child;
-				var oDefaultFilterBar;
+				let oDefaultFilterBar;
 				if (oChanges.mutation === "insert") {
 					_setBasicSearch.call(this, oFilterBar);
 					this._assignCollectiveSearchSelect();
@@ -333,7 +362,7 @@ sap.ui.define([
 						}
 					}
 				} else { // remove case
-					var oExistingBasicSearchField = oFilterBar.getBasicSearchField();
+					const oExistingBasicSearchField = oFilterBar.getBasicSearchField();
 					if (oExistingBasicSearchField && oExistingBasicSearchField._bCreatedByValueHelp) {
 						oFilterBar.setBasicSearchField(); // remove to reuse on other FilterBar
 					}
@@ -379,7 +408,7 @@ sap.ui.define([
 	 * @returns {sap.ui.model.Context} <code>BindingContext</code>
 	 */
 	FilterableListContent.prototype._getListItemBindingContext = function (oItem) {
-		var sModelName = this.getListBindingInfo().model;
+		const sModelName = this.getListBindingInfo().model;
 		return oItem && oItem.getBindingContext(sModelName);
 	};
 
@@ -397,8 +426,8 @@ sap.ui.define([
 	 * @returns {object} Returns a type map for property paths
 	 */
 	FilterableListContent.prototype._getTypesForConditions = function (oConditions) {
-		var oDelegate = this.getValueHelpDelegate();
-		var oValueHelp = this.getValueHelpInstance();
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelpInstance();
 		return oDelegate ? oDelegate.getTypesForConditions(oValueHelp, this, oConditions) : {};
 	};
 
@@ -410,9 +439,9 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	FilterableListContent.prototype.getFormattedTitle = function(iCount) {
-		var sTitle = ListContent.prototype.getFormattedTitle.apply(this, arguments);
+		let sTitle = ListContent.prototype.getFormattedTitle.apply(this, arguments);
 		if (!sTitle) {
-			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", iCount);
+			sTitle = this._oResourceBundle.getText(iCount ? "valuehelp.SELECTFROMLIST" : "valuehelp.SELECTFROMLISTNONUMBER", [iCount]);
 		}
 		return sTitle;
 	};
@@ -424,7 +453,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	FilterableListContent.prototype.getFormattedShortTitle = function() {
-		var sShortTitle = this.getShortTitle();
+		let sShortTitle = this.getShortTitle();
 		if (!sShortTitle) {
 			sShortTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.Shorttitle");
 		}
@@ -439,21 +468,21 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valuehelp.base.Container
 	 */
 	FilterableListContent.prototype.getFormattedTokenizerTitle = function(iCount) {
-		var sTokenizerTitle = this.getTokenizerTitle();
+		let sTokenizerTitle = this.getTokenizerTitle();
 		if (!sTokenizerTitle) {
-			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), iCount);
+			sTokenizerTitle = this._oResourceBundle.getText("valuehelp.SELECTFROMLIST.TokenizerTitle" + (iCount === 0 ? "NoCount" : ""), [iCount]);
 		}
 		return sTokenizerTitle;
 	};
 
 	FilterableListContent.prototype.isSearchSupported = function () {
 
-		var sFilterFields = this.getFilterFields();
-		var bSearchSupported = !!sFilterFields;
+		const sFilterFields = this.getFilterFields();
+		let bSearchSupported = !!sFilterFields;
 		if (sFilterFields === "$search") {
-			var oListBinding = this.getListBinding();
-			var oDelegate = this.getValueHelpDelegate();
-			var oDelegatePayload = this.getValueHelpInstance();
+			const oListBinding = this.getListBinding();
+			const oDelegate = this.getValueHelpDelegate();
+			const oDelegatePayload = this.getValueHelpInstance();
 			bSearchSupported = oDelegate && oDelegate.isSearchSupported(oDelegatePayload, this, oListBinding);
 		}
 
@@ -474,24 +503,10 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype._assignCollectiveSearchSelect = function () {
-		var oFilterBar = this._getPriorityFilterBar();
+		const oFilterBar = this._getPriorityFilterBar();
 		if (oFilterBar.setCollectiveSearch) {
 			oFilterBar.setCollectiveSearch(this._oCollectiveSearchSelect); // remove it if empty
 		}
-	};
-
-	FilterableListContent.prototype._applyFiltersIfNecessary = function () {
-		var oListBinding = this.getListBinding();
-		var oListBindingInfo = this.getListBindingInfo();
-		var bBindingSuspended = oListBinding && oListBinding.isSuspended();
-		var bBindingWillBeSuspended = !oListBinding && oListBindingInfo && oListBindingInfo.suspended;
-
-		if ((bBindingSuspended || bBindingWillBeSuspended) && !this.isTypeahead()) { // in dialog case do not resume suspended table on opening
-			return undefined;
-		}
-
-		// apply filters before opening
-		return this.applyFilters();
 	};
 
 	/**
@@ -503,14 +518,14 @@ sap.ui.define([
 	 */
 	FilterableListContent.prototype.onBeforeShow = function(bInitial) {
 		if (bInitial) {
-			var oDelegate = this.getValueHelpDelegate();
+			const oDelegate = this.getValueHelpDelegate();
 			return Promise.resolve(oDelegate && oDelegate.getFilterConditions(this.getValueHelpInstance(), this)).then(function (oConditions) {
 				this._oInitialFilterConditions = oConditions;
 
-				var oFilterBar = this._getPriorityFilterBar();
+				const oFilterBar = this._getPriorityFilterBar();
 				if (oFilterBar) { // apply initial conditions to filterbar if existing
-					var sFilterFields = this.getFilterFields();
-					var oNewConditions = merge({}, this._oInitialFilterConditions);
+					const sFilterFields = this.getFilterFields();
+					const oNewConditions = merge({}, this._oInitialFilterConditions);
 					return Promise.resolve(!oNewConditions[sFilterFields] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 						if (bInitial) {
 							_addSearchConditionToConditionMap(oNewConditions, sFilterFields, this._getPriorityFilterValue());
@@ -518,9 +533,7 @@ sap.ui.define([
 						}
 					}.bind(this))).then(function (oStateDiff) {
 						return StateUtil.applyExternalState(oFilterBar, oStateDiff);
-					}).then(this._applyFiltersIfNecessary.bind(this));
-				} else {
-					return this._applyFiltersIfNecessary();
+					});
 				}
 			}.bind(this));
 		}
@@ -532,9 +545,9 @@ sap.ui.define([
 	 * @param {object} oChange change object
 	 */
 	FilterableListContent.prototype._fireSelect = function (oChange) {
-		var oDelegate = this.getValueHelpDelegate();
-		var oValueHelp = this.getValueHelpInstance();
-		var oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oValueHelp, this, oChange) : oChange;
+		const oDelegate = this.getValueHelpDelegate();
+		const oValueHelp = this.getValueHelpInstance();
+		const oModifiedSelectionChange = oDelegate && oDelegate.modifySelectionBehaviour ? oDelegate.modifySelectionBehaviour(oValueHelp, this, oChange) : oChange;
 		if (oModifiedSelectionChange) {
 			this.fireSelect(oModifiedSelectionChange);
 		}
@@ -558,18 +571,18 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype.getCount = function (aConditions, sGroup) {
-		var oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
-		var oDelegatePayload = oDelegate && this.getValueHelpInstance();
+		const oDelegate = this.isValueHelpDelegateInitialized() && this.getValueHelpDelegate();
+		const oDelegatePayload = oDelegate && this.getValueHelpInstance();
 		return oDelegate && oDelegate.getCount ? oDelegate.getCount(oDelegatePayload, this, aConditions, sGroup) : ListContent.prototype.getCount.apply(this, arguments);
 	};
 
 	FilterableListContent.prototype._getLocalFilterValue = function() {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.getLocalFilterValue();
 	};
 
 	FilterableListContent.prototype._setLocalFilterValue = function(sValue) {
-		var oContainer = this.getParent();
+		const oContainer = this.getParent();
 		return oContainer && oContainer.setLocalFilterValue(sValue);
 	};
 
@@ -580,7 +593,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.ValueHelpDelegate
 	 */
 	FilterableListContent.prototype._getPriorityFilterValue = function() {
-		var sLocalFilterValue = this._getLocalFilterValue();
+		const sLocalFilterValue = this._getLocalFilterValue();
 
 		if (typeof sLocalFilterValue !== 'undefined') {
 			return sLocalFilterValue;
@@ -603,7 +616,7 @@ sap.ui.define([
 	};
 
 	function _addSearchConditionToConditionMap(oConditions, sFilterFields, sFilterValue) {
-		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition("Contains", [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
+		oConditions[sFilterFields] = sFilterValue ? [Condition.createCondition(OperatorName.Contains, [sFilterValue], undefined, undefined, ConditionValidated.NotValidated)] : [];
 		return;
 	}
 

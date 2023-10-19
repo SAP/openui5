@@ -3,7 +3,7 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/m/QuickViewPage",
+	"sap/m/DynamicDateRange",
 	"sap/ui/base/Event",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -17,7 +17,7 @@ sap.ui.define([
 ], function(
 	Button,
 	Label,
-	QuickViewPage,
+	DynamicDateRange,
 	Event,
 	XMLView,
 	JsControlTreeModifier,
@@ -224,6 +224,23 @@ sap.ui.define([
 				// assert
 				assert.strictEqual(iIndexInParentAggregation, 0, "then the index of the most recently created button is found correctly");
 			});
+		});
+
+		QUnit.test("moveAggregation in the same aggregation of the parent control", async function(assert) {
+			const oHBox = this.oXmlView.byId("hbox1");
+			const oMovedButton = this.oXmlView.byId("button1");
+			await JsControlTreeModifier.moveAggregation(oHBox, "items", oHBox, "items", oMovedButton, 2);
+			const oContentAggregation = await JsControlTreeModifier.getAggregation(oHBox, "items");
+			assert.strictEqual(oContentAggregation[2], oMovedButton);
+		});
+
+		QUnit.test("moveAggregation between different controls", async function(assert) {
+			const oSourceHBox = this.oXmlView.byId("hbox1");
+			const oTargetHBox = this.oXmlView.byId("hbox2");
+			const oMovedButton = this.oXmlView.byId("button1");
+			await JsControlTreeModifier.moveAggregation(oSourceHBox, "items", oTargetHBox, "items", oMovedButton, 1);
+			const oContentAggregation = await JsControlTreeModifier.getAggregation(oTargetHBox, "items");
+			assert.strictEqual(oContentAggregation[1], oMovedButton);
 		});
 
 		QUnit.test("createAndAddCustomData adds Custom Data properly", function(assert) {
@@ -598,20 +615,20 @@ sap.ui.define([
 		});
 
 		QUnit.test("when getProperty is called for a property of type object", function(assert) {
-			this.oControl = new QuickViewPage();
+			this.oControl = new DynamicDateRange();
 			var oSomeObject = new Button();
 			this.oControl.addDependent(oSomeObject); //for later cleanup
 
 			var mData = { key : "value"};
-			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", mData);
-			assert.deepEqual(this.oControl.getCrossAppNavCallback(), mData, "then serializable data (plain object) can be passed");
+			JsControlTreeModifier.setProperty(this.oControl, "value", mData);
+			assert.deepEqual(this.oControl.getValue(), mData, "then serializable data (plain object) can be passed");
 
 			var aData = [mData];
-			JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", aData);
-			assert.deepEqual(this.oControl.getCrossAppNavCallback(), aData, "then serializable data (array) can be passed");
+			JsControlTreeModifier.setProperty(this.oControl, "value", aData);
+			assert.deepEqual(this.oControl.getValue(), aData, "then serializable data (array) can be passed");
 
 			assert.throws(function() {
-				JsControlTreeModifier.setProperty(this.oControl, "crossAppNavCallback", oSomeObject);
+				JsControlTreeModifier.setProperty(this.oControl, "value", oSomeObject);
 			},
 			/TypeError/,
 			"then passing non JSON data will throw a message");
@@ -693,7 +710,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("attachEvent() — basic case", function (assert) {
-			return JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }])
+			return JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }], window.$sap__qunit_presshandler1)
 				.then(function () {
 					this.oButton.firePress();
 					assert.strictEqual(this.oSpy1.callCount, 1);
@@ -703,8 +720,8 @@ sap.ui.define([
 
 		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
 			return Promise.all([
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]),
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"])
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1),
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2)
 			]).then(function () {
 				this.oButton.firePress();
 				assert.strictEqual(this.oSpy1.callCount, 1);
@@ -717,14 +734,14 @@ sap.ui.define([
 		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
 			return JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1, "then an exception is thrown");
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1, "then an exception is thrown");
 				});
 		});
 
 		QUnit.test("attachEvent() — two equal event handler functions with a different set of parameters", function (assert) {
 			return Promise.all([
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"]),
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"])
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1),
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"], window.$sap__qunit_presshandler1)
 			]).then(function () {
 				this.oButton.firePress();
 				assert.strictEqual(this.oSpy1.callCount, 2);
@@ -734,9 +751,9 @@ sap.ui.define([
 		});
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
-			return JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+			return JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
 				.then(function () {
-					return JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1");
+					return JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler1", window.$sap__qunit_presshandler1);
 				}.bind(this))
 				.then(function () {
 					this.oButton.firePress();
@@ -746,11 +763,11 @@ sap.ui.define([
 
 		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
 			return Promise.all([
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1"),
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]),
-				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"])
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1),
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"], window.$sap__qunit_presshandler2),
+				JsControlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2)
 			]).then(function () {
-				return JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler2");
+				return JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_presshandler2", window.$sap__qunit_presshandler2);
 			}.bind(this))
 			.then(function () {
 				this.oButton.firePress();
@@ -764,7 +781,7 @@ sap.ui.define([
 		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
 			return JsControlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1);
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1);
 				});
 		});
 	});

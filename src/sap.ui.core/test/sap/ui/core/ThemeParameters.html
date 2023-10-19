@@ -12,42 +12,43 @@
 		</script>
 
 		<script>
-			try{
-				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
-			}
-
-			jQuery.sap.require("sap.ui.core.theming.Parameters");
-
-			var oListBox = new sap.ui.commons.ListBox({
-				height : "480px",
-				displaySecondaryValues: true
-			}).placeAt("content");
-
-
-			function fetchParameters() {
-				var mAllParameters = sap.ui.core.theming.Parameters.get();
-
-				oListBox.destroyItems();
-				for (var name in mAllParameters) {
-					oItem = new sap.ui.core.ListItem();
-					oItem.setText(name);
-					oItem.setAdditionalText(mAllParameters[name]);
-					oListBox.addItem(oItem);
+			sap.ui.reuire(["sap/ui/core/Theming"], function(Theming) {
+				try{
+					sap.ui.getCore().loadLibrary("sap.ui.commons");
+				}catch(e){
+					alert("This test page requires the library 'sap.ui.commons' which is not available.");
+					throw(e);
 				}
-			}
+
+				jQuery.sap.require("sap.ui.core.theming.Parameters");
+
+				var oListBox = new sap.ui.commons.ListBox({
+					height : "480px",
+					displaySecondaryValues: true
+				}).placeAt("content");
 
 
-			// react on theme change
-			sap.ui.getCore().attachThemeChanged(function(evt){
+				function fetchParameters() {
+					var mAllParameters = sap.ui.core.theming.Parameters.get();
+
+					oListBox.destroyItems();
+					for (var name in mAllParameters) {
+						oItem = new sap.ui.core.ListItem();
+						oItem.setText(name);
+						oItem.setAdditionalText(mAllParameters[name]);
+						oListBox.addItem(oItem);
+					}
+				}
+
+
+				// react on theme change
+				Theming.attachApplied(function(evt){
+					fetchParameters();
+				});
+
+
 				fetchParameters();
 			});
-
-
-			fetchParameters();
-
 		</script>
 	</head>
 

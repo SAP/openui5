@@ -39,7 +39,7 @@ sap.ui.define([
 						}
 					}
 				});
-				var oData = oModel.getData(sPath);
+				var oData = oModel.getProperty(sPath);
 				//if there is no data the model has to request new data
 				if (!oData) {
 					oView.setBusyIndicatorDelay(0);
@@ -68,7 +68,7 @@ sap.ui.define([
 
 		_checkIfProductAvailable: function(sPath) {
 			var oModel = this.getModel();
-			var oData = oModel.getData(sPath);
+			var oData = oModel.getProperty(sPath);
 
 			// show not found page
 			if (!oData) {

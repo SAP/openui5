@@ -5,13 +5,13 @@
 sap.ui.define([
 	"sap/ui/fl/changeHandler/condenser/Classification",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/requireAsync",
 	"sap/base/util/merge",
 	"sap/base/util/ObjectPath"
 ], function(
 	CondenserClassification,
 	Base,
-	DelegateMediatorAPI,
+	requireAsync,
 	merge,
 	ObjectPath
 ) {
@@ -29,6 +29,7 @@ sap.ui.define([
 			// that was replaced by default OData V2 delegate
 			return "sap.ui.model.odata.v2.ODataModel";
 		}
+		return undefined;
 	}
 
 	/**
@@ -40,7 +41,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 */
-	var BaseAddViaDelegate = {
+	const BaseAddViaDelegate = {
 
 		/**
 		 * Returns an instance of the addViaDelegate change handler
@@ -57,7 +58,7 @@ sap.ui.define([
 		 * @return {any} The addViaDelegate change handler object
 		 * @public
 		 */
-		createAddViaDelegateChangeHandler: function(mAddViaDelegateSettings) {
+		createAddViaDelegateChangeHandler(mAddViaDelegateSettings) {
 			/** **************** Utility functions with access to mAddViaDelegateSettings ******************/
 
 			function getNewFieldId(sNewPropertyId) {
@@ -79,70 +80,61 @@ sap.ui.define([
 				return evaluateSettingsFlag(oChangeODataInformation, "skipCreateLayout");
 			}
 
-			function checkCondensingEnabled(mChange, mPropertyBag) {
+			async function checkCondensingEnabled(mChange, mPropertyBag) {
 				// createLayout side effects might break condensing
 				// Only enable condensing if the delegate doesn't create a layout
 				// or the handler opts out
 
-				var oControl = mPropertyBag.modifier.bySelector(mChange.getSelector(), mPropertyBag.appComponent);
-				var sModelType = getModelType(mChange.getContent());
+				const oControl = mPropertyBag.modifier.bySelector(mChange.getSelector(), mPropertyBag.appComponent);
+				const sModelType = getModelType(mChange.getContent());
 
-				return DelegateMediatorAPI.getDelegateForControl({
+				const DelegateMediatorAPI = await requireAsync("sap/ui/fl/apply/api/DelegateMediatorAPI");
+				const oDelegate = await DelegateMediatorAPI.getDelegateForControl({
 					control: oControl,
 					modifier: mPropertyBag.modifier,
 					modelType: sModelType,
 					supportsDefault: mAddViaDelegateSettings.supportsDefault
-				})
-				.then(function(oDelegate) {
-					var bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
-					return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
 				});
+				const bCondensingSupported = !isFunction(oDelegate.instance.createLayout);
+				return bCondensingSupported || skipCreateLayout(mChange.getSupportInformation().oDataInformation);
 			}
 
-			function getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate) {
-				var mDelegateSettings = merge({}, mDelegatePropertyBag);
+			async function getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate) {
+				const mDelegateSettings = merge({}, mDelegatePropertyBag);
 				mDelegateSettings.fieldSelector.id = getNewFieldId(mDelegateSettings.fieldSelector.id);
-				return oDelegate.createControlForProperty(mDelegateSettings)
-				.then(function(mSpecificControlInfo) {
-					if (skipCreateLabel(oChangeODataInformation)) {
-						return mSpecificControlInfo;
-					}
-					var sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
-					mDelegatePropertyBag.labelFor = sNewFieldId;
-					return oDelegate.createLabel(mDelegatePropertyBag).then(function(oLabel) {
-						return {
-							label: oLabel,
-							control: mSpecificControlInfo.control,
-							valueHelp: mSpecificControlInfo.valueHelp
-						};
-					});
-				});
+				const mSpecificControlInfo = await oDelegate.createControlForProperty(mDelegateSettings);
+				if (skipCreateLabel(oChangeODataInformation)) {
+					return mSpecificControlInfo;
+				}
+				const sNewFieldId = mDelegatePropertyBag.modifier.getId(mSpecificControlInfo.control);
+				mDelegatePropertyBag.labelFor = sNewFieldId;
+				const oLabel = await oDelegate.createLabel(mDelegatePropertyBag);
+				return {
+					label: oLabel,
+					control: mSpecificControlInfo.control,
+					valueHelp: mSpecificControlInfo.valueHelp
+				};
 			}
 
-			function getControlsFromDelegate(oChangeContent, mDelegate, mPropertyBag, oChangeODataInformation) {
-				var mDelegatePropertyBag = merge({
+			async function getControlsFromDelegate(oChangeContent, mDelegate, mPropertyBag, oChangeODataInformation) {
+				const mDelegatePropertyBag = merge({
 					aggregationName: mAddViaDelegateSettings.aggregationName,
 					payload: mDelegate.payload || {},
 					parentSelector: oChangeContent.parentId
 				}, mPropertyBag);
-				var oDelegate = mDelegate.instance;
-
-				return Promise.resolve()
-				.then(function() {
-					if (
-						isFunction(oDelegate.createLayout)
-							&& !skipCreateLayout(oChangeODataInformation)
-					) {
-						return oDelegate.createLayout(mDelegatePropertyBag);
-					}
-				})
-				.then(function(mLayoutControlInfo) {
-					if (ObjectPath.get("control", mLayoutControlInfo)) {
-						mLayoutControlInfo.layoutControl = true;
-						return mLayoutControlInfo;
-					}
-					return getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate);
-				});
+				const oDelegate = mDelegate.instance;
+				let mLayoutControlInfo;
+				if (
+					isFunction(oDelegate.createLayout)
+						&& !skipCreateLayout(oChangeODataInformation)
+				) {
+					mLayoutControlInfo = await oDelegate.createLayout(mDelegatePropertyBag);
+				}
+				if (ObjectPath.get("control", mLayoutControlInfo)) {
+					mLayoutControlInfo.layoutControl = true;
+					return mLayoutControlInfo;
+				}
+				return getDelegateControlForPropertyAndLabel(oChangeODataInformation, mDelegatePropertyBag, oDelegate);
 			}
 
 			/** **************** Change Handler ******************/
@@ -158,12 +150,12 @@ sap.ui.define([
 				 * @returns {Promise<undefined>} to wait for execution
 				 * @public
 				 */
-				applyChange: function(oChange, oControl, mPropertyBag) {
-					var oAppComponent = mPropertyBag.appComponent;
-					var oChangeContent = oChange.getContent();
-					var oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
-					var mFieldSelector = oChangeContent.newFieldSelector;
-					var mCreateProperties = {
+				async applyChange(oChange, oControl, mPropertyBag) {
+					const oAppComponent = mPropertyBag.appComponent;
+					const oChangeContent = oChange.getContent();
+					const oChangeODataInformation = oChange.getSupportInformation().oDataInformation;
+					const mFieldSelector = oChangeContent.newFieldSelector;
+					const mCreateProperties = {
 						appComponent: mPropertyBag.appComponent,
 						view: mPropertyBag.view,
 						fieldSelector: mFieldSelector,
@@ -173,51 +165,55 @@ sap.ui.define([
 					};
 					// Check if the change is applicable
 					if (mPropertyBag.modifier.bySelector(mFieldSelector, oAppComponent, mPropertyBag.view)) {
-						return Base.markAsNotApplicable(
-							"Control to be created already exists:" + (mFieldSelector.id || mFieldSelector),
+						await Base.markAsNotApplicable(
+							`Control to be created already exists:${mFieldSelector.id || mFieldSelector}`,
 							/* bAsync */true
 						);
+						return;
 					}
-					var oRevertData = {
+					const oRevertData = {
 						newFieldSelector: mFieldSelector
 					};
-					// revert data will be enhanced later on, but should be attached to the change so that the addProperty-hook can access it and enhance it
+					// revert data will be enhanced later on, but should be attached to the change
+					// so that the addProperty-hook can access it and enhance it
 					oChange.setRevertData(oRevertData);
 
-					var sModelType = getModelType(oChangeContent);
+					const sModelType = getModelType(oChangeContent);
 
-					return DelegateMediatorAPI.getDelegateForControl({
+					const DelegateMediatorAPI = await requireAsync("sap/ui/fl/apply/api/DelegateMediatorAPI");
+					const mDelegate = await DelegateMediatorAPI.getDelegateForControl({
 						control: oControl,
 						modifier: mPropertyBag.modifier,
 						modelType: sModelType,
 						supportsDefault: mAddViaDelegateSettings.supportsDefault
-					}).then(function(mDelegate) {
-						return getControlsFromDelegate(oChangeContent, mDelegate, mCreateProperties, oChangeODataInformation);
-					}).then(function(mInnerControls) {
-						var mAddPropertySettings = merge({},
-							{
-								control: oControl,
-								innerControls: mInnerControls,
-								change: oChange
-							},
-							mPropertyBag
-						);
-						//------------------------
-						// Call 'addProperty' hook!
-						//------------------------
-						return Promise.resolve()
-						.then(function() {
-							return mAddViaDelegateSettings.addProperty(mAddPropertySettings);
-						})
-						.then(function() {
-							if (mInnerControls.valueHelp) {
-								var oValueHelpSelector = mPropertyBag.modifier.getSelector(mPropertyBag.modifier.getId(mInnerControls.valueHelp), oAppComponent);
-								var oRevertData = oChange.getRevertData();
-								oRevertData.valueHelpSelector = oValueHelpSelector;
-								oChange.setRevertData(oRevertData);
-							}
-						});
 					});
+					const mInnerControls = await getControlsFromDelegate(
+						oChangeContent,
+						mDelegate,
+						mCreateProperties,
+						oChangeODataInformation
+					);
+					const mAddPropertySettings = merge({},
+						{
+							control: oControl,
+							innerControls: mInnerControls,
+							change: oChange
+						},
+						mPropertyBag
+					);
+					//------------------------
+					// Call 'addProperty' hook!
+					//------------------------
+					await mAddViaDelegateSettings.addProperty(mAddPropertySettings);
+					if (mInnerControls.valueHelp) {
+						const oValueHelpSelector = mPropertyBag.modifier.getSelector(
+							mPropertyBag.modifier.getId(mInnerControls.valueHelp),
+							oAppComponent
+						);
+						const oRevertData = oChange.getRevertData();
+						oRevertData.valueHelpSelector = oValueHelpSelector;
+						oChange.setRevertData(oRevertData);
+					}
 				},
 
 				/**
@@ -231,50 +227,39 @@ sap.ui.define([
 				 * @return {boolean} True if successful
 				 * @public
 				 */
-				revertChange: function(oChange, oControl, mPropertyBag) {
-					var oAppComponent = mPropertyBag.appComponent;
-					var oModifier = mPropertyBag.modifier;
-					var mFieldSelector = oChange.getRevertData().newFieldSelector;
-					var mValueHelpSelector = oChange.getRevertData().valueHelpSelector;
+				async revertChange(oChange, oControl, mPropertyBag) {
+					const oAppComponent = mPropertyBag.appComponent;
+					const oModifier = mPropertyBag.modifier;
+					const mFieldSelector = oChange.getRevertData().newFieldSelector;
+					const mValueHelpSelector = oChange.getRevertData().valueHelpSelector;
 
-					var oNewField = oModifier.bySelector(mFieldSelector, oAppComponent);
+					const oNewField = oModifier.bySelector(mFieldSelector, oAppComponent);
 
-					var oParentControl = oChange.getDependentControl(mAddViaDelegateSettings.parentAlias, mPropertyBag)
+					const oParentControl = oChange.getDependentControl(mAddViaDelegateSettings.parentAlias, mPropertyBag)
 						|| /* fallback and legacy changes */ oControl;
 
-					return Promise.resolve()
-					.then(oModifier.removeAggregation.bind(oModifier, oParentControl, mAddViaDelegateSettings.aggregationName, oNewField))
-					.then(oModifier.destroy.bind(oModifier, oNewField))
-					.then(function() {
-						if (mValueHelpSelector) {
-							var oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
-							return Promise.resolve()
-							.then(oModifier.removeAggregation.bind(oModifier, oParentControl, "dependents", oValueHelp))
-							.then(oModifier.destroy.bind(oModifier, oValueHelp));
-						}
-					})
-					.then(function() {
-						var mAddPropertySettings = merge({},
-							{
-								control: oControl,
-								change: oChange
-							},
-							mPropertyBag
-						);
+					await oModifier.removeAggregation(oParentControl, mAddViaDelegateSettings.aggregationName, oNewField);
+					await oModifier.destroy(oNewField);
+					if (mValueHelpSelector) {
+						const oValueHelp = oModifier.bySelector(mValueHelpSelector, oAppComponent);
+						await oModifier.removeAggregation(oParentControl, "dependents", oValueHelp);
+						await oModifier.destroy(oValueHelp);
+					}
+					const mAddPropertySettings = merge({},
+						{
+							control: oControl,
+							change: oChange
+						},
+						mPropertyBag
+					);
 
-						if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
-							//-------------------------------------
-							// Call 'revertAdditionalControls' hook!
-							//-------------------------------------
-							return Promise.resolve()
-							.then(function() {
-								return mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
-							})
-							.then(function() {
-								oChange.resetRevertData();
-							});
-						}
-					});
+					if (isFunction(mAddViaDelegateSettings.revertAdditionalControls)) {
+						//-------------------------------------
+						// Call 'revertAdditionalControls' hook!
+						//-------------------------------------
+						await mAddViaDelegateSettings.revertAdditionalControls(mAddPropertySettings);
+						oChange.resetRevertData();
+					}
 				},
 
 				/**
@@ -294,9 +279,9 @@ sap.ui.define([
 				 * @param {object} mPropertyBag.view Application view
 				 * @public
 				 */
-				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
-					var oAppComponent = mPropertyBag.appComponent;
-					var oContent = {};
+				completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag) {
+					const oAppComponent = mPropertyBag.appComponent;
+					const oContent = {};
 					if (mSpecificChangeInfo.parentId) {
 						if (isFunction(mAddViaDelegateSettings.mapParentIdIntoChange)) {
 							mAddViaDelegateSettings.mapParentIdIntoChange(oChange, mSpecificChangeInfo, mPropertyBag);
@@ -339,8 +324,8 @@ sap.ui.define([
 					oChange.setContent(oContent);
 				},
 
-				getChangeVisualizationInfo: function(oChange) {
-					var oRevertData = oChange.getRevertData();
+				getChangeVisualizationInfo(oChange) {
+					const oRevertData = oChange.getRevertData();
 					if (oRevertData && oRevertData.labelSelector) {
 						return {
 							affectedControls: [oRevertData.labelSelector]
@@ -351,36 +336,34 @@ sap.ui.define([
 					};
 				},
 
-				getCondenserInfo: function(oChange, mPropertyBag) {
-					return checkCondensingEnabled(oChange, mPropertyBag)
-					.then(function(bCondensingEnabled) {
-						if (!bCondensingEnabled) {
-							return undefined;
-						}
+				async getCondenserInfo(oChange, mPropertyBag) {
+					const bCondensingEnabled = await checkCondensingEnabled(oChange, mPropertyBag);
+					if (!bCondensingEnabled) {
+						return undefined;
+					}
 
-						if (
-							!oChange.getContent().newFieldSelector
-								|| !oChange.getContent().parentId
-								|| !mAddViaDelegateSettings.aggregationName
-						) {
-							return undefined;
-						}
+					if (
+						!oChange.getContent().newFieldSelector
+							|| !oChange.getContent().parentId
+							|| !mAddViaDelegateSettings.aggregationName
+					) {
+						return undefined;
+					}
 
-						return {
-							affectedControl: oChange.getContent().newFieldSelector,
-							classification: CondenserClassification.Create,
-							targetContainer: oChange.getContent().parentId,
-							targetAggregation: mAddViaDelegateSettings.aggregationName,
-							setTargetIndex: function(oChange, iNewTargetIndex) {
-								var oChangeContent = oChange.getContent();
-								oChangeContent.newFieldIndex = iNewTargetIndex;
-								oChange.setContent(oChangeContent);
-							},
-							getTargetIndex: function(oChange) {
-								return oChange.getContent().newFieldIndex;
-							}
-						};
-					});
+					return {
+						affectedControl: oChange.getContent().newFieldSelector,
+						classification: CondenserClassification.Create,
+						targetContainer: oChange.getContent().parentId,
+						targetAggregation: mAddViaDelegateSettings.aggregationName,
+						setTargetIndex(oChange, iNewTargetIndex) {
+							const oChangeContent = oChange.getContent();
+							oChangeContent.newFieldIndex = iNewTargetIndex;
+							oChange.setContent(oChangeContent);
+						},
+						getTargetIndex(oChange) {
+							return oChange.getContent().newFieldIndex;
+						}
+					};
 				}
 			};
 		}

@@ -142,6 +142,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/support/library", "./CoreHelper.su
 
 	/***
 	 * Checks for custom styles applied on UI elements
+	 *
+	 * @deprecated Since 1.119
 	 */
 	var oCheckForLegacyParametersGet = {
 		id: "checkForLegacyParametersGet",
@@ -171,7 +173,9 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/support/library", "./CoreHelper.su
 	};
 
 	return [
+		/** @deprecated */
 		oCheckForLegacyParametersGet,
+
 		oCssCheckCustomStyles,
 		oCssCheckCustomStylesThatAffectControls
 	];

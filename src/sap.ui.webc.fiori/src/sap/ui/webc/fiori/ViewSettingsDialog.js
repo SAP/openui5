@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.ViewSettingsDialog.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/ViewSettingsDialog"
 ], function(WebComponent, library) {
@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> component helps the user to sort data within a list or a table. It consists of several lists like <code>Sort order</code> which is built-in and <code>Sort By</code> and <code>Filter By</code> lists, for which you must be provide items(<code>sap.ui.webc.fiori.SortItem</code> & <code>sap.ui.webc.fiori.FilterItem</code> respectively) These options can be used to create sorters for a table.
@@ -168,7 +168,19 @@ sap.ui.define([
 	});
 
 	/**
-	 * Sets a JavaScript object, as settings to the <code>sap.ui.webc.fiori.ViewSettingsDialog</code>. This method can be used after the dialog is initially open, as the dialog need to set its initial settings. The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> throws an event called "before-open", this can be used as trigger point. The object should have the following format: <code> {sortOrder: "Ascending", sortBy: "Name", filters: [{"Filter 1": ["Some filter 1", "Some filter 2"]}, {"Filter 2": ["Some filter 4"]}]} </code>
+	 * Sets a JavaScript object, as settings to the <code>sap.ui.webc.fiori.ViewSettingsDialog</code>. This method can be used after the dialog is initially open, as the dialog needs to set its initial settings.<br>
+	 * The <code>sap.ui.webc.fiori.ViewSettingsDialog</code> throws an event called "before-open", which can be used as a trigger point.<br>
+	 * The object should have the following format:<br>
+	 * <pre>
+	 * {
+	 * 	sortOrder: "Ascending",
+	 * 	sortBy: "Name",
+	 * 	filters: [
+	 * 		{"Filter 1": ["Some filter 1", "Some filter 2"]},
+	 * 		{"Filter 2": ["Some filter 4"]},
+	 * 	]
+	 * }
+	 * </pre>
 	 * @param {object} settings predefined settings.
 	 * @public
 	 * @name sap.ui.webc.fiori.ViewSettingsDialog#setConfirmedSettings

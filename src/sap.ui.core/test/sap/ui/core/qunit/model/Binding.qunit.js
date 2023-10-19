@@ -4,14 +4,18 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/EventProvider",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason"
-], function (Log, EventProvider, Binding, ChangeReason) {
+], function (Log, EventProvider, Messaging, Binding, ChangeReason) {
 	/*global QUnit, sinon*/
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.Binding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
@@ -60,16 +64,16 @@ sap.ui.define([
 				getControlMessages : function () {},
 				reset : function () {}
 			},
-			oMessageManager = {removeMessages : function () {}};
+			oMessaging = {removeMessages : function () {}};
 
 		assert.strictEqual(oBinding.getContext(), oContext);
 
-		this.mock(sap.ui).expects("require").withExactArgs("sap/ui/core/message/MessageManager")
-			.returns(oMessageManager);
+		this.mock(sap.ui).expects("require").withExactArgs("sap/ui/core/Messaging")
+			.returns(oMessaging);
 		this.mock(oBinding).expects("getDataState").withExactArgs().twice().returns(oDataState);
 		this.mock(oDataState).expects("getControlMessages").withExactArgs()
 			.returns("~messages");
-		this.mock(oMessageManager).expects("removeMessages").withExactArgs("~messages", true);
+		this.mock(oMessaging).expects("removeMessages").withExactArgs("~messages", true);
 		this.mock(oDataState).expects("reset").withExactArgs();
 		this.mock(oBinding).expects("checkDataState").withExactArgs();
 		this.mock(oBinding).expects("_fireChange").withExactArgs({
@@ -202,15 +206,14 @@ sap.ui.define([
 				getControlMessages : function () {},
 				setModelMessages : function () {}
 			},
-			oDataStateMock = this.mock(oDataState),
-			oMessageManager = sap.ui.getCore().getMessageManager();
+			oDataStateMock = this.mock(oDataState);
 
 		if (oFixture.dataStateSet) {
 			oBinding.oDataState = oDataState;
 
 			oDataStateMock.expects("getControlMessages")
 				.withExactArgs().returns("~oControlMessages");
-			this.mock(oMessageManager).expects("removeMessages")
+			this.mock(Messaging).expects("removeMessages")
 				.withExactArgs("~oControlMessages", true);
 			oDataStateMock.expects("setModelMessages").withExactArgs();
 			oDataStateMock.expects("changed").withExactArgs().returns(oFixture.dataStateChanged);

@@ -61,6 +61,8 @@
 // Separator
 @_sap_m_IconTabBar_SeparatorHeight: 2rem;
 @_sap_m_IconTabBar_SeparatorMargin: 0.75rem 0.25rem 0;
+@_sap_m_IconTabBar_TextOnlySeparatorMargin: 0.375rem 0.25rem 0.375rem;
+@_sap_m_IconTabBar_TextOnlySeparatorMarginCompact: @_sap_m_IconTabBar_TextOnlySeparatorMargin;
 @_sap_m_IconTabBar_SeparatorIconHeight: 2.75rem;
 @__sap_m_IconTabBar_SeparatorIconLineHeight: 2.75rem;
 
@@ -225,7 +227,7 @@
 			border: 1px solid @sapButton_BorderColor;
 
 			.sapMITHShowSubItemsIcon {
-				color: @sapButton_TextColor;
+				color: @sapUiBaseText;
 			}
 		}
 	}
@@ -233,8 +235,8 @@
 	.sapMITHEndOverflow:hover,
 	.sapMITHStartOverflow:hover {
 		.sapMITBItem {
-			background: @sapButton_Background;
-			border: 1px solid @_sap_m_IconTabBar_ShellOverflowHoverBorderColor;
+			background: @sapButton_Hover_Background;
+			border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorHover;
 		}
 	}
 
@@ -247,7 +249,7 @@
 
 	//Arrow button
 	.sapMITBFilterWithItems .sapMITBFilterExpandBtn .sapMBtnIcon  {
-		color: @sapButton_TextColor;
+		color: @sapUiBaseText;
 	}
 }
 
@@ -384,7 +386,7 @@
 			border-color: @sapContent_Selected_ForegroundColor;
 		}
 		.sapMBtnIcon {
-			color: @_sap_m_IconTabBar_SelectedTextColor;
+			color: @_sap_m_IconTabBar_SelectedTextColor !important;
 		}
 	}
 
@@ -464,6 +466,28 @@
 .sapMITBFilterDefault {
 	border-color: @sapUiContentSelectedForegroundColor;
 	color: @sapUiContentSelectedForegroundColor;
+
+	.sapMITBFilterExpandBtnSeparator {
+		border-color: @sapUiBaseText;
+	}
+
+	.sapMBtnIcon {
+		color: @sapUiBaseText !important;
+	}
+}
+
+.sapMITBFilterDefault {
+	.sapMITBFilterWrapper:hover {
+		.sapMITBText {
+			color: @sapUiContentSelectedForegroundColor;
+		}
+	}
+
+	.sapMITBFilterExpandBtn:hover {
+		.sapMBtnIcon {
+			color: @sapUiBaseText;
+		}
+	}
 }
 
 .sapMITBFilterNeutral {
@@ -730,10 +754,11 @@ html.sap-desktop {
 			.sapMITBItem {
 				&:active{
 					background-color: @_sap_m_IconTabBar_Overflow_BackgroundColorPressed;
+					border: 1px solid @_sap_m_IconTabBar_Overflow_BorderColorPressed;
 				}
 				&:active::after {
-					// when overflow is pressed, make the focus white
-					border-color: @_sap_m_IconTabBar_Overflow_TextColorPressed;
+					// when overflow is pressed, hide the focus
+					border-color: transparent;
 				}
 			}
 		}

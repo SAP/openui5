@@ -92,11 +92,11 @@ sap.ui.define([
 						'<Label text="visibleLabel" stashed="false"></Label>' +
 						'<Label text="stashedInvisibleLabel" visible="false" stashed="true"></Label>' +
 					'</VBox>' +
-					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" crossAppNavCallback="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
-					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" crossAppNavCallback="\{&quot;key&quot;:&quot;value&quot;\}" />' +
-					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" crossAppNavCallback="{\'key\': \'value\'}" />' +
-					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_BINDING + '" crossAppNavCallback="{/foo}" />' +
-					'<QuickViewPage id="' + ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" crossAppNavCallback="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
+					'<DynamicDateRange id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT + '" value="\\{&quot;key&quot;:&quot;value&quot;\\}" />' +
+					'<DynamicDateRange id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2 + '" value="\{&quot;key&quot;:&quot;value&quot;\}" />' +
+					'<DynamicDateRange id="' + ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3 + '" value="{\'key\': \'value\'}" />' +
+					'<DynamicDateRange id="' + ID_OF_CONTROL_WITH_PROP_BINDING + '" value="{/foo}" />' +
+					'<DynamicDateRange id="' + ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY + '" value="[\\{&quot;key&quot;:&quot;value&quot;\\}]" />' +
 					'<f:DynamicPageTitle id="' + ID_OF_CONTROL_WITH_INLINE_CUSTOM_DATA + '" app:someInlineAppCustomData="inlineValue" />' +
 				'</mvc:View>';
 			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
@@ -406,6 +406,30 @@ sap.ui.define([
 				});
 		});
 
+		QUnit.test("a child is moved inside the default aggregation", async function (assert) {
+			const oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+			const oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
+			await XmlTreeModifier.moveAggregation(oVBox, "items", oVBox, "items", oLabel, 1);
+			const aChildNodes = XmlTreeModifier._children(oVBox);
+			assert.strictEqual(aChildNodes.length, 3);
+			assert.strictEqual(aChildNodes[1].localName, "Label", "Label was moved to the right index");
+			assert.strictEqual(aChildNodes[1].namespaceURI, "sap.m");
+		});
+
+		QUnit.test("a child is moved from one control to another", async function (assert) {
+			const oSourceVBox = XmlTreeModifier._children(this.oXmlView)[0];
+			const oTargetHBox = XmlTreeModifier._children(this.oXmlView)[1];
+			const oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
+			await XmlTreeModifier.moveAggregation(oSourceVBox, "items", oTargetHBox, "items", oLabel, 1);
+			const aTargetHBoxChildNodes = XmlTreeModifier._children(oTargetHBox);
+			const aTargetItemChildNodes = XmlTreeModifier._children(aTargetHBoxChildNodes[1]);
+			assert.strictEqual(aTargetItemChildNodes.length, 2);
+			assert.strictEqual(aTargetItemChildNodes[1].localName, "Label", "Label was added to target parent with the right index");
+			assert.strictEqual(aTargetItemChildNodes[1].namespaceURI, "sap.m");
+			const aSourceItemChildNodes = XmlTreeModifier._children(oSourceVBox);
+			assert.strictEqual(aSourceItemChildNodes.length, 2, "Label was removed from source parent");
+		});
+
 		QUnit.test("a child is removed from the aggregation and then destroyed + destroy without removing", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oLabel = XmlTreeModifier._children(this.oXmlView)[0].childNodes[2];
@@ -529,7 +553,7 @@ sap.ui.define([
 
 		QUnit.test("getProperty for properties of type object (double escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+			return XmlTreeModifier.getProperty(oControl, "value")
 				.then(function (mData) {
 					assert.deepEqual(mData, { key : "value"}, "returns json value");
 				});
@@ -537,7 +561,7 @@ sap.ui.define([
 
 		QUnit.test("getProperty for properties of type object (single escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_2, this.oXmlView);
-			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+			return XmlTreeModifier.getProperty(oControl, "value")
 				.then(function (mData) {
 					assert.deepEqual(mData, { key : "value"}, "returns json value");
 				});
@@ -545,7 +569,7 @@ sap.ui.define([
 
 		QUnit.test("getProperty for properties of type object (single quote case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT_3, this.oXmlView);
-			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+			return XmlTreeModifier.getProperty(oControl, "value")
 				.then(function (mData) {
 					assert.deepEqual(mData, { key : "value"}, "returns json value");
 				});
@@ -553,7 +577,7 @@ sap.ui.define([
 
 		QUnit.test("getProperty for properties of type object with an array (curly braces escaped case)", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_ARRAY, this.oXmlView);
-			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+			return XmlTreeModifier.getProperty(oControl, "value")
 				.then(function (mData) {
 					assert.deepEqual(mData, [{ "key" : "value"}], "returns array value");
 				});
@@ -561,7 +585,7 @@ sap.ui.define([
 
 		QUnit.test("getProperty for properties controlled by a binding", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
-			return XmlTreeModifier.getProperty(oControl, "crossAppNavCallback")
+			return XmlTreeModifier.getProperty(oControl, "value")
 				.then(function (mData) {
 					assert.equal(mData, undefined, "nothing is returned");
 				});
@@ -569,23 +593,23 @@ sap.ui.define([
 
 		QUnit.test("setProperty for properties of type object", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", { key2 : 2});
+			XmlTreeModifier.setProperty(oControl, "value", { key2 : 2});
 
-			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
+			var sStringifiedData = oControl.getAttribute("value");
 			assert.strictEqual(sStringifiedData, '\\{"key2":2\\}', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("setProperty for properties of type array", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			XmlTreeModifier.setProperty(oControl, "crossAppNavCallback", [{ key2 : 2}]);
+			XmlTreeModifier.setProperty(oControl, "value", [{ key2 : 2}]);
 
-			var sStringifiedData = oControl.getAttribute("crossAppNavCallback");
+			var sStringifiedData = oControl.getAttribute("value");
 			assert.strictEqual(sStringifiedData, '[\\{"key2":2\\}]', "returns json value stringified and escaped");
 		});
 
 		QUnit.test("getPropertyBinding for bound properties", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
-			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "value");
 			var oBindingInfo = {
 				path: "/foo"
 			};
@@ -594,7 +618,7 @@ sap.ui.define([
 
 		QUnit.test("getPropertyBinding for unbound properties of type object", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback");
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "value");
 			assert.equal(mData, undefined, "nothing is returned");
 		});
 
@@ -606,23 +630,23 @@ sap.ui.define([
 
 		QUnit.test("getPropertyBinding for empty properties", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_BINDING, this.oXmlView);
-			var mData = XmlTreeModifier.getPropertyBinding(oControl, "crossAppNavCallback2");
+			var mData = XmlTreeModifier.getPropertyBinding(oControl, "value2");
 			assert.equal(mData, undefined, "nothing is returned");
 		});
 
 		QUnit.test("setPropertyBinding with a binding string", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", "{/foo}");
-			assert.equal(oControl.getAttribute("crossAppNavCallback"), "{/foo}", "the string was set");
+			XmlTreeModifier.setPropertyBinding(oControl, "value", "{/foo}");
+			assert.equal(oControl.getAttribute("value"), "{/foo}", "the string was set");
 		});
 
 		QUnit.test("setPropertyBinding with a binding info object", function(assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
-			var oValueBefore = oControl.getAttribute("crossAppNavCallback");
+			var oValueBefore = oControl.getAttribute("value");
 			assert.throws(function() {
-				XmlTreeModifier.setPropertyBinding(oControl, "crossAppNavCallback", {path: "foo"});
+				XmlTreeModifier.setPropertyBinding(oControl, "value", {path: "foo"});
 			}, Error, "the function throws an error");
-			assert.deepEqual(oValueBefore, oControl.getAttribute("crossAppNavCallback"), "the property was not changed");
+			assert.deepEqual(oValueBefore, oControl.getAttribute("value"), "the property was not changed");
 		});
 
 		function getVisibleLabel(oXmlView) {
@@ -667,8 +691,8 @@ sap.ui.define([
 		QUnit.test("applySetting with property of type object", function (assert) {
 			var oControl = XmlTreeModifier._byId(ID_OF_CONTROL_WITH_PROP_TYPE_OBJECT, this.oXmlView);
 			var mData = { key2 : 2};
-			return XmlTreeModifier.applySettings(oControl, {crossAppNavCallback: mData})
-				.then(XmlTreeModifier.getProperty.bind(XmlTreeModifier, oControl, "crossAppNavCallback"))
+			return XmlTreeModifier.applySettings(oControl, {value: mData})
+				.then(XmlTreeModifier.getProperty.bind(XmlTreeModifier, oControl, "value"))
 				.then(function (oProperty) {
 					assert.deepEqual(oProperty, mData, "the property of type object returns in JSON notation");
 				});
@@ -1138,7 +1162,7 @@ sap.ui.define([
 		}
 	}, function () {
 		QUnit.test("attachEvent() — basic case", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1151,7 +1175,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("attachEvent() — basic case with parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }])
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1", { foo: "bar" }], window.$sap__qunit_presshandler1)
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1164,8 +1188,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("attachEvent() — two different event handlers with different set of parameters for the same event name", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1182,13 +1206,13 @@ sap.ui.define([
 		QUnit.test("attachEvent() — attempt to attach non-existent function", function (assert) {
 			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1);
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1);
 				});
 		});
 
 		QUnit.test("attachEvent() — two equal event handlers with a different set of parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"])
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"]))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", ["param0", "param1"], window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", ["param2", "param3"], window.$sap__qunit_presshandler1))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function(oView) {
 						this.oView = oView;
@@ -1202,8 +1226,8 @@ sap.ui.define([
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", window.$sap__qunit_presshandler1))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
 					return this.createView(this.oXmlView).then(function(oView) {
@@ -1216,8 +1240,8 @@ sap.ui.define([
 
 		QUnit.test("detachEvent() — basic case", function (assert) {
 			assert.notOk(this.oButton.hasAttribute("press"));
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler1", window.$sap__qunit_presshandler1))
 				.then(function () {
 					assert.notOk(this.oButton.hasAttribute("press"));
 					return this.createView(this.oXmlView).then(function (oView) {
@@ -1229,10 +1253,10 @@ sap.ui.define([
 		});
 
 		QUnit.test("detachEvent() — three event handlers, two of them are with a different set of parameters", function (assert) {
-			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1")
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"]))
-				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"]))
-				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2"))
+			return XmlTreeModifier.attachEvent(this.oButton, "press", "$sap__qunit_presshandler1", null, window.$sap__qunit_presshandler1)
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param0", "param1"], window.$sap__qunit_presshandler2))
+				.then(XmlTreeModifier.attachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", ["param2", "param3"], window.$sap__qunit_presshandler2))
+				.then(XmlTreeModifier.detachEvent.bind(XmlTreeModifier, this.oButton, "press", "$sap__qunit_presshandler2", window.$sap__qunit_presshandler2))
 				.then(function () {
 					return this.createView(this.oXmlView).then(function (oView) {
 						this.oView = oView;
@@ -1248,7 +1272,7 @@ sap.ui.define([
 		QUnit.test("detachEvent() — attempt to detach non-existent function", function (assert) {
 			return XmlTreeModifier.detachEvent(this.oButton, "press", "$sap__qunit_non_existent_handler")
 				.catch(function (vError) {
-					assert.ok(vError.message.indexOf("function is not found") > -1);
+					assert.ok(vError.message.indexOf("fnCallback parameter missing or not a function") > -1);
 				});
 		});
 	});

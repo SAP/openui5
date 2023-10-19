@@ -11,11 +11,6 @@ sap.ui.define([
 	var oI18nMatcher = new I18NText();
 
 	/**
-	 *  The controls which should not be referenced by a "for" attribute (Specified in the HTML standard). See {@link sap.ui.core.LabelEnablement}
-	 */
-	var NON_LABELABLE_CONTROLS = ["sap.ui.comp.navpopover.SmartLink", "sap.m.Link", "sap.m.Label", "sap.m.Text"];
-
-	/**
 	 * @class
 	 * The LabelFor matcher checks if a given control has a label associated with it.
 	 * For every Label on the page, the matcher checks if:
@@ -147,11 +142,6 @@ sap.ui.define([
 				return false;
 			}
 
-			if (NON_LABELABLE_CONTROLS.indexOf(oControl.getMetadata().getName()) > -1) {
-				this._oLogger.error("Control cannot have an associated label according to HTML standard");
-				return false;
-			}
-
 			var fnLabelType = this._getApplicationWindow().sap.ui.require("sap/m/Label");
 			var aLabelsInPage = this._getApplicationWindow().sap.ui.require("sap/ui/core/Element").registry.filter(function (oElement) {
 				return oElement instanceof fnLabelType;
@@ -166,9 +156,9 @@ sap.ui.define([
 
 			bIsMatching = aLabelsInPage.some(function (oLabel) {
 				if (sKey && oI18nMatcher.isMatching(oLabel)) {
-					return oControl.getId() === oLabel.getLabelForRendering();
+					return oControl.getId() === oLabel.getLabelForRendering() || oLabel.isLabelFor(oControl);
 				} else if (sLabelText && oLabel.getText() === sLabelText) {
-					return oControl.getId() === oLabel.getLabelForRendering();
+					return oControl.getId() === oLabel.getLabelForRendering() || oLabel.isLabelFor(oControl);
 				}
 				return false;
 			});

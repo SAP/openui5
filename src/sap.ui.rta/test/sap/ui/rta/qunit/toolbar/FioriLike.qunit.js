@@ -2,23 +2,24 @@
 
 sap.ui.define([
 	"sap/ui/rta/toolbar/FioriLike",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Lib"
+], function(
 	FioriLike,
-	oCore
+	nextUIUpdate,
+	Lib
 ) {
 	"use strict";
 
 	QUnit.module("Given FioriLike toolbar is instantiated", {
-		beforeEach: function() {
-			oCore.applyChanges();
+		async beforeEach() {
+			await nextUIUpdate();
 			this.oToolbar = new FioriLike({
-				textResources: oCore.getLibraryResourceBundle("sap.ui.rta")
+				textResources: Lib.getResourceBundleFor("sap.ui.rta")
 			});
 			return this.oToolbar.onFragmentLoaded();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 		}
 	}, function() {

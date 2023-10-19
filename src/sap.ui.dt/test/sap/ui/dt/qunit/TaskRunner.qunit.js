@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Instantiation TaskRunner", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -35,7 +35,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("TaskRunner API - run", {
-		beforeEach: function() {
+		beforeEach() {
 			this.observableTaskType = "TestType";
 			this.oCallbackStub = sandbox.stub().resolves();
 			this.oTaskManager = new TaskManager();
@@ -44,7 +44,7 @@ sap.ui.define([
 				taskType: this.observableTaskType
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 			sandbox.restore();
 		}
@@ -97,7 +97,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("TaskRunner API - stop", {
-		beforeEach: function() {
+		beforeEach() {
 			this.observableTaskType = "TestType";
 			this.oCallbackStub = sandbox.stub().resolves();
 			this.oTaskManager = new TaskManager();
@@ -106,7 +106,7 @@ sap.ui.define([
 				taskType: this.observableTaskType
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 			sandbox.restore();
 		}

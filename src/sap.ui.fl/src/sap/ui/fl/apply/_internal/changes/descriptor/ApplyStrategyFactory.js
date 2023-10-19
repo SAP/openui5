@@ -12,24 +12,44 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	function processManifestPart(vManifestPart, oChangeTexts) {
+		// Recursively search the manifest for localization bindings and replace them with default texts
+		const vNewManifestPart = Array.isArray(vManifestPart)
+			? [...vManifestPart]
+			: { ...vManifestPart };
+		Object.entries(vNewManifestPart).forEach(([sKey, vValue]) => {
+			if (typeof vValue === "object" && vValue !== null) {
+				vNewManifestPart[sKey] = processManifestPart(vValue, oChangeTexts);
+			} else if (typeof vValue === "string") {
+				vNewManifestPart[sKey] = vValue.replaceAll(/{{.*?}}/g, (sMatch) => {
+					// Extract the key and replace it if there is a value for it
+					const sTextKey = sMatch.slice(2, -2);
+					const sResolvedValue = oChangeTexts[sTextKey];
+					return sResolvedValue || sMatch;
+				});
+			}
+		});
+		return vNewManifestPart;
+	}
+
 	var RuntimeStrategy = {
-		registry: function() {
+		registry() {
 			return requireAsync("sap/ui/fl/apply/_internal/changes/descriptor/Registration");
 		},
-		handleError: function(oError) {
+		handleError(oError) {
 			Log.error(oError);
 		},
-		processTexts: function(oManifest, oChangeTexts) {
-			// TODO: optimize performance by creating map not using JSON.stringify/parse
-			var sManifest = JSON.stringify(oManifest);
-			Object.keys(oChangeTexts).forEach(function(sTextKey) {
-				if (oChangeTexts[sTextKey].value[""]) {
-					 sManifest = sManifest.replace("{{" + sTextKey + "}}", oChangeTexts[sTextKey].value[""]);
-				} else {
-					Log.error("Text change has to contain default language");
+		processTexts(oManifest, oChangeTexts) {
+			const oValidChangeTexts = {};
+			Object.entries(oChangeTexts).forEach(([sTextKey, { value: mChangeTextValue }]) => {
+				// Always use the default language (key = "")
+				if (mChangeTextValue[""]) {
+					oValidChangeTexts[sTextKey] = mChangeTextValue[""];
+					return;
 				}
+				Log.error("Text change has to contain default language");
 			});
-			return JSON.parse(sManifest);
+			return processManifestPart(oManifest, oValidChangeTexts);
 		}
 	};
 
@@ -38,7 +58,7 @@ sap.ui.define([
 		 * Strategy to apply descriptor changes during runtime.
 		 * @returns {object} Runtime strategy
 		 */
-		getRuntimeStrategy: function() {
+		getRuntimeStrategy() {
 			return RuntimeStrategy;
 		}
 	};

@@ -209,7 +209,7 @@ sap.ui.define([
 	ReloadManager.enableAutomaticStart = function(sLayer, oRootControl) {
 		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oRootControl});
 		var vParameter = sFlexReference || true;
-		window.sessionStorage.setItem("sap.ui.rta.restart." + sLayer, vParameter);
+		window.sessionStorage.setItem(`sap.ui.rta.restart.${sLayer}`, vParameter);
 	};
 
 	/**
@@ -218,7 +218,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} sLayer - Active layer
 	 */
 	ReloadManager.disableAutomaticStart = function(sLayer) {
-		window.sessionStorage.removeItem("sap.ui.rta.restart." + sLayer);
+		window.sessionStorage.removeItem(`sap.ui.rta.restart.${sLayer}`);
 	};
 
 	/**
@@ -228,7 +228,7 @@ sap.ui.define([
 	 * @returns {boolean} <code>true</code> if restart is needed
 	 */
 	ReloadManager.needsAutomaticStart = function(sLayer) {
-		return !!window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
+		return !!window.sessionStorage.getItem(`sap.ui.rta.restart.${sLayer}`);
 	};
 
 	/**

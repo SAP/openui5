@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/ui/core/CustomData",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Util",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
@@ -27,7 +29,8 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Element"
 ], function(
 	includes,
 	isEmptyObject,
@@ -38,6 +41,7 @@ sap.ui.define([
 	Button,
 	Input,
 	CustomData,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	DtUtil,
@@ -47,6 +51,7 @@ sap.ui.define([
 	Settings,
 	VerticalLayout,
 	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
@@ -55,7 +60,8 @@ sap.ui.define([
 	RTAUtils,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	Core,
+	Element
 ) {
 	"use strict";
 
@@ -120,10 +126,10 @@ sap.ui.define([
 	function registerControlsForChanges() {
 		sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 		sandbox.stub(ChangesWriteAPI, "create").resolves({
-			getSupportInformation: function() {
+			getSupportInformation() {
 				return {};
 			},
-			setSupportInformation: function() {}
+			setSupportInformation() {}
 		});
 	}
 
@@ -133,26 +139,27 @@ sap.ui.define([
 	var ON_IRRELEVANT = "IRRELEVANT";
 
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
-			this.oRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
+			this.oRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(sLibraryName) {
+			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
+				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
 			});
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
@@ -250,7 +257,7 @@ sap.ui.define([
 					return DtUtil.waitForSynced(this.oDesignTime, fnReturnOverlay)();
 				}.bind(this))
 				.then(function(oOverlay) {
-					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME");
+					var sExpectedText = this.oRTATexts.getText("CTX_ADD_ELEMENTS", ["I18N_KEY_USER_FRIENDLY_CONTROL_NAME"]);
 					assert.equal(this.oPlugin.getContextMenuText(test.sibling, oOverlay), sExpectedText, "then the translated context menu entry is properly set");
 					assert.ok(this.oPlugin.isAvailable([oOverlay], test.sibling), "then the action is available");
 					assert.notOk(this.oPlugin.isEnabled([oOverlay], test.sibling, sAggregationName), "then the action is disabled");
@@ -340,7 +347,7 @@ sap.ui.define([
 
 		QUnit.test(" when the control's dt metadata has a reveal action with function allowing reveal only for some instances", function(assert) {
 			return createOverlayWithAggregationActions.call(this, {
-				reveal: function(oControl) {
+				reveal(oControl) {
 					if (oControl.getId() === "Invisible1") {
 						return {
 							changeType: "unhideControl"
@@ -421,13 +428,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with CANCEL", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithCancelClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
@@ -489,7 +496,7 @@ sap.ui.define([
 			this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer, "enhanceInvisibleElements").resolves([]);
 
 			return createOverlayWithAggregationActions.call(this, {
-				reveal: function(oControl) {
+				reveal(oControl) {
 					if (oControl.getId() === REVEALABLE_CTRL_ID) {
 						return {
 							changeType: "unhideControl"
@@ -512,14 +519,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a plugin whose dialog always close with OK", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPlugin.destroy();
 			this.oPseudoPublicParent.destroy();
 			sandbox.restore();
@@ -537,7 +544,7 @@ sap.ui.define([
 		].forEach(function(test) {
 			var sPrefix = test.sibling ? "On sibling: " : "On child: ";
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate and a reveal action", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has NO addViaDelegate and a reveal action`, function(assert) {
 				var done = assert.async();
 
 				function fnExecuteAssertions(oEvent) {
@@ -582,7 +589,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has NO addViaDelegate or reveal add actions", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has NO addViaDelegate or reveal add actions`, function(assert) {
 				var fnElementModifiedStub = sandbox.stub();
 				this.oPlugin.attachEventOnce("elementModified", fnElementModifiedStub);
 				var sAggregationName = test.sibling ? "content" : "contentLeft";
@@ -602,7 +609,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has only an add via delegate action`, function(assert) {
 				var done = assert.async();
 				sandbox.stub(RTAPlugin.prototype, "getVariantManagementReference").returns(sVariantManagementReference);
 				var sAggregationName = "contentLeft";
@@ -669,13 +676,13 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has only an add via delegate action and a default delegate is available", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has only an add via delegate action and a default delegate is available`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sAggregationName = "contentLeft";
@@ -743,12 +750,12 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with a valid delegate configured", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has addViaDelegate with a valid delegate configured`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sAggregationName = "contentLeft";
@@ -777,13 +784,13 @@ sap.ui.define([
 					assert.equal(this.fnEnhanceInvisibleElementsStub.callCount, 0, "then the analyzer was not called for invisible elements");
 					assertDialogModelLength.call(this, assert, 3, "then all three addViaDelegate elements are part of the dialog model");
 					var bValidDialogElements = this.oPlugin.getDialog().getElements().every(function(oElement, iIndex) {
-						return oElement.label === "delegate" + iIndex;
+						return oElement.label === `delegate${iIndex}`;
 					});
 					assert.ok(bValidDialogElements, "then all elements in the dialog are valid");
 				}.bind(this));
 			});
 
-			QUnit.test(sPrefix + "when the control's dt metadata has addViaDelegate with an invalid delegate configured", function(assert) {
+			QUnit.test(`${sPrefix}when the control's dt metadata has addViaDelegate with an invalid delegate configured`, function(assert) {
 				var done = assert.async();
 				var sChangeType = "addFields";
 				var sDelegatePath = "misconfigured/module/path";
@@ -849,8 +856,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal action on a responsible element and getMenuItems() is called", function(assert) {
-			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
-				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(...aArgs) {
+				if (aArgs[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;
@@ -876,8 +883,8 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a disabled reveal action along with an enabled reveal action on the responsible element and getActions() is called", function(assert) {
-			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function() {
-				if (arguments[0][0] === this.oPseudoPublicParentOverlay) {
+			sandbox.stub(this.oPlugin, "isAvailable").callsFake(function(...aArgs) {
+				if (aArgs[0][0] === this.oPseudoPublicParentOverlay) {
 					return true;
 				}
 				return undefined;
@@ -953,18 +960,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has addViaDelegate and a reveal actions", function(assert) {
-			var oOriginalRTATexts = oCore.getLibraryResourceBundle("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = oCore.getLibraryResourceBundle;
+			var oOriginalRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
 			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(oCore, "getLibraryResourceBundle").callsFake(function(sLibraryName) {
+			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, arguments);
+				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -982,17 +990,18 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function() {
-				var sExpectedText = oOriginalRTATexts.getText("HEADER_ADDITIONAL_ELEMENTS", "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL");
+				var sExpectedText = oOriginalRTATexts.getText("HEADER_ADDITIONAL_ELEMENTS", ["I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"]);
 				assert.equal(this.oDialog.getTitle(), sExpectedText, "then the translated title is properly set");
 			}.bind(this));
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(sLibraryName) {
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
+			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+				const [oLibrary] = aArgs;
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
+				return Lib.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1019,16 +1028,17 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
-			sandbox.stub(oCore, "loadLibrary").callsFake(function(sLibraryName) {
-				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
+			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+				const [oLibrary] = aArgs;
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return oCore.loadLibrary.wrappedMethod.apply(this, arguments);
+				return Lib.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: ["path/to/instancespecific/delegate"],
-				stub: { getPropertyInfo: function() {} }
+				stub: { getPropertyInfo() {} }
 			}]);
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1443,17 +1453,17 @@ sap.ui.define([
 
 		QUnit.test("when 'registerElementOverlay' is called and the metamodel is not loaded yet", function(assert) {
 			var fnDone = assert.async();
-			var oSibling = this.oSibling;
+			var {oSibling} = this;
 			var oSiblingOverlay = {
-				getElement: function() {
+				getElement() {
 					return oSibling;
 				}
 			};
 
 			sandbox.stub(this.oSibling, "getModel").returns({
-				getMetaModel: function() {
+				getMetaModel() {
 					return {
-						loaded: function() {
+						loaded() {
 							return Promise.resolve();
 						}
 					};
@@ -1540,7 +1550,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app that is field extensible enabled...", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			registerControlsForChanges();
 			this.STUB_EXTENSIBILITY_BUSINESS_CTXT = {
 				extensionData: [{BusinessContext: "some context", description: "some description"}], // BusinessContext API returns this structure
@@ -1560,14 +1570,14 @@ sap.ui.define([
 					entityType: "Header"
 				}
 			};
-			this.STUB_EXTENSIBILITY_USHELL_URL = "someURLToCheckOurParameterPassing:"
-				+ JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS);
+			this.STUB_EXTENSIBILITY_USHELL_URL = `someURLToCheckOurParameterPassing:${
+				 JSON.stringify(this.STUB_EXTENSIBILITY_USHELL_PARAMS)}`;
 
-			givenSomeBoundControls.call(this, assert);
+			await givenSomeBoundControls.call(this, assert);
 
 			givenThePluginWithOKClosingDialog.call(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			sandbox.restore();
 			this.oPlugin.destroy();
@@ -1589,7 +1599,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.notCalled, "up to date service is not called");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "then the button to create custom fields is not shown");
 			}.bind(this));
 		});
@@ -1612,7 +1622,7 @@ sap.ui.define([
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), false, "the Button to create custom Fields is not shown");
 			}.bind(this));
 		});
@@ -1636,7 +1646,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(this.fnDialogOpen.calledOnce, "then the dialog was opened");
-				var oCustomFieldButton = oCore.byId(this.oDialog.getId() + "--" + "rta_customFieldButton");
+				var oCustomFieldButton = Element.getElementById(`${this.oDialog.getId()}--` + `rta_customFieldButton`);
 				assert.equal(oCustomFieldButton.getVisible(), true, "the Button to create custom Fields is shown");
 			}.bind(this));
 		});
@@ -1708,7 +1718,7 @@ sap.ui.define([
 
 			.then(function() {
 				assert.ok(fnServiceUpToDateStub.getCall(0).args[0], "addViaDelegate is dependent on up to date service, it should be called with a control");
-				var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+				var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 				assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
 				assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 				assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
@@ -1746,7 +1756,7 @@ sap.ui.define([
 
 				.then(function() {
 					assert.equal(this.oDialog.getCustomFieldEnabled(), true, "then in the dialog custom field is enabled");
-					var oBCContainer = oCore.byId(this.oDialog.getId() + "--" + "rta_businessContextContainer");
+					var oBCContainer = Element.getElementById(`${this.oDialog.getId()}--` + `rta_businessContextContainer`);
 					assert.equal(oBCContainer.getVisible(), true, "then in the Business Context Container in the Dialog is visible");
 					assert.equal(oBCContainer.getContent().length > 1, true, "then in the Business Context Container shows Business Contexts");
 					return this.oPlugin.showAvailableElements(false, sAggregationName, [oOverlay]);
@@ -1869,10 +1879,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Plugin and a DT with one control", {
-		beforeEach: function() {
+		async beforeEach() {
 			this.oButton = new Button("control1", {text: "foo"});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			givenThePluginWithOKClosingDialog.call(this);
 			return new Promise(function(resolve) {
 				this.oDesignTime = new DesignTime({
@@ -1885,7 +1895,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oButton.destroy();
 			this.oDesignTime.destroy();
@@ -1914,7 +1924,7 @@ sap.ui.define([
 	//                                                    oControl (Bar)
 	//                 contentLeft                                        contentMiddle         contentRight
 	// [oSibling, <oUnsupportedInvisible>, <oInvisible1>, <oInvisible2>        EMPTY          oIrrelevantChild]
-	function givenSomeBoundControls() {
+	async function givenSomeBoundControls() {
 		this.oSibling = new Button({id: "Sibling", visible: true});
 		this.oUnsupportedInvisible = new Input({id: "UnsupportedInvisible", visible: false});
 		this.oInvisible1 = new Button({id: "Invisible1", visible: false});
@@ -1935,7 +1945,7 @@ sap.ui.define([
 		this.oPseudoPublicParent.setModel(new SomeModel());
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// simulate analyzer returning some elements
 		this.fnEnhanceInvisibleElementsStub = sandbox.stub(AdditionalElementsAnalyzer, "enhanceInvisibleElements").resolves([
@@ -2026,7 +2036,7 @@ sap.ui.define([
 			var oSourceDTMetadata = oSourceElementOverlay.getDesignTimeMetadata().getData();
 
 			var oActions = Object.assign({
-				getResponsibleElement: function() {
+				getResponsibleElement() {
 					return mActions.responsibleElement.target;
 				},
 				actionsFromResponsibleElement: mActions.responsibleElement.actionsFromResponsibleElement || []
@@ -2055,7 +2065,7 @@ sap.ui.define([
 				key: "sap-ui-custom-settings",
 				value: oCustomDataValue
 			});
-			var oControl = this.oControl;
+			var {oControl} = this;
 			oControl.insertAggregation("customData", oCustomData, 0, /* bSuppressInvalidate= */true);
 		}
 	}
@@ -2094,10 +2104,10 @@ sap.ui.define([
 					propagateRelevantContainer: bPropagateRelevantContainer,
 					actions: null,
 					childNames: null,
-					getStableElements: function() {
+					getStableElements() {
 						return [];
 					},
-					getIndex: function(oBar, oBtn) {
+					getIndex(oBar, oBtn) {
 						if (oBtn) {
 							return oBar.getContentLeft().indexOf(oBtn) + 1;
 						}
@@ -2155,8 +2165,8 @@ sap.ui.define([
 				resolve();
 			}.bind(this));
 		}.bind(this))
-		.then(function() {
-			oCore.applyChanges();
+		.then(async function() {
+			await nextUIUpdate();
 			this.oDesignTime.addPlugin(this.oPlugin);
 			switch (sOverlayType) {
 				case ON_SIBLING :

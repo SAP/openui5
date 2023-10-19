@@ -3,40 +3,43 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/dt/OverlayUtil",
+	"sap/base/util/restricted/_omit",
+	"sap/m/MessageBox",
+	"sap/ui/core/Element",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/MetadataPropagationUtil",
-	"sap/ui/rta/util/hasStableId",
-	"sap/m/MessageBox",
-	"sap/ui/rta/util/BindingsExtractor",
-	"sap/base/util/restricted/_omit",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment",
-	"sap/ui/core/Core"
-],
-function(
-	FieldExtensibility,
-	FlexUtils,
-	Layer,
-	FlexLayerUtils,
-	Version,
-	OverlayUtil,
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/rta/util/hasStableId"
+], function(
+	_omit,
+	MessageBox,
+	Element,
+	EventBus,
+	Fragment,
+	Lib,
 	DOMUtil,
 	ElementUtil,
 	MetadataPropagationUtil,
-	hasStableId,
-	MessageBox,
-	BindingsExtractor,
-	_omit,
+	OverlayUtil,
+	Version,
+	FieldExtensibility,
+	Layer,
+	FlexLayerUtils,
+	FlexUtils,
 	JSONModel,
-	Fragment,
-	Core
+	BindingsExtractor,
+	hasStableId
 ) {
 	"use strict";
 
@@ -50,8 +53,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.Utils
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality.
-	 * API of this class might be changed in the future.
 	 */
 
 	var Utils = {};
@@ -99,7 +100,7 @@ function(
 						if (bServiceOutdated) {
 							FieldExtensibility.setServiceValid(oModel.sServiceUrl);
 							// needs FLP to trigger UI restart popup
-							Core.getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
+							EventBus.getInstance().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 						}
 					});
 				}
@@ -116,7 +117,7 @@ function(
 	 * @returns{Promise} The Promise which resolves when popup is closed (via Remove OR Cancel actions)
 	 */
 	Utils.openRemoveConfirmationDialog = function(oElement, sText) {
-		var oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		var sTitle;
 		return new Promise(
 			function(resolve) {
@@ -144,11 +145,11 @@ function(
 
 				// create a controller for the action in the Dialog
 				var oFragmentController = {
-					removeField: function() {
+					removeField() {
 						fnCleanUp();
 						resolve(true);
 					},
-					closeDialog: function() {
+					closeDialog() {
 						fnCleanUp();
 						resolve(false);
 					}
@@ -209,7 +210,7 @@ function(
 	Utils.getOverlayInstanceForDom = function(oDomRef) {
 		var sId = oDomRef.getAttribute("id");
 		if (sId) {
-			return Core.byId(sId);
+			return Element.getElementById(sId);
 		}
 		return undefined;
 	};
@@ -222,7 +223,7 @@ function(
 	 */
 	Utils.getFocusedOverlay = function() {
 		if (document.activeElement) {
-			var oElement = Core.byId(document.activeElement.id);
+			var oElement = Element.getElementById(document.activeElement.id);
 			if (oElement && oElement.isA("sap.ui.dt.ElementOverlay")) {
 				return oElement;
 			}
@@ -285,9 +286,7 @@ function(
 		while (oNextFocusableSiblingOverlay && !this.isOverlaySelectable(oNextFocusableSiblingOverlay)) {
 			oNextFocusableSiblingOverlay = OverlayUtil.getNextSiblingOverlay(oNextFocusableSiblingOverlay);
 		}
-		if (!oNextFocusableSiblingOverlay) {
-			oNextFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, NEXT);
-		}
+		oNextFocusableSiblingOverlay ||= this._findSiblingOverlay(oOverlay, NEXT);
 		return oNextFocusableSiblingOverlay;
 	};
 
@@ -306,9 +305,7 @@ function(
 			oPreviousFocusableSiblingOverlay = OverlayUtil
 			.getPreviousSiblingOverlay(oPreviousFocusableSiblingOverlay);
 		}
-		if (!oPreviousFocusableSiblingOverlay) {
-			oPreviousFocusableSiblingOverlay = this._findSiblingOverlay(oOverlay, PREVIOUS);
-		}
+		oPreviousFocusableSiblingOverlay ||= this._findSiblingOverlay(oOverlay, PREVIOUS);
 		return oPreviousFocusableSiblingOverlay;
 	};
 
@@ -377,7 +374,7 @@ function(
 	 * @private
 	 */
 	Utils.createFieldLabelId = function(oParentControl, sEntityType, sBindingPath) {
-		return (oParentControl.getId() + "_" + sEntityType + "_" + sBindingPath).replace("/", "_");
+		return (`${oParentControl.getId()}_${sEntityType}_${sBindingPath}`).replace("/", "_");
 	};
 
 	/**
@@ -487,30 +484,28 @@ function(
 	 * @returns{Promise} Promise displaying the message box; resolves when it is closed with the pressed button
 	 */
 	Utils.showMessageBox = function(sMessageType, sMessageKey, mPropertyBag) {
-		return Core.getLibraryResourceBundle("sap.ui.rta", true)
-		.then(function(oResourceBundle) {
-			mPropertyBag = mPropertyBag || {};
-			var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
-			var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
-			var vActionTexts =
-				mPropertyBag.actionKeys &&
-				mPropertyBag.actionKeys.map(function(sActionKey) {
-					return oResourceBundle.getText(sActionKey);
-				});
-			var sEmphasizedAction = mPropertyBag.emphasizedActionKey ? oResourceBundle.getText(mPropertyBag.emphasizedActionKey) : undefined;
+		var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		mPropertyBag ||= {};
+		var sMessage = oResourceBundle.getText(sMessageKey, mPropertyBag.error ? [mPropertyBag.error.userMessage || mPropertyBag.error.message || mPropertyBag.error] : undefined);
+		var sTitle = mPropertyBag.titleKey && oResourceBundle.getText(mPropertyBag.titleKey);
+		var vActionTexts =
+			mPropertyBag.actionKeys &&
+			mPropertyBag.actionKeys.map(function(sActionKey) {
+				return oResourceBundle.getText(sActionKey);
+			});
+		var sEmphasizedAction = mPropertyBag.emphasizedActionKey ? oResourceBundle.getText(mPropertyBag.emphasizedActionKey) : undefined;
 
-			var bShowCancel = mPropertyBag.showCancel;
-			var mOptions = _omit(mPropertyBag, ["titleKey", "error", "actionKeys", "emphasizedAction", "emphasizedActionKey", "showCancel"]);
-			mOptions.title = sTitle;
-			mOptions.styleClass = Utils.getRtaStyleClassName();
-			mOptions.actions = mOptions.actions || vActionTexts;
-			mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
-			if (bShowCancel) {
-				mOptions.actions.push(MessageBox.Action.CANCEL);
-			}
+		var bShowCancel = mPropertyBag.showCancel;
+		var mOptions = _omit(mPropertyBag, ["titleKey", "error", "actionKeys", "emphasizedAction", "emphasizedActionKey", "showCancel"]);
+		mOptions.title = sTitle;
+		mOptions.styleClass = Utils.getRtaStyleClassName();
+		mOptions.actions ||= vActionTexts;
+		mOptions.emphasizedAction = sEmphasizedAction || mPropertyBag.emphasizedAction;
+		if (bShowCancel) {
+			mOptions.actions.push(MessageBox.Action.CANCEL);
+		}
 
-			return messageBoxPromise(sMessageType, sMessage, mOptions);
-		});
+		return messageBoxPromise(sMessageType, sMessage, mOptions);
 	};
 
 	function messageBoxPromise(sMessageType, sMessage, mOptions) {
@@ -529,7 +524,7 @@ function(
 	 * @returns{boolean} <code>true</code> when the controls have compatible bindings.
 	 */
 	Utils.checkSourceTargetBindingCompatibility = function(oSource, oTarget, oModel) {
-		oModel = oModel || oSource.getModel();
+		oModel ||= oSource.getModel();
 		var mSourceBindings = BindingsExtractor.collectBindingPaths(oSource, oModel);
 		var sSourceContextBindingPath;
 		var sTargetContextBindingPath;
@@ -618,7 +613,7 @@ function(
 
 			// determine target relevantContainer
 			var vTargetRelevantContainerAfterMove = MetadataPropagationUtil.getRelevantContainerForPropagation(oAggregationDtMetadata.getData(), oMovedElement);
-			vTargetRelevantContainerAfterMove = vTargetRelevantContainerAfterMove || oTargetElement;
+			vTargetRelevantContainerAfterMove ||= oTargetElement;
 
 			// check for same relevantContainer
 			if (
@@ -651,13 +646,14 @@ function(
 	 * @return {Promise.<boolean>} It either resolves with an indicator whether a confirmation
 	 * was shown or rejects with "cancel" if cancel was pressed
 	 */
-	Utils.checkDraftOverwrite = function(oVersionsModel) {
+	Utils.checkDraftOverwrite = function(oVersionsModel, bOnlySwitch) {
 		var bBackEndDraftExists = oVersionsModel.getProperty("/backendDraft");
 		var bDraftDisplayed = oVersionsModel.getProperty("/displayedVersion") === Version.Number.Draft;
 
 		if (
 			bDraftDisplayed ||
-			!bBackEndDraftExists
+			!bBackEndDraftExists ||
+			bOnlySwitch
 		) {
 			return Promise.resolve(false);
 		}

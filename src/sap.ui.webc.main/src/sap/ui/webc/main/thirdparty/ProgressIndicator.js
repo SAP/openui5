@@ -24,6 +24,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var ProgressIndicator_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *
@@ -69,7 +74,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
         "Error": "status-negative",
         "Warning": "status-critical",
         "Success": "status-positive",
-        "Information": "hint"
+        "Information": "information"
       };
     }
     get styles() {
@@ -121,6 +126,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       ProgressIndicator_1.i18nBundle = await (0, _i18nBundle.getI18nBundle)("@ui5/webcomponents");
     }
   };
+  __decorate([(0, _property.default)()], ProgressIndicator.prototype, "accessibleName", void 0);
   __decorate([(0, _property.default)({
     type: Boolean
   })], ProgressIndicator.prototype, "disabled", void 0);

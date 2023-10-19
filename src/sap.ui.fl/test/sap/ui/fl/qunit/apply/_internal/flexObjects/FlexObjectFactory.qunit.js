@@ -19,7 +19,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Basic creation", {
-		before: function() {
+		before() {
 			this.oBackendResponse = {
 				fileName: "foo",
 				fileType: "change",
@@ -34,7 +34,7 @@ sap.ui.define([
 				someUnknownProperty: "shouldNotLeadToProblems"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

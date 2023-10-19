@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_01_removeColumn",
 		"changeType": "removeColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"id": "mdcTable--column0"
@@ -17,7 +17,7 @@
 	{
 		"fileName": "id_02_removeColumn",
 		"changeType": "removeColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column2",
 			"id": "mdcTable--column2"

@@ -3,17 +3,18 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/Sticky/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/sample/odata/v4/Sticky/SandboxModel" // preload only
+], function (Core, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/Sticky/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils",
-		"sap/ui/core/sample/odata/v4/Sticky/SandboxModel" // preload only
-	], function (Helper, Any, Main, opaTest, TestUtils) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.Sticky");
 
 		//*****************************************************************************
@@ -28,6 +29,7 @@ sap.ui.getCore().attachInit(function () {
 						name : "sap.ui.core.sample.odata.v4.Sticky"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 				When.onTheMainPage.selectStickyType(0);
 				When.onTheMainPage.pressPrepare();
@@ -41,7 +43,6 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.onAnyPage.checkLog();
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 		}
 

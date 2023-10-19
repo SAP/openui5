@@ -8,9 +8,9 @@ sap.ui.define([
 ], function (ActionToolbar, Engine, Util) {
 	"use strict";
 
-    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-    var oDesignTime = {
+    const oDesignTime = {
             description: "{description}",
             name: "{name}",
             aggregations: {
@@ -41,8 +41,8 @@ sap.ui.define([
         aAllowedAggregations = [
             "actions", "between"
         ],
-        aAllProperties = [];
+        aAllowedProperties = [];
 
-    return Util.getDesignTime(ActionToolbar, aAllProperties, aAllowedAggregations, oDesignTime);
+    return Util.getDesignTime(ActionToolbar, aAllowedProperties, aAllowedAggregations, oDesignTime);
 
 });

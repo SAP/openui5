@@ -204,6 +204,13 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			"opa/input/SuggestionRowsPopoverOPA": {
+				title: "OPA Test Page for sap.m.Input with tabular suggestions",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
 			/**
 			 * @deprecated As of version 1.50
 			 */
@@ -524,6 +531,15 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			LinkTileContent: {
+				title: "QUnit Test Page for sap.m.LinkTileContent",
+				coverage: {
+					only: "//sap\/m\/LinkTileContent.*/"
+				},
+				ui5: {
+					language: "en"
+				}
+			},
 			"Generic Testsuite": {
 				page: "test-resources/sap/m/qunit/testsuite.generic.qunit.html"
 			},
@@ -618,6 +634,13 @@ sap.ui.define([
 				title: "QUnit tests: sap.m.InputBase",
 				sinon: {
 					useFakeTimers: true
+				}
+			},
+			"opa/input/InputTypeAheadOPA": {
+				title: "OPA Test Page for sap.m.Input",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
 				}
 			},
 			InstanceManager: {
@@ -716,6 +739,16 @@ sap.ui.define([
 				title: "QUnit page for sap.m.Menu",
 				sinon: {
 					useFakeTimers: true
+				},
+				ui5: {
+					language: "en-US",
+					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
+				}
+			},
+			MenuItem: {
+				title: "QUnit Page for sap.m.MenuItem",
+				coverage: {
+					only: ["sap/m/MenuItem"]
 				},
 				ui5: {
 					language: "en-US",
@@ -951,15 +984,6 @@ sap.ui.define([
 					}
 				}
 			},
-			"p13n.FlexUtil": {
-				title: "Test Page for sap.m.p13n.FlexUtil",
-				module: "test-resources/sap/m/qunit/p13n/FlexUtil.qunit",
-				loader: {
-					paths: {
-						resourceroot: "test-resources/sap/m/qunit/p13n"
-					}
-				}
-			},
 			"p13n.modules.xConfigAPI": {
 				title: "Test Page for sap.m.p13n.modules.xConfigAPI",
 				module: "test-resources/sap/m/qunit/p13n/xConfigAPI.qunit",
@@ -1074,6 +1098,9 @@ sap.ui.define([
 					libs: ["sap.m", "sap.ui.layout", "sap.ui.unified"] // to compensate 2 sync loadLibrary
 				}
 			},
+            /**
+             * @deprecated as of version 1.120
+             */
 			P13nDimMeasurePanel: {
 				title: "Test Page for sap.m.P13nDimMeasurePanel",
 				sinon: {
@@ -1562,6 +1589,13 @@ sap.ui.define([
 					useFakeTimers: false // some tests activate it
 				}
 			},
+			"table.ColumnWidthController": {
+				title: "Test Page for sap.m.table.ColumnWidthController",
+				module: "test-resources/sap/m/qunit/table/ColumnWidthController.qunit",
+				paths: {
+					resourceroot: "test-resources/sap/m/qunit/table/"
+				}
+			},
 			"table.columnmenu.Menu": {
 				title: "Test Page for sap.m.table.columnmenu.Menu",
 				module: "test-resources/sap/m/qunit/table/columnmenu/Menu.qunit",
@@ -1800,18 +1834,19 @@ sap.ui.define([
 					"./upload/UploadSetOpenFileDialog.qunit"
 				]
 			},
-			UploadSetTable: {
-				title: "Test Page for sap.m.upload.UploadSetTable",
+			UploadSetwithTable: {
+				title: "Test Page for sap.m.upload.UploadSetwithTable",
 				coverage: {
-					only: "[sap/m/upload/UploadSetTable.js,sap/m/upload/UploadSetTableItem.js,sap/m/upload/UploadSetTableRenderer.js,sap/m/upload/UploadSetTableItemRenderer.js]"
+					only: "[sap/m/upload/UploadSetwithTable.js,sap/m/upload/UploadSetwithTableItem.js,sap/m/upload/FilePreviewDialog.js,sap/m/upload/UploadSetwithTableRenderer.js,sap/m/upload/UploadSetwithTableItemRenderer.js]"
 				},
 				ui5: {
 					language: "en",
 					libs: ["sap.m", "sap.ui.unified"] // to compensate sync loadLibrary
 				},
 				module: [
-					"./upload/UploadSetTable.qunit",
-					"./upload/UploadSetTableItem.qunit"
+					"./upload/UploadSetwithTable.qunit",
+					"./upload/UploadSetwithTableItem.qunit",
+					"./upload/FilePreviewDialog.qunit"
 				]
 			},
 			VBox: {

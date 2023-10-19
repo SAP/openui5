@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.tilesVariants.sample5",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"type": "Numeric",
+			"title": "Tile without icon",
+			"subTitle": "And with subtitle",
+			"unitOfMeasurement": "EUR",
+			"details": {
+				"text": "{details}",
+				"state": "Success"
+			},
+			"actions": [
+				{
+					"type": "Navigation",
+					"parameters": {
+						"url": "http://sap.com"
+					}
+				}
+			]
+		},
+		"content": {
+			"data": {
+				"json": [{
+						"Name": "Comfort Easy"
+					}
+				]
+			},
+			"item": {
+				"title": "{Name}"
+			}
+		}
+	}
+}

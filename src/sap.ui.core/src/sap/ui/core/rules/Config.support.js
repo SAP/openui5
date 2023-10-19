@@ -5,15 +5,18 @@
  * Defines support rules for the app configuration.
  */
 sap.ui.define([
-	"jquery.sap.global",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/support/library",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Lib",
+	"sap/ui/core/Supportability"
 ], function(
-	jQuery,
+	LoaderExtensions,
 	SupportLib,
 	XMLView,
-	Configuration) {
+	Library,
+	Supportability
+) {
 	"use strict";
 
 	// shortcuts
@@ -54,7 +57,7 @@ sap.ui.define([
 
 	oPreloadAsyncCheck.check = function(oIssueManager, oCoreFacade) {
 		// Check for debug mode
-		var bIsDebug = Configuration.getDebug();
+		var bIsDebug = Supportability.isDebugModeEnabled();
 		if (bIsDebug) {
 			return;
 		}
@@ -64,7 +67,7 @@ sap.ui.define([
 			return;
 		}
 
-		var vPreloadMode = Configuration.getPreload(),
+		var vPreloadMode = Library.getPreloadMode(),
 			bLoaderIsAsync = sap.ui.loader.config().async;
 
 		var sDetails = "It is recommended to use the configuration option " +
@@ -121,7 +124,7 @@ sap.ui.define([
 			var sUI5ICFNode = "/sap/bc/ui5_ui5/";
 			var aAppNames = [];
 			var sAppName;
-			var aRequests = jQuery.sap.measure.getRequestTimings();
+			var aRequests = window.performance.getEntriesByType("resource");
 			for (var i = 0; i < aRequests.length; i++) {
 				var sUrl = aRequests[i].name;
 				//We limit the check to requests under ICF node "/sap/bc/ui5_ui5/", only these are relevant here
@@ -180,16 +183,7 @@ sap.ui.define([
 				// 2. Ignore libraries with declared modules
 				// Alternative: More exact, but request-dependent solution would be loading and evaluating the resources.json file for each library
 
-				// support rules can get loaded within a ui5 version which does not have module "sap/base/util/LoaderExtensions" yet
-				// therefore load the jQuery.sap.getAllDeclaredModules fallback if not available
-				var LoaderExtensions = sap.ui.require("sap/base/util/LoaderExtensions");
-				var aDeclaredModules;
-				if (LoaderExtensions) {
-					aDeclaredModules = LoaderExtensions.getAllRequiredModules();
-				} else {
-					// TODO: migration not possible. jQuery.sap.getAllDeclaredModules is deprecated.
-					aDeclaredModules = jQuery.sap.getAllDeclaredModules();
-				}
+				var aDeclaredModules = LoaderExtensions.getAllRequiredModules();
 				Object.keys(mLibraries).forEach(function(sLibrary) {
 					var sLibraryWithDot = sLibrary + ".";
 					for (var i = 0; i < aDeclaredModules.length; i++) {
@@ -437,6 +431,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	var oAsynchronousXMLViews = {
 		id: "asynchronousXMLViews",
 		audiences: [Audiences.Application],
@@ -520,6 +517,7 @@ sap.ui.define([
 		oReuseComponents,
 		oModelPreloading,
 		oModelPreloadAndEarlyRequests,
+		/** @deprecated */
 		oAsynchronousXMLViews
 	];
 }, true);

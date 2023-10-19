@@ -24,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Property Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = PropertyChange;
 			this.sBindingError = "Please use 'PropertyBindingChange' to set a binding";
 
@@ -34,8 +34,11 @@ sap.ui.define([
 
 			this.oButton = new Button({text: this.OLD_VALUE});
 			this.oDOMParser = new DOMParser();
-			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
-			this.oXmlButton = this.oXmlDocument.childNodes[0];
+			this.oXmlDocument = this.oDOMParser.parseFromString(
+				`<Button xmlns='sap.m' text='${this.OLD_VALUE}' enabled='true' />`,
+				"application/xml"
+			);
+			[this.oXmlButton] = this.oXmlDocument.childNodes;
 
 			this.mExpectedSelector = {
 				id: this.oButton.getId(),
@@ -56,7 +59,7 @@ sap.ui.define([
 
 			this.oChange = new UIChange(this.mSpecificChangeData);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -212,8 +215,11 @@ sap.ui.define([
 
 		QUnit.test("When applying and reverting a property change which changes a binding on a xml control tree, Then", function(assert) {
 			this.OLD_VALUE = "{i18n>textKey}";
-			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
-			this.oXmlButton = this.oXmlDocument.childNodes[0];
+			this.oXmlDocument = this.oDOMParser.parseFromString(
+				`<Button xmlns='sap.m' text='${this.OLD_VALUE}' enabled='true' />`,
+				"application/xml"
+			);
+			[this.oXmlButton] = this.oXmlDocument.childNodes;
 
 			this.mExpectedChangeContent = {
 				property: "text",

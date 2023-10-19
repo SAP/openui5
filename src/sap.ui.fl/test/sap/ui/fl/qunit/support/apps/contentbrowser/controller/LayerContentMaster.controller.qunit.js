@@ -22,30 +22,30 @@ sap.ui.define([
 	var oRouter;
 
 	QUnit.module("LayerContentMaster", {
-		beforeEach: function() {
+		beforeEach() {
 			oController = new LayerContentMaster();
 			oRouter = new Router();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("on LRep content received", function(assert) {
 			var oPage = {
-				setBusy: function() {}
+				setBusy() {}
 			};
 			var oData = {};
 			var oStubbedFilterList = sandbox.stub(oController, "filterListByQuery");
 			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						setData: function() {}
+						setData() {}
 					};
 				}
 			});
 			sandbox.stub(oController, "byId").returns({
-				setValue: function() {}
+				setValue() {}
 			});
 
 			oController._onContentReceived(oPage, oData);
@@ -67,9 +67,9 @@ sap.ui.define([
 				}
 			]);
 			var eSelectionEvent = {
-				getSource: function() {
+				getSource() {
 					return {
-						getBindingContextPath: function() {
+						getBindingContextPath() {
 							return "/1";
 						}
 					};
@@ -78,7 +78,7 @@ sap.ui.define([
 			oController.sLayer = sLayer;
 			oController.sNamespace = "1stLevel/2ndLevel/";
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			});
@@ -106,9 +106,9 @@ sap.ui.define([
 				}
 			]);
 			var oSelectionEvent = {
-				getSource: function() {
+				getSource() {
 					return {
-						getBindingContextPath: function() {
+						getBindingContextPath() {
 							return "/0";
 						}
 					};
@@ -117,7 +117,7 @@ sap.ui.define([
 			oController.sLayer = sLayer;
 			oController.sNamespace = "1stLevel/2ndLevel/";
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			});

@@ -895,6 +895,38 @@ function (
 		helpers.renderObject(oObjectPage);
 	});
 
+	QUnit.test("not scrolled to selected section when navigation is canceled", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oSecondSection = this.oObjectPage.getSections()[1],
+			fnDone = assert.async(),
+			oSpy = this.spy(oObjectPage, "scrollToSection");
+
+		assert.expect(1);
+
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.attachBeforeNavigate(function (oEvent) {
+			oEvent.preventDefault();
+		});
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oSpy.reset();
+
+			// Act
+			oObjectPage.onAnchorBarTabPress({getParameter:
+				function () {
+					return oSecondSection.getId();
+				}
+			});
+
+			// Assert
+			assert.ok(oSpy.notCalled, "scroll to selected section is prevented");
+
+			fnDone();
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("Resizing", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 3;
@@ -2124,6 +2156,24 @@ function (
 			assert.equal(oObjectPage.getSelectedSection(), null, "Selected section is null as there are no sections.");
 			done();
 		}, this.iDelay);
+	});
+
+	QUnit.test("test removing and destroying Section on mobile (with binding)", function (assert) {
+		var oObjectPage = this.oOP,
+			done = assert.async();
+
+			this.stub(lib.Utilities, "isPhoneScenario").returns(true);
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+			// Act
+			oObjectPage.removeSection(oObjectPage.getSections()[1]).destroy("KeepDom");
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.ok(true, "Error is not thrown");
+				done();
+			},  this.iDelay);
+		}.bind(this));
 	});
 
 	QUnit.module("ObjectPage API: invalidate");

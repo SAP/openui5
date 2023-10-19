@@ -34,7 +34,7 @@
 								id="mdcTable1"
 								width="100%"
 								headerVisible="true"
-								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'Single'}"
+								selectionMode="{= ${settings>/maxConditions} === -1 ? 'Multi' : 'SingleMaster'}"
 								p13nMode="Column,Sort"
 								delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 								threshold="50">

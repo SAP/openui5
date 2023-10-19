@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.ContentFactory
 	 * @extends sap.ui.base.Object
 	 */
-	var ContentFactory = BaseObject.extend("sap.ui.mdc.field.content.ContentFactory", {
+	const ContentFactory = BaseObject.extend("sap.ui.mdc.field.content.ContentFactory", {
 		metadata: {
 			library: "sap.ui.mdc"
 		},
@@ -57,7 +57,7 @@ sap.ui.define([
 		}
 	});
 
-	var mContentTypes = {
+	const mContentTypes = {
 		Default: DefaultContent,
 		Search: SearchContent,
 		Date: DateContent,
@@ -107,8 +107,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId) {
-		var aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
-		var oLoadModulesPromise;
+		const aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
+		let oLoadModulesPromise;
 
 		this.setNoFormatting(oContentType.getNoFormatting(sContentMode));
 
@@ -121,7 +121,7 @@ sap.ui.define([
 
 		if (!this.getDataType()) {
 			// DataType instance not already set, make sure to load module before creating control and corresponding ConditionType (In Field case Instance is set in Binding.)
-			var sDataType = this.getField().getDataType();
+			let sDataType = this.getField().getDataType();
 			if (sDataType) {
 				sDataType = this.getField().getTypeMap().getDataTypeClassName(sDataType); // map EDM-Types
 				aControlNames.push(sDataType.replaceAll(".", "/"));
@@ -168,7 +168,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.getContentMode = function(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators) {
-		var sContentMode = ContentMode.Edit;
+		let sContentMode = ContentMode.Edit;
 		if (sEditMode === FieldEditMode.Display) {
 			if (iMaxConditions !== 1) {
 				sContentMode = ContentMode.DisplayMultiValue;
@@ -181,11 +181,11 @@ sap.ui.define([
 			sContentMode = ContentMode.EditMultiValue;
 		} else if (bMultipleLines) {
 			sContentMode = ContentMode.EditMultiLine;
+		} else if (this.getField()._getValueHelp()) { // if ValueHelp assigned use control supporting help
+			sContentMode = ContentMode.EditForHelp;
 		} else if (aOperators.length === 1 && oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) {
 			this._sOperator = aOperators[0];
 			sContentMode = ContentMode.EditOperator;
-		} else if (this.getField()._getValueHelp()) { // if ValueHelp assigned use control supporting help
-			sContentMode = ContentMode.EditForHelp;
 		}
 		return sContentMode;
 	};
@@ -200,8 +200,8 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 */
 	ContentFactory.prototype.getContentType = function(sBaseType, iMaxConditions, bIsTriggerable) {
-		var oField = this.getField();
-		var oContentType = mContentTypes[sBaseType] ? mContentTypes[sBaseType] : null;
+		const oField = this.getField();
+		let oContentType = mContentTypes[sBaseType] ? mContentTypes[sBaseType] : null;
 		if (!oContentType) {
 			if (oField.getFieldInfo() && bIsTriggerable) {
 				oContentType = mContentTypes.Link;
@@ -241,8 +241,8 @@ sap.ui.define([
 		return this._oField;
 	};
 
-	ContentFactory.prototype.getFieldHelpIcon = function() {
-		return this.getField()._getFieldHelpIcon();
+	ContentFactory.prototype.getValueHelpIcon = function() {
+		return this.getField()._getValueHelpIcon();
 	};
 
 	ContentFactory.prototype.getHandleTokenUpdate = function() {
@@ -271,10 +271,10 @@ sap.ui.define([
 
 	ContentFactory.prototype.setAriaLabelledBy = function(oContent) {
 		if (oContent.addAriaLabelledBy) {
-			var aAriaLabelledBy = this.getField().getAriaLabelledBy();
+			const aAriaLabelledBy = this.getField().getAriaLabelledBy();
 
-			for (var i = 0; i < aAriaLabelledBy.length; i++) {
-				var sId = aAriaLabelledBy[i];
+			for (let i = 0; i < aAriaLabelledBy.length; i++) {
+				const sId = aAriaLabelledBy[i];
 				oContent.addAriaLabelledBy(sId);
 			}
 		}
@@ -298,7 +298,7 @@ sap.ui.define([
 			}
 
 			if (!this[sCondType]) {
-				var oFormatOptions = fnGetFormatOptions();
+				const oFormatOptions = fnGetFormatOptions();
 				this[sCondType] = new CondType(oFormatOptions);
 				this[sCondType]._bCreatedByField = true;
 			}
@@ -316,7 +316,7 @@ sap.ui.define([
 	};
 
 	ContentFactory.prototype.getConditionsType = function (bSkipConditionsTypeGeneration, CustomConditionsType) {
-		var UsedConditionType = CustomConditionsType || ConditionsType; // CustomConditionsType used for DynamicDateRange
+		const UsedConditionType = CustomConditionsType || ConditionsType; // CustomConditionsType used for DynamicDateRange
 		return _getCondType.call(this, "_oConditionsType", UsedConditionType, this.getField().getFormatOptions.bind(this.getField()), bSkipConditionsTypeGeneration);
 	};
 
@@ -347,8 +347,8 @@ sap.ui.define([
 		}
 
 		// set types from current content (if external)
-		var oConditionType;
-		var oConditionsType;
+		let oConditionType;
+		let oConditionsType;
 
 		if (oContent) {
 			if (this._oContentConditionTypes.content) {
@@ -384,7 +384,7 @@ sap.ui.define([
 			// as data type module might not be loaded, load it now
 			if (!this.getDataType()) {
 				// DataType instance not already set, make sure to load module before creating control and corresponding ConditionType (In Field case Instance is set in Binding.)
-				var sDataType = this.getField().getDataType();
+				let sDataType = this.getField().getDataType();
 				if (sDataType) {
 					sDataType = this.getField().getTypeMap().getDataTypeClassName(sDataType); // map EDM-Types
 					sDataType = sDataType.replaceAll(".", "/");
@@ -440,7 +440,7 @@ sap.ui.define([
 
 	ContentFactory.prototype.retrieveDataType = function() { // make sure that data type module is loaded before
 		if (!this._oDataType) {
-			var sDataType = this.getField().getDataType();
+			const sDataType = this.getField().getDataType();
 			if (typeof sDataType === "string") {
 				this._oDataType = this.getField().getTypeMap().getDataTypeInstance(sDataType, this.getField().getDataTypeFormatOptions(), this.getField().getDataTypeConstraints());
 				this._oDataType._bCreatedByField = true;
@@ -460,7 +460,7 @@ sap.ui.define([
 
 	ContentFactory.prototype.retrieveAdditionalDataType = function() { // make sure that data type module is loaded before
 		if (!this._oAdditionalDataType) {
-			var oDataType = this.getField().getAdditionalDataTypeConfiguration();
+			const oDataType = this.getField().getAdditionalDataTypeConfiguration();
 
 			if (oDataType) {
 				if (oDataType.isA && oDataType.isA("sap.ui.model.Type")) {
@@ -567,10 +567,10 @@ sap.ui.define([
 	 * @ui5-restricted only for controls inherit from FieldBase
 	 */
 	ContentFactory.prototype.updateConditionType = function() {
-		var oConditionType = this._oConditionType;
-		var oConditionsType = this._oConditionsType;
+		const oConditionType = this._oConditionType;
+		const oConditionsType = this._oConditionsType;
 		if (oConditionType || oConditionsType) {
-			var oFormatOptions = this.getField().getFormatOptions();
+			let oFormatOptions = this.getField().getFormatOptions();
 			if (oConditionType) {
 				oConditionType.setFormatOptions(oFormatOptions);
 			}

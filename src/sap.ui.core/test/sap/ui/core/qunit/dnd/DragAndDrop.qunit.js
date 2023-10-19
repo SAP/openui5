@@ -6,12 +6,11 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragDropInfo",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
-	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
-	"sap/ui/core/Core",
 	"sap/ui/Device",
-	"sap/ui/core/Configuration"
-], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, Element, UIArea, Core, Device, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, Configuration, nextUIUpdate) {
 	"use strict";
 
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
@@ -156,7 +155,7 @@ sap.ui.define([
 				]
 			});
 			this.oControl.addStyleClass("sapUiScrollDelegate").placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -170,13 +169,13 @@ sap.ui.define([
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a non draggable element");
 	});
 
-	QUnit.test("Text input elements", function(assert) {
+	QUnit.test("Text input elements", async function(assert) {
 		var oEvent;
 
 		this.oControl.addTopItem(new DivControl({elementTag: "input"}));
 		this.oControl.addTopItem(new DivControl({elementTag: "textarea"}));
 		this.oControl.addDragDropConfig(new DragDropInfo({sourceAggregation: "topItems"}));
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl.getTopItems()[0]);
 		oEvent.target.focus();
@@ -190,7 +189,7 @@ sap.ui.define([
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a textarea element");
 	});
 
-	QUnit.test("Text input elements - Workaround for a bug in Firefox", function(assert) {
+	QUnit.test("Text input elements - Workaround for a bug in Firefox", async function(assert) {
 		var oBrowserStub = sinon.stub(Device, "browser");
 		var that = this;
 		var sBrowser = "firefox";
@@ -200,7 +199,7 @@ sap.ui.define([
 		that.oControl.addTopItem(new DivControl({elementTag: "input"}));
 		that.oControl.addTopItem(new DivControl({elementTag: "textarea"}));
 		that.oControl.addDragDropConfig(new DragDropInfo());
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is draggable before mousedown");
 
@@ -299,7 +298,7 @@ sap.ui.define([
 				]
 			});
 			this.oControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -463,7 +462,7 @@ sap.ui.define([
 				]
 			});
 			this.oControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -583,7 +582,7 @@ sap.ui.define([
 				]
 			});
 			this.oControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oControl.destroy();
@@ -658,7 +657,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("dragSession", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oContainer = new DragAndDropControl({
 				topItems: [this.oSourceControl = new DivControl()],
 				bottomItems: [this.oTargetControl = new DivControl(), this.oLastTargetControl = new DivControl()],
@@ -673,7 +672,8 @@ sap.ui.define([
 			});
 
 			this.oContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+
+			await nextUIUpdate();
 
 			this.oTargetDomRef = this.oTargetControl.getDomRef();
 			this.oSourceDomRef = this.oSourceControl.getDomRef();
@@ -789,7 +789,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("groupName", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oContainer = new DragAndDropControl({
 				topItems: [this.oSourceControl = new DivControl()],
 				bottomItems: [this.oTargetControl = new DivControl()],
@@ -807,7 +807,8 @@ sap.ui.define([
 			});
 
 			this.oContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+
+			await nextUIUpdate();
 
 			this.oTargetDomRef = this.oTargetControl.getDomRef();
 			this.oSourceDomRef = this.oSourceControl.getDomRef();
@@ -863,7 +864,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Parent traverse", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oContainer = new DragAndDropControl({
 				topItems: [this.oSourceControl = new DivControl()],
 				bottomItems: [this.oTargetControl = new DivControl({
@@ -886,7 +887,7 @@ sap.ui.define([
 			});
 
 			this.oContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oTargetDomRef = this.oTargetControl.getDomRef();
 			this.oSourceDomRef = this.oSourceControl.getDomRef();

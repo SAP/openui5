@@ -32,6 +32,7 @@ sap.ui.define([
 			this._bActive = false;
 			this._aEventIds = [];
 			this._bIsToolPlugin = oStub.isToolStub();
+			this._oStub = oStub;
 		}
 	});
 
@@ -245,22 +246,19 @@ sap.ui.define([
 		return this._bActive;
 	};
 
-	Plugin.prototype.confirmReload = function (sParameterName, vParameterValue) {
+	Plugin.prototype.confirmReload = function (fnConfirmCb) {
 		MessageBox.confirm(this._getText("TechInfo.ReloadApp.ConfirmMessage"), {
 			title: this._getText("TechInfo.DebugSources.ConfirmTitle"),
 			onClose: function (oAction) {
 				if (oAction === MessageBox.Action.OK) {
-					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD_WITH_PARAMETER, {
-						parameterName: sParameterName,
-						parameterValue: vParameterValue
-					});
+					fnConfirmCb();
 				}
-			}.bind(this)
+			}
 		});
 	};
 
 	Plugin.prototype._getText = function (sKey, aParameters) {
-		return Library.get("sap.ui.core").getResourceBundle().getText(sKey, aParameters);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParameters);
 	};
 
 	return Plugin;

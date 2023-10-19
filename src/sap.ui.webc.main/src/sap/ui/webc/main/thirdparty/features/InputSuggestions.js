@@ -183,11 +183,14 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
     onItemSelected(selectedItem, keyboardUsed) {
       const allItems = this._getItems();
       const item = selectedItem || allItems[this.selectedItemIndex];
+      const nonGroupItems = this._getNonGroupItems();
       this.selectedItemIndex = allItems.indexOf(item);
       this.accInfo = {
-        currentPos: this.selectedItemIndex + 1,
-        listSize: allItems.length,
-        itemText: this._getRealItems()[this.selectedItemIndex].description
+        isGroup: item.groupItem,
+        currentPos: nonGroupItems.indexOf(item) + 1,
+        listSize: nonGroupItems.length,
+        itemText: this._getRealItems()[this.selectedItemIndex].text,
+        description: this._getRealItems()[this.selectedItemIndex].description
       };
       // If the item is "Inactive", prevent selection with SPACE or ENTER
       // to have consistency with the way "Inactive" items behave in the ui5-list
@@ -333,15 +336,18 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
       const items = this._getItems();
       const currentItem = items[nextIdx];
       const previousItem = items[previousIdx];
+      const nonGroupItems = this._getNonGroupItems();
       if (!currentItem) {
         return;
       }
       this.component.focused = false;
       this._clearValueStateFocus();
       this.accInfo = {
-        currentPos: nextIdx + 1,
-        listSize: items.length,
-        itemText: this._getRealItems()[items.indexOf(currentItem)].description
+        isGroup: currentItem.groupItem,
+        currentPos: nonGroupItems.indexOf(currentItem) + 1,
+        listSize: nonGroupItems.length,
+        itemText: this._getRealItems()[this.selectedItemIndex].text,
+        description: this._getRealItems()[items.indexOf(currentItem)].description
       };
       if (previousItem) {
         previousItem.selected = false;
@@ -396,6 +402,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
     _getItems() {
       return this.responsivePopover ? [...this.responsivePopover.querySelector("[ui5-list]").children] : [];
     }
+    _getNonGroupItems() {
+      return this._getItems().filter(item => !item.groupItem);
+    }
     _getComponent() {
       return this.component;
     }
@@ -423,7 +432,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/FeaturesRegistry",
         return "";
       }
       const itemPositionText = Suggestions.i18nBundle.getText(_i18nDefaults.LIST_ITEM_POSITION, this.accInfo.currentPos, this.accInfo.listSize);
-      return `${this.accInfo.itemText} ${itemPositionText}`;
+      const groupItemText = Suggestions.i18nBundle.getText(_i18nDefaults.LIST_ITEM_GROUP_HEADER);
+      return this.accInfo.isGroup ? `${groupItemText} ${this.accInfo.itemText}` : `${this.accInfo.description} ${itemPositionText}`;
     }
     getRowText(suggestion) {
       return this.sanitizeText(suggestion.text || suggestion.textContent || "");

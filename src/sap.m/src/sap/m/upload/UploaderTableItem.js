@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/util/File",
 	"sap/ui/Device",
-	"sap/m/upload/UploadSetTableItem",
+	"sap/m/upload/UploadSetwithTableItem",
 	"sap/m/upload/UploaderHttpRequestMethod"
 ], function (Log, MobileLibrary, Element, FileUtil, Device, UploadSetItem, UploaderHttpRequestMethod) {
 	"use strict";
@@ -22,7 +22,10 @@ sap.ui.define([
 	 * @extends sap.ui.core.Element
 	 *
 	 * @constructor
-	 * @private
+	 * @public
+	 * @experimental since 1.120
+	 * @since 1.120
+	 * @version ${version}
 	 * @alias sap.m.upload.UploaderTableItem
 	 */
 	var Uploader = Element.extend("sap.m.upload.UploaderTableItem", {
@@ -38,48 +41,46 @@ sap.ui.define([
 				 */
 				uploadUrl: {type: "string", defaultValue: null},
 				/**
-				 * URL where the next file is going to be download from.
+				 * URL where the next file is going to be downloaded from.
 				 */
 				downloadUrl: {type: "string", defaultValue: null},
 				/**
 				 * HTTP request method chosen for file upload.
-				 * @since 1.90
 				 */
 				httpRequestMethod: {type: "sap.m.upload.UploaderHttpRequestMethod", defaultValue: UploaderHttpRequestMethod.Post},
 				/**
 				* This property decides the type of request. If set to "true", the request gets sent as a multipart/form-data request instead of file only request.
-				* @since 1.92
 				*/
 				useMultipart: { type: "boolean", defaultValue: false }
             },
 			events: {
 				/**
-				 * The event is fired just after the POST request was sent.
+				 * The event is fired just after the POST request is sent.
 				 */
 				uploadStarted: {
 					parameters: {
 						/**
 						 * The item that is going to be uploaded.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"}
+						item: {type: "sap.m.upload.UploadSetwithTableItem"}
 					}
 				},
 				/**
-				 * The event is fired every time an XHR request reports progress in uploading.
+				 * The event is fired every time an XHR request reports progress while uploading.
 				 */
 				uploadProgressed: {
 					parameters: {
 						/**
 						 * The item that is being uploaded.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"},
+						item: {type: "sap.m.upload.UploadSetwithTableItem"},
 						/**
 						 * The number of bytes transferred since the beginning of the operation.
 						 * This doesn't include headers and other overhead, but only the content itself
 						 */
 						loaded: {type: "int"},
 						/**
-						 * The total number of bytes of content that will be transferred during the operation.
+						 * The total number of bytes of content that is transferred during the operation.
 						 * If the total size is unknown, this value is zero.
 						 */
 						total: {type: "int"}
@@ -93,7 +94,7 @@ sap.ui.define([
 						/**
 						 * The item that was uploaded.
 						 */
-						item: {type: "sap.m.upload.UploadSetTableItem"},
+						item: {type: "sap.m.upload.UploadSetwithTableItem"},
 						/**
 						 * A JSON object containing the additional response parameters like response, responseXML, readyState, status and headers.
 						 * <i>Sample response object:</i>
@@ -119,12 +120,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Starts function for uploading one file object to given url. Returns promise that resolves when the upload is finished or rejects when the upload fails.
+	 * Starts the function for uploading one file object to a given URL. Returns promise that is resolved when the upload is finished, or is rejected when the upload fails.
 	 *
-	 * @param {File|Blob} oFile File or Blob object to be uploaded.
+	 * @param {File|Blob} oFile File or blob object to be uploaded.
 	 * @param {string} sUrl Upload Url.
 	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
-	 * @returns {Promise} Promise that resolves when the upload is finished or rejects when the upload fails.
+	 * @returns {Promise} Promise that is resolved when the upload is finished, or is rejected when the upload fails.
 	 * @public
 	 */
 	Uploader.uploadFile = function (oFile, sUrl, aHeaderFields) {
@@ -161,7 +162,7 @@ sap.ui.define([
 	/**
 	 * Starts the process of uploading the specified file.
 	 *
-	 * @param {sap.m.upload.UploadSetTableItem} oItem Item representing the file to be uploaded.
+	 * @param {sap.m.upload.UploadSetwithTableItem} oItem Item representing the file to be uploaded.
 	 * @param {sap.ui.core.Item[]} [aHeaderFields] Collection of request header fields to be send along.
 	 * @public
 	 */
@@ -229,16 +230,16 @@ sap.ui.define([
 	/**
 	 * Starts the process of downloading a file.
 	 *
-	 * @param {sap.m.upload.UploadSetTableItem} oItem Item representing the file to be downloaded.
+	 * @param {sap.m.upload.UploadSetwithTableItem} oItem Item representing the file to be downloaded.
 	 * @param {sap.ui.core.Item[]} aHeaderFields List of header fields to be added to the GET request.
-	 * @param {boolean} bAskForLocation True if the location to where download the file should be first queried by a browser dialog.
-	 * @return {boolean} True if the download process successfully
+	 * @param {boolean} bAskForLocation If it is true, the location of where the file is to be downloaded is queried by a browser dialog.
+	 * @return {boolean} It returns true if the download is processed successfully
 	 * @public
 	 */
 	Uploader.prototype.download = function (oItem, aHeaderFields, bAskForLocation) {
 		var sUrl = this.getDownloadUrl() || oItem.getUrl();
 
-		// File.save doesn't work in Safari but URLHelper.redirect does work.
+		// File.save doesn't work in Safari, however, URLHelper.redirect works.
 		// So, this overwrites the value of bAskForLocation in order to make it work.
 		if (Device.browser.name === "sf") {
 			bAskForLocation = false;

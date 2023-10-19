@@ -126,7 +126,7 @@ sap.ui.define([
 		QUnit.test("Error object as parameter", function(assert) {
 			var oError = new Error("error message");
 			var sStack = oError.stack;
-			oError.stack = oError.toString() + "\t\n \t\n" + oError.stack + "  \n";
+			oError.stack = `${oError.toString()}\t\n \t\n${oError.stack}  \n`;
 			assert.ok(oError.toString() + sStack, "duplicate text and whitespaces are trimmed");
 		});
 		QUnit.test("called with wrong parameter", function(assert) {
@@ -183,16 +183,6 @@ sap.ui.define([
 
 		QUnit.test("when called with a string", function(assert) {
 			assert.strictEqual(Util.getObjectType("foo"), "string");
-		});
-	});
-
-	QUnit.module("printf()", function() {
-		QUnit.test("basic functionality", function(assert) {
-			assert.equal(
-				Util.printf("Arg1: {0}, Arg2: {1}", "Val1", "Val2"),
-				"Arg1: Val1, Arg2: Val2",
-				"The string has been correctly assembled"
-			);
 		});
 	});
 
@@ -254,7 +244,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("waitForSynced()", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -263,7 +253,7 @@ sap.ui.define([
 			var fnToBeResolved = sandbox.stub();
 			var oDesignTime = {
 				getStatus: sandbox.stub().returns("syncing"),
-				attachEventOnce: function(sEventName, fnHandler) {
+				attachEventOnce(sEventName, fnHandler) {
 					if (sEventName === "synced") {
 						assert.ok(true, "then the handler was attached to the synced event");
 						fnToBeResolved.callsFake(fnHandler);
@@ -281,14 +271,16 @@ sap.ui.define([
 			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 
-			var oReturnPromise = fnReturn.apply(null, aMockParams);
+			var oReturnPromise = fnReturn(...aMockParams);
 			assert.strictEqual(fnToBeResolved.callCount, 0, "then the 'synced' callback function was not called");
 			setTimeout(fnToBeResolved, 50);
 			return oReturnPromise.then(function(sReturn) {
-				assert.ok(fnToBeResolved.calledOnce, "then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
+				assert.ok(fnToBeResolved.calledOnce,
+					"then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
 				return fnOriginalStub().then(function(sExpectedReturn) {
 					assert.strictEqual(sExpectedReturn, sReturn, "then calling the returned function returns the correct value");
-					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]), "then the returned function was called with the correct arguments");
+					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]),
+						"then the returned function was called with the correct arguments");
 				});
 			});
 		});
@@ -298,7 +290,7 @@ sap.ui.define([
 			var fnToBeResolved = sandbox.stub();
 			var oDesignTime = {
 				getStatus: sandbox.stub().returns("syncing"),
-				attachEventOnce: function(sEventName, fnHandler) {
+				attachEventOnce(sEventName, fnHandler) {
 					if (sEventName === "synced") {
 						assert.ok(true, "then the handler was attached to the synced event");
 						fnToBeResolved.callsFake(fnHandler);
@@ -313,18 +305,19 @@ sap.ui.define([
 			var fnReturn = Util.waitForSynced(oDesignTime);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 
-			var oReturnPromise = fnReturn.apply(null, aMockParams);
+			var oReturnPromise = fnReturn(...aMockParams);
 			assert.strictEqual(fnToBeResolved.callCount, 0, "then the 'synced' callback function was not called");
 			setTimeout(fnToBeResolved, 50);
 			return oReturnPromise.then(function() {
-				assert.ok(fnToBeResolved.calledOnce, "then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
+				assert.ok(fnToBeResolved.calledOnce,
+					"then the wrapper function returns a resolved promise only after the 'synced' callback function was called");
 			});
 		});
 
 		QUnit.test("when waitForSynced is called with the DT in 'synced' status", function(assert) {
 			var oDesignTime = {
 				getStatus: sandbox.stub().returns("synced"),
-				attachEventOnce: function(sEventName) {
+				attachEventOnce(sEventName) {
 					if (sEventName === "synced") {
 						assert.ok(false, "this should never be called");
 					} else if (sEventName === "syncFailed") {
@@ -341,10 +334,11 @@ sap.ui.define([
 			var fnReturn = Util.waitForSynced(oDesignTime, fnOriginalStub);
 			assert.ok(typeof fnReturn === "function", "then a function was returned");
 
-			return fnReturn.apply(null, aMockParams).then(function(sReturn) {
+			return fnReturn(...aMockParams).then(function(sReturn) {
 				return fnOriginalStub().then(function(sExpectedReturn) {
 					assert.strictEqual(sExpectedReturn, sReturn, "then calling the returned function returns the correct value");
-					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]), "then the returned function was called with the correct arguments");
+					assert.ok(fnOriginalStub.calledWith(aMockParams[0], aMockParams[1]),
+						"then the returned function was called with the correct arguments");
 				});
 			});
 		});
@@ -353,7 +347,7 @@ sap.ui.define([
 			assert.expect(4);
 			var oDesignTime = {
 				getStatus: sandbox.stub().returns("syncing"),
-				attachEventOnce: function(sEventName, fnHandler) {
+				attachEventOnce(sEventName, fnHandler) {
 					if (sEventName === "synced") {
 						assert.ok(true, "then the handler was attached to the synced event");
 					} else if (sEventName === "syncFailed") {

@@ -206,9 +206,9 @@ sap.ui.define([
 	}
 
 	function parameterizedTest(oApplyStorageConnector, oWriteStorageConnector, sStorage) {
-		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
-			before: function() {
-				oWriteStorageConnector.write({
+		QUnit.module(`loadFlexData: Given some changes in the ${sStorage}`, {
+			async before() {
+				await oWriteStorageConnector.write({
 					flexObjects: [
 						oTestData.change1,
 						oTestData.change2,
@@ -228,7 +228,7 @@ sap.ui.define([
 					]
 				});
 			},
-			after: function() {
+			after() {
 				removeListFromStorage(oWriteStorageConnector.storage, [
 					oTestData.change1.fileName,
 					oTestData.change2.fileName,
@@ -278,9 +278,9 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("loadFlexData: Given entries were present in different layers " + sStorage, {
-			before: function() {
-				oWriteStorageConnector.write({
+		QUnit.module(`loadFlexData: Given entries were present in different layers ${sStorage}`, {
+			async before() {
+				await oWriteStorageConnector.write({
 					flexObjects: [
 						oTestData.baseChange,
 						oTestData.vendorVariant,
@@ -290,7 +290,7 @@ sap.ui.define([
 					]
 				});
 			},
-			after: function() {
+			after() {
 				removeListFromStorage(oWriteStorageConnector.storage, [
 					oTestData.baseChange.fileName,
 					oTestData.vendorVariant.fileName,

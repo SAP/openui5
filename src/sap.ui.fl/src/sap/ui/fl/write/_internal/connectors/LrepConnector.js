@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/connectors/BaseConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_pick"
 ], function(
 	merge,
+	Lib,
 	BaseConnector,
 	InitialConnector,
 	InitialUtils,
@@ -185,7 +187,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.changeTypes] Change types of the changes which should be reset (comma-separated list)
 		 * @returns {Promise} Promise resolves as soon as the reset has completed
 		 */
-		reset: function(mPropertyBag) {
+		reset(mPropertyBag) {
 			BusyIndicator.show(0); // Reset takes a long time with app descriptor changes, so a BusyIndicator is needed.
 			var aChanges = [];
 			var oTransportSelectionPromise = Promise.resolve(); // By default, no transport needed for USER layer
@@ -262,14 +264,14 @@ sap.ui.define([
 		 * - <sMessage> when all the artifacts are successfully transported fl will return the message to show
 		 * - "Error" in case of a problem
 		 */
-		publish: function(mPropertyBag) {
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		publish(mPropertyBag) {
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var fnHandleAllErrors = function(oError) {
 				BusyIndicator.hide();
 				var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 				var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-				Log.error("transport error: " + oError);
+				Log.error(`transport error: ${oError}`);
 				MessageBox.show(sMessage, {
 					icon: MessageBox.Icon.ERROR,
 					title: sTitle,
@@ -315,7 +317,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @returns {Promise} Promise resolves as soon as flex info has been retrieved
 		 */
-		getFlexInfo: function(mPropertyBag) {
+		getFlexInfo(mPropertyBag) {
 			var aParameters = ["layer"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
@@ -336,7 +338,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.$filter] Filters full raw data
 		 * @returns {Promise<object>} Promise resolves as soon as context has been retrieved
 		 */
-		getContexts: function(mPropertyBag) {
+		getContexts(mPropertyBag) {
 			var aParameters = ["type", "$skip", "$filter"];
 			var mParameters = _pick(mPropertyBag, aParameters);
 
@@ -355,7 +357,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.flexObjects Payload for the post request
 		 * @returns {Promise<object>} Promise resolves as soon as context descriptions have been retrieved
 		 */
-		loadContextDescriptions: function(mPropertyBag) {
+		loadContextDescriptions(mPropertyBag) {
 			mPropertyBag.method = "POST";
 			mPropertyBag.isContextSharing = true;
 			return _doWrite(mPropertyBag).then(function(oResult) {
@@ -369,7 +371,7 @@ sap.ui.define([
 		 * @returns {Promise<boolean>} Promise resolves with true
 		 * @deprecated
 		 */
-		 isContextSharingEnabled: function() {
+		 isContextSharingEnabled() {
 			return Promise.resolve(true);
 		},
 
@@ -380,7 +382,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.url Configured url for the connector
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
-		loadFeatures: function(mPropertyBag) {
+		loadFeatures(mPropertyBag) {
 			if (InitialConnector.settings) {
 				return Promise.resolve(InitialConnector.settings);
 			}
@@ -408,7 +410,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		write: function(mPropertyBag) {
+		write(mPropertyBag) {
 			mPropertyBag.method = "POST";
 			return _doWrite(mPropertyBag);
 		},
@@ -424,7 +426,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @returns {Promise} Promise resolves as soon as the writing was completed
 		 */
-		condense: function(mPropertyBag) {
+		condense(mPropertyBag) {
 			mPropertyBag.method = "POST";
 			mPropertyBag.isCondensingEnabled = true;
 			return _doWrite(mPropertyBag);
@@ -439,7 +441,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @returns {Promise} Resolves as soon as the writing is completed without data
 		 */
-		update: function(mPropertyBag) {
+		update(mPropertyBag) {
 			if (mPropertyBag.flexObject.fileType === "variant") {
 				mPropertyBag.isLegacyVariant = true;
 			}
@@ -457,7 +459,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.url] Configured url for the connector
 		 * @returns {Promise} Resolves as soon as the deletion is completed without data
 		 */
-		remove: function(mPropertyBag) {
+		remove(mPropertyBag) {
 			var mParameters = {
 				namespace: mPropertyBag.flexObject.namespace,
 				layer: mPropertyBag.flexObject.layer
@@ -486,13 +488,13 @@ sap.ui.define([
 			return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 		},
 		appVariant: {
-			getManifirstSupport: function(mPropertyBag) {
-				var sManifirstUrl = ROUTES.MANI_FIRST_SUPPORTED + "/?id=" + mPropertyBag.appId;
+			getManifirstSupport(mPropertyBag) {
+				var sManifirstUrl = `${ROUTES.MANI_FIRST_SUPPORTED}/?id=${mPropertyBag.appId}`;
 				return InitialUtils.sendRequest(sManifirstUrl, "GET", {initialConnector: InitialConnector}).then(function(oResponse) {
 					return oResponse.response;
 				});
 			},
-			getManifest: function(mPropertyBag) {
+			getManifest(mPropertyBag) {
 				var sAppVariantManifestUrl = mPropertyBag.appVarUrl;
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
@@ -502,7 +504,7 @@ sap.ui.define([
 				);
 				return WriteUtils.sendRequest(sAppVariantManifestUrl, "GET", oRequestOption);
 			},
-			load: function(mPropertyBag) {
+			load(mPropertyBag) {
 				var sAppVariantUrl = InitialUtils.getUrl(ROUTES.APPVARIANTS, mPropertyBag);
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
@@ -512,12 +514,12 @@ sap.ui.define([
 				);
 				return WriteUtils.sendRequest(sAppVariantUrl, "GET", oRequestOption);
 			},
-			create: function(mPropertyBag) {
+			create(mPropertyBag) {
 				mPropertyBag.method = "POST";
 				mPropertyBag.isAppVariant = true;
 				return _doWrite(mPropertyBag);
 			},
-			assignCatalogs: function(mPropertyBag) {
+			assignCatalogs(mPropertyBag) {
 				var mParameters = {};
 				mParameters.action = mPropertyBag.action;
 				delete mPropertyBag.action;
@@ -536,7 +538,7 @@ sap.ui.define([
 				);
 				return WriteUtils.sendRequest(sCatalogAssignmentUrl, "POST", oRequestOption);
 			},
-			unassignCatalogs: function(mPropertyBag) {
+			unassignCatalogs(mPropertyBag) {
 				var mParameters = {};
 				mParameters.action = mPropertyBag.action;
 				delete mPropertyBag.action;
@@ -553,7 +555,7 @@ sap.ui.define([
 				);
 				return WriteUtils.sendRequest(sCatalogUnAssignmentUrl, "POST", oRequestOption);
 			},
-			update: function(mPropertyBag) {
+			update(mPropertyBag) {
 				return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
 					if (sTransport) {
 						mPropertyBag.transport = sTransport;
@@ -564,7 +566,7 @@ sap.ui.define([
 					return _doWrite(mPropertyBag);
 				});
 			},
-			remove: function(mPropertyBag) {
+			remove(mPropertyBag) {
 				return _selectTransportForAppVariant(mPropertyBag).then(function(sTransport) {
 					var mParameters = {};
 					if (sTransport) {
@@ -584,7 +586,7 @@ sap.ui.define([
 					return WriteUtils.sendRequest(sDeleteUrl, "DELETE", oRequestOption);
 				});
 			},
-			list: function(mPropertyBag) {
+			list(mPropertyBag) {
 				var mParameters = {};
 
 				mParameters.layer = mPropertyBag.layer;
@@ -605,23 +607,23 @@ sap.ui.define([
 			}
 		},
 		contextBasedAdaptation: {
-			create: function(mPropertyBag) {
+			create(mPropertyBag) {
 				mPropertyBag.isContextBasedAdaptationEnabled = true;
 				mPropertyBag.method = "POST";
 				return _doWrite(mPropertyBag);
 			},
-			reorder: function(mPropertyBag) {
+			reorder(mPropertyBag) {
 				mPropertyBag.isContextBasedAdaptationEnabled = true;
 				mPropertyBag.method = "PUT";
 				return _doWrite(mPropertyBag);
 			},
-			update: function(mPropertyBag) {
+			update(mPropertyBag) {
 				mPropertyBag.isContextBasedAdaptationEnabled = true;
 				mPropertyBag.method = "PUT";
 				mPropertyBag.reference = mPropertyBag.adaptationId;
 				return _doWrite(mPropertyBag);
 			},
-			load: function(mPropertyBag) {
+			load(mPropertyBag) {
 				var aParameters = ["version"];
 				var mParameters = _pick(mPropertyBag, aParameters);
 				InitialConnector._addClientInfo(mParameters);
@@ -631,7 +633,7 @@ sap.ui.define([
 					return oResult.response;
 				});
 			},
-			remove: function(mPropertyBag) {
+			remove(mPropertyBag) {
 				mPropertyBag.isContextBasedAdaptationEnabled = true;
 				mPropertyBag.method = "DELETE";
 				mPropertyBag.reference = mPropertyBag.adaptationId;
@@ -639,7 +641,7 @@ sap.ui.define([
 			}
 		},
 		ui2Personalization: {
-			create: function(mPropertyBag) {
+			create(mPropertyBag) {
 				mPropertyBag.initialConnector = this.initialConnector;
 				var sPrefix = Utils.getLrepUrl();
 				var oRequestOptions = WriteUtils.getRequestOptions(
@@ -651,7 +653,7 @@ sap.ui.define([
 				var sUrl = sPrefix + ROUTES.UI2PERSONALIZATION;
 				return WriteUtils.sendRequest(sUrl, "PUT", oRequestOptions);
 			},
-			remove: function(mPropertyBag) {
+			remove(mPropertyBag) {
 				mPropertyBag.initialConnector = this.initialConnector;
 				var sUrl = InitialUtils.getUrl(ROUTES.UI2PERSONALIZATION, {
 					url: Utils.getLrepUrl()
@@ -664,7 +666,7 @@ sap.ui.define([
 			}
 		},
 		versions: {
-			load: function(mPropertyBag) {
+			load(mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
 					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag)
@@ -679,7 +681,7 @@ sap.ui.define([
 					});
 				});
 			},
-			activate: function(mPropertyBag) {
+			activate(mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
 					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag),
@@ -695,7 +697,7 @@ sap.ui.define([
 					return renameVersionNumberProperty(oVersion);
 				});
 			},
-			discardDraft: function(mPropertyBag) {
+			discardDraft(mPropertyBag) {
 				var oRequestOption = WriteUtils.getRequestOptions(
 					InitialConnector,
 					InitialUtils.getUrl(ROUTES.TOKEN, mPropertyBag)
@@ -703,14 +705,14 @@ sap.ui.define([
 				var sVersionsUrl = InitialUtils.getUrl(ROUTES.VERSIONS.DISCARD, mPropertyBag);
 				return WriteUtils.sendRequest(sVersionsUrl, "DELETE", oRequestOption);
 			},
-			publish: function(mPropertyBag) {
-				var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+			publish(mPropertyBag) {
+				var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 				var fnHandleAllErrors = function(oError) {
 					BusyIndicator.hide();
 					var sMessage = oResourceBundle.getText("MSG_TRANSPORT_ERROR", oError ? [oError.message || oError] : undefined);
 					var sTitle = oResourceBundle.getText("HEADER_TRANSPORT_ERROR");
-					Log.error("transport error" + oError);
+					Log.error(`transport error${oError}`);
 					MessageBox.show(sMessage, {
 						icon: MessageBox.Icon.ERROR,
 						title: sTitle,

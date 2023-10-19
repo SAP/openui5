@@ -52,10 +52,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					}
 				}
 			},
-			ThemeParameters: {
+			/**
+			 * Note: Contains tests for sync and async APIs, combined with legacy Core#loadLibrary.
+			 */
+			"ThemeParameters_legacyAPIs": {
 				title: "sap.ui.core.theming.Parameters",
 				ui5: {
-					libs: "sap.ui.legacy.testlib",
 					theme: "sap_hcb"
 				},
 				qunit: {
@@ -64,6 +66,23 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				loader: {
 					paths: {
 						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib_legacyAPIs/",
+						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
+					}
+				}
+			},
+			/**
+			 * Note: Only contains modern non-deprecated APIs.
+			 */
+			ThemeParameters: {
+				title: "sap.ui.core.theming.Parameters - Async Only",
+				ui5: {
+					theme: "sap_hcb"
+				},
+				qunit: {
+					reorder: false
+				},
+				loader: {
+					paths: {
 						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
 					}
 				}
@@ -85,9 +104,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"Theming": {
 				title: "sap.ui.core.Theming",
 				ui5: {
-					theme: "",
+					theme: "", // Note: this is intentionally an empty string, regression test for theme defaulting
 					themeRoots: {
-						"sap_initialThemeRoot": "/somewhere/outside"
+						"theme_with_initial_themeRoot": "/somewhere/outside"
 					}
 				},
 				qunit: {
@@ -97,9 +116,9 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"ThemingWoThemeManager": {
 				title: "sap.ui.core.Theming w/o sap.ui.core.theming.ThemeManager",
 				ui5: {
-					theme: "",
+					theme: "", // Note: this is intentionally an empty string, regression test for theme defaulting
 					themeRoots: {
-						"sap_initialThemeRoot": "/somewhere/outside"
+						"theme_with_initial_themeRoot": "/somewhere/outside"
 					}
 				},
 				testConfig: {
@@ -110,6 +129,29 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				},
 				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
 				module: "testdata/core/Theming.qunit"
+			},
+			"Theming_default_and_fallback": {
+				title: "sap.ui.core.Theming - defaulting and fallbacks",
+				ui5: {
+					theme: "sap_goldreflection" // Note: deprecated and deleted theme: used for fallback test!
+				},
+				qunit: {
+					reorder: false
+				}
+			},
+			"Theming_default_and_fallback_wo_ThemeManager": {
+				title: "sap.ui.core.Theming - defaulting and fallbacks",
+				ui5: {
+					theme: "sap_goldreflection" // Note: deprecated and deleted theme: used for fallback test!
+				},
+				testConfig: {
+					themeManagerNotActive: true
+				},
+				qunit: {
+					reorder: false
+				},
+				beforeBootstrap: "testdata/core/Theming.beforeBootstrap.qunit",
+				module: "testdata/core/Theming_default_and_fallback.qunit"
 			}
 		}
 	};

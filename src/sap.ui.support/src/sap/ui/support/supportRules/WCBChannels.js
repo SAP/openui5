@@ -132,14 +132,6 @@ function () {
 		DELETE_RULE:                "DELETE_RULE",
 
 		/**
-		 * Posts information about the application under test.
-		 * @type {string}
-		 * @const
-		 * @protected
-		 */
-		POST_APPLICATION_INFORMATION: "POST_APPLICATION_INFORMATION",
-
-		/**
 		 * Posts available libraries.
 		 * @type {string}
 		 * @const

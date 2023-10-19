@@ -7,18 +7,18 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
+	 * Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
 	 * This class provides method calls, that are called by the <code>Chart</code> for specific operations and overwrite the internal behavior.
 	 *
-	 * @author SAP SE
 	 * @namespace
+	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/ChartDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
 	 * @since 1.88
 	 * @public
 	 *
 	 */
-	var ChartDelegate = Object.assign({}, AggregationBaseDelegate);
+	const ChartDelegate = Object.assign({}, AggregationBaseDelegate);
 
 	/**
 	 * Notifies the inner chart to zoom in.
@@ -224,6 +224,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChartDelegate.initializeInnerChart = function (oChart) {
+		return Promise.reject();
 	};
 
 	/**

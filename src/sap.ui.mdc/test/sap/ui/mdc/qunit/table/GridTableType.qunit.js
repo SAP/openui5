@@ -3,11 +3,13 @@
 sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
-	"sap/ui/mdc/enums/TableType"
+	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	Table,
 	GridTableType,
-	TableType
+	TableType,
+	TableRowCountMode
 ) {
 	"use strict";
 
@@ -30,7 +32,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Shorthand type='GridTable'", function(assert) {
-		var oTable = new Table({type: TableType.Table});
+		const oTable = new Table({type: TableType.Table});
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._getType().isA("sap.ui.mdc.table.GridTableType"), "Default type instance is a sap.ui.mdc.table.GridTableType");
@@ -41,7 +43,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTable - HideStandardTooltips", function(assert) {
-		var oTable = new Table({type: TableType.Table});
+		const oTable = new Table({type: TableType.Table});
 
 		return oTable.initialized().then(function() {
 			assert.ok(oTable._oTable._getHideStandardTooltips(), "HideStandardTooltips option set in inner GridTable");
@@ -71,8 +73,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Fix column count", function(assert) {
-		var oTable = this.createTable({
+	QUnit.test("fixedColumnCount property", function(assert) {
+		const oTable = this.createTable({
 			type: new GridTableType({fixedColumnCount: 1})
 		});
 
@@ -90,5 +92,14 @@ sap.ui.define([
 			assert.equal(oTable.getType().getFixedColumnCount(), 0, "fixedColumnCount for type is set to 0");
 			assert.equal(oTable._oTable.getFixedColumnCount(), 0, "Inner table has a fixed column count of 0");
 		});
+	});
+
+	QUnit.test("#getTableStyleClasses", function(assert) {
+		const oTable = this.createTable();
+
+		assert.deepEqual(oTable.getType().getTableStyleClasses(), ["sapUiMdcTableFitContainer"], "RowCountMode Auto");
+
+		oTable.getType().setRowCountMode(TableRowCountMode.Fixed);
+		assert.deepEqual(oTable.getType().getTableStyleClasses(), [], "RowCountMode Fixed");
 	});
 });

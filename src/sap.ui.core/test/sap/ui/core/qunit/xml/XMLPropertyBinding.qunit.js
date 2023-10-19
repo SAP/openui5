@@ -1,11 +1,13 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/Log",
 	"sap/m/Input",
 	"sap/ui/core/Configuration",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/type/Float",
-	"sap/ui/model/xml/XMLModel"
-], function(Input, Configuration, ChangeReason, TypeFloat, XMLModel) {
+	"sap/ui/model/xml/XMLModel",
+	"sap/ui/model/xml/XMLPropertyBinding"
+], function(Log, Input, Configuration, ChangeReason, TypeFloat, XMLModel, XMLPropertyBinding) {
 	"use strict";
 
 	var sDefaultLanguage = Configuration.getLanguage();
@@ -34,7 +36,13 @@ sap.ui.define([
 		"</root>";
 
 	QUnit.module("sap.ui.model.xml.XMLPropertyBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
+			this.oLogMock = this.mock(Log);
+			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning").never();
 			// reset bindings
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);
@@ -70,19 +78,24 @@ sap.ui.define([
 	});
 
 	QUnit.test("PropertyBinding refresh", function(assert) {
-		assert.expect(3);
-		var oBinding = this.oModel.bindProperty("/name");
-		assert.equal(oBinding.getValue(), "Peter", "Property Binding returns value");
+		const oBinding = this.oModel.bindProperty("/name");
+		let iChangeCount = 0;
+
+		assert.strictEqual(oBinding.getValue(), "Peter", "Property Binding returns value");
 		oBinding.attachChange(function() {
-			assert.ok("Property Binding fires change event when changed");
+			iChangeCount += 1;
 		});
 		this.oModel.getData().firstChild.firstChild.firstChild.nodeValue = "Jonas";
+		assert.strictEqual(iChangeCount, 0, "Property Binding fires change event when changed");
+
+		// code under test
 		oBinding.refresh();
-		assert.equal(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
+
+		assert.strictEqual(oBinding.getValue(), "Jonas", "Property Binding returns changed value");
+		assert.strictEqual(iChangeCount, 1, "Property Binding fires change event when changed");
 	});
 
 	QUnit.test("PropertyBinding async update", function(assert) {
-		assert.expect(4);
 		var oBinding1 = this.oModel.bindProperty("/name"),
 			oBinding2 = this.oModel.bindProperty("/name");
 		oBinding1.attachChange(function(){});
@@ -361,4 +374,55 @@ sap.ui.define([
 		done();
 	});
 
+	//**********************************************************************************************
+	QUnit.test("checkUpdate: suspended", function () {
+		// code under test - suspended binding is not updated
+		XMLPropertyBinding.prototype.checkUpdate.call({bSuspended: true});
+	});
+
+	//**********************************************************************************************
+	QUnit.test("checkUpdate: no update needed", function () {
+		const oBinding = {
+			oValue: "~value",
+			_getValue() {}
+		};
+		this.mock(oBinding).expects("_getValue").withExactArgs().returns("~value");
+
+		// code under test - values are equal, no force update
+		XMLPropertyBinding.prototype.checkUpdate.call(oBinding);
+	});
+
+	//**********************************************************************************************
+[{
+	forceUpdate: undefined,
+	newValue: "~newValue",
+	test: "value changed"
+}, {
+	forceUpdate: true,
+	newValue: "~value",
+	test: "force update"
+}].forEach((oFixture) => {
+	QUnit.test(`checkUpdate: ${oFixture.test}`, function (assert) {
+		const oBinding = {
+			oValue: "~value",
+			_fireChange() {},
+			_getValue() {},
+			checkDataState() {},
+			getDataState() {}
+		};
+		this.mock(oBinding).expects("_getValue").withExactArgs().returns(oFixture.newValue);
+		const oDataState = {
+			setValue() {}
+		};
+		this.mock(oBinding).expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setValue").withExactArgs(oFixture.newValue);
+		this.mock(oBinding).expects("checkDataState").withExactArgs();
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason: ChangeReason.Change});
+
+		// code under test - values are different, no force update
+		XMLPropertyBinding.prototype.checkUpdate.call(oBinding, oFixture.forceUpdate);
+
+		assert.strictEqual(oBinding.oValue, oFixture.newValue);
+	});
+});
 });

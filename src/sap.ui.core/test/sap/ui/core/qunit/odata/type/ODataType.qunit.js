@@ -105,6 +105,15 @@ sap.ui.define([
 		assert.strictEqual(oType.getEmptyValue(null, true), 0);
 	});
 
+	//*********************************************************************************************
+	QUnit.test("getEmptyValue: without format options", function (assert) {
+		var oType = new ODataType();
+
+		// code under test
+		assert.strictEqual(oType.getEmptyValue("", true), null);
+		assert.strictEqual(oType.getEmptyValue(null, true), null);
+	});
+
 	//*****************************************************************************************
 [undefined, {"~constraint" : 2}].forEach(function (oConstraints) {
 	QUnit.test("checkParseEmptyValueToZero logs warning", function (assert) {

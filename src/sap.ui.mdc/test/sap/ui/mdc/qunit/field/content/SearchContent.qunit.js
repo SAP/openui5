@@ -12,7 +12,7 @@ sap.ui.define([
 ], function(QUnit, SearchContent, FilterField, Text, SearchField, FieldMultiInput, TextArea, Token, JSONModel) {
 	"use strict";
 
-	var oControlMap = {
+	const oControlMap = {
 		"Display": {
 			getPathsFunction: "getDisplay",
 			paths: ["sap/m/Text"],
@@ -48,12 +48,12 @@ sap.ui.define([
 		}
 	};
 
-	var aControlMapKeys = Object.keys(oControlMap);
+	const aControlMapKeys = Object.keys(oControlMap);
 
 	QUnit.module("Getters");
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		QUnit.test(oValue.getPathsFunction, function(assert) {
 			assert.deepEqual(SearchContent[oValue.getPathsFunction](), oValue.paths, "Correct control path returned for ContentMode '" + sControlMapKey + "'.");
 		});
@@ -67,8 +67,8 @@ sap.ui.define([
 		assert.notOk(SearchContent.getUseDefaultEnterHandler(), "Correct useDefaultEnterHandler value returned.");
 	});
 
-	QUnit.test("getUseDefaultFieldHelp", function(assert) {
-		assert.notOk(SearchContent.getUseDefaultFieldHelp(), "DefaultFieldHelp is not used.");
+	QUnit.test("getUseDefaultValueHelp", function(assert) {
+		assert.notOk(SearchContent.getUseDefaultValueHelp(), "DefaultValueHelp is not used.");
 	});
 
 	QUnit.test("getControlNames", function(assert) {
@@ -85,12 +85,12 @@ sap.ui.define([
 		assert.deepEqual(SearchContent.getControlNames("EditForHelp"), [null], "Correct default controls returned for ContentMode 'EditForHelp'");
 	});
 
-	var iChangeEvent = 0;
+	let iChangeEvent = 0;
 	function _myChangeHandler(oEvent) {
 		iChangeEvent++;
 	}
 
-	var iSubmitEvent = 0;
+	let iSubmitEvent = 0;
 	function _mySubmitHandler(oEvent) {
 		iSubmitEvent++;
 	}
@@ -107,7 +107,7 @@ sap.ui.define([
 		afterEach: function() {
 			delete this.oField;
 			while (this.aControls.length > 0) {
-				var oControl = this.aControls.pop();
+				const oControl = this.aControls.pop();
 				if (oControl) {
 					oControl.destroy();
 				}
@@ -117,35 +117,35 @@ sap.ui.define([
 		}
 	});
 
-	var fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
+	const fnCreateControls = function(oContentFactory, sContentMode, sIdPostFix) {
 		return SearchContent.create(oContentFactory, sContentMode, null, oControlMap[sContentMode].instances, sContentMode + sIdPostFix);
 	};
 
-	var fnSpyOnCreateFunction = function(sContentMode) {
+	const fnSpyOnCreateFunction = function(sContentMode) {
 		return oControlMap[sContentMode].createFunction ? sinon.spy(SearchContent, oControlMap[sContentMode].createFunction) : null;
 	};
 
-	var fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
+	const fnSpyCalledOnce = function(fnSpyFunction, sContentMode, assert) {
 		if (fnSpyFunction) {
 			assert.ok(fnSpyFunction.calledOnce, oControlMap[sContentMode].createFunction + " called once.");
 		}
 	};
 
 	QUnit.test("create", function(assert) {
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
 		this.oField.awaitControlDelegate().then(function() {
-			var aDisplayControls = oControlMap["Display"].instances;
-			var aEditControls = oControlMap["Edit"].instances;
+			const aDisplayControls = oControlMap["Display"].instances;
+			const aEditControls = oControlMap["Edit"].instances;
 
-			var fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
-			var fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
-			var fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
-			var fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
-			var fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
+			const fnCreateDisplayFunction = fnSpyOnCreateFunction("Display");
+			const fnCreateEditFunction = fnSpyOnCreateFunction("Edit");
+			const fnCreateEditMultiValueFunction = fnSpyOnCreateFunction("EditMultiValue");
+			const fnCreateEditMultiLineFunction = fnSpyOnCreateFunction("EditMultiLine");
+			const fnCreateEditForHelpFunction = fnSpyOnCreateFunction("EditForHelp");
 
-			var aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
-			var aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
+			const aCreatedDisplayControls = fnCreateControls(oContentFactory, "Display", "-create");
+			const aCreatedEditControls = fnCreateControls(oContentFactory, "Edit", "-create");
 			this.aControls = aCreatedDisplayControls.concat(aCreatedEditControls);
 
 			assert.throws(
@@ -184,7 +184,7 @@ sap.ui.define([
 				},
 				"createEditForHelp throws an error.");
 
-			var aCreatedEditOperatorControls = SearchContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
+			const aCreatedEditOperatorControls = SearchContent.create(oContentFactory, "EditOperator", null, [null], "EditOperator" + "-create");
 
 			fnSpyCalledOnce(fnCreateDisplayFunction, "Display", assert);
 			fnSpyCalledOnce(fnCreateEditFunction, "Edit", assert);
@@ -202,15 +202,15 @@ sap.ui.define([
 
 	QUnit.test("eventing", function(assert) {
 
-		var done = assert.async();
-		var oContentFactory = this.oField._oContentFactory;
-		var oModel = new JSONModel({ // fake model
+		const done = assert.async();
+		const oContentFactory = this.oField._oContentFactory;
+		const oModel = new JSONModel({ // fake model
 			conditions: []
 		});
 
 		this.oField.awaitControlDelegate().then(function() {
 			this.aControls = fnCreateControls(oContentFactory, "Edit", "-create");
-			var oSearchField = this.aControls[0];
+			const oSearchField = this.aControls[0];
 			oSearchField.setModel(oModel, "$field"); // To create binding
 
 			// for testing just fire event of SearchField. Do not test if SearchField behaves right on user-intercation, just test the API usage.
@@ -230,13 +230,13 @@ sap.ui.define([
 	});
 
 	aControlMapKeys.forEach(function(sControlMapKey) {
-		var oValue = oControlMap[sControlMapKey];
+		const oValue = oControlMap[sControlMapKey];
 		if (oValue.createFunction && !oValue.throwsError) {
 			QUnit.test(oValue.createFunction, function(assert) {
-				var done = assert.async();
-				var oContentFactory = this.oField._oContentFactory;
+				const done = assert.async();
+				const oContentFactory = this.oField._oContentFactory;
 				this.oField.awaitControlDelegate().then(function() {
-					var oInstance = oValue.instances[0];
+					const oInstance = oValue.instances[0];
 					this.aControls = SearchContent.create(oContentFactory, sControlMapKey, null, oValue.instances, sControlMapKey);
 
 					assert.ok(this.aControls[0] instanceof oInstance, "Correct control created in " + oValue.createFunction);
@@ -247,7 +247,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createEditMultiValue", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.throws(
 				function() {
@@ -265,7 +265,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createEditMultiLine", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.throws(
 				function() {

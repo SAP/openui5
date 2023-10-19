@@ -11,7 +11,6 @@ sap.ui.define(function() {
 	 * @namespace
 	 * @name sap.ui.rta.service.Selection
 	 * @author SAP SE
-	 * @experimental Since 1.58
 	 * @since 1.58
 	 * @version ${version}
 	 * @private
@@ -46,7 +45,7 @@ sap.ui.define(function() {
 				 * @return {string[]} Selected control IDs
 				 * @public
 				 */
-				get: function() {
+				get() {
 					return getControlIds(oSelectionManager.get());
 				},
 

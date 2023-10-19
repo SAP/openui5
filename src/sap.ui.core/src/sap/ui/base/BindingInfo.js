@@ -4,12 +4,14 @@
 /*eslint-disable max-len */
 // Provides an abstraction for BindingInfos
 sap.ui.define([
-	"sap/ui/core/Configuration",
+	"sap/base/config",
+	"sap/ui/base/DesignTime",
+	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/base/BindingParser",
 	"sap/ui/model/BindingMode",
 	"sap/base/Log"
 ],
-	function(Configuration, BindingParser, BindingMode) {
+	function(BaseConfig, DesignTime, getCompatibilityVersion, BindingParser, BindingMode) {
 	"use strict";
 
 	// Marker to not 'forget' ui5Objects
@@ -176,12 +178,32 @@ sap.ui.define([
 		UI5ObjectMarker: sUI5ObjectMarker
 	};
 
+	/**
+	 * @deprecated As of Version 1.119
+	 */
+	function getBindingSyntax() {
+		var sBindingSyntax = BaseConfig.get({
+			name: "sapUiBindingSyntax",
+			type: BaseConfig.Type.String,
+			defaultValue: "default",
+			freeze: true
+		});
+		if ( sBindingSyntax === "default" ) {
+			sBindingSyntax = (getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
+		}
+		return sBindingSyntax;
+	}
+
 	Object.defineProperty(BindingInfo, "parse", {
 		get: function () {
 			if (!this.oParser) {
-				// Note: "simple" binding syntax is deprecated since 1.24
-				this.oParser = Configuration.getBindingSyntax() === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
-				if ( Configuration.getDesignMode() == true ) {
+				this.oParser = BindingParser.complexParser;
+				/**
+				 * Note: "simple" binding syntax is deprecated since 1.24
+				 * @deprecated As of Version 1.119
+				 */
+				this.oParser = getBindingSyntax() === "simple" ? BindingParser.simpleParser : BindingParser.complexParser;
+				if (DesignTime.isDesignModeEnabled() == true) {
 					BindingParser._keepBindingStrings = true;
 				}
 			}

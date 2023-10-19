@@ -104,7 +104,7 @@ The table provides an overview of the most common block tags.
 | Tag | Use | Example | How to Use / Details |
 | --- | --- | ------- | -------------------- |
 | `@param` | Adds parameters | `@param {string} statement The SQL statement to be prepared` | Begin description with a capital letter. |
-| `@returns` | Adds return values | `@returns {type1|type2|...} Description` | Begin description with a capital letter. |
+| `@returns` | Adds return values | `@returns {type1\|type2\|...} Description` | Begin description with a capital letter. |
 | `@throws` | Adds the description of an exception if an error occurs | `@throws {type} Description` | Begin description with a capital letter. |
 | `@author` | Adds the name of the developer responsible for the code | `@author Max Mustermann` | This is an optional tag that is not displayed in JSDoc. If you need to use the version tag, use ${version} so you don't have to update this manually for each new version. |
 | `@version` | Names the version for an entity | `@version 14.1.2` | This is an optional tag that is not displayed in JSDoc. Use ${version} so you don't have to update this manually for each new version. |
@@ -134,7 +134,6 @@ To refer to another entity within the **API Reference**, you can use `{@link}` i
 | `full.path.ClassName.method` | Refers to a static method (or any other static property) | | |
 | `module:full/module/name#method` | Refers to an instance method from a class that does not expose a global name | | |
 | `module:full/module/name.method` | Refers to a static method from a module that does not expose a global name | | |
-| `#method` | Refers to an instance method **within** a class | `#getHeader` | You must use this type of reference **within** an API that you are documenting, for example, within the SmartTable control documentation, if you want to link to a method that belongs to the control itself. |
 | `#method` | Refers to an instance method **within** a class | `#getHeader` | You must use this type of reference **within** an API that you are documenting, for example, within the SmartTable control documentation, if you want to link to a method that belongs to the control itself. |
 | `#.method` | Refers to a static method **within** a class | | |
 | `full.path.ClassName#event:name` | Refers to an event fired by an instance of a class | `sap.ui.comp.smarttable.SmartTable#event:beforeRebindTable` | |

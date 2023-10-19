@@ -4464,129 +4464,6 @@ sap.ui.define([
 			oCard.startManifestProcessing();
 		});
 
-		QUnit.module("Grouping", {
-			beforeEach: function () {
-				this.oCard = new Card();
-			},
-			afterEach: function () {
-				this.oCard.destroy();
-				this.oCard = null;
-			}
-		});
-
-		QUnit.test("List card items can be grouped", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.attachEvent("_ready", function () {
-				var aItems = this.oCard.getCardContent().getInnerList().getItems();
-				// Assert
-				assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
-				assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
-				assert.strictEqual(aItems[0].getTitle(), "Expensive", "The group title is correct");
-				done();
-			}.bind(this));
-
-			// Act
-			oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.listGrouping.card"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "List Card"
-					},
-					"content": {
-						"data": {
-							"json": [{
-									"Name": "Product 1",
-									"Price": "100"
-								},
-								{
-									"Name": "Product 2",
-									"Price": "200"
-								}
-							]
-						},
-						"item": {
-							"title": "{Name}",
-							"description": "{Price}"
-						},
-						"group": {
-							"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
-							"order": {
-								"path": "Price",
-								"dir": "DESC"
-							}
-						}
-					}
-				}
-			});
-			oCard.startManifestProcessing();
-		});
-
-		QUnit.test("Table card items can be grouped", function (assert) {
-			// Arrange
-			var done = assert.async(),
-				oCard = this.oCard;
-
-			oCard.attachEvent("_ready", function () {
-				var aItems = this.oCard.getCardContent().getInnerList().getItems();
-				// Assert
-				assert.strictEqual(aItems.length, 4, "There are two list items and two group titles in the list.");
-				assert.ok(aItems[0].isA("sap.m.GroupHeaderListItem"), "The first item of the list is the group title");
-				assert.strictEqual(aItems[0].getTitle(), "Cheap", "The group title is correct");
-				done();
-			}.bind(this));
-
-			// Act
-			oCard.setManifest({
-				"sap.app": {
-					"id": "test.card.tableGrouping.card"
-				},
-				"sap.card": {
-					"type": "Table",
-					"data": {
-						"json":[{
-							"Name": "Product 1",
-							"Price": "100"
-						},
-						{
-							"Name": "Product 2",
-							"Price": "200"
-						}
-					]
-					},
-					"header": {
-						"title": "L3 Request list content Card"
-					},
-					"content": {
-						"row": {
-							"columns": [{
-									"title": "Name",
-									"value": "{Name}"
-								},
-								{
-									"title": "Price",
-									"value": "{Price}"
-								}
-							]
-						},
-						"group": {
-							"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
-							"order": {
-								"path": "Price",
-								"dir": "ASC"
-							}
-						}
-					}
-				}
-			});
-			oCard.startManifestProcessing();
-		});
-
 		QUnit.module("Creation of children cards", {
 			beforeEach: function () {
 				this.oCard = new Card();
@@ -4898,7 +4775,6 @@ sap.ui.define([
 				// Assert
 				assert.ok(oContent.isA("sap.ui.integration.cards.ObjectContent"), "ObjectContent is created as card content");
 				assert.ok(oContent.getAggregation("_loadingPlaceholder").getDomRef(), "Loading placeholder is displayed in the content");
-				//debugger
 				assert.notOk(oLoadingPlaceholder.getDomRef().getAttribute("title"), "No tooltip is rendered");
 				assert.ok(this.oCard.getDomRef().classList.contains("sapFCardPreview"), "'sapFCardPreview' CSS class should be added");
 

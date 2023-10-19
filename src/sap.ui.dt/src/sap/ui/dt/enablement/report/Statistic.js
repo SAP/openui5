@@ -37,7 +37,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.enablement.report.Statistic
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var oStatistic = Control.extend("sap.ui.dt.enablement.report.Statistic", /** @lends sap.ui.dt.enablement.report.Statistic.prototype */ {
 		metadata: {
@@ -56,7 +55,7 @@ sap.ui.define([
 			}
 		},
 
-		init: function() {
+		init() {
 			this._oModel = null;
 			this.setAggregation("_form", this._createForm());
 		},
@@ -65,11 +64,11 @@ sap.ui.define([
 		 * Called when the Statistic is destroyed
 		 * @protected
 		 */
-		exit: function() {
+		exit() {
 			this.setData(null);
 		},
 
-		setData: function(oData) {
+		setData(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -83,28 +82,28 @@ sap.ui.define([
 			this.setProperty("data", oData);
 		},
 
-		_createForm: function() {
-			var oForm = new SimpleForm(this.getId() + "--form", {
+		_createForm() {
+			var oForm = new SimpleForm(`${this.getId()}--form`, {
 				editable: false,
 				layout: "ResponsiveGridLayout",
 				title: "Statistics",
 				content: [
-					new Label(this.getId() + "--form-supported-label", {text: "Supported"}),
-					new Text(this.getId() + "--form-supported-value", {text: "{/statistic/SUPPORTED}"}),
-					new Label(this.getId() + "--form-partial-supported-label", {text: "Partial Supported"}),
-					new Text(this.getId() + "--form-partial-supported-value", {text: "{/statistic/PARTIAL_SUPPORTED}"}),
-					new Label(this.getId() + "--form-not-supported-label", {text: "Not Supported"}),
-					new Text(this.getId() + "--form-not-supported-value", {text: "{/statistic/NOT_SUPPORTED}"}),
-					new Label(this.getId() + "--form-unknown-label", {text: "Unknown"}),
-					new Text(this.getId() + "--form-unknown-value", {text: "{/statistic/UNKNOWN}"}),
-					new Label(this.getId() + "--form-error-label", {text: "Error"}),
-					new Text(this.getId() + "--form-error-value", {text: "{/statistic/ERROR}"})
+					new Label(`${this.getId()}--form-supported-label`, {text: "Supported"}),
+					new Text(`${this.getId()}--form-supported-value`, {text: "{/statistic/SUPPORTED}"}),
+					new Label(`${this.getId()}--form-partial-supported-label`, {text: "Partial Supported"}),
+					new Text(`${this.getId()}--form-partial-supported-value`, {text: "{/statistic/PARTIAL_SUPPORTED}"}),
+					new Label(`${this.getId()}--form-not-supported-label`, {text: "Not Supported"}),
+					new Text(`${this.getId()}--form-not-supported-value`, {text: "{/statistic/NOT_SUPPORTED}"}),
+					new Label(`${this.getId()}--form-unknown-label`, {text: "Unknown"}),
+					new Text(`${this.getId()}--form-unknown-value`, {text: "{/statistic/UNKNOWN}"}),
+					new Label(`${this.getId()}--form-error-label`, {text: "Error"}),
+					new Text(`${this.getId()}--form-error-value`, {text: "{/statistic/ERROR}"})
 				]
 			});
 			return oForm;
 		},
 
-		_getForm: function() {
+		_getForm() {
 			return this.getAggregation("_form");
 		},
 

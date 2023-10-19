@@ -7,7 +7,9 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/rta/Utils",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
@@ -18,7 +20,9 @@ sap.ui.define([
 ], function(
 	Log,
 	ManagedObject,
+	Element,
 	Fragment,
+	Lib,
 	Utils,
 	JSONModel,
 	MessageBox,
@@ -31,10 +35,10 @@ sap.ui.define([
 
 	function showError(vError) {
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		Log.error(sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-			+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
+		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}\n${
+			 oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
@@ -62,8 +66,9 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 			this._oTranslationModel = new JSONModel(getInitialTranslationModelData());
 		}
 	});
@@ -72,7 +77,7 @@ sap.ui.define([
 		var oModel = oEvent.getSource().getModel("translation");
 		var sSourceLanguage = oModel.getProperty("/sourceLanguage");
 		var sTargetLanguage = oModel.getProperty("/targetLanguage");
-		var sFileName = sSourceLanguage + "_" + sTargetLanguage + "_" + "TranslationXLIFF";
+		var sFileName = `${sSourceLanguage}_${sTargetLanguage}_` + `TranslationXLIFF`;
 
 		var mPropertyBag = {
 			layer: Layer.CUSTOMER,
@@ -104,7 +109,7 @@ sap.ui.define([
 	Translation.prototype._createDownloadTranslationDialog = function() {
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.DownloadTranslationDialog",
-			id: this.getToolbar().getId() + "_download_translation_fragment",
+			id: `${this.getToolbar().getId()}_download_translation_fragment`,
 			controller: {
 				onDownloadFile: downloadFile.bind(this),
 				onCancelDownloadDialog: function() {
@@ -120,7 +125,7 @@ sap.ui.define([
 	};
 
 	Translation.prototype._createUploadTranslationDialog = function() {
-		var sUploadId = this.getToolbar().getId() + "_upload_translation_fragment";
+		var sUploadId = `${this.getToolbar().getId()}_upload_translation_fragment`;
 		return Fragment.load({
 			name: "sap.ui.rta.toolbar.translation.UploadTranslationDialog",
 			id: sUploadId,
@@ -128,8 +133,8 @@ sap.ui.define([
 				onCancelUploadDialog: function() {
 					this._oUploadDialog.close();
 				}.bind(this),
-				formatUploadEnabled: function() {
-					var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+				formatUploadEnabled() {
+					var oFileUploader = Element.getElementById(`${sUploadId}--fileUploader`);
 					return oFileUploader.checkFileReadable();
 				},
 				saveFiles: function(oEvent) {
@@ -146,7 +151,7 @@ sap.ui.define([
 	};
 
 	function handleUploadPress(sUploadId) {
-		var oFileUploader = sap.ui.getCore().byId(sUploadId + "--fileUploader");
+		var oFileUploader = Element.getElementById(`${sUploadId}--fileUploader`);
 		oFileUploader.checkFileReadable().then(function() {
 			if (this._oTranslationModel.getProperty("/file")) {
 				var mPropertyBag = {
@@ -155,7 +160,7 @@ sap.ui.define([
 				};
 				mPropertyBag.payload.append("file", this._oTranslationModel.getProperty("/file"), oFileUploader.getValue());
 				return TranslationAPI.uploadTranslationTexts(mPropertyBag).then(function() {
-					var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+					var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 					var sMsg = oTextResources.getText("MSG_UPLOAD_TRANSLATION_SUCCESS");
 					MessageToast.show(sMsg, {
 						styleClass: Utils.getRtaStyleClassName()
@@ -205,9 +210,7 @@ sap.ui.define([
 	};
 
 	Translation.prototype.openUploadTranslationDialog = function() {
-		if (!this._oUploadDialogPromise) {
-			this._oUploadDialogPromise = this._createUploadTranslationDialog();
-		}
+		this._oUploadDialogPromise ||= this._createUploadTranslationDialog();
 		return this._oUploadDialogPromise.then(function(oUploadDialog) {
 			this.getToolbar().addDependent(oUploadDialog);
 			return oUploadDialog.open();

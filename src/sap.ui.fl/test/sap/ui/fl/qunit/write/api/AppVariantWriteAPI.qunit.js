@@ -67,13 +67,13 @@ sap.ui.define([
 		var oManifest = new Manifest(oDescriptor);
 		return {
 			name: "customer.reference.app.id",
-			getManifest: function() {
+			getManifest() {
 				return oManifest;
 			},
-			getId: function() {
+			getId() {
 				return "Control---demo--test";
 			},
-			getLocalId: function() {}
+			getLocalId() {}
 		};
 	}
 
@@ -89,7 +89,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given AppVariantWriteAPI and app variant is created based on the original application which is running in the background", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
@@ -216,7 +216,7 @@ sap.ui.define([
 				fileName: "id_1445501120486_26",
 				fileType: "change",
 				changeType: "hideControl",
-				reference: "reference.app.Component",
+				reference: "reference.app",
 				packageName: "",
 				content: {},
 				selector: {
@@ -224,7 +224,7 @@ sap.ui.define([
 				},
 				layer: Layer.CUSTOMER,
 				texts: {},
-				namespace: "reference.app.Component",
+				namespace: "reference.app",
 				creation: "2018-10-16T08:00:02",
 				originalLanguage: "EN",
 				conditions: {},
@@ -235,7 +235,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -276,11 +276,11 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				applyChange: function() {
+				applyChange() {
 				},
-				revertChange: function() {
+				revertChange() {
 				}
 			});
 
@@ -360,11 +360,11 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				applyChange: function() {
+				applyChange() {
 				},
-				revertChange: function() {
+				revertChange() {
 				}
 			});
 
@@ -441,11 +441,11 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				applyChange: function() {
+				applyChange() {
 				},
-				revertChange: function() {
+				revertChange() {
 				}
 			});
 
@@ -533,11 +533,11 @@ sap.ui.define([
 			sandbox.stub(FlexUtils, "getAppComponentForControl").withArgs(oAppComponent).returns(oAppComponent);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns(oAppComponent.getManifest());
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-				completeChangeContent: function() {
+				completeChangeContent() {
 				},
-				applyChange: function() {
+				applyChange() {
 				},
-				revertChange: function() {
+				revertChange() {
 				}
 			});
 
@@ -628,7 +628,7 @@ sap.ui.define([
 				};
 
 				var oResponse = {
-					getParameters: function() {
+					getParameters() {
 						return oDialogSelection;
 					}
 				};
@@ -737,7 +737,7 @@ sap.ui.define([
 				};
 
 				var oResponse = {
-					getParameters: function() {
+					getParameters() {
 						return oDialogSelection;
 					}
 				};
@@ -800,7 +800,7 @@ sap.ui.define([
 				};
 
 				var oResponse = {
-					getParameters: function() {
+					getParameters() {
 						return oDialogSelection;
 					}
 				};
@@ -1041,7 +1041,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given AppVariantWriteAPI and app variant is created based on an app variant which is not running in the background", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
@@ -1153,7 +1153,7 @@ sap.ui.define([
 				fileName: "id_1445501120486_26",
 				fileType: "change",
 				changeType: "hideControl",
-				reference: "reference.app.Component",
+				reference: "reference.app",
 				packageName: "",
 				content: {},
 				selector: {
@@ -1161,7 +1161,7 @@ sap.ui.define([
 				},
 				layer: Layer.CUSTOMER,
 				texts: {},
-				namespace: "reference.app.Component",
+				namespace: "reference.app",
 				creation: "2018-10-16T08:00:02",
 				originalLanguage: "EN",
 				conditions: {},
@@ -1172,7 +1172,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1189,13 +1189,13 @@ sap.ui.define([
 			var oManifest = new Manifest(oDescriptor);
 			var oAppVariantComponent = {
 				name: "customer.reference.app.variant.id_123456",
-				getManifest: function() {
+				getManifest() {
 					return oManifest;
 				},
-				getId: function() {
+				getId() {
 					return "Control---demo--test";
 				},
-				getLocalId: function() {}
+				getLocalId() {}
 			};
 
 			var oAppComponent = createAppComponent();
@@ -1214,9 +1214,9 @@ sap.ui.define([
 			getAppComponentForControlStub.withArgs(oAppVariantComponent).returns(oAppVariantComponent);
 
 			sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves({
-				completeChangeContent: function() {},
-				applyChange: function() {},
-				revertChange: function() {}
+				completeChangeContent() {},
+				applyChange() {},
+				revertChange() {}
 			});
 
 			var fnCreateBackendCall = sandbox.stub(Storage, "write").resolves();

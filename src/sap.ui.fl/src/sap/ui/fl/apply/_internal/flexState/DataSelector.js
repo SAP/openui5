@@ -2,8 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
 	"sap/ui/base/ManagedObject"
 ], function(
+	merge,
+	ObjectPath,
 	ManagedObject
 ) {
 	"use strict";
@@ -72,14 +76,15 @@ sap.ui.define([
 				 */
 				checkInvalidation: {
 					type: "function",
-					defaultValue: function() {
+					defaultValue() {
 						return true;
 					}
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 			this._mInitialized = {};
 			if (this.getParameterKey()) {
 				// If value is parameterized, create a map for easier access
@@ -93,6 +98,18 @@ sap.ui.define([
 			}
 		}
 	});
+
+	const sNoParameter = "DataSelector_no_parameter";
+
+	function getAllParameterValues(oDataSelector, mParameters) {
+		const aReturn = [];
+		let oCurrentDataSelector = oDataSelector;
+		do {
+			aReturn.unshift(oCurrentDataSelector.getParameterKey() ? mParameters[oCurrentDataSelector.getParameterKey()] : sNoParameter);
+			oCurrentDataSelector = oCurrentDataSelector.getParentDataSelector();
+		} while (oCurrentDataSelector);
+		return aReturn;
+	}
 
 	/**
 	 * Registers a callback listener to get notified about changes to the state
@@ -124,13 +141,19 @@ sap.ui.define([
 	};
 
 	DataSelector.prototype._getParameterizedCachedResult = function(mParameters) {
-		var sParameterKey = this.getParameterKey();
-		if (sParameterKey) {
-			var sParameter = mParameters[sParameterKey];
-			return this.getCachedResult()[sParameter];
-		}
-		// If the data selector is not parameterized, return the whole cache
-		return this.getCachedResult();
+		const aParameterValues = getAllParameterValues(this, mParameters);
+		return ObjectPath.get(aParameterValues, this.getCachedResult());
+	};
+
+	DataSelector.prototype._setParameterizedCachedResult = function(mParameters, vValue) {
+		const aParameterValues = getAllParameterValues(this, mParameters);
+		const mNewData = {};
+		ObjectPath.set(aParameterValues, vValue, mNewData);
+		return this.setCachedResult(merge(
+			{},
+			this.getCachedResult(),
+			mNewData
+		));
 	};
 
 	DataSelector.prototype._clearCache = function(mParameters) {
@@ -159,21 +182,6 @@ sap.ui.define([
 		});
 	};
 
-	DataSelector.prototype._setParameterizedCachedResult = function(mParameters, vValue) {
-		var sParameterKey = this.getParameterKey();
-		if (sParameterKey && mParameters) {
-			var mNewData = {};
-			var sParameter = mParameters[sParameterKey];
-			mNewData[sParameter] = vValue;
-			return this.setCachedResult(Object.assign(
-				{},
-				this.getCachedResult(),
-				mNewData
-			));
-		}
-		return this.setCachedResult(vValue);
-	};
-
 	/**
 	 * Getter that triggers the execution of the derived state calculation or returns
 	 * the value from the cache.
@@ -183,7 +191,7 @@ sap.ui.define([
 	DataSelector.prototype.get = function(mParameters) {
 		var sParameterKey = this.getParameterKey();
 		if (sParameterKey && !(mParameters || {})[sParameterKey]) {
-			throw new Error("Parameter '" + sParameterKey + "' is missing");
+			throw new Error(`Parameter '${sParameterKey}' is missing`);
 		}
 		var vResult = this._getParameterizedCachedResult(mParameters);
 		// Check for undefined or null as indicators for an empty cache

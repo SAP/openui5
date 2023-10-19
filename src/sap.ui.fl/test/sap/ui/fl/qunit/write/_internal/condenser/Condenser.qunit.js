@@ -5,6 +5,7 @@ sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/Element",
 	"delegates/TableDelegate",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Reverter",
@@ -20,6 +21,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	XMLView,
 	JsControlTreeModifier,
+	Element,
 	TableDelegate,
 	Applier,
 	Reverter,
@@ -58,11 +60,11 @@ sap.ui.define([
 	var sComplexProperty03FieldId = "GeneralLedgerDocument_Header_AccountingDocumentKeyComplex_ComplexProperty03";
 
 	function getControlSelectorId(sId) {
-		return "Comp1---idMain1--" + sId;
+		return `Comp1---idMain1--${sId}`;
 	}
 
 	function loadChangesFromPath(sPath, assert, iNumber) {
-		return fetch("test-resources/sap/ui/fl/qunit/testResources/condenser/" + sPath)
+		return fetch(`test-resources/sap/ui/fl/qunit/testResources/condenser/${sPath}`)
 
 		.then(function(oResponse) {
 			return oResponse.json();
@@ -73,7 +75,7 @@ sap.ui.define([
 				oChangeDefinition.layer = Layer.VENDOR;
 				aChanges.push(FlexObjectFactory.createFromFileContent(oChangeDefinition));
 			});
-			assert.equal(aChanges.length, iNumber, "Expected number of changes: " + iNumber);
+			assert.equal(aChanges.length, iNumber, `Expected number of changes: ${iNumber}`);
 			return aChanges;
 		});
 	}
@@ -83,12 +85,12 @@ sap.ui.define([
 			iIndex !== undefined
 			&& sControl === undefined
 		) {
-			return sMessage + "[" + iIndex + "] should be ";
+			return `${sMessage}[${iIndex}] should be `;
 		} else if (
 			iIndex !== undefined
 			&& sControl !== undefined
 		) {
-			return sMessage + sControl + " should be " + iIndex;
+			return `${sMessage + sControl} should be ${iIndex}`;
 		}
 		return sMessage;
 	}
@@ -113,7 +115,7 @@ sap.ui.define([
 		var mPropertyBag = {
 			flexController: {
 				_oChangePersistence: {
-					_deleteChangeInMap: function() {
+					_deleteChangeInMap() {
 					}
 				}
 			},
@@ -139,7 +141,7 @@ sap.ui.define([
 		}.bind(this)).then(function() {
 			return Condenser.condense(oAppComponent, aChanges);
 		}).then(function(aRemainingChanges) {
-			assert.strictEqual(aRemainingChanges.length, iExpectedNumberAfterCondense, "Expected number of remaining changes: " + iExpectedNumberAfterCondense);
+			assert.strictEqual(aRemainingChanges.length, iExpectedNumberAfterCondense, `Expected number of remaining changes: ${iExpectedNumberAfterCondense}`);
 
 			var aDeletedChanges = aChanges.filter(function(oChange) {
 				return !aRemainingChanges.some(function(oRemainingChange) {
@@ -185,21 +187,21 @@ sap.ui.define([
 		assert.strictEqual(aFirstGroupElements[2].getId(), getControlSelectorId(sCompanyCodeFieldId), getMessage(sAffectedControlMgs, undefined, 2) + sCompanyCodeFieldId);
 		var aSecondGroupElements = aGroups[1].getGroupElements();
 		assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
-		assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
-		assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
+		assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), `${getMessage(sAffectedControlMgs, undefined, 0)}SpecificFlexibility`);
+		assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), `${getMessage(sAffectedControlMgs, undefined, 1)}BoundButton35`);
 	}
 
 	QUnit.module("Given an app with a SmartForm", {
-		before: function() {
+		before() {
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 			this.bSkipRevertOnEnd = false;
 		},
-		afterEach: function(assert) {
+		afterEach(assert) {
 			if (!this.bSkipRevertOnEnd) {
 				return revertMultipleChanges(this.aChanges).then(function() {
 					checkInitialStateAfterRevert(assert);
@@ -208,7 +210,7 @@ sap.ui.define([
 			}
 			return sandbox.restore();
 		},
-		after: function() {
+		after() {
 			oAppComponent.destroy();
 		}
 	}, function() {
@@ -286,20 +288,20 @@ sap.ui.define([
 		QUnit.test("multiple property changes on different controls and properties", function(assert) {
 			return loadApplyCondenseChanges.call(this, "propertyChanges.json", 10, 4, assert).then(function(aRemainingChanges) {
 				assert.strictEqual(aRemainingChanges[0].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.strictEqual(aRemainingChanges[0].getContent().property, "useHorizontalLayout", sPropertyMsg + "useHorizontalLayout");
+				assert.strictEqual(aRemainingChanges[0].getContent().property, "useHorizontalLayout", `${sPropertyMsg}useHorizontalLayout`);
 				assert.strictEqual(aRemainingChanges[0].getContent().newValue, false, sValueMsg + false);
 
 				assert.strictEqual(aRemainingChanges[1].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.strictEqual(aRemainingChanges[1].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
+				assert.strictEqual(aRemainingChanges[1].getContent().property, "elementForLabel", `${sPropertyMsg}elementForLabel`);
 				assert.strictEqual(aRemainingChanges[1].getContent().newValue, 2, sValueMsg + 2);
 
 				assert.strictEqual(aRemainingChanges[2].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.strictEqual(aRemainingChanges[2].getContent().property, "elementForLabel", sPropertyMsg + "elementForLabel");
+				assert.strictEqual(aRemainingChanges[2].getContent().property, "elementForLabel", `${sPropertyMsg}elementForLabel`);
 				assert.strictEqual(aRemainingChanges[2].getContent().newValue, 1, sValueMsg + 1);
 
 				assert.strictEqual(aRemainingChanges[3].getChangeType(), PROPERTY_CHANGE_TYPE, sChangeTypeMsg + PROPERTY_CHANGE_TYPE);
-				assert.strictEqual(aRemainingChanges[3].getContent().property, "label", sPropertyMsg + "label");
-				assert.strictEqual(aRemainingChanges[3].getContent().newValue, "80", sValueMsg + "80");
+				assert.strictEqual(aRemainingChanges[3].getContent().property, "label", `${sPropertyMsg}label`);
+				assert.strictEqual(aRemainingChanges[3].getContent().newValue, "80", `${sValueMsg}80`);
 			});
 		});
 
@@ -330,8 +332,8 @@ sap.ui.define([
 				// Target UI [ Flexibility, Button35 ]
 				var aSecondGroupElements = aGroups[1].getGroupElements();
 				assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
-				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
-				assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 1) + "BoundButton35");
+				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), `${getMessage(sAffectedControlMgs, undefined, 0)}SpecificFlexibility`);
+				assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.BoundButton35"), `${getMessage(sAffectedControlMgs, undefined, 1)}BoundButton35`);
 			});
 		});
 
@@ -353,9 +355,9 @@ sap.ui.define([
 				// Target UI [ Flexibility, ComplexProperty01, Button35 ]
 				var aSecondGroupElements = aGroups[1].getGroupElements();
 				assert.strictEqual(aSecondGroupElements.length, 3, sContainerElementsMsg + 3);
-				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 0) + "SpecificFlexibility");
+				assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.SpecificFlexibility"), `${getMessage(sAffectedControlMgs, undefined, 0)}SpecificFlexibility`);
 				assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId(sComplexProperty01FieldId), getMessage(sAffectedControlMgs, undefined, 1) + sComplexProperty01FieldId);
-				assert.strictEqual(aSecondGroupElements[2].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 2) + "BoundButton35");
+				assert.strictEqual(aSecondGroupElements[2].getId(), getControlSelectorId("Dates.BoundButton35"), `${getMessage(sAffectedControlMgs, undefined, 2)}BoundButton35`);
 			});
 		});
 
@@ -534,8 +536,8 @@ sap.ui.define([
 					// Initial UI [ Flexibility, Button35 ]
 					// Target UI [ Button35, Flexibility ]
 					assert.strictEqual(aSecondGroupElements.length, 2, sContainerElementsMsg + 2);
-					assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.BoundButton35"), getMessage(sAffectedControlMgs, undefined, 0) + "BoundButton35");
-					assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.SpecificFlexibility"), getMessage(sAffectedControlMgs, undefined, 1) + "SpecificFlexibility");
+					assert.strictEqual(aSecondGroupElements[0].getId(), getControlSelectorId("Dates.BoundButton35"), `${getMessage(sAffectedControlMgs, undefined, 0)}BoundButton35`);
+					assert.strictEqual(aSecondGroupElements[1].getId(), getControlSelectorId("Dates.SpecificFlexibility"), `${getMessage(sAffectedControlMgs, undefined, 1)}SpecificFlexibility`);
 				}.bind(this));
 			});
 		});
@@ -716,14 +718,14 @@ sap.ui.define([
 				// Initial UI: contentLeft: [lb1, lb2], contentMiddle: [mb1, mb2], contentRight: [rb1, rb2]
 				// Target UI: contentLeft: [lb1, lb2], contentMiddle: [mb2, mb1, rb2], contentRight: [rb1]
 				assert.strictEqual(aContentLeft.length, 2, sContainerElementsMsg + 2);
-				assert.strictEqual(aContentLeft[0].getId(), oAppComponent.createId("idMain1--lb1"), getMessage(sAffectedControlMgs, undefined, 0) + "lb1");
-				assert.strictEqual(aContentLeft[1].getId(), oAppComponent.createId("idMain1--lb2"), getMessage(sAffectedControlMgs, undefined, 1) + "lb2");
+				assert.strictEqual(aContentLeft[0].getId(), oAppComponent.createId("idMain1--lb1"), `${getMessage(sAffectedControlMgs, undefined, 0)}lb1`);
+				assert.strictEqual(aContentLeft[1].getId(), oAppComponent.createId("idMain1--lb2"), `${getMessage(sAffectedControlMgs, undefined, 1)}lb2`);
 				assert.strictEqual(aContentMiddle.length, 3, sContainerElementsMsg + 3);
-				assert.strictEqual(aContentMiddle[0].getId(), oAppComponent.createId("idMain1--mb2"), getMessage(sAffectedControlMgs, undefined, 0) + "mb2");
-				assert.strictEqual(aContentMiddle[1].getId(), oAppComponent.createId("idMain1--mb1"), getMessage(sAffectedControlMgs, undefined, 1) + "mb1");
-				assert.strictEqual(aContentMiddle[2].getId(), oAppComponent.createId("idMain1--rb2"), getMessage(sAffectedControlMgs, undefined, 2) + "rb2");
+				assert.strictEqual(aContentMiddle[0].getId(), oAppComponent.createId("idMain1--mb2"), `${getMessage(sAffectedControlMgs, undefined, 0)}mb2`);
+				assert.strictEqual(aContentMiddle[1].getId(), oAppComponent.createId("idMain1--mb1"), `${getMessage(sAffectedControlMgs, undefined, 1)}mb1`);
+				assert.strictEqual(aContentMiddle[2].getId(), oAppComponent.createId("idMain1--rb2"), `${getMessage(sAffectedControlMgs, undefined, 2)}rb2`);
 				assert.strictEqual(aContentRight.length, 1, sContainerElementsMsg + 1);
-				assert.strictEqual(aContentRight[0].getId(), oAppComponent.createId("idMain1--rb1"), getMessage(sAffectedControlMgs, undefined, 0) + "rb1");
+				assert.strictEqual(aContentRight[0].getId(), oAppComponent.createId("idMain1--rb1"), `${getMessage(sAffectedControlMgs, undefined, 0)}rb1`);
 			});
 		});
 
@@ -737,7 +739,7 @@ sap.ui.define([
 			}.bind(this)).then(function() {
 				return Condenser.condense(oAppComponent, this.aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges.length, 7, "Expected number of remaining changes: " + 7);
+				assert.strictEqual(aRemainingChanges.length, 7, `Expected number of remaining changes: ${7}`);
 			});
 		});
 
@@ -753,7 +755,7 @@ sap.ui.define([
 				aChanges.splice(30, 0, false);
 				return Condenser.condense(oAppComponent, aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges.length, 13, "Expected number of remaining changes: " + 13);
+				assert.strictEqual(aRemainingChanges.length, 13, `Expected number of remaining changes: ${13}`);
 				assert.strictEqual(aRemainingChanges[0], "not a change", "the non UI Change was sorted correctly");
 				assert.deepEqual(aRemainingChanges[4], {type: "variant"}, "the non UI Change was sorted correctly");
 				assert.strictEqual(aRemainingChanges[5], false, "the non UI Change was sorted correctly");
@@ -771,7 +773,7 @@ sap.ui.define([
 					fileName: "idRename0",
 					layer: Layer.CUSTOMER,
 					changeType: "renameField",
-					reference: "sap.ui.rta.test.Component",
+					reference: "sap.ui.rta.test",
 					selector: {
 						id: "idMain1--Victim",
 						idIsLocal: true
@@ -781,7 +783,7 @@ sap.ui.define([
 					fileName: "idRename1",
 					layer: Layer.CUSTOMER,
 					changeType: "renameField",
-					reference: "sap.ui.rta.test.Component",
+					reference: "sap.ui.rta.test",
 					selector: {
 						id: "idMain1--Victim",
 						idIsLocal: true
@@ -789,7 +791,7 @@ sap.ui.define([
 				})));
 				return Condenser.condense(oAppComponent, aChanges);
 			}.bind(this)).then(function(aRemainingChanges) {
-				assert.strictEqual(aRemainingChanges.length, 12, "Expected number of remaining changes: " + 12);
+				assert.strictEqual(aRemainingChanges.length, 12, `Expected number of remaining changes: ${12}`);
 				assert.strictEqual(aRemainingChanges[0].getId(), "idRename0", "the not applied UI Change was sorted correctly");
 				assert.deepEqual(aRemainingChanges[4].getId(), "idRename1", "the not applied UI Change was sorted correctly");
 			});
@@ -802,20 +804,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an app with controls with templates", {
-		before: function() {
+		before() {
 			return RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture").then(function(oComp) {
 				oAppComponent = oComp.getComponentInstance();
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 		},
-		afterEach: function() {
+		afterEach() {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent.destroy();
 		}
 	}, function() {
@@ -832,7 +834,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an ObjectPageLayout", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				viewName: "sap.ui.fl.testResources.condenser.ObjectPageLayout",
 				id: "myView"
@@ -840,21 +842,21 @@ sap.ui.define([
 				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 		},
-		afterEach: function() {
+		afterEach() {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent._restoreGetAppComponentStub();
 			oAppComponent.destroy();
 		}
 	}, function() {
 		[true, false].forEach(function(bPersistedChanges) {
-			var sName = "addIFrame and updateIFrame together" + (bPersistedChanges ? " with some persisted changes" : "");
+			var sName = `addIFrame and updateIFrame together${bPersistedChanges ? " with some persisted changes" : ""}`;
 			QUnit.test(sName, function(assert) {
 				var aPersistedChanges = bPersistedChanges ? [0, 1, 2, 3] : [];
 				// eslint-disable-next-line max-nested-callbacks
@@ -912,7 +914,7 @@ sap.ui.define([
 		});
 
 		[true, false].forEach(function(bPersistedChanges) {
-			var sName = "addIFrame and updateIFrame together + unclassified changes" + (bPersistedChanges ? " with some persisted changes" : "");
+			var sName = `addIFrame and updateIFrame together + unclassified changes${bPersistedChanges ? " with some persisted changes" : ""}`;
 			QUnit.test(sName, function(assert) {
 				var aPersistedChanges = bPersistedChanges ? [0, 1, 2, 3] : [];
 				// eslint-disable-next-line max-nested-callbacks
@@ -940,7 +942,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a mdc Table", {
-		before: function() {
+		before() {
 			return XMLView.create({
 				viewName: "sap.ui.fl.testResources.condenser.MdcTable",
 				id: "view"
@@ -948,7 +950,7 @@ sap.ui.define([
 				oAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon, "componentId", undefined, oView);
 			});
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.aChanges = [];
 			sandbox.stub(TableDelegate, "fetchProperties").resolves([
 				{
@@ -975,19 +977,19 @@ sap.ui.define([
 			]);
 			sandbox.stub(TableDelegate, "updateBindingInfo");
 		},
-		afterEach: function(assert) {
+		afterEach(assert) {
 			return revertMultipleChanges(this.aChanges).then(function() {
 				assert.ok(true, "after the test, the Initial UI is shown again");
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
-				assert.strictEqual(aColumns.length, 3, "Expected number of MDC columns: " + 3);
-				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", sValueMsg + "column0");
-				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column1", sValueMsg + "column1");
-				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column2", sValueMsg + "column2");
+				assert.strictEqual(aColumns.length, 3, `Expected number of MDC columns: ${3}`);
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", `${sValueMsg}column0`);
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column1", `${sValueMsg}column1`);
+				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column2", `${sValueMsg}column2`);
 				sandbox.restore();
 			});
 		},
-		after: function() {
+		after() {
 			oAppComponent._restoreGetAppComponentStub();
 			oAppComponent.destroy();
 		}
@@ -1011,11 +1013,11 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcMoveRemoveChanges.json", 6, 1, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
-				assert.strictEqual(aColumns.length, 2, "Expected number of MDC columns: " + 2);
-				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", sValueMsg + "column0");
-				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", sValueMsg + "column2");
+				assert.strictEqual(aColumns.length, 2, `Expected number of MDC columns: ${2}`);
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column0", `${sValueMsg}column0`);
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", `${sValueMsg}column2`);
 			});
 		});
 
@@ -1029,12 +1031,12 @@ sap.ui.define([
 			return loadApplyCondenseChanges.call(this, "mdcRemoveAddChanges.json", 4, 4, assert)
 			.then(revertAndApplyNew.bind(this))
 			.then(function() {
-				var oTable = sap.ui.getCore().byId("view--mdcTable");
+				var oTable = Element.getElementById("view--mdcTable");
 				var aColumns = oTable.getColumns();
-				assert.strictEqual(aColumns.length, 3, "Expected number of MDC columns: " + 3);
-				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", sValueMsg + "column3");
-				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", sValueMsg + "column2");
-				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column4", sValueMsg + "column4");
+				assert.strictEqual(aColumns.length, 3, `Expected number of MDC columns: ${3}`);
+				assert.strictEqual(aColumns[0].getId(), "view--mdcTable--column3", `${sValueMsg}column3`);
+				assert.strictEqual(aColumns[1].getId(), "view--mdcTable--column2", `${sValueMsg}column2`);
+				assert.strictEqual(aColumns[2].getId(), "view--mdcTable--column4", `${sValueMsg}column4`);
 			});
 		});
 
@@ -1048,7 +1050,7 @@ sap.ui.define([
 					assert.strictEqual(aRemainingChanges[0].getChangeType(), "addGroup", "the remaining changes are of type addSort and addGroup");
 					assert.strictEqual(aRemainingChanges[1].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
 					assert.strictEqual(aRemainingChanges[2].getChangeType(), "addSort", "the remaining changes are of type addSort and addGroup");
-					var aSorters = sap.ui.getCore().byId("view--mdcTable").getSortConditions().sorters;
+					var aSorters = Element.getElementById("view--mdcTable").getSortConditions().sorters;
 					assert.deepEqual(aSorters[0], {
 						name: "sorter2",
 						descending: false

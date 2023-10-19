@@ -462,7 +462,26 @@ sap.ui.define([
 				 * The event is fired when the Edit Header button is pressed
 				 */
 				editHeaderButtonPress: {},
+				/**
+				 * The event is fired before the selected section is changed using the navigation.
+				 * This event can be aborted by the application with preventDefault(), which means that there will be no navigation.
+				 * @since 1.118
+				 */
+				beforeNavigate: {
+					allowPreventDefault: true,
+					parameters: {
 
+						/**
+						 * The selected section object.
+						 */
+						section: {type: "sap.uxap.ObjectPageSection"},
+
+						/**
+						 * The selected subsection object.
+						 */
+						subSection: {type: "sap.uxap.ObjectPageSubSection"}
+					}
+				},
 				/**
 				 * The event is fired when the selected section is changed using the navigation.
 				 * @since 1.40
@@ -1839,7 +1858,7 @@ sap.ui.define([
 
 		var oSubsection;
 
-		if (BaseObject.isA(oSection, "sap.uxap.ObjectPageSubSection")) {
+		if (BaseObject.isObjectA(oSection, "sap.uxap.ObjectPageSubSection")) {
 			oSubsection = oSection;
 			oSection = oSection.getParent();
 		} else {
@@ -2261,6 +2280,15 @@ sap.ui.define([
 		oSection = bIsSubSection ? oSectionBase.getParent() : oSectionBase;
 		oSubSection = bIsSubSection ? oSectionBase : this._getFirstVisibleSubSection(oSectionBase);
 
+		var bExecuteDefault = this.fireBeforeNavigate({
+			section: oSection,
+			subSection: oSubSection
+		});
+
+		if (!bExecuteDefault) {
+			return;
+		}
+
 		// we set *direct* scrolling by which we instruct the page to *skip* processing of intermediate sections (sections between current and requested)
 		this.setDirectScrollingToSection(oSection.getId());
 		// finally request the page to scroll to the requested section
@@ -2591,7 +2619,7 @@ sap.ui.define([
 			//on mobile, each section and subsection is considered equally (a section is a very tiny subsection containing only a title)
 			if (this._bMobileScenario) {
 				// BCP 1680331690. Should skip subsections that are in a section with lower importance, which makes them hidden.
-				var sectionParent = this.oCore.byId(oSectionBase.getId()).getParent();
+				var sectionParent = oSectionBase.getParent();
 				if (sectionParent instanceof ObjectPageSection && sectionParent._getIsHidden()) {
 					return;
 				}

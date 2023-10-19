@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "horizontal-waterfall-chart";
-  const pathData = "M128.5 103q-11 0-18.5-7t-7.5-18 7.5-18.5 18.5-7.5h358q11 0 18 7.5t7 18.5q0 25-25 25h-358zm358 52q25 0 25 25 0 11-7 18.5t-18 7.5h-77q-11 0-18.5-7.5t-7.5-18.5 7.5-18 18.5-7h77zm-358 255q-11 0-18.5-7t-7.5-19q0-11 7.5-18t18.5-7h128q25 0 25 25 0 26-25 26h-128zm128-102q-26 0-26-26 0-25 26-25h153q11 0 18.5 7t7.5 18q0 12-7.5 19t-18.5 7h-153zm230 153q25 0 25 26 0 25-25 25h-460q-26 0-26-25V27q0-26 26-26 25 0 25 26v434h435z";
+  const pathData = "M454 429q11 0 18.5 7t7.5 18-7.5 18.5T454 480H58q-11 0-18.5-7.5T32 454V58q0-11 7.5-18.5T58 32t18 7.5T83 58v371h371zM154 115q-11 0-18.5-7T128 90t7.5-18.5T154 64h300q11 0 18.5 7.5T480 90t-7.5 18-18.5 7H154zm300 45q11 0 18.5 7.5T480 186t-7.5 18-18.5 7h-44q-11 0-18.5-7t-7.5-18 7.5-18.5T410 160h44zm-96 64q11 0 18.5 7.5T384 250t-7.5 18-18.5 7H250q-11 0-18.5-7t-7.5-18 7.5-18.5T250 224h108zM154 384q-11 0-18.5-7.5T128 358t7.5-18 18.5-7h108q11 0 18.5 7t7.5 18-7.5 18.5T262 384H154z";
   _exports.pathData = pathData;
   const ltr = true;
   _exports.ltr = ltr;

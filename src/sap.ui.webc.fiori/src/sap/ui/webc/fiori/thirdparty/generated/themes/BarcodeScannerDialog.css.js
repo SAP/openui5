@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/BarcodeScannerDialog.css",
-    content: ".ui5-barcode-scanner-dialog-root::part(content) {\r\n    padding: .4375rem;\r\n}\r\n\r\n/* video */\r\n\r\n.ui5-barcode-scanner-dialog-video-wrapper,\r\n.ui5-barcode-scanner-dialog-video {\r\n    height:100%;\r\n    width: 100%;\r\n}\r\n\r\n.ui5-barcode-scanner-dialog-video {\r\n    object-fit: cover;\r\n}\r\n\r\n/* footer */\r\n\r\n.ui5-barcode-scanner-dialog-footer {\r\n    display: flex;\r\n    justify-content: flex-end;\r\n    width: 100%;\r\n}\r\n\r\n/* busy indicator */\r\n\r\n.ui5-barcode-scanner-dialog-busy {\r\n    position: absolute;\r\n    top: 50%;\r\n    left: 50%;\r\n    transform: translate(-50%, -50%);\r\n    z-index: 1;\r\n}\r\n\r\n.ui5-barcode-scanner-dialog-busy:not([active]) {\r\n\tdisplay: none;\r\n}\r\n"
+    content: ".ui5-barcode-scanner-dialog-root::part(content){padding:.4375rem}.ui5-barcode-scanner-dialog-video,.ui5-barcode-scanner-dialog-video-wrapper{height:100%;width:100%}.ui5-barcode-scanner-dialog-video{object-fit:cover}.ui5-barcode-scanner-dialog-footer{display:flex;justify-content:flex-end;width:100%}.ui5-barcode-scanner-dialog-busy{left:50%;position:absolute;top:50%;transform:translate(-50%,-50%);z-index:1}.ui5-barcode-scanner-dialog-busy:not([active]){display:none}"
   };
   var _default = styleData;
   _exports.default = _default;

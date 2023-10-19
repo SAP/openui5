@@ -44,6 +44,25 @@ sap.ui.define([
 			and.iShouldSeeAGroupCalled("Testing");
 	});
 
+	opaTest("Should be able to open concrete sample", function (Given, When, Then) {
+		// Action
+		When.onTheControlsMasterPage.iTriggerTheSearchFor("Generic Tag");
+		// Assertions
+		When.onTheControlsMasterPage.iPressOnTheEntity("Generic Tag");
+		When.onTheEntityPage.iPressOnTheSample("Generic Tag with Different Configurations");
+		When.onTheSamplePage.iPressOnShowCode();
+		Then.onTheCodePage.iShouldBeAbleToSwitchFiles("manifest.json");
+	});
+
+	opaTest("Should be able to edit sample code", function (Given, When, Then) {
+		// Action
+		Then.onTheCodePage.iShouldBeAbleToSwitchFiles("Page.view.xml");
+		When.onTheCodePage.iShouldSeeCodeEditor();
+		//Then.onTheCodePage.iShouldSeeAnErrorOnThePage();
+		Then.onTheCodePage.iShouldSeeEditedNotification();
+		Then.onTheCodePage.iShouldSeeResetChangesButton();
+	});
+
 	opaTest("Should teardown my app", function(Given, When, Then) {
 		expect(0); // eslint-disable-line no-undef
 		Then.iTeardownMyApp();

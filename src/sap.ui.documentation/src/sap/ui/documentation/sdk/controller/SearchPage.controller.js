@@ -68,6 +68,7 @@ sap.ui.define([
 
 				if (sQuery === sOldQuery) {
 					this.getView().byId("searchPage").setSelectedSection(sSectionId);
+					this._modifyLinks();
 					return;
 				}
 
@@ -117,9 +118,11 @@ sap.ui.define([
 
 			/**
 			 * Modify all search result links
+			 * The default modification is formatting of titles (hide/show trailing colons)
+			 * @param bModifyHref enable modifications of href and target (to alow open in new window)
 			 * @private
 			 */
-			_modifyLinks: function () {
+			_modifyLinks: function (bModifyHref) {
 				var oView = this.getView(),
 					// Collect all possible items from all lists
 					aItems = [].concat(
@@ -133,24 +136,38 @@ sap.ui.define([
 					oLink,
 					sHref,
 					sTarget = "_self",
-					bExternal;
+					bExternal,
+					bFormatTitle = true;
 
 				while (iLen--) {
 					oItem = aItems[iLen];
 					// Access control lazy loading method if available
 					if (oItem._getLinkSender) {
 						// Set link href to allow open in new window functionality
-						oLink = oItem._getLinkSender();
-						sHref = oItem.getCustomData()[0].getValue();
-						bExternal = oItem.getCustomData()[1].getValue();
-						if (bExternal) {
-							sHref = new URL(sHref, document.baseURI).href;
-							sTarget = "_blank";
+						oLink = this.loadSearchResultLink(oItem, bFormatTitle);
+						if (bModifyHref) {
+							sHref = oItem.getCustomData()[0].getValue();
+							bExternal = oItem.getCustomData()[1].getValue();
+							if (bExternal) {
+								sHref = new URL(sHref, document.baseURI).href;
+								sTarget = "_blank";
+							}
+							oLink.setHref(sHref);
+							oLink.setTarget(sTarget);
 						}
-						oLink.setHref(sHref);
-						oLink.setTarget(sTarget);
 					}
 				}
+			},
+
+			loadSearchResultLink: function(oItem, bFormatTitle) {
+				var bShowColon;
+				if (!oItem._getLinkSender) {
+					return null;
+				}
+				if (bFormatTitle) {
+					bShowColon = !!oItem.getText();
+				}
+				return oItem._getLinkSender(bShowColon);
 			},
 
 			getGroupHeader : function (oGroup) {
@@ -174,22 +191,22 @@ sap.ui.define([
 
 			onAllLoadMore : function (oEvent) {
 				this.getModel("searchView").setProperty("/visibleAllLength", oEvent.getParameter("actual"));
-				this._modifyLinks();
+				this._modifyLinks(true);
 			},
 
 			onAPILoadMore : function (oEvent) {
 				this.getModel("searchView").setProperty("/visibleAPILength", oEvent.getParameter("actual"));
-				this._modifyLinks();
+				this._modifyLinks(true);
 			},
 
 			onDocLoadMore : function (oEvent) {
 				this.getModel("searchView").setProperty("/visibleDocLength", oEvent.getParameter("actual"));
-				this._modifyLinks();
+				this._modifyLinks(true);
 			},
 
 			onExploredLoadMore : function (oEvent) {
 				this.getModel("searchView").setProperty("/visibleExploredLength", oEvent.getParameter("actual"));
-				this._modifyLinks();
+				this._modifyLinks(true);
 			},
 
 			onSwitchTab: function(oEvent) {

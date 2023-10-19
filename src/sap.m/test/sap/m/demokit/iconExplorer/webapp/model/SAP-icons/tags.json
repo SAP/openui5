@@ -6894,5 +6894,71 @@
 			"appointment",
 			"calendar"
 		]
+	},
+	"da": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine"
+		]
+	},
+	"da-2": {
+		"tags": [
+			"artificial intelligence",
+			"voice recognition",
+			"npl",
+			"NPL",
+			"assistant",
+			"chatbot",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"conversational ai",
+			"contextual understanding",
+			"artificial",
+			"machine",
+			"filled",
+			"full"
+		]
+	},
+	"ai": {
+		"tags": [
+			"artificial intelligence",
+			"star",
+			"information",
+			"sparkle",
+			"magic",
+			"generate",
+			"automate",
+			"automation",
+			"generic",
+			"situation",
+			"machine learning",
+			"ai",
+			"digital",
+			"assistance",
+			"virtual",
+			"intelligence",
+			"contextual understanding",
+			"artificial",
+			"robot",
+			"machine"
+		]
 	}
 }

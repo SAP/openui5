@@ -1,8 +1,8 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/ui/core/Configuration",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/XMLView"
-], function (Configuration, XMLView) {
+], function (DesignTime, XMLView) {
 	"use strict";
 
 	QUnit.module("DesignMode, Controller Deactivation");
@@ -10,10 +10,9 @@ sap.ui.define([
 	QUnit.test("Configuration Accessors", function (assert) {
 		assert.expect(3);
 
-		var oConfig = Configuration;
-		assert.equal(oConfig.getDesignMode(), true, "Design Mode is on");
-		assert.equal(oConfig.getSuppressDeactivationOfControllerCode(), false, "SuppressDeactivationOfControllerCode is false");
-		assert.equal(oConfig.getControllerCodeDeactivated(), true, "getControllerCodeDeactivated is true");
+		assert.equal(DesignTime.isDesignModeEnabled(), true, "Design Mode is on");
+		assert.equal(DesignTime.isControllerCodeDeactivationSuppressed(), false, "SuppressDeactivationOfControllerCode is false");
+		assert.equal(DesignTime.isControllerCodeDeactivated(), true, "isControllerCodeDeactivated is true");
 	});
 
 	QUnit.test("Create a XMLView instance and check controller methods are replaced by empty ones", function (assert) {

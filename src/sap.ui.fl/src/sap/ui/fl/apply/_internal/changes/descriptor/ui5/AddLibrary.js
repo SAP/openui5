@@ -63,11 +63,9 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			// sap.ui5/dependencies node is mandatory in manifest
-			if (!oManifest["sap.ui5"].dependencies.libs) {
-				oManifest["sap.ui5"].dependencies.libs = {};
-			}
+			oManifest["sap.ui5"].dependencies.libs ||= {};
 			var oManifestLibs = oManifest["sap.ui5"].dependencies.libs;
 			var oChangeLibs = oChange.getContent().libraries;
 

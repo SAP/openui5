@@ -14,15 +14,38 @@ sap.ui.define([], function() {
 	 * @since 1.54.0
 	 */
 	return {
+        getUShellContainer: function() {
+            return sap.ui.require("sap/ushell/Container");
+        },
 		getService: function(sServiceName) {
+            const oContainer = this.getUShellContainer();
+            if (!oContainer) {
+                return null;
+            }
+
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
-					return sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("CrossApplicationNavigation");
+					return oContainer.getService("CrossApplicationNavigation");
 				case "URLParsing":
-					return sap.ushell && sap.ushell.Container && sap.ushell.Container.getService("URLParsing");
+					return oContainer.getService("URLParsing");
 				default:
 					return null;
 			}
-		}
+		},
+        getServiceAsync: function(sServiceName) {
+            const oContainer = this.getUShellContainer();
+            if (!oContainer) {
+                return Promise.resolve(null);
+            }
+
+            switch (sServiceName) {
+				case "CrossApplicationNavigation":
+					return oContainer.getServiceAsync("CrossApplicationNavigation");
+				case "URLParsing":
+					return oContainer.getServiceAsync("URLParsing");
+				default:
+					return Promise.resolve(null);
+			}
+        }
 	};
 });

@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/MessageScope",
+	"sap/ui/core/Messaging",
 	'sap/ui/core/util/MockServer'
-], function (ODataModel, MessageScope, MockServer) {
+], function (ODataModel, MessageScope, Messaging, MockServer) {
 	"use strict";
 
 
@@ -661,7 +662,7 @@ sap.ui.define([
 		var done = assert.async();
 		var that = this;
 		var oRequest;
-		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessageModel = Messaging.getMessageModel();
 
 		var oCreateEntryProduct = {
 			properties: {
@@ -859,7 +860,7 @@ sap.ui.define([
 					mResponseParameter.mDeepSalesOrderMsg = "Msg";
 					that.oModel.read("/BusinessPartnerSet('0100000000')", {
 						success: function(){
-							var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
+							var oMsg = Messaging.getMessageModel().getData()[0];
 							assert.equal(oMsg.aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message target is correctly set.");
 							assert.equal(oMsg.aFullTargets[0], "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Message full target is correctly set.");
 							done();
@@ -883,7 +884,7 @@ sap.ui.define([
 					mResponseParameter.mDeepSalesOrderMsg = "MsgWithProperty";
 					that.oModel.read("/BusinessPartnerSet('0100000000')", {
 						success: function(){
-							var oMsg = sap.ui.getCore().getMessageManager().getMessageModel().getData()[0];
+							var oMsg = Messaging.getMessageModel().getData()[0];
 							assert.equal(oMsg.aTargets[0], "/SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message target is correctly set.");
 							assert.equal(oMsg.aFullTargets[0], "/BusinessPartnerSet('0100000000')/ToSalesOrders('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/CurrencyCode", "Message full target is correctly set.");
 							done();

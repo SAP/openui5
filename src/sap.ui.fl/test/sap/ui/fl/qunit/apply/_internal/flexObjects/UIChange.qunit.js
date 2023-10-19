@@ -27,7 +27,7 @@ sap.ui.define([
 	var oFileContent = {
 		fileName: "foo",
 		fileType: "change",
-		reference: "sap.ui.demoapps.rta.fiorielements.Component",
+		reference: "sap.ui.demoapps.rta.fiorielements",
 		content: {
 			originalControlType: "sap.m.Label"
 		},
@@ -53,21 +53,20 @@ sap.ui.define([
 		},
 		namespace: "apps/sap.ui.demoapps.rta.fiorielements/changes/",
 		support: {
-			sapui5Version: Core.getConfiguration().getVersion().toString(),
 			generator: "sap.ui.rta.command"
 		},
 		variantReference: "myVariantReference"
 	};
 
 	QUnit.module("UIChange Creation", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				getUserId: function() {
+				getUserId() {
 					return "userId";
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -112,9 +111,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("ApplyState handling", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -249,7 +248,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Dependent Selector handling", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control("myId");
 			this.oControl2 = new Control("myId2");
 			this.oUIChange = FlexObjectFactory.createUIChange(Object.assign({}, oFileContent));
@@ -257,7 +256,7 @@ sap.ui.define([
 				modifier: JsControlTreeModifier
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			this.oControl2.destroy();
 			this.oUIChange.destroy();

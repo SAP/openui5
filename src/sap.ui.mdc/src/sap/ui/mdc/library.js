@@ -13,9 +13,10 @@
 	"use strict";
 
 	/**
-	 * OpenUI5 library that contains metadata-driven composite controls that can be extended
+	 * OpenUI5 library that contains metadata-driven composite controls, which can be extended
 	 * for use with any SAPUI5 model and data protocol.
 	 *
+	 * @see {@link topic:1dd2aa91115d43409452a271d11be95b sap.ui.mdc}
 	 * @namespace
 	 * @alias sap.ui.mdc
 	 * @author SAP SE
@@ -24,7 +25,7 @@
 	 * @public
 	 * @experimental As of version 1.54
 	 */
-	 var thisLib = sap.ui.getCore().initLibrary({
+	 const thisLib = sap.ui.getCore().initLibrary({
 		version: "${version}",
 		name: "sap.ui.mdc",
 		dependencies: ["sap.ui.core", "sap.m"],
@@ -60,13 +61,13 @@
 			"sap.ui.mdc.FilterField",
 			"sap.ui.mdc.MultiValueField",
 			"sap.ui.mdc.link.Panel",
-			"sap.ui.mdc.link.ContactDetails",
 			"sap.ui.mdc.Chart",
 			"sap.ui.mdc.p13n.PersistenceProvider"
 			],
 		elements: [
 			"sap.ui.mdc.table.Column",
 			"sap.ui.mdc.table.CreationRow",
+			"sap.ui.mdc.table.DragDropConfig",
 			"sap.ui.mdc.table.TableTypeBase",
 			"sap.ui.mdc.table.GridTableType",
 			"sap.ui.mdc.table.ResponsiveTableType",
@@ -82,10 +83,6 @@
 			"sap.ui.mdc.field.ListFieldHelpItem",
 			"sap.ui.mdc.filterbar.aligned.FilterItemLayout",
 			"sap.ui.mdc.Link",
-			"sap.ui.mdc.link.ContactDetailsAddressItem",
-			"sap.ui.mdc.link.ContactDetailsEmailItem",
-			"sap.ui.mdc.link.ContactDetailsItem",
-			"sap.ui.mdc.link.ContactDetailsPhoneItem",
 			"sap.ui.mdc.link.LinkItem",
 			"sap.ui.mdc.link.PanelItem",
 			"sap.ui.mdc.link.SemanticObjectUnavailableAction",
@@ -245,10 +242,22 @@
 	 * @param {object} oControlEvent.getParameters
 	 * @param {boolean} oControlEvent.getParameters.leaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.value When no condition is given this can be used to create a default condition
-	 * @param {string} oControlEvent.getParameters.key When no condition is given this can be used to create a default condition
-	 * @param {string} oControlEvent.getParameters.itemId provides the navigated item's id (useful for aria attributes)
-	*/
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
+	 */
+
+	/**
+	 * This optional event is fired after a suggested item for type-ahead has been found.
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContent#typeaheadSuggested
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
+	 * @param {string} oControlEvent.getParameters.filterValue Provides the used filter value. (as the event might be fired asynchronously, and the current user input might have changed.)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
+	 * @since 1.120.0
+	 */
 
 	/**
 	 * This optional event can be fired by typaehead contents also supporting dialog mode.
@@ -438,10 +447,21 @@
 	 * @param {object} oControlEvent.getParameters
 	 * @param {boolean} oControlEvent.getParameters.bLeaveFocus Indicates that the source control should be focused again
 	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
-	 * @param {string} oControlEvent.getParameters.value When no condition is given this can be used to create a default condition
-	 * @param {string} oControlEvent.getParameters.key When no condition is given this can be used to create a default condition
-	 * @param {string} oControlEvent.getParameters.itemId provides the navigated item's id (useful for aria attributes)
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
 	*/
+
+	/**
+	 * This optional event is fired after a suggested item for type-ahead has been found.
+	 *
+	 * @name sap.ui.mdc.valuehelp.ITypeaheadContainer#typeaheadSuggested
+	 * @event
+	 * @param {sap.ui.base.Event} oControlEvent
+	 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+	 * @param {object} oControlEvent.getParameters
+	 * @param {object} oControlEvent.getParameters.condition Provides the target condition of the navigation
+	 * @param {string} oControlEvent.getParameters.itemId Provides the navigated item's ID (used for ARIA attributes)
+	 * @since 1.120.0
+	 */
 
 	/**
 	 * This optional event can be fired by typaehead contents also supporting dialog mode.
@@ -1161,44 +1181,6 @@
 		 */
 		axis3: "axis3"
 	};
-	/**
-	 * Defines supported address types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsAddressType = {
-		work: "work",
-		home: "home",
-		preferred: "preferred"
-	};
-	/**
-	 * Defines supported email types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsEmailType = {
-		work: "work",
-		home: "home",
-		preferred: "preferred"
-	};
-	/**
-	 * Defines supported phone types in ContactDetails control.
-	 *
-	 * @enum {string}
-	 * @private
-	 * @since 1.64
-	 */
-	thisLib.ContactDetailsPhoneType = {
-		work: "work",
-		home: "home",
-		cell: "cell",
-		fax: "fax",
-		preferred: "preferred"
-	};
 
 	/**
 	 * Enumeration of the <code>multiSelectMode</code> in <code>ListBase</code>.
@@ -1278,42 +1260,6 @@
 	 * @name sap.ui.mdc.util
 	 * @since 1.74.0
 	 * @public
-	 */
-
-	/**
-	 *
-	 * @typedef {object} sap.ui.mdc.filterbar.PropertyInfo
-	 * @property {string} path
-	 *   The identifier of the property
-	 * @property {string} [name]
-	 *   The alternative identifier of the property. Either path or name can be used, preferably is on path
-	 * @property {string} label
-	 *   The label of the identifier
-	 * @property {string} [tooltip]
-	 *   The tooltip of the identifier
-	 * @property {string} dataType
-	 *   The data type of the property
-	 * @property {object} [constraints]
-	 *   Defines constraints for the data type of the property
-	 * @property {object} [formatOptions]
-	 *   Defines format options for the data type of the property
-	 * @property {string} [group]
-	 *   The group identifier to which the property belongs
-	 * @property {string} [groupLabel]
-	 *   The group name of the group identifier
-	 * @property {boolean} [caseSensitive = false]
-	 *   Defines that the filter value is treated as case-sensitive if set to <code>true</code>
-	 * @property {sap.ui.mdc.enums.FieldDisplay} [display]
-	 *   Describes how the value will be presented to the user
-	 * @property {boolean} [hiddenFilter = false]
-	 *   Defines if the filter is visible in the filter bar
-	 * @property {boolean} [required = false]
-	 *   Defines if the filter is mandatory
-	 * @property {int} [maxConditions]
-	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
-	 *
-	 * @public
-	 * @since 1.112.0
 	 */
 
 	/**

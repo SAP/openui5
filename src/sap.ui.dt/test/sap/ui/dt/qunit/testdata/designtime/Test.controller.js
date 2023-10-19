@@ -5,9 +5,9 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("dt.view.Test", {
-		onInit: function() {
+		onInit() {
 		},
-		onAfterRendering: function() {
+		onAfterRendering() {
 			var oSimpleScrollControl = this.oView.byId("simpleScrollControl");
 
 			if (oSimpleScrollControl) {

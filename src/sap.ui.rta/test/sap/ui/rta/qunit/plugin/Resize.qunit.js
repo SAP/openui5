@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangesWriteAPI,
@@ -33,6 +34,7 @@ sap.ui.define([
 	Text,
 	VerticalLayout,
 	Core,
+	Element,
 	sinon
 ) {
 	"use strict";
@@ -61,7 +63,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a table in Design Time with a Resize Plugin...", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			givenTableWithResizableColumns.call(this);
 			var fnDone = assert.async();
 
@@ -79,7 +81,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oResizePlugin.destroy();
@@ -157,7 +159,7 @@ sap.ui.define([
 			this.oColumn0Overlay.setDesignTimeMetadata({
 				actions: {
 					resize: {
-						handler: function() {
+						handler() {
 							return;
 						}
 					}
@@ -178,7 +180,7 @@ sap.ui.define([
 				} else {
 					this.oColumn0Overlay.getDomRef().dispatchEvent(new Event(sEventName));
 				}
-				assert.strictEqual(oStub.callCount, iCallCount, "then on " + sEventName + " event the method is called the correct number of times");
+				assert.strictEqual(oStub.callCount, iCallCount, `then on ${sEventName} event the method is called the correct number of times`);
 			}
 
 			sandbox.stub(this.oResizePlugin, "isEnabled").returns(true);
@@ -245,7 +247,7 @@ sap.ui.define([
 			assert.ok(oRemoveHandleSpy.called, "on mouse leave, the handle is removed");
 			this.oColumn0OverlayDomElement.dispatchEvent(new Event("mousemove"));
 			aHandle = this.oColumn0OverlayDomElement.getElementsByClassName("sapUiRtaResizeHandle");
-			oHandle = aHandle[0];
+			[oHandle] = aHandle;
 			assert.strictEqual(aHandle.length, 1, "on new mousemove, handle is recreated on the overlay");
 			oRemoveHandleSpy = sandbox.spy(this.oResizePlugin.getHandle(), "remove");
 
@@ -307,7 +309,7 @@ sap.ui.define([
 
 	// Some tests need RTA as the calculations are dependent on the style class (handle position)
 	QUnit.module("Given a table in RTA...", {
-		beforeEach: function() {
+		beforeEach() {
 			givenTableWithResizableColumns.call(this);
 
 			this.oRta = new RuntimeAuthoring({
@@ -323,7 +325,7 @@ sap.ui.define([
 				this.oResizePlugin = this.oRta.getPlugins().resize;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oComponent.destroy();
 			this.oContainer.destroy();
@@ -437,7 +439,7 @@ sap.ui.define([
 
 		QUnit.test("when _finalizeResize is called and the handler returns no changes... ", function(assert) {
 			sandbox.stub(this.oResizePlugin, "getAction").returns({
-				handler: function() {
+				handler() {
 					return Promise.resolve([]);
 				}
 			});
@@ -457,7 +459,7 @@ sap.ui.define([
 		QUnit.test("when _finalizeResize is called with a change in width but the handler fails... ", function(assert) {
 			var sErrorMessage = "I failed!";
 			sandbox.stub(this.oResizePlugin, "getAction").returns({
-				handler: function() {
+				handler() {
 					return Promise.reject(sErrorMessage);
 				}
 			});
@@ -470,7 +472,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.equal(
 					oError.message,
-					"Error occurred during handler execution. Original error: Error - " + sErrorMessage,
+					`Error occurred during handler execution. Original error: Error - ${sErrorMessage}`,
 					"then the proper error is raised"
 				);
 				assert.ok(this.oColumn0Overlay.isSelected(), "then the overlay is selected");
@@ -491,7 +493,7 @@ sap.ui.define([
 			.catch(function(oError) {
 				assert.equal(
 					oError.message,
-					"Error occurred during resize command creation. Original error: Error - " + sErrorMessage,
+					`Error occurred during resize command creation. Original error: Error - ${sErrorMessage}`,
 					"then the proper error is raised"
 				);
 				assert.ok(this.oColumn0Overlay.isSelected(), "then the overlay is selected");
@@ -545,10 +547,10 @@ sap.ui.define([
 		QUnit.test("when _createCommand is called with a handler in the DT Metadata... ", function(assert) {
 			var fnDone = assert.async();
 			var iNewWidth = this.oColumn0Overlay.getDomRef().offsetWidth - 10;
-			var oTable = Core.byId(this.oComponent.createId("myTable"));
-			var oColumn0 = Core.byId(this.oComponent.createId("column0"));
-			var oColumn1 = Core.byId(this.oComponent.createId("column1"));
-			var oColumn2 = Core.byId(this.oComponent.createId("column2"));
+			var oTable = Element.getElementById(this.oComponent.createId("myTable"));
+			var oColumn0 = Element.getElementById(this.oComponent.createId("column0"));
+			var oColumn1 = Element.getElementById(this.oComponent.createId("column1"));
+			var oColumn2 = Element.getElementById(this.oComponent.createId("column2"));
 
 			this.oColumn0Overlay.setDesignTimeMetadata({
 				actions: {
@@ -684,7 +686,7 @@ sap.ui.define([
 					iMouseInitialPosition = oHandle.getBoundingClientRect().left;
 
 					function onSecondMouseDown() {
-						oFullScreenDiv = document.getElementsByClassName("sapUiRtaFullScreenDiv")[0];
+						[oFullScreenDiv] = document.getElementsByClassName("sapUiRtaFullScreenDiv");
 						iMouseFinalPosition = iMouseInitialPosition - 60;
 						iExpectedHandlePosition = iMinWidth - oHandle.offsetWidth;
 						oFullScreenDiv.dispatchEvent(new MouseEvent("mousemove", { clientX: iMouseFinalPosition }));
@@ -756,7 +758,7 @@ sap.ui.define([
 					iMouseInitialPosition = oHandle.getBoundingClientRect().left;
 
 					function onSecondMouseDown() {
-						oFullScreenDiv = document.getElementsByClassName("sapUiRtaFullScreenDiv")[0];
+						[oFullScreenDiv] = document.getElementsByClassName("sapUiRtaFullScreenDiv");
 						// Move handle outside of the control border
 						iMouseFinalPosition = iMouseInitialPosition - 175;
 						iExpectedHandlePosition = 15 - oHandle.offsetWidth;
@@ -791,7 +793,7 @@ sap.ui.define([
 				actions: {
 					resize: {
 						changeType: "myChangeType",
-						getHandleExtensionHeight: function(oElement) {
+						getHandleExtensionHeight(oElement) {
 							return oElement.getParent().getDomRef().offsetHeight;
 						}
 					}
@@ -878,7 +880,7 @@ sap.ui.define([
 						actions: {
 							resize: {
 								changeType: "myChangeType",
-								getSizeLimits: function() {
+								getSizeLimits() {
 									return {
 										minimumWidth: iColumn0OverlayOldWidth
 									};

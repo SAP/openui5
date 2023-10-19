@@ -107,7 +107,7 @@ sap.ui.define([
 		oRootDomRef.id = this.sDOM_ID;
 
 		var oBusyContainer = document.createElement("div");
-		this._oResBundle = Library.get("sap.ui.core").getResourceBundle();
+		this._oResBundle = Library.getResourceBundleFor("sap.ui.core");
 		var sTitle = this._oResBundle.getText("BUSY_TEXT");
 		delete this._oResBundle;
 

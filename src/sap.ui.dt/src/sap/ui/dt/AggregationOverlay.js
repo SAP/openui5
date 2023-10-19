@@ -37,7 +37,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.AggregationOverlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AggregationOverlay = Overlay.extend("sap.ui.dt.AggregationOverlay", /** @lends sap.ui.dt.AggregationOverlay.prototype */ {
 		metadata: {
@@ -76,10 +75,10 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getAttributes = function() {
+	AggregationOverlay.prototype._getAttributes = function(...aArgs) {
 		return merge(
 			{},
-			Overlay.prototype._getAttributes.apply(this, arguments),
+			Overlay.prototype._getAttributes.apply(this, aArgs),
 			{
 				"data-sap-ui-dt-aggregation": this.getAggregationName()
 			}
@@ -190,10 +189,10 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype.render = function() {
+	AggregationOverlay.prototype.render = function(...aArgs) {
 		if (this.getChildren().length > 0 || this.getDesignTimeMetadata().getDomRef()) {
 			this.addStyleClass("sapUiDtAggregationOverlay");
-			return Overlay.prototype.render.apply(this, arguments);
+			return Overlay.prototype.render.apply(this, aArgs);
 		}
 		return undefined;
 	};
@@ -201,19 +200,20 @@ function(
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._getRenderingParent = function() {
+	AggregationOverlay.prototype._getRenderingParent = function(...aArgs) {
 		if (Util.isInteger(this.getScrollContainerId())) {
 			return this.getParent().getScrollContainerById(this.getScrollContainerId());
 		}
-		return Overlay.prototype._getRenderingParent.apply(this, arguments);
+		return Overlay.prototype._getRenderingParent.apply(this, aArgs);
 	};
 
 	/**
 	 * @override
 	 */
-	AggregationOverlay.prototype._setPosition = function($Target, oGeometry, $Parent, bForceScrollbarSync) {
+	AggregationOverlay.prototype._setPosition = function(...aArgs) {
+		const [, oGeometry, , bForceScrollbarSync] = aArgs;
 		// Apply Overlay position first, then extra logic based on this new position
-		Overlay.prototype._setPosition.apply(this, arguments);
+		Overlay.prototype._setPosition.apply(this, aArgs);
 
 		if (oGeometry.domRef && !Util.isInteger(this.getScrollContainerId())) {
 			this._handleOverflowScroll(oGeometry, this.$(), this.getParent(), bForceScrollbarSync);

@@ -3,6 +3,7 @@
 	"use strict";
 
 	QUnit.test("Check Core Functionality", function(assert) {
+		var aLoadedLibraries = Object.keys(sap.ui.getCore().getLoadedLibraries());
 		/* check that SAPUI5 has been loaded */
 		assert.ok(jQuery, "jQuery has been loaded");
 		assert.ok(jQuery.sap, "jQuery.sap namespace exists");
@@ -11,7 +12,10 @@
 		assert.ok(typeof sap.ui.getCore === "function", "sap.ui.getCore exists");
 		assert.ok(sap.ui.getCore(), "sap.ui.getCore() returns a value");
 
-		assert.deepEqual(sap.ui.core.Configuration.getValue("modules"), [ "sap.m.library" ], "Libraries");
+		[ "sap.ui.core", "sap.m" ].forEach(function(sLib) {
+			assert.ok(aLoadedLibraries.includes(sLib),"Library " + sLib + " has been loaded");
+		});
+		assert.deepEqual(Object.keys(sap.ui.getCore().getLoadedLibraries()), [ "sap.ui.core", "sap.m" ], "Libraries");
 	});
 
 	QUnit.test("Check boot() has run", function(assert) {

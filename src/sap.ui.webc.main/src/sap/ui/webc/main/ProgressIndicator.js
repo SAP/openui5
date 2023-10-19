@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.ProgressIndicator.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> Shows the progress of a process in a graphical way. To indicate the progress, the inside of the component is filled with a color.
@@ -47,6 +47,14 @@ sap.ui.define([
 			properties: {
 
 				/**
+				 * Defines the accessible ARIA name of the component.
+				 */
+				accessibleName: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
 				 * Specifies the text value to be displayed in the bar.
 				 *
 				 * <b>Note:</b>
@@ -66,7 +74,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}

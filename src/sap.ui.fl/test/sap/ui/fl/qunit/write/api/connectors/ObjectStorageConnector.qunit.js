@@ -162,8 +162,8 @@ sap.ui.define([
 	}
 
 	function parameterizedTest(oConnector, sStorage, bPublicLayer) {
-		QUnit.module("loadFlexData: Given a " + sStorage, {
-			afterEach: function() {
+		QUnit.module(`loadFlexData: Given a ${sStorage}`, {
+			afterEach() {
 				sandbox.restore();
 				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
@@ -285,11 +285,11 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.module("Given some changes in a " + sStorage, {
-			beforeEach: function() {
+		QUnit.module(`Given some changes in a ${sStorage}`, {
+			beforeEach() {
 				return saveListWithConnector(oConnector, values(oTestData));
 			},
-			afterEach: function() {
+			afterEach() {
 				return removeFlexObjectsFromStorage(oConnector.storage);
 			}
 		}, function() {
@@ -591,7 +591,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("write: Given a connector where _itemsStoredAsObjects", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -605,8 +605,9 @@ sap.ui.define([
 			return JsObjectConnector.write({
 				flexObjects: [oObject]
 			})
-			.then(function() {
+			.then(function(oResponse) {
 				assert.equal(oSetItemStub.getCall(0).args[1], oObject, "the write was called with the object");
+				assert.ok(oResponse.response[0].creation, "then a creation was added to the object");
 				return removeFlexObjectsFromStorage(JsObjectConnector.storage);
 			});
 		});
@@ -620,9 +621,14 @@ sap.ui.define([
 			return SessionStorageWriteConnector.write({
 				flexObjects: [oObject]
 			})
-			.then(function() {
+			.then(function(oResponse) {
 				var sObject = JSON.stringify(oObject);
-				assert.strictEqual(SessionStorageWriteConnector.storage.getItem(sKey), sObject, "the write was called with the object as string");
+				assert.strictEqual(
+					SessionStorageWriteConnector.storage.getItem(sKey),
+					sObject,
+					"the write was called with the object as string"
+				);
+				assert.ok(oResponse.response[0].creation, "then a creation was added to the object");
 				return removeFlexObjectsFromStorage(SessionStorageWriteConnector.storage);
 			});
 		});
@@ -631,7 +637,7 @@ sap.ui.define([
 	var oAsyncStorage = {
 		_itemsStoredAsObjects: true,
 		_items: {},
-		setItem: function(sKey, vValue) {
+		setItem(sKey, vValue) {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					oAsyncStorage._items[sKey] = vValue;
@@ -639,7 +645,7 @@ sap.ui.define([
 				});
 			});
 		},
-		removeItem: function(sKey) {
+		removeItem(sKey) {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					delete oAsyncStorage._items[sKey];
@@ -647,7 +653,7 @@ sap.ui.define([
 				});
 			});
 		},
-		clear: function() {
+		clear() {
 			return new Promise(function(resolve) {
 				setTimeout(function() {
 					oAsyncStorage._items = {};
@@ -655,10 +661,10 @@ sap.ui.define([
 				});
 			});
 		},
-		getItem: function(sKey) {
+		getItem(sKey) {
 			return Promise.resolve(oAsyncStorage._items[sKey]);
 		},
-		getItems: function() {
+		getItems() {
 			return Promise.resolve(oAsyncStorage._items);
 		}
 	};

@@ -2,18 +2,18 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flp/FlpLinkDelegate",
-	"sap/ui/mdc/link/ContactDetails"
-], function (FlpLinkDelegate, ContactDetails) {
+	"sap/ui/mdc/ushell/LinkDelegate",
+	"testutils/link/ContactDetails",
+	"sap/ui/mdc/enums/LinkType"
+], function (UShellLinkDelegate, ContactDetails, LinkType) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, FlpLinkDelegate);
-	SampleLinkDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+	const SampleLinkDelegate = Object.assign({}, UShellLinkDelegate);
 
 	SampleLinkDelegate.fetchAdditionalContent = function (oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.loadAdditionalContent) {
-			var aAdditionalContent = [
+			const aAdditionalContent = [
 				new ContactDetails()
 			];
 			if (oPayload && oPayload.addAdditionalContent) {
@@ -25,7 +25,7 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.fetchLinkItems = function(oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.items) {
 			return Promise.resolve(oPayload.items);
 		}
@@ -33,12 +33,12 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.fetchLinkType = function(oLink) {
-		var oPayload = oLink.getPayload();
+		const oPayload = oLink.getPayload();
 		if (oPayload.linkType) {
 			return Promise.resolve(oPayload.linkType);
 		}
 		return Promise.resolve({
-			type: 2,
+			type: LinkType.Popover,
 			directLink: undefined
 		});
 	};

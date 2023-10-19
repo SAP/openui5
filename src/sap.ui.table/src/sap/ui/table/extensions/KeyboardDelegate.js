@@ -570,7 +570,7 @@ sap.ui.define([
 	 */
 	function getColumnIndexInVisibleAndGroupedColumns(oTable, oColumn) {
 		var aVisibleAndGroupedColumns = oTable.getColumns().filter(function(oColumn) {
-			return oColumn.getVisible() || oColumn.getGrouped();
+			return oColumn.getVisible() || (oColumn.getGrouped ? oColumn.getGrouped() : false);
 		});
 
 		for (var i = 0; i < aVisibleAndGroupedColumns.length; i++) {
@@ -1017,11 +1017,7 @@ sap.ui.define([
 
 		} else if ($Target.hasClass("sapUiTableCtrlAfter")) {
 			if (!TableUtils.isNoDataVisible(this)) {
-				if (this._getRowMode().getHideEmptyRows && this._getRowMode().getHideEmptyRows()) {
-					setFocusOnColumnHeaderOfLastFocusedDataCell(this, oEvent);
-				} else {
-					restoreFocusOnLastFocusedDataCell(this, oEvent);
-				}
+				restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
 		}
 
@@ -1127,13 +1123,13 @@ sap.ui.define([
 			oEvent.preventDefault(); // Prevent full page text selection.
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER) && sSelectionMode === SelectionMode.MultiToggle) {
-				oSelectionPlugin.onKeyboardShortcut("toggle");
+				oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
 			}
 
 		// Ctrl+Shift+A: Deselect all.
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.A, ModKey.CTRL + ModKey.SHIFT)) {
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL | CellType.COLUMNROWHEADER)) {
-				oSelectionPlugin.onKeyboardShortcut("clear");
+				oSelectionPlugin.onKeyboardShortcut("clear", oEvent);
 			}
 
 		// F4: Enter the action mode.
@@ -1190,7 +1186,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.ANY)) {
 			oEvent.preventDefault(); // Prevent opening the default browser context menu.
-			TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
+			TableUtils.Menu.openContextMenu(this, oEvent);
 		}
 	};
 
@@ -1211,7 +1207,7 @@ sap.ui.define([
 
 		if (oCellInfo.isOfType(CellType.COLUMNHEADER)) {
 			if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE) || KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.ENTER)) {
-				TableUtils.Menu.openContextMenu(this, oEvent.target);
+				TableUtils.Menu.openContextMenu(this, oEvent);
 			}
 		} else if (KeyboardDelegate._isKeyCombination(oEvent, KeyCodes.SPACE)) {
 			handleSpaceAndEnter(this, oEvent);
@@ -1418,6 +1414,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapdownmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1442,7 +1443,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-
 			/* Range Selection */
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
@@ -1503,6 +1503,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapupmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.CTRL)) {
@@ -1527,7 +1532,6 @@ sap.ui.define([
 		var oCellInfo = TableUtils.getCellInfo(oEvent.target);
 
 		if (KeyboardDelegate._isKeyCombination(oEvent, null, ModKey.SHIFT)) {
-
 			/* Range Selection */
 
 			if (oCellInfo.isOfType(CellType.ANYCONTENTCELL)) {
@@ -1589,6 +1593,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsapleftmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (this._getKeyboardExtension().isInActionMode()) {
@@ -1668,6 +1677,11 @@ sap.ui.define([
 	};
 
 	KeyboardDelegate.prototype.onsaprightmodifiers = function(oEvent) {
+		if (oEvent.isMarked()) {
+			preventItemNavigation(oEvent);
+			return;
+		}
+
 		handleNavigationEvent(oEvent);
 
 		if (this._getKeyboardExtension().isInActionMode()) {

@@ -122,7 +122,14 @@
 						icon: "sap-icon://bell",
 						layoutData: new sap.m.OverflowToolbarLayoutData({
 							priority: sap.m.OverflowToolbarPriority.NeverOverflow
-						})
+						}),
+						customData: [
+							new sap.m.BadgeCustomData({
+								key:"badge",
+								value:"5",
+								visible:true
+							})
+						]
 					}),
 					new sap.tnt.ToolHeaderUtilitySeparator(),
 					new sap.m.ToolbarSpacer({
@@ -578,6 +585,7 @@
 						backgroundDesign: "Transparent",
 						items: [
 							new sap.m.IconTabFilter({text: "Filter 1"}),
+							new sap.m.IconTabSeparator(),
 							new sap.m.IconTabFilter({text: "Filter 2"}),
 							new sap.m.IconTabFilter({text: "Filter 3"})
 						]
@@ -586,7 +594,14 @@
 						backgroundDesign: "Solid",
 						items: [
 							new sap.m.IconTabFilter({text: "Filter 1"}),
-							new sap.m.IconTabFilter({text: "Filter 2"}),
+							new sap.m.IconTabFilter({
+								text: "Filter 2",
+								items: [
+									new sap.m.IconTabFilter({text: "Filter 2-1"}),
+									new sap.m.IconTabFilter({text: "Filter 2-2"}),
+									new sap.m.IconTabFilter({text: "Filter 2-3"})
+								]
+							}),
 							new sap.m.IconTabFilter({text: "Filter 3"})
 						]
 					}),

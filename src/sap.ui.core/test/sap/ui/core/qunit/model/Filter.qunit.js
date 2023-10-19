@@ -9,6 +9,9 @@ sap.ui.define([
 	var sDefaultLanguage = Configuration.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function () {
 			Configuration.setLanguage("en-US");
 		},
@@ -748,4 +751,27 @@ sap.ui.define([
 
 
 	});
+
+	//*********************************************************************************************
+	QUnit.test("Static never fulfilled filter", function(assert) {
+		assert.ok(Filter.NONE instanceof Filter);
+		assert.strictEqual(Filter.NONE.getPath(), "/");
+		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
+		assert.strictEqual(Filter.NONE.getTest()(), false);
+	});
+
+	//*********************************************************************************************
+[
+	{filters : [{}, Filter.NONE]},
+	[{}, Filter.NONE],
+	{condition : Filter.NONE}
+].forEach((oFixture, i) => {
+	QUnit.test("Filter.NONE passed to constructor, " + i, function(assert) {
+		assert.throws(() => {
+			// code under test
+			new Filter(oFixture);
+		}, new Error("Filter.NONE not allowed "
+			+ (oFixture.condition ? "as condition" : "in multiple filter")));
+	});
+});
 });

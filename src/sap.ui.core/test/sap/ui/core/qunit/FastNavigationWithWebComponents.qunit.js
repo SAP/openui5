@@ -1,12 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/events/F6Navigation",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(F6Navigation, Core, XMLView, KeyCodes, QUnitUtils, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(F6Navigation, XMLView, KeyCodes, QUnitUtils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	// Test setup
@@ -97,9 +97,9 @@ sap.ui.define([
 			pView = XMLView.create({
 				id: "xmlView",
 				viewName: "sap.ui.fastnav.view.FastNavigation"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				oView.placeAt("content");
-				Core.applyChanges();
+				await nextUIUpdate();
 				return oView;
 			});
 			return pView;

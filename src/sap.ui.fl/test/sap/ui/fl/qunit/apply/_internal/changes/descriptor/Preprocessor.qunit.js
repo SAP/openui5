@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Preprocessor", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oConfig = {
 				componentData: {},
 				asyncHints: {},
@@ -52,7 +52,7 @@ sap.ui.define([
 
 			this.fnStorageStub = sandbox.stub(Storage, "loadFlexData");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -151,7 +151,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Applier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oConfig = {
 				componentData: {},
 				asyncHints: {},
@@ -163,7 +163,7 @@ sap.ui.define([
 			this.fnApplyChangeSpy = sandbox.spy(AddLibrary, "applyChange");
 			this.fnApplierUtilsSpy = sandbox.spy(Applier, "applyChanges");
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}
@@ -181,7 +181,7 @@ sap.ui.define([
 						fileName: "id_1581069458324_200_propertyChange",
 						fileType: "change",
 						changeType: "propertyChange",
-						reference: "applier.test.reference.Component",
+						reference: "applier.test.reference",
 						packageName: "$TMP",
 						content: {property: "busy", newValue: true},
 						selector: {
@@ -210,7 +210,7 @@ sap.ui.define([
 				assert.equal(oStorageLoadFlexData.callCount, 1, "Storage.loadFlexData is called once");
 				assert.equal(oStorageCompleteFlexData.callCount, 0, "Storage.completeFlexData is not called");
 
-				sap.ui.require.preload({"applier/test/reference/changes/changes-bundle.json": '[{"fileName":"id_1581069458324_142_propertyChange","fileType":"change","changeType":"propertyChange","reference":"applier.test.reference.Component","packageName":"$TMP","content":{"property":"busy","newValue":true},"selector":{"id":"applierreference.listreport::sap.suite.ui.generic.template.ListReport.view.ListReport::YY1_BONUSPLANMEL--addEntry","type":"sap.m.Button","idIsLocal":false},"layer":"VENDOR","texts":{},"namespace":"applier/test/reference/changes/","projectId":"applier.test","creation":"2020-02-07T09:57:43.523Z","originalLanguage":"EN","conditions":{},"context":"","support":{"generator":"Change.createInitialFileContent","service":"","user":"","sapui5Version":"1.75.0-SNAPSHOT","sourceChangeFileName":"","compositeCommand":""},"oDataInformation":{},"dependentSelector":{},"validAppVersions":{"creation":"1.0.0","from":"1.0.0","to":"1.0.0"},"jsOnly":false,"variantReference":"","appDescriptorChange":false}]'});
+				sap.ui.require.preload({"applier/test/reference/changes/changes-bundle.json": '[{"fileName":"id_1581069458324_142_propertyChange","fileType":"change","changeType":"propertyChange","reference":"applier.test.reference","packageName":"$TMP","content":{"property":"busy","newValue":true},"selector":{"id":"applierreference.listreport::sap.suite.ui.generic.template.ListReport.view.ListReport::YY1_BONUSPLANMEL--addEntry","type":"sap.m.Button","idIsLocal":false},"layer":"VENDOR","texts":{},"namespace":"applier/test/reference/changes/","projectId":"applier.test","creation":"2020-02-07T09:57:43.523Z","originalLanguage":"EN","conditions":{},"context":"","support":{"generator":"Change.createInitialFileContent","service":"","user":"","sapui5Version":"1.75.0-SNAPSHOT","sourceChangeFileName":"","compositeCommand":""},"oDataInformation":{},"dependentSelector":{},"validAppVersions":{"creation":"1.0.0","from":"1.0.0","to":"1.0.0"},"jsOnly":false,"variantReference":"","appDescriptorChange":false}]'});
 				return FlexState.initialize({
 					componentId: this.oConfig.id,
 					reference: sReference,
@@ -231,7 +231,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Preprocessor", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
@@ -245,7 +245,7 @@ sap.ui.define([
 			this.fnFlexStateStub = sandbox.stub(FlexState, "initialize").resolves();
 			this.fnGetAppDescriptorChangesSpy = sandbox.stub(FlexState, "getAppDescriptorChanges").returns([]);
 		},
-		afterEach: function() {
+		afterEach() {
 			FlexState.clearState();
 			sandbox.restore();
 		}

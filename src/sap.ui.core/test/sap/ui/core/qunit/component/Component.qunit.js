@@ -1,8 +1,9 @@
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
-	'sap/ui/core/Core',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/Messaging',
 	'sap/ui/core/UIComponentMetadata',
 	'sap/ui/test/routing/Component',
 	'sap/ui/test/routing/RouterExtension',
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/ui/core/Manifest',
 	'sap/base/i18n/ResourceBundle'
-], function (createAndAppendDiv, Core, Component, ComponentContainer, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
+], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, Messaging, UIComponentMetadata, SamplesRoutingComponent, SamplesRouterExtension, Log, deepExtend, LoaderExtensions, Manifest, ResourceBundle) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -79,8 +80,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Simple Component Instance", function(assert){
-		Core.applyChanges();
+	QUnit.test("Simple Component Instance", async function(assert){
+		await nextUIUpdate();
 		assert.ok(document.getElementById("CompCont1"));
 		var elem = document.getElementById("buttonComponent---mybutn");
 		assert.equal(elem.textContent, "Text changed through settings", "Settings applied");
@@ -173,6 +174,77 @@ sap.ui.define([
 		oComponent.destroy();
 	});
 
+	QUnit.module("Routing classes: Loading behavior", {
+		/**
+		 * @deprecated since 1.120
+		 */
+		beforeEach() {
+			this.requireSyncSpy = sinon.spy(sap.ui, "requireSync");
+		},
+		/**
+		 * @deprecated since 1.120
+		 */
+		afterEach() {
+			this.requireSyncSpy.restore();
+		}
+	});
+
+	QUnit.test("[Router] manifest = false", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.routerPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Router] manifest = true", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.routerPreloading"
+			// manifest: true // implicitly set
+		});
+
+		assert.ok(oComp.getRouter().isA("sap.m.routing.Router"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Targets] manifest = false", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.targetsPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
+	QUnit.test("[Targets] manifest = true", async function(assert) {
+		const oComp = await Component.create({
+			name: "sap.ui.test.targetsPreloading",
+			manifest: false
+		});
+
+		assert.ok(oComp.getTargets().isA("sap.m.routing.Targets"), "sap.m.routing.Router was correctly instantiated");
+
+		/** @deprecated since 1.120 */
+		assert.equal(this.requireSyncSpy.callCount, 0, "No sync request issued");
+
+		oComp.destroy();
+	});
+
 	QUnit.module("Special Cases & Compatibility Check", {
 		before: function() {
 			// Root View
@@ -209,7 +281,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			// Clear all messages so the tests don't interfere with eachother
-			Core.getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		}
 	});
 
@@ -224,19 +296,18 @@ sap.ui.define([
 			assert.ok(oComp, "Component created.");
 			assert.strictEqual(false, oComp.getManifestEntry("/sap.ui5/handleValidation"), "Correct handleValidation value was returned on instance: false");
 
-			// fire a validation error -> should NOT create a Message via the global MessageManager
+			// fire a validation error -> should NOT create a Message via Messaging
 			// the Component has set "handleValidation" to <false> and thus is not registered to the
-			// global MessageManager
+			// Messaging
 			oComp.fireValidationError({
 				element: oComp,
 				property: "handleValidationTest",
 				newValue: false
 			});
 
-			var oMM = Core.getMessageManager();
-			var aMessages = oMM.getMessageModel().getData();
+			var aMessages = Messaging.getMessageModel().getData();
 
-			assert.equal(aMessages.length, 0, "No messages must be created. The Component should not be registered to the MessageManager.");
+			assert.equal(aMessages.length, 0, "No messages must be created. The Component should not be registered to the Messaging.");
 
 		}).finally(function() {
 			oComponentGeneric.destroy();
@@ -272,19 +343,18 @@ sap.ui.define([
 			assert.ok(oComp, "Component created.");
 			assert.strictEqual(true, oComp.getManifestEntry("/sap.ui5/handleValidation"), "Correct handleValidation value was returned on instance: true");
 
-			// fire a validation error -> should create a Message via the global MessageManager
+			// fire a validation error -> should create a Message via the Messaging
 			// the Component has set "handleValidation" to <true> and thus is automatically registered to the
-			// global MessageManager
+			// Messaging
 			oComp.fireValidationError({
 				element: oComp,
 				property: "handleValidationTest",
 				newValue: true
 			});
 
-			var oMM = Core.getMessageManager();
-			var aMessages = oMM.getMessageModel().getData();
+			var aMessages = Messaging.getMessageModel().getData();
 
-			assert.equal(aMessages.length, 1, "One messages must be created. The Component is automatically registered to the MessageManager.");
+			assert.equal(aMessages.length, 1, "One messages must be created. The Component is automatically registered to the Messaging.");
 
 		}).finally(function() {
 			oComponentInstanceSpecific.destroy();
@@ -392,7 +462,7 @@ sap.ui.define([
 		sinon.assert.calledOnce(fnDestroySpy);
 	});
 
-	QUnit.module("Routing", {
+	QUnit.module("Routing - General", {
 		beforeEach : function () {
 			// System under test
 			return Component.create({
@@ -441,7 +511,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.module("Routing", {
+	QUnit.module("Routing - Targets", {
 		beforeEach : function (assert) {
 			var done = assert.async();
 			var that = this;
@@ -488,8 +558,7 @@ sap.ui.define([
 		beforeEach : function () {
 			// System under test
 			return Component.create({
-				name: "sap.ui.test.routing",
-				async: true
+				name: "sap.ui.test.routing"
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 			}.bind(this));
@@ -1742,6 +1811,9 @@ sap.ui.define([
 	});
 
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	QUnit.module("Window Event Handler", {
 		beforeEach: function() {
 
@@ -1754,6 +1826,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	QUnit.test("onWindowError", function(assert) {
 		var MyOnWindowErrorComponent = Component.extend("test.onWindowError.Component");
 
@@ -1787,6 +1862,9 @@ sap.ui.define([
 		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	QUnit.test("onWindowBeforeUnload", function(assert) {
 		var MyOnWindowBeforeUnloadComponent = Component.extend("test.onWindowBeforeUnload.Component");
 
@@ -1813,6 +1891,9 @@ sap.ui.define([
 		assert.equal(this.removeEventListenerSpy.getCall(0).thisValue, window, "removeEventListener has been called on the window object");
 	});
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	QUnit.test("onWindowUnload", function(assert) {
 		var MyOnWindowUnloadComponent = Component.extend("test.onWindowUnload.Component");
 

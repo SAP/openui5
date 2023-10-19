@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents-fiori",
     fileName: "themes/NotificationOverflowActionsPopover.css",
-    content: ".ui5-notification-overflow-list {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n.ui5-notification-overflow-popover::part(content) {\n\tpadding: var(--_ui5-notification-overflow-popover-padding);\n}\n\n.ui5-notification-overflow-list-btn::part(button) {\n\tjustify-content: flex-start;\n}"
+    content: ".ui5-notification-overflow-list{display:flex;flex-direction:column}.ui5-notification-overflow-popover::part(content){padding:var(--_ui5-v1-18-0-notification-overflow-popover-padding)}.ui5-notification-overflow-list-btn::part(button){justify-content:flex-start}"
   };
   var _default = styleData;
   _exports.default = _default;

@@ -14,14 +14,14 @@ sap.ui.require([
 
 	"use strict";
 
-    var oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+    const oMDCBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
-    var iChangeSelectedActions = function(oP13nDialog, aActions) {
+    const iChangeSelectedActions = function(oP13nDialog, aActions) {
         this.waitFor({
 			controlType: "sap.m.p13n.SelectionPanel",
 			matchers: new Ancestor(oP13nDialog, false),
 			success: function(aListViews) {
-				var oListView = aListViews[0];
+				const oListView = aListViews[0];
                 this.waitFor({
 					controlType: "sap.m.ColumnListItem",
 					matchers: new Ancestor(oListView, false),
@@ -30,7 +30,7 @@ sap.ui.require([
 							controlType: "sap.m.Label",
 							matchers: new Ancestor(oColumnListItem, false),
 							success: function(aLabels) {
-								var oLabelControl = aLabels[0];
+								const oLabelControl = aLabels[0];
 								this.waitFor({
 									controlType: "sap.m.CheckBox",
 									matchers: [
@@ -51,7 +51,7 @@ sap.ui.require([
         });
     };
 
-    var iMoveAction = function(sActionLabel, sDirection) {
+    const iMoveAction = function(sActionLabel, sDirection) {
         return waitForP13nDialog.call(this, {
             matchers: [
                 new Properties({
@@ -63,7 +63,7 @@ sap.ui.require([
                     controlType: "sap.m.p13n.SelectionPanel",
                     matchers: new Ancestor(oP13nDialog, false),
                     success: function(aListViews) {
-                        var oListView = aListViews[0];
+                        const oListView = aListViews[0];
                         this.waitFor({
                             controlType: "sap.m.ColumnListItem",
                             matchers: function(oColumnListItem) {
@@ -71,7 +71,7 @@ sap.ui.require([
                             },
                             actions: new Press(),
                             success: function(aColumnListItem) {
-                                var oColumnListItem = aColumnListItem[0];
+                                const oColumnListItem = aColumnListItem[0];
                                 this.waitFor({
                                     controlType: "sap.m.CheckBox",
                                     matchers: [
@@ -181,26 +181,26 @@ sap.ui.require([
                         controlType: "sap.ui.mdc.ActionToolbar",
                         id: sActionToolbarId,
                         success: function(oActionToolbar) {
-                            var aExpectedTexts = Object.keys(mActions);
-                            var mFoundActions = {};
+                            const aExpectedTexts = Object.keys(mActions);
+                            const mFoundActions = {};
                             Opa5.assert.ok(oActionToolbar, "ActionToolbar found");
                             this.waitFor({
                                 controlType: "sap.ui.mdc.actiontoolbar.ActionToolbarAction",
                                 matchers: function(oActionToolbarAction) {
-                                    var sActionText = oActionToolbarAction.getAction().getText();
-                                    var oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
-                                    var aActions = oActionToolbar.getContent().filter(function(oContent){
+                                    const sActionText = oActionToolbarAction.getAction().getText();
+                                    const oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
+                                    const aActions = oActionToolbar.getContent().filter(function(oContent){
                                         return oContent.getVisible() && oContent.isA("sap.ui.mdc.actiontoolbar.ActionToolbarAction");
                                     });
-                                    var iActionIndex = aActions.indexOf(oActionToolbarAction);
+                                    const iActionIndex = aActions.indexOf(oActionToolbarAction);
 
-                                    var bAncestor = new Ancestor(oActionToolbar, true)(oActionToolbarAction);
-                                    var bCorrectIndex = false;
-                                    var bCorrectLayoutInformation = false;
+                                    const bAncestor = new Ancestor(oActionToolbar, true)(oActionToolbarAction);
+                                    let bCorrectIndex = false;
+                                    let bCorrectLayoutInformation = false;
 
                                     if (mActions[sActionText]) {
-                                        var oExpectedLayoutInformation = mActions[sActionText];
-                                        var iExpectedIndex = aExpectedTexts.indexOf(sActionText);
+                                        const oExpectedLayoutInformation = mActions[sActionText];
+                                        const iExpectedIndex = aExpectedTexts.indexOf(sActionText);
 
                                         bCorrectIndex = iExpectedIndex === iActionIndex;
                                         bCorrectLayoutInformation = oExpectedLayoutInformation.alignment === oActionLayoutInformation.alignment && oExpectedLayoutInformation.aggregationName === oActionLayoutInformation.aggregationName;

@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/base/util/UriParameters"
+	"sap/ui/core/Core"
 ], function(
-	Core,
-	UriParameters
+	Core
 ) {
 	"use strict";
 
@@ -71,9 +69,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ThemePicker._updateAppearance = function(sKey) {
+		var bIsAutoSettingActive = this._bSupportsPrefersColorScheme && sKey === APPEARANCE_KEY_AUTO,
+			bIsDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-		if (sKey === APPEARANCE_KEY_AUTO && this._bSupportsPrefersColorScheme) {
-			this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
+		if (bIsAutoSettingActive) {
+			this._toggleLightOrDarkAppearance(bIsDark);
 			this._attachPrefersColorSchemeChangeListener();
 		} else {
 			Core.applyTheme(this._getTheme()[sKey]);
@@ -81,7 +81,13 @@ sap.ui.define([
 
 		this._sLastKnownAppearanceKey = sKey;
 
-		this.bus.publish("themeChanged", "onThemeChanged", {sThemeActive: this._getTheme()[sKey]});
+		// I've added this check because there was a mismatch between the selected theme
+		// and the theme that was sent as event data when the user had selected the 'Auto' setting.
+		if (bIsAutoSettingActive) {
+			this.bus.publish("themeChanged", "onThemeChanged", {sThemeActive: APPEARANCE[bIsDark ? APPEARANCE_KEY_DARK : APPEARANCE_KEY_LIGHT]});
+		} else {
+			this.bus.publish("themeChanged", "onThemeChanged", {sThemeActive: this._getTheme()[sKey]});
+		}
 
 		if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
 			this._oConfigUtil.setCookie(CONFIGURATION_APPEARANCE, sKey);
@@ -180,7 +186,7 @@ sap.ui.define([
 	* @private
 	*/
 	ThemePicker._createConfigurationBasedOnURIInput = function () {
-	   var oUriParams = UriParameters.fromQuery(window.location.search);
+	   var oUriParams = new URLSearchParams(window.location.search);
 	   this._aConfiguration = [];
 
 	   if (!(oUriParams.has('sap-ui-theme') || oUriParams.has('sap-theme'))) {

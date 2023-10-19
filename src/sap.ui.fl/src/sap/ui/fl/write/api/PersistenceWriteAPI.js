@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -47,7 +47,6 @@ sap.ui.define([
 	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.apply._internal.flexObjects.FlexObject}s.
 	 *
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
-	 * @experimental Since 1.68
 	 * @since 1.68
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
@@ -108,7 +107,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.hasHigherLayerChanges = function(mPropertyBag) {
-		mPropertyBag.upToLayer = mPropertyBag.upToLayer || LayerUtils.getCurrentLayer();
+		mPropertyBag.upToLayer ||= LayerUtils.getCurrentLayer();
 
 		return FlexObjectState.getFlexObjects(mPropertyBag)
 		.then(function(aFlexObjects) {
@@ -191,7 +190,7 @@ sap.ui.define([
 					return oFlexInfo;
 				})
 				.catch(function(oError) {
-					Log.error("Sending request to flex/info route failed: " + oError.message);
+					Log.error(`Sending request to flex/info route failed: ${oError.message}`);
 					return oFlexInfo;
 				});
 			}
@@ -210,7 +209,7 @@ sap.ui.define([
 	 */
 	PersistenceWriteAPI.getResetAndPublishInfoFromSession = function(oControl) {
 		var sParameter = ManifestUtils.getFlexReferenceForControl(oControl) || "true";
-		return JSON.parse(window.sessionStorage.getItem("sap.ui.fl.info." + sParameter));
+		return JSON.parse(window.sessionStorage.getItem(`sap.ui.fl.info.${sParameter}`));
 	};
 
 	/**
@@ -232,8 +231,13 @@ sap.ui.define([
 	PersistenceWriteAPI.reset = function(mPropertyBag) {
 		var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 		var oFlexController = FlexControllerFactory.createForSelector(oAppComponent);
-		var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
-		return oFlexController.resetChanges.apply(oFlexController, aArguments);
+		return oFlexController.resetChanges(
+			mPropertyBag.layer,
+			mPropertyBag.generator,
+			oAppComponent,
+			mPropertyBag.selectorIds,
+			mPropertyBag.changeTypes
+		);
 	};
 
 	/**
@@ -251,7 +255,7 @@ sap.ui.define([
 	 * - "Error" in case of a problem
 	 */
 	PersistenceWriteAPI.publish = function(mPropertyBag) {
-		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
+		mPropertyBag.styleClass ||= "";
 		return ChangePersistenceFactory.getChangePersistenceForControl(Utils.getAppComponentForSelector(mPropertyBag.selector))
 		.transportAllUIChanges({}, mPropertyBag.styleClass, mPropertyBag.layer, mPropertyBag.appVariantDescriptors);
 	};
@@ -322,13 +326,14 @@ sap.ui.define([
 			}
 			if (!mPropertyBag.selector) {
 				return Promise.reject(
-					new Error("An invalid selector was passed so change could not be removed with id: " + mPropertyBag.change.getId()));
+					new Error(`An invalid selector was passed so change could not be removed with id: ${mPropertyBag.change.getId()}`));
 			}
 			var oAppComponent = Utils.getAppComponentForSelector(mPropertyBag.selector);
 			if (!oAppComponent) {
 				return Promise.reject(
-					new Error("Invalid application component for selector, change could not be removed with id: "
-					+ mPropertyBag.change.getId()));
+					new Error(
+						`Invalid application component for selector, change could not be removed with id: ${mPropertyBag.change.getId()}`
+					));
 			}
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);

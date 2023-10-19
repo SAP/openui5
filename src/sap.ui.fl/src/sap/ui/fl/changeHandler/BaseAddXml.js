@@ -23,7 +23,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.75
 	 * @private
-	 * @experimental Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var BaseAddXml = {};
 
@@ -83,7 +82,7 @@ sap.ui.define([
 		.then(function(oRetrievedAggregationDefinition) {
 			oAggregationDefinition = oRetrievedAggregationDefinition;
 			if (!oAggregationDefinition) {
-				return Promise.reject(new Error("The given Aggregation is not available in the given control: " + oModifier.getId(oControl)));
+				return Promise.reject(new Error(`The given Aggregation is not available in the given control: ${oModifier.getId(oControl)}`));
 			}
 			// load and instantiate fragment
 			return LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
@@ -103,7 +102,7 @@ sap.ui.define([
 					.then(function(bValidated) {
 						if (!bValidated) {
 							BaseAddXml._destroyArrayOfControls(aNewControls);
-							return Promise.reject(new Error("The content of the xml fragment does not match the type of the targetAggregation: " + oAggregationDefinition.type));
+							return Promise.reject(new Error(`The content of the xml fragment does not match the type of the targetAggregation: ${oAggregationDefinition.type}`));
 						}
 					});
 				};
@@ -132,7 +131,7 @@ sap.ui.define([
 	BaseAddXml.revertChange = revertAddedControls;
 
 	BaseAddXml._throwMissingAttributeError = function(sAttribute) {
-		throw new Error("Attribute missing from the change specific content '" + sAttribute + "'");
+		throw new Error(`Attribute missing from the change specific content '${sAttribute}'`);
 	};
 
 	BaseAddXml._destroyArrayOfControls = function(aControls) {
@@ -154,7 +153,7 @@ sap.ui.define([
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#completeChangeContent
 	 */
 	BaseAddXml.completeChangeContent = function(oChange, oSpecificChangeInfo, oContent) {
-		oContent = oContent || {};
+		oContent ||= {};
 		if (oSpecificChangeInfo.fragmentPath) {
 			oContent.fragmentPath = oSpecificChangeInfo.fragmentPath;
 		} else {

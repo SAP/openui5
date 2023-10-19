@@ -2,30 +2,30 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/Utils",
-	"sap/ui/core/Core"
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/Utils"
 ], function(
 	sinon,
-	Utils,
-	oCore
+	FlexConfiguration,
+	Utils
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.library", {
-		beforeEach: function() {
-			this.oSetConfigurationtub = sandbox.stub(oCore.getConfiguration(), "setFlexibilityServices");
+		beforeEach() {
+			this.oSetConfigurationtub = sandbox.stub(FlexConfiguration, "setFlexibilityServices");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("isTrialSystem with ushellContainer available and returning false", function(assert) {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getLogonSystem: function() {
+				getLogonSystem() {
 					return {
-						isTrial: function() {
+						isTrial() {
 							return false;
 						}
 					};

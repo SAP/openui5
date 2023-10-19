@@ -46,7 +46,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var oDataSources = oManifest["sap.app"].dataSources;
 			var oChangeContent = oChange.getContent();
 			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
@@ -55,7 +55,7 @@ sap.ui.define([
 				if (oDataSource) {
 					changePropertyValueByPath(oChangeContent.entityPropertyChange, oDataSource);
 				} else {
-					throw new Error("Nothing to update. DataSource with ID \"" + oChangeContent.dataSourceId + "\" does not exist.");
+					throw new Error(`Nothing to update. DataSource with ID "${oChangeContent.dataSourceId}" does not exist.`);
 				}
 			} else {
 				throw Error("No sap.app/dataSource found in manifest.json");

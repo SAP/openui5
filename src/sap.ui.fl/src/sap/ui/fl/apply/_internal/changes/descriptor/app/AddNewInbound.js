@@ -50,14 +50,9 @@ sap.ui.define([
 		* @private
 		* @ui5-restricted sap.ui.fl.apply._internal
 		*/
-		applyChange: function(oManifest, oChange) {
-			if (!oManifest["sap.app"].crossNavigation) {
-				oManifest["sap.app"].crossNavigation = {};
-			}
-
-			if (!oManifest["sap.app"].crossNavigation.inbounds) {
-				oManifest["sap.app"].crossNavigation.inbounds = {};
-			}
+		applyChange(oManifest, oChange) {
+			oManifest["sap.app"].crossNavigation ||= {};
+			oManifest["sap.app"].crossNavigation.inbounds ||= {};
 
 			var oChangeContent = oChange.getContent();
 			var sInboundId = getAndCheckInboundId(oChangeContent);
@@ -66,7 +61,7 @@ sap.ui.define([
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sInboundId, oChange);
 				oManifest["sap.app"].crossNavigation.inbounds[sInboundId] = oChangeContent.inbound[sInboundId];
 			} else {
-				throw new Error("Inbound with ID \"" + sInboundId + "\" already exist.");
+				throw new Error(`Inbound with ID "${sInboundId}" already exist.`);
 			}
 			return oManifest;
 		}

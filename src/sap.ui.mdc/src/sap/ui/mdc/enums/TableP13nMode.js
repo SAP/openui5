@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableP13nMode = {
+    const TableP13nMode = {
         /**
          * Column personalization is enabled.
          *
@@ -46,6 +46,8 @@ sap.ui.define(function() {
          */
         Aggregate: "Aggregate"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableP13nMode", TableP13nMode);
 
     return TableP13nMode;
 

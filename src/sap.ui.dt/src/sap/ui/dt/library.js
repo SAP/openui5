@@ -7,11 +7,12 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/SelectionMode",
 	"sap/ui/core/library"
-],
-function(
-	ManagedObjectMetadata
+], function(
+	ManagedObjectMetadata,
+	Lib
 ) {
 	"use strict";
 
@@ -23,10 +24,9 @@ function(
 	 * @author SAP SE
 	 * @version ${version}
 	 * @since 1.30
-	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @private
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Lib.init({
 		name: "sap.ui.dt",
 		version: "${version}",
 		dependencies: ["sap.ui.core"],

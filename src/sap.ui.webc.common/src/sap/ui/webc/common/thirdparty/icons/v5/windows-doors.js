@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "windows-doors";
-  const pathData = "M139 263q-23 0-23-23t23-23q11 0 17.5 6t6.5 17-6.5 17-17.5 6zM489 0q23 0 23 23v185q0 23-23 23H303q-10 0-16.5-6t-6.5-17V23q0-11 6.5-17T303 0h186zM373 139h-46v46h46v-46zm0-93h-46v46h46V46zm93 93h-47v46h47v-46zm0-93h-47v46h47V46zM209 1q23 0 23 23v465q0 23-23 23H24q-11 0-17.5-6T0 489V24Q0 13 6.5 7T24 1h185zm-23 46H47v419h139V47z";
+  const pathData = "M486 64q11 0 18.5 7.5T512 90v176q0 11-7.5 18.5T486 292H303q-11 0-18.5-7.5T277 266V90q0-11 7.5-18.5T303 64h183zm-277 0q11 0 18.5 7.5T235 90v332q0 11-7.5 18.5T209 448H26q-11 0-18.5-7.5T0 422V90q0-11 7.5-18.5T26 64h183zm252 51h-41v37h41v-37zm-133 0v37h41v-37h-41zm-144 0H51v282h133V115zm144 126h41v-38h-41v38zm133 0v-38h-41v38h41zm-324 27q-23 0-23-22t23-22 23 22-23 22z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

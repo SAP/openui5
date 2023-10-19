@@ -49,7 +49,6 @@ sap.ui.define([
 	 * @abstract
 	 * @since 1.30
 	 * @alias sap.ui.dt.Overlay
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Overlay = Element.extend("sap.ui.dt.Overlay", /** @lends sap.ui.dt.Overlay.prototype */ {
 		metadata: {
@@ -196,20 +195,18 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			this._aStyleClasses = this._aStyleClasses.slice(0);
 			this._oScrollbarSynchronizers = new Map();
 			this._aBindParameters = [];
 
-			Element.apply(this, arguments);
+			Element.apply(this, aArgs);
 
 			if (!this.getElement()) {
 				throw Util.createError(
 					"Overlay#constructor",
-					Util.printf(
-						"Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but {0} was given",
-						Util.getObjectType(arguments[0].element)
-					)
+					`Cannot create overlay without a valid element. Expected a descendant of sap.ui.core.Element or sap.ui.core.Component, but ${Util.getObjectType(aArgs[0].element)} was given`
 				);
 			}
 
@@ -220,7 +217,7 @@ sap.ui.define([
 					this.fireInitFailed({
 						error: Util.createError(
 							"Overlay#asyncInit",
-							"ElementOverlay is destroyed during initialization ('" + this.getId() + "')"
+							`ElementOverlay is destroyed during initialization ('${this.getId()}')`
 						)
 					});
 				} else {
@@ -232,11 +229,7 @@ sap.ui.define([
 				var oError = Util.propagateError(
 					vError,
 					"Overlay#asyncInit",
-					Util.printf(
-						"Can't initialize overlay (id='{0}') properly. Original error: {1}",
-						this.getId(),
-						Util.wrapError(vError).message
-					)
+					`Error initializing overlay (id='${this.getId()}'). Original error: ${Util.wrapError(vError).message}`
 				);
 
 				this.fireInitFailed({
@@ -297,9 +290,7 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.getOverlayContainer = function() {
-		if (!$OverlayContainer) {
-			$OverlayContainer = jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
-		}
+		$OverlayContainer ||= jQuery("<div></div>").attr("id", OVERLAY_CONTAINER_ID).appendTo("body");
 		return $OverlayContainer;
 	};
 
@@ -321,9 +312,7 @@ sap.ui.define([
 	 * @static
 	 */
 	Overlay.getMutationObserver = function() {
-		if (!oMutationObserver) {
-			oMutationObserver = new MutationObserver();
-		}
+		oMutationObserver ||= new MutationObserver();
 		return oMutationObserver;
 	};
 
@@ -428,7 +417,7 @@ sap.ui.define([
 	};
 
 	Overlay.prototype.toggleStyleClass = function(sClassName) {
-		this[(this.hasStyleClass(sClassName) ? "remove" : "add") + "StyleClass"](sClassName);
+		this[`${this.hasStyleClass(sClassName) ? "remove" : "add"}StyleClass`](sClassName);
 	};
 
 	Overlay.prototype.setElement = function(vElement) {
@@ -441,15 +430,15 @@ sap.ui.define([
 		}
 	};
 
-	Overlay.prototype.destroy = function() {
+	Overlay.prototype.destroy = function(...aArgs) {
 		if (this.bIsDestroyed) {
-			Log.error("FIXME: Do not destroy overlay twice (overlayId = " + this.getId() + ")!");
+			Log.error(`FIXME: Do not destroy overlay twice (overlayId = ${this.getId()})!`);
 			return;
 		}
 
 		this.fireBeforeDestroy();
 
-		Element.prototype.destroy.apply(this, arguments);
+		Element.prototype.destroy.apply(this, aArgs);
 	};
 
 	/**
@@ -587,6 +576,7 @@ sap.ui.define([
 		var oGeometryChangedPromise = Promise.resolve();
 		if (this.isVisible()) {
 			if (oGeometry && oGeometry.visible) {
+				this._ensureVisibility(this.$());
 				this._setSize(this.$(), oGeometry);
 				var $RenderingParent = this._getRenderingParent();
 
@@ -624,7 +614,7 @@ sap.ui.define([
 		.catch(function(vError) {
 			Log.error(Util.createError(
 				"Overlay#applyStyles",
-				"An error occurred during applySizes calculation: " + vError
+				`An error occurred during applySizes calculation: ${vError}`
 			));
 		})
 		.then(function() {
@@ -667,9 +657,18 @@ sap.ui.define([
 		if (Util.isInteger(iZIndex)) {
 			$overlayDomRef.css("z-index", iZIndex);
 		} else if (this.isRoot()) {
-			this._iZIndex = this._iZIndex || ZIndexManager.getZIndexBelowPopups();
+			this._iZIndex ||= ZIndexManager.getZIndexBelowPopups();
 			$overlayDomRef.css("z-index", this._iZIndex);
 		}
+	};
+
+	/**
+	 * Ensures that the DOM element is visible
+	 * @param {jQuery} $Target - DOM element which we will ensure visibility
+	 * @protected
+	 */
+	Overlay.prototype._ensureVisibility = function($Target) {
+		$Target.css("display", "block");
 	};
 
 	/**
@@ -679,14 +678,11 @@ sap.ui.define([
 	 * @protected
 	 */
 	Overlay.prototype._setSize = function($Target, oGeometry) {
-		// ensure visibility
-		$Target.css("display", "block"); // FIXME: this method should not be responsible for visibility
-
 		var mSize = oGeometry.size;
 
 		// ASSIGN SIZE
-		$Target.css("width", mSize.width + "px");
-		$Target.css("height", mSize.height + "px");
+		$Target.css("width", `${mSize.width}px`);
+		$Target.css("height", `${mSize.height}px`);
 	};
 
 	/**
@@ -698,7 +694,7 @@ sap.ui.define([
 	 */
 	Overlay.prototype._setPosition = function($Target, oGeometry, $Parent) {
 		var mPosition = DOMUtil.getOffsetFromParent(oGeometry, $Parent ? $Parent.get(0) : null);
-		$Target.css("transform", "translate(" + mPosition.left + "px, " + mPosition.top + "px)");
+		$Target.css("transform", `translate(${mPosition.left}px, ${mPosition.top}px)`);
 	};
 
 	/**
@@ -715,19 +711,17 @@ sap.ui.define([
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof fnHandler === "function") { // also do nothing if the second parameter is not a function
 				// store the parameters for on()
-				if (!this._aBindParameters) {
-					this._aBindParameters = [];
-				}
-				oListener = oListener || this;
+				this._aBindParameters ||= [];
+				oListener ||= this;
 
 				// FWE jQuery.proxy can't be used as it breaks our contract when used with same function but different listeners
 				var fnProxy = fnHandler.bind(oListener);
 
 				this._aBindParameters.push({
-					sEventType: sEventType,
-					fnHandler: fnHandler,
-					oListener: oListener,
-					fnProxy: fnProxy
+					sEventType,
+					fnHandler,
+					oListener,
+					fnProxy
 				});
 
 				// if control is rendered, directly call on()
@@ -753,7 +747,7 @@ sap.ui.define([
 	Overlay.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
 		if (sEventType && (typeof (sEventType) === "string")) { // do nothing if the first parameter is empty or not a string
 			if (typeof (fnHandler) === "function") { // also do nothing if the second parameter is not a function
-				oListener = oListener || this;
+				oListener ||= this;
 
 				// remove the bind parameters from the stored array
 				if (this._aBindParameters) {
@@ -782,10 +776,10 @@ sap.ui.define([
 	 * @private
 	 */
 	Overlay.prototype._deleteDummyContainer = function($TargetDomRef, oTargetOverlay, oOriginalDomRef) {
-		var $DummyScrollContainer = $TargetDomRef.find(">.sapUiDtDummyScrollContainer");
-		if ($DummyScrollContainer.length) {
+		if (this._oDummyScrollContainer.length) {
 			var oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
-			$DummyScrollContainer.remove();
+			this._oDummyScrollContainer.remove();
+			this._oDummyScrollContainer = jQuery();
 			// Ensure that the element positions are synced before destroying
 			oScrollbarSynchronizer.attachEventOnce("synced", function() {
 				oScrollbarSynchronizer.destroy();
@@ -821,17 +815,16 @@ sap.ui.define([
 
 		var iScrollHeight = oOriginalDomRef.scrollHeight;
 		var iScrollWidth = oOriginalDomRef.scrollWidth;
+		this._oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 
 		// Math.ceil is needed because iScrollHeight is an integer value, mSize not. To compare we should have an integer value for mSize too.
 		// example: iScrollHeight = 24px, mSize.height = 23.98375. Both should be the same.
 		if (iScrollHeight > Math.ceil(mSize.height) || iScrollWidth > Math.ceil(mSize.width)) {
-			// TODO: save ref to DummyScrollContainer somewhere to avoid "find" selector
-			var oDummyScrollContainer = $TargetDomRef.find("> .sapUiDtDummyScrollContainer");
 			var oScrollbarSynchronizer;
-			if (!oDummyScrollContainer.length) {
-				oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer'></div>");
-				oDummyScrollContainer.height(iScrollHeight);
-				oDummyScrollContainer.width(iScrollWidth);
+			if (!this._oDummyScrollContainer.length) {
+				this._oDummyScrollContainer = jQuery("<div class='sapUiDtDummyScrollContainer'></div>");
+				this._oDummyScrollContainer.height(iScrollHeight);
+				this._oDummyScrollContainer.width(iScrollWidth);
 
 				if (
 					oTargetOverlay
@@ -850,14 +843,14 @@ sap.ui.define([
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBar");
 					oTargetOverlay.addStyleClass("sapUiDtOverlayWithScrollBarHorizontal");
 				}
-				$TargetDomRef.append(oDummyScrollContainer);
+				$TargetDomRef.append(this._oDummyScrollContainer);
 				oScrollbarSynchronizer = new ScrollbarSynchronizer({
 					synced: this.fireScrollSynced.bind(this)
 				});
 				oScrollbarSynchronizer.addTarget(oOriginalDomRef, $TargetDomRef.get(0));
 				this._oScrollbarSynchronizers.set($TargetDomRef.get(0), oScrollbarSynchronizer);
 			} else {
-				oDummyScrollContainer.css({
+				this._oDummyScrollContainer.css({
 					height: iScrollHeight,
 					width: iScrollWidth
 				});

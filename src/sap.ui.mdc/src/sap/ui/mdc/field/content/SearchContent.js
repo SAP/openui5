@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.SearchContent
 	 * @extends sap.ui.mdc.field.content.DefaultContent
 	 */
-	var SearchContent = Object.assign({}, DefaultContent, {
+	const SearchContent = Object.assign({}, DefaultContent, {
 		getDisplayMultiValue: function() {
 			return [null];
 		},
@@ -43,12 +43,12 @@ sap.ui.define([
 		getUseDefaultEnterHandler: function() {
 			return false;
 		},
-		getUseDefaultFieldHelp: function() {
+		getUseDefaultValueHelp: function() {
 			return false;
 		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
-			var SearchField = aControlClasses[0];
-			var oConditionsType = oContentFactory.getConditionsType();
+			const SearchField = aControlClasses[0];
+			const oConditionsType = oContentFactory.getConditionsType();
 			oContentFactory.setHideOperator(true);
 			oContentFactory.updateConditionType(); // to update HideOperator
 
@@ -59,7 +59,7 @@ sap.ui.define([
 			 * the conditions. (Like it would happen in TwoWay-Binding.) To inform the Binding about the success or failure of the update the ValidationSuccess, ValidationError
 			 * and ParseError events are used. (Like it would happen on TwoWay-Binding.)
 			 */
-			var oControl = new SearchField(sId, {
+			const oControl = new SearchField(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType, mode: BindingMode.OneWay }, // oneWay as SearchField updates "value" while typing
 				placeholder: "{$field>/placeholder}",
 				width: "100%",
@@ -71,12 +71,12 @@ sap.ui.define([
 					oContentFactory.getHandleEnter().call(this, oEvent);
 				},
 				change: function(oEvent) {
-					var oSource = oEvent.getSource();
-					var sValue = oEvent.getParameter("value");
-					var oBinding = oSource.getBinding("value");
+					const oSource = oEvent.getSource();
+					const sValue = oEvent.getParameter("value");
+					const oBinding = oSource.getBinding("value");
 					try {
 						oBinding.setExternalValue(sValue); // as not automatically triggered for OneWay binding
-						var mSuccessParameters = {
+						const mSuccessParameters = {
 							element: oSource,
 							property: "value",
 							type: oBinding.getType(),
@@ -85,7 +85,7 @@ sap.ui.define([
 						};
 						oSource.fireValidationSuccess(mSuccessParameters, false, true); // bAllowPreventDefault, bEnableEventBubbling
 					} catch (oException) {
-						var mErrorParameters = {
+						const mErrorParameters = {
 							element: oSource,
 							property: "value",
 							type: oBinding.getType(),

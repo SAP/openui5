@@ -19,14 +19,14 @@ sap.ui.define(
 		 * @experimental
 		 * @ui5-restricted sap.ui.mdc
 		 *
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.add as addPromise
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.remove as removePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.resolve as resolvePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.reject as rejectPromise
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.retrieve as retrievePromise
-		 * @borrows sap.ui.mdc.util.PromiseCache.prototype.retrieveMany as retrievePromises
+		 * @borrows sap.ui.mdc.util.PromiseCache.add as addPromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.remove as removePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.resolve as resolvePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.reject as rejectPromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.retrieve as retrievePromise
+		 * @borrows sap.ui.mdc.util.PromiseCache.retrieveMany as retrievePromises
 		 */
-		var PromiseMixin = {};
+		const PromiseMixin = {};
 		PromiseMixin.addPromise = function (sName, fnCreate) {
 			return this.promiseCache.add(sName, fnCreate);
 		};
@@ -67,7 +67,7 @@ sap.ui.define(
 			};
 		};
 		return function () {
-			var _noop = function (fnMethod) {
+			const _noop = function (fnMethod) {
 				return function () {
 					if (this.bIsDestroyed) {
 						return undefined;

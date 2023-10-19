@@ -1133,9 +1133,7 @@ sap.ui.define([
 		aItemDomRefs = oItemNavigation.getItemDomRefs();
 
 		if (aItemDomRefs[iIndex]) {
-			oItemNavigation.setFocusedIndex(iIndex);
-
-			aItemDomRefs[iIndex].focus();
+			oItemNavigation.focusItem(iIndex);
 		}
 	};
 

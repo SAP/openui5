@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.test.Test
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Test = ManagedObject.extend("sap.ui.dt.test.Test", /** @lends sap.ui.dt.test.Test.prototype */ {
 		metadata: {
@@ -111,7 +110,7 @@ sap.ui.define([
 	Test.prototype.addGroup = function(aParentChildren, sName, sMessage, sNamePostfix) {
 		return this.add(aParentChildren,
 			true,
-			sName + (sNamePostfix ? (" (" + sNamePostfix + ")") : ""),
+			sName + (sNamePostfix ? (` (${sNamePostfix})`) : ""),
 			sMessage,
 			null,
 			Test.TYPE.GROUP

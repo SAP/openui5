@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Operator",
 	'sap/ui/mdc/enums/BaseType',
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/DatePicker"
@@ -25,6 +26,7 @@ sap.ui.define([
 	Operator,
 	BaseType,
 	ConditionValidated,
+	OperatorName,
 	oCore,
 	UI5Date,
 	DatePicker
@@ -56,12 +58,12 @@ sap.ui.define([
 			var oConditionChangeBinding = oCM.bindProperty("/conditions", oCM.getContext("/"));
 			oConditionChangeBinding.attachChange(this.handleConditionModelChange.bind(this));
 
-			oCM.addCondition("ProductId", Condition.createCondition("EQ", ["22134T"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"]));
-			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22]));
-			oCM.addCondition("CountryId", Condition.createCondition("EQ", ["USA"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("RegionId", Condition.createCondition("EQ", ["02"], {"conditions/CountryId":"USA"}, undefined, ConditionValidated.Validated));
-			oCM.addCondition("CityId", Condition.createCondition("EQ", ["02"], /*{"conditions/CountryId":"USA", "conditions/RegionId":"01"}*/undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("ProductId", Condition.createCondition(OperatorName.EQ, ["22134T"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("Name", Condition.createCondition(OperatorName.StartsWith, ["Web"]));
+			oCM.addCondition("Quantity", Condition.createCondition(OperatorName.EQ, [22]));
+			oCM.addCondition("CountryId", Condition.createCondition(OperatorName.EQ, ["USA"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("RegionId", Condition.createCondition(OperatorName.EQ, ["02"], {"conditions/CountryId":"USA"}, undefined, ConditionValidated.Validated));
+			oCM.addCondition("CityId", Condition.createCondition(OperatorName.EQ, ["02"], /*{"conditions/CountryId":"USA", "conditions/RegionId":"01"}*/undefined, undefined, ConditionValidated.Validated));
 
 			//set the model on Form just to have it somehow local
 			var oForm = this.byId("Form1");
@@ -76,8 +78,8 @@ sap.ui.define([
 				longText: "European countries",
 				valueTypes: [],
 				getModelFilter: function(oCondition, sFieldPath) {
-					var oFilter1 = new Filter({ path: sFieldPath, operator: "EQ", value1: "DE" });
-					var oFilter2 = new Filter({ path: sFieldPath, operator: "EQ", value1: "FR" });
+					var oFilter1 = new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: "DE" });
+					var oFilter2 = new Filter({ path: sFieldPath, operator: FilterOperator.EQ, value1: "FR" });
 					return new Filter({ filters: [oFilter1, oFilter2], and: false });
 				}
 			}));
@@ -246,14 +248,6 @@ sap.ui.define([
 				oIcon.setSrc("sap-icon://sys-cancel");
 				oIcon.setColor("Warning");
 			}
-			//		},
-			//
-			//		handleGo: function(oEvent) { // TODO: need trigger in FieldHelp
-			//			var oFilterConditionModel = oEvent.oSource.getModel("filter");
-			//			if (oFilterConditionModel) {
-			//				var oFilter = oFilterConditionModel.getFilters();
-			//				oFilterConditionModel._oListBinding.filter(oFilter); // TODO: function on CM
-			//			}
 		},
 		clearFilters: function(oEvent) {
 			var oView = this.getView();

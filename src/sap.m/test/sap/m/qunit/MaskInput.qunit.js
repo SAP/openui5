@@ -248,10 +248,10 @@ sap.ui.define([
 		}));
 		oControl.addRule(new MaskInputRule({
 			maskFormatSymbol: "~",
-			regex: '[{}]'
+			regex: '[()]'
 		}));
 		assert.equal(oControl.getRules()[2].getMaskFormatSymbol(), "~", "There must be a rule with mask format symbol '~'");
-		assert.equal(oControl.getRules()[2].getRegex(), "[{}]", "The rule with mask format symbol '~' regex must be the last one set");
+		assert.equal(oControl.getRules()[2].getRegex(), "[()]", "The rule with mask format symbol '~' regex must be the last one set");
 	});
 
 	QUnit.test("Single escaped character", function (assert){

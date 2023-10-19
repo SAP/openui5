@@ -15,14 +15,14 @@ sap.ui.require([
 ], function(Opa5, Ancestor, waitForFilterField, waitForField, deepEqual, FieldAssertions, FilterFieldAssertions, DateValue, Utils) {
 	"use strict";
 
-	var fnConvertDatesToStrings = function(aDates) {
+	const fnConvertDatesToStrings = function(aDates) {
 		return aDates.map(function(oDate) {
 			return oDate.toString();
 		});
 	};
 
-	var iShouldSeeFilterFieldWithInnerControlProperties = function(oFilterFieldProperties, sInnerControlType, oInnerControlProperties) {
-		var oMatcher = new DateValue();
+	const iShouldSeeFilterFieldWithInnerControlProperties = function(oFilterFieldProperties, sInnerControlType, oInnerControlProperties) {
+		const oMatcher = new DateValue();
 		if (oInnerControlProperties.dateValue) {
 			oMatcher.setDateValue(oInnerControlProperties.dateValue);
 			delete oInnerControlProperties.dateValue;
@@ -61,7 +61,7 @@ sap.ui.require([
 					});
 				},
 				iShouldSeeFieldWithDatePickerProperties: function(oFieldProperties, oDatePickerProperties) {
-					var oMatcher;
+					let oMatcher;
 					if (oDatePickerProperties.dateValue) {
 						oMatcher = new DateValue({
 							dateValue: oDatePickerProperties.dateValue
@@ -108,7 +108,7 @@ sap.ui.require([
 								controlType: "sap.m.DynamicDateRange",
 								matchers: new Ancestor(oFilterField),
 								check: function(aInnerControls) {
-									var aValues = fnConvertDatesToStrings(aInnerControls[0].getValue().values);
+									const aValues = fnConvertDatesToStrings(aInnerControls[0].getValue().values);
 									return deepEqual(aValues, fnConvertDatesToStrings(oDynamicDateRangeProperties.value.values)) && aInnerControls[0].getValue().operator === oDynamicDateRangeProperties.value.operator;
 								},
 								success: function(aDynamicDateRanges) {

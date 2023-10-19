@@ -80,7 +80,7 @@ sap.ui.define([
 						var oError = DtUtil.propagateError(
 							vError,
 							"service.Receiver",
-							DtUtil.printf("Can't execute method {0} of service {1} due unexpected error.", mRequestBody.method, mRequestBody.service),
+							`Unexpected error: Can't execute method ${mRequestBody.method} of service ${mRequestBody.service}`,
 							"sap.ui.rta"
 						);
 
@@ -170,7 +170,7 @@ sap.ui.define([
 		oPostMessageBus.subscribe(CHANNEL_ID, "unsubscribe", fnReceiver);
 
 		return {
-			destroy: function() {
+			destroy() {
 				if (oPostMessageBus) {
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "getService", fnReceiver);
 					oPostMessageBus.unsubscribe(CHANNEL_ID, "callMethod", fnReceiver);

@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField", // to have it loaded when BasicSearch should be created
@@ -40,6 +41,7 @@ sap.ui.define([
 		MTable,
 		Condition,
 		ConditionValidated,
+		OperatorName,
 		ValueHelpSelectionType,
 		FilterBar,
 		FilterField,
@@ -65,20 +67,20 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var ListMode = mLibrary.ListMode;
+	const ListMode = mLibrary.ListMode;
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
-	var oMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 
-	var oMTable;
-	var oModel;
-	var oTable;
-	var oItemTemplate;
-	var bIsOpen = true;
-	var bIsTypeahead = true;
-	var iMaxConditions = -1;
+	let oMTable;
+	let oModel;
+	let oTable;
+	let oItemTemplate;
+	let bIsOpen = true;
+	let bIsTypeahead = true;
+	let iMaxConditions = -1;
 
-	var oContainer = { //to fake Container
+	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return null;
 		},
@@ -127,7 +129,7 @@ sap.ui.define([
 		}
 	};
 
-	var _init = function(bTypeahead) {
+	const _init = function(bTypeahead) {
 		oModel = new JSONModel({
 			items: [
 				{ text: "Item 1", key: "I1", additionalText: "Text 1", inValue: "" },
@@ -154,7 +156,7 @@ sap.ui.define([
 
 		oTable.setModel(oModel); // as ValueHelp is faked
 
-		var aConditions = [Condition.createItemCondition("I2", "Item 2", {inParameter: null})];
+		const aConditions = [Condition.createItemCondition("I2", "Item 2", {inParameter: null})];
 		oMTable = new MTable("MT1", {
 			table: oTable,
 			keyPath: "key",
@@ -163,7 +165,7 @@ sap.ui.define([
 			conditions: aConditions, // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
-				operators: ["EQ", "BT"]
+				operators: [OperatorName.EQ, OperatorName.BT]
 			}
 		}).setModel(oModel);
 		sinon.stub(oMTable, "getParent").returns(oContainer);
@@ -171,7 +173,7 @@ sap.ui.define([
 		oMTable.oParent = oContainer; // fake
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oMTable.destroy();
 		oMTable = null;
 		oTable = undefined; // destroyed with MTable content
@@ -184,7 +186,7 @@ sap.ui.define([
 		iMaxConditions = -1;
 	};
 
-	var _fakeV4Binding = function (oListBinding) {
+	const _fakeV4Binding = function (oListBinding) {
 		oListBinding = oListBinding || oTable.getBinding("items");
 		oListBinding.requestContexts = function() { return Promise.resolve([]);};
 		oListBinding.changeParameters = function() {};
@@ -205,20 +207,20 @@ sap.ui.define([
 
 	QUnit.test("getContent for typeahead", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oMTable.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
-		var iConfirm = 0;
+		let iConfirm = 0;
 		oMTable.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 		});
 
-		var oContent = oMTable.getContent();
+		const oContent = oMTable.getContent();
 
 		if (oContent) {
 			oMTable.onShow(); // to update selection and scroll
@@ -228,15 +230,15 @@ sap.ui.define([
 			// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
 			assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
 
-			var aItems = oTable.getItems();
-			var oItem = aItems[0];
+			const aItems = oTable.getItems();
+			let oItem = aItems[0];
 			assert.notOk(oItem.getSelected(), "Item0 not selected");
 			oItem = aItems[1];
 			assert.ok(oItem.getSelected(), "Item1 is selected");
 			oItem = aItems[2];
 			assert.notOk(oItem.getSelected(), "Item2 not selected");
 
-			var aNewConditions = [
+			const aNewConditions = [
 				Condition.createItemCondition("I3", "X-Item 3")
 			];
 
@@ -262,14 +264,14 @@ sap.ui.define([
 
 	QUnit.test("getContainerConfig - footer without length limitation", function(assert) {
 
-		var oContainerConfig = oMTable.getContainerConfig();
-		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oContainerConfig = oMTable.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oFooterContent.then(function(aFooterContent) {
 				assert.notOk(aFooterContent, "no Content returned");
 				fnDone();
@@ -285,27 +287,27 @@ sap.ui.define([
 
 		oTable.bindItems({path: "/items", template: oItemTemplate, length: 10});
 
-		var iSwitchToDialog = 0;
+		let iSwitchToDialog = 0;
 		oMTable.attachEvent("requestSwitchToDialog", function(oEvent) {
 			iSwitchToDialog++;
 		});
 
-		var oContainerConfig = oMTable.getContainerConfig();
-		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oContainerConfig = oMTable.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oFooterContent.then(function(oFooterContent) {
 				assert.ok(oFooterContent, "Content returned");
 				assert.ok(oFooterContent.isA("sap.m.Toolbar"), "Content is sap.m.Toolbar");
-				var aToolbarContent = oFooterContent.getContent();
+				const aToolbarContent = oFooterContent.getContent();
 				assert.equal(aToolbarContent.length, 2, "Tollbar content length");
-				var oSpacer = aToolbarContent[0];
+				const oSpacer = aToolbarContent[0];
 				assert.ok(oSpacer.isA("sap.m.ToolbarSpacer"), "First content is sap.m.ToolbarSpacer");
-				var oButton = aToolbarContent[1];
+				const oButton = aToolbarContent[1];
 				assert.ok(oButton.isA("sap.m.Button"), "Second content is sap.m.Button");
 				assert.equal(oButton.getText(), oMResourceBundle.getText("INPUT_SUGGESTIONS_SHOW_ALL"), "Button text");
 				assert.ok(oButton.getEnabled(), "Button enabled");
@@ -325,14 +327,14 @@ sap.ui.define([
 
 	QUnit.test("Filtering without $search", function(assert) {
 
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 
 		sinon.spy(oListBinding, "filter");
 		oMTable.onBeforeShow(); // filtering should happen only if open
 		oMTable._bContentBound = true;
 
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout( function(){ // as waiting for onBeforeShow-Promise
 			oMTable.setFilterValue("3");
 			// compare arguments of filter as Filter object is changed during filtering
@@ -348,7 +350,7 @@ sap.ui.define([
 			assert.equal(oListBinding.filter.args[0][0][0].aFilters[1].oValue1, "3", "ListBinding 2. filter value1");
 			assert.notOk(oListBinding.filter.args[0][0][0].bAnd, "ListBinding filters are OR combined");
 			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-			var aItems = oTable.getItems();
+			const aItems = oTable.getItems();
 			assert.equal(aItems.length, 1, "number of items");
 			assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
 			fnDone();
@@ -358,18 +360,16 @@ sap.ui.define([
 
 	QUnit.test("Filtering for InParameters", function(assert) {
 
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 		sinon.spy(oListBinding, "filter");
-		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
-		var oInPromise = Promise.resolve({inValue: [oCondition]});
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
-		oMTable.onBeforeShow(true); // to trigger filtering
-		assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
-
-		var fnDone = assert.async();
-		oInPromise.then(function() {
+		const fnDone = assert.async();
+		oMTable.onBeforeShow(true).then(function() {
+			assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable), "ValueHelpDelegate.getFilterConditions called");
 			oMTable.onShow(true); // to trigger filtering
 			// compare arguments of filter as Filter object is changed during filtering
 			assert.equal(oListBinding.filter.args.length, 1, "ListBinding filter called once");
@@ -379,7 +379,7 @@ sap.ui.define([
 			assert.equal(oListBinding.filter.args[0][0][0].sOperator, FilterOperator.EQ, "ListBinding filter operator");
 			assert.equal(oListBinding.filter.args[0][0][0].oValue1, "3", "ListBinding filter value1");
 			assert.equal(oListBinding.filter.args[0][1], FilterType.Application, "ListBinding filter type");
-			var aItems = oTable.getItems();
+			const aItems = oTable.getItems();
 			assert.equal(aItems.length, 1, "number of items");
 			assert.equal(aItems[0].getCells()[0].getText(), "I3", "Key of item");
 
@@ -391,10 +391,21 @@ sap.ui.define([
 
 	QUnit.test("Filtering using $search", function(assert) {
 
+		let iTypeaheadSuggested = 0;
+		let oCondition;
+		let sFilterValue;
+		let sItemId;
+		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
+			iTypeaheadSuggested++;
+			oCondition = oEvent.getParameter("condition");
+			sFilterValue = oEvent.getParameter("filterValue");
+			sItemId = oEvent.getParameter("itemId");
+		});
+
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "updateBinding"); //test V4 logic
 
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 		sinon.spy(oListBinding, "filter");
 		sinon.spy(oListBinding, "changeParameters");
@@ -408,8 +419,22 @@ sap.ui.define([
 		assert.ok(oListBinding.changeParameters.calledWith({$search: "X"}), "ListBinding.changeParameters called with search string");
 		assert.notOk(oListBinding.isSuspended(), "ListBinding is resumed");
 
-		oContainer.getValueHelpDelegate.restore();
-		ValueHelpDelegateV4.updateBinding.restore();
+		const fnDone = assert.async();
+		setTimeout( function(){ // as waiting for Promise
+			// as JSOM-Model does not support $search all items are returned, but test for first of result
+			const oTable = oMTable.getTable();
+			const aItems = oTable.getItems();
+			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
+			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
+			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
+			assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
+			assert.ok(aItems[0].hasStyleClass("sapMLIBSelected"), "Item shown as selected");
+			assert.notOk(aItems[0].getSelected(), "Item not really selected");
+
+			oContainer.getValueHelpDelegate.restore();
+			ValueHelpDelegateV4.updateBinding.restore();
+			fnDone();
+		}, 0);
 
 	});
 
@@ -425,7 +450,7 @@ sap.ui.define([
 
 		var oListBinding = oTable.getBinding("items");
 		sinon.spy(oListBinding, "filter");
-		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		var oCondition = Condition.createCondition(OperatorName.EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
 		oMTable.setProperty("inConditions", {inValue: [oCondition]});
 		oMTable.onShow(); // to trigger filtering
 
@@ -446,7 +471,7 @@ sap.ui.define([
 
 	QUnit.test("isSearchSupported without $search", function(assert) {
 
-		var bSupported = oMTable.isSearchSupported();
+		const bSupported = oMTable.isSearchSupported();
 		assert.ok(bSupported, "supported for filtering");
 
 	});
@@ -455,11 +480,11 @@ sap.ui.define([
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
 
 		oMTable.setFilterFields("$search");
-		var bSupported = oMTable.isSearchSupported();
+		const bSupported = oMTable.isSearchSupported();
 		assert.ok(bSupported, "supported for $search");
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.calledOnce, "ValueHelpDelegateV4.isSearchSupported called");
 
@@ -471,7 +496,7 @@ sap.ui.define([
 	QUnit.test("isSearchSupported - no search", function(assert) {
 
 		oMTable.setFilterFields();
-		var bSupported = oMTable.isSearchSupported();
+		const bSupported = oMTable.isSearchSupported();
 		assert.notOk(bSupported, "not supported if no FilterFields");
 
 	});
@@ -485,7 +510,7 @@ sap.ui.define([
 			}
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
@@ -499,11 +524,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
@@ -531,8 +556,8 @@ sap.ui.define([
 			]
 		});
 
-		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
-		var oInPromise = Promise.resolve({inValue: [oCondition]});
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
@@ -541,7 +566,7 @@ sap.ui.define([
 			}
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
@@ -555,12 +580,12 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
@@ -589,7 +614,7 @@ sap.ui.define([
 			]
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
@@ -605,11 +630,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.notOk(true, "Promise Then must not be called");
 				fnDone();
@@ -625,7 +650,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for key - match from request", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
@@ -642,11 +667,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
@@ -669,18 +694,18 @@ sap.ui.define([
 			]
 		});
 
-		var oCondition = Condition.createCondition("EQ", ["3"], undefined, undefined, ConditionValidated.NotValidated);
-		var oInPromise = Promise.resolve({inValue: [oCondition]});
+		const oCondition = Condition.createCondition(OperatorName.EQ, ["3"], undefined, undefined, ConditionValidated.NotValidated);
+		const oInPromise = Promise.resolve({inValue: [oCondition]});
 		sinon.stub(ValueHelpDelegate, "getFilterConditions").returns(oInPromise);
 
 		sinon.stub(ValueHelpDelegate, "createConditionPayload").callsFake(function(oPayload, oContent, aValues, oContext) {
-			var oData = oContext.getObject();
+			const oData = oContext.getObject();
 			if (oData.key === "I3") {
 				return {inParameters: {inValue: oData.inValue}};
 			}
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: undefined,
 			value: "I3",
@@ -697,11 +722,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.ok(ValueHelpDelegate.getFilterConditions.calledWith(undefined/*no parent provided*/, oMTable, oConfig), "ValueHelpDelegate.getFilterConditions called");
@@ -719,7 +744,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for key - no match", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "X",
 			parsedDescription: undefined,
 			value: "X",
@@ -733,11 +758,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.notOk(true, "Promise Then must not be called");
 				fnDone();
@@ -753,7 +778,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for description - match", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "x-item 3",
 			value: "X_Item 3",
@@ -767,11 +792,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
@@ -794,7 +819,7 @@ sap.ui.define([
 			]
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "item 1",
 			value: "item 1",
@@ -808,11 +833,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "i1", description: "item 1", payload: undefined}, "Item returned");
@@ -827,7 +852,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for description - match from request", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: undefined,
 			parsedDescription: "x-item 3",
 			value: "X-Item 3",
@@ -844,11 +869,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
@@ -863,7 +888,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for key and description - match", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: "I3",
 			value: "I3",
@@ -877,11 +902,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
@@ -896,7 +921,7 @@ sap.ui.define([
 
 	QUnit.test("getItemForValue: check for key and description - match from request", function(assert) {
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: "I3",
 			value: "I3",
@@ -913,11 +938,11 @@ sap.ui.define([
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I3", description: "X-Item 3", payload: undefined}, "Item returned");
@@ -935,7 +960,7 @@ sap.ui.define([
 		oMTable.setKeyPath();
 		oMTable.setDescriptionPath();
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I3",
 			parsedDescription: "I3",
 			value: "I3",
@@ -977,7 +1002,7 @@ sap.ui.define([
 			]
 		});
 
-		var oConfig = {
+		const oConfig = {
 			parsedValue: "I1",
 			parsedDescription: undefined,
 			value: "I1",
@@ -990,30 +1015,70 @@ sap.ui.define([
 			control: "MyControl"
 		};
 
-		sinon.stub(ValueHelpDelegate, "getFilterConditions").callsFake(function (oPayload, oContent, oLocalConfig) {
+		const getFilterConditionsStub = sinon.stub(ValueHelpDelegate, "getFilterConditions");
+		getFilterConditionsStub.callsFake(function (oPayload, oContent, oLocalConfig) {
 			assert.ok(true, "ValueHelpDelegate.getFilterConditions is called.");
 			assert.equal(oContent, oMTable, "getFilterConditions receives correct content");
 			assert.equal(oLocalConfig, oConfig, "getFilterConditions receives correct config");
-			return 	{"inValue": [{operator: "EQ", values: ["b"], validated: "NotValidated"}]};
+			return 	{"inValue": [{operator: OperatorName.EQ, values: ["b"], validated: "NotValidated"}]};
 		});
 
 		_fakeV4Binding();
 
-		var oPromise = oMTable.getItemForValue(oConfig);
+		const oPromise = oMTable.getItemForValue(oConfig);
 		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function(oItem) {
 				assert.ok(true, "Promise Then must be called");
 				assert.deepEqual(oItem, {key: "I1", description: "Item 1B", payload: undefined}, "Correct item returned");
 			}).catch(function(oError) {
 				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
 			}).finally(function() {
+				getFilterConditionsStub.restore();
 				fnDone();
 			});
 		}
 
+	});
+
+	QUnit.test("getItemForValue: _oFirstItemResult", (assert) => {
+		const fnDone = assert.async();
+		const sFilterValue = "IR";
+		const oExpectedResultItem = {
+			text: "FirstItemResult", key: "IR", additionalText: "Not in the Model"
+		};
+		oMTable._oFirstItemResult = {
+			filterValue: sFilterValue,
+			result: oExpectedResultItem
+		};
+
+		const oConfig = {
+			parsedValue: sFilterValue,
+			parsedDescription: undefined,
+			value: sFilterValue,
+			context: {payload: {inValue: "b"}},
+			bindingContext: undefined,
+			checkKey: true,
+			checkDescription: false,
+			caseSensitive: false,
+			exception: ParseException,
+			control: "MyControl"
+		};
+
+		const oPromise = oMTable.getItemForValue(oConfig);
+		assert.ok(oPromise instanceof Promise, "getItemForValue returns promise");
+		if (oPromise) {
+			oPromise.then(function(oItem) {
+				assert.ok(true, "Promise Then must be called");
+				assert.deepEqual(oItem, oExpectedResultItem, "Correct value returned");
+			}).catch(function(oError) {
+				assert.notOk(true, "Promise Catch called: " + oError.message || oError);
+			}).finally(function() {
+				fnDone();
+			});
+		}
 	});
 
 	QUnit.test("isValidationSupported", function(assert) {
@@ -1022,18 +1087,18 @@ sap.ui.define([
 
 	});
 
-	var iNavigate = 0;
-	var oNavigateCondition;
-	var sNavigateItemId;
-	var bNavigateLeaveFocus;
+	let iNavigate = 0;
+	let oNavigateCondition;
+	let sNavigateItemId;
+	let bNavigateLeaveFocus;
 
 	function _checkNavigatedItem(assert, oTable, iNavigatedIndex, iSelectedIndex, oCondition, bLeaveFocus) {
 
-		var aItems = oTable.getItems();
+		const aItems = oTable.getItems();
 		assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
 
-		for (var i = 0; i < aItems.length; i++) {
-			var oItem = aItems[i];
+		for (let i = 0; i < aItems.length; i++) {
+			const oItem = aItems[i];
 			if (i === iSelectedIndex) {
 				assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item" + i + " is focused");
 				if (!oItem.isA("sap.m.GroupHeaderListItem")) {
@@ -1074,7 +1139,7 @@ sap.ui.define([
 	QUnit.test("navigate", function(assert) {
 
 		bIsOpen = true; // test for open navigation (for closed is tested later)
-		var oScrollContainer = new ScrollContainer(); // to test scrolling
+		const oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
 		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
@@ -1127,7 +1192,7 @@ sap.ui.define([
 
 	QUnit.test("navigate for multi-value", function(assert) {
 
-		var oScrollContainer = new ScrollContainer(); // to test scrolling
+		const oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
 		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
@@ -1139,7 +1204,7 @@ sap.ui.define([
 		oTable.setMode(ListMode.MultiSelect);
 		oMTable.setConfig({
 			maxConditions: -1,
-			operators: ["EQ", "BT"]
+			operators: [OperatorName.EQ, OperatorName.BT]
 		});
 		sinon.spy(oTable, "focus");
 
@@ -1153,15 +1218,15 @@ sap.ui.define([
 			sNavigateItemId = oEvent.getParameter("itemId");
 			bNavigateLeaveFocus = oEvent.getParameter("leaveFocus");
 		});
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oMTable.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
-		var iConfirm = 0;
+		let iConfirm = 0;
 		oMTable.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 		});
@@ -1172,7 +1237,7 @@ sap.ui.define([
 		assert.ok(oTable.focus.called, "Table focused");
 		assert.equal(iNavigate, 0, "Navigated Event not fired");
 
-		var aItems = oTable.getItems();
+		const aItems = oTable.getItems();
 		qutils.triggerKeydown(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.equal(iNavigate, 1, "Navigate event fired");
 		assert.notOk(oNavigateCondition, "Navigate condition");
@@ -1182,7 +1247,7 @@ sap.ui.define([
 		// selection via SelectionChangeEvent (selection of items done normally in table)
 		iSelect = 0;
 		iConfirm = 0;
-		var aNewConditions = [
+		const aNewConditions = [
 			Condition.createItemCondition("I2", "Item 2")
 		];
 		aItems[1].setSelected(false);
@@ -1209,9 +1274,9 @@ sap.ui.define([
 				{ text: "Item 3", key: "I3", additionalText: "Text 3", group: "a" }
 			]
 		});
-		var oSorter = new Sorter("group", false, true);
+		const oSorter = new Sorter("group", false, true);
 		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 
 
 
@@ -1234,10 +1299,10 @@ sap.ui.define([
 		_fakeV4Binding();
 
 		oMTable.navigate(1);
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
 			_checkNavigatedItem(assert, oTable, 1, 1, Condition.createItemCondition("I1", "Item 1"), false);
-			var oItem = oTable.getItems()[0];
+			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
@@ -1278,13 +1343,13 @@ sap.ui.define([
 				{ text: "Item 3", key: "I3", additionalText: "Text 3", group: "a" }
 			]
 		});
-		var oSorter = new Sorter("group", false, true);
+		const oSorter = new Sorter("group", false, true);
 		oTable.bindItems({path: '/items', suspended: true, sorter: oSorter, template: oItemTemplate});
-		var oListBinding = oTable.getBinding("items");
+		const oListBinding = oTable.getBinding("items");
 
 		_fakeV4Binding(oListBinding);
 
-		var oScrollContainer = new ScrollContainer(); // to test scrolling
+		const oScrollContainer = new ScrollContainer(); // to test scrolling
 		sinon.stub(oScrollContainer, "getContent").returns([oTable]); // to render table
 		oContainer.getUIAreaForContent = function() {
 			return oScrollContainer.getUIArea();
@@ -1315,10 +1380,10 @@ sap.ui.define([
 		oListBinding.getLength.callThrough();
 
 		oMTable.navigate(1);
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		setTimeout( function(){ // as waiting for Promise
 			_checkNavigatedItem(assert, oTable, 0, 0, undefined, false);
-			var oItem = oTable.getItems()[0];
+			let oItem = oTable.getItems()[0];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item0 is GroupHeaderListItem");
 			oItem = oTable.getItems()[3];
 			assert.ok(oItem.isA("sap.m.GroupHeaderListItem"), "Item3 is GroupHeaderListItem");
@@ -1380,31 +1445,38 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		let oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "both"
 		};
-		var oAttributes = oMTable.getAriaAttributes(1);
+		let oAttributes = oMTable.getAriaAttributes(1);
 		assert.ok(oAttributes, "Aria attributes returned for SingleSelect");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
-		var oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+		const oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
 
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION")
+			roleDescription: oResourceBundleM.getText("MULTICOMBOBOX_ARIA_ROLE_DESCRIPTION"),
+			valueHelpEnabled: false,
+			autocomplete: "both"
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
 		oMTable.setUseAsValueHelp(false);
+		oMTable.setUseFirstMatch(false);
 		oCheckAttributes = {
 			contentId: oTable.getId(),
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
 		oAttributes = oMTable.getAriaAttributes(-1);
 		assert.ok(oAttributes, "Aria attributes returned for MultiSelect with typeahead only");
@@ -1423,18 +1495,18 @@ sap.ui.define([
 
 	QUnit.test("getContainerConfig - getContentHeight", function(assert) {
 
-		var oFakeDom = {
+		const oFakeDom = {
 			getBoundingClientRect: function() {
 				return {height: 10};
 			}
 		};
 		sinon.stub(oTable, "getDomRef"). returns(oFakeDom);
 
-		var oContainerConfig = oMTable.getContainerConfig();
-		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oContainerConfig = oMTable.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
-		var iHeight = oPopupConfig.getContentHeight();
+		const iHeight = oPopupConfig.getContentHeight();
 		assert.equal(iHeight, 10, "height");
 		oTable.getDomRef.restore();
 
@@ -1564,7 +1636,7 @@ sap.ui.define([
 
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "2")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "2")]
 		});
 
 		oMTable.setFilterBar(oFilterBar);
@@ -1591,7 +1663,7 @@ sap.ui.define([
 		oListBinding.filter.reset();
 		oMTable.setFilterBar();
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "3")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "3")]
 		});
 		assert.notOk(oFilterBar.getBasicSearchField(), "SearchField removed from FilterBar");
 
@@ -1621,8 +1693,8 @@ sap.ui.define([
 
 		var oFilterBar = new FilterBar("FB1");
 		oFilterBar.setInternalConditions({
-			additionalText: [Condition.createCondition("Contains", "2")],
-			$search: [Condition.createCondition("StartsWith", "i")]
+			additionalText: [Condition.createCondition(OperatorName.Contains", "2")],
+			$search: [Condition.createCondition(OperatorName.StartsWith", "i")]
 		});
 
 		oMTable.setFilterValue("i");

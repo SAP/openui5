@@ -1,4 +1,8 @@
 /*global QUnit */
+/**
+ * @fileoverview
+ * @deprecated
+ */
 sap.ui.define(["sap/base/Log", "test-resources/sap/ui/support/TestHelper"], function(Log, testRule) {
 	"use strict";
 

@@ -30,7 +30,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AddXMLAtExtensionPoint command with a valid entry in the change registry,", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			var oXmlString =
@@ -56,7 +56,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oXMLView.destroy();
 			sandbox.restore();
@@ -122,7 +122,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -172,7 +172,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});

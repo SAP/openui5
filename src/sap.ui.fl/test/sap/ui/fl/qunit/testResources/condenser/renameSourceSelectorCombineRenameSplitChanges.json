@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_1_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -21,7 +21,7 @@
 	{
 		"fileName": "id_2_combineFields",
 		"changeType": "combineFields",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"combineFieldSelectors": [
 				{
@@ -57,7 +57,7 @@
 	{
 		"fileName": "id_3_renameField",
 		"changeType": "renameField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"originalControlType": "sap.ui.comp.smartform.GroupElement"
 		},
@@ -76,7 +76,7 @@
 	{
 		"fileName": "id_4_splitField",
 		"changeType": "splitField",
-		"reference": "sap.ui.rta.test.Component",
+		"reference": "sap.ui.rta.test",
 		"content": {
 			"newElementIds": [
 				"Comp1---idMain1--id-1576671746128-48",

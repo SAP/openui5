@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function(Log, Button, StandardListItem, Table, Text, VBox, JSONModel, CountMode, ODataV2Model, ODataV4Model,
 		SupportLib, RuleAnalyzer, TestUtils) {
+	/*global sinon*/
 	"use strict";
 
 	QUnit.module("sap.ui.core.rules.Model.support", {
@@ -50,8 +51,16 @@ sap.ui.define([
 					: oEmptyV4Response
 			});
 			this.oLogMock = this.mock(Log);
-			this.oLogMock.expects("warning").never();
-			this.oLogMock.expects("error").never();
+			this.oLogMock.expects("warning")
+				.withExactArgs(
+					sinon.match((sMsg) => /retry loading JavaScript resource: .*library\.support\.js/.test(sMsg)),
+					undefined, "sap.ui.ModuleSystem", undefined)
+				.atLeast(0);
+			this.oLogMock.expects("error")
+				.withExactArgs(
+					sinon.match((sMsg) => /failed to load JavaScript resource: .*library\.support\.js/.test(sMsg)),
+					undefined, "sap.ui.ModuleSystem", undefined)
+				.atLeast(0);
 			this.oLogMock.expects("fatal").never();
 		}
 	});

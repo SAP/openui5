@@ -50,9 +50,20 @@ sap.ui.define([
 
 			this.iIdCounter = 0;
 
-			this.fnDestroyHandler = this.destroy.bind(this);
-
-			jQuery(window).on("unload", this.fnDestroyHandler);
+			/**
+			 * The block below is not needed because it only did a cleanup
+			 * before the page was closed. This should not be necessary.
+			 * Nevertheless we leave the coding here and only deprecate it,
+			 * in order to keep the BFCache behavior stable.
+			 * Removing the 'unload' handler could potentially activate
+			 * the BFCache and cause a different behavior in browser versions
+			 * where the 'unload' handler is still supported.
+			 * Therefore we only removed the not needed cleanup coding
+			 * but still attach a noop to ensure this handler would still
+			 * invalidate the BFCache.
+			 * @deprecated as of 1.119
+			 */
+			window.addEventListener("unload", () => {});
 
 			ActivityDetection.attachActivate(initListener, this);
 
@@ -80,22 +91,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Destroy method of the Resize Handler.
-	 *
-	 * It unregisters the event handlers.
-	 *
-	 * @param {jQuery.Event} oEvent the event that initiated the destruction of the ResizeHandler
-	 * @private
-	 */
-	ResizeHandler.prototype.destroy = function(oEvent) {
-		ActivityDetection.detachActivate(initListener, this);
-		jQuery(window).off("unload", this.fnDestroyHandler);
-		this.aResizeListeners = [];
-		this.aSuspendedDomRefs = [];
-		clearListener.call(this);
-	};
-
-	/**
 	 * Attaches listener to resize event.
 	 *
 	 * @param {Element|sap.ui.core.Control} oRef the DOM reference or a control
@@ -104,7 +99,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ResizeHandler.prototype.attachListener = function(oRef, fnHandler){
-		var bIsControl = BaseObject.isA(oRef, 'sap.ui.core.Control'),
+		var bIsControl = BaseObject.isObjectA(oRef, 'sap.ui.core.Control'),
 			bIsJQuery = oRef instanceof jQuery, // actually, jQuery objects are not allowed as oRef, as per the API documentation. But this happens in the wild.
 			oDom = bIsControl ? oRef.getDomRef() : oRef,
 			iWidth = oDom ? oDom.offsetWidth : 0,
@@ -209,9 +204,6 @@ sap.ui.define([
 
 	/**
 	 * Registers the given event handler for resize events on the given DOM element or control.
-	 *
-	 * <b>Note:</b> This function must not be used before the UI5 framework is initialized.
-	 * Please use the {@link sap.ui.core.Core#attachInit init event} of UI5 if you are not sure whether this is the case.
 	 *
 	 * The resize handler periodically checks the dimensions of the registered reference. Whenever it detects changes, an event is fired.
 	 * Be careful when changing dimensions within the event handler which might cause another resize event and so on.

@@ -15,12 +15,12 @@ sap.ui.define(
 
 			return {
 				iClickOnButton: function (sButton) {
-					var oButton = null;
+					let oButton = null;
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						check: function (aButtons) {
-							for (var i = 0; i < aButtons.length; i++) {
-								var sText = aButtons[i].getText();
+							for (let i = 0; i < aButtons.length; i++) {
+								const sText = aButtons[i].getText();
 								if (sText === sButton) {
 									oButton = aButtons[i];
 									return true;
@@ -36,11 +36,11 @@ sap.ui.define(
 				},
 				// TODO: try to make a generic function for button
 				iClickOnButtonWithIcon: function (sButton, icon) {
-					var oButton = null;
+					let oButton = null;
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						check: function (aButtons) {
-							for (var i = 0; i < aButtons.length; i++) {
+							for (let i = 0; i < aButtons.length; i++) {
 								if (aButtons[i].getText() === sButton && aButtons[i].getIcon() === icon) {
 									oButton = aButtons[i];
 									return true;

@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
 	"sap/ui/mdc/enums/TableSelectionMode"
 ], function(
 	ODataV4ValueHelpDelegate,
@@ -32,28 +31,27 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
 	TableSelectionMode
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
-		var oPayload = oValueHelp.getPayload();
-		var sFilterFields = oPayload.filter;
-		var oValueHelp = oContainer && oContainer.getParent();
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
-		var sId = oValueHelp.getId();
+	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer) {
+		const oPayload = _oValueHelp.getPayload();
+		const sFilterFields = oPayload.filter;
+		const oValueHelp = oContainer && oContainer.getParent();
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const sId = oValueHelp.getId();
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const oParams = new URLSearchParams(window.location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
-		var oCurrentTable = oCurrentContent && oCurrentContent.getTable();
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
+		let oCurrentTable = oCurrentContent && oCurrentContent.getTable();
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 			if (!oCurrentTable) {

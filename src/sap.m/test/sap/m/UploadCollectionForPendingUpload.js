@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Bar",
 	"sap/ui/util/Mobile",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core"
 ], function(
 	MessageToast,
 	Button,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Page,
 	Bar,
 	Mobile,
-	Log
+	Log,
+	Core
 ) {
 	"use strict";
 
@@ -156,7 +158,7 @@ sap.ui.define([
 	}
 
 	function fnUpdateAttachmentTitle() {
-		sap.ui.getCore().byId("attachmentTitle").setText("Attachments (" + oUploadCollection.getItems().length + ")");
+		Core.byId("attachmentTitle").setText("Attachments (" + oUploadCollection.getItems().length + ")");
 	}
 
 	function fnUploadComplete(oEvent) {

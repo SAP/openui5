@@ -1503,7 +1503,7 @@ sap.ui.define([
 										key: 'manifest.json'
 									},
 									{
-										url: '/samples/actions/approve/snackManifest.json',
+										url: '/samples/actions/approve/detailsManifest.json',
 										name: 'detailsManifest.json',
 										key: 'detailsManifest.json'
 									},
@@ -2086,11 +2086,28 @@ sap.ui.define([
 						key: 'dateAndTime',
 						target: 'exploreSamples',
 						title: 'Date and Time',
-						files: [
+						subSamples: [
 							{
-								url: '/samples/formatters/dateAndTime/manifest.json',
-								name: 'manifest.json',
-								key: 'manifest.json'
+								key: 'dateAndTime',
+								title: 'Date and Time',
+								files: [
+									{
+										url: '/samples/formatters/dateAndTime/dateTime/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								key: 'date',
+								title: 'Date',
+								files: [
+									{
+										url: '/samples/formatters/dateAndTime/date/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
 							}
 						]
 					},
@@ -3432,6 +3449,27 @@ sap.ui.define([
 									},
 									{
 										url: '/samples/designtimeDestinations/i18n/i18n.properties',
+										name: 'i18n/i18n.properties',
+										key: 'i18n.properties'
+									}
+								]
+							},
+							{
+								title: 'Destinations at top',
+								key: 'designtimeDestinationsAtTop',
+								files: [
+									{
+										url: '/samples/designtimeDestinationsAtTop/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									},
+									{
+										url: '/samples/designtimeDestinationsAtTop/manifest.json',
+										name: 'manifest.json',
+										key: 'cardManifest.json'
+									},
+									{
+										url: '/samples/designtimeDestinationsAtTop/i18n/i18n.properties',
 										name: 'i18n/i18n.properties',
 										key: 'i18n.properties'
 									}

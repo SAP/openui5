@@ -18,10 +18,10 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual'
 ], function(
@@ -40,29 +40,29 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
 	Core,
 	Condition,
 	ConditionValidated,
+	OperatorName,
 	StateUtil,
 	deepEqual
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
-	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer, sContentId) {
-		var oValueHelp = oContainer && oContainer.getParent();
+	ValueHelpDelegate.retrieveContent = function (_oValueHelp, oContainer, sContentId) {
+		const oValueHelp = oContainer && oContainer.getParent();
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const oParams = new URLSearchParams(window.location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
@@ -169,7 +169,7 @@ sap.ui.define([
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
-					var oAdditionalContent = new Conditions({
+					const oAdditionalContent = new Conditions({
 						title:"Define Conditions",
 						shortTitle:"Conditions",
 						label:"Label of Field"
@@ -190,19 +190,19 @@ sap.ui.define([
 	};
 
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		var oFilterBar = oContent.getFilterBar();
+		const oFilterBar = oContent.getFilterBar();
 
 		if (oFilterBar) {
 
-			var bHasCountryFilter = oFilterBar.getFilterItems().find(function (oFilterItem) {
+			const bHasCountryFilter = oFilterBar.getFilterItems().find(function (oFilterItem) {
 				return oFilterItem.getBinding("conditions").sPath.indexOf("countryOfOrigin_code") >= 0;
 			});
 
 			if (bHasCountryFilter) {
-				var oCountry = Core.byId("FB0-FF6");
-				var aCountryConditions = oCountry && oCountry.getConditions();
+				const oCountry = Core.byId("FB0-FF6");
+				const aCountryConditions = oCountry && oCountry.getConditions();
 				if (aCountryConditions && aCountryConditions.length) {
 					oConditions["countryOfOrigin_code"] = aCountryConditions;
 					return oConditions;
@@ -213,91 +213,10 @@ sap.ui.define([
 		return oConditions;
 	};
 
-	// Exemplatory implementation of a condition merge strategy (shared condition between multiple collectiveSearch lists)
-	ValueHelpDelegate.modifySelectionBehaviour = function (oValueHelp, oContent, oChange) {
-
-		var oChangeCondition = oChange.conditions[0];
-		var oCurrentConditions = oContent.getConditions();
-
-		// Replace typeahead condition with existing one - we do not want duplicates in this scenario
-		if (oContent.isTypeahead() && oChange.type === "Set") {
-			return {
-				type: "Set",
-				conditions: oChange.conditions.map(function (oCondition) {
-					var oExisting = oCurrentConditions.find(function (oCurrentCondition) {
-						return oCurrentCondition.values[0] === oCondition.values[0];
-					});
-
-					return oExisting || oCondition;
-				})
-			};
-		}
-
-		var oExistingCondition = oCurrentConditions.find(function (oCondition) {
-			return oCondition.values[0] === oChangeCondition.values[0];
-		});
-
-		// reuse and apply payload to existing condition for this value
-		if (oChange.type === "Add" && oExistingCondition) {
-			return {
-				type: "Set",
-				conditions: oCurrentConditions.slice().map(function (oCondition) {
-					if (oCondition === oExistingCondition) {
-						oChangeCondition.payload = Object.assign({}, oExistingCondition.payload, oChangeCondition.payload);
-						return oChangeCondition;
-					}
-					return oCondition;
-				})
-			};
-		}
-		// remove payload from existing condition for this value, or delete the condition if it doesn't contain another payload
-		if (oChange.type === "Remove" && oExistingCondition) {
-			return {
-				type: "Set",
-				conditions: oCurrentConditions.slice().filter(function (oCondition) {
-					return oCondition === oExistingCondition ? oExistingCondition.payload && Object.keys(oExistingCondition.payload).length > 1 : true; // keep existing condition if another payload exists
-				}).map(function (oCondition) {
-					if (oCondition === oExistingCondition) {
-						delete oExistingCondition.payload[oContent.getId()];	// delete existing payload for this content
-						return oExistingCondition;
-					}
-					return oCondition;
-				})
-			};
-		}
-		return oChange;
-	};
-
-	// Exemplatory implementation of a condition payload
-	ValueHelpDelegate.createConditionPayload = function (oValueHelp, oContent, aValues, vContext) {
-		var sIdentifier = oContent.getId();
-		var oConditionPayload = {};
-		oConditionPayload[sIdentifier] = {};
-
-		var oListBinding = oContent.getListBinding();
-			var oContext = oListBinding && oListBinding.aContexts && oListBinding.aContexts.find(function (oContext) {
-				return oContext.getObject(oContent.getKeyPath()) === aValues[0];
-			});
-			if (oContext) {
-				var aDataProperties = oContent.getTable().getColumns().map(function (oColumn) {
-					return oColumn.getPropertyKey && oColumn.getPropertyKey();
-				});
-
-				if (aDataProperties.indexOf("countryOfOrigin_code") !== -1) {
-					oConditionPayload[sIdentifier]["countryOfOrigin_code"] = oContext.getProperty("countryOfOrigin_code");
-				}
-
-				if (aDataProperties.indexOf("dateOfBirth") !== -1) {
-					oConditionPayload[sIdentifier]["dateOfBirth"] = oContext.getProperty("dateOfBirth");	// TODO: Do we actually need to convert anything, when storing only raw context data?
-				}
-			}
-		return oConditionPayload;
-	};
-
 	// Exemplatory implementation of outparameter update
 	ValueHelpDelegate.onConditionPropagation = function (oValueHelp, sReason, oConfig) {
 		// find all conditions carrying country information
-		var aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
+		const aAllConditionCountries = oValueHelp.getConditions().reduce(function (aResult, oCondition) {
 			if (oCondition.payload) {
 				Object.values(oCondition.payload).forEach(function (oSegment) {
 					if (oSegment["countryOfOrigin_code"] && aResult.indexOf(oSegment["countryOfOrigin_code"]) === -1) {
@@ -309,14 +228,14 @@ sap.ui.define([
 		}, []);
 
 		if (aAllConditionCountries && aAllConditionCountries.length) {
-			var oFilterBar = Core.byId("FB0");
+			const oFilterBar = Core.byId("FB0");
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				aAllConditionCountries.forEach(function(sCountry) {
-					var bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
+					const bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {
 						return oCondition.values[0] === sCountry;
 					});
 					if (!bExists) {
-						var oNewCondition = Condition.createCondition("EQ", [sCountry], undefined, undefined, ConditionValidated.Validated);
+						const oNewCondition = Condition.createCondition(OperatorName.EQ, [sCountry], undefined, undefined, ConditionValidated.Validated);
 						oState.filter['countryOfOrigin_code'] = oState.filter && oState.filter['countryOfOrigin_code'] || [];
 						oState.filter['countryOfOrigin_code'].push(oNewCondition);
 					}

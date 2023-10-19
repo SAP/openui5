@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
@@ -16,7 +17,8 @@ sap.ui.define([
 	ManagedObject,
 	Fragment,
 	coreLibrary,
-	Core,
+	Element,
+	Lib,
 	JSONModel,
 	RtaUtils,
 	AddIFrameDialogController,
@@ -25,10 +27,10 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
-	var _oTextResources = Core.getLibraryResourceBundle("sap.ui.rta");
+	var {ValueState} = coreLibrary;
+	var _oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var _sDocumentationURL = "https://help.sap.com/docs/search?q=Embedding%20Content%20%28Object%20Pages%29";
-	var _sDocumentationHTML = _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT") + " (" + "<a href=" + _sDocumentationURL + ">" + _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT") + "</a>" + ")";
+	var _sDocumentationHTML = `${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_TEXT")} (` + `<a href=${_sDocumentationURL}>${_oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_URL_WARNING_LINKTEXT")}</a>` + `)`;
 	var _mText = {
 		dialogTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
 		dialogCreateTitle: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_TITLE"),
@@ -57,10 +59,13 @@ sap.ui.define([
 		selectAdditionalTextPercentHeader: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PERCENT_HEADER"),
 		selectAdditionalTextVh: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_VH"),
 		selectAdditionalTextPx: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_PX"),
-		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM")
+		selectAdditionalTextRem: _oTextResources.getText("IFRAME_ADDIFRAME_DIALOG_SELECT_ADDITIONAL_TEXT_REM"),
+		advancedSettingsTitle: _oTextResources.getText("IFRAME_ADDIFRAME_ADVANCED_SETTINGS"),
+		useLegacyNavigationLabel: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION"),
+		useLegacyNavigationInfo: _oTextResources.getText("IFRAME_ADDIFRAME_USE_LEGACY_NAVIGATION_INFO")
 	};
 
-	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue) {
+	function createJSONModel(bSetUpdateTitle, bAsContainer, sFrameWidthValue, sFrameHeightValue, bUseLegacyNavigation) {
 		_mText.dialogTitle = bSetUpdateTitle ? _mText.dialogUpdateTitle : _mText.dialogCreateTitle;
 
 		var sSelectAdditionalTextPercent = bAsContainer
@@ -121,7 +126,13 @@ sap.ui.define([
 			}, {
 				unit: "rem",
 				descriptionText: _mText.selectAdditionalTextRem
-			}]
+			}],
+			useLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			},
+			previewUseLegacyNavigation: {
+				value: !!bUseLegacyNavigation
+			}
 		});
 	}
 
@@ -167,22 +178,12 @@ sap.ui.define([
 	 * @private
 	 */
 	AddIFrameDialog.prototype._createDialog = function(mSettings) {
-		// set the correct title
-		var bSetUpdateTitle;
-		var bAsContainer;
-		var sFrameWidth;
-		var sFrameHeight;
-		if (mSettings) {
-			bSetUpdateTitle = !!mSettings.updateMode;
-			bAsContainer = !!mSettings.asContainer;
-			sFrameWidth = mSettings.frameWidth;
-			sFrameHeight = mSettings.frameHeight;
-		}
 		this._oJSONModel = createJSONModel(
-			bSetUpdateTitle,
-			bAsContainer,
-			sFrameWidth,
-			sFrameHeight
+			!!mSettings?.updateMode,
+			!!mSettings?.asContainer,
+			mSettings?.frameWidth,
+			mSettings?.frameHeight,
+			mSettings?.useLegacyNavigation
 		);
 		this._oController = new AddIFrameDialogController(this._oJSONModel, mSettings);
 		Fragment.load({
@@ -225,7 +226,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AddIFrameDialog.prototype._disablePanelExpand = function() {
-		var oPanelButton = Core.byId("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
+		var oPanelButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel").getDependents()[0];
 		if (oPanelButton) {
 			oPanelButton.setEnabled(false);
 		}
@@ -244,7 +245,7 @@ sap.ui.define([
 			.map(function(sUserSetting) {
 				return {
 					label: sUserSetting,
-					key: "{$user>/" + sUserSetting + "}",
+					key: `{$user>/${sUserSetting}}`,
 					value: oUserInfo[sUserSetting]
 				};
 			});
@@ -259,7 +260,7 @@ sap.ui.define([
 				.map(function(sProperty) {
 					return {
 						label: sProperty,
-						key: "{" + sProperty + "}",
+						key: `{${sProperty}}`,
 						value: oDefaultBoundObject[sProperty]
 					};
 				});

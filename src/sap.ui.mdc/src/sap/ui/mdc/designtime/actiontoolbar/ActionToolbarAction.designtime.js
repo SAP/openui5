@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (ActionToolbarAction, Util) {
 	"use strict";
 
-    var oDesignTime = {
+    const oDesignTime = {
             description: "{description}",
             name: "{name}",
             aggregations: {

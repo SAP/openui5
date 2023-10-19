@@ -9,10 +9,9 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/List",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	hasStableId,
@@ -23,10 +22,9 @@ function(
 	OverlayRegistry,
 	VerticalLayout,
 	JSONModel,
-	List,
 	XMLView,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -39,7 +37,7 @@ function(
 	});
 
 	QUnit.module("Control with unstable ID", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -50,7 +48,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout();
 				}
 			});
@@ -62,7 +60,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -75,7 +73,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -87,7 +85,7 @@ function(
 	});
 
 	QUnit.module("Control with stable ID", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
@@ -98,7 +96,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout("layout");
 				}
 			});
@@ -110,7 +108,7 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -123,7 +121,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -139,7 +137,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has stable ID)", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -154,7 +152,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -177,9 +175,9 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -192,7 +190,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -204,7 +202,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has stable ID, control has unstable ID)", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -219,7 +217,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -242,9 +240,9 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -257,7 +255,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
@@ -269,7 +267,7 @@ function(
 	});
 
 	QUnit.module("Control in binding template (template has unstable ID, control has stable ID)", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var oModel = new JSONModel([
 				{ text: "item1-bound" },
@@ -284,7 +282,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new XMLView({
 						id: "myView",
 						viewContent:
@@ -307,9 +305,9 @@ function(
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
-			this.oText1 = this.oView.byId("layout").getItems()[0].getContent()[0];
+			[this.oText1] = this.oView.byId("layout").getItems()[0].getContent();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -322,7 +320,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();

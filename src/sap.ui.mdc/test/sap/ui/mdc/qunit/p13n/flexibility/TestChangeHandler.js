@@ -4,7 +4,7 @@ sap.ui.define([
     "use strict";
 
     //Test implementation used in ItemBaseFlex.qunit
-    var oTestChangeHandler = Object.assign({}, ItemBaseFlex);
+    const oTestChangeHandler = Object.assign({}, ItemBaseFlex);
 
     oTestChangeHandler.findItem = function(oModifier, aItems, sName) {
         return new Promise(function(resolve){

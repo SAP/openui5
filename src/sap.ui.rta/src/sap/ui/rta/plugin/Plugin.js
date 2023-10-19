@@ -74,7 +74,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.46
 	 * @alias sap.ui.rta.plugin.Plugin
-	 * @experimental Since 1.46. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
@@ -127,14 +126,10 @@ sap.ui.define([
 	function debounceFunction(mDebounceFunctions, oOverlay, sName, fnOriginalFunction) {
 		// Create debounced function for the given parameters if it was not created before
 		var sOverlayId = oOverlay.getId();
-		if (!mDebounceFunctions[sOverlayId]) {
-			mDebounceFunctions[sOverlayId] = {};
-		}
-		if (!mDebounceFunctions[sOverlayId][sName]) {
-			// Debounce with approximately one frame to cover multiple synchronous calls
-			// without causing a huge delay
-			mDebounceFunctions[sOverlayId][sName] = debounce(fnOriginalFunction, 16);
-		}
+		mDebounceFunctions[sOverlayId] ||= {};
+		// Debounce with approximately one frame to cover multiple synchronous calls
+		// without causing a huge delay
+		mDebounceFunctions[sOverlayId][sName] ||= debounce(fnOriginalFunction, 16);
 		// Execute the function
 		mDebounceFunctions[sOverlayId][sName]();
 	}
@@ -143,6 +138,7 @@ sap.ui.define([
 		// Initialize here because plugins may not extend the rta.Plugin and
 		// instead inherit the method via rta.Utils.extendWith
 		// Therefore the constructor/init might not be properly called
+		// eslint-disable-next-line logical-assignment-operators
 		if (!this._mDebounceFunctions) {
 			// The _onElementModified callback might be triggered many times in a row, e.g.
 			// by SimpleForms which add all aggregation items one by one

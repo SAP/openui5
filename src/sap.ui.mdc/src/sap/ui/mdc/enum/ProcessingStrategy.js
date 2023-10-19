@@ -16,7 +16,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.ui.mdc
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.ProcessingStrategy}
 	 */
-	var ProcessingStrategy = {
+	const ProcessingStrategy = {
 		/**
 		 * The delta will only calculate changes that will be added in addition to the existing state
 		 */

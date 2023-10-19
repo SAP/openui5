@@ -4,15 +4,15 @@
 
 // Provides object sap.ui.dt.DOMUtil.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/zIndex",
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
+	Localization,
 	jQuery,
-	Device,
-	Configuration
+	Device
 ) {
 	"use strict";
 
@@ -26,7 +26,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.DOMUtil
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var DOMUtil = {};
@@ -103,7 +102,7 @@ sap.ui.define([
 			mOffset.top -= (mParentOffset.top - (iScrollTop || 0));
 		}
 
-		if (Configuration.getRTL()) {
+		if (Localization.getRTL()) {
 			var iParentWidth = oParent ? oParent.offsetWidth : window.innerWidth;
 			// TODO: Workaround - remove when bug in Safari (issue 336512063) is solved
 			if (Device.browser.safari && !Device.browser.mobile && DOMUtil.hasVerticalScrollBar(oParent)) {
@@ -126,7 +125,7 @@ sap.ui.define([
 	 */
 	DOMUtil.getScrollLeft = function(oElement) {
 		if (
-			!Configuration.getRTL()
+			!Localization.getRTL()
 			|| !DOMUtil.hasHorizontalScrollBar(oElement)
 		) {
 			return oElement.scrollLeft;
@@ -151,11 +150,11 @@ sap.ui.define([
 
 	DOMUtil._getElementDimensions = function(oDomRef, sMeasure, aDirection) {
 		var oRelevantDomRef = oDomRef[0] || oDomRef;
-		var iOffsetWidth = oRelevantDomRef["offset" + sMeasure];
+		var iOffsetWidth = oRelevantDomRef[`offset${sMeasure}`];
 		var iValue = 0;
 		for (var i = 0; i < 2; i++) {
 			// remove border
-			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)["border" + aDirection[ i ] + sMeasure];
+			var sBorderMeasure = window.getComputedStyle(oRelevantDomRef, null)[`border${aDirection[ i ]}${sMeasure}`];
 			iValue -= sBorderMeasure ? parseInt(sBorderMeasure.slice(0, -2)) : 0;
 		}
 		return iOffsetWidth + iValue;
@@ -362,7 +361,7 @@ sap.ui.define([
 		// Styles is an array, but has some special access functions
 		for (var i = 0; i < iLength; i++) {
 			sStyle = oStyles[i];
-			sStyles = sStyles + sStyle + ":" + oStyles.getPropertyValue(sStyle) + ";";
+			sStyles = `${sStyles + sStyle}:${oStyles.getPropertyValue(sStyle)};`;
 		}
 
 		oDest.style.cssText = sStyles;

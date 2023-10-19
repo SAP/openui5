@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
 	"sap/ui/util/openWindow",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib"
 ],
 function(
 	ListItemBase,
@@ -30,7 +31,8 @@ function(
 	AvatarShape,
 	AvatarSize,
 	openWindow,
-	Configuration
+	Configuration,
+	CoreLib
 	) {
 	"use strict";
 
@@ -146,8 +148,8 @@ function(
 				 *
 				 * If bandwidth is the key for the application, set this value to false.
 				 *
-				 * Deprecated as of version 1.88. Image is replaced by avatar.
-				 */
+				 * @deprecated as of version 1.88. Image is replaced by {@link sap.m.Avatar }
+				*/
 				iconDensityAware: {type: "boolean", defaultValue: true},
 
 				/**
@@ -252,7 +254,7 @@ function(
 		renderer: FeedListItemRenderer
 	});
 
-	FeedListItem._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	FeedListItem._oRb = CoreLib.getResourceBundleFor("sap.m");
 	FeedListItem._nMaxCharactersMobile = 300;
 	FeedListItem._nMaxCharactersDesktop = 500;
 
@@ -371,7 +373,8 @@ function(
 	};
 
 	FeedListItem.prototype.onAfterRendering = function() {
-		var oFormattedText = this.getAggregation("_text");
+		var oFormattedText = this.getAggregation("_text"),
+			oDomRef = this.getDomRef();
 		if (document.getElementById(this.getAggregation("_actionButton"))) {
 			document.getElementById(this.getAggregation("_actionButton").getId()).setAttribute("aria-haspopup", "menu");
 		}
@@ -380,7 +383,7 @@ function(
 		}
 		this.$("realtext").find('a[target="_blank"]').on("click", openLink);
 
-		oFormattedText && oFormattedText._sanitizeCSSPosition(this.getDomRef()); // perform CSS position sanitize
+		oDomRef && oFormattedText && oFormattedText._sanitizeCSSPosition(oDomRef.querySelector(".sapMFeedListItemText")); // perform CSS position sanitize
 	};
 
 	FeedListItem.prototype.exit = function() {

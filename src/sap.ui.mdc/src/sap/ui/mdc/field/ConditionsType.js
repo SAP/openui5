@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/field/splitValue',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -20,6 +21,7 @@ sap.ui.define([
 		ConditionValidateException,
 		FilterOperatorUtil,
 		splitValue,
+		OperatorName,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -47,7 +49,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
-	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the additionalValue (description) of the condition (used for formatting, parsing and validating)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the <code>additionalValue</code> (description) of the condition (used for formatting, parsing, and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
@@ -55,9 +57,9 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] <code>BindingContext</code> of field. Used to get a key or description from the value help using in/out parameters. (In a table, the value help might be connected to a different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field, for example, for date types; a different type is used internally to have different <code>formatOptions</code>
-	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional type used on other part of a field. (For example, for unit fields.)
-	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional types used for parts of a <code>CompositeType</code> (if valueType is a <code>CompositeType</code>)
-	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] additional types used for parts of a <code>CompositeType</code> (if additionalValueType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] Additional type used for another part of a field (for example, for unit fields)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>valueType</code> is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>additionalValueType</code> is a <code>CompositeType</code>)
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field.
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {sap.ui.mdc.condition.ConditionObject} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined and is just returned
@@ -67,12 +69,12 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
-	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput value-property case)
-	 * @param {string} [oFormatOptions.keepValue] If noFormatting is set, this value is used as output (To keep typed value during value help selection)
+	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
+	 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionsType
 	 */
-	var ConditionsType = SimpleType.extend("sap.ui.mdc.field.ConditionsType", /** @lends sap.ui.mdc.field.ConditionsType.prototype */ {
+	const ConditionsType = SimpleType.extend("sap.ui.mdc.field.ConditionsType", /** @lends sap.ui.mdc.field.ConditionsType.prototype */ {
 
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
@@ -161,7 +163,7 @@ sap.ui.define([
 			throw new FormatException("No valid conditions provided");
 		}
 
-		var vValue;
+		let vValue;
 
 		if (!sTargetType || sTargetType === "string" || sTargetType === "any") {
 			vValue = ""; // if string requested use string
@@ -173,16 +175,16 @@ sap.ui.define([
 			return _getKeepValue.call(this) || vValue;
 		}
 
-		var iMaxConditions = _getMaxConditions.call(this);
+		const iMaxConditions = _getMaxConditions.call(this);
 
-		var aSyncPromises = [];
-		var fnCreateSyncPromise = function (oCondition, sTargetType) { // as function should not be declared inside a loop
+		const aSyncPromises = [];
+		const fnCreateSyncPromise = function (oCondition, sTargetType) { // as function should not be declared inside a loop
 			return SyncPromise.resolve().then(function() {
 				return this._oConditionType.formatValue(oCondition, sTargetType);
 			}.bind(this));
 		};
 
-		for (var i = 0; i < aConditions.length; i++) {
+		for (let i = 0; i < aConditions.length; i++) {
 			aSyncPromises.push(fnCreateSyncPromise.call(this, aConditions[i], sTargetType));
 
 			if (iMaxConditions > 0 && i >= iMaxConditions - 1) {
@@ -198,7 +200,7 @@ sap.ui.define([
 
 	function _concatenateFormattedValues(aFormattedValues, vValue) {
 
-		for (var i = 0; i < aFormattedValues.length; i++) {
+		for (let i = 0; i < aFormattedValues.length; i++) {
 			if (vValue) {
 				vValue = vValue + this._oResourceBundle.getText("field.SEPARATOR") +  aFormattedValues[i];
 			} else {
@@ -275,9 +277,9 @@ sap.ui.define([
 	 */
 	 ConditionsType.prototype._parseValueToIndex = function(vValue, sSourceType, iIndex) {
 
-		var aOperators = this.oFormatOptions.operators || [];
-		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
-		var aSeparatedText = splitValue(vValue, !bBetweenSupported);
+		const aOperators = this.oFormatOptions.operators || [];
+		const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
+		const aSeparatedText = splitValue(vValue, !bBetweenSupported);
 
 		if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
 			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex);
@@ -289,10 +291,10 @@ sap.ui.define([
 
 	function _parseSingleValue(vValue, sSourceType, iIndex) {
 
-		var fnParse = function(vValue, sSourceType) {
+		const fnParse = function(vValue, sSourceType) {
 			return this._oConditionType.parseValue(vValue, sSourceType);
 		};
-		var fnHandleError = function(oException) {
+		const fnHandleError = function(oException) {
 			throw oException;
 		};
 
@@ -302,20 +304,20 @@ sap.ui.define([
 
 	function _parseMultipleValues(aValues, sSourceType, iIndex) {
 
-		var aOperators = this.oFormatOptions.operators || [];
-		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
-		var oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator("BT");
-		var fnParse = function(vValue, sSourceType) {
+		const aOperators = this.oFormatOptions.operators || [];
+		const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
+		const oBTOperator = bBetweenSupported && FilterOperatorUtil.getOperator(OperatorName.BT);
+		const fnParse = function(vValue, sSourceType) {
 			return SyncPromise.resolve().then(function() {
 				// if multiple values are pasted deactivate input validation and determination of description for performance reasons.
 				// only paste as plain conditions (NotValidated)
 				// multiple values are only possible for strings
 				vValue = vValue.trim(); // remove whitspaces from the edges (as in copy source whitspaces might be used to align values)
 				if (bBetweenSupported) {
-					var aValues = vValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
+					const aValues = vValue.split(/\t/g); // if two values exist, use it as Between and create a "a...z" value
 					if (aValues.length == 2 && aValues[0] && aValues[1]) {
 						vValue = oBTOperator.tokenFormat;
-						for (var j = 0; j < 2; j++) {
+						for (let j = 0; j < 2; j++) {
 							vValue = vValue.replace(new RegExp("\\{" + j + "\\}", "g"), aValues[j]);
 						}
 					}
@@ -324,7 +326,7 @@ sap.ui.define([
 				return this._oConditionType._parseValue(vValue, "string", false);
 			}.bind(this));
 		};
-		var fnHandleError = function(oException) {
+		const fnHandleError = function(oException) {
 			if (oException instanceof ParseException) {
 				throw new ParseException(this._oResourceBundle.getText("field.PASTE_ERROR"));
 			}
@@ -337,15 +339,15 @@ sap.ui.define([
 
 	function _parseValues(aValues, sSourceType, iIndex, fnParse, fnHandleError) {
 
-		var aSyncPromises = [];
+		const aSyncPromises = [];
 
-		for (var i = 0; i < aValues.length; i++) {
+		for (let i = 0; i < aValues.length; i++) {
 			aSyncPromises.push(fnParse.call(this, aValues[i], sSourceType));
 		}
 
-		var aConditions = SyncPromise.all(aSyncPromises).then(function(aNewConditions) {
-			var aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
-			for (var i = 0; i < aNewConditions.length; i++) {
+		const aConditions = SyncPromise.all(aSyncPromises).then(function(aNewConditions) {
+			let aConditions = this.oFormatOptions.getConditions && this.oFormatOptions.getConditions();
+			for (let i = 0; i < aNewConditions.length; i++) {
 				aConditions = _parseConditionToConditions.call(this, aNewConditions[i], aConditions, iIndex);
 				if (iIndex >= 0) {
 					iIndex++;
@@ -366,8 +368,8 @@ sap.ui.define([
 
 	function _parseConditionToConditions(oCondition, aConditions, iIndex) {
 
-		var bIsUnit = _isUnit(this.oFormatOptions.valueType);
-		var iMaxConditions = _getMaxConditions.call(this);
+		const bIsUnit = _isUnit(this.oFormatOptions.valueType);
+		const iMaxConditions = _getMaxConditions.call(this);
 
 		if (iMaxConditions !== 1 && this.oFormatOptions.getConditions) {
 			// if more than one condition is allowed add the new condition to the existing ones. (Only if not already exist)
@@ -402,18 +404,18 @@ sap.ui.define([
 			// For Currency/Unit Fields with multiple values we currently only support one unit which is valid for all numeric values.
 			// So update all conditions with unit. (only if not only a unit is shown)
 			// TODO better solution
-			var sUnit = oCondition && oCondition.values[0][1];
-			var oInParameters = oCondition && oCondition.inParameters;
-			var oOutParameters = oCondition && oCondition.outParameters;
-			var oPayload = oCondition && oCondition.payload;
-			for (var i = 0; i < aConditions.length; i++) {
+			const sUnit = oCondition && oCondition.values[0][1];
+			const oInParameters = oCondition && oCondition.inParameters;
+			const oOutParameters = oCondition && oCondition.outParameters;
+			const oPayload = oCondition && oCondition.payload;
+			for (let i = 0; i < aConditions.length; i++) {
 				aConditions[i].values[0][1] = sUnit;
 				if (sUnit === undefined) {
 					// for empty unit use updated number (0)
 					aConditions[i].values[0][0] = oCondition.values[0][0];
 				}
 				aConditions[i].values[0].splice(2); // do not have the unit table after parsing
-				if (aConditions[i].operator === "BT") {
+				if (aConditions[i].operator === OperatorName.BT) {
 					aConditions[i].values[1][1] = sUnit;
 					if (sUnit === undefined) {
 						// for empty unit use updated number (0)
@@ -466,13 +468,15 @@ sap.ui.define([
 			throw new ConditionValidateException("No valid conditions provided", undefined, undefined, aConditions);
 		}
 
+		let oCondition;
+
 		try {
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
+			for (let i = 0; i < aConditions.length; i++) {
+				oCondition = aConditions[i];
 				this._oConditionType.validateValue(oCondition);
 			}
 
-			var iMaxConditions = _getMaxConditions.call(this);
+			const iMaxConditions = _getMaxConditions.call(this);
 
 			if (aConditions.length === 0 && iMaxConditions === 1) {
 				// test if type is nullable. Only for single-value Fields. For MultiValue only real conditions should be checked for type
@@ -492,7 +496,7 @@ sap.ui.define([
 
 	function _getMaxConditions() {
 
-		var iMaxConditions = 1;
+		let iMaxConditions = 1;
 
 		if (this.oFormatOptions.hasOwnProperty("maxConditions")) {
 			iMaxConditions = this.oFormatOptions.maxConditions;
@@ -505,12 +509,12 @@ sap.ui.define([
 	function _isUnit(oType) {
 
 		if (_isCompositeType(oType)) {
-			var oFormatOptions = oType.getFormatOptions();
-			var bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
-			var bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
-			var bShowTimezone = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTimezone") || oFormatOptions.showTimezone; // handle timezone as unit
-			var bShowDate = !oFormatOptions || !oFormatOptions.hasOwnProperty("showDate") || oFormatOptions.showDate;
-			var bShowTime = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTime") || oFormatOptions.showTime;
+			const oFormatOptions = oType.getFormatOptions();
+			const bShowMeasure = !oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure;
+			const bShowNumber = !oFormatOptions || !oFormatOptions.hasOwnProperty("showNumber") || oFormatOptions.showNumber;
+			const bShowTimezone = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTimezone") || oFormatOptions.showTimezone; // handle timezone as unit
+			const bShowDate = !oFormatOptions || !oFormatOptions.hasOwnProperty("showDate") || oFormatOptions.showDate;
+			const bShowTime = !oFormatOptions || !oFormatOptions.hasOwnProperty("showTime") || oFormatOptions.showTime;
 			if ((bShowMeasure && !bShowNumber) || (bShowTimezone && !bShowDate && !bShowTime)) {
 				return true;
 			}
@@ -528,7 +532,7 @@ sap.ui.define([
 
 	function _getNoFormatting() {
 
-		var bNoFormatting = false;
+		let bNoFormatting = false;
 
 		if (this.oFormatOptions.hasOwnProperty("noFormatting")) {
 			bNoFormatting = this.oFormatOptions.noFormatting;

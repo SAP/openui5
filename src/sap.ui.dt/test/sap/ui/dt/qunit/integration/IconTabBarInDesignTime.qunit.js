@@ -6,27 +6,27 @@ sap.ui.define([
 	"sap/m/IconTabFilter",
 	"sap/m/List",
 	"sap/m/StandardListItem",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry"
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	Button,
 	IconTabBar,
 	IconTabFilter,
 	List,
 	StandardListItem,
-	oCore,
 	coreLibrary,
 	DesignTime,
-	OverlayRegistry
+	OverlayRegistry,
+	nextUIUpdate
 ) {
 	"use strict";
 
-	var IconColor = coreLibrary.IconColor;
+	var {IconColor} = coreLibrary;
 
 	QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oList = new List({
 				items: [
 					new StandardListItem({
@@ -70,7 +70,7 @@ sap.ui.define([
 					})
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -82,7 +82,7 @@ sap.ui.define([
 				done();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oList.destroy();
 			this.oButton.destroy();
 			this.oIconTabBar.destroy();
@@ -96,13 +96,13 @@ sap.ui.define([
 			assert.strictEqual(oButtonOverlay.isVisible(), false, "Button overlay is not visible");
 		});
 
-		QUnit.test("when the filter is switched...", function(assert) {
+		QUnit.test("when the filter is switched...", async function(assert) {
 			var fnDone = assert.async();
 			var oListOverlay = OverlayRegistry.getOverlay(this.oList);
 			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 
 			this.oIconTabBar.setSelectedKey("Open");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oIconTabBarOverlay = OverlayRegistry.getOverlay(this.oIconTabBar);
 
 			oIconTabBarOverlay.attachEventOnce("geometryChanged", function() {

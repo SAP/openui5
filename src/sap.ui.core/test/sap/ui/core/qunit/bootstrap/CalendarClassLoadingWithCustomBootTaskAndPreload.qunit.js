@@ -1,25 +1,38 @@
 /*global QUnit*/
 sap.ui.define([
-
-], function() {
+	"sap/ui/core/Core"
+], function(Core) {
 	"use strict";
 
 	QUnit.test("Calendar Class Loading", function(assert) {
-		var GregorianClass = sap.ui.require("sap/ui/core/date/Gregorian");
-		var JapaneseClass = sap.ui.require("sap/ui/core/date/Japanese");
+		var isScriptIncluded = (sResourcePath) => {
+			return [...document.scripts].filter((oScript) => {
+				return oScript.src.endsWith(sResourcePath);
+			}).length !== 0;
+		};
 
-		assert.notOk(GregorianClass, "The calendar class shouldn't be loaded");
-		assert.ok(JapaneseClass, "The calendar class is loaded");
+		const isLoaded = (sResourcePath) => {
+			const state = sap.ui.loader._.getModuleState(sResourcePath);
+			return state === 4;
+		};
 
-		var bLibraryRequestExists = !!document.querySelector("head > script[src*='sap/ui/core/library.js']");
-		var bCalendarClassRequestExists = !!document.querySelector("head > script[src*='sap/ui/core/date/Japanese.js']");
+		return Core.ready(function() {
+			var GregorianClass = sap.ui.require("sap/ui/core/date/Gregorian");
+			var JapaneseClass = sap.ui.require("sap/ui/core/date/Japanese");
 
-		// When a single request is sent for loading sap/ui/core/library.js, it means that the
-		// sap/ui/core/library-preload.js doesn't exist or it has empty content. Therefore the existence of the request
-		// which loads the calendar class should be the same as the existence of sap/ui/core/library.js. This means that
-		// when library-preload.js exists, both of library.js and calendar class should be loaded within the
-		// library-preload.js. When library-preload.js doesn't exists, both of them are loaded with single requests.
-		assert.ok(bLibraryRequestExists ? bCalendarClassRequestExists : !bCalendarClassRequestExists, "calendar class is loaded within library-preload.js when it exists");
+			assert.notOk(GregorianClass, "The calendar class shouldn't be loaded");
+			assert.ok(JapaneseClass, "The calendar class is loaded");
+
+			const japaneseCalendarIsIncludedAsSingleRequest = isScriptIncluded("sap/ui/core/date/Japanese.js");
+			const coreLibraryPreloadIsLoaded = isLoaded("sap/ui/core/library-preload.js");
+
+			if (coreLibraryPreloadIsLoaded) {
+				assert.notOk(japaneseCalendarIsIncludedAsSingleRequest, "calendar class is not loaded when library-preload.js exists");
+			} else {
+				assert.ok(japaneseCalendarIsIncludedAsSingleRequest, "calendar class is loaded standalone");
+			}
+
+		});
 	});
 
 });

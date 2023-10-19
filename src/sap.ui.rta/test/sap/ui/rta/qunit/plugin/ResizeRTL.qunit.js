@@ -62,7 +62,7 @@ sap.ui.define([
 
 	// Some tests need RTA as the calculations are dependent on the style class (handle position)
 	QUnit.module("Given a table in RTA...", {
-		beforeEach: function() {
+		beforeEach() {
 			givenTableWithResizableColumns.call(this);
 
 			this.oRta = new RuntimeAuthoring({
@@ -79,7 +79,7 @@ sap.ui.define([
 				this.oResizePlugin = this.oRta.getPlugins().resize;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oContainer.destroy();
 			sandbox.restore();
@@ -149,7 +149,7 @@ sap.ui.define([
 				actions: {
 					resize: {
 						changeType: "myChangeType",
-						getHandleExtensionHeight: function(oElement) {
+						getHandleExtensionHeight(oElement) {
 							return oElement.getParent().getDomRef().offsetHeight;
 						}
 					}
@@ -207,7 +207,7 @@ sap.ui.define([
 						actions: {
 							resize: {
 								changeType: "myChangeType",
-								getSizeLimits: function() {
+								getSizeLimits() {
 									return {
 										minimumWidth: iColumn0OverlayOldWidth
 									};

@@ -25,7 +25,7 @@ sap.ui.define(['./Element', './library', './Lib', "sap/base/assert"],
 		var ensureTexts = function() {
 			if (!mTexts) { // initialize texts if required
 				mTexts = {};
-				var rb = Library.get("sap.ui.core").getResourceBundle();
+				var rb = Library.getResourceBundleFor("sap.ui.core");
 				mTexts[ValueState.Error] = rb.getText("VALUE_STATE_ERROR");
 				mTexts[ValueState.Warning] = rb.getText("VALUE_STATE_WARNING");
 				mTexts[ValueState.Success] = rb.getText("VALUE_STATE_SUCCESS");

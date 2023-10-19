@@ -147,6 +147,10 @@ sap.ui.define([
 		}
 	};
 
+	QuickTotal.prototype.getEffectiveQuickActions = function() {
+		return (this.getVisible() && this.getItems().length) ? [this] : [];
+	};
+
 	QuickTotal.prototype.onChange = function(oEvent, oItem) {
 		oItem.setProperty("totaled", oEvent.getParameters().pressed, true);
 		this.fireChange({item: oItem});

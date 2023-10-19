@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "redo";
-  const pathData = "M331.5 308q-8-8-8-18t8-18l60-60h-229q-33 0-55.5 22.5T84.5 290t22.5 55.5 55.5 22.5h98q12 0 19 7.5t7 18.5q0 26-26 26h-98q-27 0-51-10T70 382.5 42.5 341t-10-51 10-51T70 197.5t41.5-27.5 51-10h229l-60-59q-8-10-8-19 0-10 8-18t18-8 18 8l102 102q4 4 7 8t3 12q0 14-10 21l-102 101q-7 8-18 8t-18-8z";
+  const pathData = "M160 160h256l-88-84q-8-8-8-18 0-11 7.5-18.5T346 32q10 0 17 7l141 134q8 8 8 19 0 12-8 18L363 345q-7 7-17 7-11 0-18.5-7.5T320 326q0-10 8-18l101-97H160q-22 0-42 8.5T83 243t-23.5 34.5T51 320q0 22 8.5 42T83 397t35 23.5 42 8.5h198q11 0 18.5 7t7.5 18-7.5 18.5T358 480H160q-33 0-62-12.5T47 433t-34.5-51T0 320t12.5-62T47 207t51-34.5 62-12.5z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

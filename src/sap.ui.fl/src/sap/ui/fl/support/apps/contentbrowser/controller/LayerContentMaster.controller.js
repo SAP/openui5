@@ -26,7 +26,8 @@ sap.ui.define([
 	 * @alias sap.ui.fl.support.apps.contentbrowser.controller.LayerContentMaster
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.45
+	 * @since 1.45
+	 * @private
 	 */
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.LayerContentMaster", {
 		sNamespace: "",
@@ -38,7 +39,7 @@ sap.ui.define([
 		 * Handles data binding and route matching.
 		 * @public
 		 */
-		onInit: function() {
+		onInit() {
 			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.getRoute("LayerContentMaster").attachMatched(this._onRouteMatched, this);
 		},
@@ -49,7 +50,7 @@ sap.ui.define([
 		 * @param {object} oRouteMatch - Route object specified in the router which was matched via regexp
 		 * @private
 		 */
-		_onRouteMatched: function(oRouteMatch) {
+		_onRouteMatched(oRouteMatch) {
 			var that = this;
 			var mRouteArguments = oRouteMatch.getParameter("arguments");
 			this.sLayer = mRouteArguments.layer;
@@ -75,7 +76,7 @@ sap.ui.define([
 		 * @param {object} oData - Data which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentReceived: function(oPage, oData) {
+		_onContentReceived(oPage, oData) {
 			var oContentModel = this.getView().getModel("content");
 			oContentModel.setData(oData);
 			oPage.setBusy(false);
@@ -88,7 +89,7 @@ sap.ui.define([
 		 * @param {object} oEvent - <code>liveChange</code> event of search field
 		 * @public
 		 */
-		onSearch: function(oEvent) {
+		onSearch(oEvent) {
 			var sQuery = oEvent.getSource().getValue();
 			this.filterListByQuery(sQuery);
 		},
@@ -99,7 +100,7 @@ sap.ui.define([
 		 * @param {string} sQuery - Entered string within the search field
 		 * @public
 		 */
-		filterListByQuery: function(sQuery) {
+		filterListByQuery(sQuery) {
 			// add filter for search
 			var aFilters = [];
 			if (sQuery && sQuery.length > 0) {
@@ -124,7 +125,7 @@ sap.ui.define([
 		 * @param {object} oEvent - Press event of master components list
 		 * @public
 		 */
-		onContentSelected: function(oEvent) {
+		onContentSelected(oEvent) {
 			var sSource = oEvent.getSource();
 			var sContentBindingPath = sSource.getBindingContextPath().substring(1);
 			var sContentModelData = this.getView().getModel("content").getData();
@@ -146,7 +147,7 @@ sap.ui.define([
 				oRouter.navTo("ContentDetails", mRouteParameters);
 			} else {
 				// navigation to a namespace
-				this.sNamespace += sContentName + "/";
+				this.sNamespace += `${sContentName}/`;
 				oRouter.navTo("LayerContentMaster", {layer: this.sLayer, namespace: encodeURIComponent(this.sNamespace)});
 			}
 		},
@@ -156,7 +157,7 @@ sap.ui.define([
 		 * Calculates the parent namespace, then navigates to the target.
 		 * @public
 		 */
-		navBack: function() {
+		navBack() {
 			var oRouter = UIComponent.getRouterFor(this);
 			if (!this.sNamespace || this.sNamespace === "/") {
 				oRouter.navTo("Layers");
@@ -174,18 +175,18 @@ sap.ui.define([
 		 * @returns {string} - Shortened namespace for display
 		 * @private
 		 */
-		_shortenNamespace: function() {
+		_shortenNamespace() {
 			if (!this.sNamespace || this.sNamespace === "/") {
-				return "[" + this.sLayer + "] /";
+				return `[${this.sLayer}] /`;
 			}
 
 			var aSplittedNamespace = this.sNamespace.split("/");
 			var sNamespaceDepth = aSplittedNamespace.length;
 			if (sNamespaceDepth > 2) {
-				return "[" + this.sLayer + "] .../" + aSplittedNamespace[sNamespaceDepth - 2];
+				return `[${this.sLayer}] .../${aSplittedNamespace[sNamespaceDepth - 2]}`;
 			}
 
-			return "[" + this.sLayer + "] /" + this.sNamespace[sNamespaceDepth - 1];
+			return `[${this.sLayer}] /${this.sNamespace[sNamespaceDepth - 1]}`;
 		},
 
 		/**
@@ -194,7 +195,7 @@ sap.ui.define([
 		 * @param {object} oEvent - Press event on the error button
 		 * @public
 		 */
-		handleMessagePopoverPress: function(oEvent) {
+		handleMessagePopoverPress(oEvent) {
 			var sSource = oEvent.getSource();
 			sap.ui.require(["sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"], function(ErrorUtils) {
 				ErrorUtils.handleMessagePopoverPress(sSource);

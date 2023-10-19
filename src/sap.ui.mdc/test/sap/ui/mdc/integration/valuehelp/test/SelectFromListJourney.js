@@ -181,6 +181,21 @@ sap.ui.define([
 		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"}, []);
 	});
 
+	opaTest("Range-Selection across multiple pages", function (Given, When, Then) {
+		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
+		When.onTheOPAPage.iToggleTheValueHelpListItem("Austen, Jane", undefined);
+		When.waitFor({
+			controlType: "sap.ui.mdc.Table",
+			actions: function (oTable) {
+				return oTable.scrollToIndex(75);
+			}
+		});
+		When.onTheOPAPage.iToggleTheValueHelpListItem("Paine, Thomas", undefined, {shiftKey: true});
+		When.onTheOPAPage.iCloseTheValueHelpDialog();
+		Then.onTheOPAPage.iShouldSeeTheFilterField({label: "TestField"}, ['Austen, Jane (101)', 'Gilman, Charlotte Perkins (102)', 'Carroll, Lewis (103)', 'Shelley, Mary Wollstonecraft (104)', 'Kafka, Franz (105)', 'Twain, Mark (106)', 'Wilde, Oscar (107)', 'Douglass, Frederick (109)', 'Ibsen, Henrik (110)', 'Melville, Herman (111)', 'Doyle, Arthur Conan (112)', 'Dickens, Charles (113)', 'Joyce, James (114)', 'Swift, Jonathan (116)', 'Stoker, Bram (117)', 'Machiavelli, Niccolo (118)', 'Tolstoy, Leo, graf (120)', 'Grimm, Wilhelm (121)', 'Vatsyayana (122)', 'Unknown (124)', 'Hugo, Victor (125)', 'Anonymous (126)', 'Bronte, Charlotte (127)', 'Whitman, Walt (128)', 'Hobbes, Thomas (131)', 'Stevenson, Robert Louis (132)', 'Bronte, Emily (134)', 'Conrad, Joseph (135)', 'Dumas, Alexandre (136)', 'Chopin, Kate (138)', 'Barrie, J. M. (James Matthew) (139)', 'Hesse, Hermann (140)', 'Plato (141)', 'Franklin, Benjamin (142)', 'Defoe, Daniel (143)', 'Blake, William (144)', 'Montaigne, Michel de (145)', 'Dante Alighieri (146)', 'Kipling, Rudyard (149)', 'Dostoyevsky, Fyodor (150)', 'Homer (151)', 'Nietzsche, Friedrich Wilhelm (152)', 'Voltaire (153)', 'Babcock & Wilcox Company (154)', 'Shaw, Bernard (155)', 'Shakespeare, William (156)', 'Long, William J. (William Joseph) (159)', 'Bierce, Ambrose (160)', 'Locke, John (161)', 'Baum, L. Frank (Lyman Frank) (164)', 'Mill, John Stuart (165)', 'Jerome, Jerome K. (Jerome Klapka) (167)', 'Wells, H. G. (Herbert George) (169)', 'Equiano, Olaudah (170)', 'Sinclair, Upton (171)', 'Salten, Felix (172)', 'Thoreau, Henry David (173)', 'Tocqueville, Alexis de (176)', 'Maupassant, Guy de (177)', 'Wood, Thomas (178)', 'Rowlandson, Mary White (180)', 'Stowe, Harriet Beecher (181)', 'Benedict, Ralph Paine (182)', 'Irving, Washington (183)', 'Verne, Jules (184)', 'Christie, Agatha (186)', 'London, Jack (187)', 'Montgomery, L. M. (Lucy Maud) (188)', 'Cervantes Saavedra, Miguel de (190)', 'Dewey, John (191)', 'Marlowe, Christopher (193)', 'Wharton, Edith (194)', 'Milton, John (195)', 'More, Thomas, Saint (197)', 'Berens, E. M. (198)', 'Paine, Thomas (200)']);
+	});
+
+
 	opaTest("Navigation between tabs", function (Given, When, Then) {
 		When.onTheOPAPage.iOpenTheValueHelpForFilterField({label: "TestField"});
 		When.onTheOPAPage.iNavigateToValueHelpContent({label: "My Define Conditions Panel"});
@@ -191,7 +206,7 @@ sap.ui.define([
 		Then.iTeardownMyAppFrame();
 	});
 
-	var oFilterBarConfigs = {
+	const oFilterBarConfigs = {
 		"Default FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-2",
 		"Dedicated FilterBar": "test-resources/sap/ui/mdc/integration/valuehelp/index.html?view=sap.ui.v4demo.view.OPA-4"
 	};

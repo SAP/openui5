@@ -348,10 +348,20 @@ sap.ui.define([
 		assert.ok(oErrorSpy.calledWith(sinon.match(/data type/).and(sinon.match(/could not be found/))), "access to non-existing type should produce an error message in the log");
 		assert.ok(!oWarningSpy.called, "no warnings should be produced");
 
-		assert.strictEqual(DataType.getType("toString"), DataType.getType("any"), "'toString' should not resolve to something");
-		assert.strictEqual(DataType.getType("hasOwnProperty"), DataType.getType("any"), "'hasOwnProperty' should not resolve to something");
+		// eslint-disable-next-line no-undef-init, prefer-const
+		let expectedType = undefined;
+		/**
+		 * @deprecated w/o a global lookup, toString and hasOwnProperty won't be resolved to 'any'
+		 */
+		expectedType = DataType.getType("any");
+
+		assert.strictEqual(DataType.getType("toString"), expectedType, "'toString' should not resolve to something");
+		assert.strictEqual(DataType.getType("hasOwnProperty"), expectedType, "'hasOwnProperty' should not resolve to something");
 	});
 
+	/**
+	 * @deprecated
+	 */
 	QUnit.test("invalid type", function (assert) {
 		var oWarningSpy = this.spy(Log, "warning");
 		var oErrorSpy = this.spy(Log, "error");
@@ -364,7 +374,8 @@ sap.ui.define([
 
 		assert.strictEqual(DataType.getType("sap.ui.base.Object"), DataType.getType("any"), "access to an invalid type should fallback to type 'any'");
 		assert.ok(oWarningSpy.calledWith(sinon.match(/not a valid data type/)), "access to an invalid type should produce a warning message in the log");
-		assert.ok(!oErrorSpy.called, "no errors should be produced");
+		assert.ok(oErrorSpy.called, "deprecation error should be logged");
+		assert.ok(oErrorSpy.calledWith(sinon.match(/Defining enums via globals is deprecated/)), "deprecation error should be logged");
 	});
 
 

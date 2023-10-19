@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/Suggestions.css",
-    content: ".ui5-suggestions-popover {\n\tbox-shadow: var(--sapContent_Shadow1);\n}\n\n.ui5-suggestions-popover::part(header),\n.ui5-suggestions-popover::part(content) {\n\tpadding: 0;\n}\n\n.ui5-suggestions-popover::part(footer) {\n\tpadding: 0 1rem;\n}\n\n.ui5-suggestions-popover [ui5-li],\n.ui5-suggestions-popover [ui5-li-suggestion-item] {\n\theight: var(--_ui5_list_item_dropdown_base_height);\n}\n\n.ui5-suggestions-popover [ui5-li]::part(icon),\n.ui5-suggestions-popover [ui5-li-suggestion-item]::part(icon) {\n\tcolor: var(--sapList_TextColor);\n}\n\n.input-root-phone.native-input-wrapper {\n\tdisplay: contents;\n}\n\n.input-root-phone.native-input-wrapper::before {\n\tdisplay: none;\n}\n\n.native-input-wrapper .ui5-input-inner-phone {\n\tmargin: 0;\n}"
+    content: ".ui5-suggestions-popover{box-shadow:var(--sapContent_Shadow1)}.ui5-suggestions-popover::part(content),.ui5-suggestions-popover::part(header){padding:0}.ui5-suggestions-popover::part(footer){padding:0 1rem}.ui5-suggestions-popover [ui5-li-suggestion-item]::part(icon),.ui5-suggestions-popover [ui5-li]::part(icon){color:var(--sapList_TextColor)}.input-root-phone.native-input-wrapper{display:contents}.input-root-phone.native-input-wrapper:before{display:none}.native-input-wrapper .ui5-input-inner-phone{margin:0}"
   };
   var _default = styleData;
   _exports.default = _default;

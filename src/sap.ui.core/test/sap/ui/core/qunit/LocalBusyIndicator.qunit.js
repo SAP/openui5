@@ -8,13 +8,13 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/qunit/QUnitUtils"
-], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Core, Element, XMLView, KeyCodes, jQuery, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(LocalBusyIndicatorSupport, BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
@@ -114,7 +114,7 @@ sap.ui.define([
 			this.oFocusAfter = new Button("FocusAfter").placeAt("target1");
 			this.oSlider = new Slider().placeAt("target2");
 
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach : function() {
@@ -286,7 +286,7 @@ sap.ui.define([
 
 			this.oSlider = new Slider().placeAt("target2");
 
-			Core.applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach : function() {
@@ -381,13 +381,13 @@ sap.ui.define([
 		// setup the busy view
 		return XMLView.create({
 			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" busyIndicatorDelay="0"></mvc:View>'
-		}).then(function(myView) {
+		}).then(async function(myView) {
 			myView.placeAt('target1');
-			Core.applyChanges();
+			await nextUIUpdate();
 			myView.setBusy(true);
 			// this rerendering is crucial to test the behavior
 			myView.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 			setTimeout(function() {
 				// assert
 				assert.ok(myView.$("busyIndicator").length, "BusyIndicator rendered");
@@ -439,7 +439,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("OnBeforeRendering", function(assert) {
+	QUnit.test("OnBeforeRendering", async function(assert) {
 		var done = assert.async();
 
 		this.oButton.setBusyIndicatorDelay(0);
@@ -447,7 +447,7 @@ sap.ui.define([
 		this.oButton.placeAt("target1");
 		this.oButton.setBusy(true);
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// before delegate
 		this.oButton.addDelegate({
@@ -484,14 +484,14 @@ sap.ui.define([
 
 		// force a rendering
 		this.oButton.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 	});
 
-	QUnit.test("OnAfterRendering", function(assert) {
+	QUnit.test("OnAfterRendering", async function(assert) {
 		var done = assert.async();
 		assert.expect(4);
 		this.oButton.placeAt("target1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var that = this;
 
 		setTimeout(function() {
@@ -511,7 +511,7 @@ sap.ui.define([
 		}, 200);
 	});
 
-	QUnit.test("Ensuring DelayedCall Only Used Once", function(assert) {
+	QUnit.test("Ensuring DelayedCall Only Used Once", async function(assert) {
 		var done = assert.async();
 		assert.expect(2);
 
@@ -530,7 +530,7 @@ sap.ui.define([
 		};
 		this.oButton.addDelegate(oOnAfterRenderingDelegate, false, this);
 		this.oButton.placeAt("target1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		var that = this;
 
 		setTimeout(function() {
@@ -553,7 +553,7 @@ sap.ui.define([
 
 	QUnit.module("Busy Animation");
 
-	QUnit.test("Check if small Animation is used", function(assert) {
+	QUnit.test("Check if small Animation is used", async function(assert) {
 		var done = assert.async();
 
 		this.oBtn = new Button({
@@ -570,7 +570,7 @@ sap.ui.define([
 		this.oBtn.addDelegate(this.oDelegate);
 		this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -589,7 +589,7 @@ sap.ui.define([
 		}.bind(this), 50);
 	});
 
-	QUnit.test("Check if small Animation is used", function(assert) {
+	QUnit.test("Check if small Animation is used", async function(assert) {
 		var done = assert.async();
 
 		this.oBtn = new Button({
@@ -606,7 +606,7 @@ sap.ui.define([
 		this.oBtn.addDelegate(this.oDelegate);
 		this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -625,7 +625,7 @@ sap.ui.define([
 		}.bind(this), 50);
 	});
 
-	QUnit.test("Check if animations are stacked", function(assert) {
+	QUnit.test("Check if animations are stacked", async function(assert) {
 		var done = assert.async();
 		this.oVBox = new VBox({
 			items : [
@@ -642,7 +642,7 @@ sap.ui.define([
 			busy : true
 		}).placeAt("target3");
 
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		setTimeout(function() {
 			var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
@@ -684,7 +684,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("on control which is migrated with the new renderer mechanism", function(assert) {
+	QUnit.test("on control which is migrated with the new renderer mechanism", async function(assert) {
 		// add one event delegate which set the busy state before the control is rerendered
 		this.oButton.addEventDelegate({
 			onBeforeRendering: function() {
@@ -693,14 +693,14 @@ sap.ui.define([
 		}, this.oButton);
 
 		this.oButton.placeAt("target1");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oButton.setBusy(false);
 		// after reset the busy state, the control should be able to react to click event
 		this.testClickEventOn(this.oButton, assert);
 
 		// rerender the control to activate the busy state (problem only occurs with 2nd. rendering)
 		this.oButton.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oButton.setBusy(false);
 		// after reset the busy state, the control should be able to react to click event
 		this.testClickEventOn(this.oButton, assert);

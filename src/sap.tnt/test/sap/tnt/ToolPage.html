@@ -19,7 +19,7 @@
 				key: 'rootpage1',
 				href: '#/rootpage1',
 				items: [{
-					title: 'Child Item 1',
+					title: 'Child Item 1 Child Item 1 Child Item 1 Child Item 1',
 					key: 'page1',
 					href: '#/page1'
 				}, {
@@ -264,6 +264,7 @@
 		model.setData(data);
 
 		var sideNavigation = new sap.tnt.SideNavigation("SNav", {
+			width: "30rem",
 			expanded: false,
 			itemSelect: function (event) {
 				navContainer.to(event.getParameter('item').getKey())
@@ -412,7 +413,7 @@
 					type: sap.m.ButtonType.Transparent,
 					icon: "sap-icon://search",
 					visible: false
-				}),	
+				}),
 				new sap.m.OverflowToolbarButton({
 					tooltip: "Action 1",
 					text: "Action 1",

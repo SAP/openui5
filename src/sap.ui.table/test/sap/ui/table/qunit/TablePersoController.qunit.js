@@ -219,7 +219,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -228,7 +228,7 @@ sap.ui.define([
 								visible: false,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -237,7 +237,7 @@ sap.ui.define([
 								visible: false,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 						]
@@ -333,7 +333,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -342,7 +342,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -351,7 +351,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 						]
@@ -451,7 +451,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -460,7 +460,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -469,7 +469,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 
@@ -559,7 +559,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -568,7 +568,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							},
 							{
@@ -577,7 +577,7 @@ sap.ui.define([
 								visible: true,
 								width: "",
 								sorted: false,
-								sortOrder: "Ascending", /*filtered: false, filterValue: "",*/
+								sortOrder: "None", /*filtered: false, filterValue: "",*/
 								grouped: false
 							}
 

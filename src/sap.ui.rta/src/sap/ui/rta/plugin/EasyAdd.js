@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/m/Button"
 ], function(
+	Lib,
 	AdditionalElementsPlugin,
 	OverlayRegistry,
 	Button
@@ -26,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.plugin.EasyAdd
-	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var EasyAdd = AdditionalElementsPlugin.extend("sap.ui.rta.plugin.EasyAdd", /** @lends sap.ui.rta.plugin.EasyAdd.prototype */ {
 		metadata: {
@@ -43,7 +44,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype.registerElementOverlay = function(oOverlay) {
+	EasyAdd.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oControl.getMetadata().getName() === "sap.uxap.ObjectPageSection" && this.hasStableId(oOverlay)) {
 			oOverlay.addStyleClass("sapUiRtaPersAdd");
@@ -93,7 +95,7 @@ sap.ui.define([
 			}
 		}
 
-		AdditionalElementsPlugin.prototype.registerElementOverlay.apply(this, arguments);
+		AdditionalElementsPlugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -102,7 +104,8 @@ sap.ui.define([
 	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype.deregisterElementOverlay = function(oOverlay) {
+	EasyAdd.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		var oControl = oOverlay.getElement();
 		if (oOverlay._oAddButton) {
 			oOverlay._oAddButton.destroy();
@@ -117,7 +120,7 @@ sap.ui.define([
 			});
 		}
 
-		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		AdditionalElementsPlugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -126,8 +129,9 @@ sap.ui.define([
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	EasyAdd.prototype._isEditable = function(oOverlay) {
-		return AdditionalElementsPlugin.prototype._isEditable.apply(this, arguments).then(function(bIsEditable) {
+	EasyAdd.prototype._isEditable = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		return AdditionalElementsPlugin.prototype._isEditable.apply(this, aArgs).then(function(bIsEditable) {
 			if (oOverlay._oAddButton) {
 				var bIsLayout = oOverlay.hasStyleClass("sapUiRtaPersAddTop");
 				var sOverlayIsSibling = bIsLayout ? "asChild" : "asSibling";
@@ -155,15 +159,15 @@ sap.ui.define([
 	 */
 	EasyAdd.prototype._addButton = function(oOverlay, fnCallback, oOverlayDom, sControlName, bOverlayIsSibling) {
 		var bIsEditable = oOverlay.getEditableByPlugins().indexOf(this._retrievePluginName(bOverlayIsSibling)) > -1;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
-		var sId = oOverlay.getId() + "-AddButton";
+		var sId = `${oOverlay.getId()}-AddButton`;
 		var oHtmlButtonOuter = document.createElement("div");
 		oHtmlButtonOuter.classList.add("sapUiRtaPersAddIconOuter");
 		oHtmlButtonOuter.setAttribute("draggable", "true");
 		oHtmlButtonOuter.setAttribute("tabindex", -1);
 		oOverlay._oAddButton = new Button(sId, {
-			text: oTextResources.getText("CTX_ADD_ELEMENTS", sControlName),
+			text: oTextResources.getText("CTX_ADD_ELEMENTS", [sControlName]),
 			icon: "sap-icon://add",
 			enabled: bIsEditable
 		})

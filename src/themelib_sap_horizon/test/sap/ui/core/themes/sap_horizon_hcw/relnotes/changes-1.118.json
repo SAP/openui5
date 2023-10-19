@@ -1,7 +1,95 @@
 {
   "1.118.0": {
-    "date": "July 2023",
+    "date": "August 2023",
     "notes": [
+      {
+        "id": "28011c2391622fe8b58dfd5f153d12c8959a00fc",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Tab text no longer gets clipped in high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      },
+      {
+        "id": "cf1401eee936fe6b6921ad751f4e678ba933528c",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Apply correct theme parameters for Horizon themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122290"
+          }
+        ]
+      },
+      {
+        "id": "3154d64beb332195666bccdb75242f48648c024e",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: adjust grid cell selection display",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380122447"
+          }
+        ]
+      },
+      {
+        "id": "3915d9c95515e7a09315b86bd7af94e2973b693f",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Seaparator adjused for text only tabs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380085007"
+          }
+        ]
+      },
+      {
+        "id": "3c0f8d3339265c972834750b8cf5b0df867dd85a",
+        "type": "FIX",
+        "text": " sap.tnt.SideNavigation: Visual adjustments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114498"
+          }
+        ]
+      },
+      {
+        "id": "589dcfce01b17df2ce797c2b2adc29b9a7ebb02e",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fixed misalignment in table cell",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270143234"
+          }
+        ]
+      },
+      {
+        "id": "50e62dc191fa0fc73d65b33e7a7cd9e63b1b2fca",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Fixed incorrect overlap of parent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380057037"
+          }
+        ]
+      },
+      {
+        "id": "fd967562d6c0bb1ec2f7d7174e6671d087dbbe04",
+        "type": "FIX",
+        "text": " sap.m.Panel: round corners when sticky header is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380107587"
+          }
+        ]
+      },
       {
         "id": "c707f6fb06a8abe20aa5532bd0f83d46eac99a82",
         "type": "FIX",

@@ -3,33 +3,35 @@
  */
 
 sap.ui.define([
-	"sap/base/util/ObjectPath",
+	"sap/base/i18n/Localization",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/uid",
-	"sap/base/util/UriParameters",
+	"sap/base/util/restricted/_isEqual",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/core/Component",
+	"sap/ui/core/Element",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Scenario",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/core/mvc/View",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/mvc/View"
 ], function(
-	ObjectPath,
+	Localization,
 	isPlainObject,
 	uid,
-	UriParameters,
+	isEqual,
 	Log,
 	SyncPromise,
 	ManagedObject,
 	BaseTreeModifier,
 	Component,
+	Element,
+	FlexConfiguration,
 	Scenario,
 	hasher,
-	View,
-	Configuration
+	View
 ) {
 	"use strict";
 
@@ -40,21 +42,21 @@ sap.ui.define([
 	 */
 	function getComponentType(oManifest) {
 		// manifest instance
-		if (oManifest && oManifest.getEntry) {
-			return oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type;
+		if (oManifest?.getEntry) {
+			return oManifest.getEntry?.("sap.app")?.type;
 		}
 
 		// raw manifest
-		return oManifest && oManifest["sap.app"] && oManifest["sap.app"].type;
+		return oManifest?.["sap.app"]?.type;
 	}
 
 	function getStartUpParameter(oComponentData, sParameterName) {
-		if (oComponentData && oComponentData.startupParameters && sParameterName) {
-			if (Array.isArray(oComponentData.startupParameters[sParameterName])) {
-				return oComponentData.startupParameters[sParameterName][0];
-			}
+		if (oComponentData?.startupParameters && sParameterName && Array.isArray(oComponentData.startupParameters[sParameterName])) {
+			return oComponentData.startupParameters[sParameterName][0];
 		}
 	}
+
+	let _isUshellContainerInitialized = false;
 
 	/**
 	 * Provides utility functions for the SAPUI5 flexibility library
@@ -67,16 +69,13 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.rta
 	 */
-	var Utils = {
-		isVariantByStartupParameter: function(oControl) {
+	const Utils = {
+		isVariantByStartupParameter(oControl) {
 			// determine UI5 component out of given control
-			if (oControl) {
-				var oAppComponent = this.getAppComponentForControl(oControl);
-				if (oAppComponent && oAppComponent.getComponentData) {
-					return !!getStartUpParameter(oAppComponent.getComponentData(), "sap-app-id");
-				}
+			const oAppComponent = this.getAppComponentForControl(oControl);
+			if (oAppComponent?.getComponentData) {
+				return !!getStartUpParameter(oAppComponent.getComponentData(), "sap-app-id");
 			}
-
 			return false;
 		},
 
@@ -91,19 +90,8 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
-		getAppDescriptor: function(oControl) {
-			// determine UI5 component out of given control
-			if (oControl) {
-				var oComponent = this.getAppComponentForControl(oControl);
-
-				// determine manifest out of found component
-				if (oComponent && oComponent.getMetadata) {
-					var oComponentMetaData = oComponent.getMetadata();
-					if (oComponentMetaData && oComponentMetaData.getManifestObject) {
-						return oComponentMetaData.getManifestObject().getJson();
-					}
-				}
-			}
+		getAppDescriptor(oControl) {
+			return this.getAppComponentForControl(oControl)?.getMetadata?.()?.getManifestObject?.().getJson();
 		},
 
 		/**
@@ -117,7 +105,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isBinding: function(vPropertyValue) {
+		isBinding(vPropertyValue) {
 			return (
 				(
 					typeof vPropertyValue === "string"
@@ -145,12 +133,12 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		getComponentForControl: function(oControl) {
+		getComponentForControl(oControl) {
 			function getComponentIdForControl(oControl) {
-				var sComponentId = Component.getOwnerIdFor(oControl);
+				const sComponentId = Component.getOwnerIdFor(oControl);
 				if (!sComponentId) {
-					if (oControl && typeof oControl.getParent === "function") {
-						var oParent = oControl.getParent();
+					if (typeof oControl?.getParent === "function") {
+						const oParent = oControl.getParent();
 						if (oParent) {
 							return getComponentIdForControl(oParent);
 						}
@@ -161,7 +149,7 @@ sap.ui.define([
 
 			// determine UI5 component out of given control
 			if (oControl) {
-				var sComponentId = getComponentIdForControl(oControl);
+				const sComponentId = getComponentIdForControl(oControl);
 				if (sComponentId) {
 					return Component.get(sComponentId);
 				}
@@ -177,23 +165,23 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		getAppComponentForControl: function(oControl) {
-			var oComponent = oControl instanceof Component ? oControl : Utils.getComponentForControl(oControl);
+		getAppComponentForControl(oControl) {
+			let oComponent = oControl instanceof Component ? oControl : Utils.getComponentForControl(oControl);
 
 			// special case for Fiori Elements to reach the real appComponent
-			if (oComponent && oComponent.getAppComponent && oComponent.getAppComponent() instanceof Component) {
+			if (oComponent?.getAppComponent?.() instanceof Component) {
 				return oComponent.getAppComponent();
 			}
 
 			// special case for OVP
-			if (oComponent && oComponent.oComponentData && oComponent.oComponentData.appComponent) {
+			if (oComponent?.oComponentData?.appComponent) {
 				return oComponent.oComponentData.appComponent;
 			}
 
-			if (oComponent && oComponent.getManifestEntry) {
+			if (oComponent?.getManifestEntry) {
 				var oSapApp = oComponent.getManifestEntry("sap.app");
 
-				if (oSapApp && oSapApp.type && oSapApp.type !== "application") {
+				if (oSapApp?.type && oSapApp.type !== "application") {
 					if (oComponent instanceof Component) {
 						// we need to call this method only when the component is an instance of Component in order to walk up the tree
 						// returns owner app component
@@ -216,7 +204,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		getAppComponentForSelector: function(oSelector) {
+		getAppComponentForSelector(oSelector) {
 			return oSelector.appComponent || Utils.getAppComponentForControl(oSelector);
 		},
 
@@ -231,12 +219,12 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		getViewForControl: function(oControl) {
+		getViewForControl(oControl) {
 			if (oControl instanceof View) {
 				return oControl;
 			}
 
-			if (oControl && typeof oControl.getParent === "function") {
+			if (typeof oControl?.getParent === "function") {
 				oControl = oControl.getParent();
 				return Utils.getViewForControl(oControl);
 			}
@@ -252,21 +240,14 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.transport.Transport
 		 */
-		getClient: function() {
-			var oUriParams;
-			var sClient;
-			oUriParams = UriParameters.fromQuery(window.location.search);
-			sClient = oUriParams.get("sap-client");
-			return sClient || undefined;
+		getClient() {
+			return new URLSearchParams(window.location.search).get("sap-client");
 		},
 
-		getLrepUrl: function() {
-			var aFlexibilityServices = Configuration.getFlexibilityServices();
-			var oLrepConfiguration = aFlexibilityServices.find(function(oServiceConfig) {
-				return oServiceConfig.connector === "LrepConnector";
-			});
-
-			return oLrepConfiguration ? oLrepConfiguration.url : "";
+		getLrepUrl() {
+			const aFlexibilityServices = FlexConfiguration.getFlexibilityServices();
+			const oLrepConfiguration = aFlexibilityServices.find((oServiceConfig) => oServiceConfig.connector === "LrepConnector");
+			return oLrepConfiguration?.url || "";
 		},
 
 		/**
@@ -277,13 +258,13 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		getCurrentLanguage: function() {
-			var sLanguage = Configuration.getLanguage();
-			if (!sLanguage || typeof sLanguage !== "string") {
+		getCurrentLanguage() {
+			const sLanguage = Localization.getLanguage();
+			if (typeof sLanguage !== "string") {
 				return "";
 			}
 
-			var nIndex = sLanguage.indexOf("-");
+			const nIndex = sLanguage.indexOf("-");
 			if ((nIndex < 0) && (sLanguage.length <= 2)) {
 				return sLanguage.toUpperCase();
 			}
@@ -301,22 +282,16 @@ sap.ui.define([
 		 * @returns {string} control type of the control - undefined if controlType cannot be determined
 		 * @private
 		 */
-		getControlType: function(oControl) {
-			var oMetadata;
-			if (oControl && typeof oControl.getMetadata === "function") {
-				oMetadata = oControl.getMetadata();
-				if (oMetadata && typeof oMetadata.getElementName === "function") {
-					return oMetadata.getElementName();
-				}
-			}
+		getControlType(oControl) {
+			return oControl?.getMetadata?.()?.getElementName?.();
 		},
 
 		/**
 		 * See {@link sap.ui.core.BaseTreeModifier#checkControlId} method
 		 */
-		checkControlId: function(vControl, oAppComponent) {
+		checkControlId(vControl, oAppComponent) {
 			if (!oAppComponent) {
-				vControl = vControl instanceof ManagedObject ? vControl : sap.ui.getCore().byId(vControl);
+				vControl = vControl instanceof ManagedObject ? vControl : Element.getElementById(vControl);
 				oAppComponent = Utils.getAppComponentForControl(vControl);
 			}
 			return BaseTreeModifier.checkControlId(vControl, oAppComponent);
@@ -333,11 +308,8 @@ sap.ui.define([
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {object} Returns the parsed URL hash object or an empty object if ushell container is not available
 		 */
-		getParsedURLHash: function(oURLParsingService) {
-			if (oURLParsingService) {
-				return oURLParsingService.parseShellHash(hasher.getHash()) || {};
-			}
-			return {};
+		getParsedURLHash(oURLParsingService) {
+			return oURLParsingService?.parseShellHash(hasher.getHash()) || {};
 		},
 
 		/**
@@ -347,8 +319,8 @@ sap.ui.define([
 		 * @returns {string} url parameter
 		 * @private
 		 */
-		getUrlParameter: function(sParameterName) {
-			return UriParameters.fromQuery(window.location.search).get(sParameterName);
+		getUrlParameter(sParameterName) {
+			return new URLSearchParams(window.location.search).get(sParameterName);
 		},
 
 		/**
@@ -356,27 +328,29 @@ sap.ui.define([
 		 *
 		 * @returns {object|undefined} Returns UShell container object if available or undefined
 		 */
-		getUshellContainer: function() {
-			// TODO wait until  FLP does offer anything
-			return ObjectPath.get("sap.ushell.Container");
+		getUshellContainer() {
+			const oContainer = sap.ui.require("sap/ushell/Container");
+			// Workaround to verify whether container is bootstrapped or not before FLP offer better solution
+			if (oContainer && !_isUshellContainerInitialized) {
+				try {
+					oContainer.getLogonSystem();
+					_isUshellContainerInitialized = true;
+				} catch (oError) {
+					return undefined;
+				}
+			}
+			return oContainer;
 		},
 
-		createDefaultFileName: function(sNameAddition) {
-			var sFileName = uid().replace(/-/g, "_");
-			if (sNameAddition) {
-				sFileName += "_" + sNameAddition;
-			}
-			return sFileName;
+		createDefaultFileName(sNameAddition) {
+			const sFileName = uid().replace(/-/g, "_");
+			return sNameAddition ? `${sFileName}_${sNameAddition}` : sFileName;
 		},
 
-		createNamespace: function(oPropertyBag, sFileType) {
-			var sSubfolder = "changes";
-			if (sFileType === "ctrl_variant") {
-				sSubfolder = "variants";
-			}
-			var sReferenceName = oPropertyBag.reference.replace(".Component", "");
-			var sNamespace = "apps/" + sReferenceName + "/" + sSubfolder + "/";
-			return sNamespace;
+		createNamespace(oPropertyBag, sFileType) {
+			const sSubfolder = sFileType === "ctrl_variant" ? "variants" : "changes";
+			const sReferenceName = oPropertyBag.reference.replace(".Component", "");
+			return `apps/${sReferenceName}/${sSubfolder}/`;
 		},
 
 		/**
@@ -388,43 +362,31 @@ sap.ui.define([
 		 * @param {string} sProjectId project ID
 		 * @returns {string} Returns the root LRep namespace
 		 */
-		buildLrepRootNamespace: function(sBaseId, sScenario, sProjectId) {
-			var sRootNamespace = "apps/";
-			var oError = new Error("Error in sap.ui.fl.Utils#buildLrepRootNamespace: ");
+		buildLrepRootNamespace(sBaseId, sScenario, sProjectId) {
+			const sRootNamespace = "apps";
+			const sBaseErrorMessage = "Error in sap.ui.fl.Utils#buildLrepRootNamespace:";
+
 			if (!sBaseId) {
-				oError.message += "for every scenario you need a base ID";
-				throw oError;
+				throw new Error(`${sBaseErrorMessage} for every scenario you need a base ID`);
 			}
 
 			switch (sScenario) {
 				case Scenario.VersionedAppVariant:
-					if (!sProjectId) {
-						oError.message += "in a versioned app variant scenario you additionally need a project ID";
-						throw oError;
-					}
-					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
-					break;
 				case Scenario.AppVariant:
 					if (!sProjectId) {
-						oError.message += "in an app variant scenario you additionally need a project ID";
-						throw oError;
+						throw new Error(`${sBaseErrorMessage} in the ${sScenario} scenario you additionally need a project ID`);
 					}
-					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
-					break;
+					return `${sRootNamespace}/${sBaseId}/appVariants/${sProjectId}/`;
 				case Scenario.AdaptationProject:
 					if (!sProjectId) {
-						oError.message += "in a adaptation project scenario you additionally need a project ID";
-						throw oError;
+						throw new Error(`${sBaseErrorMessage} in the ${sScenario} scenario you additionally need a project ID`);
 					}
-					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
-					break;
+					return `${sRootNamespace}/${sBaseId}/adapt/${sProjectId}/`;
 				case Scenario.FioriElementsFromScratch:
 				case Scenario.UiAdaptation:
 				default:
-					sRootNamespace += sBaseId + "/";
+					return `${sRootNamespace}/${sBaseId}/`;
 			}
-
-			return sRootNamespace;
 		},
 
 		/** Returns <code>true</code> if the passed manifest object is of type "application".
@@ -434,9 +396,8 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isApplication: function(oManifest) {
-			var sComponentType = getComponentType(oManifest);
-			return sComponentType === "application";
+		isApplication(oManifest) {
+			return getComponentType(oManifest) === "application";
 		},
 
 		/** Returns <code>true</code> if the passed component is an application component.
@@ -446,7 +407,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isApplicationComponent: function(oComponent) {
+		isApplicationComponent(oComponent) {
 			return oComponent instanceof Component && Utils.isApplication(oComponent.getManifestObject());
 		},
 
@@ -457,8 +418,8 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		isEmbeddedComponent: function(oComponent) {
-			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+		isEmbeddedComponent(oComponent) {
+			const oAppComponent = Utils.getAppComponentForControl(oComponent);
 			return !!(
 				oComponent instanceof Component
 				&& getComponentType(oComponent.getManifestObject()) === "component"
@@ -479,34 +440,10 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl
 		 */
-		indexOfObject: function(aArray, oObject) {
-			var iObjectIndex = -1;
-			aArray.some(function(oArrayObject, iIndex) {
-				var aKeysArray;
-				var aKeysObject;
-				if (!oArrayObject) {
-					aKeysArray = [];
-				} else {
-					aKeysArray = Object.keys(oArrayObject);
-				}
-
-				if (!oObject) {
-					aKeysObject = [];
-				} else {
-					aKeysObject = Object.keys(oObject);
-				}
-				var bSameNumberOfAttributes = aKeysArray.length === aKeysObject.length;
-				var bContains = bSameNumberOfAttributes && !aKeysArray.some(function(sKey) {
-					return oArrayObject[sKey] !== oObject[sKey];
-				});
-
-				if (bContains) {
-					iObjectIndex = iIndex;
-				}
-
-				return bContains;
+		indexOfObject(aArray, oObject) {
+			return aArray.findIndex((oArrayObject) => {
+				return isEqual(oArrayObject, oObject);
 			});
-			return iObjectIndex;
 		},
 
 		/**
@@ -519,7 +456,7 @@ sap.ui.define([
 		 * @param {boolean} bAsync - true: asynchronous processing with Promise, false: synchronous processing with FakePromise
 		 * @returns {Promise} Returns empty resolved Promise or FakePromise when all passed promises inside functions have been executed
 		 */
-		execPromiseQueueSequentially: function(aPromiseQueue, bThrowError, bAsync) {
+		execPromiseQueueSequentially(aPromiseQueue, bThrowError, bAsync) {
 			if (aPromiseQueue.length === 0) {
 				if (bAsync) {
 					return Promise.resolve();
@@ -542,7 +479,7 @@ sap.ui.define([
 				})
 				.catch(function(e) {
 					var sErrorMessage = "Error during execPromiseQueueSequentially processing occurred";
-					sErrorMessage += e ? ": " + e.message : "";
+					sErrorMessage += e ? `: ${e.message}` : "";
 					Log.error(sErrorMessage, e);
 
 					if (bThrowError) {
@@ -561,7 +498,8 @@ sap.ui.define([
 		/**
 		 * Class that behaves like a promise (es6), but is synchronous. Implements <code>then</code> and <code>catch</code> functions.
 		 * After instantiating can be used similar to standard Promises but synchronously.
-		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in further processing.
+		 * As soon as one of the callback functions returns a Promise the asynchronous Promise replaces the FakePromise in
+		 * further processing.
 		 *
 		 * @class sap.ui.fl.Utils.FakePromise
 		 * @param {any} vInitialValue - value on resolve FakePromise
@@ -572,6 +510,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
+		// eslint-disable-next-line object-shorthand
 		FakePromise: function(vInitialValue, vError, sInitialPromiseIdentifier) {
 			Utils.FakePromise.fakePromiseIdentifier = "sap.ui.fl.Utils.FakePromise";
 			this.vValue = vInitialValue;
@@ -644,17 +583,14 @@ sap.ui.define([
 		 * @param {string} sChangeId Id of the change that should be retrieved
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.FlexObject | undefined} Returns the change if it is in the map, otherwise undefined
 		 */
-		getChangeFromChangesMap: function(mChanges, sChangeId) {
-			var oResult;
-			Object.keys(mChanges).forEach(function(sControlId) {
-				mChanges[sControlId].some(function(oChange) {
-					if (oChange.getId() === sChangeId) {
-						oResult = oChange;
-						return true;
-					}
-				});
+		getChangeFromChangesMap(mChanges, sChangeId) {
+			let oMatch;
+			Object.values(mChanges).some((aControlChanges) => {
+				oMatch = aControlChanges.find((oChange) => oChange.getId() === sChangeId);
+				return oMatch;
 			});
-			return oResult;
+
+			return oMatch;
 		},
 
 		/**
@@ -666,20 +602,20 @@ sap.ui.define([
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {string} The modified URL
 		 */
-		handleUrlParameters: function(sParameters, sParameterName, sParameterValue, oURLParsingService) {
-			if (this.hasParameterAndValue(sParameterName, sParameterValue, oURLParsingService)) {
+		handleUrlParameters(sParameters, sParameterName, sParameterValue, oURLParsingService) {
+			if (Utils.hasParameterAndValue(sParameterName, sParameterValue, oURLParsingService)) {
 				if (sParameters.startsWith("?")) {
 					sParameters = sParameters.substr(1, sParameters.length);
 				}
-				var aFilterUrl = sParameters.split("&").filter(function(sParameter) {
-					return sParameter !== sParameterName + "=" + sParameterValue;
+				const aFilterUrl = sParameters.split("&").filter((sParameter) => {
+					return sParameter !== `${sParameterName}=${sParameterValue}`;
 				});
 				sParameters = "";
 				if (aFilterUrl.length > 0) {
-					sParameters = "?" + aFilterUrl.join("&");
+					sParameters = `?${aFilterUrl.join("&")}`;
 				}
 			} else {
-				sParameters += (sParameters.length > 0 ? "&" : "?") + sParameterName + "=" + sParameterValue;
+				sParameters += `${(sParameters.length > 0 ? "&" : "?") + sParameterName}=${sParameterValue}`;
 			}
 			return sParameters;
 		},
@@ -692,8 +628,8 @@ sap.ui.define([
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {boolean} <code>true</code> if the parameter and the given value are in the URL
 		 */
-		hasParameterAndValue: function(sParameterName, sParameterValue, oURLParsingService) {
-			return this.getParameter(sParameterName, oURLParsingService) === sParameterValue;
+		hasParameterAndValue(sParameterName, sParameterValue, oURLParsingService) {
+			return Utils.getParameter(sParameterName, oURLParsingService) === sParameterValue;
 		},
 
 		/**
@@ -703,14 +639,8 @@ sap.ui.define([
 		 * @param  {sap.ushell.services.URLParsing} oURLParsingService - The Unified Shell's internal URL parsing service
 		 * @returns {string} The value of the given parameter or undefined
 		 */
-		getParameter: function(sParameterName, oURLParsingService) {
-			if (oURLParsingService) {
-				var mParsedHash = Utils.getParsedURLHash(oURLParsingService);
-				return mParsedHash.params &&
-					mParsedHash.params[sParameterName] &&
-					mParsedHash.params[sParameterName][0];
-			}
-			return Utils.getUrlParameter(sParameterName);
+		getParameter(sParameterName, oURLParsingService) {
+			return Utils.getParsedURLHash(oURLParsingService)?.params?.[sParameterName]?.[0] || Utils.getUrlParameter(sParameterName);
 		},
 
 		/**
@@ -719,17 +649,8 @@ sap.ui.define([
 		 * @param {string} sAggregationName - Aggregation name
 		 * @returns {object} Aggregation metadata
 		 */
-		findAggregation: function(oControl, sAggregationName) {
-			if (oControl) {
-				if (oControl.getMetadata) {
-					var oMetadata = oControl.getMetadata();
-					var oAggregations = oMetadata.getAllAggregations();
-					if (oAggregations) {
-						return oAggregations[sAggregationName];
-					}
-				}
-			}
-			return undefined;
+		findAggregation(oControl, sAggregationName) {
+			return oControl?.getMetadata?.()?.getAllAggregations?.()?.[sAggregationName];
 		},
 
 		/**
@@ -738,8 +659,8 @@ sap.ui.define([
 		 * @param {string} sAggregationName - Aggregation name
 		 * @returns {sap.ui.base.ManagedObject[]|Element[]} Aggregation content
 		 */
-		getAggregation: function(oParent, sAggregationName) {
-			var oAggregation = Utils.findAggregation(oParent, sAggregationName);
+		getAggregation(oParent, sAggregationName) {
+			const oAggregation = Utils.findAggregation(oParent, sAggregationName);
 			if (oAggregation) {
 				return oParent[oAggregation._sGetter]();
 			}
@@ -752,13 +673,9 @@ sap.ui.define([
 		 * @param {string} sPropertyName - Property name
 		 * @returns {any} Value of the property
 		 */
-		getProperty: function(oControl, sPropertyName) {
-			var oMetadata = oControl.getMetadata().getPropertyLikeSetting(sPropertyName);
-			if (oMetadata) {
-				var sPropertyGetter = oMetadata._sGetter;
-				return oControl[sPropertyGetter]();
-			}
-			return undefined;
+		getProperty(oControl, sPropertyName) {
+			const sPropertyGetter = oControl.getMetadata().getPropertyLikeSetting(sPropertyName)?._sGetter;
+			return oControl[sPropertyGetter]();
 		},
 
 		/**
@@ -767,9 +684,9 @@ sap.ui.define([
 		 * @param {string} sServiceName UShell service name (e.g. "URLParsing")
 		 * @returns {Promise<object|undefined>} Returns UShell service if available or undefined
 		 */
-		 getUShellService: function(sServiceName) {
+		 getUShellService(sServiceName) {
 			if (sServiceName) {
-				var oUShellContainer = this.getUshellContainer();
+				const oUShellContainer = this.getUshellContainer();
 				if (oUShellContainer) {
 					return oUShellContainer.getServiceAsync(sServiceName);
 				}
@@ -782,18 +699,14 @@ sap.ui.define([
 		 * @param {array} aServiceNames - List of service names
 		 * @returns {Promise<object>} Resolves to an object with the requested ushell services
 		 */
-		getUShellServices: function(aServiceNames) {
-			var aServicePromises = aServiceNames.map(function(sServiceName) {
-				return this.getUShellService(sServiceName);
-			}.bind(this));
-			return Promise.all(aServicePromises).then(function(aServices) {
-				return aServiceNames.reduce(function(mServices, sService, iIndex) {
-					mServices[sService] = aServices && aServices[iIndex];
-					return mServices;
-				}, {});
-			});
+		async getUShellServices(aServiceNames) {
+			const mServices = {};
+			for (const sServiceName of aServiceNames) {
+				mServices[sServiceName] = await this.getUShellService(sServiceName);
+			}
+			return mServices;
 		}
 
 	};
 	return Utils;
-}, true);
+});

@@ -11,7 +11,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given three elements with vertical and horizontal scrollbars...", {
-		beforeEach: function() {
+		beforeEach() {
 			var $content = jQuery("#qunit-fixture");
 
 			var fnCreatePanelWithBiggerSubPanel = function(sId, sColour) {
@@ -25,7 +25,7 @@ function(
 				}).appendTo($content);
 
 				jQuery("<div></div>", {
-					id: sId + "-sub"
+					id: `${sId}-sub`
 				}).css({
 					width: "200px",
 					height: "200px",
@@ -42,7 +42,7 @@ function(
 
 			this.oScrollbarSynchronizer = new ScrollbarSynchronizer();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.$Panel1.remove();
 			this.$Panel2.remove();
 			this.$Panel3.remove();

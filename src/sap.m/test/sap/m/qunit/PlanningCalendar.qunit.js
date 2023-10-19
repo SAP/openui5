@@ -28,7 +28,9 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Islamic"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -1472,7 +1474,9 @@ sap.ui.define([
 		oPC1.setGroupAppointmentsMode(GroupAppointmentsMode.Collapsed);
 		Core.applyChanges();
 	});
-
+	/**
+	 * @deprecated As of version 1.119
+	 */
 	QUnit.test("appointmentsReducedHeight", function(assert) {
 		assert.ok(!oPC1.getAppointmentsReducedHeight(), "AppointmentsReducedHeight is disabled by default");
 		var aRows = oPC1.getRows();
@@ -1801,11 +1805,19 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.ok(oRowHeader.getAvatar().getVisible(),"Avatar is visible when there is icon set");
+
+		oRow.setIcon();
+		Core.applyChanges();
+
+		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.notOk(oRowHeader.getAvatar().getVisible(),"Avatar is not visible when there is no icon set");
 
 		oRow.setIcon("../../ui/unified/images/m_01.png");
 		Core.applyChanges();
 
 		assert.strictEqual(oRowHeader.getAvatar().getSrc(), oRow.getIcon(), "row header icon is sync with Avatar img");
+		assert.ok(oRowHeader.getAvatar().getVisible(),"Avatar is visible when there is icon set");
 	});
 
 	QUnit.test("specialDates in relative period not rendered", function(assert){
@@ -3037,11 +3049,39 @@ sap.ui.define([
 		assert.equal(oIntervalRow.getId(), "PC1-Row1", "row returned");
 	});
 
-	QUnit.test("rowHeaderClick", function (assert) {
+	QUnit.test("intervalselect 1Month View", function (assert) {
+		// Start with oneMonth view
+		//prepare
+		var oStartDate = oPC1.getStartDate();
+		oPC1.setViewKey(CalendarIntervalType.OneMonth);
+		oPC1.setStartDate(UI5Date.getInstance(2015,1,1));
+		Core.applyChanges();
+
+		bIntervalSelect = false;
+		oIntervalStartDate = undefined;
+		oIntervalEndDate = undefined;
+
+		//act
+		qutils.triggerKeydown("PC1-OneMonthsRow-20150301", "ENTER");
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(bIntervalSelect, "intervalSelect fired");
+		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalStartDate), "201503010000", "interval start date returned");
+		assert.equal(oFormatYyyyMMddHHmm.format(oIntervalEndDate), "201503012359", "interval end date returned");
+		assert.ok(!jQuery("#PC1-OneMonthsRow-20150301").hasClass("sapUiCalItemSel"), "interval not longer selected");
+
+		// Cleanup
+		oPC1.setViewKey(CalendarIntervalType.Hour);
+		oPC1.setStartDate(oStartDate);
+		Core.applyChanges();
+	});
+
+	QUnit.test("rowHeaderPress", function (assert) {
 		// Arrange
 		var oSpy,
 			oSecondRow = oPC1.getRows()[1], // Get second row
-			handleRowHeaderClick = function (oEvent) {
+			handleRowHeaderPress = function (oEvent) {
 				var oRow = oEvent.getParameter("row");
 				var sRowHeaderId = oEvent.getParameter("headerId");
 
@@ -3052,8 +3092,8 @@ sap.ui.define([
 				assert.strictEqual(sRowHeaderId, oSecondRow.sId + "-Head", "Returned id must be equal to the second row header id");
 			};
 
-		oSpy = this.spy(handleRowHeaderClick);
-		oPC1.attachEvent("rowHeaderClick", oSpy);
+		oSpy = this.spy(handleRowHeaderPress);
+		oPC1.attachEvent("rowHeaderPress", oSpy);
 
 		// Act - click on the second row header
 		qutils.triggerEvent("click", "PC1-Row2-Head-content");
@@ -3062,7 +3102,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "Event method must be called once");
 
 		// Cleanup
-		oPC1.detachEvent("rowHeaderClick", oSpy);
+		oPC1.detachEvent("rowHeaderPress", oSpy);
 	});
 
 	QUnit.module("Proxy calls", {
@@ -3331,7 +3371,8 @@ sap.ui.define([
 	QUnit.test("keyboard navigation HOME & END for 1 Month view", function(assert) {
 		_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
 		this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
-		this.oPC2.rerender();
+		this.oPC2.invalidate();
+		Core.applyChanges();
 		var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthsRow-";
 
 		jQuery("#" +  sMonthIdPrefix + "20160901").trigger("focus");
@@ -3475,28 +3516,79 @@ sap.ui.define([
 		assert.equal(iSelectedDate, 29, "Start date changes correctly with Back arrow");
 	});
 
+	QUnit.test("Change in date navigation does not reset firstDayOfWeek", function (assert) {
+		// Arrange
+		var oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oShiftToDate = UI5Date.getInstance(2023, 9, 19),
+			oNewStartDate = UI5Date.getInstance(2023, 9, 18);
+
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2.setBuiltInViews(["Week"]);
+		Core.applyChanges();
+
+		// Assert - Default behaviour
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oStartDate, "Start date is October 16th");
+
+		// Act - Set FirstDayOfWeek to wednesday
+		this.oPC2.setFirstDayOfWeek(3);
+		Core.applyChanges();
+
+		// Assert - First day of week is changed to wednesday
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date changes to firstDayOfWeek");
+
+		// Act - Date navigation change
+		this.oPC2.shiftToDate(oShiftToDate);
+		Core.applyChanges();
+
+		// Assert - First day of week has not been reset
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date remains the same after change in date navigation");
+	});
+
+	QUnit.test("CalendarWeekNumbering does not overwrite firstDayOfWeek", function (assert) {
+		// Arrange
+		var oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oNewStartDate = UI5Date.getInstance(2023, 9, 18),
+			oNewStartDate2 = UI5Date.getInstance(2023, 9, 19);
+
+		this.oPC2.setStartDate(oStartDate);
+		this.oPC2.setBuiltInViews(["Week"]);
+
+		// Act
+		this.oPC2.setFirstDayOfWeek(3);
+		Core.applyChanges();
+
+		// Assert - First day of week is changed to wednesday
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start date changes to firstDayOfWeek");
+
+		// Act
+		this.oPC2.setCalendarWeekNumbering("MiddleEastern");
+		Core.applyChanges();
+
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate, "Start Date is unchanged after CalendarWeekNumbering is set");
+
+		// Act
+		this.oPC2.setFirstDayOfWeek(4);
+		Core.applyChanges();
+
+		// Assert
+		assert.deepEqual(this.oPC2._dateNav.getStart(), oNewStartDate2, "Start date changes to firstDayOfWeek again");
+	});
+
 	QUnit.test("Navigaton buttons disabled when on min/max dates", function(assert) {
-		//Prepare
 		var oStartDate = this.oPC2.getStartDate();
 
-		//Arrange
+		//Arrange & Act
 		this.oPC2.setMinDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2.setStartDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 
-		//Act
-		this.oPC2._applyArrowsLogic(true);
-
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
 
-		//Arrange
+		//Arrange  & Act
 		this.oPC2.setMaxDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2.setStartDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(2222,22,22,22,22,22));
-
-		//Act
-		this.oPC2._applyArrowsLogic(false);
 
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
@@ -3632,7 +3724,8 @@ sap.ui.define([
 
 		Core.getConfiguration().setFormatLocale("en-GB");
 		this.oPC2.setStartDate(UI5Date.getInstance("2014", "10", "5", "08", "00"));
-		this.oPC2.rerender();
+		this.oPC2.invalidate();
+		Core.applyChanges();
 
 		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[0];
@@ -3969,7 +4062,8 @@ sap.ui.define([
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
-		this.oPC2.rerender(); //start date is 1st of September 2016
+		this.oPC2.invalidate(); //start date is 1st of September 2016
+		Core.applyChanges();
 
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 		//act
@@ -4048,7 +4142,9 @@ sap.ui.define([
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
-		this.oPC2.rerender(); //start date is 1st of September 2016
+		this.oPC2.invalidate(); //start date is 1st of September 2016
+
+		Core.applyChanges();
 
 		//act
 		_clickTodayButton.call(this, this.oPC2);

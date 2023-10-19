@@ -33,12 +33,10 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	oCore.loadLibrary("sap.ui.fl"); // preload lib for the spy
-
 	var sAddedSimpleFormGroupId = "rootView--id-1504610195259-77";
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Storage, "loadFlexData").resolves(Object.assign(
 				StorageUtils.getEmptyFlexDataResponse(),
 				{
@@ -46,7 +44,7 @@ sap.ui.define([
 						fileName: "id_1504610195273_78_addSimpleFormGroup",
 						fileType: "change",
 						changeType: "addSimpleFormGroup",
-						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView.Component",
+						reference: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 						packageName: "$TMP",
 						content: {
 							group: {
@@ -77,7 +75,7 @@ sap.ui.define([
 							generator: "Change.createInitialFileContent",
 							service: "",
 							user: "",
-							sapui5Version: oCore.getConfiguration().getVersion().toString()
+							sapui5Version: "version"
 						},
 						dependentSelector: {}
 					}],
@@ -92,7 +90,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			if (this.oComponent) {
 				this.oComponent.destroy();
@@ -131,7 +129,7 @@ sap.ui.define([
 
 		if (!CacheManager._isSupportedEnvironment()) {
 			QUnit.test("All further tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function(assert) {
-				assert.ok(true, "Environment: system [" + JSON.stringify(Device.system) + "],  browser: " + JSON.stringify(Device.browser));
+				assert.ok(true, `Environment: system [${JSON.stringify(Device.system)}],  browser: ${JSON.stringify(Device.browser)}`);
 			});
 		} else {
 			QUnit.test("working cache", function(assert) {
@@ -229,8 +227,8 @@ sap.ui.define([
 
 				var oSetCachePromise = new Promise(function(resolve) {
 					var fCacheManagerSet = CacheManager.set;
-					oCacheManagerSpy = sandbox.stub(CacheManager, "set").callsFake(function() {
-						fCacheManagerSet.call(CacheManager, arguments[0], arguments[1]).then(function() {
+					oCacheManagerSpy = sandbox.stub(CacheManager, "set").callsFake(function(...aArgs) {
+						fCacheManagerSet.call(CacheManager, aArgs[0], aArgs[1]).then(function() {
 							resolve();
 						});
 					});
@@ -291,10 +289,10 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.returns({
-					getCurrentControlVariantIds: function() {
+					getCurrentControlVariantIds() {
 						return ["currentVariantReferenceInitial"];
 					},
-					getVariantManagementControlIds: function() {
+					getVariantManagementControlIds() {
 						return [];
 					}
 				});
@@ -341,18 +339,18 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.onFirstCall().returns({
-					getCurrentControlVariantIds: function() {
+					getCurrentControlVariantIds() {
 						return ["currentVariantReferenceInitial"];
 					},
-					getVariantManagementControlIds: function() {
+					getVariantManagementControlIds() {
 						return [];
 					}
 				})
 				.returns({
-					getCurrentControlVariantIds: function() {
+					getCurrentControlVariantIds() {
 						return ["currentVariantReferenceChanged"];
 					},
-					getVariantManagementControlIds: function() {
+					getVariantManagementControlIds() {
 						return [];
 					}
 				});
@@ -398,10 +396,10 @@ sap.ui.define([
 
 				sandbox.stub(Component.prototype, "getModel")
 				.returns({
-					getCurrentControlVariantIds: function() {
+					getCurrentControlVariantIds() {
 						return ["currentVariantReferenceInitial"];
 					},
-					getVariantManagementControlIds: function() {
+					getVariantManagementControlIds() {
 						return [];
 					}
 				});

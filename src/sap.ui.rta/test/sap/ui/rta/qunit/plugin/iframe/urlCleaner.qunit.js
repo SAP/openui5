@@ -21,7 +21,7 @@ sap.ui.define([
 			to: "https://some.domain.com/demo-kit/#/search/{$user>/email}"
 		}].forEach(function(oTestCase) {
 			QUnit.test(JSON.stringify(oTestCase.from), function(assert) {
-				assert.strictEqual(urlCleaner(oTestCase.from), oTestCase.to, "it cleans to " + JSON.stringify(oTestCase.to));
+				assert.strictEqual(urlCleaner(oTestCase.from), oTestCase.to, `it cleans to ${JSON.stringify(oTestCase.to)}`);
 			});
 		});
 	});

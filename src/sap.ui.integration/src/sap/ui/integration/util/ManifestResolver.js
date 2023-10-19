@@ -163,8 +163,9 @@ sap.ui.define([
 			content: {
 				message: {
 					type: "error",
-					title: oResourceBundle.getText("CARD_ERROR_OCCURED"),
-					description: oError.toString(),
+					title: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_TITLE"),
+					description: oResourceBundle.getText("CARD_ERROR_CONFIGURATION_DESCRIPTION"),
+					details: oError.toString(),
 					illustrationType: IllustratedMessageType.SimpleError,
 					illustrationSize: IllustratedMessageSize.Spot
 				}

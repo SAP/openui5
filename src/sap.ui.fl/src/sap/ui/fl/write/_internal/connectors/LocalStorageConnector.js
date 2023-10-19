@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Connector for saving data to the <code>window.localStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.LocalStorageConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
@@ -24,8 +23,9 @@ sap.ui.define([
 		storage: window.localStorage
 	});
 
-	LocalStorageConnector.loadFeatures = function() {
-		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+	LocalStorageConnector.loadFeatures = function(...aArgs) {
+		return ObjectStorageConnector.loadFeatures.apply(this, aArgs)
+		.then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
 				isPublicFlVariantEnabled: true,

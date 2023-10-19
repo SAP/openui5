@@ -5,6 +5,10 @@
 		 * No more references to the global jQuery allowed
 		 */
 		{
+			"rules": {
+				"no-var": "error",
+				"prefer-const": "error"
+			},
 			"files": [
 				"src/**/*.js",
 				"test/sap/ui/mdc/demokit/**/*.js",

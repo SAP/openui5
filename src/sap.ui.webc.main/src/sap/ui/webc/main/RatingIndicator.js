@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.RatingIndicator.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"./thirdparty/RatingIndicator"
@@ -17,7 +17,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The Rating Indicator is used to display a specific number of icons that are used to rate an item. Additionally, it is also used to display the average and overall ratings.
@@ -73,7 +73,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -93,6 +93,14 @@ sap.ui.define([
 				 * <b>Note:</b> A read-only component is not editable, but still provides visual feedback upon user interaction.
 				 */
 				readonly: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines whether the component is required.
+				 */
+				required: {
 					type: "boolean",
 					defaultValue: false
 				},
@@ -118,6 +126,21 @@ sap.ui.define([
 				width: {
 					type: "sap.ui.core.CSSSize",
 					mapping: "style"
+				}
+			},
+			associations: {
+
+				/**
+				 * Receives id(or many ids) of the controls that label this control.
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					mapping: {
+						type: "property",
+						to: "accessibleNameRef",
+						formatter: "_getAriaLabelledByForRendering"
+					}
 				}
 			},
 			events: {

@@ -14,7 +14,10 @@
 			data-sap-ui-async="true"
 			data-sap-ui-oninit="module:appUnderTest/app"
 			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
-			data-sap-ui-resourceroots='{"appUnderTest": "./"}'>
+			data-sap-ui-resourceroots='{
+				"appUnderTest": "./",
+				"testutils/link": "../../../../testutils/link"
+			}'>
 	</script>
 
 </head>

@@ -17,6 +17,7 @@
 @_sap_m_SearchField_FocusOffset: 0;
 @_sap_m_SearchField_FocusBorderRadius: inherit;
 @_sap_m_SearchField_PlaceholderFontStyle: italic;
+@_sap_m_SearchField_ActiveBackgroundStyle: @sapUiFieldBackgroundStyle;
 
 .sapMSFF {
 	border-radius: @sapUiFieldBorderCornerRadius;
@@ -27,13 +28,8 @@
 }
 
 .sapMSFB {
-	// don't overlap the bottom line
-	margin-bottom: 1px;
-	height: ~"calc(100% - 1px)";
-
 	border-radius: @sapUiFieldBorderCornerRadius;
-	color: @sapUiButtonTextColor;
-
+	color: @sapUiFieldTextColor;
 	&:first-of-type {
 		margin-left: 0.25rem;
 	}
@@ -43,16 +39,17 @@
 	}
 
 	&:hover {
-		box-shadow: @sapUiContentInteractionShadow;
-		background-color: @sapUiButtonLiteHoverBackground;
+		box-shadow: @sapUiFieldHoverShadow;
+		background: @sapUiFieldBackgroundStyle;
+		background-color: @sapUiFieldHoverBackground;
 	}
 
 	&:active,
 	&.sapMSFBA // Firefox specific
 	{
-		box-shadow: @sapUiContentInteractionShadow;
+		box-shadow: @sapUiFieldHoverShadow;
 		color: @sapUiButtonSelectedTextColor;
-		background-color: @sapUiButtonLiteActiveBackground;
+		background-color: @sapUiFieldHoverBackground;
 	}
 }
 
@@ -67,5 +64,9 @@
 
 	&:hover .sapMSFF {
 		box-shadow: none;
+	}
+
+	.sapMSFB:hover {
+		color: @sapUiButtonSelectedTextColor;
 	}
 }

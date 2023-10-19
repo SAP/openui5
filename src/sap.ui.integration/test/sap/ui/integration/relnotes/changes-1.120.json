@@ -1,0 +1,67 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "f75b7ec552c7b7af164c8e2e19f48c598de56e0b",
+        "type": "FIX",
+        "text": " Integration Cards: List Card Placeholders rendering is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100591"
+          }
+        ]
+      },
+      {
+        "id": "ab8a3b1cb218484f9e6fe4cb8137a5832726bd2e",
+        "type": "FIX",
+        "text": " Integration Card: Avatar size in List Card with 2 lines (title and description) fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370105968"
+          }
+        ]
+      },
+      {
+        "id": "0c62b1a82a52bbfb97da76ff6a6432d99645cb7c",
+        "type": "FEATURE",
+        "text": " Integration Cards: Introduce date formatter"
+      },
+      {
+        "id": "6e86ece6b85543ebcf7cbf3736f2834517144654",
+        "type": "FIX",
+        "text": " Integration Cards: maxValue of micro charts now works without binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098010"
+          }
+        ]
+      },
+      {
+        "id": "7090aa25d0943f10e2987ad5e48b470e2f560ba8",
+        "type": "FIX",
+        "text": " Integration Cards: Attribute icon in List card is now always on the same line with text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370092417"
+          }
+        ]
+      },
+      {
+        "id": "bec59b923a4e5639b19680040f11d6566a7983b6",
+        "type": "FIX",
+        "text": " Integration Cards: Grouping of list items with microcharts now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370099373"
+          }
+        ]
+      }
+    ]
+  }
+}

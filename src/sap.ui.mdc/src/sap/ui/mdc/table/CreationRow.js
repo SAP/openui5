@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @since 1.65
 	 * @alias sap.ui.mdc.table.CreationRow
 	 */
-	var CreationRow = Element.extend("sap.ui.mdc.table.CreationRow", {
+	const CreationRow = Element.extend("sap.ui.mdc.table.CreationRow", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -149,8 +149,8 @@ sap.ui.define([
 	};
 
 	CreationRow.prototype._updateInnerCreationRow = function() {
-		var oTable = this._getTable();
-		var pCreateInnerCreationRow;
+		const oTable = this._getTable();
+		let pCreateInnerCreationRow;
 
 		if (!oTable || !oTable._oTable) {
 			return Promise.resolve();
@@ -197,8 +197,8 @@ sap.ui.define([
 
 			this._getTable()._oTable.getRowMode().setHideEmptyRows(this.getVisible());
 
-			for (var sModelName in this._mBindingContexts) {
-				var mBindingContext = this._mBindingContexts[sModelName];
+			for (const sModelName in this._mBindingContexts) {
+				const mBindingContext = this._mBindingContexts[sModelName];
 				this._oInnerCreationRow.setBindingContext(mBindingContext.context, mBindingContext.modelName);
 			}
 
@@ -233,7 +233,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._getTable = function() {
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 		return oParent && oParent.isA("sap.ui.mdc.Table") ? oParent : null;
 	};
 

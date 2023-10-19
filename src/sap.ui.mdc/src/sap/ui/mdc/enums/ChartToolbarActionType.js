@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -15,7 +15,7 @@ sap.ui.define(function() {
      * @enum {string}
      * @public
      */
-    var ChartToolbarActionType = {
+    const ChartToolbarActionType = {
         /**
          * Zoom-in and zoom-out action.
          *
@@ -41,6 +41,8 @@ sap.ui.define(function() {
          */
         FullScreen: "FullScreen"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.ChartToolbarActionType", ChartToolbarActionType);
 
     return ChartToolbarActionType;
 

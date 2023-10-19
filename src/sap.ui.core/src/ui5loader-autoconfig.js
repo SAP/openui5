@@ -119,6 +119,7 @@
 					});
 
 					xhr.send(null);
+					globalThis["sap-ui-config"].__loaded = true;
 
 				} catch (error) {
 					ui5loader._.logger.error("Loading externalized bootstrap configuration from \"" + url + "\" failed! Reason: " + error + "!");
@@ -156,6 +157,7 @@
 		"sap/base/strings/_camelize"
 	], function (camelize) {
 		var oConfig;
+		var oWriteableConfig = Object.create(null);
 		var rAlias = /^(sapUiXx|sapUi|sap)((?:[A-Z0-9][a-z]*)+)$/; //for getter
 		var mFrozenProperties = Object.create(null);
 		var bFrozen = false;
@@ -196,12 +198,12 @@
 			if (Object.hasOwn(mFrozenProperties,sKey)) {
 				return mFrozenProperties[sKey];
 			}
-			var vValue = oConfig[sKey];
-			if (!Object.hasOwn(oConfig, sKey)) {
+			var vValue = oWriteableConfig[sKey] || oConfig[sKey];
+			if (!Object.hasOwn(oConfig, sKey) && !Object.hasOwn(oWriteableConfig, sKey)) {
 				var vMatch = sKey.match(rAlias);
 				var sLowerCaseAlias = vMatch ? vMatch[1] + vMatch[2][0] + vMatch[2].slice(1).toLowerCase() : undefined;
 				if (sLowerCaseAlias) {
-					vValue = oConfig[sLowerCaseAlias];
+					vValue = oWriteableConfig[sLowerCaseAlias] || oConfig[sLowerCaseAlias];
 				}
 			}
 			if (bFreeze) {
@@ -211,10 +213,10 @@
 		}
 
 		function set(sKey, vValue) {
-			if (Object.hasOwn(mFrozenProperties,sKey)) {
+			if (Object.hasOwn(mFrozenProperties, sKey) || bFrozen) {
 				ui5loader._.logger.error("Configuration option '" + sKey + "' was frozen and cannot be changed to " + vValue + "!");
 			} else {
-				oConfig[sKey] = vValue;
+				oWriteableConfig[sKey] = vValue;
 			}
 		}
 
@@ -226,7 +228,12 @@
 			get: get,
 			set: set,
 			freeze: freeze,
-			setConfiguration: setConfiguration
+			setConfiguration: setConfiguration,
+			_: {
+				configLoaded() {
+					return !!globalThis["sap-ui-config"].__loaded;
+				}
+			}
 		};
 
 		createConfig();
@@ -371,41 +378,60 @@
 		};
 
 		/**
+		 * Enum for available types of configuration entries.
+		 *
 		 * @enum {string}
 		 * @alias module:sap/base/config.Type
 		 * @private
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 		 */
 		var TypeEnum = {
 			/**
 			 * defaultValue: false
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Boolean": "boolean",
 			/**
 			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Code": "code",
 			/**
 			 * defaultValue: 0
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Integer": "integer",
 			/**
 			 * defaultValue: ""
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"String": "string",
 			/**
 			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"StringArray": "string[]",
 			/**
 			 * defaultValue: []
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"FunctionArray": "function[]",
 			/**
 			 * defaultValue: undefined
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Function": "function",
 			/**
 			 * defaultValue: {}
+			 * @private
+			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 			 */
 			"Object":  "object"
 		};
@@ -589,7 +615,7 @@
 		 * @returns {any} Value of the configuration parameter
 		 * @throws {TypeError} Throws an error if the given parameter name does not match the definition.
 		 * @private
-		 * @ui5-restricted sap.ui.core.Core, jquery.sap.global
+		 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
 		 */
 		function get(mOptions) {
 			if (typeof mOptions.name !== "string" || !rValidKey.test(mOptions.name)) {
@@ -743,8 +769,7 @@
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
 	var mResourceRoots = BaseConfig.get({
 		name: "sapUiResourceRoots",
-		type: BaseConfig.Type.Object,
-		freeze: true
+		type: BaseConfig.Type.Object
 	});
 	if (typeof mResourceRoots[''] === 'string' ) {
 		sBaseUrl = mResourceRoots[''];
@@ -947,6 +972,30 @@
 		freeze: true
 	});
 
+	//calculate syncCallBehavior
+	let syncCallBehavior = 0; // ignore
+	const sNoSync = BaseConfig.get({
+		name: "sapUiXxNoSync",
+		type: BaseConfig.Type.String,
+		external: true,
+		freeze: true
+	});
+	if (sNoSync === 'warn') {
+		syncCallBehavior = 1;
+	} else if (/^(true|x)$/i.test(sNoSync)) {
+		syncCallBehavior = 2;
+	}
+
+	const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
+	if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
+		const sMessage = "[nosync]: configuration loaded via sync XHR";
+		if (syncCallBehavior === 1) {
+			ui5loader._.logger.warning(sMessage);
+		} else {
+			ui5loader._.logger.error(sMessage);
+		}
+	}
+
 	ui5loader.config({
 		baseUrl: sBaseUrl,
 
@@ -973,6 +1022,8 @@
 				'esprima': 'sap/ui/documentation/sdk/thirdparty/esprima'
 			}
 		},
+
+		reportSyncCalls: syncCallBehavior,
 
 		shim: {
 			'sap/ui/thirdparty/bignumber': {

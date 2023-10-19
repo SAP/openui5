@@ -20,6 +20,7 @@ sap.ui.define([
 		"sap/ui/events/PseudoEvents",
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/core/Configuration",
+		"sap/ui/core/Lib",
 		"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
 		"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
 		"sap/ui/dom/jquery/Selectors" // jQuery custom selectors ":sapTabbable"
@@ -42,7 +43,8 @@ sap.ui.define([
 		KeyCodes,
 		PseudoEvents,
 		jQuery,
-		Configuration
+		Configuration,
+		CoreLib
 	) {
 		"use strict";
 
@@ -275,7 +277,7 @@ sap.ui.define([
 		HeaderContainer.prototype.init = function () {
 			this._aItemEnd = [];
 			this._bRtl = Configuration.getRTL();
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = CoreLib.getResourceBundleFor("sap.m");
 			this._oScrollCntr = new ScrollContainer(this.getId() + "-scrl-cntnr", {
 				width: "100%",
 				height: "100%",
@@ -874,7 +876,7 @@ sap.ui.define([
 
 
 		HeaderContainer.prototype._handleMobileScrolling = function () {
-			if (Core.isMobile()) {
+			if (Device.browser.mobile) {
 				var $scroll = this.$("scrl-cntnr-scroll"),
 					bIsHorizontal = this.getOrientation() === Orientation.Horizontal,
 					sProperty = bIsHorizontal ? "clientX" : "clientY",

@@ -13,8 +13,8 @@ sap.ui.define([
 			// call the init function of the parent
 			BaseComponent.prototype.init.apply(this, arguments);
 
-			var aGrowingModes = [];
-			for (var p in GrowingMode) {
+			const aGrowingModes = [];
+			for (const p in GrowingMode) {
 				aGrowingModes.push({key: p, text: GrowingMode[p]});
 			}
 

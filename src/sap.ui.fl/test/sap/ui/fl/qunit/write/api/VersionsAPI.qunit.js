@@ -1,32 +1,32 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Control",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	ContextBasedAdaptationsAPI,
+	Control,
+	FlexState,
+	ManifestUtils,
+	FlexInfoSession,
 	Version,
-	VersionsAPI,
+	Settings,
 	Versions,
 	Storage,
-	Settings,
-	FlexState,
+	ContextBasedAdaptationsAPI,
+	VersionsAPI,
 	Layer,
 	Utils,
-	ManifestUtils,
-	UriParameters,
-	Control,
 	sinon
 ) {
 	"use strict";
@@ -36,32 +36,32 @@ sap.ui.define([
 
 	function stubSettings(sandbox) {
 		sandbox.stub(Settings, "getInstance").resolves({
-			isVersioningEnabled: function() {
+			isVersioningEnabled() {
 				return true;
 			},
-			isSystemWithTransports: function() {
+			isSystemWithTransports() {
 				return false;
 			}
 		});
 	}
 
 	QUnit.module("getVersionsModel", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
@@ -71,7 +71,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Given isDraftAvailable is called", function(assert) {
 			var oGetModelStub = sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function() {
+				getProperty() {
 					return [];
 				}
 			});
@@ -91,33 +91,33 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			Versions.clearInstances();
 			stubSettings(sandbox);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -199,33 +199,33 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.isOldVersionDisplayed is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							id: "com.sap.test.app"
 						}
 					};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			Versions.clearInstances();
 			stubSettings(sandbox);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -306,11 +306,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a control and a layer were provided and display version is not equal to active version", function(assert) {
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function() {
-					return "1";
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns("1");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				control: new Control(),
@@ -324,7 +320,6 @@ sap.ui.define([
 				{version: "1"}
 			];
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedVersions);
-			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 			return VersionsAPI.initialize(mPropertyBag)
 			// switch to another version
 			.then(VersionsAPI.loadVersionForApplication.bind(this, mPropertyBag))
@@ -335,29 +330,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.loadDraftForApplication is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			stubSettings(sandbox);
 			Versions.clearInstances();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -382,29 +377,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.loadVersionForApplication is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {
 						"sap.app": {
 							id: "com.sap.app"
 						}
 					};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			stubSettings(sandbox);
 			Versions.clearInstances();
 			var oDefaultAdaptation = {
@@ -430,7 +425,7 @@ sap.ui.define([
 			this.oAdaptationsModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 			this.oGetAdaptationsModelStub = sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oAdaptationsModel);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -469,7 +464,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a control, a layer, a context but no adaptationId parameter were provided and the request returns a list (version is switched)", function(assert) {
-			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
@@ -490,7 +484,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
+			var oClearStub = sandbox.stub(FlexState, "clearState");
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -500,13 +494,10 @@ sap.ui.define([
 			}.bind(this))
 			.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 			.then(function() {
-				assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
-				var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
-				assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
-				assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-				assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
-				assert.equal(oInitializePropertyBag.adaptationId, "id_5678", "the displayed adaptationId is provided by refreshAdaptationModel");
-				assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set by version model");
+				assert.equal(oClearStub.callCount, 1, "and cleared");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.equal(oInfoSession.adaptationId, "id_5678", "the displayed adaptationId is provided by refreshAdaptationModel");
+				assert.equal(oInfoSession.version, sActiveVersion, "and active version is set by version model");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion, "and displayed version is active version");
 				assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion, "and persisted version is active version");
 				assert.equal(this.oRefreshAdaptationsModelStub.callCount, 1, "a refresh of the context based adaptations is triggered");
@@ -515,7 +506,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a control, a layer and context parameter were provided and the request returns a list (adaptation is switched)", function(assert) {
-			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
@@ -537,7 +527,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
+			var oClearStub = sandbox.stub(FlexState, "clearState").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -547,13 +537,10 @@ sap.ui.define([
 			}.bind(this))
 			.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 			.then(function() {
-				assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
-				var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
-				assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
-				assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-				assert.equal(oInitializePropertyBag.allContexts, true, "and passing all contexts as true");
-				assert.equal(oInitializePropertyBag.adaptationId, "id_5678", "and passing adaptationId");
-				assert.equal(oInitializePropertyBag.version, sActiveVersion, "and active version is set by version model");
+				assert.equal(oClearStub.callCount, 1, "and reinitialized");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.equal(oInfoSession.adaptationId, "id_5678", "and passing adaptationId");
+				assert.equal(oInfoSession.version, sActiveVersion, "and active version is set by version model");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), sActiveVersion,
 					"and displayed version is active version");
 				assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), sActiveVersion,
@@ -567,7 +554,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a control and a layer were provided and the request returns a list of versions", function(assert) {
-			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer: sLayer,
@@ -591,7 +577,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			sandbox.stub(Storage.versions, "load").resolves(aReturnedBackendVersions);
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
+			var oClearStub = sandbox.stub(FlexState, "clearState");
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oVersionsModel) {
@@ -602,18 +588,15 @@ sap.ui.define([
 			}.bind(this))
 			.then(VersionsAPI.loadVersionForApplication.bind(undefined, mPropertyBag))
 			.then(function() {
-				assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
-				var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
-				assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
-				assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-				assert.equal(oInitializePropertyBag.version, Version.Number.Draft, "and passing the version number accordingly");
+				assert.equal(oClearStub.callCount, 1, "and reinitialized");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.equal(oInfoSession.version, Version.Number.Draft, "and passing the version number accordingly");
 				assert.equal(this.oVersionsModel.getProperty("/displayedVersion"), Version.Number.Draft, "and displayed version is draft");
 				assert.equal(this.oVersionsModel.getProperty("/persistedVersion"), Version.Number.Draft, "and persisted version is draft");
 			}.bind(this));
 		});
 
 		QUnit.test("when a control and a layer but no version were provided and the request returns a list of versions", function(assert) {
-			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
 				layer: sLayer,
@@ -624,49 +607,47 @@ sap.ui.define([
 
 			var sActiveVersion = 1;
 			sandbox.stub(Versions, "getVersionsModel").returns({
-				getProperty: function() {
+				getProperty() {
 					return sActiveVersion;
 				},
-				setProperty: function() {}
+				setProperty() {}
 			});
 
 			var sReference = "com.sap.app";
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(ManifestUtils, "getFlexReference").returns(sReference);
 			var aReturnedVersions = [];
-			var oClearAndInitializeStub = sandbox.stub(FlexState, "clearAndInitialize").resolves(aReturnedVersions);
+			var oClearStub = sandbox.stub(FlexState, "clearState").resolves(aReturnedVersions);
 
 			return VersionsAPI.loadVersionForApplication(mPropertyBag)
 			.then(function() {
-				assert.equal(oClearAndInitializeStub.callCount, 1, "and reinitialized");
-				var oInitializePropertyBag = oClearAndInitializeStub.getCall(0).args[0];
-				assert.equal(oInitializePropertyBag.reference, sReference, "for the same application");
-				assert.equal(oInitializePropertyBag.componentId, sComponentId, "and passing the componentId accordingly");
-				assert.equal(oInitializePropertyBag.version, sActiveVersion, "and passing the version number accordingly");
+				assert.equal(oClearStub.callCount, 1, "and reinitialized");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.equal(oInfoSession.version, sActiveVersion, "and passing the version number accordingly");
 			});
 		});
 	});
 
 	QUnit.module("Given VersionsAPI.activate is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -735,16 +716,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.discardDraft is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {},
-				getId: function() {
+				getManifestObject() {},
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
@@ -752,7 +733,7 @@ sap.ui.define([
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -798,16 +779,17 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
-			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
+			var oClearStub = sandbox.stub(FlexState, "clearState");
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 			var sDisplayedAdaptationId = "id_5678";
 			var oAdaptationsRefreshStub = sandbox.stub(ContextBasedAdaptationsAPI, "refreshAdaptationModel").resolves(sDisplayedAdaptationId);
 			return VersionsAPI.discardDraft(mPropertyBag)
 			.then(function(oDiscardInfo) {
-				assert.equal(oClearAndInitStub.calledOnce, true, "then the FlexState was cleared and initialized");
+				assert.equal(oClearStub.calledOnce, true, "then the FlexState was cleared");
 				assert.equal(oAdaptationsRefreshStub.calledOnce, true, "then the Adaptation Model was refreshed");
-				assert.strictEqual(oClearAndInitStub.getCall(0).args[0].adaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.strictEqual(oInfoSession.adaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
 				assert.equal(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
 				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
 				var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
@@ -824,7 +806,7 @@ sap.ui.define([
 
 			var sReference = "com.sap.app";
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(sReference);
-			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
+			var oClearStub = sandbox.stub(FlexState, "clearState");
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
 			sandbox.stub(ContextBasedAdaptationsAPI, "hasAdaptationsModel").returns(true);
 			var sDisplayedAdaptationId = "id_5678";
@@ -832,8 +814,9 @@ sap.ui.define([
 			return VersionsAPI.discardDraft(mPropertyBag)
 			.then(function(oDiscardInfo) {
 				assert.equal(oAdaptationsDiscardStub.calledOnce, true, "then the Adaptation Model was refreshed");
-				assert.equal(oClearAndInitStub.calledOnce, true, "then the FlexState was cleared and initialized");
-				assert.strictEqual(oClearAndInitStub.getCall(0).args[0].adaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
+				assert.equal(oClearStub.calledOnce, true, "then the FlexState was cleared and initialized");
+				const oInfoSession = FlexInfoSession.getByReference(sReference);
+				assert.strictEqual(oInfoSession.adaptationId, sDisplayedAdaptationId, "then the FlexState gets the correct adaptationId");
 				assert.equal(oDiscardInfo.backendChangesDiscarded, true, "then the discard outcome was returned");
 				assert.equal(oDiscardInfo.dirtyChangesDiscarded, true, "then the discard outcome was returned");
 				assert.deepEqual(oDiscardStub.getCall(0).args[0].reference, sReference, "the reference was passed");
@@ -843,18 +826,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given VersionsAPI.publish is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getManifestObject: function() {
+				getManifestObject() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return "sComponentId";
 				},
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: ["sap-app-id"]
 					};
@@ -862,7 +845,7 @@ sap.ui.define([
 			};
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

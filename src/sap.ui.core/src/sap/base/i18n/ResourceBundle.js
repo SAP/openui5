@@ -390,6 +390,11 @@ sap.ui.define([
 	 */
 	ResourceBundle.prototype._formatValue = function(sValue, sKey, aArgs){
 		if (typeof sValue === "string") {
+
+			if (aArgs !== undefined && !Array.isArray(aArgs)){
+				Log.error("sap/base/i18n/ResourceBundle: value for parameter 'aArgs' is not of type array");
+			}
+
 			if (aArgs) {
 				sValue = formatMessage(sValue, aArgs);
 			}
@@ -588,7 +593,7 @@ sap.ui.define([
 				// Alternative: add locale as query:
 				// url: oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : ""),
 				mHeaders = {
-					"Accept-Language": convertLocaleToBCP47(sLocale) || ""
+					"Accept-Language": convertLocaleToBCP47(sLocale) || "*"
 				};
 			} else {
 				sUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;

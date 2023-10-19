@@ -7,17 +7,13 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_navigationContainerWaiter",
 	"sap/f/FlexibleColumnLayout",
-	"sap/m/NavContainer",
-	"sap/m/App",
 	"sap/m/Page",
-	"sap/m/Button",
-	"sap/ui/test/opaQunit",
-	"sap/ui/test/Opa5",
 	"sap/base/strings/capitalize",
-	"sap/ui/core/Configuration",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function (_LogCollector, _autoWaiter, _timeoutWaiter, _XHRWaiter, _promiseWaiter,
-		_navigationContainerWaiter, FlexibleColumnLayout, NavContainer, App, Page, Button, opaTest, Opa5, capitalize, Configuration, jQuery) {
+		_navigationContainerWaiter, FlexibleColumnLayout, Page, capitalize, ControlBehavior, jQuery, nextUIUpdate) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();
@@ -247,14 +243,14 @@ sap.ui.define([
 			this.oXHRWaiterStub.returns(false);
 			this.oPromiseWaiterStub.returns(false);
 			this.oNavigationContainerWaiterStub.returns(false);
-			Configuration.setAnimationMode("full");
+			ControlBehavior.setAnimationMode("full");
 
 			this.oFcl = new FlexibleColumnLayout({
 				beginColumnPages: [new Page()],
 				midColumnPages: [new Page()]
 			}).placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach: function () {
@@ -263,7 +259,7 @@ sap.ui.define([
 			this.oPromiseWaiterStub.restore();
 			this.oNavigationContainerWaiterStub.restore();
 			this.oFcl.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 

@@ -1,32 +1,32 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/MessageBox",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
-	"sap/m/MessageBox",
-	"sap/ui/core/Core"
+	"sap/ui/fl/Layer"
 ], function(
+	MessageBox,
+	Lib,
 	sinon,
-	Version,
-	Layer,
-	KeyUserConnector,
 	InitialConnector,
 	InitialUtils,
+	Version,
+	KeyUserConnector,
 	WriteUtils,
-	MessageBox,
-	Core
+	Layer
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("KeyUserConnector", {
-		afterEach: function() {
+		afterEach() {
 			WriteUtils.sendRequest.restore();
 			sandbox.restore();
 		}
@@ -153,7 +153,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.translation", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -241,7 +241,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.getContexts", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -290,7 +290,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.loadContextDescriptions", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -321,7 +321,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector handing xsrf token in combination of the apply connector", {
-		afterEach: function() {
+		afterEach() {
 			InitialConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
@@ -365,7 +365,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector loadFeatures", {
-		afterEach: function() {
+		afterEach() {
 			InitialConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
@@ -458,7 +458,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.load", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -492,7 +492,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.activate", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -505,7 +505,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
@@ -536,7 +536,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
@@ -567,7 +567,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=en";
+			var sExpectedUrl = `/flexKeyuser/flex/keyuser/v2/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=en`;
 			var mExpectedPropertyBag = Object.assign({
 				initialConnector: InitialConnector,
 				tokenUrl: KeyUserConnector.ROUTES.TOKEN,
@@ -591,7 +591,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.discardDraft", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -614,12 +614,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("KeyUserConnector.versions.publish", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when calling publish successfully", function(assert) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 			var mPropertyBag = {
 				layer: "CUSTOMER",
 				reference: "com.sap.test.app",

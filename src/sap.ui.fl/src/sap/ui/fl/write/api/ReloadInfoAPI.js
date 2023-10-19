@@ -3,52 +3,52 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/write/_internal/FlexInfoSession"
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Utils"
 ], function(
-	LayerUtils,
-	Layer,
-	Utils,
 	ManifestUtils,
+	FlexInfoSession,
 	Version,
-	VersionsAPI,
+	CompVariantState,
 	FeaturesAPI,
 	PersistenceWriteAPI,
-	CompVariantState,
-	FlexInfoSession
+	VersionsAPI,
+	Layer,
+	LayerUtils,
+	Utils
 ) {
 	"use strict";
 
 	var oMutators = {
 		flp: {
-			set: function(vParams, sKey, sValue) {
+			set(vParams, sKey, sValue) {
 				vParams[sKey] = [sValue];
 				return vParams;
 			},
-			get: function(vParams, sKey) {
+			get(vParams, sKey) {
 				return vParams[sKey] && vParams[sKey][0];
 			},
-			remove: function(vParams, sKey) {
+			remove(vParams, sKey) {
 				delete vParams[sKey];
 				return vParams;
 			}
 		},
 		standalone: {
-			set: function(vParams, sKey, sValue) {
+			set(vParams, sKey, sValue) {
 				return Utils.handleUrlParameters(vParams, sKey, sValue);
 			},
-			get: function(vParams, sKey) {
+			get(vParams, sKey) {
 				return Utils.getParameter(sKey);
 			},
-			remove: function(vParams, sKey, sValue) {
+			remove(vParams, sKey, sValue) {
 				return Utils.handleUrlParameters(vParams, sKey, sValue);
 			}
 		}
@@ -163,15 +163,13 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
 		 */
-		getReloadReasonsForStart: function(oReloadInfo) {
+		getReloadReasonsForStart(oReloadInfo) {
 			return Promise.all([
 				areHigherLayerChangesAvailable.call(this, oReloadInfo),
 				isDraftAvailable(oReloadInfo),
 				needContextSpecificReload(oReloadInfo)
 			]).then(function(aReasons) {
-				oReloadInfo.hasHigherLayerChanges = aReasons[0];
-				oReloadInfo.isDraftAvailable = aReasons[1];
-				oReloadInfo.allContexts = aReasons[2];
+				[oReloadInfo.hasHigherLayerChanges, oReloadInfo.isDraftAvailable, oReloadInfo.allContexts] = aReasons;
 				return oReloadInfo;
 			});
 		},
@@ -184,7 +182,7 @@ sap.ui.define([
 		 * @param {sap.ushell.services.URLParsing} oURLParsingService - Unified Shell's internal URL parsing service
 		 * @returns {boolean} True if the parameter with the given value is in the URL
 		 */
-		hasVersionParameterWithValue: function(oParameter, oURLParsingService) {
+		hasVersionParameterWithValue(oParameter, oURLParsingService) {
 			return Utils.hasParameterAndValue(Version.UrlParameter, oParameter.value, oURLParsingService);
 		},
 
@@ -193,7 +191,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oControl - Root control instance
 		 */
-		removeInfoSessionStorage: function(oControl) {
+		removeInfoSessionStorage(oControl) {
 			FlexInfoSession.remove(oControl);
 		},
 
@@ -206,7 +204,7 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} <code>true</code> if the parameter with the given value is in the URL
 		 */
-		hasMaxLayerParameterWithValue: function(oParameter, oURLParsingService) {
+		hasMaxLayerParameterWithValue(oParameter, oURLParsingService) {
 			var sParameterName = LayerUtils.FL_MAX_LAYER_PARAM;
 			return Utils.hasParameterAndValue(sParameterName, oParameter.value, oURLParsingService);
 		},
@@ -223,14 +221,17 @@ sap.ui.define([
 		 * @param {string} oReloadInfo.version - Version we want to switch to
 		 * @param {string} oReloadInfo.removeVersionParameter - Indicates if the version parameter should be removed
 		 * @param {string} oReloadInfo.removeDraft - Indicates if the draft parameter should be removed
+		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} Indicates if the parameters have changed
 		 */
-		handleUrlParameters: function(oReloadInfo, sScenario) {
+		handleUrlParameters(oReloadInfo, sScenario) {
 			var bParametersChanged = false;
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
 			if (!oReloadInfo.ignoreMaxLayerParameter && oReloadInfo.hasHigherLayerChanges) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+				delete oFlexInfoSession.maxLayer;
 				bParametersChanged = true;
 			}
 
@@ -238,6 +239,7 @@ sap.ui.define([
 			if (oReloadInfo.versionSwitch && sCurrentVersionParameter !== oReloadInfo.version) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, Version.UrlParameter, sCurrentVersionParameter);
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, Version.UrlParameter, oReloadInfo.version);
+				oFlexInfoSession.version = oReloadInfo.version;
 				bParametersChanged = true;
 			}
 
@@ -246,9 +248,10 @@ sap.ui.define([
 				|| sCurrentVersionParameter === Version.Number.Draft && oReloadInfo.removeDraft
 			) {
 				oReloadInfo.parameters = oMutators[sScenario].remove(oReloadInfo.parameters, Version.UrlParameter, sCurrentVersionParameter);
+				delete oFlexInfoSession.version;
 				bParametersChanged = true;
 			}
-
+			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
 			return bParametersChanged;
 		},
 
@@ -259,21 +262,26 @@ sap.ui.define([
 		 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 		 * @param {boolean} oReloadInfo.isDraftAvailable - Indicates if a draft is available
 		 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
+		 * @param {sap.ui.fl.Selector} oReloadInfo.selector - Root control instance
 		 * @param {string} sScenario - Current scenario. Can be 'flp' or 'standalone'
 		 *
 		 * @returns {boolean} <code>true</code> to indicate that the URL has been changed
 		 */
-		handleParametersOnStart: function(oReloadInfo, sScenario) {
+		handleParametersOnStart(oReloadInfo, sScenario) {
 			var bParametersChanged = false;
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
 			if (oReloadInfo.hasHigherLayerChanges) {
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, LayerUtils.FL_MAX_LAYER_PARAM, oReloadInfo.layer);
+				oFlexInfoSession.maxLayer = oReloadInfo.layer;
 				bParametersChanged = true;
 			}
 
 			if (oReloadInfo.isDraftAvailable) {
 				oReloadInfo.parameters = oMutators[sScenario].set(oReloadInfo.parameters, Version.UrlParameter, Version.Number.Draft);
+				oFlexInfoSession.version = Version.Number.Draft;
 				bParametersChanged = true;
 			}
+			FlexInfoSession.set(oFlexInfoSession, oReloadInfo.selector);
 			return bParametersChanged;
 		},
 
@@ -287,7 +295,7 @@ sap.ui.define([
 		 * @param {sap.ushell.services.URLParsing} oReloadInfo.URLParsingService - Unified Shell's internal URL parsing service
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
-		initialDraftGotActivated: function(oReloadInfo) {
+		initialDraftGotActivated(oReloadInfo) {
 			if (oReloadInfo.versioningEnabled) {
 				var bUrlHasVersionParameter = this.hasVersionParameterWithValue({value: Version.Number.Draft}, oReloadInfo.URLParsingService);
 				return !VersionsAPI.isDraftAvailable({
@@ -312,7 +320,7 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} <code>true</code> if a draft got activated and had a draft initially when entering UI adaptation
 		 */
-		getReloadMethod: function(oReloadInfo) {
+		getReloadMethod(oReloadInfo) {
 			var oRELOAD = {
 				NOT_NEEDED: "NO_RELOAD",
 				RELOAD_PAGE: "HARD_RELOAD",
@@ -322,7 +330,10 @@ sap.ui.define([
 
 			// TODO fix app descriptor handling and reload behavior
 			// TODO move changesNeedReload near flexState; set flag when saving change that needs a reload
-			oReloadInfo.isDraftAvailable = oReloadInfo.isDraftAvailable || ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, oReloadInfo.URLParsingService);
+			oReloadInfo.isDraftAvailable ||= ReloadInfoAPI.hasVersionParameterWithValue(
+				{value: Version.Number.Draft},
+				oReloadInfo.URLParsingService
+			);
 
 			oReloadInfo.hasVersionUrlParameter = !!Utils.getParameter(Version.UrlParameter, oReloadInfo.URLParsingService);
 

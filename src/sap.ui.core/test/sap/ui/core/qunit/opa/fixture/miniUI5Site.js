@@ -18,14 +18,20 @@ sap.ui.define([
 			'<Button id="buttonOutsideOfTheApp"></Button>' +
 		'</mvc:View>';
 
-	Controller.extend("myController", {});
-
-	View.create({
-		definition: VIEW_DEFINITION,
-		type: library.mvc.ViewType.XML
-	}).then(function(oView) {
-		oView.setViewName("myView");
-		oView.placeAt("content");
+	sap.ui.define("myController.controller", function() {
+		return Controller.extend("myController", {});
 	});
+
+	Controller.create({ name: "myController" })
+		.then(function () {
+			return View.create({
+				definition: VIEW_DEFINITION,
+				type: library.mvc.ViewType.XML
+			});
+		})
+		.then(function (oView) {
+			oView.setViewName("myView");
+			oView.placeAt("content");
+		});
 
 });

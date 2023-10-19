@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/test/actions/Drop",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
 	Opa5,
@@ -16,7 +16,7 @@ sap.ui.define([
 	Drop,
 	QUnitUtils,
 	KeyCodes,
-	oCore,
+	Lib,
 	FlexTestAPI
 ) {
 	"use strict";
@@ -31,54 +31,54 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onPageWithRTA: {
 			actions: {
-				iGoToMeArea: function() {
+				iGoToMeArea() {
 					return this.waitFor({
 						id: "userActionsMenuHeaderButton",
 						errorMessage: "Did not find the User Action Menu",
 						actions: new Press()
 					});
 				},
-				iPressOnAdaptUi: function(bPersonalize) {
+				iPressOnAdaptUi(bPersonalize) {
 					var sButtonType = bPersonalize ? "PERSONALIZE" : "RTA";
-					var sId = sButtonType + "_Plugin_ActionButton";
+					var sId = `${sButtonType}_Plugin_ActionButton`;
 					return this.waitFor({
 						controlType: "sap.m.StandardListItem",
-						matchers: function(oListItem) {
+						matchers(oListItem) {
 							return oListItem.data().actionItemId === sId;
 						},
 						errorMessage: "Did not find the Adapt-Ui-Button",
 						actions: new Press()
 					});
 				},
-				iSwitchToVisualizationMode: function() {
-					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iSwitchToVisualizationMode() {
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					var sButtonText = oRtaResourceBundle.getText("BTN_VISUALIZATION");
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getText() === sButtonText;
 						},
 						actions: new Press(),
 						errorMessage: "Did not find Visualization-Button"
 					});
 				},
-				iSwitchToAdaptationMode: function() {
-					var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iSwitchToAdaptationMode() {
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					var sButtonText = oRtaResourceBundle.getText("BTN_ADAPTATION");
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getText() === sButtonText;
 						},
 						actions: new Press(),
 						errorMessage: "Did not find UI-Adaptation-Button"
 					});
 				},
-				iDragAndDropAnElement: function(sElementDragId, sElementDropId) {
+				iDragAndDropAnElement(sElementDragId, sElementDropId) {
 					this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sElementDragId;
 						},
 						// Start the dragging
@@ -87,7 +87,7 @@ sap.ui.define([
 					});
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sElementDropId;
 						},
 						// Finish dragging and drop the item right before this one.
@@ -97,90 +97,90 @@ sap.ui.define([
 						errorMessage: "Could not find the drop zone"
 					});
 				},
-				iClickTheUndoButton: function() {
+				iClickTheUndoButton() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the undo button"
 					});
 				},
-				iClickTheSaveButton: function() {
+				iClickTheSaveButton() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://save";
 						},
 						actions: new Press(),
 						errorMessage: "Did not find the save button"
 					});
 				},
-				iWaitUntilTheBusyIndicatorIsGone: function(sId, sViewName) {
+				iWaitUntilTheBusyIndicatorIsGone(sId, sViewName) {
 					return this.waitFor({
 						autoWait: false,
 						id: sId,
 						viewName: sViewName,
-						matchers: function(oRootView) {
+						matchers(oRootView) {
 							// we set the view busy, so we need to query the parent of the app
 							return oRootView.getBusy() === false;
 						},
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "the App is not busy anymore");
 						},
 						errorMessage: "The app is still busy.."
 					});
 				},
-				iRightClickOnAnElementOverlay: function(sId) {
+				iRightClickOnAnElementOverlay(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sId;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							aOverlays[0].getDomRef().dispatchEvent(oContextMenuEvent);
 						},
 						errorMessage: "Did not find the Element Overlay"
 					});
 				},
-				iClickOnAnElementOverlay: function(sId) {
+				iClickOnAnElementOverlay(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sId;
 						},
 						errorMessage: "Did not find the Element Overlay",
 						actions: new Press()
 					});
 				},
-				iRightClickOnAnAggregationOverlay: function(sId, sAggregationName) {
+				iRightClickOnAnAggregationOverlay(sId, sAggregationName) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sId;
 						},
-						success: function(oOverlay) {
+						success(oOverlay) {
 							var oAggregationOverlay = oOverlay[0].getAggregationOverlay(sAggregationName);
 							oAggregationOverlay.getDomRef().dispatchEvent(oContextMenuEvent);
 						},
 						errorMessage: "Did not find the Element Overlay"
 					});
 				},
-				iClickOnAContextMenuEntry: function(iIndex) {
+				iClickOnAContextMenuEntry(iIndex) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
-						matchers: function(oMenu) {
+						matchers(oMenu) {
 							return oMenu.getDomRef().classList.contains("sapUiDtContextMenu");
 						},
-						success: function(aMenu) {
+						success(aMenu) {
 							aMenu[0].getItems()[iIndex].getDomRef().click();
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
-				iClickOnAContextMenuEntryWithText: function(sText) {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iClickOnAContextMenuEntryWithText(sText) {
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.ui.unified.MenuItem",
 						matchers: new PropertyStrictEquals({
@@ -191,7 +191,7 @@ sap.ui.define([
 						errorMessage: "The Menu Item was not pressable"
 					});
 				},
-				iClickOnAContextMenuEntryWithIcon: function(sIcon) {
+				iClickOnAContextMenuEntryWithIcon(sIcon) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.MenuItem",
 						matchers: [
@@ -203,10 +203,10 @@ sap.ui.define([
 						errorMessage: "The Menu Item was not pressable"
 					});
 				},
-				iEnterANewName: function(sNewLabel) {
+				iEnterANewName(sNewLabel) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							if (oOverlay.getDomRef().classList.contains("sapUiDtOverlaySelected")) {
 								var oOverlayDOM = oOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
 								var oEditableFieldDomNode = oOverlayDOM.children[0];
@@ -214,7 +214,7 @@ sap.ui.define([
 							}
 							return undefined;
 						},
-						actions: function(oEditableFieldDomNode) {
+						actions(oEditableFieldDomNode) {
 							oEditableFieldDomNode.innerHTML = sNewLabel;
 							QUnitUtils.triggerEvent("keypress", oEditableFieldDomNode, { which: KeyCodes.ENTER, keyCode: KeyCodes.ENTER });
 							oEditableFieldDomNode.blur();
@@ -222,11 +222,11 @@ sap.ui.define([
 						errorMessage: "Did not find the Selected Element Overlay"
 					});
 				},
-				iSelectAFieldByBindingPathInTheAddDialog: function(sBindingPath) {
+				iSelectAFieldByBindingPathInTheAddDialog(sBindingPath) {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.CustomListItem",
-						matchers: function(oListItem) {
+						matchers(oListItem) {
 							var sBindingContextPath = oListItem.getBindingContextPath();
 							var oBindingData = oListItem.getBindingContext().getModel().getProperty(sBindingContextPath);
 							return oBindingData.bindingPath && oBindingData.bindingPath === sBindingPath;
@@ -235,19 +235,19 @@ sap.ui.define([
 						errorMessage: "List Item with this label not found"
 					});
 				},
-				iSelectAFieldByLabelInTheAddSectionDialog: function(sLabel) {
+				iSelectAFieldByLabelInTheAddSectionDialog(sLabel) {
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.CustomListItem",
-						matchers: function(oListItem) {
+						matchers(oListItem) {
 							return oListItem.getContent()[0].getItems()[0].getText() === sLabel;
 						},
 						actions: new Press(),
 						errorMessage: "List Item with this label not found"
 					});
 				},
-				iPressOK: function() {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iPressOK() {
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						searchOpenDialogs: true,
 						controlType: "sap.m.Button",
@@ -259,16 +259,16 @@ sap.ui.define([
 						errorMessage: "OK Button not found"
 					});
 				},
-				iExitRtaMode: function(bDontSaveOnExit, bNoChanges) {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iExitRtaMode(bDontSaveOnExit, bNoChanges) {
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getDomRef().closest(".sapUiRtaToolbar")
 								&& oButton.getId().includes("sapUiRta_exit");
 						},
 						actions: new Press(),
-						success: function(aButtons) {
+						success(aButtons) {
 							Opa5.assert.equal(aButtons.length, 1, "'Exit' button found");
 							// If no changes were done, the "save changes" pop-up doesn't come up
 							if (bNoChanges) {
@@ -279,54 +279,54 @@ sap.ui.define([
 								: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE";
 							return this.waitFor({
 								controlType: "sap.m.Button",
-								matchers: function(oButton) {
+								matchers(oButton) {
 									return oButton.getDomRef().closest(".sapUiRTABorder")
 										&& oButton.getProperty("text") === oResources.getText(sButtonTextKey);
 								},
 								actions: new Press(),
-								success: function(aButtons) {
+								success(aButtons) {
 									Opa5.assert.ok(aButtons.length > 0,
-										"Messagebox closed with click on '" + oResources.getText(sButtonTextKey) + "' ");
+										`Messagebox closed with click on '${oResources.getText(sButtonTextKey)}' `);
 								}
 							});
 						}
 					});
 				},
 				// Only for UI Personalization. Please do not use in UI Adaptation tests
-				iPressOnRemoveSection: function(sSectionId) {
+				iPressOnRemoveSection(sSectionId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sSectionId;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sQueryString = "#" + oOverlay.getId() + "-DeleteIcon";
+							var sQueryString = `#${oOverlay.getId()}-DeleteIcon`;
 							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Remove Button on the section"
 					});
 				},
 				// Only for UI Personalization. Please do not use in UI Adaptation tests
-				iPressOnAddSection: function(sSectionId) {
+				iPressOnAddSection(sSectionId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sSectionId;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							var oOverlay = aOverlays[0];
-							var sQueryString = "#" + oOverlay.getId() + "-AddButton";
+							var sQueryString = `#${oOverlay.getId()}-AddButton`;
 							oOverlay.getDomRef().querySelector(sQueryString).click();
 						},
 						errorMessage: "Did not find the Add Button on the section"
 					});
 				},
-				iExitRtaPersonalizationMode: function() {
-					var oResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+				iExitRtaPersonalizationMode() {
+					var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getParent().getDomRef && oButton.getParent().getDomRef() && oButton.getParent().getDomRef().classList.contains("sapUiRtaToolbar")
 								&& oButton.getParent().getDomRef().classList.contains("type_personalization")
 								&& oButton.getProperty("text") === oResources.getText("BTN_DONE");
@@ -334,24 +334,24 @@ sap.ui.define([
 						actions: new Press()
 					});
 				},
-				enableAndDeleteLrepLocalStorageAfterRta: function() {
+				enableAndDeleteLrepLocalStorageAfterRta() {
 					return this.waitFor({
-						check: function() {
+						check() {
 							return !(Opa5.getJQuery()(".sapUiRtaToolbar").length > 0);
 						},
-						success: function() {
+						success() {
 							FlexTestAPI.clearStorage("LocalStorage");
 						}
 					});
 				},
-				clearRtaRestartSessionStorage: function() {
+				clearRtaRestartSessionStorage() {
 					window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
 					window.sessionStorage.removeItem("sap.ui.rta.restart.USER");
 				},
-				clearChangesFromSessionStorage: function() {
+				clearChangesFromSessionStorage() {
 					FlexTestAPI.clearStorage("SessionStorage");
 				},
-				iPressOnEscape: function() {
+				iPressOnEscape() {
 					window.dispatchEvent(new KeyboardEvent("keydown", {
 						key: "escape"
 					}));
@@ -359,38 +359,38 @@ sap.ui.define([
 			},
 
 			assertions: {
-				iShouldSeeTheToolbar: function() {
+				iShouldSeeTheToolbar() {
 					return this.waitFor({
 						autoWait: false,
 						timeout: 100,
 						controlType: "sap.m.HBox",
-						matchers: function(oToolbar) {
+						matchers(oToolbar) {
 							return oToolbar.getDomRef().classList.contains("sapUiRtaToolbar");
 						},
-						success: function(oToolbar) {
+						success(oToolbar) {
 							Opa5.assert.ok(oToolbar[0].getVisible(), "The Toolbar is shown.");
 						},
 						errorMessage: "Did not find the Toolbar"
 					});
 				},
-				iShouldSeeTheToolbarAndTheLogo: function() {
+				iShouldSeeTheToolbarAndTheLogo() {
 					return this.waitFor({
 						autoWait: false,
 						controlType: "sap.m.HBox",
-						matchers: function(oToolbar) {
+						matchers(oToolbar) {
 							return oToolbar.getDomRef().classList.contains("sapUiRtaToolbar");
 						},
-						success: function(oToolbar) {
+						success(oToolbar) {
 							var oFioriToolbar = oToolbar[0];
 							Opa5.assert.ok(oFioriToolbar.getVisible(), "The Toolbar is shown.");
 							Opa5.assert.ok(oFioriToolbar.getControl("icon"), "The FLP Icon is part of the Toolbar");
 
 							return this.waitFor({
 								controlType: "sap.m.Image",
-								matchers: function(oImage) {
+								matchers(oImage) {
 									return oImage.getDomRef().closest(".sapUiRtaToolbar");
 								},
-								success: function(aLogo) {
+								success(aLogo) {
 									Opa5.assert.ok(aLogo.length > 0, "the logo is found on the UI");
 								}
 							});
@@ -398,54 +398,54 @@ sap.ui.define([
 						errorMessage: "Did not find the Toolbar"
 					});
 				},
-				iShouldSeeTheUndoButton: function() {
+				iShouldSeeTheUndoButton() {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getDomRef().closest(".sapUiRtaToolbar") && oButton.getIcon() === "sap-icon://undo";
 						},
-						success: function(oButton) {
+						success(oButton) {
 							Opa5.assert.ok(oButton.getVisible(), "then the button is visible");
 						},
 						errorMessage: "Did not find UndoButton"
 					});
 				},
-				iShouldSeeTheFLPToolbarAndChangesInLRep: function(iCount, sReference) {
+				iShouldSeeTheFLPToolbarAndChangesInLRep(iCount, sReference) {
 					return this.waitFor({
 						id: "shell-header",
-						success: function(oToolbar) {
+						success(oToolbar) {
 							Opa5.assert.ok(oToolbar.getVisible(), "the FLP Toolbar is shown");
 							Opa5.assert.equal(FlexTestAPI.getNumberOfChangesSynchronous("SessionStorage", sReference), iCount, "the number of changes is correct");
 						},
 						errorMessage: "the FLP-Toolbar was not found"
 					});
 				},
-				iShouldSeeTheOverlayForTheApp: function(sId, sViewName) {
+				iShouldSeeTheOverlayForTheApp(sId, sViewName) {
 					var oApp;
 					this.waitFor({
 						id: sId,
 						viewName: sViewName,
 						errorMessage: "The app is still busy..",
-						success: function(oAppControl) {
+						success(oAppControl) {
 							oApp = oAppControl;
 						}
 					});
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement() === oApp;
 						},
-						success: function(oOverlay) {
+						success(oOverlay) {
 							Opa5.assert.ok(oOverlay[0].getVisible(), "The Overlay is shown.");
 						},
 						errorMessage: "Did not find the Element Overlay for the App Control"
 					});
 				},
-				iShouldSeeChangesInLRepWhenTheBusyIndicatorIsGone: function(sId, sViewName, iCount, sReference) {
+				iShouldSeeChangesInLRepWhenTheBusyIndicatorIsGone(sId, sViewName, iCount, sReference) {
 					return this.waitFor({
 						id: sId,
 						viewName: sViewName,
-						success: function() {
+						success() {
 							Opa5.assert.strictEqual(
 								FlexTestAPI.getNumberOfChangesSynchronous("SessionStorage", sReference),
 								iCount,
@@ -455,131 +455,131 @@ sap.ui.define([
 						errorMessage: "The app is still busy.."
 					});
 				},
-				iShouldNotSeeTheElement: function(sId) {
+				iShouldNotSeeTheElement(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						visible: false,
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sId;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							Opa5.assert.notOk(aOverlays[0].getElement().getVisible(), "The element is not visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still visible"
 					});
 				},
-				iShouldSeeTheElement: function(sId) {
+				iShouldSeeTheElement(sId) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						visible: false,
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							return oOverlay.getElement().getId() === sId;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							Opa5.assert.ok(aOverlays[0].getElement().getVisible(), "The element is visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still invisible"
 					});
 				},
-				iShouldSeeTheElementWithTitle: function(sTitle) {
+				iShouldSeeTheElementWithTitle(sTitle) {
 					return this.waitFor({
 						controlType: "sap.ui.dt.ElementOverlay",
 						visible: false,
-						matchers: function(oOverlay) {
+						matchers(oOverlay) {
 							if (oOverlay.getElement().getTitle) {
 								return oOverlay.getElement().getTitle() === sTitle;
 							}
 							return undefined;
 						},
-						success: function(aOverlays) {
+						success(aOverlays) {
 							Opa5.assert.ok(aOverlays[0].getElement().getVisible(), "The element is visible on the UI");
 						},
 						errorMessage: "Did not find the element or it is still invisible"
 					});
 				},
-				iShouldSeeThePopUp: function(bWithAction) {
+				iShouldSeeThePopUp(bWithAction) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
-						matchers: function(oButton) {
+						matchers(oButton) {
 							return oButton.getId().indexOf("__mbox") > -1;
 						},
-						success: function(aButtons) {
+						success(aButtons) {
 							Opa5.assert.ok(aButtons[0].getVisible(), "The Dialog is shown.");
 						},
 						actions: bWithAction ? new Press() : undefined,
 						errorMessage: "Did not find the Dialog"
 					});
 				},
-				iShouldSeeTheVariantURLParameter: function() {
+				iShouldSeeTheVariantURLParameter() {
 					return this.waitFor({
 						autoWait: true,
-						check: function() {
+						check() {
 							var oOpa5Window = Opa5.getWindow();
 							var oHashChanger = new oOpa5Window.sap.ui.core.routing.HashChanger();
 							return oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
 					});
 				},
-				iShouldNotSeeTheVariantURLParameter: function() {
+				iShouldNotSeeTheVariantURLParameter() {
 					return this.waitFor({
 						autoWait: true,
-						check: function() {
+						check() {
 							var oOpa5Window = Opa5.getWindow();
 							var oHashChanger = new oOpa5Window.sap.ui.core.routing.HashChanger();
 							return !oHashChanger.getHash().includes("sap-ui-fl-control-variant-id");
 						},
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "The URL parameter for variant id is present");
 						},
 						errorMessage: "The URL parameter for variant id is not being added"
 					});
 				},
-				iShouldSeetheContextMenu: function() {
+				iShouldSeetheContextMenu() {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
-						matchers: function(oMenu) {
+						matchers(oMenu) {
 							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oMenu) {
+						success(oMenu) {
 							Opa5.assert.ok(oMenu[0], "The context menu is shown.");
 						},
 						errorMessage: "Did not find the Context Menu"
 					});
 				},
-				iShouldSeetheContextMenuEntries: function(aContextEntries) {
+				iShouldSeetheContextMenuEntries(aContextEntries) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
-						matchers: function(oMenu) {
+						matchers(oMenu) {
 							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oMenu) {
+						success(oMenu) {
 							var aIsContextEntries = [];
 							oMenu[0].getItems().forEach(function(oItem) {
 								aIsContextEntries.push(oItem.getText());
 							});
-							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, "expected [" + aContextEntries + "] context entries found");
+							Opa5.assert.deepEqual(aIsContextEntries, aContextEntries, `expected [${aContextEntries}] context entries found`);
 						},
 						errorMessage: "Did not find the Context Menu entries"
 					});
 				},
-				iShouldSeetheNumberOfContextMenuActions: function(iActions) {
+				iShouldSeetheNumberOfContextMenuActions(iActions) {
 					return this.waitFor({
 						controlType: "sap.ui.unified.Menu",
-						matchers: function(oMenu) {
+						matchers(oMenu) {
 							return oMenu.hasStyleClass("sapUiDtContextMenu");
 						},
-						success: function(oMenu) {
+						success(oMenu) {
 							var iItems = 0;
 							oMenu[0].getItems().forEach(function(oItem) {
 								if (oItem.getVisible()) {
 									iItems++;
 								}
 							});
-							Opa5.assert.deepEqual(iActions, iItems, "expected " + iItems + " context entries found");
+							Opa5.assert.deepEqual(iActions, iItems, `expected ${iItems} context entries found`);
 						},
 						errorMessage: "Did not find the Context Menu entries"
 					});

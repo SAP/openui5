@@ -5,6 +5,11 @@ sap.ui.define(["sap/ui/integration/Designtime"
 		return new Designtime({
 			"form": {
 				"items": {
+					"stringParameter": {
+						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
+						"type": "string",
+						"label": "string Parameter"
+					},
 					"dest1.destination": {
 						"type": "destination",
 						"label": "dest1 label defined in DT"

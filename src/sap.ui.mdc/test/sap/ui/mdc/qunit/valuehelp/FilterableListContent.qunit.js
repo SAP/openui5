@@ -35,10 +35,10 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oContent;
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	let oContent;
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oContent.destroy();
 		oContent = null;
 	};
@@ -51,7 +51,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_createDefaultFilterBar", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oContent._createDefaultFilterBar().then(function (oFilterBar) {
 			assert.ok(oFilterBar, "FilterBar is created");
 			assert.equal(oFilterBar, oContent.getAggregation("_defaultFilterBar"), "FilerBar is set as defaultFilterBar");
@@ -60,11 +60,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("_getPriorityFilterBar", function(assert) {
-		var fnDone = assert.async();
+		const fnDone = assert.async();
 		oContent._createDefaultFilterBar().then(function () {
-			var oFilterBar = oContent._getPriorityFilterBar();
+			let oFilterBar = oContent._getPriorityFilterBar();
 			assert.equal(oFilterBar, oContent.getAggregation("_defaultFilterBar"), "returns defaultFilterBar if none is set");
-			var oMyFilterBar = new FilterBar();
+			const oMyFilterBar = new FilterBar();
 			oContent.setFilterBar(oMyFilterBar);
 			oFilterBar = oContent._getPriorityFilterBar();
 			assert.equal(oFilterBar, oMyFilterBar, "returns dedicated filterbar, if available");
@@ -85,7 +85,7 @@ sap.ui.define([
 
 	QUnit.test("_getListItemBindingContext", function(assert) {
 
-		var sModelName = "MyModel";
+		const sModelName = "MyModel";
 
 		sinon.stub(oContent, "getListBindingInfo").callsFake(function () {
 			return {
@@ -93,7 +93,7 @@ sap.ui.define([
 			};
 		});
 
-		var oItem = { getBindingContext: function () {}};
+		const oItem = { getBindingContext: function () {}};
 		sinon.spy(oItem, "getBindingContext");
 
 		oContent._getListItemBindingContext(oItem);

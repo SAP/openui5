@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableRowCountMode = {
+    const TableRowCountMode = {
         /**
          * The table automatically fills the height of the surrounding container.
          *
@@ -28,6 +28,8 @@ sap.ui.define(function() {
          */
         Fixed: "Fixed"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableRowCountMode", TableRowCountMode);
 
     return TableRowCountMode;
 

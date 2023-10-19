@@ -20,8 +20,6 @@ sap.ui.define(['sap/ui/core/support/Plugin', "sap/base/Log"],
 		var LocalStorage = Plugin.extend("sap.ui.core.support.plugins.LocalStorage", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportLocalStorage", "", oSupportStub]);
-
-				this._oStub = oSupportStub;
 				this._aEventIds = [this.getId() + "GetItem", this.getId() + "SetItem"];
 			}
 		});

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "lateness";
-  const pathData = "M132 503q-11 0-18-7t-7-18q0-48 10-84t25-63 33-45.5 34-30.5q-16-12-34-30.5T142 179t-25-63.5T107 32q0-11 7-18t18-7h248q11 0 18 7t7 18q0 47-10 83.5T370 179t-33 45.5-34 30.5q16 12 34 30.5t33 45.5 25 63 10 84q0 11-7 18t-18 7H132zm25-447q4 42 16.5 72t27.5 50.5 29.5 32T254 228q9-6 24.5-17.5t31-32 28-50.5T353 56H157zm181 323q-19-45-44-67t-38-30q-13 8-38 31t-44 66h164z";
+  const pathData = "M301 256q22 16 43 35.5t37 46.5 25.5 63 9.5 85q0 11-7.5 18.5T390 512H122q-11 0-18.5-7.5T96 486q0-49 9.5-85t25.5-63 37-46.5 43-35.5q-22-16-43-35.5T131 174t-25.5-63T96 26q0-11 7.5-18.5T122 0h268q11 0 18.5 7.5T416 26q0 49-9.5 85T381 174t-37 46.5-43 35.5zM148 51q3 37 12.5 63.5T184 161t32.5 35 39.5 29q21-14 39.5-29t32.5-35 23.5-46.5T364 51H148zm108 236q-29 19-52.5 40.5T165 384h182q-15-35-38.5-56.5T256 287z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

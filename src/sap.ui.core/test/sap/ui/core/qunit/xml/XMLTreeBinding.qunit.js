@@ -49,6 +49,9 @@ sap.ui.define([
 
 
 	QUnit.module("sap.ui.model.xml.XMLTreeBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			this.oModel = new XMLModel();
 			this.oModel.setXML(testData);

@@ -6,16 +6,17 @@
 
 sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/enums/ConditionValidated"
-	], function(Condition, ConditionValidated) {
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName"
+	], function(Condition, ConditionValidated, OperatorName) {
 	"use strict";
 
 	// TODO: Move basic tests incorporated in other modules into here?
 
 	QUnit.test("compareConditions", function(assert) {
-		var oCondition1, oCondition2;
+		let oCondition1, oCondition2;
 
-		oCondition1 = Condition.createCondition("EQ", ["A", "A"], undefined, undefined, ConditionValidated.NotValidated, undefined);
+		oCondition1 = Condition.createCondition(OperatorName.EQ, ["A", "A"], undefined, undefined, ConditionValidated.NotValidated, undefined);
 
 		oCondition2 = Object.assign({}, oCondition1);
 		assert.ok(Condition.compareConditions(oCondition1, oCondition2), "compareConditions recognizes identical conditions");

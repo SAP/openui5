@@ -2,12 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
-], function (Opa5, TestUtils, Press, Interactable, Properties) {
+], function (Element, Opa5, TestUtils, Press, Interactable, Properties) {
 	"use strict";
 
 	return {
@@ -192,7 +193,7 @@ sap.ui.define([
 					},
 					success : function () {
 						var sTypeName,
-						oView = sap.ui.getCore().byId(sViewName);
+						oView = Element.getElementById(sViewName);
 
 						// check for valid automatic type determination for each cell content in 1st
 						// row
@@ -222,8 +223,8 @@ sap.ui.define([
 					// sales order IDs are in controls with ID "SalesOrderList:SalesOrderID"
 					id : /SalesOrderID-/,
 					success : function () {
-						var aSalesOrderIds = sap.ui.getCore().byId(sViewName).byId("SalesOrderList")
-								.getItems().map(function (oItem) {
+						var aSalesOrderIds = Element.getElementById(sViewName)
+								.byId("SalesOrderList").getItems().map(function (oItem) {
 									return oItem.getCells()[0].getText();
 							});
 
@@ -242,10 +243,9 @@ sap.ui.define([
 						return oTable[0].getItems().length === aExpectedScheduleIds.length;
 					},
 					success : function () {
-						var oCore = sap.ui.getCore(),
-						aScheduleIds = [];
+						var aScheduleIds = [];
 
-						oCore.byId(sViewName).byId("SO_2_SCHDL")
+						Element.getElementById(sViewName).byId("SO_2_SCHDL")
 							.getItems().forEach(function (oItem) {
 								aScheduleIds.push(oItem.getCells()[0].getText());
 							});
@@ -261,6 +261,7 @@ sap.ui.define([
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			//*****************************************************************************
 			// Check type determination
@@ -367,8 +368,6 @@ sap.ui.define([
 				deleteBusinessPartner();
 			}
 			Then.onAnyPage.checkLog();
-
-			Then.iTeardownMyUIComponent();
 		}
 	};
 });

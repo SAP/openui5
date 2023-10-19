@@ -127,7 +127,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		getPropertyInfo: function(/* mPropertyBag */) {
+		getPropertyInfo(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -149,7 +149,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		getRepresentedProperties: function(/* mPropertyBag */) {
+		getRepresentedProperties(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -178,7 +178,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createLabel: function(/* mPropertyBag */) {
+		createLabel(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -208,7 +208,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createControlForProperty: function(/* mPropertyBag */) {
+		createControlForProperty(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		},
 
@@ -236,7 +236,7 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @abstract
 		 */
-		createLayout: function(/* mPropertyBag */) {
+		createLayout(/* mPropertyBag */) {
 			return Promise.reject("not implemented");
 		}
 	};

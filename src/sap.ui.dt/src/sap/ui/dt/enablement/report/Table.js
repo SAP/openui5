@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
 	"sap/m/Button",
@@ -21,6 +22,7 @@ sap.ui.define([
 	JSONModel,
 	TreeTable,
 	Column,
+	FixedRowMode,
 	Toolbar,
 	ToolbarSpacer,
 	Button,
@@ -49,7 +51,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.enablement.report.Table
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var oTable = Control.extend("sap.ui.dt.enablement.report.Table", /** @lends sap.ui.dt.enablement.report.Table.prototype */ {
 		metadata: {
@@ -72,7 +73,7 @@ sap.ui.define([
 		 * Called when the Table is initialized
 		 * @protected
 		 */
-		init: function() {
+		init() {
 			this.setAggregation("_table", this._createTable());
 		},
 
@@ -80,7 +81,7 @@ sap.ui.define([
 		 * Called when the Table is destroyed
 		 * @protected
 		 */
-		exit: function() {
+		exit() {
 			clearTimeout(this._iFilterTimeout);
 			this.setData(null);
 		},
@@ -91,7 +92,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		setData: function(oData) {
+		setData(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -112,7 +113,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		filter: function(sFilter) {
+		filter(sFilter) {
 			var oModel = this._getTable().getModel();
 			if (oModel) {
 				if (sFilter.length > 0) {
@@ -134,13 +135,15 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createTable: function() {
-			var oTable = new TreeTable(this.getId() + "--table", {
+		_createTable() {
+			var oTable = new TreeTable(`${this.getId()}--table`, {
 				selectionMode: "MultiToggle",
-				visibleRowCount: 20,
+				rowMode: new FixedRowMode({
+					rowCount: 20
+				}),
 				enableSelectAll: false,
 				ariaLabelledBy: "title",
-				toolbar: this._createToolbar(),
+				extension: this._createToolbar(),
 				rows: "{path:'/', parameters: {arrayNames:['children']}}",
 				columns: [
 					this._createTextColumn("name", "Name", "{name}"),
@@ -156,19 +159,19 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createToolbar: function() {
-			return new Toolbar(this.getId() + "--toolbar", {
+		_createToolbar() {
+			return new Toolbar(`${this.getId()}--toolbar`, {
 				content: [
-					new ToolbarSpacer(this.getId() + "--toolbar-spacer"),
-					new Button(this.getId() + "--toolbar-collapse-button", {
+					new ToolbarSpacer(`${this.getId()}--toolbar-spacer`),
+					new Button(`${this.getId()}--toolbar-collapse-button`, {
 						text: "Collapse all",
 						press: this._onCollapseAll.bind(this)
 					}),
-					new Button(this.getId() + "--toolbar-expand-button", {
+					new Button(`${this.getId()}--toolbar-expand-button`, {
 						text: "Expand",
 						press: this._onExpandSecondLevel.bind(this)
 					}),
-					new SearchField(this.getId() + "--toolbar-search-field", {
+					new SearchField(`${this.getId()}--toolbar-search-field`, {
 						liveChange: this._onSearch.bind(this)
 					})
 				]
@@ -178,7 +181,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_onSearch: function(oEvt) {
+		_onSearch(oEvt) {
 			var sFilter = oEvt.getParameter("newValue");
 			clearTimeout(this._iFilterTimeout);
 			this._iFilterTimeout = setTimeout(function() {
@@ -189,7 +192,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createTextColumn: function(sId, sColumnText, sRowText) {
+		_createTextColumn(sId, sColumnText, sRowText) {
 			return this._createColumn(sId, sColumnText,
 				new Text({
 					text: sRowText
@@ -200,7 +203,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createRatingIndicatorColumn: function(sId, sColumnText, sRowText, sTooltip) {
+		_createRatingIndicatorColumn(sId, sColumnText, sRowText, sTooltip) {
 			return this._createColumn(sId, sColumnText,
 				new RatingIndicator({
 					maxValue: 3,
@@ -214,8 +217,8 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createColumn: function(sId, sColumnText, oTemplate) {
-			return new Column(this.getId() + "--table-column-" + sId, {
+		_createColumn(sId, sColumnText, oTemplate) {
+			return new Column(`${this.getId()}--table-column-${sId}`, {
 				label: new Label({text: sColumnText}),
 				width: "13em",
 				template: oTemplate
@@ -225,14 +228,14 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_getTable: function() {
+		_getTable() {
 			return this.getAggregation("_table");
 		},
 
 		/**
 		 * @private
 		 */
-		_onCollapseAll: function() {
+		_onCollapseAll() {
 			var oTable = this._getTable();
 			oTable.collapseAll();
 		},
@@ -240,7 +243,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_onExpandSecondLevel: function() {
+		_onExpandSecondLevel() {
 			var oTable = this._getTable();
 			oTable.expandToLevel(2);
 		},

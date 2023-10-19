@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @returns {Promise} Returns a Promise resolved empty after the script was included
 		 * @private
 		 */
-		 _loadModules: function(sFlexModulesUri) {
+		 _loadModules(sFlexModulesUri) {
 			return new Promise(function(resolve, reject) {
 				includeScript(sFlexModulesUri, undefined, resolve, reject);
 			});
@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.write._internal.connectors.LrepConnector
 		 */
-		_addClientInfo: function(mParameters) {
+		_addClientInfo(mParameters) {
 			var sClient = FlexUtils.getUrlParameter("sap-client");
 			if (!mParameters && sClient) {
 				mParameters = {};
@@ -86,7 +86,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 * or resolves with undefined in case cache bustering determines that no data is present
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			if (mPropertyBag.cacheKey === "<NO CHANGES>") {
 				return Promise.resolve();
 			}
@@ -111,7 +111,7 @@ sap.ui.define([
 				initialConnector: this,
 				xsrfToken: this.xsrfToken,
 				siteId: mPropertyBag.siteId,
-				sAppDescriptorId: sAppDescriptorId
+				sAppDescriptorId
 			}).then(function(oResult) {
 				var oResponse = oResult.response;
 				if (oResult.etag) {

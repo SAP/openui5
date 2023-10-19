@@ -4,45 +4,46 @@
 
 // Provides control sap.ui.rta.toolbar.contextBased.ManageAdaptationsDialog
 sap.ui.define([
-	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/restricted/_isEqual",
+	"sap/base/Log",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/m/ColumnListItem",
 	"sap/ui/rta/Utils",
-	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/date/UI5Date"
-],
-function(
-	Log,
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/performance/Measurement"
+], function(
+	Localization,
 	_isEqual,
+	Log,
 	ManagedObject,
 	Fragment,
 	ContextBasedAdaptationsAPI,
 	ColumnListItem,
 	Utils,
-	SaveAsAdaptation,
 	Filter,
 	FilterOperator,
 	JSONModel,
-	UI5Date
+	UI5Date,
+	Measurement
 ) {
 	"use strict";
 
 	var oRanking = {
 		Initial: 0,
 		Default: 1024,
-		Before: function(iRank) {
+		Before(iRank) {
 			return iRank + 1024;
 		},
-		Between: function(iRank1, iRank2) {
+		Between(iRank1, iRank2) {
 			return (iRank1 + iRank2) / 2;
 		},
-		After: function(iRank) {
+		After(iRank) {
 			return iRank + 0.5;
 		}
 	};
@@ -55,17 +56,19 @@ function(
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.prototype.constructor.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.prototype.constructor.apply(this, aArgs);
 			this.oTextResources = this.getToolbar().getTextResources();
 		}
 	});
 
 	ManageAdaptations.prototype.openManageAdaptationDialog = function() {
+		Measurement.start("onCBAOpenManageAdaptationDialog", "Measurement of opening the manage context-based adaptation dialog");
 		if (!this._oManageAdaptationDialogPromise) {
 			this._oManageAdaptationDialogPromise = Fragment.load({
 				name: "sap.ui.rta.toolbar.contextBased.ManageAdaptationsDialog",
-				id: this.getToolbar().getId() + "_fragment--sapUiRta_manageAdaptationDialog",
+				id: `${this.getToolbar().getId()}_fragment--sapUiRta_manageAdaptationDialog`,
 				controller: {
 					formatContextColumnCell: formatContextColumnCell.bind(this),
 					formatContextColumnTooltip: formatContextColumnTooltip.bind(this),
@@ -92,9 +95,15 @@ function(
 		return this._oManageAdaptationDialogPromise
 		.then(function() {
 			this._oRtaInformation = this.getToolbar().getRtaInformation();
-			return ContextBasedAdaptationsAPI.load({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
+			return ContextBasedAdaptationsAPI.load({
+				control: this._oRtaInformation.rootControl,
+				layer: this._oRtaInformation.flexSettings.layer
+			});
 		}.bind(this)).then(function(oAdaptations) {
-			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({control: this._oRtaInformation.rootControl, layer: this._oRtaInformation.flexSettings.layer});
+			this.oAdaptationsModel = ContextBasedAdaptationsAPI.getAdaptationsModel({
+				control: this._oRtaInformation.rootControl,
+				layer: this._oRtaInformation.flexSettings.layer
+			});
 			this.oAdaptationsModel.updateAdaptations(oAdaptations.adaptations);
 			this.oReferenceAdaptationsData = JSON.parse(JSON.stringify(this.oAdaptationsModel.getProperty("/adaptations")));
 			this._oOriginAdaptationsData = JSON.parse(JSON.stringify(this.oAdaptationsModel.getProperty("/allAdaptations")));
@@ -102,6 +111,8 @@ function(
 			this._oManageAdaptationDialog.setModel(this.oAdaptationsModel, "contextBased");
 			this._oManageAdaptationDialog.setModel(this._oControlConfigurationModel, "controlConfiguration");
 			getAdaptationsTable.call(this).attachSelectionChange(onSelectionChange.bind(this));
+			Measurement.end("onCBAOpenManageAdaptationDialog");
+			Measurement.getActive() && Log.info(`onCBAOpenManageAdaptationDialog: ${Measurement.getMeasurement("onCBAOpenManageAdaptationDialog").time} ms`);
 			return this._oManageAdaptationDialog.open();
 		}.bind(this)
 		).catch(function(oError) {
@@ -115,8 +126,8 @@ function(
 
 	// ------ formatting ------
 	function formatContextColumnCell(aRoles) {
-		return aRoles.length + " " + (aRoles.length > 1 ?
-			this.oTextResources.getText("TXT_TABLE_CONTEXT_CELL_ROLES") : this.oTextResources.getText("TXT_TABLE_CONTEXT_CELL_ROLE"));
+		return `${aRoles.length} ${aRoles.length > 1 ?
+			this.oTextResources.getText("TXT_TABLE_CONTEXT_CELL_ROLES") : this.oTextResources.getText("TXT_TABLE_CONTEXT_CELL_ROLE")}`;
 	}
 
 	function formatContextColumnTooltip(aRoles) {
@@ -132,8 +143,8 @@ function(
 			hour: "numeric",
 			minute: "numeric"
 		};
-		var sLanguage = sap.ui.getCore().getConfiguration().getLanguage();
-		return sModifiedBy + "\n" + oUi5Date.toLocaleTimeString(sLanguage, oOptions);
+		var sLanguage = Localization.getLanguage();
+		return `${sModifiedBy}\n${oUi5Date.toLocaleTimeString(sLanguage, oOptions)}`;
 	}
 
 	function onSelectionChange(oEvent) {
@@ -174,7 +185,7 @@ function(
 			var oFilterByTitle = new Filter("title", FilterOperator.Contains, sQuery);
 			var oFilterByContextId = new Filter({
 				path: "contexts/role",
-				test: function(aRoles) {
+				test(aRoles) {
 					return aRoles.some(function(sRole) {
 						return sRole.includes(sQuery.toUpperCase());
 					});
@@ -284,7 +295,10 @@ function(
 		// set the rank property and update the model to refresh the bindings
 		this.oAdaptationsModel.setProperty("rank", iNewRank, oDraggedItemContext);
 		sortByRank(this.oAdaptationsModel);
-		var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
+		var oAllUpdatedAdaptations = Object.assign(
+			this.oAdaptationsModel.getProperty("/allAdaptations"),
+			this.oAdaptationsModel.getProperty("/adaptations")
+		);
 		this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 		enableSaveButton.call(this, didAdaptationsPriorityChange.call(this));
 	}
@@ -307,7 +321,7 @@ function(
 	}
 
 	function getControlInDialog(sId) {
-		return this.getToolbar().getControl("manageAdaptationDialog--" + sId);
+		return this.getToolbar().getControl(`manageAdaptationDialog--${sId}`);
 	}
 
 	function getDefaultApplicationTable() {
@@ -348,17 +362,25 @@ function(
 	function onSaveReorderedAdaptations() {
 		Utils.checkDraftOverwrite(this.getToolbar().getModel("versions")).then(function() {
 			var oRtaInformation = this.getToolbar().getRtaInformation();
-			var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations").map(function(oAdaptation) { return oAdaptation.id; });
-			return ContextBasedAdaptationsAPI.reorder({control: oRtaInformation.rootControl, layer: oRtaInformation.flexSettings.layer, parameters: {priorities: aAdaptationPriorities}});
+			var aAdaptationPriorities = this.oAdaptationsModel.getProperty("/adaptations")
+			.map(function(oAdaptation) { return oAdaptation.id; });
+			return ContextBasedAdaptationsAPI.reorder({
+				control: oRtaInformation.rootControl,
+				layer: oRtaInformation.flexSettings.layer,
+				parameters: {priorities: aAdaptationPriorities}
+			});
 		}.bind(this)).then(function() {
-			var oAllUpdatedAdaptations = Object.assign(this.oAdaptationsModel.getProperty("/allAdaptations"), this.oAdaptationsModel.getProperty("/adaptations"));
+			var oAllUpdatedAdaptations = Object.assign(
+				this.oAdaptationsModel.getProperty("/allAdaptations"),
+				this.oAdaptationsModel.getProperty("/adaptations")
+			);
 			this.oAdaptationsModel.updateAdaptations(oAllUpdatedAdaptations);
 			onCloseDialog.call(this);
 		}.bind(this))
 		.catch(function(oError) {
 			if (oError !== "cancel") {
 				Utils.showMessageBox("error", "MSG_LREP_TRANSFER_ERROR", { titleKey: "BTN_MANAGE_APP_CTX", error: oError});
-				Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+				Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 			}
 		});
 	}

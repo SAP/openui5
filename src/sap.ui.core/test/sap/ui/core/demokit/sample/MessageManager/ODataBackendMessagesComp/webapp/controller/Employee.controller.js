@@ -1,9 +1,10 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageToast",
 	"sap/ui/model/BindingMode"
-], function (BaseController, JSONModel, MessageToast, BindingMode) {
+], function (Messaging, BaseController, JSONModel, MessageToast, BindingMode) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.controller.Employee", {
@@ -43,7 +44,7 @@ sap.ui.define([
 		onRevertChanges : function (oEvent) {
 			var oModel = this.getView().getModel();
 			oModel.resetChanges();
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		onSave : function (oEvent) {

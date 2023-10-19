@@ -17,12 +17,11 @@ sap.ui.define([
     IdentifierUtil) {
     "use strict";
 
-    var CondenserTableDelegate = Object.assign({}, TableDelegate);
-    CondenserTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+    const CondenserTableDelegate = Object.assign({}, TableDelegate);
 
     CondenserTableDelegate.addItem = function(oTable, sPropertyName, mPropertyBag) {
-        var sId;
-        var sHeader;
+        let sId;
+        let sHeader;
         function getIdAndHeader(sPropertyName, sViewId) {
             switch (sPropertyName) {
                 case "name":
@@ -46,13 +45,13 @@ sap.ui.define([
                     sId = sViewId;
             }
         }
-        var oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
-        var oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oTable);
-		var oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oTable);
-		var sViewId = mPropertyBag ? mPropertyBag.viewId : null;
+        const oModifier = mPropertyBag ? mPropertyBag.modifier : JsControlTreeModifier;
+        const oAppComponent = mPropertyBag ? mPropertyBag.appComponent : FlUtils.getAppComponentForControl(oTable);
+		const oView = (mPropertyBag && mPropertyBag.view ) ? mPropertyBag.view : FlUtils.getViewForControl(oTable);
+		let sViewId = mPropertyBag ? mPropertyBag.viewId : null;
 
-		var oColumn;
-		var oExistingColumn = sap.ui.getCore().byId(sId);
+		let oColumn;
+		const oExistingColumn = sap.ui.getCore().byId(sId);
 
 		if (oExistingColumn) {
 			return Promise.resolve(oExistingColumn);

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -11,7 +11,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @alias sap.ui.mdc.enums.ChartItemRoleType
      */
-    var ChartItemRoleType = {
+    const ChartItemRoleType = {
         /**
          * All dimensions with role "category" are assigned to the feed uid "categoryAxis".
          *
@@ -53,6 +53,8 @@ sap.ui.define(function() {
          */
         axis3: "axis3"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.ChartItemRoleType", ChartItemRoleType);
 
     return ChartItemRoleType;
 

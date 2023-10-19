@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
-	"sap/ui/mdc/enums/OperatorValueType"
+	"sap/ui/mdc/enums/OperatorName",
+	"sap/ui/mdc/enums/OperatorValueType",
+	"sap/ui/model/FilterOperator"
 ], function (
 		ValueHelpDelegate,
 		Content,
@@ -19,16 +21,18 @@ sap.ui.define([
 		FilterOperatorUtil,
 		Operator,
 		ConditionValidated,
-		OperatorValueType
+		OperatorName,
+		OperatorValueType,
+		FilterOperator
 		) {
 	"use strict";
 
-	var oContent;
-	var bIsTypeahead = false;
-	var bIsOpen = false;
-	var bIsOpening = false;
+	let oContent;
+	let bIsTypeahead = false;
+	let bIsOpen = false;
+	let bIsOpening = false;
 
-	var oContainer = { //to fake Container
+	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return "X"; // just test return value
 		},
@@ -65,7 +69,7 @@ sap.ui.define([
 		}
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oContent.destroy();
 		oContent = null;
 		bIsTypeahead = false;
@@ -86,7 +90,7 @@ sap.ui.define([
 
 		sinon.spy(oContent, "invalidate");
 		sinon.spy(oContent, "handleConditionsUpdate");
-		var aConditions = [Condition.createItemCondition("X", "Text")];
+		const aConditions = [Condition.createItemCondition("X", "Text")];
 		oContent.setConditions(aConditions);
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
 		assert.ok(oContent.handleConditionsUpdate.calledOnce, "handleConditionsUpdate called");
@@ -127,9 +131,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("EQ operator determination", function(assert) {
-		var oOperator = new Operator({
+		const oOperator = new Operator({
 			name: "MyTest",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -138,7 +142,7 @@ sap.ui.define([
 		FilterOperatorUtil.addOperator(oOperator);
 
 		sinon.spy(oContent, "invalidate");
-		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: [OperatorName.GT, OperatorName.LT, oOperator.name]});
 		assert.ok(oContent._oOperator.isA("sap.ui.mdc.condition.Operator"), "Operator was created.");
 		assert.ok(oContent._oOperator.name === "MyTest", "Operator was set via configuration");
 		assert.ok(oContent.invalidate.notCalled, "Content not invalidated");
@@ -146,9 +150,9 @@ sap.ui.define([
 
 	QUnit.test("createCondition", function(assert) {
 
-		var oOperator = new Operator({
+		const oOperator = new Operator({
 			name: "MyTest",
-			filterOperator: "EQ",
+			filterOperator: FilterOperator.EQ,
 			tokenParse: "^=([^=].*)$",
 			tokenFormat: "={0}",
 			valueTypes: [OperatorValueType.Self],
@@ -156,9 +160,9 @@ sap.ui.define([
 		});
 		FilterOperatorUtil.addOperator(oOperator);
 
-		oContent.setConfig({operators: ["GT", "LT", oOperator.name]});
+		oContent.setConfig({operators: [OperatorName.GT, OperatorName.LT, oOperator.name]});
 
-		var oCondition = oContent.createCondition("1", "Text1", {myPayload: true});
+		let oCondition = oContent.createCondition("1", "Text1", {myPayload: true});
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
 			assert.equal(oCondition && oCondition.operator, "MyTest", "Condition Operator");
@@ -173,7 +177,7 @@ sap.ui.define([
 		oCondition = oContent.createCondition("1", "Text1");
 		assert.ok(oCondition, "Condition created");
 		if (oCondition) {
-			assert.equal(oCondition && oCondition.operator, "EQ", "Condition Operator");
+			assert.equal(oCondition && oCondition.operator, OperatorName.EQ, "Condition Operator");
 			assert.equal(oCondition.values.length, 2, "Condition values length");
 			assert.equal(oCondition.values[0], "1", "Condition values[0]");
 			assert.equal(oCondition.values[1], "Text1", "Condition values[1]");
@@ -208,7 +212,7 @@ sap.ui.define([
 
 	QUnit.test("isSearchSupported", function(assert) {
 
-		var bSupported = oContent.isSearchSupported();
+		const bSupported = oContent.isSearchSupported();
 		assert.notOk(bSupported, "not supported as default");
 
 	});
@@ -239,21 +243,21 @@ sap.ui.define([
 
 	QUnit.test("getValueHelpDelegate", function(assert) {
 
-		var oDelegate = oContent.getValueHelpDelegate();
+		const oDelegate = oContent.getValueHelpDelegate();
 		assert.equal(oDelegate, ValueHelpDelegate, "Delegate returned");
 
 	});
 
 	QUnit.test("_awaitValueHelpDelegate", function(assert) {
 
-		var oPromise = oContent.awaitValueHelpDelegate();
+		const oPromise = oContent.awaitValueHelpDelegate();
 		assert.ok(oPromise instanceof Promise, "Promise returned");
 
 	});
 
 	QUnit.test("isValueHelpDelegateInitialized", function(assert) {
 
-		var bDelegateInitialized = oContent.isValueHelpDelegateInitialized();
+		const bDelegateInitialized = oContent.isValueHelpDelegateInitialized();
 		assert.ok(bDelegateInitialized, "Delegate initialized");
 
 	});
@@ -266,12 +270,14 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: null,
 			ariaHasPopup: "listbox",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: false,
+			autocomplete: "none"
 		};
-		var oAttributes = oContent.getAriaAttributes();
+		const oAttributes = oContent.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -363,14 +369,14 @@ sap.ui.define([
 
 	QUnit.test("getControl", function(assert) {
 
-		var oControl = oContent.getControl();
+		const oControl = oContent.getControl();
 		assert.equal(oControl, "Control", "Delegate returned");
 
 	});
 
 	QUnit.test("isQuickSelectSupported", function(assert) {
 
-		var bSupported = oContent.isQuickSelectSupported();
+		const bSupported = oContent.isQuickSelectSupported();
 		assert.notOk(bSupported, "not supported as default");
 
 	});

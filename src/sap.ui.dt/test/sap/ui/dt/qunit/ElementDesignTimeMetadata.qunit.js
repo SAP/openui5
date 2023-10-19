@@ -2,13 +2,13 @@
 
 sap.ui.define([
 	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/core/Element",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ElementDesignTimeMetadata,
-	Core,
+	Lib,
 	ElementUtil,
 	Element,
 	sinon
@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data: {
 					name: {
@@ -37,10 +37,10 @@ sap.ui.define([
 								action2: {
 									changeType: "secondChangeType"
 								},
-								action3: function(oElement) {
+								action3(oElement) {
 									return {changeType: oElement.name};
 								},
-								action4: function(oElement, foo, bar) {
+								action4(oElement, foo, bar) {
 									return {changeType: oElement.name + foo + bar};
 								},
 								action5: {
@@ -49,7 +49,7 @@ sap.ui.define([
 									}
 								},
 								action6: {
-									subAction: function(oElement, foo, bar) {
+									subAction(oElement, foo, bar) {
 										return {changeType: oElement.name + foo + bar};
 									}
 								}
@@ -67,33 +67,33 @@ sap.ui.define([
 							}
 						},
 						testAggregation3: {
-							childNames: function(oElement) {
+							childNames(oElement) {
 								// fake 2 cases:
 								// 1. childNames is a function, that returns the object
 								// 2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
-									singular: function() {
+									singular() {
 										// fake own resource bundle handling
-										return "I18N_KEY" + oElement.getText();
+										return `I18N_KEY${oElement.getText()}`;
 									},
-									plural: function() {
+									plural() {
 										// fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement.getText();
+										return `I18N_KEY_PLURAL${oElement.getText()}`;
 									}
 								};
 							},
-							displayName: function(oElement) {
+							displayName(oElement) {
 								// fake 2 cases:
 								// 1. displayName is a function, that returns the object
 								// 2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
-									singular: function() {
+									singular() {
 										// fake own resource bundle handling
-										return "I18N_KEY" + oElement.getText();
+										return `I18N_KEY${oElement.getText()}`;
 									},
-									plural: function() {
+									plural() {
 										// fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement.getText();
+										return `I18N_KEY_PLURAL${oElement.getText()}`;
 									}
 								};
 							}
@@ -102,7 +102,7 @@ sap.ui.define([
 							ignore: true
 						},
 						testAggregation5: {
-							ignore: function() {
+							ignore() {
 								return false;
 							}
 						}
@@ -112,13 +112,13 @@ sap.ui.define([
 							aggregationLike: true
 						}
 					},
-					getStableElements: function(oElement) {
+					getStableElements(oElement) {
 						return [oElement, oElement];
 					}
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}
@@ -162,7 +162,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
 				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -187,7 +187,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			var mExpectedDisplayNames = {
 				singular: "I18N_KEY_USER_FRIENDLY_AGGREGATION_NAME",
@@ -207,7 +207,7 @@ sap.ui.define([
 		QUnit.test("when getText is called (with and without function)", function(assert) {
 			var oElementDesignTimeMetadataWithFunction = new ElementDesignTimeMetadata({
 				data: {
-					name: function() {
+					name() {
 						return {
 							singular: "MY_FANCY_NAME",
 							plural: "MY_FANCY_NAME_PLURAL"
@@ -226,7 +226,7 @@ sap.ui.define([
 				getText: sandbox.stub().returnsArg(0), // just return i18n keys
 				hasText: sandbox.stub().returns(false)
 			};
-			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
+			sandbox.stub(Lib, "getResourceBundleFor").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
 				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -265,7 +265,7 @@ sap.ui.define([
 
 		QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning valid data", function(assert) {
 			var oOverlay = {
-				getElement: function() {
+				getElement() {
 					return "element";
 				}
 			};
@@ -274,7 +274,7 @@ sap.ui.define([
 
 		QUnit.test("when getStableElements method is called and DT Metadata has a getStableElements function returning invalid data", function(assert) {
 			var oOverlay = {
-				getElement: function() {
+				getElement() {
 					return "element";
 				}
 			};
@@ -284,7 +284,7 @@ sap.ui.define([
 
 		QUnit.test("when getStableElements method is called and DT Metadata has no getStableElements function", function(assert) {
 			var oOverlay = {
-				getElement: function() {
+				getElement() {
 					return "element";
 				}
 			};
@@ -341,7 +341,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with an array for aggregations is created for a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oScrollContainer = {
 				domRef: "foo",
 				aggregations: ["a", "b"]
@@ -354,7 +354,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}
@@ -367,7 +367,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with a function for aggregations is created for a control", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetAggregationsStub = sandbox.stub();
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data: {
@@ -380,7 +380,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}

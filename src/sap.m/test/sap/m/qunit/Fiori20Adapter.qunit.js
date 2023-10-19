@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/MessagePage",
+"sap/m/MessagePage",
 	"sap/m/Bar",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Table",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	createAndAppendDiv,
 	Fiori20Adapter,
@@ -27,7 +28,7 @@ sap.ui.define([
 	jQuery,
 	Device,
 	JSONModel,
-	MessagePage,
+MessagePage,
 	Bar,
 	Text,
 	Button,
@@ -40,7 +41,8 @@ sap.ui.define([
 	Dialog,
 	Table,
 	XMLView,
-	Core
+	Core,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -1164,7 +1166,7 @@ sap.ui.define([
 		Fiori20Adapter.detachViewChange(oSpy);
 	});
 
-	QUnit.test("First page of nested navContainer is identified on revisit", function(assert) {
+	QUnit.test("First page of nested navContainer is identified on revisit", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 				sPageTitle,
 				oBackButton,
@@ -1221,10 +1223,11 @@ sap.ui.define([
 		}
 		oSpy.resetHistory();
 		oNestedNavContainer.attachEventOnce("afterNavigate", checkOnAfterNavigateToPage2);
+		await nextUIUpdate();
 		oNestedNavContainer.to("page2");
 	});
 
-	QUnit.test("Leveled header info is correctly adapted", function(assert) {
+	QUnit.test("Leveled header info is correctly adapted", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true,
 					bHideBackButton: true,
 					bCollapseHeader: true},
@@ -1275,10 +1278,11 @@ sap.ui.define([
 			Fiori20Adapter.detachViewChange(oSpy);
 			done();
 		});
+		await nextUIUpdate();
 		oNestedNavC.to("headerlessPage2");
 	});
 
-	QUnit.test("Leveled header info is correctly updated", function(assert) {
+	QUnit.test("Leveled header info is correctly updated", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true,
 					bHideBackButton: true,
 					bCollapseHeader: true},
@@ -1331,10 +1335,11 @@ sap.ui.define([
 			Fiori20Adapter.detachViewChange(oSpy);
 			done();
 		});
+		await nextUIUpdate();
 		oNestedNavC.to("nestedPage2");
 	});
 
-	QUnit.test("2-level navigation is correctly identified", function(assert) {
+	QUnit.test("2-level navigation is correctly identified", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true,
 					bHideBackButton: true,
 					bCollapseHeader: true},
@@ -1417,10 +1422,11 @@ sap.ui.define([
 		}
 
 		oNestedNavC1.attachEventOnce("afterNavigate", checkAfterNavigateToPage2, this);
+		await nextUIUpdate();
 		oNestedNavC1.to("nestedPage2");
 	});
 
-	QUnit.test("Destroyed navContainer page is ignored", function(assert) {
+	QUnit.test("Destroyed navContainer page is ignored", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 				sPageTitle,
 				oApp1 = new App({
@@ -1453,6 +1459,7 @@ sap.ui.define([
 		// act: destroy 1st app and navigate inside 2nd app
 		oSpy.resetHistory();
 		oApp2.destroy();
+		await nextUIUpdate();
 		oApp1.to("page2");
 
 		//assert
@@ -1813,7 +1820,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initial pages of splitContainer are correctly adapted", function(assert) {
+	QUnit.test("Initial pages of splitContainer are correctly adapted", async function(assert) {
 		var oAdaptOptions = {bMoveTitle: true, bHideBackButton: true, bCollapseHeader: true},
 				oTitleInfo,
 				oBackButton,
@@ -1834,6 +1841,8 @@ sap.ui.define([
 
 		//act
 		this.oSplitContainer.addMasterPage(new Page("masterPage1", {title: "Master1", showNavButton: true}));
+
+		await nextUIUpdate();
 
 		//assert
 		assert.equal(oSpy.callCount, 1, "callback executed");

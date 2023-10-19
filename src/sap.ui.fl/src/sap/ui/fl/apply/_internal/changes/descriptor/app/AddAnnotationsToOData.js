@@ -36,11 +36,11 @@ sap.ui.define([
 		if (sChangeDataSourceId) {
 			if (Object.keys(oManifestDataSources).length > 0) {
 				if (!isDataSourceIdExistingInManifest(oManifestDataSources, sChangeDataSourceId)) {
-					throw new Error("There is no dataSource '" + sChangeDataSourceId + "' existing in the manifest. You can only add annotations to already existing dataSources in the manifest");
+					throw new Error(`There is no dataSource '${sChangeDataSourceId}' existing in the manifest. You can only add annotations to already existing dataSources in the manifest`);
 				}
 
 				if (!isDataSourceTypeOData(oManifestDataSources, sChangeDataSourceId)) {
-					throw new Error("The dataSource '" + sChangeDataSourceId + "' is existing in the manifest but is not type of 'OData'. The type of the dataSource in the manifest is '" + oManifestDataSources[sChangeDataSourceId].type + "'");
+					throw new Error(`The dataSource '${sChangeDataSourceId}' is existing in the manifest but is not type of 'OData'. The type of the dataSource in the manifest is '${oManifestDataSources[sChangeDataSourceId].type}'`);
 				}
 			} else {
 				throw new Error("There are no dataSources in the manifest at all");
@@ -62,7 +62,7 @@ sap.ui.define([
 
 	function checkingAnnotationsInsertPosition(sChangeAnnotationsInsertPosition) {
 		if (!(SUPPORTED_INSERT_POSITION.indexOf(sChangeAnnotationsInsertPosition) >= 0) && !(sChangeAnnotationsInsertPosition === undefined)) { // default is 'BEGINNING'
-			throw new Error("The defined insert position '" + sChangeAnnotationsInsertPosition + "' is not supported. The supported insert positions are: " + SUPPORTED_INSERT_POSITION.join("|"));
+			throw new Error(`The defined insert position '${sChangeAnnotationsInsertPosition}' is not supported. The supported insert positions are: ${SUPPORTED_INSERT_POSITION.join("|")}`);
 		}
 	}
 
@@ -76,11 +76,11 @@ sap.ui.define([
 				DescriptorChangeCheck.checkIdNamespaceCompliance(sAnnotation, oChange);
 
 				if (!isAnnotationTypeOfOdataAnnotation(oChangeDataSource, sAnnotation)) {
-					throw new Error("The dataSource annotation '" + sAnnotation + "' is type of '" + oChangeDataSource[sAnnotation].type + "'. Only dataSource annotations of type 'ODataAnnotation' is supported");
+					throw new Error(`The dataSource annotation '${sAnnotation}' is type of '${oChangeDataSource[sAnnotation].type}'. Only dataSource annotations of type 'ODataAnnotation' is supported`);
 				}
 
 				if (!isAnnotationPartOfAnnotationsArray(aChangeAnnotations, sAnnotation)) {
-					throw new Error("The annotation '" + sAnnotation + "' is not part of 'annotations' array property. Please add the annotation '" + sAnnotation + "' in the 'annotations' array property");
+					throw new Error(`The annotation '${sAnnotation}' is not part of 'annotations' array property. Please add the annotation '${sAnnotation}' in the 'annotations' array property`);
 				}
 			});
 		} else {
@@ -94,13 +94,9 @@ sap.ui.define([
 	}
 
 	function mergeAnnotationArray(oManifestDataSourceId, aChangeAnnotations, sChangeAnnotationsInsertPosition) {
-		if (!oManifestDataSourceId.settings) {
-			oManifestDataSourceId.settings = {};
-		}
+		oManifestDataSourceId.settings ||= {};
 
-		if (!oManifestDataSourceId.settings.annotations) {
-			oManifestDataSourceId.settings.annotations = [];
-		}
+		oManifestDataSourceId.settings.annotations ||= [];
 
 		var aNotExistingAnnotationsInChange = oManifestDataSourceId.settings.annotations.filter(function(annotation) {
 			return (aChangeAnnotations.indexOf(annotation) < 0);
@@ -123,7 +119,7 @@ sap.ui.define([
 		// Further checks after main checks
 		aChangeAnnotations.forEach(function(sAnnotation) {
 			if (!isAnnotationExisting(oManifestDataSources, oChangeDataSource, sAnnotation)) {
-				throw new Error("The annotation '" + sAnnotation + "' is part of 'annotations' array property but does not exists in the change property 'dataSource' and in the manifest (or it is not type of 'ODataAnnotation' in the manifest)");
+				throw new Error(`The annotation '${sAnnotation}' is part of 'annotations' array property but does not exists in the change property 'dataSource' and in the manifest (or it is not type of 'ODataAnnotation' in the manifest)`);
 			}
 		});
 	}
@@ -158,7 +154,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var sChangeDataSourceId = oChange.getContent().dataSourceId;
 			var aChangeAnnotations = oChange.getContent().annotations;
 			var sChangeAnnotationsInsertPosition = oChange.getContent().annotationsInsertPosition;

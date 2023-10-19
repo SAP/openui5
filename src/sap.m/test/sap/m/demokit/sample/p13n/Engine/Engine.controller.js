@@ -9,8 +9,9 @@ sap.ui.define([
 	'sap/ui/model/Sorter',
 	'sap/m/ColumnListItem',
 	'sap/m/Text',
-	'sap/ui/core/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary) {
+	'sap/ui/core/library',
+	'sap/m/table/ColumnWidthController'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, ColumnListItem, Text, coreLibrary, ColumnWidthController) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.Engine.Page", {
@@ -54,6 +55,9 @@ sap.ui.define([
 						control: oTable
 					}),
 					Groups: new GroupController({
+						control: oTable
+					}),
+					ColumnWidth: new ColumnWidthController({
 						control: oTable
 					})
 				}
@@ -104,9 +108,10 @@ sap.ui.define([
 
 			oTable.getColumns().forEach(function(oColumn, iIndex){
 				oColumn.setVisible(false);
+				oColumn.setWidth(oState.ColumnWidth[this._getKey(oColumn)]);
 				oColumn.setSortIndicator(coreLibrary.SortOrder.None);
 				oColumn.data("grouped", false);
-			});
+			}.bind(this));
 
 			oState.Sorter.forEach(function(oSorter) {
 				var oCol = this.byId(oSorter.key);
@@ -192,10 +197,13 @@ sap.ui.define([
 				oState.Sorter.forEach(function(oSorter){
 					oSorter.sorted = false;
 				});
-				oState.Sorter.push({
-					key: sAffectedProperty,
-					descending:  sSortOrder === coreLibrary.SortOrder.Descending
-				});
+
+				if (sSortOrder !== coreLibrary.SortOrder.None) {
+					oState.Sorter.push({
+						key: sAffectedProperty,
+						descending:  sSortOrder === coreLibrary.SortOrder.Descending
+					});
+				}
 
 				//3) Apply the modified personalization state to persist it in the VariantManagement
 				Engine.getInstance().applyState(oTable, oState);
@@ -214,9 +222,12 @@ sap.ui.define([
 				oState.Groups.forEach(function(oSorter){
 					oSorter.grouped = false;
 				});
-				oState.Groups.push({
-					key: sAffectedProperty
-				});
+
+				if (oGroupItem.getGrouped()) {
+					oState.Groups.push({
+						key: sAffectedProperty
+					});
+				}
 
 				//3) Apply the modified personalization state to persist it in the VariantManagement
 				Engine.getInstance().applyState(oTable, oState);
@@ -246,6 +257,19 @@ sap.ui.define([
 				oCol.position = iNewPos;
 
 				Engine.getInstance().applyState(oTable, {Columns: [oCol]});
+			});
+		},
+
+		onColumnResize: function(oEvt) {
+			var oColumn = oEvt.getParameter("column");
+			var sWidth = oEvt.getParameter("width");
+			var oTable = this.byId("persoTable");
+
+			var oColumnState = {};
+			oColumnState[this._getKey(oColumn)] = sWidth;
+
+			Engine.getInstance().applyState(oTable, {
+				ColumnWidth: oColumnState
 			});
 		}
 	});

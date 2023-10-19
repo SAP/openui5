@@ -30,11 +30,11 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("getControlIfTemplateAffected", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oControl = new Control("controlId");
 			this.oText = new Text("textId");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oControl.destroy();
 			this.oText.destroy();
 			sandbox.restore();
@@ -114,7 +114,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getChangeHandler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange = new UIChange({
 				flexObjectMetadata: {
 					changeType: "type"
@@ -123,7 +123,7 @@ sap.ui.define([
 			});
 			this.oControl = new Control("control");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}
@@ -135,7 +135,7 @@ sap.ui.define([
 			var oGetChangeHandlerStub = sandbox.stub(ChangeHandlerStorage, "getChangeHandler").resolves("changeHandler");
 			var mPropertyBag = {
 				modifier: {
-					getLibraryName: function() {return Promise.resolve("library");}
+					getLibraryName() {return Promise.resolve("library");}
 				}
 			};
 			var mControl = {
@@ -154,14 +154,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("checkIfDependencyIsStillValid", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange = new UIChange({});
 			this.oGetChangesFromMapStub = sandbox.stub(FlUtils, "getChangeFromChangesMap").returns(this.oChange);
 			this.oModifier = {
-				bySelector: function() { return "foo"; }
+				bySelector() { return "foo"; }
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -193,10 +193,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("filterChangeByView", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent("app");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAppComponent.destroy();
 			sandbox.restore();
 		}

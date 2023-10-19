@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/base/DesignTime"
 ], function(
 	MvcController,
 	XMLView,
@@ -25,14 +25,14 @@ sap.ui.define([
 	DelegateMediatorAPI,
 	DelegateMediator,
 	sinon,
-	oCore
+	DesignTime
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.apply._internal.preprocessors.RegistrationDelegator", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -70,13 +70,13 @@ sap.ui.define([
 	var sApplyProcessorPath = "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 
 	QUnit.module("sap.ui.fl.RegistrationDelegator getExtensionPointProvider function", {
-		beforeEach: function() {
+		beforeEach() {
 			var oRegisterExtensionProviderStub = sandbox.stub(ExtensionPoint, "registerExtensionProvider");
 			DelegateMediator._mDefaultDelegateItems = [];
 			RegistrationDelegator.registerAll();
-			this.fnExtensionProvider = oRegisterExtensionProviderStub.firstCall.args[0];
+			[this.fnExtensionProvider] = oRegisterExtensionProviderStub.firstCall.args;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -87,7 +87,7 @@ sap.ui.define([
 
 		QUnit.test("When extension point handling is disabled and design mode (adaptation project) is enabled", function(assert) {
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(false);
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			assert.strictEqual(this.fnExtensionProvider({}), sWriteProcessorPath, "then the base processor module path is returned");
 		});
 
@@ -97,7 +97,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When extension point handling is enabled and design mode (adaptation project) is enabled", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			sandbox.stub(ManifestUtils, "isFlexExtensionPointHandlingEnabled").returns(true);
 			assert.strictEqual(this.fnExtensionProvider({}), sApplyProcessorPath, "then the processor module path is returned");
 		});

@@ -40,7 +40,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Runtime: applyChange", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 			fetch("test-resources/sap/ui/fl/qunit/testResources/descriptorChanges/TestApplierManifest.json")
 			.then(function(oTestApplierManifestResponse) {
@@ -61,7 +61,7 @@ sap.ui.define([
 
 			this.fnLogSpy = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

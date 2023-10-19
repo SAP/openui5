@@ -16,6 +16,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/XMLCompositeMetadata',
 	'sap/ui/model/base/ManagedObjectModel',
+	'sap/ui/core/Element',
 	'sap/ui/core/Fragment',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/Log',
@@ -25,6 +26,7 @@ sap.ui.define([
 		Control,
 		XMLCompositeMetadata,
 		ManagedObjectModel,
+		Element,
 		Fragment,
 		ResourceModel,
 		Log,
@@ -233,7 +235,7 @@ sap.ui.define([
 		 * @protected
 		 */
 		XMLComposite.prototype.byId = function (sId) {
-			return sap.ui.getCore().byId(Fragment.createId(this.getId(), sId));
+			return Element.getElementById(Fragment.createId(this.getId(), sId));
 		};
 
 		/**

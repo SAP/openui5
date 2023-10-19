@@ -14,9 +14,9 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Send request functions", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

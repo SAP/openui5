@@ -2747,7 +2747,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.stepInput._getInput().getValueState(), ValueState.Error, "value state is correct");
-		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", iMax), "value state text is correct");
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
 	});
 
 	QUnit.test("_verifyValue prefers binding max constraint over max property setting", function(assert) {
@@ -2767,7 +2767,7 @@ sap.ui.define([
 		this.stepInput._verifyValue();
 
 		// assert
-		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", iMax), "value state text is correct");
+		assert.strictEqual(this.stepInput._getInput().getValueStateText(), sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("EnterNumberMax", [iMax]), "value state text is correct");
 	});
 
 	QUnit.test("If maximum or minimum binding constraint is set to 0, _getMin and _getMax return 0 too", function(assert) {

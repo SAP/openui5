@@ -4,20 +4,22 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI"
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/Versions",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/Utils"
 ], function(
 	FlexState,
-	Versions,
-	Utils,
-	Version,
-	FeaturesAPI,
 	ManifestUtils,
-	ContextBasedAdaptationsAPI
+	FlexInfoSession,
+	Version,
+	Versions,
+	ContextBasedAdaptationsAPI,
+	FeaturesAPI,
+	Utils
 ) {
 	"use strict";
 
@@ -72,8 +74,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to activate, discard and retrieve versions.
 	 *
 	 * @namespace sap.ui.fl.write.api.VersionsAPI
-	 * @experimental Since 1.74
 	 * @since 1.74
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
@@ -209,13 +211,12 @@ sap.ui.define([
 		.then(function(sDisplayedAdaptationId) {
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 			var sReference = getFlexReferenceForControl(oAppComponent);
-			return FlexState.clearAndInitialize({
-				componentId: oAppComponent.getId(),
-				reference: sReference,
-				version: mPropertyBag.version,
-				allContexts: mPropertyBag.allContexts,
-				adaptationId: sDisplayedAdaptationId
-			});
+			var oExistingFlexInfo = FlexInfoSession.get(sReference) || {};
+			FlexInfoSession.set(Object.assign(oExistingFlexInfo, {
+				adaptationId: sDisplayedAdaptationId,
+				version: mPropertyBag.version
+			}), sReference);
+			FlexState.clearState(sReference);
 		});
 	};
 
@@ -295,22 +296,15 @@ sap.ui.define([
 					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
 					.then(function(sDisplayedAdaptationId) {
 						// invalidate flexState to trigger getFlexData for the current active version after discard
-						return FlexState.clearAndInitialize({
-							componentId: oAppComponent.getId(),
-							reference: sReference,
-							adaptationId: sDisplayedAdaptationId
-						}).then(function() {
-							return oDiscardInfo;
-						});
+						var oExistingFlexInfo = FlexInfoSession.get(sReference) || {};
+						FlexInfoSession.set(Object.assign(oExistingFlexInfo, {adaptationId: sDisplayedAdaptationId}), sReference);
+						FlexState.clearState(sReference);
+						return oDiscardInfo;
 					});
 				}
 				// invalidate flexState to trigger getFlexData for the current active version after discard
-				return FlexState.clearAndInitialize({
-					componentId: oAppComponent.getId(),
-					reference: sReference
-				}).then(function() {
-					return oDiscardInfo;
-				});
+				FlexState.clearState(sReference);
+				return oDiscardInfo;
 			}
 			return oDiscardInfo;
 		});
@@ -339,7 +333,7 @@ sap.ui.define([
 		if (!mPropertyBag.version) {
 			return Promise.reject("No version was provided");
 		}
-		mPropertyBag.styleClass = mPropertyBag.styleClass || "";
+		mPropertyBag.styleClass ||= "";
 		mPropertyBag.reference = getFlexReferenceForControl(mPropertyBag.selector);
 
 		return Versions.publish(mPropertyBag);

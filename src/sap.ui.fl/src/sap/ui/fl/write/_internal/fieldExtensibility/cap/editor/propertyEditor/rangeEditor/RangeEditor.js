@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @experimental 1.93
 	 * @ui5-restricted sap.ui.fl
 	 */
 	var RangeEditor = BasePropertyEditor.extend("sap.ui.fl.write._internal.fieldExtensibility.cap.editor.propertyEditor.rangeEditor.RangeEditor", {
@@ -38,8 +37,8 @@ sap.ui.define([
 		}
 	});
 
-	RangeEditor.prototype.init = function() {
-		BasePropertyEditor.prototype.init.apply(this, arguments);
+	RangeEditor.prototype.init = function(...aArgs) {
+		BasePropertyEditor.prototype.init.apply(this, aArgs);
 		this._oContentModel = new JSONModel();
 		this._oContentModel.setDefaultBindingMode("OneWay");
 		this.setModel(this._oContentModel, "contentModel");
@@ -49,14 +48,15 @@ sap.ui.define([
 		return 2;
 	};
 
-	RangeEditor.prototype.setConfig = function() {
+	RangeEditor.prototype.setConfig = function(...aArgs) {
 		// RangeType might change, make sure to update nested editors
-		BasePropertyEditor.prototype.setConfig.apply(this, arguments);
+		BasePropertyEditor.prototype.setConfig.apply(this, aArgs);
 		this.setValue(this.getValue());
 	};
 
-	RangeEditor.prototype.setValue = function(aValues) {
-		BasePropertyEditor.prototype.setValue.apply(this, arguments);
+	RangeEditor.prototype.setValue = function(...aArgs) {
+		const [aValues] = aArgs;
+		BasePropertyEditor.prototype.setValue.apply(this, aArgs);
 		var oConfig = {
 			type: this.getConfig().rangeType
 		};

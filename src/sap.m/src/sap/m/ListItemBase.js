@@ -418,7 +418,7 @@ function(
 		}
 
 		if (this.getCounter()) {
-			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", this.getCounter()));
+			aOutput.push(oBundle.getText("LIST_ITEM_COUNTER", [this.getCounter()]));
 		}
 
 		if (sType == ListItemType.Navigation) {
@@ -998,8 +998,8 @@ function(
 			// active feedback
 			this.setActive(true);
 
-			// even though the tabindex=-1, list items are not focusable on iPhone
-			if (Device.os.ios) {
+			// make sure that the list item is focused
+			if (document.activeElement != this.getFocusDomRef()) {
 				this.focus();
 			}
 
@@ -1235,13 +1235,6 @@ function(
 
 		this.informList("FocusIn", oEvent.srcControl);
 		oEvent.setMarked();
-
-		if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
-			return;
-		}
-
-		// inform the list async that this item should be focusable
-		setTimeout(oList["setItemFocusable"].bind(oList, this), 0);
 	};
 
 	ListItemBase.prototype.onfocusout = function(oEvent) {
@@ -1273,14 +1266,10 @@ function(
 		}
 
 		// allow the context menu to open on the SingleSelect or MultiSelect control
-		// is(":focusable") check is required as IE sets activeElement also to text controls
-		if (jQuery(document.activeElement).is(":focusable") &&
-			document.activeElement !== this.getDomRef() &&
-			oEvent.srcControl !== this.getModeControl()) {
-			return;
+		if (oEvent.srcControl == this.getModeControl() ||
+			document.activeElement.matches(".sapMLIB,.sapMListTblCell,.sapMListTblSubRow")) {
+			this.informList("ContextMenu", oEvent);
 		}
-
-		this.informList("ContextMenu", oEvent);
 	};
 
 	return ListItemBase;

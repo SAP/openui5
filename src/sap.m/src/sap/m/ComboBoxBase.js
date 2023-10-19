@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/m/inputUtils/forwardItemProperties",
 	"sap/m/inputUtils/highlightDOMElements",
+	"sap/m/inputUtils/highlightItemsWithContains",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Core"
@@ -40,6 +41,7 @@ sap.ui.define([
 		jQuery,
 		forwardItemProperties,
 		highlightDOMElements,
+		highlightItemsWithContains,
 		ListHelpers,
 		IconPool,
 		Core
@@ -231,9 +233,10 @@ sap.ui.define([
 		 * - currenly typed value in the input field
 		 * - item to be matched
 		 * The function should return a Boolean value (true or false) which represents whether an item will be shown in the dropdown or not.
+		 * If no callback is provided, the control fallbacks to default filtering.
 		 *
 		 * @public
-		 * @param {function(string=, sap.ui.core.Item=, boolean=):boolean|undefined|function} fnFilter A callback function called when typing in a ComboBoxBase control or ancestor.
+		 * @param {function(string=, sap.ui.core.Item=):boolean} [fnFilter] A callback function called when typing in a ComboBoxBase control or ancestor.
 		 * @returns {this} <code>this</code> to allow method chaining.
 		 * @since 1.58
 		 */
@@ -264,7 +267,21 @@ sap.ui.define([
 
 			aListItemsDOM = this._getList().$().find('.sapMSLIInfo [id$=-infoText], .sapMSLITitleOnly [id$=-titleText]');
 
-			highlightDOMElements(aListItemsDOM, sValue);
+			if (this.useHighlightItemsWithContains()) {
+				highlightItemsWithContains(aListItemsDOM, sValue);
+			} else {
+				highlightDOMElements(aListItemsDOM, sValue);
+			}
+		};
+
+		/**
+		 * Handles highlighting of items after filtering.
+		 *
+		 * @protected
+		 * @ui5-restricted sap.ui.comp.smartfield.ComboBox
+		 */
+		ComboBoxBase.prototype.useHighlightItemsWithContains = function () {
+			return false;
 		};
 
 		/**

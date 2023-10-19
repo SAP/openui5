@@ -1,11 +1,12 @@
-sap.ui.getCore().attachInit(function() {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/m/Button",
+	"sap/m/Label",
+	"sap/ui/layout/VerticalLayout"
+], function(Core, Button, Label, VerticalLayout) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/m/Button",
-		"sap/m/Label",
-		"sap/ui/layout/VerticalLayout"
-	], function(Button, Label, VerticalLayout) {
+	Core.ready().then(function() {
 		var sText = "Number of lemmings saved: ";
 		var iNumSavedLemmings = 0;
 

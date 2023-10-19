@@ -212,8 +212,10 @@
 
 		oLabel.placeAt("settings");
 		oSelect.placeAt("settings");
-		sap.ui.getCore().attachInit(function() {
-			oSelect.setSelectedKey(sInitialValue);
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(function() {
+				oSelect.setSelectedKey(sInitialValue);
+			});
 		});
 		return oSelect;
 	}

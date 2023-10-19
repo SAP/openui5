@@ -20,7 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Creation of the first change without a registered propagationListener", {
-		beforeEach: function() {
+		beforeEach() {
 			return Component.create({
 				name: "sap.ui.fl.qunit.integration.testComponentComplex",
 				id: "sap.ui.fl.qunit.integration.testComponentComplex",
@@ -35,7 +35,7 @@ sap.ui.define([
 				this.oComponent.aPropagationListeners = [];
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 		}
 	}, function() {

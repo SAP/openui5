@@ -23,15 +23,15 @@ sap.ui.define([
 	 * @since 1.87
 	 * @alias sap.ui.mdc.filterbar.vh.CollectiveSearchSelect
 	 */
-	var CollectiveSearchSelect = VariantManagement.extend("sap.ui.mdc.filterbar.vh.CollectiveSearchSelect", /** @lends sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.prototype */ {
+	const CollectiveSearchSelect = VariantManagement.extend("sap.ui.mdc.filterbar.vh.CollectiveSearchSelect", /** @lends sap.ui.mdc.filterbar.vh.CollectiveSearchSelect.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
 
 				/**
-				 * The title of the <code>CollectiveSearchSelect</code>.
+				 * The title of the <code>CollectiveSearchSelect</code> control.
 				 *
-				 * The title will be shown on the popover of the control on top of the List.
+				 * The <code>title</code> property will be shown on the popover of the control on top of the <code>List</code>.
 				 */
 				title: {
 					type: "string",
@@ -40,9 +40,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * The key of the selected item of the <code>CollectiveSearchSelect</code>.
+				 * The key of the selected item of the <code>CollectiveSearchSelect</code> control.
 				 *
-				 * The selectedItemKey must be set to the initially selected item key.
+				 * The <code>selectedItemKey</code> property must be set to the initially selected item key.
 				 * When the user changes the selection, the property will change and reflect the key of the newly selected item.
 				 */
 				selectedItemKey: {
@@ -126,7 +126,7 @@ sap.ui.define([
 	 * @returns {object} Configuration information for the <code>sap.m.IOverflowToolbarContent</code> interface.
 	 */
 	CollectiveSearchSelect.prototype.getOverflowToolbarConfig = function() {
-		var oOverflowToolbarConfig = VariantManagement.prototype.getOverflowToolbarConfig.apply(this); // Call base class
+		const oOverflowToolbarConfig = VariantManagement.prototype.getOverflowToolbarConfig.apply(this); // Call base class
 		oOverflowToolbarConfig.canOverflow = true;
 		return oOverflowToolbarConfig;
 	};

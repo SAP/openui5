@@ -3,8 +3,9 @@ sap.ui.define([
 	'sap/ui/test/matchers/_Visitor',
 	'sap/m/Button',
 	'sap/m/Toolbar',
-	'sap/m/Page'
-], function (_Visitor, Button, Toolbar, Page) {
+	'sap/m/Page',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_Visitor, Button, Toolbar, Page, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_Visitor", {
@@ -17,12 +18,12 @@ sap.ui.define([
 				content: [this.oToolbar]
 			});
 			this.oPage.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 			this.oVisitor = new _Visitor();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPage.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 

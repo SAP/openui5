@@ -4,13 +4,14 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
 	"sap/m/Link",
+	"sap/m/OverflowToolbar",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuery, Device) {
+function(DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, jQuery, Device) {
 	"use strict";
 	var oFactory, helpers;
 
@@ -338,6 +339,69 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuer
 		}
 	});
 
+	QUnit.test("Breadcrumbs in OverflowToolbar", function (assert) {
+		// Arrange
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Loooooooooooooooooooooooooong current location text");
+		var oOFT = new OverflowToolBar({
+				content: [this.oStandardBreadCrumbsControl]
+			}),
+			oSpy = this.spy(this.oStandardBreadCrumbsControl, "fireEvent"),
+			sMinWidth;
+
+		helpers.renderObject(oOFT);
+
+		// Assert
+		sMinWidth = this.oStandardBreadCrumbsControl.$().css("min-width");
+		assert.ok(parseInt(sMinWidth) > DomUnitsRem.toPx(Parameters.get({
+				name: "_sap_m_Toolbar_ShrinkItem_MinWidth",
+				callback: function(sValue) {
+					return sValue;
+				}
+			})),
+			"Min-width is bigger than the standart 2.5rem/40px width of OFT's shrikable items");
+		assert.ok(oSpy.calledWith("_minWidthChange"), "Invalidation event is fired for the OFT");
+	});
+
+	QUnit.test("Breadcrumbs in OverflowToolbar - config", function (assert) {
+		// Arrange
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Current location text");
+
+		// Act
+		var oOFTConfig = this.oStandardBreadCrumbsControl.getOverflowToolbarConfig();
+
+		// Assert
+		assert.strictEqual(oOFTConfig.canOverflow, true, "Breadcrumbs can overflow");
+		assert.strictEqual(oOFTConfig.getCustomImportance(), "Medium", "Breadcrumbs have Medium overflow importance");
+		assert.strictEqual(oOFTConfig.invalidationEvents.length, 1, "Breadcrumbs have one invalidation event");
+		assert.strictEqual(oOFTConfig.invalidationEvents[0], "_minWidthChange", "Invalidation event is '_minWidthChange'");
+		assert.strictEqual(typeof oOFTConfig.onAfterExitOverflow, "function", "Breadcrumbs have onAfterExitOverflow function implementation");
+	});
+
+	QUnit.test("Breadcrumbs in OverflowToolbar - reseting control", function (assert) {
+		// Arrange
+		var oSpy;
+
+		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4, "Current location text");
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		oSpy = this.spy(this.oStandardBreadCrumbsControl, "_resetControl");
+
+		// Act
+		this.oStandardBreadCrumbsControl._onAfterExitOverflow();
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "_resetControl is called, when Breadcrumbs exits overflow menu");
+
+		// Clean up
+		oSpy.resetHistory();
+
+		// Act
+		this.oStandardBreadCrumbsControl.setCurrentLocationText("New Location Text");
+
+		// Assert
+		assert.ok(oSpy.calledOnce, "_resetControl is called, when currentLocationText is changed");
+	});
+
 	QUnit.test("Only links", function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(4);
 		helpers.renderObject(this.oStandardBreadCrumbsControl);
@@ -408,6 +472,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library, oCore, jQuer
 
 		this.stub(this.oStandardBreadCrumbsControl, "$").callsFake(function() {
 			return {
+				"hasClass": function(){ return false; },
 				"outerWidth": function(){ return 208;}
 			};
 		});

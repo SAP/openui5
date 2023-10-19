@@ -1,7 +1,10 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
+sap.ui.define([
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element"
+], function(ManagedObject, Element) {
 	"use strict";
 
 	/**
@@ -17,8 +20,6 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.BaseCommand
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var BaseCommand = ManagedObject.extend("sap.ui.rta.command.BaseCommand", {
 		metadata: {
@@ -54,7 +55,7 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	 */
 	BaseCommand.prototype.getElement = function() {
 		var sId = this.getAssociation("element");
-		return sap.ui.getCore().byId(sId);
+		return Element.getElementById(sId);
 	};
 
 	/**

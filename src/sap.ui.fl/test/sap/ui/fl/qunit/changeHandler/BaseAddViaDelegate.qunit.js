@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function createChangeHandler(bSkipCreateLayout) {
 		return BaseAddViaDelegate.createAddViaDelegateChangeHandler({
-			addProperty: function() {},
+			addProperty() {},
 			aggregationName: "formElements",
 			parentAlias: "parentFormContainer",
 			fieldSuffix: "-field",
@@ -35,7 +35,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.changeHandler.BaseAddViaDelegate - Condensing", {
-		before: function() {
+		before() {
 			return Component.create({
 				name: "testComponentAsync",
 				id: "testComponentAsync"
@@ -50,7 +50,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oComponent);
 			sandbox.stub(DelegateMediatorAPI, "getDelegateForControl").callsFake(function() {
 				return Promise.resolve({instance: this.oDelegate});
@@ -67,7 +67,7 @@ sap.ui.define([
 				selector: JsControlTreeModifier.getSelector(this.oForm, this.oComponent)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oForm.destroy();
 			delete this.oDelegate;
 			delete this.oChange;
@@ -77,7 +77,7 @@ sap.ui.define([
 		QUnit.test("when a change handler skips layout creation", function(assert) {
 			var oChangeHandler = createChangeHandler(true);
 			this.oDelegate = {
-				createLayout: function() {}
+				createLayout() {}
 			};
 			oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 
@@ -107,7 +107,7 @@ sap.ui.define([
 		QUnit.test("when a delegate creates a custom layout", function(assert) {
 			var oChangeHandler = createChangeHandler(false);
 			this.oDelegate = {
-				createLayout: function() {}
+				createLayout() {}
 			};
 			oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeInfo, this.mPropertyBag);
 

@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/Panel",
 	"sap/m/Text",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/ChangeReason",
@@ -31,7 +32,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService"
 ], function(Log, encodeURL, each, isEmptyObject, isPlainObject, Button, ListItem, HBox, Input,
-		Label, List, Panel, Text, Message, XMLView, ChangeReason, ClientModel, Context, Filter,
+		Label, List, Panel, Text, Messaging, Message, XMLView, ChangeReason, ClientModel, Context, Filter,
 		FilterOperator, Sorter, JSONModel, MessageScope, ODataUtils, ODataModel, Column, Table,
 		jQuery, fakeService) {
 	"use strict";
@@ -290,15 +291,15 @@ sap.ui.define([
 		assert.strictEqual(oModel.getMessageScope(), MessageScope.RequestedObjects,
 			"Initial message scope is: RequestedObjects");
 
-		sap.ui.getCore().getMessageManager().registerMessageProcessor(oModel);
+		Messaging.registerMessageProcessor(oModel);
 		oModel.metadataLoaded().then(function() {
 			var oContext = oModel.createEntry("/Products");
 			oMessage.setTargets([oContext.getPath()]);
 			oMessage2.setTargets([oContext.getPath()]);
-			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			Messaging.addMessages([oMessage, oMessage2]);
 			assert.equal(oModel.getMessagesByEntity(oContext.getPath()).length, 2, "all messages returned");
 			assert.equal(oModel.getMessagesByEntity(oContext.getPath(), true).length, 1, "messages that are not persitent returned");
-			sap.ui.getCore().getMessageManager().unregisterMessageProcessor(oModel);
+			Messaging.unregisterMessageProcessor(oModel);
 			done();
 		});
 	});
@@ -3445,7 +3446,7 @@ sap.ui.define([
 		}, true);
 
 		var oBinding = oModel.bindList("/Categories");
-		oModel.setDeferredBatchGroups(["myId"]);
+		oModel.setDeferredGroups(["myId"]);
 		var handler = function() { // delay the following test
 			// detach so that checkUpdate called from v2.Context#delete does not again call this handler
 			oBinding.detachChange(handler);
@@ -3621,7 +3622,7 @@ sap.ui.define([
 		window.fakeResponded = function() {
 			iParallelCount--;
 		};
-		oModel.setDeferredBatchGroups(["1", "2"]);
+		oModel.setDeferredGroups(["1", "2"]);
 		oModel.read("/Categories(1)", {groupId: "1"});
 		oModel.read("/Categories(9999)", {groupId: "1"});
 		oModel.read("/Categories(3)", {groupId: "2"});
@@ -4205,7 +4206,7 @@ sap.ui.define([
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
-			oModel.setDeferredBatchGroups(["myId"]);
+			oModel.setDeferredGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 						oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
@@ -4252,7 +4253,7 @@ sap.ui.define([
 		function fnSuccess() { oInfo.success++; }
 		function fnError() { oInfo.error++; }
 		oModel.attachMetadataLoaded(function() {
-			oModel.setDeferredBatchGroups(["myId"]);
+			oModel.setDeferredGroups(["myId"]);
 			oRequest1 = oModel.read("/Categories(1)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oRequest2 = oModel.read("/Categories(3)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});
 			oModel.read("/Categories(4)", {success: fnSuccess, error: fnError, batchGroupId : "myId"});

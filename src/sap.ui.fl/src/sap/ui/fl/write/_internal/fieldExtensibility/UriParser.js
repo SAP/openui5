@@ -52,9 +52,9 @@ sap.ui.define([
 				throw new Error("sap.ui.fl.fieldExt.UriParser.parseV2ServiceUri: Malformed service URI (Invalid service name)");
 			}
 			if (aServiceSegments[1].toLowerCase() !== "sap") { // 1.) Case
-				sServiceNameWithVersion = "/" + aServiceSegments[1] + "/" + aServiceSegments[2];
+				sServiceNameWithVersion = `/${aServiceSegments[1]}/${aServiceSegments[2]}`;
 			} else { // 2.) Case
-				sServiceNameWithVersion = aServiceSegments[2];
+				[, , sServiceNameWithVersion] = aServiceSegments;
 			}
 		} else { // 3. Case
 			// Remove last slash
@@ -130,9 +130,10 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.UriParser
-	 * @experimental Since 1.87.0
+	 * @since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
 	 */
 	var UriParser = {};
 

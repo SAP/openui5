@@ -1,0 +1,78 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.RowModes.Controller"
+	xmlns="sap.ui.table"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:u="sap.ui.unified"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+	<m:Page
+		showHeader="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<Table
+				id="table"
+				selectionMode="MultiToggle"
+				rows="{/ProductCollection}"
+				rowMode="{ui>/rowMode}"
+				ariaLabelledBy="title">
+				<extension>
+					<m:OverflowToolbar style="Clear">
+						<m:Title id="title" text="Products"/>
+					</m:OverflowToolbar>
+				</extension>
+				<columns>
+					<Column filterProperty="Name">
+						<m:Label text="Product Name" />
+						<template>
+							<m:Text text="{Name}" wrapping="false" />
+						</template>
+					</Column>
+					<Column filterProperty="Category">
+						<m:Label text="Category" />
+						<template>
+							<m:Text text="{Category}" wrapping="false" />
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Image" />
+						<template>
+							<m:Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Quantity" />
+						<template>
+							<m:Label text="{
+								path: 'Quantity',
+								type: 'sap.ui.model.type.Integer'
+							}" />
+						</template>
+					</Column>
+					<Column>
+						<m:Label text="Delivery Date" />
+						<template>
+							<m:Text text="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}" wrapping="false" />
+						</template>
+					</Column>
+				</columns>
+				<footer>
+					<m:OverflowToolbar id="infobar">
+						<m:Label text="Row Mode:" labelFor="rowMode"/>
+						<m:SegmentedButton id="rowMode" selectedKey="{ui>/rowMode}">
+							<m:items>
+								<m:SegmentedButtonItem icon="sap-icon://locked" key="Fixed" tooltip="Fixed"/>
+								<m:SegmentedButtonItem icon="sap-icon://restart" key="Auto" tooltip="Auto"/>
+								<m:SegmentedButtonItem icon="sap-icon://resize-vertical" key="Interactive" tooltip="Interactive"/>
+							</m:items>
+						</m:SegmentedButton>
+					</m:OverflowToolbar>
+				</footer>
+			</Table>
+		</m:content>
+	</m:Page>
+</mvc:View>

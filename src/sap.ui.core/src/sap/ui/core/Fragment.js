@@ -231,7 +231,7 @@ function(
 			Log.error("sap.ui.core.Fragment.byId: two strings must be given as parameters, but are: " + sFragmentId + " and " + sId);
 			return undefined;
 		}
-		return sap.ui.getCore().byId(sFragmentId + "--" + sId);
+		return Element.getElementById(sFragmentId + "--" + sId);
 	};
 
 	/**

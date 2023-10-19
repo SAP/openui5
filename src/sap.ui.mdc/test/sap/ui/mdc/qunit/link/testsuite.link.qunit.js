@@ -22,7 +22,11 @@ sap.ui.define(function() {
 				only:	"[sap/ui/mdc]",	// Which files to show in the coverage report, if null, no files are excluded from coverage
 				branchCoverage: true		// Whether to enable standard branch coverage
 			},
-			loader: {},
+			loader: {
+				paths: {
+					"testutils": "test-resources/sap/ui/mdc/testutils"
+				}
+			},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
 			autostart: true,// Whether to call QUnit.start() when the test setup is done
 			module: "./../{name}.qunit"
@@ -45,8 +49,8 @@ sap.ui.define(function() {
 				title: "FieldInfo"
 			},
 
-			"link/FlpLinkDelegate": {
-				title: "FlpLinkDelegate"
+			"link/UShellLinkDelegate": {
+				title: "UShellLinkDelegate"
 			},
 
 			"link/opa/test/LinkPersonalization.opa": {
@@ -65,11 +69,6 @@ sap.ui.define(function() {
 				title: "PersonalizationSelectionPanelEndUser"
 			},
 			"link/opa/test/PersonalizationSelectionPanelKeyUser.opa": {
-				loader: {
-					paths: {
-						"testutils/opa": "test-resources/sap/ui/mdc/testutils/opa"
-					}
-				},
 				title: "PersonalizationSelectionPanelKeyUser"
 			},
 			"link/opa/test/PersonalizationSelectionPanelRestore.opa": {

@@ -98,13 +98,24 @@ sap.ui.define(function() {
 				title: "QUnit Page for ObjectPath"
 			},
 			"base/util/resolveReference": {
-				title: "QUnit Page for resolveReference"
+				title: "QUnit Page for resolveReference",
+				loader: {
+					paths: {
+						"util": "test-resources/sap/ui/core/qunit/base/util/"
+					}
+				}
 			},
 			"base/util/uid": {
 				title: "QUnit Page for uid"
 			},
+			/**
+			 * @deprecated as of version 1.119
+			 */
 			"base/util/UriParameters": {
-				title: "QUnit Page for UriParameters"
+				title: "QUnit Page for UriParameters",
+				coverage: {
+					only: ["sap/base/util/UriParameters"]
+				}
 			},
 			/**
 			 * @deprecated as of version 1.90

@@ -8,7 +8,6 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/qunit/apply/_internal/flexObjects/getFlexObjectFileContent",
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
@@ -18,7 +17,6 @@ sap.ui.define([
 	States,
 	Layer,
 	getFlexObjectFileContent,
-	UriParameters,
 	sinon
 ) {
 	"use strict";
@@ -26,7 +24,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given sap.ui.fl.apply._internal.flexObjects.CompVariant.constructor is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -108,7 +106,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given 'CompVariant' created by FlexObjectFactory.createCompVariant", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -527,7 +525,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given isEditEnabled/isRenameEnabled/isDeleteEnabled is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -615,11 +613,9 @@ sap.ui.define([
 				Settings._instance = new Settings(mTestSetup.settings);
 				stubCurrentUser(mTestSetup.currentUser);
 				if (mTestSetup.sapUiLayerUrlParameter) {
-					sandbox.stub(UriParameters, "fromQuery").returns({
-						get: function() {
-							return mTestSetup.sapUiLayerUrlParameter;
-						}
-					});
+					sandbox.stub(URLSearchParams.prototype, "get").returns(
+						mTestSetup.sapUiLayerUrlParameter
+					);
 				}
 
 				var oVariant = createVariant(mTestSetup.variant);

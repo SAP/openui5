@@ -7,14 +7,14 @@ sap.ui.define([
 	//Load FL lib (as this might be required for fl related tests)
 	oCore.loadLibrary("sap.ui.fl");
 
-	var fnCreateEnvironment = function(sView, sModule) {
+	const fnCreateEnvironment = function(sView, sModule) {
 
-		var oCreatedView;
+		let oCreatedView;
 
 		//Create a custom component
-		var UIComp = UIComponent.extend("test", {
+		const UIComp = UIComponent.extend("test", {
 			createContent: function() {
-				var oApp = new App(oCreatedView.createId("mdcFlexTest"));
+				const oApp = new App(oCreatedView.createId("mdcFlexTest"));
 				oApp.addPage(oCreatedView);
 				return oApp;
 			}
@@ -29,7 +29,7 @@ sap.ui.define([
 		//2) Create the Component
 		.then(function(oView){
 			oCreatedView = oView;
-			var oComp = new UIComp();
+			const oComp = new UIComp();
 
 			return oComp;
 		})
@@ -37,7 +37,7 @@ sap.ui.define([
 		.then(function(oComp){
 
 			// Place component in container and display
-			var oUiComponentContainer = new ComponentContainer({
+			const oUiComponentContainer = new ComponentContainer({
 				component: oComp,
 				async: false
 			});

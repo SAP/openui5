@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
+	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/core/Core"
 ], function(
 	Controller,
@@ -19,6 +20,7 @@ sap.ui.define([
 	FilterOperatorUtil,
 	Operator,
 	ConditionValidated,
+	OperatorName,
 	oCore
 ) {
 	"use strict";
@@ -30,15 +32,15 @@ sap.ui.define([
 			oCore.getMessageManager().registerObject(this.getView(), true);
 
 			// create a ConditionModel for the listbinding
-			var oCM = new ConditionModel();
+			const oCM = new ConditionModel();
 			// var oConditionChangeBinding = oCM.bindProperty("/conditions", oCM.getContext("/"));
 			// oConditionChangeBinding.attachChange(this.handleConditionModelChange.bind(this));
 
-			// oCM.addCondition("title", Condition.createCondition("EQ", ["4711"], undefined, undefined, ConditionValidated.Validated));
-			oCM.addCondition("title", Condition.createCondition("EQ", ["4711"]));
+			// oCM.addCondition("title", Condition.createCondition(OperatorName.EQ, ["4711"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("title", Condition.createCondition(OperatorName.EQ, ["4711"]));
 
 			//set the model on Form just to have it somehow local
-			var oForm = this.byId("Form1");
+			const oForm = this.byId("Form1");
 			oForm.setModel(oCM, "cm");
 
 			// add custom operators

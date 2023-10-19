@@ -28,10 +28,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const name = "NoApplications";
   const set = "tnt";
+  const collection = "V4";
   (0, _Illustrations.registerIllustration)(name, {
     dialogSvg: _tntDialogNoApplications.default,
     sceneSvg: _tntSceneNoApplications.default,
     spotSvg: _tntSpotNoApplications.default,
-    set
+    set,
+    collection
   });
 });

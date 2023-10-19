@@ -94,6 +94,9 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = mLibrary.AvatarColor;
 
+	// shortcut for sap.m.AvatarImageFitType
+	var AvatarImageFitType = mLibrary.AvatarImageFitType;
+
 	var ButtonType = mLibrary.ButtonType;
 
 	var FlexRendertype = mLibrary.FlexRendertype;
@@ -460,6 +463,7 @@ sap.ui.define([
 			displayShape: oIconConfiguration.shape,
 			tooltip: oIconConfiguration.alt,
 			backgroundColor: oIconConfiguration.backgroundColor || (vInitials ? undefined : AvatarColor.Transparent),
+			imageFitType: AvatarImageFitType.Contain,
 			visible: oIconConfiguration.visible
 		}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
 

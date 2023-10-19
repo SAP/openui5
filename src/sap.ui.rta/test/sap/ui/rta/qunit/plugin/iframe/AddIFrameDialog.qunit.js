@@ -4,25 +4,31 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialogController",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	AddIFrameDialog,
 	isEmptyObject,
 	coreLibrary,
+	Lib,
 	AddIFrameDialogController,
+	nextUIUpdate,
 	QUnitUtils,
-	oCore,
+	Element,
+	KeyCodes,
 	JSONModel
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var aTextInputFields = ["frameUrl"];
 	var aNumericInputFields = ["frameWidth", "frameHeight"];
 	var aUnitsOfWidthMeasure = [{
@@ -167,7 +173,7 @@ sap.ui.define([
 	}
 
 	function clickOnButton(sId) {
-		var oButton = oCore.byId(sId);
+		var oButton = Element.getElementById(sId);
 		QUnitUtils.triggerEvent("tap", oButton.getDomRef());
 	}
 
@@ -179,13 +185,13 @@ sap.ui.define([
 		clickOnButton("sapUiRtaAddIFrameDialogSaveButton");
 	}
 
-	function updateSaveButtonEnablement(bEnabled) {
-		oCore.byId("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
-		oCore.applyChanges();
+	async function updateSaveButtonEnablement(bEnabled) {
+		Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").setEnabled(bEnabled);
+		await nextUIUpdate();
 	}
 
 	QUnit.module("Given that a AddIFrameDialog is available...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAddIFrameDialog = new AddIFrameDialog();
 		}
 	}, function() {
@@ -221,7 +227,7 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var mHashmap = AddIFrameDialogController.prototype._buildParameterHashMap(mParameters);
 				mParameters.parameters.forEach(function(oParam) {
-					assert.strictEqual(oParam.value, mHashmap[oParam.key], "Found " + oParam.key);
+					assert.strictEqual(oParam.value, mHashmap[oParam.key], `Found ${oParam.key}`);
 				});
 				clickOnCancel();
 			}, this);
@@ -234,7 +240,7 @@ sap.ui.define([
 					this.oAddIFrameDialog._oJSONModel = createJSONModel();
 					this.oController = new AddIFrameDialogController(this.oAddIFrameDialog._oJSONModel);
 					this.oAddIFrameDialog._oJSONModel.getData()[sFieldName].valueState = ValueState.Error;
-					assert.strictEqual(this.oController._areAllValueStateNones(), false, "Detected " + sFieldName + " field's error value state");
+					assert.strictEqual(this.oController._areAllValueStateNones(), false, `Detected ${sFieldName} field's error value state`);
 				}, this);
 				clickOnCancel();
 			}, this);
@@ -271,7 +277,7 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				Object.keys(mParameters).forEach(function(sFieldName) {
-					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], sFieldName + " is imported correctly");
+					assert.strictEqual(oData[sFieldName].value, mParameters[sFieldName], `${sFieldName} is imported correctly`);
 				});
 				clickOnCancel();
 			}, this);
@@ -299,18 +305,16 @@ sap.ui.define([
 
 		QUnit.test("When URL parameter values contain characters that need to be encoded", function(assert) {
 			this.oAddIFrameDialog.attachOpened(function() {
-				var sUrl = "https://example.com/{Product_Category}";
+				const sUrl = "https://example.com/{Product_Category}";
 				this.oAddIFrameDialog._oJSONModel.setProperty("/frameUrl/value", sUrl);
 				this.oAddIFrameDialog._oController.onShowPreview();
-				var oIFrame = oCore.byId("sapUiRtaAddIFrameDialog_PreviewFrame");
-				oIFrame._oSetUrlPromise.then(function() {
-					assert.strictEqual(
-						oIFrame.getUrl(),
-						"https://example.com/Ice%20Cream",
-						"then the preview url is encoded properly"
-					);
-					clickOnCancel();
-				});
+				const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
+				assert.strictEqual(
+					oIFrame.getUrl(),
+					"https://example.com/Ice%20Cream",
+					"then the preview url is encoded properly"
+				);
+				clickOnCancel();
 			}, this);
 
 			return this.oAddIFrameDialog.open(mParameters);
@@ -343,24 +347,66 @@ sap.ui.define([
 			this.oAddIFrameDialog.attachOpened(function() {
 				var oData = this.oAddIFrameDialog._oJSONModel.getData();
 				var bEnabled = !!oData.frameUrl.value;
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Initial state of URL-Textarea is empty");
+				assert.strictEqual(Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), false, "Initial state is disabled");
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					bEnabled,
+					"Initial state of URL-Textarea is empty"
+				);
 				oData.frameUrl.value = "https:\\www.sap.com";
 				bEnabled = !!oData.frameUrl.value;
 				updateSaveButtonEnablement(!!oData.frameUrl.value);
-				assert.strictEqual(oCore.byId("sapUiRtaAddIFrameDialogSaveButton").getEnabled(), bEnabled, "Button is enabled wheen URL-Textarea is not empty");
+				assert.strictEqual(
+					Element.getElementById("sapUiRtaAddIFrameDialogSaveButton").getEnabled(),
+					bEnabled,
+					"Button is enabled wheen URL-Textarea is not empty"
+				);
 				clickOnCancel();
 			}, this);
 			return this.oAddIFrameDialog.open();
 		});
 
+		QUnit.test("when the useLegacyNavigation switch is toggled", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async () => {
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled by default");
+				const oSwitch = Element.getElementById("sapUiRtaAddIFrameDialog_UseLegacyNavigationToggle");
+				oSwitch.focus();
+				QUnitUtils.triggerKeyup(oSwitch.getDomRef(), KeyCodes.SPACE);
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				await nextUIUpdate();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after switch was toggled");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open();
+		});
+
+		QUnit.test("when an url is entered", function(assert) {
+			this.oAddIFrameDialog.attachOpened(async () => {
+				const oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
+				const oPreviewButton = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewButton");
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled before anything is entered");
+				oUrlTextArea.setValue("someUrl");
+				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
+				this.oAddIFrameDialog._oController._oJSONModel.refresh();
+				await nextUIUpdate();
+				assert.ok(oPreviewButton.getEnabled(), "then the preview button is enabled after url was entered");
+				this.oAddIFrameDialog._oController.onShowPreview();
+				assert.notOk(oPreviewButton.getEnabled(), "then the preview button is disabled after refreshing the preview");
+				clickOnCancel();
+			});
+			return this.oAddIFrameDialog.open();
+		});
+
 		QUnit.test("when a forbidden url is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async function() {
+				var oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				// eslint-disable-next-line no-script-url
 				oUrlTextArea.setValue("javascript:someJs");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				assert.strictEqual(oUrlTextArea.getValueState(), "Error", "then an error is displayed");
 				this.oAddIFrameDialog._oController.onShowPreview();
@@ -376,11 +422,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a url with bindings is entered", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				var oUrlTextArea = oCore.byId("sapUiRtaAddIFrameDialog_EditUrlTA");
+			this.oAddIFrameDialog.attachOpened(async function() {
+				var oUrlTextArea = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 				oUrlTextArea.setValue("https://example.com/{productCategory}");
 				QUnitUtils.triggerEvent("input", oUrlTextArea.getFocusDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				assert.strictEqual(oUrlTextArea.getValueState(), "None", "then it is not showing an error");
 				clickOnCancel();
@@ -422,7 +468,7 @@ sap.ui.define([
 			return this.oAddIFrameDialog.open().then(function(mSettings) {
 				assert.strictEqual(mSettings.frameUrl, "https://www.sap.com/index.html", "Setting for frameUrl is correct");
 				aNumericInputFields.forEach(function(sFieldName) {
-					assert.strictEqual(mSettings[sFieldName], 100, "Setting for " + sFieldName + " is correct");
+					assert.strictEqual(mSettings[sFieldName], 100, `Setting for ${sFieldName} is correct`);
 				});
 				assert.strictEqual(mSettings.frameWidthUnit, "rem", "Setting for frameWidthUnit is correct");
 				assert.strictEqual(mSettings.frameHeightUnit, "vh", "Setting for frameHeightUnit is correct");
@@ -430,14 +476,14 @@ sap.ui.define([
 		});
 
 		aImportTestData.forEach(function(mData, iIndex) {
-			QUnit.test("When existing settings are passed to the dialog then they should be imported correctly, part " + (iIndex + 1), function(assert) {
+			QUnit.test(`When existing settings are passed to the dialog then they should be imported correctly, part ${iIndex + 1}`, function(assert) {
 				this.oAddIFrameDialog.attachOpened(function() {
 					var oData = this.oAddIFrameDialog._oJSONModel.getData();
 					Object.keys(mData.expectedResults).forEach(function(sFieldName) {
 						if (Array.isArray(oData[sFieldName])) {
-							assert.deepEqual(oData[sFieldName], mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+							assert.deepEqual(oData[sFieldName], mData.expectedResults[sFieldName], `${sFieldName} is imported correctly`);
 						} else {
-							assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], sFieldName + " is imported correctly");
+							assert.strictEqual(oData[sFieldName].value, mData.expectedResults[sFieldName], `${sFieldName} is imported correctly`);
 						}
 					});
 					clickOnCancel();
@@ -447,11 +493,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("When existing settings contain % values for the section height", function(assert) {
-			this.oAddIFrameDialog.attachOpened(function() {
-				var oHeightValueArea = oCore.byId("sapUiRtaAddIFrameDialog_HeightInput");
+			this.oAddIFrameDialog.attachOpened(async function() {
+				var oHeightValueArea = Element.getElementById("sapUiRtaAddIFrameDialog_HeightInput");
 				oHeightValueArea.setValue("50");
 				QUnitUtils.triggerEvent("input", oHeightValueArea.getFocusDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 				clickOnSave();
 			}, this);
 			return this.oAddIFrameDialog.open({

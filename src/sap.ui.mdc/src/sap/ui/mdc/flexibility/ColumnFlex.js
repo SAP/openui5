@@ -7,17 +7,19 @@ sap.ui.define([
 ], function(Engine, ItemBaseFlex) {
 	"use strict";
 
-	var ColumnFlex = Object.assign({}, ItemBaseFlex);
+	const ColumnFlex = Object.assign({}, ItemBaseFlex);
 
 	ColumnFlex.findItem = function(oModifier, aColumns, sName) {
 		return aColumns.reduce(function(oPreviousPromise, oColumn) {
 			return oPreviousPromise
 				.then(function(oFoundColumn) {
 					if (!oFoundColumn) {
-						return Promise.resolve()
-							.then(oModifier.getProperty.bind(oModifier, oColumn, "propertyKey"))
-							.then(function(sPropertyKey) {
-								if (sPropertyKey === sName) {
+						return Promise.all([
+								oModifier.getProperty(oColumn, "propertyKey"),
+								oModifier.getProperty(oColumn, "dataProperty")
+							])
+							.then(function(aProperties) {
+								if (aProperties[0] === sName || aProperties[1] === sName) {
 									return oColumn;
 								}
 							});

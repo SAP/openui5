@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
+	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
@@ -14,13 +15,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/util/Utils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ], function (
 	Log,
 	extend,
 	ObjectPath,
 	VersionInfo,
+	Supportability,
 	RuleSet,
 	CommunicationBus,
 	channelNames,
@@ -28,8 +29,7 @@ sap.ui.define([
 	constants,
 	EvalUtils,
 	Utils,
-	jQuery,
-	Configuration
+	jQuery
 	) {
 		"use strict";
 
@@ -220,7 +220,7 @@ sap.ui.define([
 				iProgress = 0,
 				iRulesNumber = aLibNames.publicRules.length;
 
-			var supportModeConfig = Configuration.getSupportMode();
+			var supportModeConfig = Supportability.getSupportSettings();
 			var bSilentMode = supportModeConfig && supportModeConfig.indexOf("silent") > -1;
 
 			if (bHasInternalRules) {
@@ -331,8 +331,8 @@ sap.ui.define([
 
 			return new Promise(function (resolve) {
 				try {
-					sap.ui.require([sLibraryName.replace(/\./g, "/") + "/library.support"], function () {
-						fnProcessFile.call(that, sLibraryName);
+					sap.ui.require([sLibraryName.replace(/\./g, "/") + "/library.support"], function (oLibSupport) {
+						fnProcessFile.call(that, sLibraryName, oLibSupport);
 						resolve();
 					}, resolve);
 				} catch (ex) {
@@ -346,12 +346,24 @@ sap.ui.define([
 		 *
 		 * @private
 		 * @param {string} sLibName Name of the library from which to fetch a ruleset
+		 * @param {object} oLibSupport Export of the library.support file
 		 */
-		RuleSetLoader._fetchRuleSet = function (sLibName) {
+		RuleSetLoader._fetchRuleSet = function (sLibName, oLibSupport) {
 			try {
 				var sNormalizedLibName = sLibName.replace("." + sCustomSuffix, "").replace(".internal", ""),
-					oLibSupport = ObjectPath.get(sLibName).library.support,
 					oRuleSet = this._mRuleSets[sNormalizedLibName];
+
+				/**
+				 * @deprecated As of 1.120
+				 */
+				if (oLibSupport == null) {
+					oLibSupport = ObjectPath.get(sLibName).library.support;
+					if (oLibSupport) {
+						Log.error(
+							`The ruleset for library '${sLibName}' could only be retrieved via globals.` +
+							`This is deprecated and won't be supported in future releases`);
+					}
+				}
 
 				if (!oLibSupport) {
 					// This case usually happens when the library flag bExport is set to true.

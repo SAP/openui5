@@ -8,12 +8,10 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
 	"sap/ui/core/mvc/XMLView",
-	"sap/base/util/includes",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	validateStableIds,
 	UIComponent,
 	ComponentContainer,
@@ -21,20 +19,19 @@ function(
 	VerticalLayout,
 	Button,
 	XMLView,
-	includes,
 	LoaderExtensions,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Freestyle application", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.rta.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId"),
 						content: [
@@ -62,7 +59,7 @@ function(
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -72,7 +69,7 @@ function(
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponentContainer.destroy();
 		}
 	}, function() {
@@ -85,10 +82,10 @@ function(
 	});
 
 	QUnit.module("Fiori Elements Application with extension", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
-				createContent: function() {
+				createContent() {
 					return new VerticalLayout({
 						id: this.createId("layoutId"),
 						content: [
@@ -170,7 +167,7 @@ function(
 			});
 
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -180,7 +177,7 @@ function(
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -195,15 +192,15 @@ function(
 	var mManifest = {};
 
 	QUnit.module("Fiori Elements Applications without extensions", {
-		beforeEach: function() {
+		beforeEach() {
 			this.aDummyOverlays = ["overlay1", "overlay2"];
 			this.oComponent = {
-				getManifest: function() {
+				getManifest() {
 					return mManifest;
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

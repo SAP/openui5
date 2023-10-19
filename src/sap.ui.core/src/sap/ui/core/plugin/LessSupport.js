@@ -4,6 +4,8 @@
 
 /**
  * FEATURE TO INCREASE DEVELOPMENT EXPERIENCE! NO PRODUCTIVE USAGE ALLOWED!
+ * @fileoverview
+ * @deprecated As of version 1.120
  */
 (function() {
 	"use strict";
@@ -145,7 +147,7 @@
 					if (ok) {
 						ThemeManager.themeLoaded = true;
 						setTimeout(function () {
-							ThemeManager.fireThemeChanged({theme: Theming.getTheme()});
+							ThemeManager.fireThemeApplied({theme: Theming.getTheme()});
 						}, 0);
 					} else {
 						that.iCheckThemeAppliedTimeout = setTimeout(checkThemeApplied, 100);
@@ -513,7 +515,7 @@
 			 */
 			LessSupport.refresh = function() {
 				oThis.refreshLess(true);
-				ThemeManager.checkThemeChanged();
+				ThemeManager.checkThemeApplied();
 			};
 
 			return LessSupport;

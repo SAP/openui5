@@ -7,7 +7,7 @@ sap.ui.define([
 ], function (ProcessingStrategy, FilterOperatorUtil, BaseController, P13nBuilder, Log, merge, deepEqual) {
 	"use strict";
 
-    var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
+    const FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController", {
         constructor: function() {
 			BaseController.apply(this, arguments);
 			this._bResetEnabled = true;
@@ -23,9 +23,9 @@ sap.ui.define([
             title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filter.PERSONALIZATION_DIALOG_TITLE"),
             tabText: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.TAB_Filter"),
             afterClose: function(oEvt) {
-                var oDialog = oEvt.getSource();
+                const oDialog = oEvt.getSource();
                 if (oDialog) {
-                    var oDialogContent = oDialog.getContent()[0];
+                    const oDialogContent = oDialog.getContent()[0];
                     if (oDialogContent.isA("sap.m.p13n.Container")) {
                         oDialogContent.removeView("Filter");
                     } else {
@@ -50,8 +50,8 @@ sap.ui.define([
     };
 
     FilterController.prototype.getBeforeApply = function() {
-        var oAdaptationFilterBar = this.getAdaptationControl().getInbuiltFilter();
-        var pConditionPromise = oAdaptationFilterBar ? oAdaptationFilterBar.createConditionChanges() : Promise.resolve([]);
+        const oAdaptationFilterBar = this.getAdaptationControl().getInbuiltFilter();
+        const pConditionPromise = oAdaptationFilterBar ? oAdaptationFilterBar.createConditionChanges() : Promise.resolve([]);
         return pConditionPromise;
     };
 
@@ -75,11 +75,11 @@ sap.ui.define([
      */
     FilterController.checkConditionOperatorSanity = function(mConditions) {
         //TODO: consider to harmonize this sanity check with 'getCurrentState' cleanups
-        for (var sFieldPath in mConditions) {
-            var aConditions = mConditions[sFieldPath];
-            for (var i = 0; i < aConditions.length; i++) {
-                var oCondition = aConditions[i];
-                var sOperator = oCondition.operator;
+        for (const sFieldPath in mConditions) {
+            const aConditions = mConditions[sFieldPath];
+            for (let i = 0; i < aConditions.length; i++) {
+                const oCondition = aConditions[i];
+                const sOperator = oCondition.operator;
                 if (!FilterOperatorUtil.getOperator(sOperator)){
                     aConditions.splice(i, 1);
                     /*
@@ -102,7 +102,7 @@ sap.ui.define([
     };
 
     FilterController.prototype.initAdaptationUI = function (oPropertyHelper, oWrapper) {
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+        const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 
         return this.getAdaptationControl().retrieveInbuiltFilter().then(function(oAdaptationFilterBar){
             oAdaptationFilterBar.setP13nData(oAdaptationData);
@@ -121,10 +121,10 @@ sap.ui.define([
 
     FilterController.prototype.update = function(oPropertyHelper){
         if (this._oPanel) {
-            var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+            const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
             this._oPanel.setP13nData(oAdaptationData);
-            var oAdaptationControl = this.getAdaptationControl();
-            var oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
+            const oAdaptationControl = this.getAdaptationControl();
+            const oInbuiltFilter = oAdaptationControl && oAdaptationControl.getInbuiltFilter();
             if (oInbuiltFilter) {
                 oInbuiltFilter.createFilterFields();
             }
@@ -161,33 +161,33 @@ sap.ui.define([
     *
     * @returns {array} Array containing the delta based created changes
     */
-    var getConditionDeltaChanges = function(mDeltaInfo) {
-        var aConditionChanges = [];
+    const getConditionDeltaChanges = function(mDeltaInfo) {
+        let aConditionChanges = [];
 
-        var mNewConditionState = mDeltaInfo.changedState;
-        var mPreviousConditionState = mDeltaInfo.existingState;
-        var oAdaptationControl = mDeltaInfo.control;
-        var bAbsoluteAppliance = mDeltaInfo.hasOwnProperty("applyAbsolute") ? mDeltaInfo.applyAbsolute : true;
-        var aPropertyInfo = mDeltaInfo.propertyInfo;
+        const mNewConditionState = mDeltaInfo.changedState;
+        const mPreviousConditionState = mDeltaInfo.existingState;
+        const oAdaptationControl = mDeltaInfo.control;
+        const bAbsoluteAppliance = mDeltaInfo.hasOwnProperty("applyAbsolute") ? mDeltaInfo.applyAbsolute : true;
+        const aPropertyInfo = mDeltaInfo.propertyInfo;
 
-        for (var sFieldPath in mNewConditionState) {
-            var bValidProperty = _hasProperty(aPropertyInfo, sFieldPath);
+        for (const sFieldPath in mNewConditionState) {
+            const bValidProperty = _hasProperty(aPropertyInfo, sFieldPath);
             if (!bValidProperty && oAdaptationControl.isA("sap.ui.mdc.Control") && oAdaptationControl.isPropertyHelperFinal()) {
                 Log.warning("property '" + sFieldPath + "' not supported");
                 continue;
             }
 
-            var aFilterConditionChanges = _diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl, bAbsoluteAppliance);
+            const aFilterConditionChanges = _diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl, bAbsoluteAppliance);
             aConditionChanges = aConditionChanges.concat(aFilterConditionChanges);
         }
 
         return aConditionChanges;
     };
 
-    var _hasProperty = function(aPropertyInfo, sName) {
+    const _hasProperty = function(aPropertyInfo, sName) {
         return aPropertyInfo.some(function(oProperty){
             //First check unique name
-            var bValid = oProperty.name === sName || sName == "$search";
+            let bValid = oProperty.name === sName || sName == "$search";
 
             //Use path as Fallback
             bValid = bValid ? bValid : oProperty.path === sName;
@@ -196,9 +196,9 @@ sap.ui.define([
         });
     };
 
-    var createConditionChange = function(sChangeType, oControl, sFieldPath, oCondition) {
+    const createConditionChange = function(sChangeType, oControl, sFieldPath, oCondition) {
         delete oCondition.filtered;
-        var oConditionChange = {
+        const oConditionChange = {
             selectorElement: oControl,
             changeSpecificData: {
                 changeType: sChangeType,
@@ -224,26 +224,27 @@ sap.ui.define([
     *
     * @returns {array} Array containing the delta based created changes
     */
-    var _diffConditionPath = function(sFieldPath, aConditions, aOrigShadowConditions, oControl, bAbsoluteAppliance){
-        var oChange, aChanges = [];
-        var aOrigConditions = merge([], aConditions);
-        var aShadowConditions = aOrigShadowConditions ? merge([], aOrigShadowConditions) : [];
+    const _diffConditionPath = function(sFieldPath, aConditions, aOrigShadowConditions, oControl, bAbsoluteAppliance){
+        let oChange;
+        const aChanges = [];
+        const aOrigConditions = merge([], aConditions);
+        const aShadowConditions = aOrigShadowConditions ? merge([], aOrigShadowConditions) : [];
 
 
         if (deepEqual(aConditions, aShadowConditions)) {
             return aChanges;
         }
 
-        var fnRemoveSameConditions = function(aConditions, aShadowConditions){
-            var bRunAgain;
+        const fnRemoveSameConditions = function(aConditions, aShadowConditions){
+            let bRunAgain;
 
             do  {
                 bRunAgain = false;
 
-                for (var i = 0; i < aConditions.length; i++) {
+                for (let i = 0; i < aConditions.length; i++) {
 
-                    var oNewCondition = aConditions[i];
-                    var nConditionIdx = FilterOperatorUtil.indexOfCondition(oNewCondition, aShadowConditions);
+                    const oNewCondition = aConditions[i];
+                    const nConditionIdx = FilterOperatorUtil.indexOfCondition(oNewCondition, aShadowConditions);
                     if (nConditionIdx > -1) {
 
                         aConditions.splice(i, 1);
@@ -265,8 +266,8 @@ sap.ui.define([
 
             aShadowConditions.forEach(function(oCondition) {
                 //In case of absolute appliance always remove, in case of explicit appliance only remove if explicitly given in the new state via filtered=false
-                var iNewCondition = FilterOperatorUtil.indexOfCondition(oCondition, aOrigConditions);
-                var bNewConditionExplicitlyRemoved = iNewCondition > -1 && aOrigConditions[iNewCondition].filtered === false;
+                const iNewCondition = FilterOperatorUtil.indexOfCondition(oCondition, aOrigConditions);
+                const bNewConditionExplicitlyRemoved = iNewCondition > -1 && aOrigConditions[iNewCondition].filtered === false;
                 if (bAbsoluteAppliance || bNewConditionExplicitlyRemoved) {
                     oChange = createConditionChange("removeCondition", oControl, sFieldPath, oCondition);
                     aChanges.push(oChange);
@@ -288,7 +289,7 @@ sap.ui.define([
 
 
     FilterController.prototype.model2State = function() {
-        var oItems = {},
+        const oItems = {},
             oFilter = this.getCurrentState();
             this.getP13nData().items.forEach(function(oItem) {
             if (oItem.active && Object.keys(oFilter).includes(oItem.name)) {
@@ -301,11 +302,11 @@ sap.ui.define([
 
     FilterController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var mExistingFilters = this.getCurrentState() || {};
+        const mExistingFilters = this.getCurrentState() || {};
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+        const oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            var aExistingFilters = mExistingFilters[mItem.name];
+            const aExistingFilters = mExistingFilters[mItem.name];
             mItem.active = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
             return !(oProperty.filterable === false);
@@ -321,11 +322,11 @@ sap.ui.define([
 
     FilterController.prototype.changesToState = function(aChanges, mOld, mNew) {
 
-        var mStateDiff = {};
+        const mStateDiff = {};
 
         aChanges.forEach(function(oChange){
-            var oStateDiffContent = merge({}, oChange.changeSpecificData.content);
-            var sName = oStateDiffContent.name;
+            const oStateDiffContent = merge({}, oChange.changeSpecificData.content);
+            const sName = oStateDiffContent.name;
 
             if (!mStateDiff[sName]) {
                 mStateDiff[sName] = [];

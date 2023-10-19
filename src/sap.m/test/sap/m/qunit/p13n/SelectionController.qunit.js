@@ -783,4 +783,72 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("FlexUtil API 'getPropertySetterchanges' tests",{
+		initHelper: function() {
+
+			var oHelper = new MetadataHelper([
+				{key: "fieldA", label: "Field A"},
+				{key: "fieldB", label: "Field B"},
+				{key: "fieldC", label: "Field C"}
+			]);
+
+			return oHelper;
+		},
+        beforeEach: function() {
+			this.oTestControl = new Control();
+			this.oSelectionController = new SelectionController({
+				control: new Control(),
+				targetAggregation: "dependents"
+			});
+        }
+	});
+
+	QUnit.test("Check 'getPropertySetterChanges' delta determination (no changes for same value)", function(assert){
+		var aSetChanges = this.oSelectionController.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new Control(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a", someProperty: "foo"}
+			],
+			changedState: [
+				{name: "a", someProperty: "foo"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 0, "No changes created as the value is the same");
+	});
+
+	QUnit.test("Check 'getPropertySetterChanges' (changes for new values)", function(assert){
+		var aSetChanges = this.oSelectionController.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new Control(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a"}
+			],
+			changedState: [
+				{name: "a", someProperty: "foo"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 1, "One change created as the value is added");
+	});
+
+	QUnit.test("Check 'getPropertySetterChanges' (changes for different values)", function(assert){
+		var aSetChanges = this.oSelectionController.getPropertySetterChanges({
+			operation: "setSomeProperty",
+			control: new Control(),
+			deltaAttribute: "someProperty",
+			existingState: [
+				{name: "a", someProperty: "foo"}
+			],
+			changedState: [
+				{name: "a", someProperty: "bar"}
+			]
+		});
+
+		assert.equal(aSetChanges.length, 1, "One change created as the value is changed");
+	});
+
 });

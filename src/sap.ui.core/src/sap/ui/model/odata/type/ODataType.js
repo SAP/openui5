@@ -156,7 +156,7 @@ sap.ui.define([
 	 */
 	ODataType.prototype.checkParseEmptyValueToZero = function () {
 		if (this.oFormatOptions && this.oFormatOptions.parseEmptyValueToZero
-			&& (!this.oConstraints || this.oConstraints && this.oConstraints.nullable !== false)) {
+			&& (!this.oConstraints || this.oConstraints.nullable !== false)) {
 			Log.warning("The parseEmptyValueToZero format option is ignored as the nullable constraint"
 				+ " is not false.", null, this.getName());
 		}
@@ -201,7 +201,6 @@ sap.ui.define([
 	 * @returns {string|undefined}
 	 *   The language-dependent placeholder text or <code>undefined</code> if the type does not offer a placeholder
 	 *
-	 * @experimental As of version 1.114.0
 	 * @public
 	 */
 	ODataType.prototype.getPlaceholderText = function () {

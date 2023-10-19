@@ -3,16 +3,31 @@
  */
 
 //Provides default renderer for control sap.ui.table.Table
-sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "./extensions/ExtensionBase",
-			   'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/base/Log"],
-	function(Device, library, Column, TableUtils, ExtensionBase, Renderer, IconPool, Log) {
+sap.ui.define([
+	"sap/ui/Device",
+	"./library",
+	"./Column",
+	"./utils/TableUtils",
+	"./extensions/ExtensionBase",
+	"sap/ui/core/Renderer",
+	"sap/ui/core/IconPool",
+	"sap/ui/core/library",
+	"sap/base/Log"
+], function(
+	Device,
+	library,
+	Column,
+	TableUtils,
+	ExtensionBase,
+	Renderer,
+	IconPool,
+	CoreLibrary,
+	Log
+) {
 	"use strict";
 
-	// shortcuts
-	var VisibleRowCountMode = library.VisibleRowCountMode;
-	var SortOrder = library.SortOrder;
+	var SortOrder = CoreLibrary.SortOrder;
 	var ColumnUtils = TableUtils.Column;
-
 	var mFlexCellContentAlignment = {
 		Begin: "flex-start",
 		End: "flex-end",
@@ -20,6 +35,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		Right: undefined, // Set on every call of TableRenderer#render to respect the current text direction.
 		Center: "center"
 	};
+	var Hook = TableUtils.Hook.Keys.TableRenderer;
 
 	/**
 	 * Table renderer.
@@ -117,7 +133,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.style("width", oTable.getWidth());
 
-		oTable._getRowMode().applyTableStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderTableStyles, rm);
 
 		if (oTable._bFirstRendering) {
 			// This class hides the table by setting opacity to 0. It will be removed in Table#_updateTableSizes.
@@ -196,17 +212,10 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 			this.renderFooter(rm, oTable, oTable.getFooter());
 		}
 
-		// TODO: Move to "renderTableChildAtBottom" hook in row modes
-		if (oTable.getVisibleRowCountMode() == VisibleRowCountMode.Interactive) {
-			this.renderVariableHeight(rm, oTable);
-		}
-
-		// TODO: Move to "renderTableChildAtBottom" hook in row modes
-		this.renderBottomPlaceholder(rm, oTable);
+		TableUtils.Hook.call(oTable, Hook.RenderInTableBottomArea, rm);
 
 		rm.close("div");
 
-		//oTable._getRowMode().renderTableChildAtBottom(rm);
 		this.renderTabElement(rm, "sapUiTableOuterAfter");
 		rm.close("div");
 	};
@@ -275,7 +284,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		this.renderTabElement(rm, "sapUiTableCtrlBefore", bHasRows ? "0" : "-1");
 
 		rm.openStart("div", oTable.getId() + "-tableCCnt");
-		oTable._getRowMode().applyRowContainerStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowContainerStyles, rm);
 		rm.class("sapUiTableCCnt");
 		rm.openEnd();
 
@@ -330,29 +339,6 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		rm.renderControl(oFooter);
 
-		rm.close("div");
-	};
-
-	TableRenderer.renderVariableHeight = function(rm, oTable) {
-		rm.openStart("div", oTable.getId() + "-sb");
-		rm.attr("tabindex", "-1");
-		rm.class("sapUiTableHeightResizer");
-		rm.style("height", "5px");
-		rm.openEnd();
-		rm.close("div");
-	};
-
-	TableRenderer.renderBottomPlaceholder = function(rm, oTable) {
-		var mPlaceholderHeight = oTable._getRowMode().getTableBottomPlaceholderStyles();
-
-		if (mPlaceholderHeight === undefined) {
-			return;
-		}
-
-		rm.openStart("div", oTable.getId() + "-placeholder-bottom");
-		rm.class("sapUiTablePlaceholder");
-		oTable._getRowMode().applyTableBottomPlaceholderStyles(rm);
-		rm.openEnd();
 		rm.close("div");
 	};
 
@@ -539,7 +525,12 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 
 		if (bRenderIcons) {
 			var bFiltered = oColumn.getFiltered();
-			var bSorted = oColumn.getSorted();
+			var bSorted = oColumn.getSortOrder() !== SortOrder.None;
+
+			/** @deprecated As of version 1.120 */
+			if (!oColumn.getSorted()) {
+				bSorted = false;
+			}
 
 			if (bFiltered) {
 				rm.class("sapUiTableColFiltered");
@@ -723,7 +714,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		rm.class("sapUiTableContentCell");
 		rm.class(bHeader ? "sapUiTableRowSelectionCell" : "sapUiTableRowActionCell");
 
-		oTable._getRowMode().renderRowStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowStyles, rm);
 
 		rm.attr("tabindex", "-1");
 
@@ -1128,7 +1119,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 		this.addRowCSSClasses(rm, oTable, iRowIndex);
 
 		rm.attr("data-sap-ui-rowindex", iRowIndex);
-		oTable._getRowMode().renderRowStyles(rm);
+		TableUtils.Hook.call(oTable, Hook.RenderRowStyles, rm);
 
 		var oRowSettings = oRow.getAggregation("_settings");
 		var oParams = {
@@ -1209,7 +1200,7 @@ sap.ui.define(['sap/ui/Device', './library', "./Column", './utils/TableUtils', "
 				rm.class("sapUiTableFirstColumnCell");
 			}
 
-			oTable._getRowMode().renderCellContentStyles(rm);
+			TableUtils.Hook.call(oTable, Hook.RenderCellContentStyles, rm);
 
 			rm.openEnd();
 			this.renderTableCellControl(rm, oTable, oCell, bIsFirstColumn);

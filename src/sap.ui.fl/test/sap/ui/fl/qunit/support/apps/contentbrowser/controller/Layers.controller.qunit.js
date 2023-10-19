@@ -21,20 +21,20 @@ sap.ui.define([
 	var oController;
 
 	QUnit.module("Layers", {
-		beforeEach: function() {
+		beforeEach() {
 			oController = new Layers();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when a layer is selected", function(assert) {
 			var oEvent = {
-				getSource: function() {
+				getSource() {
 					return {
-						getBindingContextPath: function() {
+						getBindingContextPath() {
 							return {
-								substring: function() {
+								substring() {
 									return "layer";
 								}
 							};
@@ -43,9 +43,9 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								layer: {
 									name: Layer.VENDOR
@@ -69,7 +69,7 @@ sap.ui.define([
 
 		QUnit.test("when MessagePopover is press", function(assert) {
 			var oEvent = {
-				getSource: function() {
+				getSource() {
 					return "source";
 				}
 			};

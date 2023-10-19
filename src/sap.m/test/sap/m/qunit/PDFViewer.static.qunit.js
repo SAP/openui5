@@ -76,7 +76,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadDone1Handler);
 			oPdfViewer.attachLoaded(fnLoadDone2Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -84,7 +84,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadDone2Handler);
 			oPdfViewer.attachLoaded(fnLoadDone3Handler);
 			oPdfViewer.setSource(sourcePath1);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 
@@ -92,7 +92,7 @@ sap.ui.define([
 			oPdfViewer.detachLoaded(fnLoadDone3Handler);
 			oPdfViewer.attachLoaded(fnLoadDone4Handler);
 			oPdfViewer.setSource(sourcePath2);
-			TestUtils.rerender();
+			TestUtils.triggerRerender();
 			return Promise.resolve();
 		};
 

@@ -1,11 +1,18 @@
-specVersion: '3.0'
+specVersion: "3.0"
 metadata:
-  name: walkthrough-tutorial
+  name: ui5.walkthrough
 type: application
 framework:
   name: OpenUI5
-  version: 1.118.0-SNAPSHOT #DependencyVersion,groupId:com.sap.openui5,artifactId:sap.ui.core#
+  version: 1.121.0-SNAPSHOT #MainVersion#
   libraries:
-    - name: sap.ui.core
     - name: sap.m
+    - name: sap.ui.core
     - name: themelib_sap_horizon
+server:
+  customMiddleware:
+  - name: ui5-middleware-simpleproxy
+    afterMiddleware: compression
+    mountPath: /V2
+    configuration:
+      baseUri: "https://services.odata.org"

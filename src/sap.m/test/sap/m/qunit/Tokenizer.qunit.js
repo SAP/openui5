@@ -496,6 +496,77 @@ sap.ui.define([
 		// Cleanup
 		oTokenizer.destroy();
 	});
+	QUnit.test("should fire press event coming from n-more list", function (assert) {
+		// Setup
+		var oList, oHandleListItemPressSpy,
+			oModel = new JSONModel({
+				items: [{text: "Token 0"},
+					{text: "Token 1"},
+					{text: "Token 2"}
+				]
+			}),
+			oTokenizer = new Tokenizer({
+				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
+				width: "200px",
+				renderMode: "Narrow"
+			})
+				.setModel(oModel)
+				.placeAt("content");
+
+		oHandleListItemPressSpy = this.spy(oTokenizer, "_handleListItemPress");
+
+		// Act
+		oList = oTokenizer._getTokensList();
+		oList.fireItemPress();
+
+		// Assert
+		assert.ok(oHandleListItemPressSpy.called, "List item pressed event should be called");
+
+		// Cleanup
+		oTokenizer.destroy();
+	});
+
+	QUnit.test("Handle firePress event mapping between List items and Tokens on n-more item pressed", function (assert) {
+		// Setup
+		var aItems, oItem, oToken, oFirstItemPressFiredSpy,
+			oModel = new JSONModel({
+				items: [{text: "Token 0"},
+					{text: "Token 1"},
+					{text: "Token 2"}
+				]
+			}),
+			oTokenizer = new Tokenizer({
+				tokens: {path: "/items", template: new Token({text: {path: "text"}})},
+				width: "200px",
+				renderMode: "Narrow"
+			})
+				.setModel(oModel)
+				.placeAt("content"),
+			oEvent = {
+				getParameter: function () {
+					return oTokenizer._getTokensList().getItems()[0];
+				}
+			};
+
+		Core.applyChanges();
+
+		oTokenizer._handleNMoreIndicatorPress();
+		Core.applyChanges();
+
+		aItems = oTokenizer._getTokensList().getItems();
+		oItem = aItems[0];
+		oToken = Core.byId(oItem.data("tokenId"));
+		oFirstItemPressFiredSpy = this.spy(oToken, "firePress");
+
+		oTokenizer._handleListItemPress(oEvent);
+		Core.applyChanges();
+
+		// Assert
+		assert.ok(oFirstItemPressFiredSpy.called, "pressed event fired on the correct token since corresponding list item pressed");
+
+		// Cleanup
+		oTokenizer.destroy();
+	});
 
 	QUnit.module("Setters", {
 		beforeEach : function() {

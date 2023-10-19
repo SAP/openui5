@@ -1,0 +1,110 @@
+{
+  "1.118.0": {
+    "date": "August 2023",
+    "notes": [
+      {
+        "id": "cfea48d7e5044413f637a727468f0111fe29c45f",
+        "type": "FEATURE",
+        "text": " sap.ui.core: generic Web Components support for UI5"
+      },
+      {
+        "id": "3771ed477b5c2b77e90de008bdc80a0fd2162099",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.TimeOfDay#getModelValueFromISOString: Fix issue for set precisions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114882"
+          }
+        ]
+      },
+      {
+        "id": "c986256f809a94a0c63e96bf0a92fe9bd7bc28f4",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.type.DateTimeOffset#getModelValueFromISOString: Fix issue for V4 with set precisions",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380114882"
+          }
+        ]
+      },
+      {
+        "id": "0b08233862b0dcaa05fd6d2de97a80556468e096",
+        "type": "FIX",
+        "text": " asynchronousXMLView.qunit.js: Stabelize execution order",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380111981"
+          }
+        ]
+      },
+      {
+        "id": "01e9de75c05ec6cacc563f533e73ff1ed01c849d",
+        "type": "FEATURE",
+        "text": " Theming: Support for default theme and fallback themes"
+      },
+      {
+        "id": "5020e2e02038513984acebc5508d607aaaec5901",
+        "type": "FIX",
+        "text": " jquery.sap.measure.qunit: Stabilize tests"
+      },
+      {
+        "id": "b4f2c17d0867a312dee71cf0d2fcb4674a49cc7e",
+        "type": "FIX",
+        "text": " theming/ThemeManager: Avoid multiple CSS loading",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500005027552023"
+          }
+        ]
+      },
+      {
+        "id": "d8d8e2cf3629a9d2ad025e752227d600139a88c5",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: parse dateTime timezone \"z\" for UTC",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005085862023"
+          }
+        ]
+      },
+      {
+        "id": "ad8a440b06096fe656ba20193c0240d160e22604",
+        "type": "FIX",
+        "text": " core/routing/Router: update the current route when 'navTo' is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380103731"
+          }
+        ]
+      },
+      {
+        "id": "761ebed36ef848fd500857f40c63924f792828f4",
+        "type": "FIX",
+        "text": " core/Icon: use theming variable for focus outline",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380099755"
+          }
+        ]
+      },
+      {
+        "id": "96a1d29bf838cf39f0c98e39a13d2f78a5e75c90",
+        "type": "FIX",
+        "text": " util/Mobile: set correct viewport for iPad with \"request desktop website\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005790312023"
+          }
+        ]
+      }
+    ]
+  }
+}

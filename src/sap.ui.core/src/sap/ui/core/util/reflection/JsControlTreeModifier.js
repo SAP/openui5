@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/util/XMLHelper",
 	"sap/base/util/merge",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment"
 ], function (
 	BindingParser,
@@ -19,9 +20,9 @@ sap.ui.define([
 	ObjectPath,
 	XMLHelper,
 	merge,
+	Element,
 	Fragment
 ) {
-
 
 	"use strict";
 	/**
@@ -261,7 +262,7 @@ sap.ui.define([
 		 * @inheritDoc
 		 */
 		_byId: function (sId) {
-			return sap.ui.getCore().byId(sId);
+			return Element.getElementById(sId);
 		},
 
 		/**
@@ -331,39 +332,65 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		insertAggregation: function (oParent, sName, oObject, iIndex) {
+		insertAggregation: async function (oParent, sName, oObject, iIndex) {
 			//special handling without invalidation for customData
 			if (sName === "customData") {
-				return oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+				oParent.insertAggregation(sName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+				return;
 			}
-			return this.findAggregation(oParent, sName)
-				.then(function (oAggregation) {
-					if (oAggregation) {
-						if (oAggregation.multiple) {
-							var iInsertIndex = iIndex || 0;
-							oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
-						} else {
-							oParent[oAggregation._sMutator](oObject);
-						}
-					}
-				});
+			const oAggregation = await this.findAggregation(oParent, sName);
+			if (oAggregation) {
+				if (oAggregation.multiple) {
+					const iInsertIndex = iIndex || 0;
+					oParent[oAggregation._sInsertMutator](oObject, iInsertIndex);
+				} else {
+					oParent[oAggregation._sMutator](oObject);
+				}
+			}
 		},
 
 		/**
 		 * @inheritDoc
 		 */
-		removeAggregation: function (oControl, sName, oObject) {
+		removeAggregation: async function (oParent, sName, oObject) {
 			//special handling without invalidation for customData
 			if (sName === "customData") {
-				oControl.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
-				return Promise.resolve();
+				oParent.removeAggregation(sName, oObject, /*bSuppressInvalidate=*/true);
+				return;
 			}
-			return this.findAggregation(oControl, sName)
-				.then(function (oAggregation) {
-					if (oAggregation) {
-						oControl[oAggregation._sRemoveMutator](oObject);
-					}
-				});
+			const oAggregation = await this.findAggregation(oParent, sName);
+			if (oAggregation) {
+				oParent[oAggregation._sRemoveMutator](oObject);
+			}
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		moveAggregation: async function(oSourceParent, sSourceAggregationName, oTargetParent, sTargetAggregationName, oObject, iIndex) {
+			let oSourceAggregation;
+			let oTargetAggregation;
+
+			// customData aggregations are always multiple and use the standard "removeAggregation" mutator
+			if (sSourceAggregationName === "customData") {
+				oSourceParent.removeAggregation(sSourceAggregationName, oObject, /*bSuppressInvalidate=*/true);
+			} else {
+				oSourceAggregation = await this.findAggregation(oSourceParent, sSourceAggregationName);
+			}
+			if (sTargetAggregationName === "customData") {
+				oTargetParent.insertAggregation(sTargetAggregationName, oObject, iIndex, /*bSuppressInvalidate=*/true);
+			} else {
+				oTargetAggregation = await this.findAggregation(oTargetParent, sTargetAggregationName);
+			}
+
+			if (oSourceAggregation && oTargetAggregation) {
+				oSourceParent[oSourceAggregation._sRemoveMutator](oObject);
+				if (oTargetAggregation.multiple) {
+					oTargetParent[oTargetAggregation._sInsertMutator](oObject, iIndex);
+				} else {
+					oTargetParent[oTargetAggregation._sMutator](oObject);
+				}
+			}
 		},
 
 		/**
@@ -530,11 +557,10 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function (oObject, sEventName, sFunctionPath, vData) {
+		attachEvent: function (oObject, sEventName, sFunctionPath, vData, fnCallback) {
 			return new Promise(function (fnResolve, fnReject) {
-				var fnCallback = ObjectPath.get(sFunctionPath);
 				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't attach event because the event handler function is not found or not a function."));
+					fnReject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
 				}
 				fnResolve(oObject.attachEvent(sEventName, vData, fnCallback));
 			});
@@ -543,11 +569,10 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		detachEvent: function (oObject, sEventName, sFunctionPath) {
+		detachEvent: function (oObject, sEventName, sFunctionPath, fnCallback) {
 			return new Promise(function (fnResolve, fnReject) {
-				var fnCallback = ObjectPath.get(sFunctionPath);
 				if (typeof fnCallback !== "function") {
-					fnReject(new Error("Can't attach event because the event handler function is not found or not a function."));
+					fnReject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
 				}
 				// EventProvider.detachEvent doesn't accept vData parameter, therefore it might lead
 				// to a situation when an incorrect event listener is detached.

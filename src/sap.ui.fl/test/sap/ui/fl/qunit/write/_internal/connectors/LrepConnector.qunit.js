@@ -1,33 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/m/MessageBox",
+	"sap/ui/core/BusyIndicator",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
-	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/ui/fl/write/_internal/connectors/Utils",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/m/MessageBox",
-	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core"
+	"sap/ui/fl/Layer"
 ], function(
+	MessageBox,
+	BusyIndicator,
+	Lib,
 	sinon,
 	FlexObjectFactory,
 	InitialLrepConnector,
-	WriteLrepConnector,
 	InitialUtils,
+	Version,
+	WriteLrepConnector,
 	WriteUtils,
 	TransportSelection,
-	Version,
 	Settings,
-	Layer,
-	MessageBox,
-	BusyIndicator,
-	oCore
+	Layer
 ) {
 	"use strict";
 
@@ -40,25 +40,25 @@ sap.ui.define([
 	}
 
 	QUnit.module("LrepConnector", {
-		before: function() {
+		before() {
 			this.oMockNewChange = {
 				packageName: "$TMP",
 				fileType: "change",
 				id: "changeId2",
 				namespace: "namespace",
-				getFileType: function() {
+				getFileType() {
 					return this.fileType;
 				},
-				getId: function() {
+				getId() {
 					return this.id;
 				},
-				getNamespace: function() {
+				getNamespace() {
 					return this.namespace;
 				},
-				setResponse: function(oDefinition) {
+				setResponse(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getFlexObjectMetadata: function() {
+				getFlexObjectMetadata() {
 					return {
 						packageName: this.packageName
 					};
@@ -71,16 +71,16 @@ sap.ui.define([
 				fileName: "manifest",
 				id: "customer.app.var.id",
 				namespace: "namespace",
-				getDefinition: function() {
+				getDefinition() {
 					return {
 						fileType: this.fileType,
 						fileName: this.fileName
 					};
 				},
-				getNamespace: function() {
+				getNamespace() {
 					return this.namespace;
 				},
-				getPackage: function() {
+				getPackage() {
 					return this.packageName;
 				}
 			};
@@ -90,11 +90,11 @@ sap.ui.define([
 			this.aMockLocalChanges = [this.oMockNewChange];
 			this.aAppVariantDescriptors = [this.oAppVariantDescriptor];
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
@@ -198,7 +198,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").returns(Promise.resolve());
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
@@ -231,7 +231,7 @@ sap.ui.define([
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
 			var fnPrepareChangesForTransportStub = sandbox.stub(TransportSelection.prototype, "_prepareChangesForTransport").resolves();
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			return WriteLrepConnector.publish({
 				transportDialogSettings: {
@@ -370,8 +370,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: false,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return false;}
+				isProductiveSystem() {return false;},
+				isAtoEnabled() {return false;}
 			};
 			var oAdjustedResponse = {
 				response: [
@@ -450,8 +450,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: false,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return false;}
+				isProductiveSystem() {return false;},
+				isAtoEnabled() {return false;}
 			};
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
@@ -537,8 +537,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
+				isProductiveSystem() {return false;},
+				isAtoEnabled() {return true;}
 			};
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").resolves(oMockTransportInfo);
@@ -566,8 +566,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
+				isProductiveSystem() {return false;},
+				isAtoEnabled() {return true;}
 			};
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=CUSTOMER&selector=view--control1,feview--control2";
@@ -598,8 +598,8 @@ sap.ui.define([
 			var oSetting = {
 				isKeyUser: true,
 				isAtoAvailable: true,
-				isProductiveSystem: function() {return false;},
-				isAtoEnabled: function() {return true;}
+				isProductiveSystem() {return false;},
+				isAtoEnabled() {return true;}
 			};
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSetting));
 			var sUrl = "/sap/bc/lrep/changes/?reference=flexReference&layer=USER&generator=Change.createInitialFileContent&selector=view--control1,feview--control2";
@@ -879,12 +879,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.appVariant", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			WriteUtils.sendRequest.restore();
 			sandbox.verifyAndRestore();
 		}
@@ -1026,7 +1026,7 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				settings: {
-					isAtoEnabled: function() {
+					isAtoEnabled() {
 						return false;
 					}
 				}
@@ -1108,19 +1108,19 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				settings: {
-					isAtoEnabled: function() {
+					isAtoEnabled() {
 						return true;
 					}
 				},
 				appVariant: {
-					getDefinition: function() {
+					getDefinition() {
 						return {
 							fileName: "manifest",
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function() {return "aPackage";},
-					getNamespace: function() {return "aNameSpace";}
+					getPackage() {return "aPackage";},
+					getNamespace() {return "aNameSpace";}
 				}
 			};
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport&sap-language=EN";
@@ -1145,19 +1145,19 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				settings: {
-					isAtoEnabled: function() {
+					isAtoEnabled() {
 						return true;
 					}
 				},
 				appVariant: {
-					getDefinition: function() {
+					getDefinition() {
 						return {
 							fileName: "manifest",
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function() {return "aPackage";},
-					getNamespace: function() {return "aNameSpace";}
+					getPackage() {return "aPackage";},
+					getNamespace() {return "aNameSpace";}
 				}
 			};
 			var oStubOpenTransportSelection = sinon.stub(TransportSelection.prototype, "openTransportSelection").resolves(undefined);
@@ -1195,16 +1195,16 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				appVariant: {
-					getDefinition: function() {
+					getDefinition() {
 						return {
 							fileName: "manifest",
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function() {
+					getPackage() {
 						return "aPackage";
 					},
-					getNamespace: function() {
+					getNamespace() {
 						return "aNameSpace";
 					}
 				}
@@ -1230,16 +1230,16 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				appVariant: {
-					getDefinition: function() {
+					getDefinition() {
 						return {
 							fileName: "manifest",
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function() {
+					getPackage() {
 						return "aPackage";
 					},
-					getNamespace: function() {
+					getNamespace() {
 						return "aNameSpace";
 					}
 				}
@@ -1260,16 +1260,16 @@ sap.ui.define([
 				isAppVariantRoot: true,
 				url: "/sap/bc/lrep",
 				appVariant: {
-					getDefinition: function() {
+					getDefinition() {
 						return {
 							fileName: "manifest",
 							fileType: "appdescr_variant"
 						};
 					},
-					getPackage: function() {
+					getPackage() {
 						return "aPackage";
 					},
-					getNamespace: function() {
+					getNamespace() {
 						return "aNameSpace";
 					}
 				}
@@ -1303,7 +1303,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.contextBasedAdaptation", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.sLayer = Layer.CUSTOMER;
@@ -1315,7 +1315,7 @@ sap.ui.define([
 				return Promise.resolve({response: {}});
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			WriteUtils.sendRequest.restore();
 			sandbox.verifyAndRestore();
 		}
@@ -1342,8 +1342,8 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.create(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?parentVersion="
-					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?parentVersion=${
+					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "POST", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1371,8 +1371,8 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.update(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion="
-					+ mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${
+					 mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(contextBasedAdaptationData), "the correct payload was passed");
 			}.bind(this));
@@ -1389,7 +1389,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.load(mPropertyBag).then(function() {
 				assert.equal(this.oStubInitialUtilsSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubInitialUtilsSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?version=" + mPropertyBag.version, "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?version=${mPropertyBag.version}`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "GET", "the correct http method was passed");
 			}.bind(this));
 		});
@@ -1406,7 +1406,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.remove(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/" + mPropertyBag.adaptationId + "?parentVersion=" + mPropertyBag.parentVersion + "&sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/${mPropertyBag.adaptationId}?parentVersion=${mPropertyBag.parentVersion}&sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "DELETE", "the correct http method was passed");
 			}.bind(this));
 		});
@@ -1424,7 +1424,7 @@ sap.ui.define([
 			return WriteLrepConnector.contextBasedAdaptation.reorder(mPropertyBag).then(function() {
 				assert.equal(this.oStubWriteSendRequest.callCount, 1, "one call was sent");
 				var oCallArguments = this.oStubWriteSendRequest.getCall(0).args;
-				assert.strictEqual(oCallArguments[0], "/sap/bc/lrep/flex/apps/" + this.sAppId + "/adaptations/?sap-language=EN", "the correct url was passed");
+				assert.strictEqual(oCallArguments[0], `/sap/bc/lrep/flex/apps/${this.sAppId}/adaptations/?sap-language=EN`, "the correct url was passed");
 				assert.strictEqual(oCallArguments[1], "PUT", "the correct http method was passed");
 				assert.deepEqual(oCallArguments[2].payload, JSON.stringify(oFlexObject), "the correct payload was passed");
 			}.bind(this));
@@ -1432,12 +1432,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.ui2personalization", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			WriteUtils.sendRequest.restore();
 			sandbox.verifyAndRestore();
 		}
@@ -1481,7 +1481,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.versions.load", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.verifyAndRestore();
 		}
 	}, function() {
@@ -1516,7 +1516,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.versions.discardDraft", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1539,7 +1539,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.versions.activate", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1552,7 +1552,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
@@ -1583,7 +1583,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
@@ -1614,7 +1614,7 @@ sap.ui.define([
 				version: sActivateVersion
 			};
 
-			var sExpectedUrl = "/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=" + sActivateVersion + "&sap-language=EN";
+			var sExpectedUrl = `/sap/bc/lrep/flex/versions/activate/com.sap.test.app?version=${sActivateVersion}&sap-language=EN`;
 			var mExpectedPropertyBag = {
 				initialConnector: InitialLrepConnector,
 				tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/com.sap.test.app",
@@ -1638,7 +1638,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.versions.publish", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1649,7 +1649,7 @@ sap.ui.define([
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=transportId&version=versionToPublish";
 			var mExpectedPropertyBag = {
@@ -1685,7 +1685,7 @@ sap.ui.define([
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
 			var fnCheckTransportInfoStub = sandbox.stub(TransportSelection.prototype, "checkTransportInfo").returns(true);
-			var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.fl");
+			var oResourceBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 			var sExpectedUrl = "/sap/bc/lrep/flex/versions/publish/sampleComponent?transport=ATO_NOTIFICATION&version=versionToPublish";
 			var mExpectedPropertyBag = {

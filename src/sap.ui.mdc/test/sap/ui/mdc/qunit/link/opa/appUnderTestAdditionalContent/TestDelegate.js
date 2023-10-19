@@ -4,15 +4,15 @@
 sap.ui.define([
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
-	"sap/ui/mdc/link/ContactDetails",
-	"sap/ui/mdc/link/ContactDetailsItem"
+	"testutils/link/ContactDetails",
+	"testutils/link/ContactDetailsItem"
 ], function(LinkDelegate, LinkItem, ContactDetails, ContactDetailsItem) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.fetchLinkItems = function() {
-		var aLinkItems = [
+		const aLinkItems = [
 			new LinkItem({
 				key: "IDLinkItem00",
 				text: "{ProductId}",
@@ -25,7 +25,7 @@ sap.ui.define([
 	};
 
 	SampleLinkDelegate.fetchAdditionalContent = function() {
-		var aAdditionalConten = [
+		const aAdditionalConten = [
 			new ContactDetails({
 				items: new ContactDetailsItem({
 					photo: "/testsuite/test-resources/sap/ui/documentation/sdk/images/johnDoe.png",

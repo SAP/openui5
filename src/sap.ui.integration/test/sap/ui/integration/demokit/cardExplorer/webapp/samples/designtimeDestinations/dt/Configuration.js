@@ -20,6 +20,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"editableToUser": false,
 						"visibleToUser": false
 					},
+					"destination.group": {
+						"label": "Destinations group label defined in DT",
+						"type": "group"
+					},
 					"local.destination": {
 						"type": "destination",
 						"label": "{i18n>TRANSLATED_DESTINATION_LABEL} defined in dt",

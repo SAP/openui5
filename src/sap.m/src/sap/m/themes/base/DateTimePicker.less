@@ -120,7 +120,7 @@ html.sap-phone .sapMDateTimePopupCont,
 html.sapUiMedia-Std-Phone .sapMDateTimePopupCont {
 
 	height: 100%;
-	min-width: 20rem;
+	min-width: 19.1rem;
 	overflow: auto !important; /* allow scrolling in landscape mode */
 	display: block;
 }
@@ -147,6 +147,7 @@ html.sapUiMedia-Std-Phone .sapMDateTimePopupCont > .sapUiCal {
 
 html.sapUiMedia-Std-Phone .sapMDateTimePopupCont > div[class=sapUiCal] {
 	height: 25.25rem;
+	min-width: 19.1rem;
 }
 
 html.sapUiMedia-Std-Phone .sapMDateTimePopupCont.sapMTimePickerDropDown .sapMTimePickerContainer {
@@ -284,3 +285,10 @@ html.sapUiMedia-StdExt-Tablet .sapMDynamicDateRangePopover .sapMDateTimePopupCon
 	width: 100%;
 }
 
+html.sap-desktop {
+	.sapMDateTimePopup {
+		.sapMValueStateHeaderRoot {
+			width: 100% !important;
+		}
+	}
+}

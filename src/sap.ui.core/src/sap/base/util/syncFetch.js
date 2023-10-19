@@ -48,6 +48,7 @@ sap.ui.define([
 	 * @return {module:sap/base/util/SimpleResponse} Returns a <code>SimpleResponse</code> response object
 	 *
 	 * @alias module:sap/base/util/syncFetch
+	 * @deprecated As of Version 1.120
 	 * @private
 	 * @ui5-restricted SAPUI5 Distribution Layer Libraries
 	 */

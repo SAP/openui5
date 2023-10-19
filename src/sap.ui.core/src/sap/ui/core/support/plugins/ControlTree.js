@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/ui/core/UIArea',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/tmpl/Template',
 	'sap/ui/model/Binding',
 	'sap/ui/model/CompositeBinding',
 	'sap/base/util/each',
@@ -25,8 +24,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dom/jquery/selectText",// jQuery Plugin "selectText"
-	"sap/ui/dom/jquery/cursorPos",// jQuery Plugin "cursorPos"
-	'sap/ui/core/mvc/Controller' // provides sap.ui.controller
+	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
 ], function(
 	Core,
 	Plugin,
@@ -40,7 +38,6 @@ sap.ui.define([
 	UIArea,
 	View,
 	XMLView,
-	Template,
 	Binding,
 	CompositeBinding,
 	each,
@@ -50,8 +47,6 @@ sap.ui.define([
 	KeyCodes
 ) {
 	"use strict";
-
-	/*global alert */
 
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ControlTree.
@@ -65,8 +60,6 @@ sap.ui.define([
 		var ControlTree = Plugin.extend("sap.ui.core.support.plugins.ControlTree", {
 			constructor : function(oSupportStub) {
 				Plugin.apply(this, [ "sapUiSupportControlTree", "Control Tree", oSupportStub]);
-
-				this._oStub = oSupportStub;
 
 				if (this.runsAsToolPlugin()) {
 
@@ -1212,7 +1205,7 @@ sap.ui.define([
 		};
 
 		ControlTree.prototype.onsapUiSupportControlTreeRequestControlTreeSerialize = function(oEvent) {
-			var oControl = this.oCore.byId(oEvent.getParameter("controlID"));
+			var oControl = Element.getElementById(oEvent.getParameter("controlID"));
 			var sType = oEvent.getParameter("sType");
 
 			var oViewSerializer;
@@ -1233,8 +1226,18 @@ sap.ui.define([
 							oView.addContent(oControl.clone());
 							oViewSerializer = new ViewSerializer(oView, window, "sap.m");
 						}
-						// By now just XML and HTML can be serialized
-						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
+
+						/**
+						 * HTML only
+						 * @deprecated Since 1.119
+						 */
+						if (sType && sType !== "XML") {
+							mViews = oViewSerializer.serializeToHTML();
+						}
+						// XML
+						if (!(sType && sType !== "XML")) {
+							mViews = oViewSerializer.serializeToXML();
+						}
 					} else {
 						var oUIArea = UIArea.registry.get(oEvent.getParameter("controlID"));
 						var aContent = oUIArea.getContent();
@@ -1242,8 +1245,17 @@ sap.ui.define([
 							oView.addContent(aContent[i]);
 						}
 						oViewSerializer = new ViewSerializer(oView, window, "sap.m");
-						// By now just XML and HTML can be serialized
-						mViews = (sType && sType !== "XML") ? oViewSerializer.serializeToHTML() : oViewSerializer.serializeToXML();
+						/**
+						 * HTML only
+						 * @deprecated Since 1.119
+						 */
+						if (sType && sType !== "XML") {
+							mViews = oViewSerializer.serializeToHTML();
+						}
+						// XML
+						if (!(sType && sType !== "XML")) {
+							mViews = oViewSerializer.serializeToXML();
+						}
 						for ( var i = 0; i < aContent.length; i++) {
 							oUIArea.addContent(aContent[i]);
 						}
@@ -1273,7 +1285,7 @@ sap.ui.define([
 		ControlTree.prototype.onsapUiSupportControlTreeChangeProperty = function(oEvent) {
 
 			var sId = oEvent.getParameter("id");
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (oControl) {
 
@@ -1339,8 +1351,7 @@ sap.ui.define([
 
 		ControlTree.prototype.getControlTree = function() {
 
-			var oCore = this.oCore,
-				aControlTree = [],
+			var aControlTree = [],
 				mAllElements = {};
 
 			function serializeElement(oElement) {
@@ -1416,16 +1427,21 @@ sap.ui.define([
 						switch (sStereotype) {
 						case "element":
 						case "control":
-							oObj = oCore.byId(mAssoc.id);
+							oObj = Element.getElementById(mAssoc.id);
 							break;
 						case "component":
 							oObj = Component.get(mAssoc.id);
 							break;
-						case "template":
-							oObj = Template.byId(mAssoc.id);
-							break;
 						default:
 							break;
+						}
+
+						/**
+						 * @deprecated As of version 1.58
+						 */
+						if (sStereotype === "template") {
+							var Template = sap.ui.requireSync("sap/ui/core/tmpl/Template");
+							oObj = Template.byId(mAssoc.id);
 						}
 
 						if (!oObj) {
@@ -1454,7 +1470,7 @@ sap.ui.define([
 
 			var aControlProps = [];
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (!oControl && UIArea.registry.get(sId)) {
 
@@ -1544,7 +1560,7 @@ sap.ui.define([
 				contexts: []
 			};
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (!oControl) {
 				return mControlBindingInfos;
@@ -1745,7 +1761,7 @@ sap.ui.define([
 
 		ControlTree.prototype.refreshBinding = function(sId, sBindingName) {
 
-			var oControl = this.oCore.byId(sId);
+			var oControl = Element.getElementById(sId);
 			var mBindingInfo = oControl.mBindingInfos[sBindingName];
 
 			if (!oControl || !mBindingInfo) {

@@ -4,10 +4,10 @@
 
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	JsControlTreeModifier,
-	Core
+	Element
 ) {
 	"use strict";
 
@@ -40,20 +40,12 @@ sap.ui.define([
 	 * @returns {string[]} Array of container element IDs of initial UI reconstruction
 	 */
 	Utils.getInitialUIContainerElementIds = function(mUIReconstructions, sContainerKey, sAggregationName, aContainerElements) {
-		if (!mUIReconstructions[sContainerKey]) {
-			mUIReconstructions[sContainerKey] = {};
-		}
+		mUIReconstructions[sContainerKey] ||= {};
 		var mUIStates = mUIReconstructions[sContainerKey];
-		if (!mUIStates[sAggregationName]) {
-			mUIStates[sAggregationName] = {};
-		}
+		mUIStates[sAggregationName] ||= {};
 		var mUIAggregationState = mUIStates[sAggregationName];
-		if (!mUIAggregationState[Utils.TARGET_UI]) {
-			mUIAggregationState[Utils.TARGET_UI] = aContainerElements;
-		}
-		if (!mUIAggregationState[Utils.INITIAL_UI]) {
-			mUIAggregationState[Utils.INITIAL_UI] = aContainerElements.slice(0);
-		}
+		mUIAggregationState[Utils.TARGET_UI] ||= aContainerElements;
+		mUIAggregationState[Utils.INITIAL_UI] ||= aContainerElements.slice(0);
 		return mUIAggregationState[Utils.INITIAL_UI];
 	};
 
@@ -67,7 +59,7 @@ sap.ui.define([
 	 * @returns {Promise<string[]>} Array of Ids wrapped in Promise
 	 */
 	Utils.getContainerElementIds = function(sContainerId, sAggregationName, aCustomAggregation, sAffectedControlIdProperty) {
-		var oContainer = Core.byId(sContainerId);
+		var oContainer = Element.getElementById(sContainerId);
 
 		return Promise.resolve(aCustomAggregation || JsControlTreeModifier.getAggregation(oContainer, sAggregationName))
 		.then(function(aContainerElements) {

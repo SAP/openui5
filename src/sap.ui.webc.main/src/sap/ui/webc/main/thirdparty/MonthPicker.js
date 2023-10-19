@@ -26,6 +26,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var MonthPicker_1;
+
+  // Template
+
+  // Styles
+
   const PAGE_SIZE = 12; // total months on a single page
   const ROW_SIZE = 3; // months per row (4 rows of 3 months each)
   /**
@@ -165,11 +170,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
      * Modifies timestamp by a given amount of months and,
      * if necessary, loads the prev/next page.
      * @param { number } amount
+     * @param { boolean } preserveDate whether to preserve the day of the month (f.e. 15th of March + 1 month = 15th of April)
      * @private
      */
-    _modifyTimestampBy(amount) {
+    _modifyTimestampBy(amount, preserveDate) {
       // Modify the current timestamp
-      this._safelyModifyTimestampBy(amount, "month");
+      this._safelyModifyTimestampBy(amount, "month", preserveDate);
       // Notify the calendar to update its timestamp
       this.fireEvent("navigate", {
         timestamp: this.timestamp
@@ -218,7 +224,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
      * @protected
      */
     _showPreviousPage() {
-      this._modifyTimestampBy(-PAGE_SIZE);
+      this._modifyTimestampBy(-PAGE_SIZE, true);
     }
     /**
      * Called by Calendar.js
@@ -226,7 +232,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
      * @protected
      */
     _showNextPage() {
-      this._modifyTimestampBy(PAGE_SIZE);
+      this._modifyTimestampBy(PAGE_SIZE, true);
     }
     _isOutOfSelectableRange(date, minDate, maxDate) {
       const month = date.getMonth();

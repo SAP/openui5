@@ -3,7 +3,7 @@ sap.ui.define([
 ], function(TableDelegateBase) {
 	"use strict";
 
-	var TableDelegate = Object.assign({}, TableDelegateBase);
+	const TableDelegate = Object.assign({}, TableDelegateBase);
 
 	TableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		TableDelegateBase.updateBindingInfo.apply(this, arguments);

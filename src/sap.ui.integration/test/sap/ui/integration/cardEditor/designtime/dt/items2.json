@@ -370,6 +370,18 @@
 			}
 		}
 	},
+	"image": {
+		"manifestpath": "/sap.card/configuration/parameters/image/value",
+		"type": "string",
+		"label": "image",
+		"visualization": {
+			"type": "ImageSelect",
+			"settings": {
+				"value": "{currentSettings>value}",
+				"editable": "{currentSettings>editable}"
+			}
+		}
+	},
 	"separatorColor": {
 		"type": "separator",
 		"line": true

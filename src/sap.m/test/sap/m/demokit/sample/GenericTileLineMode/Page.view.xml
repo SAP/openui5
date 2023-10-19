@@ -42,6 +42,16 @@
 						</TileContent>
 					</GenericTile>
 				</l:HorizontalLayout>
+				<l:HorizontalLayout id="LinkTiles"
+				                    allowWrapping="true"
+									content="{/linkTiles}"
+				                    class="sapUiTinyMarginTopBottom">
+				<GenericTile header = "{title}" frameType = "TwoByOne" linkTileContents = "{path:'linkTileContents', templateShareable:true}">
+					<linkTileContents>
+						<LinkTileContent  iconSrc="{iconSrc}"  linkText="{linkText}" linkHref="{linkHref}" linkPress=".onLinkPress"/>
+					</linkTileContents>
+				</GenericTile>
+				</l:HorizontalLayout>
 				<l:HorizontalLayout id="SlideTileContainer"
 				                    allowWrapping="true"
 				                    class="sapUiTinyMarginTopBottom">

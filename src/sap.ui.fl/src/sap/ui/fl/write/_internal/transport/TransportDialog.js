@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MessageToast",
 	"sap/ui/core/ListItem",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/_internal/transport/Transports",
 	"sap/ui/core/library"
 ], function(
@@ -23,13 +24,14 @@ sap.ui.define([
 	Input,
 	MessageToast,
 	ListItem,
+	Lib,
 	Transports,
 	coreLibrary
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
 	/**
 	 * Constructor for a new transport/TransportDialog.
@@ -102,7 +104,7 @@ sap.ui.define([
 		Dialog.prototype.init.apply(this);
 
 		// initialize dialog and create member variables.
-		this._oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+		this._oResources = Lib.getResourceBundleFor("sap.ui.fl");
 		this.setTitle(this._oResources.getText("TRANSPORT_DIALOG_TITLE"));
 
 		// add the content.
@@ -153,7 +155,7 @@ sap.ui.define([
 		this._oLocalObjectButton = new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_LOCAL_OBJECT"),
-			press: function() {
+			press() {
 				that._onLocal();
 			}
 		});
@@ -162,14 +164,14 @@ sap.ui.define([
 			text: this._oResources.getText("TRANSPORT_DIALOG_OK"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_OK"),
 			enabled: false,
-			press: function() {
+			press() {
 				that._onOkay();
 			}
 		}));
 		this.addButton(new Button({
 			text: this._oResources.getText("TRANSPORT_DIALOG_CANCEL"),
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_CANCEL"),
-			press: function() {
+			press() {
 				that.fireCancel();
 				that.close();
 				that.destroy();
@@ -245,7 +247,7 @@ sap.ui.define([
 			enabled: false,
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_TRANSPORT_TT"),
 			width: "100%",
-			selectionChange: function() {
+			selectionChange() {
 				// if package field is visible but has no value, the OK button is disable
 				if (that._oPackageListItem.getVisible() && !that._oPackage.getValue()) {
 					return;
@@ -254,7 +256,7 @@ sap.ui.define([
 				that.getButtons()[1].setEnabled(true);
 				that._oTransport.setValueState(ValueState.None);
 			},
-			change: function(oEvent) {
+			change(oEvent) {
 				var fCheck = function(oItem) {
 					if ((oItem && oEvent.mParameters.newValue !== oItem.getText()) || !oItem) {
 						return true;
@@ -286,7 +288,7 @@ sap.ui.define([
 		return new Input({
 			tooltip: this._oResources.getText("TRANSPORT_DIALOG_PACKAGE_TT"),
 			width: "100%",
-			change: function() {
+			change() {
 				var oPromise;
 				var oObject;
 
@@ -298,7 +300,7 @@ sap.ui.define([
 					that._onPackageChangeError(oResult);
 				});
 			},
-			liveChange: function(oEvent) {
+			liveChange(oEvent) {
 				if (oEvent.mParameters.liveValue && oEvent.mParameters.liveValue.length > 3) {
 					that._oTransport.setEnabled(true);
 				}
@@ -354,7 +356,7 @@ sap.ui.define([
 			} else if (oTransports.errorCode) {
 				this.getButtons()[1].setEnabled(false);
 				this._oPackage.setValueState(ValueState.Error);
-				this._oPackage.setValueStateText(this._oResources.getText("TRANSPORT_DIALOG_" + oTransports.errorCode));
+				this._oPackage.setValueStateText(this._oResources.getText(`TRANSPORT_DIALOG_${oTransports.errorCode}`));
 				this._setTransports(oTransports);
 			} else {
 				MessageToast.show(this._oResources.getText("TRANSPORT_DIALOG_NO_TRANSPORTS"));

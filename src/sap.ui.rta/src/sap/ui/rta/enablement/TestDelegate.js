@@ -39,7 +39,6 @@ function(
 	 * sap.ui.fl Delegate to be used in elementActionTests.
 	 * @namespace sap.ui.rta.enablement.TestDelegate
 	 * @implements sap.ui.fl.interfaces.Delegate
-	 * @experimental Since 1.77
 	 * @since 1.77
 	 * @public
 	 * @borrows sap.ui.fl.interfaces.Delegate#getPropertyInfo as #getPropertyInfo
@@ -52,7 +51,7 @@ function(
 		/**
 		 *	@inheritdoc
 		 */
-		getPropertyInfo: function(mPropertyBag) {
+		getPropertyInfo(mPropertyBag) {
 			return Promise.resolve()
 			.then(function() {
 				var bValidParameters =
@@ -70,7 +69,7 @@ function(
 		/**
 		 *	@inheritdoc
 		 */
-		createLabel: function(mPropertyBag) {
+		createLabel(mPropertyBag) {
 			return Promise.resolve()
 			.then(function() {
 				var bParametersValid =
@@ -81,7 +80,7 @@ function(
 					return mPropertyBag.modifier.createControl("sap.m.Label", // for V4/FIHR | for v2 it should be smart label
 						mPropertyBag.appComponent,
 						mPropertyBag.view,
-						mPropertyBag.labelFor + "-label",
+						`${mPropertyBag.labelFor}-label`,
 						{
 							labelFor: mPropertyBag.labelFor,
 							text: mPropertyBag.bindingPath
@@ -96,7 +95,7 @@ function(
 		/**
 		 *	@inheritdoc
 		 */
-		createControlForProperty: function(mPropertyBag) {
+		createControlForProperty(mPropertyBag) {
 			return Promise.resolve()
 			.then(function() {
 				var bParametersValid =
@@ -111,7 +110,7 @@ function(
 							mPropertyBag.view,
 							mPropertyBag.fieldSelector,
 							{
-								text: "{" + mPropertyBag.bindingPath + "}"
+								text: `{${mPropertyBag.bindingPath}}`
 							}
 						)
 					];
@@ -119,7 +118,7 @@ function(
 						var mValueHelpSelector = merge(
 							{},
 							mPropertyBag.fieldSelector,
-							{ id: mPropertyBag.fieldSelector.id + "-" + mPropertyBag.payload.valueHelpId }
+							{ id: `${mPropertyBag.fieldSelector.id}-${mPropertyBag.payload.valueHelpId}` }
 						);
 						aPromises.push(mPropertyBag.modifier.createControl("sap.ui.core.Element",
 							mPropertyBag.appComponent,
@@ -149,7 +148,7 @@ function(
 		 *	@override
 		 *	@inheritdoc
 		 */
-		createLayout: function(mPropertyBag) {
+		createLayout(mPropertyBag) {
 			var bParametersValid =
 				checkCommonParametersForControl(mPropertyBag)
 				&& mPropertyBag.fieldSelector && typeof mPropertyBag.fieldSelector === "object" && typeof mPropertyBag.fieldSelector.id === "string";

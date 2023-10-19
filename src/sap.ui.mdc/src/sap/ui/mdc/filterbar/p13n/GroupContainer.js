@@ -10,16 +10,17 @@ sap.ui.define([
 
 	/**
 	 * Constructor for a new filterBar/p13n/GroupContainer.
-     * Used for a complex groupable FilterBar UI, should be used in combination with <code>FilterGroupLayout</code>
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @class The GroupContainer is a IFilterContainer implementation for <code>sap.m.Table</code>
+	 * @class
+	 * The GroupContainer is a IFilterContainer implementation for <code>sap.m.Table</code>.
+	 * It is used for a complex groupable FilterBar UI and should be used in combination with <code>FilterGroupLayout</code>.
 	 * @extends sap.ui.mdc.filterbar.IFilterContainer
 	 * @constructor
 	 * @private
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.filterbar.p13n.GroupContainer
 	 */
-	var GroupContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.GroupContainer");
+	const GroupContainer = IFilterContainer.extend("sap.ui.mdc.filterbar.p13n.GroupContainer");
 
 	GroupContainer.prototype.init = function() {
 
@@ -31,8 +32,8 @@ sap.ui.define([
 		this.oLayout = new AdaptFiltersPanel();
 
 		this.oLayout.setItemFactory(function(oBindingContext){
-			var sKey = oBindingContext.getProperty(oBindingContext.sPath).name;
-			var oFilterItem = this.mFilterItems[sKey];
+			const sKey = oBindingContext.getProperty(oBindingContext.sPath).name;
+			const oFilterItem = this.mFilterItems[sKey];
 			return oFilterItem;
 		}.bind(this));
 	};
@@ -50,7 +51,7 @@ sap.ui.define([
 	};
 
 	GroupContainer.prototype.getFilterFields = function() {
-		var aFilterItems = [];
+		const aFilterItems = [];
 
 		Object.keys(this.mFilterItems).forEach(function(sKey){
 			aFilterItems.push(this.mFilterItems[sKey]);

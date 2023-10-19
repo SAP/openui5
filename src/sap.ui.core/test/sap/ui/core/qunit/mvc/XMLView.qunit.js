@@ -2,6 +2,7 @@
 sap.ui.define([
 	'sap/base/Log',
 	'sap/base/i18n/ResourceBundle',
+	"sap/ui/core/Element",
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/View',
@@ -15,8 +16,9 @@ sap.ui.define([
 	'sap/m/Panel',
 	'./AnyView.qunit',
 	'sap/ui/thirdparty/jquery',
-	"sap/ui/core/Configuration"
-], function(Log, ResourceBundle, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, ResourceBundle, Element, coreLibrary, Controller, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, XMLHelper, Button, Panel, testsuite, jQuery, Configuration, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -254,18 +256,22 @@ sap.ui.define([
 			type: ViewType.XML,
 			async: true
 		}).placeAt('content');
-		sap.ui.getCore().applyChanges();
 
-		// check that placeholder DOM is not marked for preservation
-		var oElemView = oView.getDomRef();
-		assert.ok(oElemView, "DOM for view must exist");
-		assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
+		oView.onControllerConnected = async () => {
+			await nextUIUpdate();
+
+			// check that placeholder DOM is not marked for preservation
+			var oElemView = oView.getDomRef();
+			assert.ok(oElemView, "DOM for view must exist");
+			assert.ok(oElemView.getAttribute("data-sap-ui-preserve") == null, "DOM must not be marked as 'to be preserved' after construction but before afterInit");
+			return XMLView.prototype.onControllerConnected.apply(oView, arguments);
+		};
 
 		// wait for the async load to complete
-		oView.attachAfterInit(function() {
+		oView.attachAfterInit(async function() {
 
 			// ensure rendering
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// check that DOm now exists and that it is correctly marked for preservation
 			var oElemView = oView.getDomRef();
@@ -280,7 +286,7 @@ sap.ui.define([
 
 			// force a rerendering
 			oView.invalidate();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// check that DOM has been preserved
 			var oPanel = oView.byId("myPanel");
@@ -298,10 +304,10 @@ sap.ui.define([
 			assert.ok(oSubViewDomRef.hasAttribute("data-sap-ui-preserve"), "Dom Element has the preserve attribute set");
 
 			// complete execution only in next tick as the controller code will execute further QUnit asserts in the current tick
-			setTimeout(function() {
-				done();
+			setTimeout(async function() {
 				oView.destroy();
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
+				done();
 			});
 		});
 	});
@@ -311,12 +317,12 @@ sap.ui.define([
 		// load view, embed it in a Panel and force rendering
 		return XMLView.create({
 			viewName: 'example.mvc.test'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			var oPanel = new Panel({
 				text: "My View",
 				content: [oView]
 			}).placeAt('content');
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// check that DOM exists
 			var oElemViewBefore = oView.getDomRef();
@@ -386,7 +392,7 @@ sap.ui.define([
 		return XMLView.create({
 			id: "xmlview",
 			viewName: 'example.mvc.test'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			xmlview = oView;
 
 			var iLayoutRendered = 0;
@@ -405,17 +411,17 @@ sap.ui.define([
 			});
 			oLayout.placeAt('content');
 
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			check(true, " (after initial rendering)");
 			assert.equal(1, iLayoutRendered, "layout initially should have been rendered once");
 
 			xmlview.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			check(false, " (after becoming invisible)");
 			assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview invisible)");
 
 			xmlview.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			check(true, " (after becoming visible again)");
 			assert.equal(1, iLayoutRendered, "layout still should have been rendered only once (after making the xmlview visible again)");
 
@@ -428,17 +434,17 @@ sap.ui.define([
 		// load and place view, force rendering
 		return XMLView.create({
 			viewName: "example.mvc.test"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
 			var oPanel = oView.byId("myPanel");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// panel should be visible and have normal control DOM
 			assert.ok(oPanel.getDomRef() && !isInPreservedArea(oPanel.getDomRef()), "panel rendered (and not part of the preserve area())");
 
 			// make only the panel invisible, force rendering
 			oPanel.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// there should be no more DOM for the panel, but an invisible placeholder
 			assert.notOk(oPanel.getDomRef(), "panel should be hidden");
@@ -446,7 +452,7 @@ sap.ui.define([
 
 			// hide the view
 			oView.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// this should move it to the preserve area with all child controls incl. the invisible placeholder
 			assert.ok(oView.getDomRef() && isPreserved(oView.getDomRef()), "view has DOM and DOM is in preserved area");
@@ -456,7 +462,7 @@ sap.ui.define([
 			// restore both, view and child control
 			oView.setVisible(true);
 			oPanel.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// both view and child should have DOM, should not be in the preserve area and should have no placeholders
 			assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
@@ -469,9 +475,9 @@ sap.ui.define([
 			// now make view and child visible in two different renderings
 			oView.setVisible(false);
 			oPanel.setVisible(false);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			oView.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// invisible control should still be invisible and invisible placeholder still should exist
 			assert.ok(oView.getDomRef() && !isPreserved(oView.getDomRef()), "view has DOM and DOM is no longer in preserved area");
@@ -481,7 +487,7 @@ sap.ui.define([
 
 			// making the panel visible should also work
 			oPanel.setVisible(true);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			assert.ok(oPanel.getDomRef(), "panel rendered after making it visible");
 			assert.notOk(invisiblePlaceholder(oPanel), "invisible placeholder must not exist for visible panel");
 			assert.notOk(dummyPlaceholder(oPanel), "dummy placeholder must not exists for visible panel");
@@ -496,9 +502,9 @@ sap.ui.define([
 		// load and place view, force rendering
 		return XMLView.create({
 			viewName: 'example.mvc.test'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oDomRef = oView.getDomRef();
 			RenderManager.preserveContent(oDomRef, true);
@@ -516,9 +522,9 @@ sap.ui.define([
 		// load and place view, force rendering
 		return XMLView.create({
 			viewName: 'example.mvc.test'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oDomRef = oView.getDomRef();
 
@@ -573,12 +579,12 @@ sap.ui.define([
 		return XMLView.create({
 			id: "outer",
 			viewName: "nested.views.outer"
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.ok(oControl, "control with id '" + sId + "' should exist");
 				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
 			});
@@ -586,7 +592,7 @@ sap.ui.define([
 			// install delegates on each control to assert later that all have been rendered
 			var count = 0;
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				oControl.addDelegate({
 					onBeforeRendering: function() {
 						count += 100;
@@ -599,12 +605,12 @@ sap.ui.define([
 
 			// Act: force a re-rerendering of the outer view
 			oView.invalidate();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// Assert: everythging has been rendered again
 			assert.equal(count, 101 * expectedControls.length, "all controls should have participated in the rendering");
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.ok(oControl, "control with id '" + sId + "' should exist");
 				assert.ok(oControl.getDomRef(), "control with id '" + sId + "' should have DOM");
 				assert.notOk(document.getElementById(RenderManager.RenderPrefixes.Dummy + sId), "there should be no more Dummy-Element for id '" + sId + "'");
@@ -613,7 +619,7 @@ sap.ui.define([
 
 			oView.destroy();
 			expectedControls.forEach(function(sId) {
-				var oControl = sap.ui.getCore().byId(sId);
+				var oControl = Element.getElementById(sId);
 				assert.notOk(oControl, "control with id '" + sId + "' should no longer exist");
 				assert.notOk(document.getElementById(sId), "there should be no more DOM with id '" + sId + "'");
 			});
@@ -647,9 +653,9 @@ sap.ui.define([
 
 		return XMLView.create({
 			definition: sXML
-		}).then(function (oView) {
+		}).then(async function (oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			var oButtonDomRef = oView.byId("Jenson").getDomRef();
 			assert.ok(oButtonDomRef.parentNode === oView.getDomRef(), "Button is a direct DOM child of the View.");
@@ -742,9 +748,9 @@ sap.ui.define([
 		return XMLView.create({
 			id: "view",
 			definition: xmlWithHTMLFragment
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 			return oView;
 		}).then(function(oView) {
 			assert.ok(jQuery("#view--valid1").length == 1, "DOM must contain view--valid1 element.");
@@ -940,9 +946,9 @@ sap.ui.define([
 		return XMLView.create({
 			id: "viewWithNamedAggregations",
 			definition: sXmlWithNamedAggregations
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(oView.getContent()[0].getId(),"viewWithNamedAggregations--contentButton", "viewWithNamedAggregations: The button was added correctly to content aggregation");
 

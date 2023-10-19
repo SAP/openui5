@@ -29,3 +29,25 @@
 .sapMTextAreaMirror {
 	line-height: 1.5;
 }
+
+html.sap-desktop:not(.sapUiNativeScrollbars) .sapMTextArea {
+	.sapMInputBaseContentWrapperWarning ::-webkit-scrollbar {
+		background: @sapUiFieldWarningBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperError ::-webkit-scrollbar {
+		background: @sapUiFieldInvalidBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperInformation ::-webkit-scrollbar {
+		background: @sapUiFieldInformationBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+
+	.sapMInputBaseContentWrapperSuccess ::-webkit-scrollbar {
+		background: @sapUiFieldSuccessBackgroundStyle;
+		background-color: @sapUiScrollBarTrackColor;
+	}
+}

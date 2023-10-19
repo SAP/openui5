@@ -33,11 +33,13 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
+	"sap/ui/core/Rendering",
+	"sap/ui/core/Supportability",
+	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/message/MessageManager",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
 	"sap/ui/model/Model",
@@ -45,8 +47,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
 		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		SyncPromise, CacheManager, Configuration, coreLibrary, Message, MessageManager, BindingMode,
-		BaseContext, Model, OperationMode, URI) {
+		SyncPromise, Configuration, coreLibrary, Messaging, Rendering, Supportability,
+		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -181,8 +183,7 @@ sap.ui.define([
 		 *   <code>undefined</code>, '$auto', '$direct' or an application group ID.
 		 * @param {boolean} [mParameters.withCredentials]
 		 *   Whether the XMLHttpRequest is called with <code>withCredentials</code>, so that user
-		 *   credentials are included in cross-origin requests by the browser (@experimental as of
-		 *   Version 1.117.0)
+		 *   credentials are included in cross-origin requests by the browser (since 1.120.0)
 		 * @throws {Error} If an unsupported synchronization mode is given, if the given service
 		 *   root URL does not end with a forward slash, if an unsupported parameter is given, if
 		 *   OData system query options or parameter aliases are specified as parameters, if an
@@ -300,7 +301,7 @@ sap.ui.define([
 		mUriParameters = this.buildQueryOptions(oUri.query(true), false, true);
 		// BEWARE: these are shared across all bindings!
 		this.mUriParameters = mUriParameters;
-		if (Configuration.getStatisticsEnabled()) {
+		if (Supportability.isStatisticsEnabled()) {
 			// Note: this way, "sap-statistics" is not sent within $batch
 			mUriParameters = Object.assign({"sap-statistics" : true}, mUriParameters);
 		}
@@ -377,7 +378,7 @@ sap.ui.define([
 			reportStateMessages : this.reportStateMessages.bind(this),
 			reportTransitionMessages : this.reportTransitionMessages.bind(this),
 			updateMessages : function (aOldMessages, aNewMessages) {
-				MessageManager.updateMessages(aOldMessages, aNewMessages);
+				Messaging.updateMessages(aOldMessages, aNewMessages);
 			}
 		};
 		this.oRequestor = _Requestor.create(this.sServiceUrl, this.oInterface, this.mHeaders,
@@ -461,7 +462,9 @@ sap.ui.define([
 	 * the entity is also available.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *    The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error]
@@ -503,7 +506,9 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *    The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {string} [oEvent.getParameters.path]
 	 *   The absolute path to the entity which caused the event. The path is only provided for
 	 *   additional property requests; for other requests it is <code>undefined</code>.
@@ -532,7 +537,9 @@ sap.ui.define([
 	 * not user input.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *    The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.Context} [oEvent.getParameters.context]
 	 *   The property binding's {@link sap.ui.model.Binding#getContext context}, if available
 	 * @param {string} oEvent.getParameters.path
@@ -616,7 +623,7 @@ sap.ui.define([
 		if (!this.aPrerenderingTasks) {
 			this.aPrerenderingTasks = [];
 			fnRunTasks = runTasks.bind(null, this.aPrerenderingTasks);
-			sap.ui.getCore().addPrerenderingTask(fnRunTasks);
+			Rendering.addPrerenderingTask(fnRunTasks);
 			// Add a watchdog to run the tasks in case there is no rendering. Ensure that the task
 			// runs after all setTimeout(0) tasks scheduled from within the current task, even those
 			// that were scheduled afterwards. A simple setTimeout(n) with n > 0 is not sufficient
@@ -1208,7 +1215,7 @@ sap.ui.define([
 	 *   <li> It must not contain control characters.
 	 * </ul>
 	 *
-	 * @param {object} [mHeaders]
+	 * @param {Object<string|undefined>} [mHeaders]
 	 *   Map of HTTP header names to their values
 	 * @throws {Error}
 	 *   If <code>mHeaders</code> contains unsupported headers, the same header occurs more than
@@ -2411,7 +2418,7 @@ sap.ui.define([
 			});
 		});
 		if (aNewMessages.length || aOldMessages.length) {
-			MessageManager.updateMessages(aOldMessages, aNewMessages);
+			Messaging.updateMessages(aOldMessages, aNewMessages);
 		}
 	};
 
@@ -2430,7 +2437,7 @@ sap.ui.define([
 		var that = this;
 
 		if (aMessages && aMessages.length) {
-			MessageManager.updateMessages(undefined, aMessages.map(function (oMessage) {
+			Messaging.updateMessages(undefined, aMessages.map(function (oMessage) {
 				oMessage.transition = true;
 				return that.createUI5Message(oMessage, sResourcePath);
 			}));

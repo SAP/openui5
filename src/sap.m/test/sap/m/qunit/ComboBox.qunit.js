@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/base/Event",
 	"sap/base/Log",
 	"sap/ui/events/KeyCodes",
@@ -3915,63 +3915,6 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("it should correctly set the selection if the items aggregation is bounded to an OData model", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.setModel(oModel);
-
-		// IDs and names of the products in the model:
-		//
-		// id_1  Gladiator MX
-		// id_2  Psimax
-		// id_3  Hurricane GX
-		// id_4  Webcam
-		// id_5  Monitor Locking Cable
-		// id_6  Laptop Case
-		// id_7  Removable CD/DVD
-		// id_8  USB Stick 16 GByte
-		// id_9  Deskjet Super Highspeed
-		// id_10 Laser Allround Pro
-		// id_11 Flat S
-		// id_12 Flat Medium
-		// id_13 Flat X-large II
-		// id_14 High End Laptop 2b
-		// id_15 Very Natural Keyboard
-		// id_16 Hardcore Hacker
-
-		oComboBox.setSelectedKey("id_5");
-		oComboBox.placeAt("content");
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		// assert
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_5");
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
 	// BCP 1570460580
 	QUnit.test("it should not override the selection when binding context is changed", function (assert) {
 
@@ -5350,91 +5293,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("onsapshow Alt + DOWN - open the control's picker pop-up and select the text", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: [
-				new Item({
-					key: "GER",
-					text: "Germany"
-				})
-			],
-			selectedKey: "GER"
-		});
-
-		// arrange
-		oComboBox.syncPickerContent();
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
-		// handler does not override the type ahead
-		this.clock.tick(0);
-
-		// open the dropdown list picker
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_RIGHT);
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);
-
-		// assert
-		assert.strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
-		assert.strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("it should open the dropdown list, show the busy indicator and load the items asynchronous when Alt + Down keys are pressed", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
-
-		// assert
-		assert.ok(oComboBox.isOpen(), "the dropdown list is open");
-		assert.strictEqual(oComboBox._getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
-		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
 	QUnit.test("it should open the dropdown list and preselect first item if there is such", function (assert) {
 		// arrange
 		var oItem = new Item({
@@ -6253,101 +6111,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should load the items asynchronous when the Down arrow key is pressed and afterwards process the even", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-				oCore.applyChanges();
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-		oCore.applyChanges();
-
-		// assert
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getValue(), "Psimax");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "Psimax", "the value in the input field is selected");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Psimax");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_2");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_2");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
-	QUnit.test("it should show busy indicator in the text field if the items are not loaded after a 300ms delay", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 400;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-
-		// tick the clock ahead some ms millisecond
-		this.clock.tick(300);
-
-		// assert
-		assert.strictEqual(oComboBox.getBusy(), true);
-		this.clock.tick(iAutoRespondAfter);
-		assert.strictEqual(oComboBox.getBusy(), false);
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
 	QUnit.module("onsapup");
 
 	QUnit.test("onsapup", function (assert) {
@@ -6979,55 +6742,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("it should load the items asynchronous when the Home key is pressed select the first selectable item", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		// assert
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getValue(), "Gladiator MX");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "Gladiator MX");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
-	});
-
 	QUnit.module("onsapend");
 
 	QUnit.test("onsapend", function (assert) {
@@ -7226,55 +6940,6 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
-	});
-
-	QUnit.test("it should load the items asynchronous when the End key is pressed and afterwards process the event", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		// assert
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getValue(), "Hardcore Hacker");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "Hardcore Hacker", "the value in the input field is selected");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Hardcore Hacker");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_16");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_16");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
 	});
 
 	QUnit.module("onsappagedown");
@@ -7594,55 +7259,6 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
-	});
-
-	QUnit.test("it should load the items asynchronous when the Page Down key is pressed and afterwards process the even", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		// assert
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getValue(), "Laser Allround Pro");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "Laser Allround Pro", "the value in the input field is selected");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Laser Allround Pro");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_10");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_10");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
 	});
 
 	QUnit.module("onsappageup");
@@ -7967,55 +7583,6 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
-	});
-
-	QUnit.test("it should load the items asynchronous when the Page Up key is pressed and afterwards process the even", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-
-		// act
-		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 1);
-
-		// assert
-		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
-		assert.strictEqual(oComboBox.getValue(), "Gladiator MX");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "Gladiator MX", "the value in the input field is selected");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
 	});
 
 	QUnit.module("oninput");
@@ -8368,69 +7935,6 @@ sap.ui.define([
 
 		// cleanup
 		oComboBox.destroy();
-	});
-
-	QUnit.test("it should load the items asynchronous and perform autocomplete", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox({
-			items: {
-				path: "/Products",
-				template: new Item({
-					key: "{ProductId}",
-					text: "{Name}"
-				})
-			},
-			loadItems: function () {
-				oComboBox.setModel(oModel);
-				oCore.applyChanges();
-			}
-		});
-
-		// arrange
-		var sUri = "/service/";
-		var iAutoRespondAfter = 10;
-		var oMockServer = fnStartMockServer(sUri, iAutoRespondAfter);
-		var oModel = new ODataModel(sUri, true);
-		oComboBox.placeAt("content");
-		oCore.applyChanges();
-		oComboBox.focus();
-		var oTarget = oComboBox.getFocusDomRef();
-
-		// act
-
-		// fake user interaction, (the keydown and input events)
-		oTarget.value = "F";
-		qutils.triggerKeydown(oTarget, KeyCodes.F);
-		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
-
-		oTarget.value = "Fl";
-		qutils.triggerKeydown(oTarget, KeyCodes.L);
-		qutils.triggerEvent("input", oTarget);
-		oCore.applyChanges();
-
-		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
-		// to make sure that the data from the OData model is available)
-		this.clock.tick(iAutoRespondAfter + 2);
-
-		// assert
-		assert.strictEqual(oComboBox.getValue(), "Flat S", "the value is correct");
-		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.strictEqual(oComboBox.getSelectedText(), "at S", "the word completion is correct");
-		}
-		assert.strictEqual(oComboBox.getSelectedItem().getText(), "Flat S");
-		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_11");
-		assert.strictEqual(oComboBox.getSelectedKey(), "id_11");
-		assert.strictEqual(oComboBox.getItems().length, 16, "the items are loaded");
-		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "the suggestion list is filtered");
-		assert.ok(oComboBox.isOpen());
-
-		// cleanup
-		oMockServer.stop();
-		oMockServer.destroy();
-		oComboBox.destroy();
-		oModel.destroy();
 	});
 
 	QUnit.test("it should filter the list on phones", function (assert) {
@@ -13895,5 +13399,493 @@ sap.ui.define([
 		// Assert
 		oFirstMatchingItem = oComboBox._getList().getItems()[1];
 		assert.notOk(oFirstMatchingItem.hasStyleClass("sapMLIBFocused"), "First matching item should not include .sapMLIBFocused on second typein");
+	});
+
+	QUnit.module("Asynchronous oData binding handling", {
+		before: function() {
+			this.oMockServer = fnStartMockServer("/service/", 10);
+
+		},
+		after: function() {
+			this.oMockServer.stop();
+			this.oMockServer.destroy();
+		}
+	});
+
+	QUnit.test("it should correctly set the selection if the items aggregation is bounded to an OData model", function (assert) {
+		var done = assert.async();
+
+		// system under test
+
+		// arrange
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri, true);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 1);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				events: {
+					dataReceived: function() {
+						oComboBox.placeAt("content");
+						oCore.applyChanges();
+
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Monitor Locking Cable");
+
+						oComboBox.destroy();
+						oModel.destroy();
+
+						done();
+					}
+				},
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				})
+			}
+		});
+		oComboBox.setModel(oModel);
+		oComboBox.setSelectedKey("id_5");
+
+		// assert
+		assert.strictEqual(oComboBox.getSelectedKey(), "id_5");
+	});
+
+	QUnit.test("onsapshow Alt + DOWN - open the control's picker pop-up and select the text", function (assert) {
+
+		// system under test
+		var oComboBox = new ComboBox({
+			items: [
+				new Item({
+					key: "GER",
+					text: "Germany"
+				})
+			],
+			selectedKey: "GER"
+		});
+
+		// arrange
+		oComboBox.syncPickerContent();
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event
+		// handler does not override the type ahead
+		this.clock.tick(0);
+
+		// open the dropdown list picker
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_RIGHT);
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true /* ctrl key is down */);
+
+		// assert
+		assert.strictEqual(oComboBox.getFocusDomRef().selectionStart, 0, "The text should be selected");
+		assert.strictEqual(oComboBox.getFocusDomRef().selectionEnd, 7, "The text should be selected");
+
+		// cleanup
+		oComboBox.destroy();
+	});
+
+	QUnit.test("it should open the dropdown list, show the busy indicator and load the items asynchronous when Alt + Down keys are pressed", function (assert) {
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataRequested: function() {
+						oComboBox.placeAt("content");
+						oCore.applyChanges();
+
+						oComboBox.focus();
+
+						// act
+						qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
+
+						// assert
+						assert.ok(oComboBox.isOpen(), "the dropdown list is open");
+						assert.strictEqual(oComboBox._getList().getBusy(), true, "the loading indicator in the dropdown list is shown");
+						assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-busy"), "true");
+					},
+					dataReceived: function() {
+						oCore.applyChanges();
+
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox._getList().getBusy(), false, "the loading indicator in the dropdown list is not shown");
+						assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-busy"), undefined);
+
+						oComboBox.destroy();
+						oModel.destroy();
+
+						done();
+					}
+				}
+			},
+			loadItems: function () {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.setModel(oModel);
+		this.clock.tick(iAutoRespondAfter + 1);
+	});
+
+	QUnit.test("it should show busy indicator in the text field if the items are not loaded after a 300ms delay", function (assert) {
+		// arrange
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 400;
+		var oModel = new ODataModel(sUri, true);
+		var that = this;
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataRequested: function() {
+						oCore.applyChanges();
+						that.clock.tick(300);
+						assert.strictEqual(oComboBox.getBusy(), true);
+					},
+					dataReceived: function() {
+						oCore.applyChanges();
+						assert.strictEqual(oComboBox.getBusy(), false);
+
+						oComboBox.destroy();
+						oModel.destroy();
+
+						done();
+					}
+				}
+			},
+			loadItems: function () {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		this.clock.tick(iAutoRespondAfter);
+	});
+
+	QUnit.test("it should load the items asynchronous when the Down arrow key is pressed and afterwards process the even", function (assert) {
+		// arrange
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri, true);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+						oCore.applyChanges();
+
+						// assert
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox.getValue(), "Psimax");
+
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "Psimax", "the value in the input field is selected");
+						}
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Psimax");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_2");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_2");
+
+						oComboBox.destroy();
+						oModel.destroy();
+
+						done();
+					}
+				}
+			},
+			loadItems: function () {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 1);
+	});
+
+	QUnit.test("it should load the items asynchronous when the Home key is pressed select the first selectable item", function (assert) {
+		// arrange
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+						oCore.applyChanges();
+
+						// assert
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox.getValue(), "Gladiator MX");
+
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "Gladiator MX");
+						}
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
+
+						done();
+					}
+				}
+			},
+			loadItems: function() {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter);
+	});
+
+	QUnit.test("it should load the items asynchronous when the End key is pressed and afterwards process the event", function (assert) {
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox.getValue(), "Hardcore Hacker");
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "Hardcore Hacker", "the value in the input field is selected");
+						}
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Hardcore Hacker");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_16");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_16");
+
+						done();
+					}
+				}
+			},
+			loadItems: function() {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.END);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 1);
+	});
+
+	QUnit.test("it should load the items asynchronous when the Page Down key is pressed and afterwards process the even", function (assert) {
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox.getValue(), "Laser Allround Pro");
+
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "Laser Allround Pro", "the value in the input field is selected");
+						}
+
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Laser Allround Pro");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_10");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_10");
+
+						done();
+					}
+				}
+			},
+			loadItems: function() {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_DOWN);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 1);
+	});
+
+	QUnit.test("it should load the items asynchronous when the Page Up key is pressed and afterwards process the even", function (assert) {
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+						assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
+						assert.strictEqual(oComboBox.getValue(), "Gladiator MX");
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "Gladiator MX", "the value in the input field is selected");
+						}
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Gladiator MX");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_1");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_1");
+
+						done();
+					}
+				}
+			},
+			loadItems: function() {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+
+		// act
+		qutils.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.PAGE_UP);
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 1);
+	});
+
+	QUnit.test("it should load the items asynchronous and perform autocomplete", function (assert) {
+		var done = assert.async();
+		var sUri = "/service/";
+		var iAutoRespondAfter = 10;
+		var oModel = new ODataModel(sUri);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/Products",
+				template: new Item({
+					key: "{ProductId}",
+					text: "{Name}"
+				}),
+				events: {
+					dataReceived: function() {
+						assert.strictEqual(oComboBox.getValue(), "Flat S", "the value is correct");
+
+						if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
+							assert.strictEqual(oComboBox.getSelectedText(), "at S", "the word completion is correct");
+						}
+
+						assert.strictEqual(oComboBox.getSelectedItem().getText(), "Flat S");
+						assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_11");
+						assert.strictEqual(oComboBox.getSelectedKey(), "id_11");
+						assert.strictEqual(oComboBox.getItems().length, 16, "the items are loaded");
+						assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "the suggestion list is filtered");
+						assert.ok(oComboBox.isOpen());
+
+						done();
+					}
+				}
+			},
+			loadItems: function() {
+				oComboBox.setModel(oModel);
+			}
+		});
+
+		oComboBox.placeAt("content");
+		oCore.applyChanges();
+		oComboBox.focus();
+		var oTarget = oComboBox.getFocusDomRef();
+
+		// fake user interaction, (the keydown and input events)
+		oTarget.value = "F";
+		qutils.triggerKeydown(oTarget, KeyCodes.F);
+		qutils.triggerEvent("input", oTarget);
+		oCore.applyChanges();
+
+		oTarget.value = "Fl";
+		qutils.triggerKeydown(oTarget, KeyCodes.L);
+		qutils.triggerEvent("input", oTarget);
+		oCore.applyChanges();
+
+		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
+		// to make sure that the data from the OData model is available)
+		this.clock.tick(iAutoRespondAfter + 2);
 	});
 });

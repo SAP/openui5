@@ -485,9 +485,9 @@ sap.ui.define([
 
 		function testEmptyRow() {
 			var sOriginalDropPosition = oTable.getDragDropConfig()[0].getDropPosition();
-			var iVisibleRowCount = oTable.getVisibleRowCount();
+			var iOriginalRowCount = oTable.getRowMode().getRowCount();
 
-			oTable.setVisibleRowCount(10);
+			oTable.getRowMode().setRowCount(10);
 			oCore.applyChanges();
 
 			Object.getOwnPropertyNames(DropPosition).forEach(function(sPropertyName) {
@@ -500,7 +500,7 @@ sap.ui.define([
 
 			// Restore
 			oTable.getDragDropConfig()[0].setDropPosition(sOriginalDropPosition);
-			oTable.setVisibleRowCount(iVisibleRowCount);
+			oTable.getRowMode().setRowCount(iOriginalRowCount);
 			oCore.applyChanges();
 		}
 
@@ -556,7 +556,7 @@ sap.ui.define([
 		}
 
 		oTable.unbindRows();
-		oTable.setVisibleRowCount(2);
+		oTable.getRowMode().setRowCount(2);
 		oTable.setShowNoData(false);
 		oCore.applyChanges();
 		oClock.tick(50);

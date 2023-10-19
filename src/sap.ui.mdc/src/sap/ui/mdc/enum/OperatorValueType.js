@@ -15,7 +15,7 @@ sap.ui.define(function() {
 	 * @ui5-restricted sap.fe
 	 * @deprecated since 1.115.0 - please see {@link sap.ui.mdc.enums.OperatorValueType}
 	 */
-	var OperatorValueType = {
+	const OperatorValueType = {
 		/**
 		 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
 		 *

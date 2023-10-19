@@ -16,7 +16,8 @@ sap.ui.define([
 	"./library",
 	"sap/ui/core/Component",
 	"sap/ui/layout/library",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/uxap/ModelMapping"
 ], function(
 	jQuery,
 	Control,
@@ -30,7 +31,8 @@ sap.ui.define([
 	library,
 	Component,
 	layoutLibrary,
-	Log
+	Log,
+	ModelMapping
 ) {
 		"use strict";
 
@@ -245,7 +247,7 @@ sap.ui.define([
 		BlockBase.prototype.setParent = function (oParent, sAggregationName, bSuppressInvalidate) {
 			Control.prototype.setParent.call(this, oParent, sAggregationName, bSuppressInvalidate);
 
-			if (oParent instanceof library.ObjectPageSubSection) {
+			if (oParent && oParent.isA("sap.uxap.ObjectPageSubSection")) {
 				this._bLazyLoading = true; //we activate the block lazy loading since we are within an objectPageLayout
 				this._oParentObjectPageSubSection = oParent;
 			}
@@ -507,6 +509,10 @@ sap.ui.define([
 		 * @private
 		 */
 		BlockBase.prototype._afterViewInstantiated = function (oView, sMode) {
+			if (this._bIsBeingDestroyed) {
+				return;
+			}
+
 			var oController = oView.getController();
 
 			//link to the controller defined in the Block

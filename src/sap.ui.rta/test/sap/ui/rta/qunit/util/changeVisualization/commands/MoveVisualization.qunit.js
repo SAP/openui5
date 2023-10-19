@@ -2,19 +2,19 @@
 
 sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/commands/MoveVisualization",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	MoveVisualization,
-	oCore
+	Lib
 ) {
 	"use strict";
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	QUnit.module("Base tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.mPropertyBag = { appComponent: null };
 		},
-		afterEach: function() {
+		afterEach() {
 		}
 	}, function() {
 		QUnit.test("when no payload and property bag are set", function(assert) {

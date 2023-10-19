@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.Bar.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Bar"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The Bar is a container which is primarily used to hold titles, buttons and input elements and its design and functionality is the basis for page headers and footers. The component consists of three areas to hold its content - startContent slot, default slot and endContent slot. It has the capability to center content, such as a title, while having other components on the left and right side.
@@ -59,16 +59,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the component's design.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b> Available options are:
-				 * <ul>
-				 *     <li><code>Header</code></li>
-				 *     <li><code>Subheader</code></li>
-				 *     <li><code>Footer</code></li>
-				 *     <li><code>FloatingFooter</code></li>
-				 * </ul>
 				 */
 				design: {
 					type: "sap.ui.webc.fiori.BarDesign",
@@ -87,7 +77,7 @@ sap.ui.define([
 			aggregations: {
 
 				/**
-				 * Defines the content at the end of the bar
+				 * Defines the content at the end of the bar.
 				 */
 				endContent: {
 					type: "sap.ui.core.Control",
@@ -96,7 +86,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the content in the middle of the bar
+				 * Defines the content in the middle of the bar.
 				 */
 				middleContent: {
 					type: "sap.ui.core.Control",
@@ -104,7 +94,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the content at the start of the bar
+				 * Defines the content at the start of the bar.
 				 */
 				startContent: {
 					type: "sap.ui.core.Control",

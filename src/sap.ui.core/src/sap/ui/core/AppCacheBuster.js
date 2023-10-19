@@ -10,13 +10,15 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/thirdparty/URI',
+	'sap/base/config',
 	'sap/base/Log',
+	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
+	'sap/base/util/fetch',
 	'sap/base/util/mixedFetch',
 	'sap/base/strings/escapeRegExp',
-	'sap/ui/core/_IconRegistry',
-	'sap/ui/core/Configuration'
-], function(ManagedObject, URI, Log, extend, mixedFetch, escapeRegExp, _IconRegistry, Configuration) {
+	'sap/ui/core/_IconRegistry'
+], function(ManagedObject, URI, BaseConfig, Log, Localization, extend, fetch, mixedFetch, escapeRegExp, _IconRegistry) {
 	"use strict";
 
 	/*
@@ -52,10 +54,16 @@ sap.ui.define([
 	//   indexOf check in convertURL will not work here!
 
 	// determine the language and loading mode from the configuration
-	var oConfiguration = Configuration;
-	var sLanguage = oConfiguration.getLanguage();
-	var bSync = oConfiguration.getAppCacheBusterMode() === "sync";
-	var bBatch = oConfiguration.getAppCacheBusterMode() === "batch";
+	const sLanguage = Localization.getLanguage();
+	const sAppCacheBusterMode = BaseConfig.get({
+		name: "sapUiXxAppCacheBusterMode",
+		type: BaseConfig.Type.String,
+		defaultValue: "sync",
+		external: true,
+		freeze: true
+	});
+	const bSync = sAppCacheBusterMode === "sync";
+	const bBatch = sAppCacheBusterMode === "batch";
 
 	// AppCacheBuster session (will be created initially for compat reasons with mIndex)
 	//   - oSession.index: file index (maps file to timestamp) / avoid duplicate loading of known base paths
@@ -156,7 +164,7 @@ sap.ui.define([
 				oInit = {
 					body: sContent.join("\n"),
 					headers: {
-						"Accept": mixedFetch.ContentTypes.JSON,
+						"Accept": fetch.ContentTypes.JSON,
 						"Content-Type": "text/plain"
 					},
 					mode: "POST"
@@ -197,7 +205,7 @@ sap.ui.define([
 				// configure request; check how to execute the request (sync|async)
 				oInit = {
 					headers: {
-						Accept: mixedFetch.ContentTypes.JSON
+						Accept: fetch.ContentTypes.JSON
 					},
 					mode: "POST"
 				};
@@ -249,7 +257,11 @@ sap.ui.define([
 				// load it
 				Log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
 
-				mixedFetch(sUrl, oInit, !bAsync)
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				fetch = mixedFetch ? mixedFetch : fetch;
+				fetch(sUrl, oInit, !bAsync)
 					.then(function(oResponse) {
 						if (oResponse.ok) {
 							return oResponse.json();
@@ -283,17 +295,12 @@ sap.ui.define([
 			 * base URLs configured in the UI5 bootstrap.
 			 *
 			 * @param {Object} [oSyncPoint] the sync point which is used to chain the execution of the AppCacheBuster
+			 * @param {Object} [oConfig] the AppCacheBuster configuration
 			 *
 			 * @private
 			 */
-			boot: function(oSyncPoint) {
-
-				// application cachebuster mechanism (copy of array for later modification)
-				var oConfig = oConfiguration.getAppCacheBuster();
-
+			boot: function(oSyncPoint, oConfig) {
 				if (oConfig && oConfig.length > 0) {
-
-					oConfig = oConfig.slice();
 
 					// flag to activate the cachebuster
 					var bActive = true;
@@ -622,7 +629,12 @@ sap.ui.define([
 	};
 
 	// check for pre-defined callback handlers and register the callbacks
-	var mHooks = oConfiguration.getAppCacheBusterHooks();
+	const mHooks = BaseConfig.get({
+		name: "sapUiXxAppCacheBusterHooks",
+		type: BaseConfig.Type.Object,
+		defaultValue: undefined,
+		freeze: true
+	});
 	if (mHooks) {
 		["handleURL", "onIndexLoad", "onIndexLoaded"].forEach(function(sFunction) {
 			if (typeof mHooks[sFunction] === "function") {

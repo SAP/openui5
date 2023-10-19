@@ -3,10 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/URI"
 ],
-function (UriParameters, URI) {
+function (URI) {
 	"use strict";
 
 	var DEFAULT_FRAME_ID = '_unnamed_frame_-_use_message_origin_';
@@ -42,12 +41,12 @@ function (UriParameters, URI) {
 	WCBConfig.prototype.getFrameId = function () {
 		// the opener window assigns a tool frame an ID and includes in as a URI parameter upon opening the frame
 		// returns the frame's ID or a default value, when running in an opener window
-		return UriParameters.fromQuery(window.location.search).get(this._sURIFrameId) || DEFAULT_FRAME_ID;
+		return new URLSearchParams(window.location.search).get(this._sURIFrameId) || DEFAULT_FRAME_ID;
 	};
 
 	WCBConfig.prototype.getOriginURIParameter = function () {
 		// the opener window sets its origin as a URI parameter upon opening the frame
-		return UriParameters.fromQuery(window.location.search).get(this._sURIOrigin);
+		return new URLSearchParams(window.location.search).get(this._sURIOrigin);
 	};
 
 	WCBConfig.prototype.getReceivingWindow = function () {

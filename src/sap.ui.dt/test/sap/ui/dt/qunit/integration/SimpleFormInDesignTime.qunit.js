@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/DatePicker",
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,
@@ -21,12 +21,12 @@ sap.ui.define([
 	DatePicker,
 	VerticalLayout,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oLabel = new Label({text: "Name"});
 
 			this.oSimpleForm = new SimpleForm("Form1", {
@@ -47,7 +47,7 @@ sap.ui.define([
 			this.oVerticalLayout = new VerticalLayout({content: [this.oSimpleForm, this.oLabel]});
 
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -67,12 +67,12 @@ sap.ui.define([
 				rootElements: [this.oVerticalLayout]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				oCore.applyChanges();
+			this.oDesignTime.attachEventOnce("synced", async function() {
+				await nextUIUpdate();
 				done();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oSimpleForm.destroy();
 		}
@@ -83,11 +83,11 @@ sap.ui.define([
 			assert.ok(oFormAggregationOverlay, "aggregation overlay for not ignored aggregation is created");
 		});
 
-		QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
+		QUnit.test("when the content is added to a SimpleForm ...", async function(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button("button1", {text: "Button"});
 			this.oSimpleForm.addContent(this.oButton);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);

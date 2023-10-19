@@ -110,8 +110,7 @@ sap.ui.define([
 		if (Context.hasChanged(this.oContext, oContext)) {
 			this.oContext = oContext;
 			if (this.isRelative()) {
-				bForceUpdate = !!(oOldContext !== oContext
-					&& this.getDataState().getControlMessages().length);
+				bForceUpdate = !!(oOldContext !== oContext && this.getDataState().getMessages().length);
 				this.checkUpdate(bForceUpdate);
 			}
 		}

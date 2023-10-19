@@ -3,15 +3,13 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/rta/util/UrlParser"
+	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 ], function(
 	UIComponent,
 	FlexControllerFactory,
 	ChangePersistenceFactory,
 	FakeLrepConnectorLocalStorage,
-	ControlPersonalizationWriteAPI,
-	UrlParser
+	ControlPersonalizationWriteAPI
 ) {
 	"use strict";
 
@@ -25,9 +23,9 @@ sap.ui.define([
 		 * @public
 		 * @override
 		 */
-		init: function() {
+		init(...aArgs) {
 			// call the base component's init function
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 
 			// app specific setup
 			this._createFakeLrep();
@@ -38,14 +36,14 @@ sap.ui.define([
 			this.updateChangesModel();
 		},
 
-		updateChangesModel: function() {
+		updateChangesModel() {
 			this.oChangePersistence.getChangesForComponent()// {includeCtrlVariants: true})
 			.then(function(oChanges) {
 				this.getModel().setProperty("/changes", oChanges);
 			}.bind(this));
 		},
 
-		createChangesAndSave: function(mChangeData, oControl) {
+		createChangesAndSave(mChangeData, oControl) {
 			ControlPersonalizationWriteAPI.add(
 				{
 					changes: [
@@ -60,7 +58,7 @@ sap.ui.define([
 			.then(this.updateChangesModel.bind(this));
 		},
 
-		resetPersonalization: function(aControls) {
+		resetPersonalization(aControls) {
 			ControlPersonalizationWriteAPI.reset({selectors: aControls})
 			.then(this.updateChangesModel.bind(this));
 		},
@@ -69,8 +67,8 @@ sap.ui.define([
 		 * Create the FakeLrep with localStorage
 		 * @private
 		 */
-		_createFakeLrep: function() {
-			if (UrlParser.getParam("sap-rta-mock-lrep") !== false) {
+		_createFakeLrep() {
+			if (new URLSearchParams(window.location.search).get("sap-rta-mock-lrep") !== false) {
 				FakeLrepConnectorLocalStorage.enableFakeConnector();
 			}
 		}

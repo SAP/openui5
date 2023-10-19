@@ -14,7 +14,6 @@
 			<Table
 				id="table"
 				selectionMode="MultiToggle"
-				visibleRowCount="10"
 				enableSelectAll="false"
 				rows="{/ProductSet}"
 				threshold="15"

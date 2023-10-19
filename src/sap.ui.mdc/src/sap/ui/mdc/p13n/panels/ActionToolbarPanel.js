@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @since 1.85
 	 * @alias sap.ui.mdc.p13n.panels.ActionToolbarPanel
 	 */
-	var ActionToolbarPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.ActionToolbarPanel", {
+	const ActionToolbarPanel = SelectionPanel.extend("sap.ui.mdc.p13n.panels.ActionToolbarPanel", {
 		metadata: {
             library: "sap.ui.mdc"
         },
@@ -31,12 +31,12 @@ sap.ui.define([
     });
 
     ActionToolbarPanel.prototype._bindListItems = function(mBindingInfo) {
-        var oTemplate = this.getAggregation("_template");
+        const oTemplate = this.getAggregation("_template");
 		if (oTemplate) {
-            var fnGetAlignment = function(oContext) {
+            const fnGetAlignment = function(oContext) {
                 return oContext.getProperty("alignment");
             };
-            var oSorter = new Sorter({
+            const oSorter = new Sorter({
                 path: "alignment",
                 descending: false,
                 group: fnGetAlignment
@@ -55,7 +55,7 @@ sap.ui.define([
 		this._oListControl.getItems().filter(function(oItem) {
 			return !oItem._bGroupHeader;
 		}).forEach(function(oItem){
-			var oFirstCell = oItem.getCells()[0];
+			const oFirstCell = oItem.getCells()[0];
 			if (oFirstCell.getItems().length > 1){
 				oFirstCell.removeItem(oFirstCell.getItems()[1]);
 			}
@@ -65,17 +65,17 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._moveTableItem = function(oItem, iNewIndex) {
-		var aItems = this._oListControl.getItems();
-		var aFields = this._getP13nModel().getProperty("/items");
+		const aItems = this._oListControl.getItems();
+		const aFields = this._getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOlModelIndex = aFields.indexOf(this._getModelEntry(oItem));
+		const iOlModelIndex = aFields.indexOf(this._getModelEntry(oItem));
 
 		// limit the minumum and maximum index
 		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aItems.length - 1);
 
 		// new index of the item in the model
-		var iNewModelIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
+		const iNewModelIndex = aFields.indexOf(aItems[iNewIndex].getBindingContext(this.P13N_MODEL).getObject());
 		if (iNewModelIndex == iOlModelIndex) {
 			return;
 		}
@@ -98,7 +98,7 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._onPressButtonMoveToTop = function() {
-		var iIndex = this._oListControl.getItems().indexOf(this._oHoveredItem);
+		let iIndex = this._oListControl.getItems().indexOf(this._oHoveredItem);
 
 		while (!this._oListControl.getItems()[iIndex - 1]._bGroupHeader) {
 			iIndex--;
@@ -108,7 +108,7 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._onPressButtonMoveToBottom = function() {
-		var iIndex = this._oListControl.getItems().indexOf(this._oHoveredItem);
+		let iIndex = this._oListControl.getItems().indexOf(this._oHoveredItem);
 
 		while (iIndex < this._oListControl.getItems().length - 1 && !this._oListControl.getItems()[iIndex + 1]._bGroupHeader) {
 			iIndex++;
@@ -118,12 +118,12 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._onItemPressed = function(oEvent) {
-		var oSourceControl = oEvent.getParameter('srcControl');
+		const oSourceControl = oEvent.getParameter('srcControl');
 		if (!this._isControlPartOfMoveButtons(oSourceControl)) {
-			var oTableItem = oEvent.getParameter('listItem');
+			const oTableItem = oEvent.getParameter('listItem');
 			this._oSelectedItem = oTableItem;
 
-			var oContext = oTableItem.getBindingContext(this.P13N_MODEL);
+			const oContext = oTableItem.getBindingContext(this.P13N_MODEL);
 			if (this.getEnableReorder() && oContext && oContext.getProperty(this.PRESENCE_ATTRIBUTE)){
 				this._handleActivated(oTableItem);
 				this._updateEnableOfMoveButtons(oTableItem, true);
@@ -132,12 +132,12 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._isControlPartOfMoveButtons = function(oControl) {
-		var aSelectedItemActions = this._oSelectedItem ? this._oSelectedItem.getCells()[1].getItems() : [];
-		var bIsControlPartOfMoveButtons = false;
+		const aSelectedItemActions = this._oSelectedItem ? this._oSelectedItem.getCells()[1].getItems() : [];
+		let bIsControlPartOfMoveButtons = false;
 
 		// Starting at index 2 as 0 and 1 are occupied by the active information
 		if (aSelectedItemActions.length > 2) {
-			for (var iIndex = 2; iIndex < aSelectedItemActions.length; iIndex++) {
+			for (let iIndex = 2; iIndex < aSelectedItemActions.length; iIndex++) {
 				if (aSelectedItemActions[iIndex] == oControl ||
 					aSelectedItemActions[iIndex] == oControl.getParent()) {
 						bIsControlPartOfMoveButtons = true;
@@ -149,9 +149,9 @@ sap.ui.define([
 	};
 
 	ActionToolbarPanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
-		var iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
-		var iLastItemPos =  this._oListControl.getItems().length - 1;
-		var bUpEnabled = true, bDownEnabled = true;
+		const iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
+		const iLastItemPos =  this._oListControl.getItems().length - 1;
+		let bUpEnabled = true, bDownEnabled = true;
 		if (iTableItemPos == 0) {
 			// disable move buttons upwards, if the item is at the top
 			bUpEnabled = false;
@@ -161,7 +161,7 @@ sap.ui.define([
 			bDownEnabled = false;
 		}
 		// Check if list is grouped
-		var bListIsGrouped = this._oListControl.getItems().some(function(oItem) {
+		const bListIsGrouped = this._oListControl.getItems().some(function(oItem) {
 			return oItem._bGroupHeader;
 		});
 		if (bListIsGrouped) {

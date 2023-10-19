@@ -32,7 +32,6 @@ sap.ui.define([
 	 * Provides an API for tools to create, update, delete app variants.
 	 *
 	 * @namespace sap.ui.fl.write.api.AppVariantWriteAPI
-	 * @experimental Since 1.72
 	 * @since 1.72
 	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
@@ -51,7 +50,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		saveAs: function(mPropertyBag) {
+		saveAs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -78,7 +77,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		deleteAppVariant: function(mPropertyBag) {
+		deleteAppVariant(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -96,7 +95,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		listAllAppVariants: function(mPropertyBag) {
+		listAllAppVariants(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -112,7 +111,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		getManifest: function(mPropertyBag) {
+		getManifest(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -134,7 +133,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		assignCatalogs: function(mPropertyBag) {
+		assignCatalogs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}
@@ -157,7 +156,7 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		unassignCatalogs: function(mPropertyBag) {
+		unassignCatalogs(mPropertyBag) {
 			if (!mPropertyBag.layer) {
 				return Promise.reject("Layer must be provided");
 			}

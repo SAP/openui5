@@ -16,20 +16,22 @@
 
 	<script>
 		// load and start the customized application
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require(["sap/ui/core/mvc/Controller"], function(Controller) {
-				//register an extension provider to simulate a real extension coming from flex
-				Controller.registerExtensionProvider("sample.ExtensionProvider_legacyAPIs");
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.ready().then(function() {
+				sap.ui.require(["sap/ui/core/mvc/Controller"], function(Controller) {
+					//register an extension provider to simulate a real extension coming from flex
+					Controller.registerExtensionProvider("sample.ExtensionProvider_legacyAPIs");
 
-				//add an async view
-				var oView = sap.ui.xmlview({viewName: "sample.Main", async:true});
-				oView.placeAt("content1");
+					//add an async view
+					var oView = sap.ui.xmlview({viewName: "sample.Main", async:true});
+					oView.placeAt("content1");
 
-				//add an sync view
-				var oView = sap.ui.xmlview({viewName: "sample.Main", async:false});
-				oView.placeAt("content2");
+					//add an sync view
+					var oView = sap.ui.xmlview({viewName: "sample.Main", async:false});
+					oView.placeAt("content2");
+				});
 			});
-		})
+		});
 
 	</script>
 </head>

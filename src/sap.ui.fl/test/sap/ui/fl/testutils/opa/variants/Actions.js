@@ -37,7 +37,7 @@ sap.ui.define([
 					this.waitFor({
 						controlType: "sap.m.ColumnListItem",
 						matchers: new Descendant(oCell, false),
-						success: function(aEditableVariantItems) {
+						success(aEditableVariantItems) {
 							var oEditableVariantItem = aEditableVariantItems[0];
 							if (typeof oSettings.success === "function") {
 								oSettings.success.call(this, oEditableVariantItem);
@@ -48,7 +48,7 @@ sap.ui.define([
 					});
 				}
 			}.bind(this),
-			errorMessage: "No variant with name " + sVariantName + " was found in 'Manage Views'"
+			errorMessage: `No variant with name ${sVariantName} was found in 'Manage Views'`
 		});
 	};
 
@@ -58,7 +58,7 @@ sap.ui.define([
 
 	return {
 
-		iPressButtonWithID: function(sId) {
+		iPressButtonWithID(sId) {
 			return this.waitFor({
 				id: sId,
 				controlType: "sap.m.Button",
@@ -66,7 +66,7 @@ sap.ui.define([
 			});
 		},
 
-		iSetFavoriteVariant: function(sVariantName, bValue) {
+		iSetFavoriteVariant(sVariantName, bValue) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -74,7 +74,7 @@ sap.ui.define([
 						matchers: [
 							new Ancestor(oManageVariantItem, false)
 						],
-						actions: function(oIcon) {
+						actions(oIcon) {
 							if ((fIsFavoriteSelected(oIcon) && !bValue) ||
 								(!fIsFavoriteSelected(oIcon) && bValue)) {
 								new Press().executeOn(oIcon);
@@ -85,7 +85,7 @@ sap.ui.define([
 			});
 		},
 
-		iRenameVariant: function(sOriginalVariantName, sNewVariantName) {
+		iRenameVariant(sOriginalVariantName, sNewVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sOriginalVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -106,7 +106,7 @@ sap.ui.define([
 			});
 		},
 
-		iSetDefaultVariant: function(sVariantName) {
+		iSetDefaultVariant(sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -120,7 +120,7 @@ sap.ui.define([
 			});
 		},
 
-		iRemoveVariant: function(sVariantName) {
+		iRemoveVariant(sVariantName) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -138,7 +138,7 @@ sap.ui.define([
 			});
 		},
 
-		iApplyAutomaticallyVariant: function(sVariantName, bApplyAuto) {
+		iApplyAutomaticallyVariant(sVariantName, bApplyAuto) {
 			return waitForEditableVariantItemByVariantName.call(this, sVariantName, {
 				actions: function(oManageVariantItem) {
 					this.waitFor({
@@ -146,7 +146,7 @@ sap.ui.define([
 						matchers: [
 							new Ancestor(oManageVariantItem, false)
 						],
-						actions: function(oCheckBox) {
+						actions(oCheckBox) {
 							if (bApplyAuto && !oCheckBox.getSelected() ||
 								!bApplyAuto && oCheckBox.getSelected()) {
 								new Press().executeOn(oCheckBox);
@@ -157,37 +157,37 @@ sap.ui.define([
 			});
 		},
 
-		iCreateNewVariant: function(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
+		iCreateNewVariant(sFlVMId, sVariantTitle, bDefault, bApplyAuto, bPublic) {
 			return this.waitFor({
-				id: sFlVMId + "-vm-name",
-				success: function(oInput) {
+				id: `${sFlVMId}-vm-name`,
+				success(oInput) {
 					new EnterText({
 						text: sVariantTitle
 					}).executeOn(oInput);
 
 					if (bDefault) {
 						this.waitFor({
-							id: sFlVMId + "-vm-default",
+							id: `${sFlVMId}-vm-default`,
 							actions: new Press()
 						});
 					}
 
 					if (bApplyAuto) {
 						this.waitFor({
-							id: sFlVMId + "-vm-execute",
+							id: `${sFlVMId}-vm-execute`,
 							actions: new Press()
 						});
 					}
 
 					if (bPublic) {
 						this.waitFor({
-							id: sFlVMId + "-vm-public",
+							id: `${sFlVMId}-vm-public`,
 							actions: new Press()
 						});
 					}
 
 					return this.waitFor({
-						id: sFlVMId + "-vm-variantsave",
+						id: `${sFlVMId}-vm-variantsave`,
 						actions: new Press()
 					});
 				},

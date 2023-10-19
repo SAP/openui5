@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -13,7 +13,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ActionToolbarActionAlignment
 	 */
-	var ActionToolbarActionAlignment = {
+	const ActionToolbarActionAlignment = {
 		/**
 		 * Align to the beginning
 		 * @public
@@ -25,6 +25,8 @@ sap.ui.define(function() {
 		 */
 		End: "End"
 	};
+
+	DataType.registerEnum("sap.ui.mdc.enums.ActionToolbarActionAlignment", ActionToolbarActionAlignment);
 
 	return ActionToolbarActionAlignment;
 

@@ -4,10 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry"
-],
-function(
+], function(
 	ManagedObject,
+	Lib,
 	OverlayRegistry
 ) {
 	"use strict";
@@ -30,7 +31,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.Plugin
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var Plugin = ManagedObject.extend("sap.ui.dt.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
@@ -314,7 +314,7 @@ function(
 			}
 			return oOverlay.getDesignTimeMetadata() ? oOverlay.getDesignTimeMetadata().getLibraryText(oElement, vName) : "";
 		}
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText(sPluginId);
+		return Lib.getResourceBundleFor("sap.ui.rta").getText(sPluginId);
 	};
 
 	/**

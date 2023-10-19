@@ -50,12 +50,12 @@ sap.ui.define([
 				case "URLParsing":
 					return {
 						parseShellHash: this.fnParseShellHashStub,
-						constructShellHash: function() {return "constructedHash";}
+						constructShellHash() {return "constructedHash";}
 					};
 				case "ShellNavigation":
-					return {registerNavigationFilter: function() {}, unregisterNavigationFilter: function() {}};
+					return {registerNavigationFilter() {}, unregisterNavigationFilter() {}};
 				case "CrossApplicationNavigation":
-					return {toExternal: function() {}};
+					return {toExternal() {}};
 				default:
 					return undefined;
 			}
@@ -81,7 +81,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oData = {
 				variantMgmtId1: {
 					defaultVariant: "variantMgmtId1",
@@ -107,19 +107,11 @@ sap.ui.define([
 				}
 			};
 
-			var oMockFlexController = {
-				_oChangePersistence: {
-					getComponentName: function() {
-						return "someComponentName";
-					}
-				}
-			};
-
 			this.oDummyControl = new VariantManagement("dummyControl");
 
 			this.oAppComponent = new Component("AppComponent");
 			this.oModel = new VariantModel(this.oData, {
-				flexController: oMockFlexController,
+				flexController: {},
 				appComponent: this.oAppComponent
 			});
 			return this.oModel.initialize()
@@ -133,7 +125,7 @@ sap.ui.define([
 				.withArgs(this.oComponent).returns(this.oAppComponent);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oModel.destroy();
 			this.oAppComponent.destroy();

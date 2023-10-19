@@ -28,6 +28,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var AvatarGroup_1;
+
+  // Styles
+
+  // Template
+
   const OVERFLOW_BTN_CLASS = "ui5-avatar-group-overflow-btn";
   const AVATAR_GROUP_OVERFLOW_BTN_SELECTOR = `.${OVERFLOW_BTN_CLASS}`;
   // based on RTL/LTR a margin-left/right is set respectfully
@@ -98,8 +103,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * The component provides advanced keyboard handling.
    * When focused, the user can use the following keyboard
    * shortcuts in order to perform a navigation:
+   *
    * <br>
-   * - <code>type</code> Individual:
+   * <code>type</code> Individual:
    * <br>
    * <ul>
    * <li>[TAB] - Move focus to the overflow button</li>
@@ -110,7 +116,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * <li>[SPACE],[ENTER],[RETURN] - Trigger <code>ui5-click</code> event</li>
    * </ul>
    * <br>
-   * - <code>type</code> Group:
+   * <code>type</code> Group:
    * <br>
    * <ul>
    * <li>[TAB] - Move focus to the next interactive element after the component</li>

@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.webc.main.DateRangePicker.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/DateRangePicker",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/DateRangePicker"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The DateRangePicker enables the users to enter a localized date range using touch, mouse, keyboard input, or by selecting a date range in the calendar.
@@ -85,7 +85,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -196,16 +196,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value state of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
+				 * Defines the value state of the component.
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",

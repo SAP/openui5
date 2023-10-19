@@ -23,6 +23,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TabSeparator_1;
+
+  // Templates
+
+  // Styles
+
   /**
    * @class
    * The <code>ui5-tab-separator</code> represents a vertical line to separate tabs inside a <code>ui5-tabcontainer</code>.
@@ -31,6 +36,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
    * @author SAP SE
    * @alias sap.ui.webc.main.TabSeparator
    * @extends sap.ui.webc.base.UI5Element
+   * @abstract
    * @tagname ui5-tab-separator
    * @implements sap.ui.webc.main.ITab
    * @public

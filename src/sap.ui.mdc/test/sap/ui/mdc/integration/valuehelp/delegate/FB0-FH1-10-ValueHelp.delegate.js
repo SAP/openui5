@@ -13,15 +13,14 @@ sap.ui.define([
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/base/util/UriParameters",
-	'sap/m/library',
 	"sap/ui/core/Core",
-	'sap/ui/mdc/condition/Condition'
+	"sap/ui/mdc/condition/Condition"
 
 ], function(
 	ODataV4ValueHelpDelegate,
@@ -34,34 +33,32 @@ sap.ui.define([
 	GridTableType,
 	mdcTable,
 	mdcColumn,
+	OperatorName,
 	mLibrary,
 	Table,
 	Column,
 	ColumnListItem,
 	Text,
-	UriParameters,
 	Core,
 	Condition
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 	ValueHelpDelegate.apiVersion = 2;//CLEANUPD_DELEGATE
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
-		var oValueHelp = oContainer && oContainer.getParent();
+		const oParams = new URLSearchParams(window.location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
-
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
 
-		var oReturnPromise = Promise.resolve();
+		let oReturnPromise = Promise.resolve();
 
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
@@ -105,7 +102,7 @@ sap.ui.define([
 				oContainer.addContent(oCurrentContent);
 
 				if (bMultiSelect) {
-					var oAdditionalContent = new Conditions({
+					const oAdditionalContent = new Conditions({
 						title:"Define Conditions",
 						shortTitle:"Conditions",
 						label:"Label of Field"
@@ -114,23 +111,23 @@ sap.ui.define([
 				}
 			}
 
-			var sCollectiveSearchKey = oCurrentContent.getCollectiveSearchKey() || "";
+			const sCollectiveSearchKey = oCurrentContent.getCollectiveSearchKey() || "";
 
-			var oCurrentTable = oCurrentContent.getTable();
+			const oCurrentTable = oCurrentContent.getTable();
 
 			if (oCurrentTable) {
 				oCurrentContent.setTable();
 				oCurrentTable.destroy();
 			}
 
-			var oCurrentFB = oCurrentContent.getFilterBar();
+			const oCurrentFB = oCurrentContent.getFilterBar();
 
 			if (oCurrentFB) {
 				oCurrentContent.setFilterBar();
 				oCurrentFB.destroy();
 			}
 
-			var oCollectiveSearchContent;
+			let oCollectiveSearchContent;
 
 			switch (sCollectiveSearchKey) {
 				case "template1":
@@ -246,22 +243,23 @@ sap.ui.define([
 
 			// Set initial filterbar conditions
 			if (oCurrentContent) {
-				var oFilterBar = oCurrentContent.getFilterBar();
+				const oFilterBar = oCurrentContent.getFilterBar();
 
 				if (oFilterBar) {
 					oReturnPromise = oFilterBar.awaitPropertyHelper().then(function (oPropertyHelper) {
-						var bHasCountryOfOrigin = oPropertyHelper.getProperties().some(function (oProp) {
+						const bHasCountryOfOrigin = oPropertyHelper.getProperties().some(function (oProp) {
 							return oProp.name === "countryOfOrigin_code";
 						});
+						let oConditions;
 						if (bHasCountryOfOrigin) {
-							var aCountryConditions = Core.byId("FB0-FF6").getConditions();
-							var oConditions = {
+							const aCountryConditions = Core.byId("FB0-FF6").getConditions();
+							oConditions = {
 								"countryOfOrigin_code": aCountryConditions
 							};
 						}
-						var sFilterValue = oCurrentContent.getFilterValue();
+						const sFilterValue = oCurrentContent.getFilterValue();
 						if (sFilterValue) {
-							oConditions['$search'] = [Condition.createCondition("StartsWith", [sFilterValue])];
+							oConditions['$search'] = [Condition.createCondition(OperatorName.StartsWith, [sFilterValue])];
 						}
 						oFilterBar.setInternalConditions(oConditions);
 					});

@@ -26,6 +26,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var DynamicSideContent_1;
+
+  // Styles
+
+  // Texts
+
   // Breakpoint-related constants
   const S_M_BREAKPOINT = 720,
     // Breakpoint between S and M screen sizes

@@ -20,10 +20,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Connector", {
-		beforeEach: function() {
+		beforeEach() {
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
 		}
@@ -158,9 +158,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("PersonalizationConnector handing xsrf token in combination of the apply connector", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialUtils.sendRequest.restore();
 			sandbox.restore();
 		}

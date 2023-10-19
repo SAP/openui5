@@ -9,12 +9,12 @@
 		<template:repeat list="{target>}" var="field">
 			<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
 				<Column>
-					<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					<Text text="{path: 'field>Label', formatter: 'AH.format'}"/>
 				</Column>
 			</template:if>
 			<template:if test="{field>Action}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldForAction -->
 				<Column demandPopin="true" minScreenWidth="1800px" popinDisplay="WithoutHeader">
-					<Text text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+					<Text text="{path: 'field>Label', formatter: 'AH.format'}"/>
 				</Column>
 			</template:if>
 		</template:repeat>
@@ -24,12 +24,12 @@
 			<template:if test="{field>Value}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataField -->
 				<template:if test="{field>Target}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldWithNavigationPath -->
 					<template:then>
-						<template:with path="field>Target" helper="sap.ui.model.odata.AnnotationHelper.resolvePath" var="entityType">
-							<Link text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" press="onDetailsPressed">
+						<template:with path="field>Target" helper="AH.resolvePath" var="entityType">
+							<Link text="{path: 'field>Value', formatter: 'AH.format'}" press="onDetailsPressed">
 								<dependents>
 									<template:with path="entityType>com.sap.vocabularies.UI.v1.HeaderInfo" var="headerInfo">
-										<Popover binding="{path: 'field>Target', formatter: 'sap.ui.model.odata.AnnotationHelper.getNavigationPath'}"
-												title="{path: 'headerInfo>Title/Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}">
+										<Popover binding="{path: 'field>Target', formatter: 'AH.getNavigationPath'}"
+												title="{path: 'headerInfo>Title/Value', formatter: 'AH.format'}">
 											<core:Fragment fragmentName="sap.ui.core.sample.ViewTemplate.scenario.Identification" type="XML"/>
 										</Popover>
 									</template:with>
@@ -38,20 +38,20 @@
 						</template:with>
 					</template:then>
 					<template:else>
-						<Text text="{path: 'field>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+						<Text text="{path: 'field>Value', formatter: 'AH.format'}" />
 					</template:else>
 				</template:if>
 			</template:if>
 			<template:if test="{field>Action}"><!-- duck typing for com.sap.vocabularies.UI.v1.DataFieldForAction -->
-				<template:with path="field>Action" helper="sap.ui.model.odata.AnnotationHelper.gotoFunctionImport" var="function">
+				<template:with path="field>Action" helper="AH.gotoFunctionImport" var="function">
 					<template:if test="{function>com.sap.vocabularies.Common.v1.IsActionCritical}">
 						<template:then>
 							<!-- IsActionCritical defaults to true -->
-							<Button text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"
+							<Button text="{path: 'field>Label', formatter: 'AH.format'}"
 								icon="{= ${function>com.sap.vocabularies.Common.v1.IsActionCritical/Bool} !== 'false' ? 'sap-icon://notification' : ''}" />
 						</template:then>
 						<template:else>
-							<Button text="{path: 'field>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}" />
+							<Button text="{path: 'field>Label', formatter: 'AH.format'}" />
 						</template:else>
 					</template:if>
 				</template:with>

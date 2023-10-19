@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/postmessage/Bus",
+	"sap/ui/core/Lib",
 	"sap/base/util/uid",
 	"sap/base/util/merge",
 	"sap/ui/rta/util/ServiceEventBus",
@@ -12,6 +13,7 @@ sap.ui.define([
 ], function(
 	ManagedObject,
 	PostMessageBus,
+	Lib,
 	uid,
 	merge,
 	ServiceEventBus,
@@ -82,8 +84,9 @@ sap.ui.define([
 		 */
 		_bInit: false,
 
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 
 			if (!this.getWindow()) {
 				throw new TypeError("sap.ui.rta.Client: window parameter is required");
@@ -173,8 +176,11 @@ sap.ui.define([
 					// Rejecting queued requests
 					var aRequests = this._aRequestQueue.slice();
 					this._aRequestQueue = [];
+					// eslint-disable-next-line max-nested-callbacks
 					aRequests.forEach(function(mRequest) {
-						mRequest.reject(new Error("sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused"));
+						mRequest.reject(
+							new Error("sap.ui.rta.Client.getService(): connection to RuntimeAuthoring instance has been refused")
+						);
 					});
 				}, this);
 
@@ -184,7 +190,7 @@ sap.ui.define([
 					origin: this.getOrigin(),
 					channelId: CHANNEL_ID,
 					eventId: PostMessageBus.event.CONNECT,
-					data: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("SERVICE_NAME")
+					data: Lib.getResourceBundleFor("sap.ui.rta").getText("SERVICE_NAME")
 				});
 			}, this);
 
@@ -197,14 +203,14 @@ sap.ui.define([
 	 * After an object has been destroyed, it can no longer be used.
 	 * @public
 	 */
-	Client.prototype.destroy = function() {
+	Client.prototype.destroy = function(...aArgs) {
 		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "getService", this._receiverMethods, this);
 		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "callMethod", this._receiverMethods, this);
 		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "subscribe", this._receiverMethods, this);
 		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "unsubscribe", this._receiverMethods, this);
 		this._oPostMessageBus.unsubscribe(CHANNEL_ID, "event", this._receiverEvents, this);
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	/**
@@ -298,7 +304,7 @@ sap.ui.define([
 				var mService = merge(
 					// Create placeholders for methods
 					aMethods.reduce(function(mResult, sMethodName) {
-						mResult[sMethodName] = function() {
+						mResult[sMethodName] = function(...aArgs) {
 							return this._sendRequest(this._createRequest({
 								target: oEvent.source,
 								origin: oEvent.origin,
@@ -307,7 +313,7 @@ sap.ui.define([
 								data: {
 									service: sServiceName,
 									method: sMethodName,
-									arguments: Array.prototype.slice.call(arguments)
+									arguments: aArgs
 								}
 							}));
 						}.bind(this);
@@ -318,19 +324,22 @@ sap.ui.define([
 				);
 
 				if (Array.isArray(aEvents) && aEvents.length > 0) {
-					if (!this._oServiceEventBus) {
-						this._oServiceEventBus = new ServiceEventBus();
-					}
+					this._oServiceEventBus ||= new ServiceEventBus();
 					merge(mService, {
 						attachEvent: function(sEventName, fnCallback, oContext) {
 							if (typeof (sEventName) !== "string" || !sEventName) {
-								throw new TypeError("sap.ui.rta.Client: sEventName must be a non-empty string when calling attachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: sEventName must be a non-empty string when calling attachEvent() for a service"
+								);
 							}
 							if (typeof fnCallback !== "function") {
-								throw new TypeError("sap.ui.rta.Client: fnFunction must be a function when calling attachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: fnFunction must be a function when calling attachEvent() for a service"
+								);
 							}
 
-							// 1. Check whether there are other subscribers for same event, if so, then receiver doesn't need second notification
+							// 1. Check whether there are other subscribers for same event, if so,
+							// then receiver doesn't need second notification
 							var oEventProvider = this._oServiceEventBus.getChannel(sServiceName);
 							var bShouldNotifyReceiver = !oEventProvider || !oEventProvider.hasListeners(sEventName);
 
@@ -349,7 +358,7 @@ sap.ui.define([
 										event: sEventName
 									}
 								})).then(function(mResponse) {
-									this._mEventHandlerIds[sServiceName + "," + sEventName] = mResponse.id;
+									this._mEventHandlerIds[`${sServiceName},${sEventName}`] = mResponse.id;
 
 									// Use case when detach happens before we received response from RTA instance
 									this._checkIfEventAlive(sServiceName, sEventName);
@@ -358,10 +367,14 @@ sap.ui.define([
 						}.bind(this),
 						detachEvent: function(sEventName, fnCallback, oContext) {
 							if (typeof (sEventName) !== "string" || !sEventName) {
-								throw new TypeError("sap.ui.rta.Client: sEventName must be a non-empty string when calling detachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: sEventName must be a non-empty string when calling detachEvent() for a service"
+								);
 							}
 							if (typeof fnCallback !== "function") {
-								throw new TypeError("sap.ui.rta.Client: fnFunction must be a function when calling detachEvent() for a service");
+								throw new TypeError(
+									"sap.ui.rta.Client: fnFunction must be a function when calling detachEvent() for a service"
+								);
 							}
 
 							// 1. Unsubscribe from local EventBus
@@ -370,10 +383,10 @@ sap.ui.define([
 							// 2. Check and notify RTA instance if we don't want more events
 							this._checkIfEventAlive(sServiceName, sEventName);
 						}.bind(this),
-						attachEventOnce: function(sEventName, fnCallback, oContext) {
-							function fnOnce() {
+						attachEventOnce(sEventName, fnCallback, oContext) {
+							function fnOnce(...aArgs) {
 								mService.detachEvent(sEventName, fnOnce);
-								fnCallback.apply(oContext, arguments);
+								fnCallback.apply(oContext, aArgs);
 							}
 							mService.attachEvent(sEventName, fnOnce);
 						}
@@ -403,7 +416,7 @@ sap.ui.define([
 
 	Client.prototype._checkIfEventAlive = function(sServiceName, sEventName) {
 		var oEventProvider = this._oServiceEventBus.getChannel(sServiceName);
-		var sEventHandlerId = this._mEventHandlerIds[sServiceName + "," + sEventName];
+		var sEventHandlerId = this._mEventHandlerIds[`${sServiceName},${sEventName}`];
 
 		if (
 			(!oEventProvider || !oEventProvider.hasListeners(sEventName))

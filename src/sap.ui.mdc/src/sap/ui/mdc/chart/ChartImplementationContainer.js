@@ -27,7 +27,7 @@ sap.ui.define([
 		 * @since 1.105
 		 * @alias sap.ui.mdc.chart.ChartImplementationContainer
 		 */
-		var ChartImplementationContainer = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {
+		const ChartImplementationContainer = Control.extend("sap.ui.mdc.chart.ChartImplementationContainer", /** @lends sap.ui.mdc.chart.ChartImplementationContainer.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
 				interfaces: [
@@ -161,7 +161,8 @@ sap.ui.define([
 		 * @ui5-restricted sap.fe, sap.ui.mdc
 		 */
 		ChartImplementationContainer.prototype.showOverlay = function (bShow) {
-			var $this = this.$(), $overlay = $this.find(".sapUiMdcChartOverlay");
+			const $this = this.$();
+			let $overlay = $this.find(".sapUiMdcChartOverlay");
 			if (bShow && $overlay.length === 0) {
 				$overlay = jQuery("<div>").addClass("sapUiOverlay sapUiMdcChartOverlay").css("z-index", "1");
 				$this.append($overlay);
@@ -175,7 +176,7 @@ sap.ui.define([
 		};
 
 		ChartImplementationContainer.prototype._updateVisibilities = function () {
-			var bVisible = this.getShowNoDataStruct();
+			const bVisible = this.getShowNoDataStruct();
 
 			if (this.getContent()) {
 				this.getContent().setVisible(!bVisible);

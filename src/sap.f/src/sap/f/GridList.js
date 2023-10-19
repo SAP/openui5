@@ -250,7 +250,7 @@ sap.ui.define([
 		}
 
 		var aItemsDomRefs = this.getItems().reduce(function (aAcc, oItem) {
-			if (oItem.getVisible()) {
+			if (oItem.getDomRef()) {
 				aAcc.push(oItem.getDomRef());
 			}
 
@@ -289,9 +289,6 @@ sap.ui.define([
 				.setFocusedIndex(0);
 
 			this.addDelegate(this._oItemNavigation);
-
-			// set the tab index of active items
-			this._setItemNavigationTabIndex(0);
 		}
 
 		ListBase.prototype._startItemNavigation.apply(this, arguments);

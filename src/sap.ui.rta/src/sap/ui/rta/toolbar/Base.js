@@ -4,14 +4,18 @@
 
 sap.ui.define([
 	"sap/m/HBox",
+	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/util/ZIndexManager",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/rta/util/Animation",
 	"./BaseRenderer"
 ], function(
 	HBox,
+	Element,
 	StaticArea,
+	Lib,
 	ZIndexManager,
 	ResourceModel,
 	Animation,
@@ -33,7 +37,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.rta.toolbar.Base
-	 * @experimental Since 1.48. This class is experimental. The API might be changed in future.
 	 */
 
 	var Base = HBox.extend("sap.ui.rta.toolbar.Base", {
@@ -66,9 +69,10 @@ sap.ui.define([
 				textResources: "object"
 			}
 		},
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			HBox.apply(this, arguments);
+			HBox.apply(this, aArgs);
 
 			this._oExtensions = {};
 			this.setAlignItems("Center");
@@ -95,23 +99,26 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Base.prototype.init = function() {
+	Base.prototype.init = function(...aArgs) {
 		this._oResourceModel = new ResourceModel({
-			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
 		});
-		HBox.prototype.init.apply(this, arguments);
+		HBox.prototype.init.apply(this, aArgs);
 		// Assign the model object to the SAPUI5 core using the name "i18n"
 		this.setModel(this._oResourceModel, "i18n");
+		this._fnOnScrollBound = this._onScroll.bind(this);
+		window.addEventListener("scroll", this._fnOnScrollBound, true);
 		return this.buildContent();
 	};
 
-	Base.prototype.exit = function() {
+	Base.prototype.exit = function(...aArgs) {
 		Object.values(this._oExtensions).forEach(function(oExtension) {
 			oExtension.destroy();
 		});
 		this._oExtensions = {};
+		window.removeEventListener("scroll", this._fnOnScrollBound, true);
 
-		HBox.prototype.exit.apply(this, arguments);
+		HBox.prototype.exit.apply(this, aArgs);
 	};
 
 	/**
@@ -135,7 +142,7 @@ sap.ui.define([
 	Base.prototype.setTextResources = function(oTextResource) {
 		this.setProperty("textResources", oTextResource);
 		this._oResourceModel = new ResourceModel({
-			bundle: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta")
+			bundle: Lib.getResourceBundleFor("sap.ui.rta")
 		});
 	};
 
@@ -149,7 +156,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent - Event object
 	 */
 	Base.prototype.eventHandler = function(sEventName, oEvent) {
-		this["fire" + sEventName](oEvent.getParameters());
+		this[`fire${sEventName}`](oEvent.getParameters());
 	};
 
 	/**
@@ -192,7 +199,7 @@ sap.ui.define([
 		// 1) create Promise and wait until DomRef is available
 		return new Promise(function(fnResolve) {
 			var oDelegate = {
-				onAfterRendering: function() {
+				onAfterRendering() {
 					this.removeEventDelegate(oDelegate);
 					fnResolve();
 				}
@@ -247,7 +254,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Base.prototype.getControl = function(sName) {
-		return sap.ui.getCore().byId("sapUiRta_" + sName);
+		return Element.getElementById(`sapUiRta_${sName}`);
 	};
 
 	/**
@@ -256,6 +263,17 @@ sap.ui.define([
 	 */
 	Base.prototype.bringToFront = function() {
 		this.setZIndex(ZIndexManager.getNextZIndex());
+	};
+
+	Base.prototype._onScroll = function() {
+		var oDomElement = this.getDomRef();
+		// In some cases, there is a scroll event before
+		// the DOM Element is created
+		if (!oDomElement) {
+			return;
+		}
+		var sScrollClass = "sapUiRtaToolbar_scrolling";
+		oDomElement.classList.toggle(sScrollClass, window.scrollY > 0);
 	};
 
 	return Base;

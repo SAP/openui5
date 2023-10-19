@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ElementMetadata",
-	"sap/base/Log"
-], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log) {
+	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("");
@@ -73,7 +74,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("isDraggable - Aggregated child element", function(assert) {
+	QUnit.test("isDraggable - Aggregated child element", async function(assert) {
 		var oDragInfo = new DragInfo({
 			sourceAggregation: "children"
 		});
@@ -84,7 +85,7 @@ sap.ui.define([
 		});
 
 		oParent.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: Child control is in the defined sourceAggregation");
 		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: Child control is in the defined sourceAggregation");
@@ -96,31 +97,31 @@ sap.ui.define([
 		delete oControl.isDragAllowed;
 
 		oDragInfo.setSourceAggregation("thereIsNoSuchAnAggregationName");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: Child control is not in the defined sourceAggregation");
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: Child control is not in the defined sourceAggregation");
 
 		oDragInfo.setSourceAggregation("children");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable Again: Child control is in the defined sourceAggregation");
 		assert.ok(oControl.getDomRef().draggable, "Dom Draggable Again: Child control is in the defined sourceAggregation");
 
 		oDragInfo.setEnabled(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: DragInfo is disabled");
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: DragInfo is disabled");
 
 		oDragInfo.setEnabled(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled");
 		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled");
 
 		oDragInfo.setSourceAggregation();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: sourceAggregation is empty");
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: sourceAggregation is empty");
@@ -130,7 +131,7 @@ sap.ui.define([
 		oParent.destroy();
 	});
 
-	QUnit.test("isDraggable - Enabled", function(assert) {
+	QUnit.test("isDraggable - Enabled", async function(assert) {
 		var oDragInfo = new DragInfo({
 			enabled: false
 		});
@@ -139,13 +140,13 @@ sap.ui.define([
 		});
 
 		oControl.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not draggable: DragInfo is not enabled");
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not draggable: DragInfo is not enabled");
 
 		oDragInfo.setEnabled(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled and drag source is the control itself");
 		assert.ok(oControl.getDomRef().draggable, "Dom Draggable: DragInfo is enabled and drag source is the control itself");

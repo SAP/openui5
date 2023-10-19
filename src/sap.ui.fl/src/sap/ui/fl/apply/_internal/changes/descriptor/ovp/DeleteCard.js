@@ -32,7 +32,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			/* logic for changemerger */
 			var oDeleteCard = oChange.getContent();
 			var oOldCards = oManifest["sap.ovp"].cards;

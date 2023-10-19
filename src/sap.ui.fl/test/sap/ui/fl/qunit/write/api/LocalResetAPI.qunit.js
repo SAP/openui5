@@ -46,7 +46,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Reset/Restore", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFooElement = new VBox("fooElement");
 			this.oBarElement = new VBox("barElement");
 			this.oElement = new VBox("parentElement", {
@@ -68,7 +68,7 @@ sap.ui.define([
 			this.oChangePersistence.addDirtyChange(aChanges[1]);
 			sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oElement.destroy();
 		}
@@ -183,7 +183,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Nested change collection", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oElement = new VBox("element", {
 				items: [
 					new VBox("childElement")
@@ -201,7 +201,7 @@ sap.ui.define([
 			this.oChangePersistence = new ChangePersistence(oComponent);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(oComponent.name);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oParentElement.destroy();
 		}

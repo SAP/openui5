@@ -179,7 +179,7 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.core/src/sap/ui/thirdparty/caja-html-sanitizer.js
 
-Component: Unicode Common Locale Data Repository, version: 41
+Component: Unicode Common Locale Data Repository, version: 43
 Copyright: 1991-2014 Unicode, Inc.
 License: Unicode-DFS-2015
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Unicode-DFS-2015.txt
@@ -334,7 +334,7 @@ License: ISC
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/ISC.txt
 Contained in: src/sap.ui.core/src/sap/ui/core/cache/LRUPersistentCache.js
 
-Component: Time Zone Database, version: 2022a
+Component: Time Zone Database, version: 2023c
 Copyright: Arthur David Olson, Paul Eggert and other contributors
 License: LicenseRef-tzdata-PublicDomain
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/LicenseRef-tzdata-PublicDomain.txt
@@ -401,7 +401,7 @@ License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
 Contained in: src/sap.ui.integration/src/sap/ui/integration/thirdparty/adaptive-expressions.js
 
-Component: Markdown-it, version: 12.2.0
+Component: Markdown-it, version: 12.3.2
 Copyright: 2014 Vitaly Puzrin, Alex Kocharin
 License: MIT
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/MIT.txt
@@ -416,7 +416,7 @@ Contained in: src/sap.ui.integration/test/sap/ui/integration/demokit/cardExplore
 
 Library: sap.ui.webc.common:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -436,13 +436,13 @@ Contained in: src/sap.ui.webc.common/src/sap/ui/webc/common/thirdparty/lit-html/
 
 Library: sap.ui.webc.fiori:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/thirdparty/*.*
 
-Component: ZXing, version: 0.19.1
+Component: ZXing, version: 0.17.1
 Copyright: 2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -451,7 +451,7 @@ Contained in: src/sap.ui.webc.fiori/src/sap/ui/webc/fiori/lib/zxing.js
 
 Library: sap.ui.webc.main:
 
-Component: UI5 Web Components, version: 1.5.0
+Component: UI5 Web Components, version: 1.18.0
 Copyright: SAP
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
@@ -466,7 +466,7 @@ License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt
 Contained in: lib/jsdoc/ui5/plugin.js
 
-Component: SAP Theming Base Content, version: 11.4.2
+Component: SAP Theming Base Content, version: 11.6.8
 Copyright: SAP SE or an SAP affiliate company and Theming Base Content contributors
 License: Apache-2.0
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/Apache-2.0.txt

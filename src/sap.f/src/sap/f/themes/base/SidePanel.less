@@ -3,6 +3,9 @@
 /* Base theme                      */
 /* =============================== */
 
+@_sap_ui_layout_Splitter_BarDecorationColors: @sapUiHighlight, fade(@sapUiHighlight, 0);
+@_sap_ui_layout_Splitter_BarActiveDecorationColors: @sapUiHighlight, @sapUiHighlight;
+
 /***** Desktop *****/
 
 // Cozy
@@ -31,7 +34,7 @@
 		border-left: none;
 		border-right: none;
 		vertical-align: top;
-		color: @sapUiHighlight;
+		color: @sapUiContentIconColor;
 		position: absolute;
 		left: -1rem;
 
@@ -39,7 +42,7 @@
 			outline: none;
 		}
 
-		&:focus::after {
+		&:focus:not(:active)::after {
 			content: "";
 			display: block;
 			position: absolute;
@@ -53,7 +56,7 @@
 		.sapFSPSplitterBarDecorationBefore {
 			width: 1rem;
 			height: 4rem;
-			background-image: linear-gradient(to top, @sapUiGroupContentBorderColor, fade(@sapUiGroupContentBorderColor, 0));
+			background-image: linear-gradient(to top, @_sap_ui_layout_Splitter_BarDecorationColors);
 			background-size: 0.0625rem 100%;
 			background-repeat: no-repeat;
 			background-position: center;
@@ -63,7 +66,7 @@
 			width: 1rem;
 			height: 4rem;
 			height: 4rem;
-			background-image: linear-gradient(to bottom, @sapUiGroupContentBorderColor, fade(@sapUiGroupContentBorderColor, 0));
+			background-image: linear-gradient(to bottom, @_sap_ui_layout_Splitter_BarDecorationColors);
 			background-size: 0.0625rem 100%;
 			background-repeat: no-repeat;
 			background-position: center;
@@ -90,6 +93,17 @@
 			}
 		}
 
+		&:active {
+			.sapFSPSplitterBarDecorationBefore {
+				flex-grow: 1;
+				background-image: linear-gradient(to top, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
+			}
+			.sapFSPSplitterBarDecorationAfter {
+				flex-grow: 1;
+				background-image: linear-gradient(to bottom, @_sap_ui_layout_Splitter_BarActiveDecorationColors);
+			}
+		}
+
 		&:hover {
 			.sapFSPSplitterBarDecorationBefore,
 			.sapFSPSplitterBarDecorationAfter {
@@ -100,14 +114,6 @@
 			.sapFSPSplitterBarGripIcon {
 				background: @sapUiButtonLiteBackground;
 				border-color: @sapUiButtonLiteBorderColor;
-			}
-		}
-
-		&.sapFSPSplitterActive {
-			.sapFSPSplitterBarDecorationBefore,
-			.sapFSPSplitterBarDecorationAfter {
-				flex-grow: 1;
-				background-image: linear-gradient(to left, @sapUiHighlight, @sapUiHighlight);
 			}
 		}
 	}
@@ -194,6 +200,7 @@
 			height: 100%;
 			min-width: 4.25rem;
 			width: 4.25rem;
+			overflow: hidden;
 		}
 
 		.sapFSPActionBarList {

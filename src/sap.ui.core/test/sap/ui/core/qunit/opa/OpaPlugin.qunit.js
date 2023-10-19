@@ -8,10 +8,11 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Dialog",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/Fragment",
 	"./utils/view",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log"
 ], function (OpaPlugin,
 			 Interactable,
@@ -21,10 +22,11 @@ sap.ui.define([
 			 Button,
 			 Input,
 			 Dialog,
+			 Element,
 			 View,
 			 XMLView,
-			 Fragment,
 			 viewUtils,
+			 nextUIUpdate,
 			 Log) {
 	"use strict";
 
@@ -43,10 +45,10 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should retrieve a control by a global id", function(assert) {
+	QUnit.test("Should retrieve a control by a global id", async function(assert) {
 		// Arrange
 		this.oButton.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		var oRetrievedButton = this.oPlugin.getMatchingControls({ id : this.sId });
@@ -100,14 +102,14 @@ sap.ui.define([
 		assert.strictEqual(oRetrievedButton, this.oButton);
 	});
 
-	QUnit.test("Should retrieve multiple controls by global id's", function(assert) {
+	QUnit.test("Should retrieve multiple controls by global id's", async function(assert) {
 		// Arrange
 		var oButton = new Button(),
 			oButton2 = new Button();
 
 		oButton.placeAt("qunit-fixture");
 		oButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPlugin = new OpaPlugin();
@@ -125,14 +127,14 @@ sap.ui.define([
 		oButton2.destroy();
 	});
 
-	QUnit.test("Should retrieve multiple controls by global id's with regexp", function(assert) {
+	QUnit.test("Should retrieve multiple controls by global id's with regexp", async function(assert) {
 		// Arrange
 		var oButton = new Button(),
 			oButton2 = new Button();
 
 		oButton.placeAt("qunit-fixture");
 		oButton2.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPlugin = new OpaPlugin();
@@ -197,7 +199,7 @@ sap.ui.define([
 			this.oButton2.placeAt("qunit-fixture");
 			this.oCheckBox.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach : function() {
 			this.fnLogSpy.restore();
@@ -326,6 +328,9 @@ sap.ui.define([
 		});
 
 		assert.strictEqual(oResult.length, 0, "Result was null");
+		/**
+		 * @deprecated since 1.56 together with lazy loading as it implies sync loading
+		 */
 		sinon.assert.calledWith(this.fnLogSpy, "The control type sap.m.MessageToast must be a function.");
 	});
 
@@ -375,14 +380,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("OpaPlugin - Controls in a view", {
-		beforeEach: function (assert) {
+		beforeEach: async function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			viewUtils.createXmlView("bar", "myFooBarView").then(function(oView) {
+			await viewUtils.createXmlView("bar", "myFooBarView").then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -768,6 +771,22 @@ sap.ui.define([
 		this.oDialog.open();
 	});
 
+	QUnit.test("Should skip matching view when no viewId or viewName in options", function (assert) {
+		var fnStart = assert.async(),
+			fnMatchViewSpy = sinon.spy(this.oPlugin, "_getMatchingView");
+		this.oDialog.attachAfterOpen(function () {
+			this.oPlugin.getMatchingControls({
+				searchOpenDialogs: true,
+				id: "OKButton"
+			});
+
+			assert.ok(fnMatchViewSpy.notCalled, "No view matching");
+			fnStart();
+		}, this);
+
+		this.oDialog.open();
+	});
+
 	QUnit.module("OpaPlugin - controls in an open dialog with view parent", {
 		beforeEach: function (assert) {
 			var sViewContent = [
@@ -782,16 +801,14 @@ sap.ui.define([
 			].join('');
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			XMLView.create({
+			return XMLView.create({
 				id: "viewWithDialog",
 				definition: sViewContent
 			}).then(function(oView) {
 				this.oView = oView
 					.setViewName("testView")
 					.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -804,7 +821,7 @@ sap.ui.define([
 	QUnit.test("Should only match controls in open dialog", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var aControls = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -823,7 +840,7 @@ sap.ui.define([
 	QUnit.test("Should match controls in open dialog by ID and view", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var oControlWithViewName = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -857,7 +874,7 @@ sap.ui.define([
 	QUnit.test("Should match controls in open dialog by ID with no viewName or viewID", function (assert) {
 		var oPlugin = new OpaPlugin();
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("viewWithDialog--myDialog");
+		var oDialog = Element.getElementById("viewWithDialog--myDialog");
 		oDialog.attachAfterOpen(function () {
 			var oControlWithStrictID = oPlugin.getMatchingControls({
 				searchOpenDialogs: true,
@@ -881,7 +898,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oPlugin =  new OpaPlugin();
 			this.oButton = new Button("foo").placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oPlugin.destroy();
@@ -1011,16 +1028,13 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			viewUtils.createXmlView("sample.viewNamespace.viewName", "myViewSample").then(function(oView) {
+			this.oPlugin = new OpaPlugin();
+			return viewUtils.createXmlView("sample.viewNamespace.viewName", "myViewSample").then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
-
-			this.oPlugin = new OpaPlugin();
 		},
 		afterEach: function () {
 			this.oView.destroy();
@@ -1061,8 +1075,7 @@ sap.ui.define([
 			this.sViewName = "sample.viewNamespace.viewName";
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			Promise.all([
+			return Promise.all([
 				viewUtils.createXmlView(this.sViewName, "mySampleView"),
 				viewUtils.createXmlView(this.sViewName, "myOtherView"),
 				viewUtils.createXmlView("differentName", "myDifferentlyNamedView")
@@ -1070,8 +1083,7 @@ sap.ui.define([
 				this.oSampleView = aViews[0].placeAt("qunit-fixture");
 				this.oDuplicateView = aViews[1].placeAt("qunit-fixture");
 				this.oDifferentView = aViews[2].placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -1100,17 +1112,14 @@ sap.ui.define([
 
 		// Note: This test is executed with QUnit 1 and QUnit 2.
 		//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-		var done = assert.async();
-		viewUtils.createXmlView(this.sViewName, "myOtherView").then(function(oView) {
+		return viewUtils.createXmlView(this.sViewName, "myOtherView").then(async function(oView) {
 			this.oDuplicateView = oView;  // do not render view
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(aViews.length, 3, "Should find all controls of type View");
 			assert.strictEqual(oMatchedView.getId(), "mySampleView", "Should match only rendered views");
 			sinon.assert.calledWith(this.fnLogSpy, "Found 2 views with viewName '" + this.sViewName + "'");
 			sinon.assert.calledWith(this.fnLogSpy, "Found 1 visible views with viewName '" + this.sViewName + "'");
-
-			done();
 		}.bind(this), function(oErr) {
 			assert.strictEqual(oErr, undefined, "failed to load view");
 		});
@@ -1140,14 +1149,12 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async(assert);
-			viewUtils.createXmlView("testViewName", "myView", {
+			return viewUtils.createXmlView("testViewName", "myView", {
 				id: "testFragment",
 				name: "fixture.OpaPlugin"
 			}).then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -1172,14 +1179,12 @@ sap.ui.define([
 			].join('');
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition: sView
 			}).then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -1191,7 +1196,7 @@ sap.ui.define([
 
 	QUnit.test("Should match controls by fragment ID inside static area", function (assert) {
 		var fnStart = assert.async();
-		var oDialog = sap.ui.getCore().byId("myView--myDialog");
+		var oDialog = Element.getElementById("myView--myDialog");
 		oDialog.attachAfterOpen(function () {
 			testWithFragmentId(new OpaPlugin(), assert);
 			fnStart();

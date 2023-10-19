@@ -32,7 +32,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a variant management control ...", {
-		before: function() {
+		before() {
 			var oData = {
 				variantMgmtId1: {
 					defaultVariant: "variantMgmtId1",
@@ -64,7 +64,7 @@ sap.ui.define([
 					selector: {
 						id: "abc123"
 					},
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1"
 				});
 				this.oChange2 = RtaQunitUtils.createUIChange({
@@ -74,7 +74,7 @@ sap.ui.define([
 					selector: {
 						id: "abc123"
 					},
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "variantMgmtId1"
 				});
 
@@ -89,7 +89,7 @@ sap.ui.define([
 						support: {
 							user: "Me"
 						},
-						reference: "Dummy.Component"
+						reference: "Dummy"
 					},
 					controlChanges: [this.oChange1, this.oChange2]
 				};
@@ -102,15 +102,15 @@ sap.ui.define([
 				sinon.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([this.oChange1, this.oChange2]);
 			}.bind(this));
 		},
-		after: function() {
+		after() {
 			this.oModel.destroy();
 			this.oMockedAppComponent.destroy();
 			this.oGetCurrentLayerStub.restore();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVariantManagement.destroy();
 			sandbox.restore();
 		}

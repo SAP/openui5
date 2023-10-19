@@ -42,7 +42,7 @@ sap.ui.define([
 	var oI18n;
 
 	return Controller.extend("sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps", {
-		onInit: function() {
+		onInit() {
 			_sIdRunningApp = this.getOwnerComponent().getIdRunningApp();
 			_bKeyUser = this.getOwnerComponent().getIsOverviewForKeyUser();
 			_sLayer = this.getOwnerComponent().getLayer();
@@ -83,20 +83,20 @@ sap.ui.define([
 			});
 		},
 
-		_createResourceBundle: function() {
-			sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
+		_createResourceBundle() {
+			sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
 			oI18n = ResourceBundle.create({
-				url: sModulePath + "/i18n/i18n.properties"
+				url: `${sModulePath}/i18n/i18n.properties`
 			});
 		},
 
-		_showMessageWhenNoAppVariantsExist: function() {
+		_showMessageWhenNoAppVariantsExist() {
 			return RtaUtils.showMessageBox(MessageBox.Icon.INFORMATION, "MSG_APP_VARIANT_OVERVIEW_SAP_DEVELOPER", {
 				titleKey: "TITLE_APP_VARIANT_OVERVIEW_SAP_DEVELOPER"
 			});
 		},
 
-		_highlightNewCreatedAppVariant: function(aAppVariantOverviewAttributes) {
+		_highlightNewCreatedAppVariant(aAppVariantOverviewAttributes) {
 			var oTable = this.byId("Table1");
 			oTable.focus();
 
@@ -113,7 +113,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		_arrangeOverviewDataAndBindToModel: function(aAppVariantOverviewAttributes) {
+		_arrangeOverviewDataAndBindToModel(aAppVariantOverviewAttributes) {
 			var aAdaptingAppAttributes = aAppVariantOverviewAttributes.filter(function(oAppVariantProperty) {
 				return oAppVariantProperty.appId === _sIdRunningApp;
 			});
@@ -153,7 +153,7 @@ sap.ui.define([
 			return Promise.resolve(aAppVariantOverviewAttributes);
 		},
 
-		formatRowHighlight: function(sValue) {
+		formatRowHighlight(sValue) {
 			// Your logic for rowHighlight goes here
 			if (sValue === oI18n.getText("MAA_CURRENTLY_ADAPTING")) {
 				return "Success";
@@ -166,7 +166,7 @@ sap.ui.define([
 			return "None";
 		},
 
-		formatDelButtonTooltip: function(bDelAppVarButtonEnabled, bIsS4HanaCloud) {
+		formatDelButtonTooltip(bDelAppVarButtonEnabled, bIsS4HanaCloud) {
 			if (!oI18n) {
 				this._createResourceBundle();
 			}
@@ -176,7 +176,7 @@ sap.ui.define([
 			return undefined;
 		},
 
-		formatAdaptUIButtonTooltip: function(bAdaptUIButtonEnabled, sAppVarStatus) {
+		formatAdaptUIButtonTooltip(bAdaptUIButtonEnabled, sAppVarStatus) {
 			if (!oI18n) {
 				this._createResourceBundle();
 			}
@@ -200,20 +200,20 @@ sap.ui.define([
 			}
 		},
 
-		formatAdaptUIButtonVisibility: function(bVisible, bKeyUser) {
+		formatAdaptUIButtonVisibility(bVisible, bKeyUser) {
 			return bVisible && bKeyUser;
 		},
 
-		getModelProperty: function(sModelPropName, sBindingContext) {
+		getModelProperty(sModelPropName, sBindingContext) {
 			return this.getView().getModel().getProperty(sModelPropName, sBindingContext);
 		},
 
-		onMenuAction: function(oEvent) {
+		onMenuAction(oEvent) {
 			var oItem = oEvent.getParameter("item");
 			var sItemPath = "";
 
 			while (oItem instanceof MenuItem) {
-				sItemPath = oItem.getText() + " > " + sItemPath;
+				sItemPath = `${oItem.getText()} > ${sItemPath}`;
 				oItem = oItem.getParent();
 			}
 
@@ -234,7 +234,7 @@ sap.ui.define([
 			return undefined;
 		},
 
-		handleUiAdaptation: function(oEvent) {
+		handleUiAdaptation(oEvent) {
 			var sSemanticObject = this.getModelProperty("semanticObject", oEvent.getSource().getBindingContext());
 			var sAction = this.getModelProperty("action", oEvent.getSource().getBindingContext());
 			var oParams = this.getModelProperty("params", oEvent.getSource().getBindingContext());
@@ -263,13 +263,13 @@ sap.ui.define([
 			return false;
 		},
 
-		copyId: function(oEvent) {
+		copyId(oEvent) {
 			var sCopiedId = this.getModelProperty("appId", oEvent.getSource().getBindingContext());
 			AppVariantUtils.copyId(sCopiedId);
 			MessageToast.show(oI18n.getText("MAA_COPY_ID_SUCCESS"));
 		},
 
-		deleteAppVariant: function(oEvent) {
+		deleteAppVariant(oEvent) {
 			var oInfo = {};
 			if (!oI18n) {
 				this._createResourceBundle();

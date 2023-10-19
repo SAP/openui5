@@ -5,20 +5,22 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/connectors/StaticFileConnector",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Core"
+	"sap/ui/core/Component",
+	"sap/ui/core/Supportability"
 ], function(
 	sinon,
 	StaticFileConnector,
 	Log,
 	LoaderExtensions,
-	oCore
+	Component,
+	Supportability
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Storage handles flexibility-bundle.json and changes-bundle.json", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -61,7 +63,7 @@ sap.ui.define([
 				"test/app/changes/flexibility-bundle.json": '[changes:{"dummy":true},"compVariants":[]]'
 			});
 
-			return StaticFileConnector.loadFlexData({reference: "test.app.Component"}).then(function(oResult) {
+			return StaticFileConnector.loadFlexData({reference: "test.app"}).then(function(oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
 				var oChange = oResult.changes[0];
 				assert.equal(oChange.dummy, true, "the change dummy data is correctly loaded");
@@ -92,7 +94,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given debug is enabled", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDebug").returns(true);
+			sandbox.stub(Supportability, "isDebugModeEnabled").returns(true);
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function() {
@@ -103,7 +105,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("given componentPreload is 'off'", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getComponentPreload").returns("off");
+			sandbox.stub(Component, "getComponentPreloadMode").returns("off");
 			var loadResourceStub = sandbox.stub(LoaderExtensions, "loadResource");
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.not.preloaded", componentName: "test.app.not.preloaded"}).then(function() {

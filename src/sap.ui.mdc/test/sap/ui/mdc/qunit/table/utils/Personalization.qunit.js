@@ -22,12 +22,12 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var fnAddItem = TableDelegate.addItem;
+	const fnAddItem = TableDelegate.addItem;
 	TableDelegate.addItem = function(oTable, sProperty) {
 		oTable._oAddItemDeferred = new Deferred();
 
 		return fnAddItem.apply(this, arguments).then(function(oColumn) {
-			var fnResolve = oTable._oAddItemDeferred.resolve;
+			const fnResolve = oTable._oAddItemDeferred.resolve;
 			oTable._oAddItemDeferred.resolve = function() {
 				fnResolve(oColumn);
 			};
@@ -38,16 +38,18 @@ sap.ui.define([
 	TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 		name: "colA",
 		label: "Column A",
-		path: "a"
+		path: "a",
+		dataType: "String"
 	}, {
 		name: "colB",
 		label: "Column B",
-		path: "b"
+		path: "b",
+		dataType: "String"
 	}]);
 
 	QUnit.module("Utils", {
 		before: function() {
-			var sTableView =
+			const sTableView =
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">'
 					+ '<Table id="myTable" p13nMode="Column" delegate="\{'
 						+ '\'name\': \'test-resources/sap/ui/mdc/delegates/TableDelegate\','
@@ -86,7 +88,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isUserPersonalizationActive - Personalization dialog without change", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		PersonalizationUtils.openSettingsDialog(oTable);
 
@@ -99,7 +101,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isUserPersonalizationActive - Personalization dialog with change", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		PersonalizationUtils.openSettingsDialog(oTable);
 
@@ -123,7 +125,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isUserPersonalizationActive - Column menu without change", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function() {
 			assert.ok(PersonalizationUtils.isUserPersonalizationActive(oTable), "Active if menu is open");
@@ -134,7 +136,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("isUserPersonalizationActive - Column menu with change", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 
 		return TableQUnitUtils.openColumnMenu(oTable, 0).then(function(oDialog) {
 			assert.ok(PersonalizationUtils.isUserPersonalizationActive(oTable), "Active if dialog is open");

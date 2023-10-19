@@ -790,8 +790,10 @@ sap.ui.define([
 			return SyncPromise.resolve(sResolvedChildPath);
 		}
 
+		// A binding w/o cache must skip this optimization and pass on to the parent binding;
+		// otherwise late properties might be missing later
 		oCanUseCachePromise = this.mCanUseCachePromiseByChildPath[sChildPath];
-		if (oCanUseCachePromise && bIsProperty) {
+		if (bIsProperty && this.oCache !== null && oCanUseCachePromise) {
 			return oCanUseCachePromise.then(function (sOldReducedPath) {
 				if (!sOldReducedPath) {
 					return undefined;
@@ -903,7 +905,7 @@ sap.ui.define([
 			}
 			return sReducedPath;
 		});
-		if (bIsProperty && !oContext.getPath().includes("($uid=")) {
+		if (bIsProperty && this.oCache !== null && !oContext.getPath().includes("($uid=")) {
 			this.mCanUseCachePromiseByChildPath[sChildPath] = oCanUseCachePromise;
 		}
 		this.aChildCanUseCachePromises.push(oCanUseCachePromise);

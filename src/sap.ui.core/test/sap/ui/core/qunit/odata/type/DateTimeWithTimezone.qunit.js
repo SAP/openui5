@@ -323,19 +323,19 @@ sap.ui.define([
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
-	result : "Dec 30, 2021, 5:00:00 AM Europe, Berlin"
+	result : "Dec 30, 2021, 5:00:00\u202FAM Europe, Berlin"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : false},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "Europe/Berlin"],
-	result : "Dec 30, 2021, 5:00:00 AM"
+	result : "Dec 30, 2021, 5:00:00\u202FAM"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : true},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
-	result : "Dec 29, 2021, 11:00:00 PM Americas, New York"
+	result : "Dec 29, 2021, 11:00:00\u202FPM Americas, New York"
 }, {
 	formatOptions : {showDate : true, showTime : true, showTimezone : false},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
-	result : "Dec 29, 2021, 11:00:00 PM"
+	result : "Dec 29, 2021, 11:00:00\u202FPM"
 }, {
 	formatOptions : {showDate : false, showTime : false, showTimezone : true},
 	values : [null, "Europe/Berlin"],
@@ -351,7 +351,7 @@ sap.ui.define([
 }, {
 	formatOptions : {showDate : false, showTime : true, showTimezone : true},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
-	result : "11:00:00 PM Americas, New York"
+	result : "11:00:00\u202FPM Americas, New York"
 }, {
 	formatOptions : {showDate : true, showTime : false, showTimezone : false},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
@@ -359,7 +359,7 @@ sap.ui.define([
 }, {
 	formatOptions : {showDate : false, showTime : true, showTimezone : false},
 	values : [UI5Date.getInstance(Date.UTC(2021, 11, 30, 4, 0, 0)), "America/New_York"],
-	result : "11:00:00 PM"
+	result : "11:00:00\u202FPM"
 }].forEach(function (oFixture, i) {
 	QUnit.test("formatValue: Integrative tests: " + oFixture.result + ", #" + i, function (assert) {
 		var oType = new DateTimeWithTimezone(oFixture.formatOptions);

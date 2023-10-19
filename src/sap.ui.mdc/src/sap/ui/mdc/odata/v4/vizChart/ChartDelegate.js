@@ -52,11 +52,11 @@ sap.ui.define([
 	 */
 
     /**
-	 * @class Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
+	 * Base Delegate for {@link sap.ui.mdc.Chart Chart}. Extend this object in your project to use all functionalities of the {@link sap.ui.mdc.Chart Chart}.<br>
 	 * This class provides method calls, which are called by the <code>Chart</code> at specific operations and allows to overwrite an internal behaviour.
 	 *
-	 * @author SAP SE
 	 * @namespace
+	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/odata/v4/vizChart/ChartDelegate
 	 * @extends module:sap/ui/mdc/odata/v4/ChartDelegate
 	 * @since 1.88
@@ -64,13 +64,13 @@ sap.ui.define([
 	 * @ui5-restricted sap.fe, sap.ui.mdc
      *
      */
-    var ChartDelegate = Object.assign({}, V4ChartDelegate);
+    const ChartDelegate = Object.assign({}, V4ChartDelegate);
 
-    var mStateMap = new window.WeakMap();
-    var Chart;
-    var Dimension;
-    var Measure;
-    var VizTooltip;
+    const mStateMap = new window.WeakMap();
+    let Chart;
+    let Dimension;
+    let Measure;
+    let VizTooltip;
 
     //API to access state
     ChartDelegate._getState = function (oChart) {
@@ -209,7 +209,7 @@ sap.ui.define([
     };
 
     ChartDelegate._setUpChartObserver = function(oChart) {
-		var mChartMap = this._getState(oChart);
+		const mChartMap = this._getState(oChart);
 
 		if (!mChartMap.observer) {
 			mChartMap.observer = new ManagedObjectObserver(function(oChange) {
@@ -253,7 +253,7 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.zoomIn = function (oChart) {
-        var oInnerChart = this._getChart(oChart);
+        const oInnerChart = this._getChart(oChart);
 
         if (oInnerChart) {
             oInnerChart.zoom({direction: "in"});
@@ -270,7 +270,7 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.zoomOut = function (oChart) {
-        var oInnerChart = this._getChart(oChart);
+        const oInnerChart = this._getChart(oChart);
 
         if (oInnerChart) {
             oInnerChart.zoom({direction: "out"});
@@ -327,10 +327,10 @@ sap.ui.define([
             return this._aChartTypeLayout;
         }
 
-        var aAxis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.series];
-		var aAxis1And2 = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.category, ChartItemRoleType.series];
-		var aCat2Axis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.category2];
-		var aCat1AllAxis = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.series];
+        const aAxis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.series];
+		const aAxis1And2 = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.category, ChartItemRoleType.series];
+		const aCat2Axis1Only = [ChartItemRoleType.axis1, ChartItemRoleType.category, ChartItemRoleType.category2];
+		const aCat1AllAxis = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.series];
 
         this._aChartTypeLayout = [
             {key: "column", allowedLayoutOptions: aAxis1Only},
@@ -384,15 +384,15 @@ sap.ui.define([
     };
 
     ChartDelegate._setupAdaptionUI = function(oChart) {
-        var oLayoutConfig = this.getChartTypeLayoutConfig().find(function(it){return it.key === oChart.getChartType();});
+        let oLayoutConfig = this.getChartTypeLayoutConfig().find(function(it){return it.key === oChart.getChartType();});
 
         //Default case -> everything allowed
         if (!oLayoutConfig) {
-            var aRoles = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.category2, ChartItemRoleType.series];
+            const aRoles = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.category2, ChartItemRoleType.series];
             oLayoutConfig = {key: oChart.getChartType(), allowedLayoutOptions: aRoles};
         }
 
-        var aStandardSetup = [
+        const aStandardSetup = [
             {kind: "Groupable"},
             {kind: "Aggregatable"}
         ];
@@ -401,12 +401,12 @@ sap.ui.define([
 
 
         //var aRolesAvailable = [ChartItemRoleType.axis1, ChartItemRoleType.axis2, ChartItemRoleType.axis3, ChartItemRoleType.category, ChartItemRoleType.category2, ChartItemRoleType.series];
-        var oArguments = {panelConfig: oLayoutConfig};
+        const oArguments = {panelConfig: oLayoutConfig};
 
-        var oPanel = new ChartItemPanel(oArguments);
+        const oPanel = new ChartItemPanel(oArguments);
 
         if (oChart.getChartType() === "heatmap"){
-            var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+            const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
             oPanel.setMessageStrip(new MessageStrip({text: MDCRb.getText("chart.PERSONALIZATION_DIALOG_MEASURE_WARNING"), type:"Warning"}));
         }
 
@@ -476,8 +476,8 @@ sap.ui.define([
         //TODO: Create Measures/Dimension only when required?
         if (oItem.getType() === "groupable") {
 
-            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
-            var oDim = this._getChart(oChart).getDimensionByName(sInnerDimName);
+            const sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
+            const oDim = this._getChart(oChart).getDimensionByName(sInnerDimName);
 
             if (!oDim) {
                 this.createInnerDimension(oChart, oItem);
@@ -487,13 +487,13 @@ sap.ui.define([
                 oDim.setRole(oItem.getRole() ? oItem.getRole() : "category");
             }
 
-            var aVisibleDimension = this._getChart(oChart).getVisibleDimensions();
+            const aVisibleDimension = this._getChart(oChart).getVisibleDimensions();
             aVisibleDimension.splice(iIndex, 0, sInnerDimName); //Insert Item without deleting existing dimension
             this._getChart(oChart).setVisibleDimensions(aVisibleDimension);
 
         } else if (oItem.getType() === "aggregatable") {
             this.createInnerMeasure(oChart, oItem);
-            var aVisibleMeasures = this._getChart(oChart).getVisibleMeasures();
+            const aVisibleMeasures = this._getChart(oChart).getVisibleMeasures();
             aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oItem));
             this._getChart(oChart).setVisibleMeasures(aVisibleMeasures);
         }
@@ -519,9 +519,9 @@ sap.ui.define([
      */
     ChartDelegate.removeItemFromInnerChart = function (oChart, oItem) {
         if (oItem.getType() === "groupable" && this._getChart(oChart).getVisibleDimensions().includes(this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart))) {
-            var sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
+            const sInnerDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart);
 
-            var aNewVisibleDimensions = this._getChart(oChart).getVisibleDimensions().filter(function (e) {
+            const aNewVisibleDimensions = this._getChart(oChart).getVisibleDimensions().filter(function (e) {
                 return e !== sInnerDimName;
             });
 
@@ -534,7 +534,7 @@ sap.ui.define([
             //this._getChart(oChart).removeDimension(this._getChart(oChart).getDimensionByName(oChartItem.getPropertyKey()));
 
         } else if (oItem.getType() === "aggregatable" && this._getChart(oChart).getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oItem))) {
-            var aNewVisibleMeasures = [];
+            const aNewVisibleMeasures = [];
 
             oChart.getItems().filter(function(oItem) {return oItem.getType() === "aggregatable";})
             .filter(function(item){ return item !== oItem;})
@@ -567,7 +567,7 @@ sap.ui.define([
      * @private
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
-    ChartDelegate.addItem = function (sPropertyName, oChart, mPropertyBag, sRole) {
+    ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
         if (oChart.getModel) {
             return Promise.resolve(this._createMDCChartItem(sPropertyName, oChart, sRole));
         }
@@ -589,10 +589,10 @@ sap.ui.define([
      */
     ChartDelegate.checkAndUpdateMDCItems = function(oChart) {
         return new Promise(function(resolve, reject){
-            var aPropPromises = [];
+            const aPropPromises = [];
 
             oChart.getItems().forEach(function(oMDCItem){
-                var bIsComplete = oMDCItem.getPropertyKey() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
+                const bIsComplete = oMDCItem.getPropertyKey() && oMDCItem.getLabel() && oMDCItem.getType() && oMDCItem.getRole();
 
                 if (!bIsComplete) {
                     aPropPromises.push(this._getPropertyInfosByName(oMDCItem.getPropertyKey(), oChart).then(function(oPropertyInfo){
@@ -655,7 +655,7 @@ sap.ui.define([
 
             if (oPropertyInfo.groupable) {
                 return new MDCChartItem(idPrefix + "--GroupableItem--" + oPropertyInfo.name, {
-                    name: oPropertyInfo.name,
+                    propertyKey: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "groupable",
                     role: sRole ? sRole : "category"
@@ -665,7 +665,7 @@ sap.ui.define([
             if (oPropertyInfo.aggregatable) {
 
                 return new MDCChartItem(idPrefix + "--AggregatableItem--" + oPropertyInfo.name, {
-                    name: oPropertyInfo.name,
+                    propertyKey: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "aggregatable",
                     role: sRole ? sRole : "axis1"
@@ -690,7 +690,7 @@ sap.ui.define([
         return new Promise(function (resolve, reject) {
 
             this._loadChart().then(function (aModules) {
-                var oNoDataCont;
+                let oNoDataCont;
 
                 this._setInnerStructure(oChart, new ChartImplementationContainer(oChart.getId() + "--implementationContainer", {}));
                 oChart.addStyleClass("sapUiMDCChartTempTextOuter");
@@ -734,11 +734,11 @@ sap.ui.define([
     ChartDelegate._createContentFromItems = function (oChart) {
         return new Promise(function(resolve, reject){
             //This is done so the user doesn't have to specify property path & aggregation method in the XML
-            var aColorPromises = [];
-            var aPropPromises = [];
+            const aColorPromises = [];
+            const aPropPromises = [];
 
-            var aVisibleDimensions = [];
-            var aVisibleMeasures = [];
+            const aVisibleDimensions = [];
+            const aVisibleMeasures = [];
             oChart.getItems().forEach(function (oItem, iIndex) {
 
                 //Uses excact mdc chart item id
@@ -779,11 +779,11 @@ sap.ui.define([
 
                         aColorPromises.push(new Promise(function(resolve, reject){
                             oChart._getPropertyByNameAsync(sKey).then(function(oPropertyInfo){
-                                var aggregationMethod = oPropertyInfo.aggregationMethod;
-                                var propertyPath = oPropertyInfo.propertyPath;
-                                var sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oChart);
+                                const aggregationMethod = oPropertyInfo.aggregationMethod;
+                                const propertyPath = oPropertyInfo.propertyPath;
+                                const sName = this.getInternalChartNameFromPropertyNameAndKind(sKey, "aggregatable", oChart);
 
-                                var oMeasureSettings = {
+                                const oMeasureSettings = {
                                     name: sName,
                                     label: oPropertyInfo.label,
                                     role: "axis1"
@@ -796,7 +796,7 @@ sap.ui.define([
                                     };
                                 }
 
-                                var oMeasure = new Measure(oMeasureSettings);
+                                const oMeasure = new Measure(oMeasureSettings);
 
                                 aVisibleMeasures.push(oMeasure);
                                 this._getChart(oChart).addMeasure(oMeasure);
@@ -812,17 +812,17 @@ sap.ui.define([
                     this._getChart(oChart).setVisibleDimensions(aVisibleDimensions);
                     this._getChart(oChart).setVisibleMeasures(aVisibleMeasures);
 
-                    var aInResultDimensions = oChart.getDelegate().inResultDimensions; //TODO: Does this use internal name? If so, change _getPropertyInfosByName  below; Most likely not the case
+                    const aInResultDimensions = oChart.getDelegate().inResultDimensions; //TODO: Does this use internal name? If so, change _getPropertyInfosByName  below; Most likely not the case
                     if (aInResultDimensions && aInResultDimensions instanceof Array && aInResultDimensions.length != 0) {
 
-                        var aInResultPromises = [];
+                        const aInResultPromises = [];
 
                         aInResultDimensions.forEach(function(sInResultDim){
 
                             aInResultPromises.push(this._getPropertyInfosByName(sInResultDim, oChart).then(function(oPropertyInfos){
-                                var sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oChart);
+                                const sName = this.getInternalChartNameFromPropertyNameAndKind(oPropertyInfos.name, "groupable", oChart);
 
-                                var oDim = new Dimension({
+                                const oDim = new Dimension({
                                     name: sName,
                                     label: oPropertyInfos.label
                                 });
@@ -895,9 +895,9 @@ sap.ui.define([
 
     ChartDelegate._getAdditionalColoringMeasuresForItem = function(oPropertyInfo) {
 
-		var aAdditional = [];
+		let aAdditional = [];
 
-		var oCriticality = oPropertyInfo.datapoint ? oPropertyInfo.datapoint.criticality : null;
+		const oCriticality = oPropertyInfo.datapoint ? oPropertyInfo.datapoint.criticality : null;
 
 		if (oCriticality && oCriticality.DynamicThresholds) {
 			aAdditional = oCriticality.DynamicThresholds.usedMeasures;
@@ -922,41 +922,41 @@ sap.ui.define([
         return this._getPropertyInfosByName(oItem.getPropertyKey(), oItem.getParent()).then(function (oPropertyInfo) {
 
             if (oPropertyInfo.criticality || (oPropertyInfo.datapoint && oPropertyInfo.datapoint.criticality)){
-                var oColorings = this._getState(oItem.getParent()).oColorings || {
+                const oColorings = this._getState(oItem.getParent()).oColorings || {
                     Criticality: {
                         DimensionValues: {},
                         MeasureValues: {}
                     }
                 };
 
-                var mChartCrit = {};
+                const mChartCrit = {};
 
                 if (oItem.getType() == "groupable") {
 
-                    var mCrit = oPropertyInfo.criticality ? oPropertyInfo.criticality : [];
+                    const  mCrit = oPropertyInfo.criticality ? oPropertyInfo.criticality : [];
 
-                    for (var sKey in mCrit) {
+                    for (const sKey in mCrit) {
 
                         mChartCrit[sKey] = {
                             Values: mCrit[sKey]
                         };
                     }
 
-                    var sDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oItem.getParent());
+                    const sDimName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oItem.getParent());
                     oColorings.Criticality.DimensionValues[sDimName] = mChartCrit;
 
                 } else {
-                    var mCrit = oPropertyInfo.datapoint  && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
+                    const mCrit = oPropertyInfo.datapoint  && oPropertyInfo.datapoint.criticality ? oPropertyInfo.datapoint.criticality : [];
 
-                    for (var sKey in mCrit) {
+                    for (const sKey in mCrit) {
                         mChartCrit[sKey] = mCrit[sKey];
                     }
 
-                    var sMeasureName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "aggregatable", oItem.getParent());
+                    const sMeasureName = this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "aggregatable", oItem.getParent());
                     oColorings.Criticality.MeasureValues[sMeasureName] = mChartCrit;
                 }
 
-                var oState = this._getState(oItem.getParent());
+                const oState = this._getState(oItem.getParent());
                 oState.oColorings = oColorings;
                 this._setState(oItem.getParent(), oState);
 
@@ -977,10 +977,11 @@ sap.ui.define([
      * @ui5-restricted sap.fe
      */
     ChartDelegate._updateColoring = function (oChart, aVisibleDimensions, aVisibleMeasures) {
-        var oTempColorings = jQuery.extend(true, {}, this._getState(oChart).oColorings), k;
+        const oTempColorings = jQuery.extend(true, {}, this._getState(oChart).oColorings);
+        let k;
 
         if (oTempColorings && oTempColorings.Criticality) {
-            var oActiveColoring;
+            let oActiveColoring;
 
             //dimensions overrule
             for (k = 0; k < aVisibleDimensions.length; k++) {
@@ -1001,7 +1002,7 @@ sap.ui.define([
             if (!oActiveColoring) {
                 delete oTempColorings.Criticality.DimensionValues;
 
-                for (var sMeasure in oTempColorings.Criticality.MeasureValues) {
+                for (const sMeasure in oTempColorings.Criticality.MeasureValues) {
 
                     if (aVisibleMeasures.indexOf(sMeasure) == -1) {
                         delete oTempColorings.Criticality.MeasureValues[sMeasure];
@@ -1034,27 +1035,27 @@ sap.ui.define([
      */
     ChartDelegate._updateSemanticalPattern = function (oChart) {
 
-        var aVisibleMeasures = this._getChart(oChart).getVisibleMeasures();
+        const aVisibleMeasures = this._getChart(oChart).getVisibleMeasures();
 
         aVisibleMeasures.forEach(function(sVisibleMeasureName){
             //first draft only with semantic pattern
-            var oPropertyInfo = this.getPropertyFromNameAndKind(sVisibleMeasureName, "aggregatable", oChart);
+            const oPropertyInfo = this.getPropertyFromNameAndKind(sVisibleMeasureName, "aggregatable", oChart);
 
             if (!oPropertyInfo){
                 return;
             }
 
-            var oDataPoint = oPropertyInfo.datapoint;
+            const oDataPoint = oPropertyInfo.datapoint;
 
             if (oDataPoint) {
 
                 if (oDataPoint.targetValue || oDataPoint.foreCastValue) {
-                    var oActualMeasure = this._getChart(oChart).getMeasureByName(sVisibleMeasureName);
+                    const oActualMeasure = this._getChart(oChart).getMeasureByName(sVisibleMeasureName);
 
                     oActualMeasure.setSemantics("actual");
 
                     if (oDataPoint.targetValue != null) {
-                        var oReferenceMeasure = this._getChart(oChart).getMeasureByName(oDataPoint.targetValue);
+                        const oReferenceMeasure = this._getChart(oChart).getMeasureByName(oDataPoint.targetValue);
 
                         if (oReferenceMeasure) {
                             oReferenceMeasure.setSemantics("reference");
@@ -1064,7 +1065,7 @@ sap.ui.define([
                     }
 
                     if (oDataPoint.foreCastValue) {
-                        var oProjectionMeasure = this._getChart(oChart).getMeasureByName(oDataPoint.foreCastValue);
+                        const oProjectionMeasure = this._getChart(oChart).getMeasureByName(oDataPoint.foreCastValue);
 
                         if (oProjectionMeasure) {
                             oProjectionMeasure.setSemantics("projected");
@@ -1099,11 +1100,11 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.getChartTypeInfo = function (oChart) {
-          var sType = oChart.getChartType(),
+          const sType = oChart.getChartType(),
             oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
             oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
-        var mInfo = {
+        const mInfo = {
             icon: ChartTypeButton.mMatchingIcon[sType],
             text: oMDCResourceBundle.getText("chart.CHART_TYPE_TOOLTIP", [
                 oChartResourceBundle.getText("info/" + sType)
@@ -1124,14 +1125,14 @@ sap.ui.define([
      * @ui5-restricted sap.fe
      */
     ChartDelegate.getAvailableChartTypes = function (oChart) {
-        var aChartTypes = [];
+        const aChartTypes = [];
 
         if (this._getChart(oChart)) {
-            var aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
-            var oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
+            const aAvailableChartTypes = this._getChart(oChart).getAvailableChartTypes().available;
+            const oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
-            for (var i = 0; i < aAvailableChartTypes.length; i++) {
-                var sType = aAvailableChartTypes[i].chart;
+            for (let i = 0; i < aAvailableChartTypes.length; i++) {
+                const sType = aAvailableChartTypes[i].chart;
                 aChartTypes.push({
                     key: sType,
                     icon: ChartTypeButton.mMatchingIcon[sType],
@@ -1156,12 +1157,12 @@ sap.ui.define([
      */
     ChartDelegate.getDrillStack = function (oChart) {
         //TODO: Generify the return values here for other chart frameworks
-        var aDrillStack = Object.assign([], this._getChart(oChart).getDrillStack());
+        const aDrillStack = Object.assign([], this._getChart(oChart).getDrillStack());
 
         aDrillStack.forEach(function(oStackEntry) {
 			// loop over nested dimension arrays -> give them the correct name for filtering
 			oStackEntry.dimension = oStackEntry.dimension.map(function(sDimension) {
-                var oProp = this.getPropertyFromNameAndKind(sDimension, "groupable", oChart);
+                const oProp = this.getPropertyFromNameAndKind(sDimension, "groupable", oChart);
                 if (oProp) {
                     return oProp.name;
                 } else {
@@ -1198,7 +1199,7 @@ sap.ui.define([
     };
 
     ChartDelegate._sortPropertyDimensions = function(aProperties) {
-        var aDimensions = aProperties.filter(function (oItem) {
+        const aDimensions = aProperties.filter(function (oItem) {
             return oItem.groupable; //Groupable means "Dimension" for sap.chart.Chart
         });
 
@@ -1225,7 +1226,7 @@ sap.ui.define([
      *
      */
     ChartDelegate.getDrillableItems = function (oChart) {
-        var aFilteredItems = oChart.getItems().filter(function (oItem) {
+        const aFilteredItems = oChart.getItems().filter(function (oItem) {
             return oItem.getType() === "groupable";
         });
         return aFilteredItems;
@@ -1277,7 +1278,7 @@ sap.ui.define([
             oChart.removeStyleClass("sapUiMDCChartTempTextOuter");
             oChart.addStyleClass("sapUiMDCChartGrid");
 
-            var oState = this._getState(oChart);
+            const oState = this._getState(oChart);
             oState.aColMeasures = [];
             oState.aInSettings = [];
             this._setState(oChart, oState);
@@ -1302,7 +1303,7 @@ sap.ui.define([
                 oState.dataLoadedCallback = fnCallbackDataLoaded;
 
                 this._setState(oChart, oState);
-                var oBindingInfo;
+                let oBindingInfo;
                 if (this._getBindingInfo) {
                     oBindingInfo = this._getBindingInfo(oChart);
                     Log.warning("mdc ChartDelegate", "calling the private delegate._getBindingInfo. Please make the function public!");
@@ -1337,7 +1338,7 @@ sap.ui.define([
 
             this._getChart(oChart).bindData(oBindingInfo);
             this._setBindingInfoForState(oChart, oBindingInfo);
-            var oState = this._getState(oChart);
+            const oState = this._getState(oChart);
             oState.innerChartBound = true;
 
             this._checkForMeasureWarning(oChart);
@@ -1403,7 +1404,7 @@ sap.ui.define([
      * @private
      */
     ChartDelegate._addInnerDimension = function(oChart, oChartItem, oPropertyInfo) {
-        var oDimension = this.innerDimensionFactory(oChart, oChartItem, oPropertyInfo);
+        const oDimension = this.innerDimensionFactory(oChart, oChartItem, oPropertyInfo);
         this._getChart(oChart).addDimension(oDimension);
     };
 
@@ -1411,7 +1412,7 @@ sap.ui.define([
      * @private
      */
     ChartDelegate.innerDimensionFactory = function (oChart, oItem, oPropertyInfo) {
-        var oDimension = new Dimension({
+        const oDimension = new Dimension({
             name: this.getInternalChartNameFromPropertyNameAndKind(oItem.getPropertyKey(), "groupable", oChart),
             role: oItem.getRole() ? oItem.getRole() : "category",
             label: oItem.getLabel()
@@ -1432,7 +1433,7 @@ sap.ui.define([
      * @private
      */
     ChartDelegate._addInnerMeasure = function(oChart, oChartItem, oPropertyInfo) {
-        var oMeasure = this.innerMeasureFactory(oChart, oChartItem, oPropertyInfo);
+        const oMeasure = this.innerMeasureFactory(oChart, oChartItem, oPropertyInfo);
         this._getChart(oChart).addMeasure(oMeasure);
     };
 
@@ -1440,10 +1441,10 @@ sap.ui.define([
      * @private
      */
     ChartDelegate.innerMeasureFactory = function(oChart, oChartItem, oPropertyInfo) {
-        var aggregationMethod = oPropertyInfo.aggregationMethod;
-        var propertyPath = oPropertyInfo.propertyPath;
+        const aggregationMethod = oPropertyInfo.aggregationMethod;
+        const propertyPath = oPropertyInfo.propertyPath;
 
-        var oMeasureSettings = {
+        const oMeasureSettings = {
             name: this._getAggregatedMeasureNameForMDCItem(oChartItem),//aggregationMethod + oItem.getPropertyKey() under normal circumstances
             label: oChartItem.getLabel(),
             role: oChartItem.getRole() ? oChartItem.getRole() : "axis1"
@@ -1502,7 +1503,7 @@ sap.ui.define([
 
             this._getChart(oChart).bindData(oBindingInfo);
             this._setBindingInfoForState(oChart, oBindingInfo);
-            var oState = this._getState(oChart);
+            const oState = this._getState(oChart);
             oState.innerChartBound = true;
         }
     };
@@ -1514,7 +1515,7 @@ sap.ui.define([
             return;
         }
 
-        var oMDCMeasures = oChart.getItems().filter(function(oItem){
+        const oMDCMeasures = oChart.getItems().filter(function(oItem){
             return oItem.getType() === "aggregatable";
         });
 
@@ -1542,9 +1543,9 @@ sap.ui.define([
             return this._getBindingInfoFromState(oChart);
         }
 
-        var oMetadataInfo = oChart.getDelegate().payload;
-        var sEntitySetPath = "/" + oMetadataInfo.collectionName;
-        var oBindingInfo = {
+        const oMetadataInfo = oChart.getDelegate().payload;
+        const sEntitySetPath = "/" + oMetadataInfo.collectionName;
+        const oBindingInfo = {
             path: sEntitySetPath
         };
         return oBindingInfo;
@@ -1560,7 +1561,7 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.getInnerChartBound = function (oChart) {
-        var oState = this._getState(oChart);
+        const oState = this._getState(oChart);
 
         if (!oState) {
             return false;
@@ -1581,7 +1582,7 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.updateBindingInfo = function (oChart, oBindingInfo) {
-        var aFilters = createInnerFilters.call(this, oChart).concat(createOuterFilters.call(this, oChart));
+        const aFilters = createInnerFilters.call(this, oChart).concat(createOuterFilters.call(this, oChart));
         addSearchParameter(oChart, oBindingInfo);
 		oBindingInfo.filters = new Filter(aFilters, true);
         oBindingInfo.sorter = this.getSorters(oChart);
@@ -1589,12 +1590,12 @@ sap.ui.define([
     };
 
     function createInnerFilters(oChart) {
-		var bFilterEnabled = oChart.getP13nMode().indexOf("Filter") > -1;
-		var aFilters = [];
+		const bFilterEnabled = oChart.getP13nMode().indexOf("Filter") > -1;
+		const aFilters = [];
 
 		if (bFilterEnabled) {
-			var aChartProperties = oChart.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), oChart.getConditions(), aChartProperties);
+			const aChartProperties = oChart.getPropertyHelper().getProperties();
+			const oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), oChart.getConditions(), aChartProperties);
 
 			if (oInnerFilterInfo.filters) {
 				aFilters.push(oInnerFilterInfo.filters);
@@ -1605,19 +1606,19 @@ sap.ui.define([
 	}
 
 	function createOuterFilters(oChart) {
-		var oFilter = Core.byId(oChart.getFilter());
-		var aFilters = [];
+		const oFilter = Core.byId(oChart.getFilter());
+		const aFilters = [];
 
 		if (!oFilter) {
 			return aFilters;
 		}
 
-		var mConditions = oFilter.getConditions();
+		const mConditions = oFilter.getConditions();
 
 		if (mConditions) {
-			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			var oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
+			const aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+			const aParameterNames = DelegateUtil.getParameterNames(oFilter);
+			const oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
 
 			if (oOuterFilterInfo.filters) {
 				aFilters.push(oOuterFilterInfo.filters);
@@ -1628,17 +1629,17 @@ sap.ui.define([
 	}
 
 	function addSearchParameter(oChart, oBindingInfo) {
-		var oFilter = Core.byId(oChart.getFilter());
+		const oFilter = Core.byId(oChart.getFilter());
 		if (!oFilter) {
 			return;
 		}
 
-		var mConditions = oFilter.getConditions();
+		const mConditions = oFilter.getConditions();
 		// get the basic search
-		var sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
+		const sSearchText = oFilter.getSearch instanceof Function ? oFilter.getSearch() :  "";
 
 		if (mConditions) {
-			var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+			const sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
 			if (sParameterPath) {
 				oBindingInfo.path = sParameterPath;
 			}
@@ -1661,12 +1662,12 @@ sap.ui.define([
      * @ui5-restricted sap.ui.mdc
     */
     ChartDelegate.getSorters = function (oChart) {
-        var aSorters;
-        var aSorterProperties = oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
+        let aSorters;
+        const aSorterProperties = oChart.getSortConditions() ? oChart.getSortConditions().sorters : [];
 
         aSorterProperties.forEach(function (oSortProp) {
 
-            var oMDCItem = oChart.getItems().find(function (oItem) {
+            const oMDCItem = oChart.getItems().find(function (oItem) {
                 return oItem.getPropertyKey() === oSortProp.name;
             });
 
@@ -1676,7 +1677,7 @@ sap.ui.define([
             }
 
             //TODO: Check for inResultDimensions
-            var oSorter = this._getSorterForItem(oMDCItem, oSortProp);
+            const oSorter = this._getSorterForItem(oMDCItem, oSortProp);
 
             if (aSorters) {
                 aSorters.push(oSorter);
@@ -1741,7 +1742,7 @@ sap.ui.define([
             if (bFlag) {
                 if (!this._getState(oChart).vizTooltip) {
 
-                    var oState = this._getState(oChart);
+                    const oState = this._getState(oChart);
                     oState.vizTooltip = new VizTooltip();
                     this._setState(oChart, oState);
                 }
@@ -1764,7 +1765,7 @@ sap.ui.define([
     ChartDelegate._loadChart = function () {
 
         return new Promise(function (resolve) {
-            var aNotLoadedModulePaths = ['sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
+            const aNotLoadedModulePaths = ['sap/chart/Chart', 'sap/chart/data/Dimension', 'sap/chart/data/Measure', 'sap/viz/ui5/controls/VizTooltip'];
 
             function onModulesLoadedSuccess(fnChart, fnDimension, fnMeasure, fnVizTooltip) {
                 Chart = fnChart;
@@ -1843,7 +1844,7 @@ sap.ui.define([
 
 
     ChartDelegate._getModel = function (oTable) {
-        var oMetadataInfo = oTable.getDelegate().payload;
+        const oMetadataInfo = oTable.getDelegate().payload;
         return oTable.getModel(oMetadataInfo.model);
     };
 
@@ -1856,7 +1857,7 @@ sap.ui.define([
             oBindingInfo.events[sEventName] = fHandler;
         } else {
             // Wrap the event handler of the other party to add our handler.
-            var fOriginalHandler = oBindingInfo.events[sEventName];
+            const fOriginalHandler = oBindingInfo.events[sEventName];
             oBindingInfo.events[sEventName] = function () {
                 fHandler.apply(this, arguments);
                 fOriginalHandler.apply(this, arguments);
@@ -1866,7 +1867,7 @@ sap.ui.define([
 
     //This is bound to mdc chart
     ChartDelegate._onDataLoadComplete = function (mEventParams) {
-        var oNoDataStruct = this.getControlDelegate()._getInnerStructure(this);
+        const oNoDataStruct = this.getControlDelegate()._getInnerStructure(this);
 
         if (this.getNoData()){
             if (mEventParams.getSource() && mEventParams.getSource().getCurrentContexts().length === 0) {

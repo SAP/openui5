@@ -81,6 +81,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Boolean", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -122,6 +125,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Currency", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -740,7 +746,7 @@ sap.ui.define([
 
 		var dateType = new DateTimeType();
 
-		assert.strictEqual(dateType.formatValue(dateValue, "string"), "Feb 1, 2003, 4:05:06 AM", "format test");
+		assert.strictEqual(dateType.formatValue(dateValue, "string"), "Feb 1, 2003, 4:05:06\u202FAM", "format test");
 
 		dateType = new DateTimeType({ pattern: "yy-MM-dd '/' hh:mm" });
 		assert.strictEqual(dateType.formatValue(dateValue, "string"), "03-02-01 / 04:05", "format test with pattern");
@@ -821,12 +827,17 @@ sap.ui.define([
 		var oDateTime1 = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
 		var oDateTime2 = UI5Date.getInstance(2003, 1, 2, 5, 6, 7);
 
-		assert.strictEqual(oDateTimeIntervalType.formatValue([oDateTime1, oDateTime2], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
+		assert.strictEqual(oDateTimeIntervalType.formatValue([oDateTime1, oDateTime2], "string"),
+			"Feb 1, 2003, 4:05:06\u202FAM\u2009\u2013\u2009Feb 2, 2003, 5:06:07\u202FAM",
+			"dates can be formatted as interval");
 
 		oDateTimeIntervalType = new DateTimeIntervalType({
 			source: {}
 		});
-		assert.strictEqual(oDateTimeIntervalType.formatValue(["Feb 1, 2003, 4:05:06 AM", "Feb 2, 2003, 5:06:07 AM"], "string"), "Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "dates can be formatted as interval");
+		assert.strictEqual(
+			oDateTimeIntervalType.formatValue(["Feb 1, 2003, 4:05:06 AM", "Feb 2, 2003, 5:06:07 AM"], "string"),
+			"Feb 1, 2003, 4:05:06\u202FAM\u2009\u2013\u2009Feb 2, 2003, 5:06:07\u202FAM",
+			"dates can be formatted as interval");
 	});
 
 	QUnit.test("DateTimeInterval parseValue", function (assert) {
@@ -835,13 +846,18 @@ sap.ui.define([
 		var oDateTime1 = UI5Date.getInstance(2003, 1, 1, 4, 5, 6);
 		var oDateTime2 = UI5Date.getInstance(2003, 1, 2, 5, 6, 7);
 
-		assert.deepEqual(oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "string"), [oDateTime1, oDateTime2], "Interval string can be parsed into an array of dates");
+		assert.deepEqual(
+			oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM \u2013 Feb 2, 2003, 5:06:07 AM", "string"),
+			[oDateTime1, oDateTime2], "Interval string can be parsed into an array of dates");
 
 		oDateTimeIntervalType = new DateTimeIntervalType({
 			source: {}
 		});
 
-		assert.deepEqual(oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM – Feb 2, 2003, 5:06:07 AM", "string"), ["Feb 1, 2003, 4:05:06 AM", "Feb 2, 2003, 5:06:07 AM"], "Interval string can be parsed into an array of formatted dates");
+		assert.deepEqual(
+			oDateTimeIntervalType.parseValue("Feb 1, 2003, 4:05:06 AM \u2013 Feb 2, 2003, 5:06:07 AM", "string"),
+			["Feb 1, 2003, 4:05:06\u202FAM", "Feb 2, 2003, 5:06:07\u202FAM"],
+			"Interval string can be parsed into an array of formatted dates");
 	});
 
 	QUnit.test("DateTimeInterval validateValue", function (assert) {
@@ -872,6 +888,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.FileSize", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1048,6 +1067,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Float", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1256,6 +1278,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Integer", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1426,6 +1451,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.String", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},
@@ -1583,7 +1611,7 @@ sap.ui.define([
 		// as date object is locale dependend fill it manually
 		var timeValue = UI5Date.getInstance(2003, 1, 1, 16, 58, 49);
 
-		assert.strictEqual(timeType.formatValue(timeValue, "string"), "4:58:49 PM", "format test");
+		assert.strictEqual(timeType.formatValue(timeValue, "string"), "4:58:49\u202FPM", "format test");
 
 		timeType = new TimeType({ pattern: "HH:mm:ss" });
 		assert.strictEqual(timeType.formatValue(timeValue, "string"), "16:58:49", "format test with pattern");
@@ -1663,12 +1691,14 @@ sap.ui.define([
 		var oTime1 = UI5Date.getInstance(2003, 1, 1, 16, 58, 49);
 		var oTime2 = UI5Date.getInstance(2003, 1, 1, 17, 0, 0);
 
-		assert.strictEqual(oTimeIntervalType.formatValue([oTime1, oTime2], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
+		assert.strictEqual(oTimeIntervalType.formatValue([oTime1, oTime2], "string"),
+			"4:58:49\u202FPM\u2009\u2013\u20095:00:00\u202FPM", "dates can be formatted as interval");
 
 		oTimeIntervalType = new TimeIntervalType({
 			source: {}
 		});
-		assert.strictEqual(oTimeIntervalType.formatValue(["4:58:49 PM", "5:00:00 PM"], "string"), "4:58:49 PM – 5:00:00 PM", "dates can be formatted as interval");
+		assert.strictEqual(oTimeIntervalType.formatValue(["4:58:49 PM", "5:00:00 PM"], "string"),
+			"4:58:49\u202FPM\u2009\u2013\u20095:00:00\u202FPM", "dates can be formatted as interval");
 	});
 
 	QUnit.test("TimeInterval parseValue", function (assert) {
@@ -1676,7 +1706,7 @@ sap.ui.define([
 		var oTime1 = UI5Date.getInstance(1970, 0, 1, 16, 58, 49);
 		var oTime2 = UI5Date.getInstance(1970, 0, 1, 17, 0, 0);
 
-		var aTimeIntervalResult = oTimeIntervalType.parseValue("4:58:49 PM –  5:00:00 PM", "string");
+		var aTimeIntervalResult = oTimeIntervalType.parseValue("4:58:49 PM \u2013  5:00:00 PM", "string");
 
 		assert.deepEqual([aTimeIntervalResult[0].getTime(), aTimeIntervalResult[1].getTime()], [oTime1.getTime(), oTime2.getTime()], "Interval string can be parsed into an array of dates");
 
@@ -1684,7 +1714,8 @@ sap.ui.define([
 			source: {}
 		});
 
-		assert.deepEqual(oTimeIntervalType.parseValue("4:58:49 PM – 5:00:00 PM", "string"), ["4:58:49 PM", "5:00:00 PM"], "Interval string can be parsed into an array of formatted dates");
+		assert.deepEqual(oTimeIntervalType.parseValue("4:58:49 PM \u2013 5:00:00 PM", "string"),
+			["4:58:49\u202FPM", "5:00:00\u202FPM"], "Interval string can be parsed into an array of formatted dates");
 	});
 
 	QUnit.test("TimeInterval validateValue", function (assert) {
@@ -1714,6 +1745,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Unit", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function() {
 			Configuration.setLanguage("en-US");
 		},

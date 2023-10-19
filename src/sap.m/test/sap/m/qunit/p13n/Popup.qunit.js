@@ -196,6 +196,36 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Check the 'onReset' hook execution", function(assert){
+
+		var done = assert.async();
+
+		this.fnReset = function() {};
+
+		var oSelectionPanel = new SelectionPanel();
+
+		oSelectionPanel.onReset = function() {
+			assert.ok(true, "Reset hook as been executed");
+			done();
+		};
+
+		this.oPopup.addPanel(oSelectionPanel);
+
+		this.oPopup.open(this.oSource);
+		var oResetBtn = this.oPopup._oPopup.getCustomHeader().getContentRight()[0];
+
+		//1) Trigger reset on Dialog
+		oResetBtn.firePress();
+
+		//2) --> Find MessageBox opened by Dialog
+		var oMessageBox = Element.registry.filter(function(oElement){return oElement.getMetadata().isA("sap.m.Dialog") && oElement.getTitle() === "Warning";})[0];
+
+		//3) confirm warning
+		oMessageBox.getButtons()[0].firePress();
+		oCore.applyChanges();
+
+	});
+
 	QUnit.test("Check focus handling after reset", function(assert){
 
 		var done = assert.async();
@@ -337,5 +367,33 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("The Popup should only provide vertical scrolling for the content if the content does not provide it itself", function(assert) {
+
+		//Create a popup with one panel
+		var oPopup = new P13nPopup({
+			panels: [
+				new SelectionPanel()
+			]
+		});
+
+		var oDialog = oPopup._createDialog({});
+		assert.equal(oDialog.getVerticalScrolling(), true, "In case there is only one panel, the dialog provides the scrolling");
+
+		//Create a popup with one panel (which can scroll by itself)
+		var oScrollablePanel = new SelectionPanel();
+		oScrollablePanel.getVerticalScrolling = function() {
+			return true;
+		};
+
+		oPopup = new P13nPopup({
+			panels: [
+				oScrollablePanel
+			]
+		});
+
+		var oDialog = oPopup._createDialog({});
+		assert.equal(oDialog.getVerticalScrolling(), false, "In case there is only one panel which is scrollable, the panel provides the scrolling");
+
+	});
 
 });

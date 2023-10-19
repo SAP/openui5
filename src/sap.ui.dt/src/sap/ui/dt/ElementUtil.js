@@ -32,8 +32,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.ElementUtil
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API
-	 *               might be changed in future.
 	 */
 
 	var ElementUtil = {};
@@ -52,7 +50,7 @@ sap.ui.define([
 
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
-			var oElement = sap.ui.getCore().byId(vElement);
+			var oElement = Element.getElementById(vElement);
 			return oElement || Component.get(vElement);
 		}
 		return vElement;
@@ -77,11 +75,11 @@ sap.ui.define([
 
 	ElementUtil.getClosestElementForNode = function(oNode) {
 		var oClosestElement = oNode.closest("[data-sap-ui]");
-		return oClosestElement ? sap.ui.getCore().byId(oClosestElement.getAttribute("data-sap-ui")) : undefined;
+		return oClosestElement ? Element.getElementById(oClosestElement.getAttribute("data-sap-ui")) : undefined;
 	};
 
 	ElementUtil.fixComponentParent = function(oElement) {
-		if (BaseObject.isA(oElement, "sap.ui.core.UIComponent")) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.UIComponent")) {
 			var oComponentContainer = oElement.oContainer;
 			if (oComponentContainer) {
 				return oComponentContainer.getParent();
@@ -92,7 +90,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.fixComponentContainerElement = function(oElement) {
-		if (BaseObject.isA(oElement, "sap.ui.core.ComponentContainer")) {
+		if (BaseObject.isObjectA(oElement, "sap.ui.core.ComponentContainer")) {
 			// This happens when the compontentContainer has not been rendered yet
 			if (!oElement.getComponentInstance()) {
 				return undefined;
@@ -142,8 +140,8 @@ sap.ui.define([
 
 			// altType getter returns not element (TODO: clarify if getAggregationNameControl getter is a convention)
 			if (oAggregationMetadata.altTypes && oAggregationMetadata.altTypes.length
-					&& oElement[oAggregationMetadata._sGetter + "Control"]) {
-				sGetter = oAggregationMetadata._sGetter + "Control";
+					&& oElement[`${oAggregationMetadata._sGetter}Control`]) {
+				sGetter = `${oAggregationMetadata._sGetter}Control`;
 			}
 
 			return {
@@ -248,7 +246,7 @@ sap.ui.define([
 					this.getAggregation(oParent, sAggregationName).length > 0) {
 				return false;
 			}
-			return BaseObject.isA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
+			return BaseObject.isObjectA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 		}
 	};
 
@@ -356,7 +354,7 @@ sap.ui.define([
 	};
 
 	ElementUtil.getParent = function(oElement) {
-		return BaseObject.isA(oElement, "sap.ui.core.Component")
+		return BaseObject.isObjectA(oElement, "sap.ui.core.Component")
 			? oElement.oContainer
 			: oElement.getParent();
 	};
@@ -408,7 +406,7 @@ sap.ui.define([
 		if (isPlainObject(mBoundControl) && mBoundControl.templateId) {
 			if (mBoundControl.stack.length > 1) {
 				var oResultControl;
-				var oAggregatedControl = sap.ui.getCore().byId(mBoundControl.templateId);
+				var oAggregatedControl = Element.getElementById(mBoundControl.templateId);
 				var sAggregation;
 				var iIndex;
 				for (var i = mBoundControl.stack.length - 2; i >= 0; i--) {
@@ -463,7 +461,7 @@ sap.ui.define([
 
 		// If the binding is found on an API parent (with a forwarded aggregation),
 		// the templateId is directly retrieved from it (the stack only has the element itself)
-		var aAPIParentInfos = oElement.aAPIParentInfos;
+		var {aAPIParentInfos} = oElement;
 		if (aAPIParentInfos && aAPIParentInfos.length > 0) {
 			bBindingFound = aAPIParentInfos.some(function(mParentInfo) {
 				oParent = mParentInfo.parent;

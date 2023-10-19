@@ -14,7 +14,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("forEachChangeInStorage / createFlexKey", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sChangeKey1 = ObjectStorageUtils.createFlexKey("id1");
 			this.sChangeKey2 = ObjectStorageUtils.createFlexKey("id2");
 			this.sVariantKey1 = ObjectStorageUtils.createFlexKey("id3");
@@ -27,7 +27,7 @@ sap.ui.define([
 			this.oStorage.foo = JSON.stringify({name: "bar"});
 			this.oStorage.bar = JSON.stringify({name: "foobar"});
 		},
-		afterEach: function() {
+		afterEach() {
 			delete this.oStorage;
 		}
 	}, function() {

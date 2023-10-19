@@ -27,10 +27,10 @@ sap.ui.define([
 	var oController;
 
 	QUnit.module("ContentDetails", {
-		beforeEach: function() {
+		beforeEach() {
 			oController = new ContentDetails();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -43,18 +43,18 @@ sap.ui.define([
 			oController.oSelectedContentModel = oSelectedContentModel;
 
 			sandbox.stub(oController, "getView").returns({
-				getContent: function() {
+				getContent() {
 					return [{
-						setBusy: function() {}
+						setBusy() {}
 					}];
 				},
-				createId: function() {
+				createId() {
 					return "iconId";
 				}
 			});
 
 			var routeParameters = {
-				getParameter: function() {
+				getParameter() {
 					return {
 						layer: sLayer,
 						namespace: sNamespace,
@@ -69,7 +69,7 @@ sap.ui.define([
 			return oController._onRouteMatched(routeParameters).then(function() {
 				assert.ok(oStubbedGetContent.calledOnce, "then a request for getting lrep data is sent");
 				assert.equal(oStubbedGetContent.getCall(0).args[0], sLayer, "with correct layer");
-				assert.equal(oStubbedGetContent.getCall(0).args[1], sNamespace + sFileName + "." + sFileType, "and with correct suffix");
+				assert.equal(oStubbedGetContent.getCall(0).args[1], `${sNamespace + sFileName}.${sFileType}`, "and with correct suffix");
 				assert.ok(oStubbedOnContentReceived.calledOnce, "and correct handler function for received data is called");
 			});
 		});
@@ -80,7 +80,7 @@ sap.ui.define([
 			};
 			var oData = {};
 			var oPage = {
-				setBusy: function() {}
+				setBusy() {}
 			};
 			var sContentSuffix = "pathtothefile";
 			var oStubbedFormatData = sandbox.stub(DataUtils, "formatData");
@@ -101,9 +101,9 @@ sap.ui.define([
 		QUnit.test("when Edit button clicked", function(assert) {
 			var oRouter = new Router();
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								layer: "layer",
 								fileName: "fileName",
@@ -147,9 +147,9 @@ sap.ui.define([
 
 		QUnit.test("when _selectTransportAndDeleteFile is called with USER layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								fileName: "fileName",
 								fileType: "fileType",
@@ -163,9 +163,9 @@ sap.ui.define([
 						}
 					};
 				},
-				byId: function() {
+				byId() {
 					return {
-						getSelected: function() {
+						getSelected() {
 							return false;
 						}
 					};
@@ -183,9 +183,9 @@ sap.ui.define([
 
 		QUnit.test("when _selectTransportAndDeleteFile is called with LOAD layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								fileName: "fileName",
 								fileType: "fileType",
@@ -199,9 +199,9 @@ sap.ui.define([
 						}
 					};
 				},
-				byId: function() {
+				byId() {
 					return {
-						getSelected: function() {
+						getSelected() {
 							return false;
 						}
 					};
@@ -219,9 +219,9 @@ sap.ui.define([
 
 		QUnit.test("when _selectTransportAndDeleteFile is called with ATO_NOTIFICATION content", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								data: "{packageName: \"$TMP\"}",
 								fileName: "fileName",
@@ -239,9 +239,9 @@ sap.ui.define([
 						}
 					};
 				},
-				byId: function() {
+				byId() {
 					return {
-						getSelected: function() {
+						getSelected() {
 							return false;
 						}
 					};
@@ -259,9 +259,9 @@ sap.ui.define([
 
 		QUnit.test("when _selectTransportAndDeleteFile is called with local object in VENDOR layer", function(assert) {
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								data: "{packageName: \"\"}",
 								fileName: "fileName",
@@ -276,9 +276,9 @@ sap.ui.define([
 						}
 					};
 				},
-				byId: function() {
+				byId() {
 					return {
-						getSelected: function() {
+						getSelected() {
 							return false;
 						}
 					};
@@ -296,9 +296,9 @@ sap.ui.define([
 
 		QUnit.test("when _selectTransportAndDeleteFile is called with transported content", function(assert) {
 			var oStubbedGetView = sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel() {
 					return {
-						getData: function() {
+						getData() {
 							return {
 								data: "{packageName: \"package\"}",
 								fileName: "fileName",
@@ -316,10 +316,10 @@ sap.ui.define([
 						}
 					};
 				},
-				addDependent: function() {},
-				byId: function() {
+				addDependent() {},
+				byId() {
 					return {
-						getSelected: function() {
+						getSelected() {
 							return false;
 						}
 					};

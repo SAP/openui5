@@ -1,10 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Log, InvisibleText, jQuery, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Log, Icon, InvisibleText, jQuery, Configuration, Element, nextUIUpdate) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -13,30 +16,30 @@ sap.ui.define([
 
 	QUnit.module("");
 
-	QUnit.test("Hidden Text is really hidden", function(assert) {
+	QUnit.test("Hidden Text is really hidden", async function(assert) {
 		var iWidth = jQuery("#content").width();
 		var iHeight = jQuery("#content").height();
 
 		var text = new InvisibleText({text: "Hello"});
 		text.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(iWidth, jQuery("#content").width(), "Width of container not influenced by hidden text.");
 		assert.equal(iHeight, jQuery("#content").height(), "Height of container not influenced by hidden text.");
 		assert.ok(text.$().parent().attr("id") == "content", "Invisible Text was rendered.");
 	});
 
-	QUnit.test("Render to static area", function(assert) {
+	QUnit.test("Render to static area", async function(assert) {
 		var text = new InvisibleText({text: "Hello"});
 		text.toStatic();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.ok(text.$().parent().attr("id") == "sap-ui-static", "Invisible Text was rendered to static area");
 	});
 
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("Rendering", async function(assert) {
 		var text = new InvisibleText({text: "Hello"});
 		text.toStatic();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		assert.equal(text.$().text(), "Hello", "Text rendered correctly");
 		text.setText("Hello2");
 		assert.equal(text.$().text(), "Hello2", "Text rendered correctly");
@@ -44,13 +47,33 @@ sap.ui.define([
 		assert.ok(text.$().hasClass("sapUiInvisibleText"), "Class sapUiInvisibleText is set");
 	});
 
-	QUnit.test("Shared Instances", function(assert) {
+	QUnit.test("Destroy after Invisible Text is added to an aggregation", async function(assert) {
+		var icon = new Icon({
+			src: "sap-icon://accept"
+		});
+		icon.placeAt("content");
+		await nextUIUpdate();
+
+		var id = "destroyTesting";
+		var text = new InvisibleText({
+			text: "Hello", id
+		});
+		text.toStatic();
+		icon.addDependent(text);
+
+		text.destroy();
+
+		assert.notOk(document.querySelector(`[id*="${id}"]`), "No DOM that contains the id exists");
+		icon.destroy();
+	});
+
+	QUnit.test("Shared Instances", async function(assert) {
 		// Note: configuration enforces initial language 'en'
 		var sExpectedTextEN = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		var textId = InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_ERROR");
 		assert.ok(textId && typeof textId === 'string', "getStaticId must return an ID");
-		var oText = sap.ui.getCore().byId(textId);
+		var oText = Element.getElementById(textId);
 		assert.ok(oText instanceof InvisibleText, "ID must refer to an instance of InvisibleText");
 		assert.equal(oText.$().text(), sExpectedTextEN, "Text rendered correctly");
 		assert.equal(oText.$().attr("aria-hidden"), "true", "aria-hidden=true is set");
@@ -60,7 +83,7 @@ sap.ui.define([
 
 		// switch language
 		Configuration.setLanguage("de");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		var sExpectedTextDE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
 		assert.notEqual(sExpectedTextEN, sExpectedTextDE, "texts should differ between 'en' and 'de'");
 
@@ -71,10 +94,10 @@ sap.ui.define([
 		// but rather reflect the behavior of the current implementation
 
 		var textId3 = InvisibleText.getStaticId("not.a.library", "TEXT_FROM_A_NON_EXISTING_LIBRARY");
-		assert.equal(sap.ui.getCore().byId(textId3).$().text(), "TEXT_FROM_A_NON_EXISTING_LIBRARY", "retrieving a text from a non-existing library results in a text that equals the key");
+		assert.equal(Element.getElementById(textId3).$().text(), "TEXT_FROM_A_NON_EXISTING_LIBRARY", "retrieving a text from a non-existing library results in a text that equals the key");
 
 		var textId4 = InvisibleText.getStaticId("sap.ui.core", "THIS_TEXT_DOES_NOT_EXIST");
-		assert.equal(sap.ui.getCore().byId(textId4).$().text(), "THIS_TEXT_DOES_NOT_EXIST", "retrieving a non-existing key results in a text that equals the key");
+		assert.equal(Element.getElementById(textId4).$().text(), "THIS_TEXT_DOES_NOT_EXIST", "retrieving a non-existing key results in a text that equals the key");
 	});
 
 	QUnit.test("Deactivated Control APIs", function(assert) {
@@ -90,10 +113,10 @@ sap.ui.define([
 		}, this);
 	});
 
-	QUnit.test("getRendererMarkup is an equivalent of renderer output", function(assert) {
+	QUnit.test("getRendererMarkup is an equivalent of renderer output", async function(assert) {
 		var oSUT = new InvisibleText({text: "Hello"});
 		oSUT.placeAt("content");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oDomRef = oSUT.getDomRef();
 		var oMarkupDomRef = jQuery(oSUT.getRendererMarkup())[0];

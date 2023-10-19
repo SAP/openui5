@@ -11,11 +11,11 @@ sap.ui.define([
 ) {
 	"use strict";
 	return UIComponent.extend("sap.ui.fl.qunit.integration.async.testComponentWithView.Component", {
-		init: function() {
-			UIComponent.prototype.init.apply(this, arguments);
+		init(...aArgs) {
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
-		createContent: function() {
+		createContent() {
 			this.oViewPromise = XMLView.create({
 				viewName: "sap.ui.fl.qunit.integration.async.testComponentWithView.View",
 				id: this.createId("rootView"),

@@ -172,6 +172,9 @@ sap.ui.define([
 		),
 		"propertyEditors": {
 			// base editors:
+			/**
+			 * @deprecated as of version 1.81
+			 */
 			"enum": "sap/ui/integration/designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor",
 			"select": "sap/ui/integration/designtime/baseEditor/propertyEditor/selectEditor/SelectEditor",
 			"multiSelect": "sap/ui/integration/designtime/baseEditor/propertyEditor/multiSelectEditor/MultiSelectEditor",

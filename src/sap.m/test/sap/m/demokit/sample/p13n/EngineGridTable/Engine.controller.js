@@ -7,8 +7,9 @@ sap.ui.define([
 	'sap/m/p13n/GroupController',
 	'sap/m/p13n/MetadataHelper',
 	'sap/ui/model/Sorter',
-	'sap/ui/table/library'
-], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, tableLibrary) {
+	'sap/ui/core/library',
+	'sap/m/table/ColumnWidthController'
+], function(Controller, JSONModel, Engine, SelectionController, SortController, GroupController, MetadataHelper, Sorter, CoreLibrary, ColumnWidthController) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.p13n.EngineGridTable.Page", {
@@ -41,6 +42,13 @@ sap.ui.define([
 				{key: "size_col", label: "Size", path: "size"}
 			]);
 
+			this._mIntialWidth = {
+				"firstName_col": "11rem",
+				"lastName_col": "11rem",
+				"city_col": "11rem",
+				"size_col": "11rem"
+			};
+
 			Engine.getInstance().register(oTable, {
 				helper: this.oMetadataHelper,
 				controller: {
@@ -52,6 +60,9 @@ sap.ui.define([
 						control: oTable
 					}),
 					Groups: new GroupController({
+						control: oTable
+					}),
+					ColumnWidth: new ColumnWidthController({
 						control: oTable
 					})
 				}
@@ -96,7 +107,7 @@ sap.ui.define([
 				});
 				oState.Sorter.push({
 					key: sAffectedProperty,
-					descending: sSortOrder === tableLibrary.SortOrder.Descending
+					descending: sSortOrder === CoreLibrary.SortOrder.Descending
 				});
 
 				//3) Apply the modified personalization state to persist it in the VariantManagement
@@ -131,9 +142,15 @@ sap.ui.define([
 			var oState = oEvt.getParameter("state");
 
 			oTable.getColumns().forEach(function(oColumn){
+
+				var sKey = this._getKey(oColumn);
+				var sColumnWidth = oState.ColumnWidth[sKey];
+
+				oColumn.setWidth(sColumnWidth || this._mIntialWidth[sKey]);
+
 				oColumn.setVisible(false);
-				oColumn.setSorted(false);
-			});
+				oColumn.setSortOrder(CoreLibrary.SortOrder.None);
+			}.bind(this));
 
 			oState.Columns.forEach(function(oProp, iIndex){
 				var oCol = this.byId(oProp.key);
@@ -146,11 +163,25 @@ sap.ui.define([
 			var aSorter = [];
 			oState.Sorter.forEach(function(oSorter) {
 				var oColumn = this.byId(oSorter.key);
+				/** @deprecated As of version 1.120 */
 				oColumn.setSorted(true);
-				oColumn.setSortOrder(oSorter.descending ? tableLibrary.SortOrder.Descending : tableLibrary.SortOrder.Ascending);
+				oColumn.setSortOrder(oSorter.descending ? CoreLibrary.SortOrder.Descending : CoreLibrary.SortOrder.Ascending);
 				aSorter.push(new Sorter(this.oMetadataHelper.getProperty(oSorter.key).path, oSorter.descending));
 			}.bind(this));
 			oTable.getBinding("rows").sort(aSorter);
+		},
+
+		onColumnResize: function(oEvt) {
+			var oColumn = oEvt.getParameter("column");
+			var sWidth = oEvt.getParameter("width");
+			var oTable = this.byId("persoTable");
+
+			var oColumnState = {};
+			oColumnState[this._getKey(oColumn)] = sWidth;
+
+			Engine.getInstance().applyState(oTable, {
+				ColumnWidth: oColumnState
+			});
 		}
 	});
 });

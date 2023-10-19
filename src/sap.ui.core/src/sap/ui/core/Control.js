@@ -655,7 +655,7 @@ sap.ui.define([
 			// 1st try to resolve the oRef as a container control
 			var oContainer = oRef;
 			if (typeof oRef === "string") {
-				oContainer = Element.registry.get(oRef);
+				oContainer = Element.getElementById(oRef);
 			}
 
 			if (oContainer instanceof Element) {
@@ -1251,6 +1251,26 @@ sap.ui.define([
 	 * @protected
 	 */
 	//Control.prototype.getAccessibilityInfo = function() { return null; };
+
+	/**
+	 * Returns a list of all controls with a field group ID.
+	 * See {@link sap.ui.core.Control#checkFieldGroupIds Control.prototype.checkFieldGroupIds} for a description of the
+	 * <code>vFieldGroupIds</code> parameter.
+	 *
+	 * If possible please use the respective method on a Control instance (see {@link sap.ui.core.Control#getControlsByFieldGroupId}).
+	 * The control method only respects aggregated child controls, which is more effective and should be sufficient for most use-cases.
+	 *
+	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
+	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
+	 * @static
+	 * @since 1.118
+	 * @public
+	 */
+	Control.getControlsByFieldGroupId = function(vFieldGroupIds) {
+		return Element.registry.filter((oElement) => {
+			return oElement.isA("sap.ui.core.Control") && oElement.checkFieldGroupIds(vFieldGroupIds);
+		});
+	};
 
 	return Control;
 

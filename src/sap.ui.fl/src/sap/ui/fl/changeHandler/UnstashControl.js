@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @alias sap.ui.fl.changeHandler.UnstashControl
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 */
 	var UnstashControl = {};
 
@@ -28,33 +28,31 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Returns the unstashed control
 	 * @public
 	 */
-	UnstashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		var mContent = oChange.getContent();
-		var oModifier = mPropertyBag.modifier;
-		var bStashed = false;
-		var oUnstashedControl;
+	UnstashControl.applyChange = async function(oChange, oControl, mPropertyBag) {
+		const mContent = oChange.getContent();
+		const oModifier = mPropertyBag.modifier;
 
-		return Promise.resolve()
-		.then(oModifier.getStashed.bind(oModifier, oControl))
-		.then(function(bPreviouslyStashed) {
-			oChange.setRevertData({
-				originalValue: bPreviouslyStashed
-			});
-			oUnstashedControl = oModifier.setStashed(oControl, bStashed, mPropertyBag.appComponent) || oControl;
-			// old way including move, new way will have separate move change
-			// only applicable for XML modifier
-			if (mContent.parentAggregationName) {
-				var sTargetAggregation = mContent.parentAggregationName;
-				var oTargetParent = oModifier.getParent(oUnstashedControl);
-				return Promise.resolve()
-				.then(oModifier.removeAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl))
-				.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oUnstashedControl, mContent.index, mPropertyBag.view));
-			}
-			return undefined;
-		})
-		.then(function() {
-			return oUnstashedControl;
+		const bPreviouslyStashed = await oModifier.getStashed(oControl);
+		oChange.setRevertData({
+			originalValue: bPreviouslyStashed
 		});
+		const oUnstashedControl = oModifier.setStashed(oControl, false, mPropertyBag.appComponent) || oControl;
+		// old way including move, new way will have separate move change
+		// only applicable for XML modifier
+		if (mContent.parentAggregationName) {
+			const sTargetAggregation = mContent.parentAggregationName;
+			const oTargetParent = oModifier.getParent(oUnstashedControl);
+			await oModifier.moveAggregation(
+				oTargetParent,
+				sTargetAggregation,
+				oTargetParent,
+				sTargetAggregation,
+				oUnstashedControl,
+				mContent.index,
+				mPropertyBag.view
+			);
+		}
+		return oUnstashedControl;
 	};
 
 	/**

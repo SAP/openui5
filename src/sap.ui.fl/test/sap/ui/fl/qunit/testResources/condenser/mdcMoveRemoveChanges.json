@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_01_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"index": 2
@@ -17,7 +17,7 @@
 	{
 		"fileName": "id_02_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"index": 1
@@ -32,7 +32,7 @@
 	{
 		"fileName": "id_03_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"index": 0
@@ -47,7 +47,7 @@
 	{
 		"fileName": "id_04_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"index": 1
@@ -62,7 +62,7 @@
 	{
 		"fileName": "id_05_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"index": 2
@@ -77,7 +77,7 @@
 	{
 		"fileName": "id_06_removeColumn",
 		"changeType": "removeColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column1",
 			"id": "mdcTable--column1"

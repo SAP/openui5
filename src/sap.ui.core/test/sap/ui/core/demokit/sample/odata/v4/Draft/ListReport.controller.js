@@ -4,8 +4,9 @@
 sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent"
-], function (MessageBox, Controller, UIComponent) {
+], function (MessageBox, Controller, Messaging, UIComponent) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.Draft.ListReport", {
@@ -24,7 +25,7 @@ sap.ui.define([
 			var oRouter = UIComponent.getRouterFor(this);
 
 			this.initMessagePopover("showMessages");
-			this.getView().setModel(sap.ui.getCore().getMessageManager().getMessageModel(),
+			this.getView().setModel(Messaging.getMessageModel(),
 				"messages");
 			oRouter.getRoute("objectPage").attachPatternMatched(this.onPatternMatched, this);
 			oRouter.getRoute("objectPageNoList").attachPatternMatched(this.onPatternMatched, this);

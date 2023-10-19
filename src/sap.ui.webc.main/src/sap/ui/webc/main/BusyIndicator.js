@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.BusyIndicator.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/BusyIndicator"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -85,17 +85,6 @@ sap.ui.define([
 
 				/**
 				 * Defines the size of the component.
-				 *
-				 * <br>
-				 * <br>
-				 * <b>Note:</b>
-				 *
-				 *
-				 * <ul>
-				 *     <li><code>Small</code></li>
-				 *     <li><code>Medium</code></li>
-				 *     <li><code>Large</code></li>
-				 * </ul>
 				 */
 				size: {
 					type: "sap.ui.webc.main.BusyIndicatorSize",

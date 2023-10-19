@@ -5,113 +5,100 @@
 	<title>ToolPage</title>
 	<script src="shared-config.js"></script>
 	<script
-			src="../../../resources/sap-ui-core.js"
-			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.tnt, sap.m">
+		src="../../../resources/sap-ui-core.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.tnt, sap.m">
 	</script>
 	<script id="myXml" type="text/xmldata">
-			<mvc:View xmlns:mvc="sap.ui.core.mvc"
-						xmlns="sap.m"
-						xmlns:tnt="sap.tnt"
-						controllerName="myController"
-						displayBlock="true"
-						viewName="sap.tnt.ToolPageWithSubHeader">
-				<tnt:ToolPage id="toolPage">
-					<tnt:header>
-						<tnt:ToolHeader>
-							<ToolbarSpacer width="0.5rem" />
-							<Image height="1.5rem"
-							 src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
-							<Title level="H1" text="Product Name" />
-							<Title level="H3" titleStyle="H6" text="Second Title" />
-							<ToolbarSpacer />
-							<Button icon="sap-icon://search" type="Transparent" />
-							<Button icon="sap-icon://task" type="Transparent" />
-							<Button icon="sap-icon://bell" type="Transparent" />
-						</tnt:ToolHeader>
-					</tnt:header>
+		<mvc:View xmlns:mvc="sap.ui.core.mvc"
+			xmlns="sap.m"
+			xmlns:tnt="sap.tnt"
+			controllerName="myController"
+			displayBlock="true"
+			viewName="sap.tnt.ToolPageWithSubHeader">
+			<tnt:ToolPage id="toolPage">
+				<tnt:header>
+					<tnt:ToolHeader>
+						<ToolbarSpacer width="0.5rem" />
+						<Image height="1.5rem" src="https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg" />
+						<Title level="H1" text="Product Name" />
+						<Title level="H3" titleStyle="H6" text="Second Title" />
+						<ToolbarSpacer />
+						<Button icon="sap-icon://search" type="Transparent" />
+						<Button icon="sap-icon://task" type="Transparent" />
+						<Button icon="sap-icon://bell" type="Transparent" />
+					</tnt:ToolHeader>
+				</tnt:header>
 
-					<tnt:subHeader>
-						<tnt:ToolHeader>
-							<IconTabHeader mode="Inline">
-								<layoutData>
-									<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
-								</layoutData>
-								<items>
-									<IconTabFilter icon="sap-icon://home" text="Home" />
-									<IconTabFilter icon="sap-icon://home" text="Applications" />
-									<IconTabFilter icon="sap-icon://employee" text="API Reference">
-										<items>
-											<IconTabFilter text="Home 1" />
-											<IconTabFilter text="Home 2" />
-											<IconTabFilter text="Home 3" />
-											<IconTabFilter text="Home 4" />
-										</items>
-									</IconTabFilter>
-									<IconTabFilter icon="sap-icon://employee" text="Demo Apps">
-										<items>
-											<IconTabFilter icon="sap-icon://home" text="Home 1" />
-											<IconTabFilter icon="sap-icon://home" text="Home 2" />
-											<IconTabFilter icon="sap-icon://home" text="Home 3" />
-											<IconTabFilter icon="sap-icon://home" text="Home 4" />
-										</items>
-									</IconTabFilter>
-								</items>
-							</IconTabHeader>
-						</tnt:ToolHeader>
-					</tnt:subHeader>
+				<tnt:subHeader>
+					<tnt:ToolHeader>
+						<IconTabHeader mode="Inline">
+							<layoutData>
+								<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+							</layoutData>
+							<items>
+								<IconTabFilter icon="sap-icon://home" text="Home" />
+								<IconTabFilter icon="sap-icon://home" text="Applications" />
+								<IconTabFilter icon="sap-icon://employee" text="API Reference">
+									<items>
+										<IconTabFilter text="Home 1" />
+										<IconTabFilter text="Home 2" />
+										<IconTabFilter text="Home 3" />
+										<IconTabFilter text="Home 4" />
+									</items>
+								</IconTabFilter>
+								<IconTabFilter icon="sap-icon://employee" text="Demo Apps">
+									<items>
+										<IconTabFilter icon="sap-icon://home" text="Home 1" />
+										<IconTabFilter icon="sap-icon://home" text="Home 2" />
+										<IconTabFilter icon="sap-icon://home" text="Home 3" />
+										<IconTabFilter icon="sap-icon://home" text="Home 4" />
+									</items>
+								</IconTabFilter>
+							</items>
+						</IconTabHeader>
+					</tnt:ToolHeader>
+				</tnt:subHeader>
 
-					<tnt:mainContents>
-						<NavContainer id="pageContainer" initialPage="page2">
-							<pages>
-								<ScrollContainer
-									id="root1"
-									horizontal="false"
-									vertical="true"
-									height="100%">
-									<Text text="This is the root page" />
-								</ScrollContainer>
-								<ScrollContainer
-									id="page1"
-									horizontal="false"
-									vertical="true"
-									height="100%">
-									<Text text="This is the first page" />
-								</ScrollContainer>
-								<ScrollContainer
-									id="page2"
-									horizontal="false"
-									vertical="true"
-									height="100%">
-									<Text text="Lorem ipsum dolor sit amet" />
-								</ScrollContainer>
-								<ScrollContainer
-									id="root2"
-									horizontal="false"
-									vertical="true"
-									height="100%">
-									<Text text="This is the root page of the second element" />
-								</ScrollContainer>
-							</pages>
-						</NavContainer>
-					</tnt:mainContents>
-
-				</tnt:ToolPage>
-			</mvc:View>
-		</script>
+				<tnt:mainContents>
+					<NavContainer id="pageContainer" initialPage="page2">
+						<ScrollContainer
+							id="root1"
+							horizontal="false"
+							vertical="true"
+							height="100%">
+							<Text text="This is the root page" />
+						</ScrollContainer>
+						<ScrollContainer
+							id="page1"
+							horizontal="false"
+							vertical="true"
+							height="100%">
+							<Text text="This is the first page" />
+						</ScrollContainer>
+						<ScrollContainer
+							id="page2"
+							horizontal="false"
+							vertical="true"
+							height="100%">
+							<Text text="Lorem ipsum dolor sit amet" />
+						</ScrollContainer>
+						<ScrollContainer
+							id="root2"
+							horizontal="false"
+							vertical="true"
+							height="100%">
+							<Text text="This is the root page of the second element" />
+						</ScrollContainer>
+					</NavContainer>
+				</tnt:mainContents>
+			</tnt:ToolPage>
+		</mvc:View>
+	</script>
 
 	<script>
 		sap.ui.controller("myController", {
-			onInit: function() {
-				var model = new sap.ui.model.json.JSONModel();
-				model.setData({
-					buttonText: "Click Me!"
-				});
-				this.getView().setModel(model);
-			},
-			doSomething: function() {
-				alert("Hello World!");
-			}
+			onInit: function() {}
 		});
 		sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
 	</script>

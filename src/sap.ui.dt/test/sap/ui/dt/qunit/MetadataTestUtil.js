@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var Util = {
-		buildMetadataObject: function(vContent, vTestAggr) {
+		buildMetadataObject(vContent, vTestAggr) {
 			var mData = {
 				data: {
 					aggregations: {
@@ -18,9 +18,9 @@ sap.ui.define([
 			return mData;
 		},
 
-		createPropagateMetadataObject: function(sInstanceOf, sTestValue, vActions, sCustomProperty) {
+		createPropagateMetadataObject(sInstanceOf, sTestValue, vActions, sCustomProperty) {
 			return {
-				propagateMetadata: function(oElement, oRelevantContainer) {
+				propagateMetadata(oElement, oRelevantContainer) {
 					if (oElement.getMetadata().getName() === sInstanceOf) {
 						var mData = {
 							aggregations: {
@@ -42,13 +42,13 @@ sap.ui.define([
 			};
 		},
 
-		createNewAggregationDtMetadataInstance: function(oData) {
+		createNewAggregationDtMetadataInstance(oData) {
 			return new AggregationDesignTimeMetadata({
 				data: oData || {}
 			});
 		},
 
-		createPropagationInfoObject: function(vPropagateFunction, oRelevantContainerElement, vMetadataFunction) {
+		createPropagationInfoObject(vPropagateFunction, oRelevantContainerElement, vMetadataFunction) {
 			var mObj = {};
 			if (vPropagateFunction) {
 				mObj.relevantContainerFunction = vPropagateFunction;
@@ -62,9 +62,9 @@ sap.ui.define([
 			return mObj;
 		},
 
-		createPropagateRelevantContainerObject: function(sInstanceOf) {
+		createPropagateRelevantContainerObject(sInstanceOf) {
 			return {
-				propagateRelevantContainer: function(oElement) {
+				propagateRelevantContainer(oElement) {
 					var sType = oElement.getMetadata().getName();
 					if (sType === sInstanceOf) {
 						return true;

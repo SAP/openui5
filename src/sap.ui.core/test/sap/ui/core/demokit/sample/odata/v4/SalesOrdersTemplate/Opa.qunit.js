@@ -3,16 +3,17 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/SandboxModel" // preload only
+], function (Core, Helper, Any, Main, opaTest) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/core/sample/odata/v4/SalesOrdersTemplate/SandboxModel" // preload only
-	], function (Helper, Any, Main, opaTest) {
+	Core.ready().then(function () {
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.SalesOrdersTemplate");
 
 		//*****************************************************************************
@@ -24,13 +25,13 @@ sap.ui.getCore().attachInit(function () {
 					name : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
 				}
 			});
+			Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 			When.onTheMainPage.pressValueHelpOnCurrencyCode();
 			When.onTheMainPage.pressValueHelpOnRole();
 
 			Then.onAnyPage.checkLog();
 			Then.onAnyPage.analyzeSupportAssistant();
-			Then.iTeardownMyUIComponent();
 		});
 
 		QUnit.start();

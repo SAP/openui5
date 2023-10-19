@@ -40,12 +40,12 @@
 		"dependencies": {
 			"minUI5Version": "1.98.0",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.f": {},
-				"sap.ui.layout": {},
+				"sap.m": {},
 				"sap.ui.codeeditor": {},
+				"sap.ui.core": {},
 				"sap.ui.integration": {},
-				"sap.m": {}
+				"sap.ui.layout": {}
 			}
 		},
 		"resources": {
@@ -323,6 +323,11 @@
 					"pattern": "modelSizeLimit",
 					"name": "modelSizeLimit",
 					"target": "modelSizeLimit"
+				},
+				{
+					"pattern": "tilesVariants",
+					"name": "tilesVariants",
+					"target": "tilesVariants"
 				}
 			],
 			"targets": {
@@ -568,6 +573,11 @@
 				"modelSizeLimit": {
 					"id": "modelSizeLimit",
 					"name": "ModelSizeLimit",
+					"level": 1
+				},
+				"tilesVariants": {
+					"id": "tilesVariants",
+					"name": "TilesVariants",
 					"level": 1
 				}
 			}

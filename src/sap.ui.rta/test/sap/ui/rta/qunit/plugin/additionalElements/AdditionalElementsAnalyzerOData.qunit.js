@@ -107,7 +107,7 @@ function(
 				label: "Some Label",
 				visible: false,
 				fields: [
-					new Input({value: "{" + sModelName + ">Property02}"})
+					new Input({value: `{${sModelName}>Property02}`})
 				]
 			});
 			var oForm = new Form({
@@ -124,7 +124,7 @@ function(
 							new FormElement({
 								id: "visible",
 								fields: [
-									new Input({value: "{" + sModelName + ">Property01}"})
+									new Input({value: `{${sModelName}>Property01}`})
 								]
 							}),
 							oInvisibleElement
@@ -168,7 +168,7 @@ function(
 							modelName: sModelName
 						},
 						delegate: {
-							getPropertyInfo: function() {
+							getPropertyInfo() {
 								return Promise.resolve([{
 									name: "Property01",
 									bindingPath: "Property01"
@@ -205,7 +205,7 @@ function(
 						modelName: sModelName
 					},
 					delegate: {
-						getPropertyInfo: function() {
+						getPropertyInfo() {
 							return Promise.resolve([{
 								name: "Property01",
 								bindingPath: "Property01"
@@ -280,7 +280,7 @@ function(
 							my: "customPayload"
 						},
 						delegate: {
-							getPropertyInfo: function() {
+							getPropertyInfo() {
 								return Promise.resolve([{
 									name: "Property01",
 									bindingPath: "Property01"
@@ -290,7 +290,7 @@ function(
 									label: sOriginalLabel
 								}]);
 							},
-							getRepresentedProperties: function(mPropertyBag) {
+							getRepresentedProperties(mPropertyBag) {
 								assert.equal(mPropertyBag.payload.my, "customPayload", "then the payload is passed correctly to getRepresentedProperties");
 								assert.equal(mPropertyBag.element.getId(), mTestData.form.getId(), "then the correct element is passed to getRepresentedProperties");
 								assert.equal(mPropertyBag.aggregationName, mActionsObject.aggregation, "then the correct aggregationName is passed to getRepresentedProperties");
@@ -329,7 +329,7 @@ function(
 						my: "customPayload"
 					},
 					delegate: {
-						getPropertyInfo: function() {
+						getPropertyInfo() {
 							return Promise.resolve([{
 								name: "Property01",
 								bindingPath: "Property01"
@@ -339,7 +339,7 @@ function(
 								label: "unrepresented property"
 							}]);
 						},
-						getRepresentedProperties: function(mPropertyBag) {
+						getRepresentedProperties(mPropertyBag) {
 							assert.equal(mPropertyBag.payload.my, "customPayload", "then the payload is passed correctly to getRepresentedProperties");
 							assert.equal(mPropertyBag.element.getId(), mTestData.form.getId(), "then the correct element is passed to getRepresentedProperties");
 							assert.equal(mPropertyBag.aggregationName, mActionsObject.action.aggregation, "then the correct aggregationName is passed to getRepresentedProperties");
@@ -377,7 +377,7 @@ function(
 						modelName: sModelName
 					},
 					delegate: {
-						getPropertyInfo: function() {
+						getPropertyInfo() {
 							return Promise.resolve([{
 								name: "Property01",
 								bindingPath: "Property01"
@@ -387,7 +387,7 @@ function(
 								label: "unrepresented property"
 							}]);
 						},
-						getRepresentedProperties: function() {
+						getRepresentedProperties() {
 							return Promise.resolve();
 						}
 					}

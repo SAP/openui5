@@ -116,7 +116,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectNumberRenderer.renderText = function(oRm, oON) {
-		var sUnit = oON.getUnit() || oON.getNumberUnit();
+		var sUnit = oON.getUnit();
+
+		/**
+		 * @deprecated as of version 1.16.1
+		 */
+		if (!sUnit) {
+			sUnit = oON.getNumberUnit();
+		}
+
 		oRm.openStart("span", oON.getId() + "-number");
 		oRm.class("sapMObjectNumberText");
 		oRm.openEnd();
@@ -133,7 +141,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectNumberRenderer.renderUnit = function(oRm, oON) {
-		var sUnit = oON.getUnit() || oON.getNumberUnit();
+		var sUnit = oON.getUnit();
+
+		/**
+		 * @deprecated as of version 1.16.1
+		 */
+		if (!sUnit) {
+			sUnit = oON.getNumberUnit();
+		}
 
 		if (sUnit !== "") {
 			oRm.openStart("span", oON.getId() + "-unit");

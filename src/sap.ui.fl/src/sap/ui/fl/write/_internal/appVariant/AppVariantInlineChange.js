@@ -34,6 +34,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.fl"
 		},
+		// eslint-disable-next-line object-shorthand
 		constructor: function(mPropertyBag) {
 			ManagedObject.apply(this);
 			if (!isPlainObject(mPropertyBag)) {
@@ -80,7 +81,7 @@ sap.ui.define([
 					this._oDefinition.texts[sTextKeyNew] = this._oDefinition.texts[sTextKey];
 					delete this._oDefinition.texts[sTextKey];
 
-					sContent = sContent.split("{{" + sTextKey + "}}").join("{{" + sTextKeyNew + "}}");
+					sContent = sContent.split(`{{${sTextKey}}}`).join(`{{${sTextKeyNew}}}`);
 				}
 			}, this);
 

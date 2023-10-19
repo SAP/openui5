@@ -6,13 +6,15 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/m/Popover",
+	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Button, CheckBox, DatePicker, Input, Label, Popover, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Button, CheckBox, DatePicker, Input, Label, Popover, Element, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	// Prepare a UI
@@ -169,8 +171,6 @@ sap.ui.define([
 		]
 	}).placeAt("content");
 
-	sap.ui.getCore().applyChanges();
-
 	// Attach handler for testing
 	var bPauseEventing = false;
 	oVerticalLayout.attachValidateFieldGroup(function(oEvent) {
@@ -209,7 +209,7 @@ sap.ui.define([
 		sCurrentGroup = sCurrent;
 		sNewGroup = sNew;
 
-		sap.ui.getCore().byId(sFieldId).focus();
+		Element.getElementById(sFieldId).focus();
 		setTimeout(function () {
 			var a = UIArea._oFieldGroupControl.getFieldGroupIds();
 			if (a) {
@@ -229,7 +229,11 @@ sap.ui.define([
 		}, 1);
 	}
 
-	QUnit.test("Input with valueHelp", function(assert) {
+	QUnit.module("FieldGroups", {
+		before: nextUIUpdate
+	});
+
+	QUnit.test("Input with valueHelp", async function(assert) {
 		assert.expect(1);
 		var done = assert.async();
 		var oButton = new Button({text: "Button"});
@@ -250,7 +254,7 @@ sap.ui.define([
 				oPopover.openBy(oEvent.getSource());
 			}
 		}).placeAt('content');
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		qutils.triggerEvent("click", oInput._getValueHelpIcon(), {});
 		oPopover.attachAfterOpen(function() {
 			assert.strictEqual(oButton.getId(), document.activeElement.id, "focus moved to popover and no fieldgroupchange must happen");
@@ -262,7 +266,7 @@ sap.ui.define([
 		assert.expect(1);
 		var done = assert.async();
 		//focus a field and the non focusable content
-		var oControl = sap.ui.getCore().byId("input100");
+		var oControl = Element.getElementById("input100");
 		oControl.focus();
 		oControl.attachValidateFieldGroup(function() {
 			assert.ok(true, "fieldgroup validation fired!");
@@ -342,21 +346,21 @@ sap.ui.define([
 		assert.expect(4);
 		var done = assert.async();
 		sNewGroup = "group4";
-		oEnterControl = sap.ui.getCore().byId("input31");
+		oEnterControl = Element.getElementById("input31");
 		oEnterControl.setFieldGroupIds([sNewGroup]);
 		assert.equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup), 0, "FieldGroupId changed to group4");
 		sCurrentGroup = [sNewGroup];
-		sap.ui.getCore().byId("input1").focus();
+		Element.getElementById("input1").focus();
 		setTimeout(function() {
 			sNewGroup = "group3";
-			oEnterControl = sap.ui.getCore().byId("input31");
+			oEnterControl = Element.getElementById("input31");
 			oEnterControl.setFieldGroupIds([sNewGroup]);
 			assert.equal(oEnterControl.getFieldGroupIds().indexOf(sNewGroup), 0, "FieldGroupId changed to group3");
 			setTimeout(function() {
 				oEnterControl.focus();
 				sCurrentGroup = ["group3"];
 				setTimeout(function() {
-					sap.ui.getCore().byId("input1").focus();
+					Element.getElementById("input1").focus();
 					setTimeout(function() {
 						done();
 					}, 1);
@@ -421,7 +425,7 @@ sap.ui.define([
 		var oParent = null;
 		var done = assert.async();
 		document.getElementById("input11").focus();
-		oEnterControl = sap.ui.getCore().byId("input21");
+		oEnterControl = Element.getElementById("input21");
 		oParent = oEnterControl.getParent();
 		moveFocus("input21", "group1", "group2", function () {
 			oEnterControl.destroy();

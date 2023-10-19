@@ -66,7 +66,7 @@ sap.ui.define([
 	 * @param {Object} mChanges The changes.
 	 */
 	MicrochartsResizeHelper.prototype._onItemChange = function (mChanges) {
-		if (mChanges.name !== "items" || !mChanges.child || !mChanges.child.getMicrochart()) {
+		if (mChanges.name !== "items" || !mChanges?.child?.getMicrochart?.()) {
 			return;
 		}
 

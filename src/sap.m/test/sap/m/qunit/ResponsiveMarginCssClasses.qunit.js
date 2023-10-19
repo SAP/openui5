@@ -2,10 +2,9 @@
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/Core",
 	"sap/ui/layout/form/ResponsiveGridLayout" // form layout used by SimpleForm
-], function(Component, ComponentContainer, UriParameters, oCore) {
+], function(Component, ComponentContainer, oCore) {
 	"use strict";
 
 	sap.ui.define("margin/qunit/controller.controller", [
@@ -44,7 +43,7 @@ sap.ui.define([
 
 	QUnit.test("Test responsive margin classes", function(assert) {
 		// Test Responsive Margins: resize the containing page and check how the elements respond.
-		var oUriParams = UriParameters.fromQuery(location.search),
+		var oUriParams = new URLSearchParams(window.location.search),
 			sExpectedMarginValue = oUriParams.get('sap-ui-expect');
 
 		if (!sExpectedMarginValue) {

@@ -39,9 +39,9 @@ function(
 		aAlreadyExistedAnnotations.forEach(function(sAnnotation) {
 			assert.strictEqual(oDataSources.hasOwnProperty(sAnnotation), true, ALREADY_EXISTING.replace("{0}", "object annotation"));
 			assert.strictEqual(oDataSources[sAnnotation].type, "ODataAnnotation", ALREADY_EXISTING.replace("{0}", "type"));
-			assert.strictEqual(oDataSources[sAnnotation].uri, "/" + sAnnotation, ALREADY_EXISTING.replace("{0}", "uri"));
+			assert.strictEqual(oDataSources[sAnnotation].uri, `/${sAnnotation}`, ALREADY_EXISTING.replace("{0}", "uri"));
 			assert.strictEqual(oDataSources[sAnnotation].hasOwnProperty("settings"), true, ALREADY_EXISTING.replace("{0}", "object settings"));
-			assert.strictEqual(oDataSources[sAnnotation].settings.localUri, "model/" + sAnnotation + ".xml", ALREADY_EXISTING.replace("{0}", "settings localUri"));
+			assert.strictEqual(oDataSources[sAnnotation].settings.localUri, `model/${sAnnotation}.xml`, ALREADY_EXISTING.replace("{0}", "settings localUri"));
 		});
 	}
 
@@ -50,7 +50,7 @@ function(
 		aExpectedNewAnnotations.forEach(function(sAnnotation) {
 			assert.strictEqual(oDataSources.hasOwnProperty(sAnnotation), true, ADDED_ANNOTATION.replace("{0}", "object annotation"));
 			assert.strictEqual(oDataSources[sAnnotation].type, "ODataAnnotation", ADDED_ANNOTATION.replace("{0}", "type"));
-			assert.strictEqual(oDataSources[sAnnotation].uri, "/" + sAnnotation, ADDED_ANNOTATION.replace("{0}", "uri"));
+			assert.strictEqual(oDataSources[sAnnotation].uri, `/${sAnnotation}`, ADDED_ANNOTATION.replace("{0}", "uri"));
 		});
 	}
 
@@ -60,7 +60,7 @@ function(
 	}
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oManifest1 = {
 				"sap.app": {
 					dataSources: {

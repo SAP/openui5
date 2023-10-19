@@ -22,10 +22,10 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var fnCheckLinks = function(Then, mItems) {
+	const fnCheckLinks = function(Then, mItems) {
 		Object.entries(mItems).forEach(function (oEntry) {
-			var sLinkText = oEntry[0];
-			var oValue = oEntry[1];
+			const sLinkText = oEntry[0];
+			const oValue = oEntry[1];
 			Then.iShouldSeeLinkItemOnPosition(sLinkText, oValue.position);
 			Then.iShouldSeeLinkItemWithSelection(sLinkText, oValue.selected);
 			Then.iShouldSeeLinkItemAsEnabled(sLinkText, oValue.enabled);

@@ -31,9 +31,9 @@ sap.ui.define([
 		if (vValue.parts && vValue.formatter) {
 			return vValue.formatter.apply(null, vValue.parts.map(function(oPart) {
 				if (oPart.model) {
-					return "{" + oPart.model + ">" + oPart.path + "}";
+					return `{${oPart.model}>${oPart.path}}`;
 				}
-				return "{" + oPart.path + "}";
+				return `{${oPart.path}}`;
 			}));
 		}
 		return vValue;
@@ -93,9 +93,18 @@ sap.ui.define([
 				renameInfo: {type: "object", group: "Data", defaultValue: null},
 
 				/**
+				 * Define whether to set the URL by creating a new history entry (legacy) or replacing the current one.
+				 */
+				useLegacyNavigation: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Backup of the initial settings for the dialogs.
 				 *
-				 * @ui5-restricted sap.ui.fl
+				 *  @private
+				 *  @ui5-restricted sap.ui.fl
 				 */
 				_settings: {type: "object", group: "Data", defaultValue: null}
 			},
@@ -103,9 +112,9 @@ sap.ui.define([
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			if (Control.prototype.init) {
-				Control.prototype.init.apply(this, arguments);
+				Control.prototype.init.apply(this, aArgs);
 			}
 			this._oInitializePromise = getContainerUserInfo()
 			.then(function(oUserInfo) {
@@ -114,48 +123,74 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		waitForInit: function() {
+		waitForInit() {
 			return this._oInitializePromise ? this._oInitializePromise : Promise.reject();
 		},
 
-		setUrl: function(sUrl) {
+		_setUrlLegacy(sEncodedUrl) {
+			// Setting the url of the IFrame directly can lead to issues
+			// if the change doesn't result in a reload of the embedded page
+			// e.g. when a navigation parameter is changed
+			// To avoid problems with the ushell and the embedded apps, it is safer
+			// to unload the iframe content first and thus force a full browser reload
+
+			if (this._oSetUrlPromise) {
+				this._oSetUrlPromise.cancel();
+				delete this._oSetUrlPromise;
+			}
+
+			this.setProperty("url", "");
+
+			this._oSetUrlPromise = new CancelablePromise(function(fnResolve, fnReject, onCancel) {
+				onCancel.shouldReject = false;
+				// Use a timeout here to avoid issues with browser caching in Chrome
+				// that seem to lead to a mismatch between IFrame content and src,
+				// see Chromium issue 324102
+				setTimeout(fnResolve, 0);
+			});
+
+			this._oSetUrlPromise.then(function() {
+				delete this._oSetUrlPromise;
+				this.setProperty("url", sEncodedUrl);
+			}.bind(this));
+		},
+
+		setUrl(sUrl) {
 			// Could contain special characters from bindings that need to be encoded
 			// Make sure that it was not encoded before
 			var sEncodedUrl = decodeURI(sUrl) === sUrl ? encodeURI(sUrl) : sUrl;
 
 			if (IFrame.isValidUrl(sEncodedUrl)) {
-				// Setting the url of the IFrame directly can lead to issues
-				// if the change doesn't result in a reload of the embedded page
-				// e.g. when a navigation parameter is changed
-				// To avoid problems with the ushell and the embedded apps, it is safer
-				// to unload the iframe content first and thus force a full browser reload
-
-				if (this._oSetUrlPromise) {
-					this._oSetUrlPromise.cancel();
-					delete this._oSetUrlPromise;
-				}
-
-				this.setProperty("url", "");
-
-				this._oSetUrlPromise = new CancelablePromise(function(fnResolve, fnReject, onCancel) {
-					onCancel.shouldReject = false;
-					// Use a timeout here to avoid issues with browser caching in Chrome
-					// that seem to lead to a mismatch between IFrame content and src,
-					// see Chromium issue 324102
-					setTimeout(fnResolve, 0);
-				});
-
-				this._oSetUrlPromise.then(function() {
+				if (this.getUseLegacyNavigation()) {
+					// Set by pushing to the history
+					this._setUrlLegacy(sEncodedUrl);
+				} else {
+					// Set by replacing the last entry
 					this.setProperty("url", sEncodedUrl);
-				}.bind(this));
+				}
 			} else {
 				Log.error("Provided URL is not valid as an IFrame src");
 			}
 			return this;
 		},
 
-		applySettings: function(mSettings) {
-			Control.prototype.applySettings.apply(this, arguments);
+		// Used for testing since retrieving or spying on the Iframe location
+		// is not possible due to cross-origin restrictions
+		_replaceIframeLocation(sNewUrl) {
+			this.getDomRef().contentWindow.location.replace(sNewUrl);
+		},
+
+		onAfterRendering() {
+			if (!this.getUseLegacyNavigation()) {
+				this._replaceIframeLocation("about:blank");
+				this._replaceIframeLocation(this.getUrl());
+			}
+		},
+
+		applySettings(mSettings, ...aOtherArgs) {
+			const { url, ...mOtherSettings } = mSettings || {};
+			Control.prototype.applySettings.apply(this, [mOtherSettings, ...aOtherArgs]);
+			Control.prototype.applySettings.apply(this, [{ url }, ...aOtherArgs]);
 			if (mSettings) {
 				var mMergedSettings = this.getProperty("_settings") || {};
 				if (mSettings._settings) {
@@ -173,7 +208,7 @@ sap.ui.define([
 			}
 		},
 
-		exit: function() {
+		exit() {
 			if (this._oUserModel) {
 				this._oUserModel.destroy();
 				delete this._oUserModel;

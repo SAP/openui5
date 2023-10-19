@@ -140,6 +140,13 @@ sap.ui.define([
 
 			this.oOperation = {
 				bAction : undefined,
+				// Whether the operation is a bound action with a navigation property inside the
+				// path to its binding parameter, and thus additional ($expand/$select) query
+				// options have been computed to facilitate a RVC.
+				// undefined: unknown whether it is possible to determine the needed query options
+				// true: query options are determined
+				// false: the preconditions are not given to determine the query options
+				bAdditionalQueryOptionsForRVC : undefined,
 				mChangeListeners : {}, // map from path to an array of change listeners
 				mParameters : {},
 				mRefreshParameters : {}
@@ -248,7 +255,7 @@ sap.ui.define([
 					mParameters, fnGetEntity, bIgnoreETag, fnOnStrictHandlingFailed);
 			}).then(function (oResponseEntity) {
 				return fireChangeAndRefreshDependentBindings().then(function () {
-					return that.handleOperationResult(sResolvedPath, oOperationMetadata,
+					return that.handleOperationResult(oOperationMetadata,
 						oResponseEntity, bReplaceWithRVC);
 				});
 			}, function (oError) {
@@ -270,6 +277,56 @@ sap.ui.define([
 			});
 
 		return Promise.resolve(oPromise);
+	};
+
+	/**
+	 * Adds the query options for determining the key properties of a return value context.
+	 * If all preconditions are fulfilled (see {@link #isReturnValueLikeBindingParameter} and
+	 * {@link #hasReturnValueContext}) and it was possible to determine the query options, the flag
+	 * <code>bAdditionalQueryOptionsForRVC</code> in <code>this.oOperation</code> is set to
+	 * <code>true</code>, if it was not possible the flag is set to <code>false</code>.
+	 *
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mQueryOptions
+	 *   The operation binding's cache query options
+	 * @returns {object}
+	 *   The computed query options
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.addQueryOptionsForReturnValueContext
+			= function (oOperationMetadata, mQueryOptions) {
+		const aMetaSegments = _Helper.getMetaPath(this.getResolvedPath()).split("/");
+
+		if (!this.isReturnValueLikeBindingParameter(oOperationMetadata)
+				|| !this.hasReturnValueContext() || aMetaSegments.length !== 4) {
+			this.oOperation.bAdditionalQueryOptionsForRVC = false;
+
+			return mQueryOptions;
+		}
+		const oMetaModel = this.oModel.getMetaModel();
+		const sEntitySet = oMetaModel.getObject(
+			"/" + aMetaSegments[1] + "/$NavigationPropertyBinding/" + aMetaSegments[2]);
+		const sPartner = oMetaModel.getObject(
+			"/" + aMetaSegments[1] + "/" + aMetaSegments[2] + "/$Partner");
+
+		let mAdditionalQueryOptions;
+		if (sEntitySet && sPartner) {
+			mAdditionalQueryOptions = {$expand : {}};
+			mAdditionalQueryOptions.$expand[sPartner] = {};
+			_Helper.selectKeyProperties(mAdditionalQueryOptions.$expand[sPartner],
+				oMetaModel.getObject("/" + sEntitySet + "/" + sPartner + "/"));
+			if (mQueryOptions.$select) {
+				_Helper.selectKeyProperties(mAdditionalQueryOptions,
+					oMetaModel.getObject("/" + sEntitySet + "/"));
+			}
+			mQueryOptions = _Helper.clone(mQueryOptions); // "copy on write"
+			_Helper.aggregateExpandSelect(mQueryOptions, mAdditionalQueryOptions);
+		}
+		this.oOperation.bAdditionalQueryOptionsForRVC = !!mAdditionalQueryOptions;
+
+		return mQueryOptions;
 	};
 
 	/**
@@ -326,7 +383,9 @@ sap.ui.define([
 	 * Registered event handlers are called with the change reason as parameter.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
+	 *   The event object
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
 	 *   The reason for the 'change' event could be
 	 *   <ul>
@@ -369,9 +428,11 @@ sap.ui.define([
 	 * {@link sap.ui.base.Event#cancelBubble oEvent.cancelBubble()}.
 	 *
 	 * @param {sap.ui.base.Event} oEvent
+	 *   The event object
 	 * @param {function} oEvent.cancelBubble
 	 *   A callback function to prevent that the event is bubbled up to the model
-	 * @param {object} oEvent.getParameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {object} [oEvent.getParameters.data]
 	 *   An empty data object if a back-end request succeeds
 	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
@@ -412,7 +473,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataContextBinding} oEvent.getSource() This binding
-	 * @param {object} oEvent.getParameters Object containing all event parameters
+	 * @param {function():Object<any>} oEvent.getParameters
+	 *   Function which returns an object containing all event parameters
 	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether all PATCHes are successfully processed
 	 *
@@ -532,8 +594,7 @@ sap.ui.define([
 		function getOriginalResourcePath(oResponseEntity) {
 			if (that.isReturnValueLikeBindingParameter(oOperationMetadata)) {
 				if (that.hasReturnValueContext()) {
-					return _Helper.getReturnValueContextPath(sOriginalResourcePath,
-						_Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
+					return that.getReturnValueContextPath(oResponseEntity);
 				}
 				if (_Helper.getPrivateAnnotation(vEntity, "predicate")
 						=== _Helper.getPrivateAnnotation(oResponseEntity, "predicate")) {
@@ -605,7 +666,8 @@ sap.ui.define([
 		this.oOperation.bAction = bAction;
 		this.oOperation.mRefreshParameters = mParameters;
 		mParameters = Object.assign({}, mParameters);
-		this.mCacheQueryOptions = this.computeOperationQueryOptions();
+		this.mCacheQueryOptions = this.addQueryOptionsForReturnValueContext(oOperationMetadata,
+			this.computeOperationQueryOptions());
 		// Note: in case of NavigationProperty, this just removes "(...)"
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			this.mCacheQueryOptions, vEntity);
@@ -738,10 +800,12 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#doDeregisterChangeListener
 	 */
 	ODataContextBinding.prototype.doDeregisterChangeListener = function (sPath, oListener) {
-		if (this.oOperation && (sPath === "$Parameter" || sPath.startsWith("$Parameter/"))) {
-			_Helper.removeByPath(this.oOperation.mChangeListeners,
-				sPath.slice(/*"$Parameter/".length*/11), oListener);
-			return;
+		if (this.oOperation) {
+			const sRelativePath = _Helper.getRelativePath(sPath, this.oParameterContext.getPath());
+			if (sRelativePath !== undefined) {
+				_Helper.removeByPath(this.oOperation.mChangeListeners, sRelativePath, oListener);
+				return;
+			}
 		}
 		asODataParentBinding.prototype.doDeregisterChangeListener.apply(this, arguments);
 	};
@@ -811,7 +875,7 @@ sap.ui.define([
 	 * @param {boolean} [bIgnoreETag]
 	 *   Whether the entity's ETag should be actively ignored (If-Match:*); supported for bound
 	 *   actions only, since 1.90.0. Ignored if there is no ETag (since 1.93.0).
-	 * @param {function} [fnOnStrictHandlingFailed]
+	 * @param {function(sap.ui.core.message.Message[]):Promise<boolean>} [fnOnStrictHandlingFailed]
 	 *   If this callback is given for an action, the preference "handling=strict" is applied. If
 	 *   the service responds with the HTTP status code 412 and a
 	 *   "Preference-applied: handling=strict" header, the details from the OData error response are
@@ -843,27 +907,41 @@ sap.ui.define([
 	 *   <code>bIgnoreETag</code> is used for an operation other than a bound action. It is also
 	 *   rejected if <code>fnOnStrictHandlingFailed</code> is supplied and
 	 *   <ul>
-	 *    <li> is used for an operation other than an action,
-	 *    <li> another request that applies the preference "handling=strict" exists in a different
-	 *      change set of the same $batch request,
-	 *    <li> it does not return a <code>Promise</code>,
-	 *    <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
-	 *      <code>oError.canceled === true</code>.
+	 *     <li> is used for an operation other than an action,
+	 *     <li> another request that applies the preference "handling=strict" exists in a different
+	 *       change set of the same $batch request,
+	 *     <li> it does not return a <code>Promise</code>,
+	 *     <li> returns a <code>Promise</code> that resolves with <code>false</code>. In this case
+	 *       <code>oError.canceled === true</code>.
 	 *   </ul>
 	 *   It is also rejected if <code>bReplaceWithRVC</code> is supplied, and there is no return
 	 *   value context at all or the existing context as described above is currently part of the
 	 *   list's collection (that is, has an index).
 	 *   <br>
 	 *   A return value context is an {@link sap.ui.model.odata.v4.Context} which represents a bound
-	 *   operation response. It is created only if the operation is bound and has a single entity
-	 *   return value from the same entity set as the operation's binding parameter and has a
-	 *   parent context which is an {@link sap.ui.model.odata.v4.Context} and points to an entity
-	 *   from an entity set. It is destroyed the next time this operation binding is executed again!
+	 *   operation response. It is created only if the operation is bound and these conditions
+	 *   apply:
+	 *   <ul>
+	 *     <li> The operation has a single entity return value from the same entity set as the
+	 *       operation's binding parameter.
+	 *     <li> It has a parent context which is an {@link sap.ui.model.odata.v4.Context} and points
+	 *       to (an entity from) an entity set. The path of the parent context must not contain a
+	 *       navigation property (but see last paragraph).
+	 *   </ul>
+	 *   <b>Note:</b> A return value context is destroyed the next time the operation binding is
+	 *   executed again.
 	 *   <br>
 	 *   If a return value context is created, it must be used instead of
 	 *   <code>this.getBoundContext()</code>. All bound messages will be related to the return value
 	 *   context only. Such a message can only be connected to a corresponding control if the
 	 *   control's property bindings use the return value context as binding context.
+	 *   <br>
+	 *   A return value context may also be provided if the parent context's path contains a maximum
+	 *   of one navigation property. In addition to the existing preconditions for a return value
+	 *   context, the metadata has to specify a partner attribute for the navigation property and
+	 *   the partner relationship has to be bi-directional. Also the navigation property binding has
+	 *   to be available in the entity set of the first segment in the parent context's path
+	 *   (@experimental as of version 1.119.0).
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> the binding's root binding is suspended,
@@ -1182,10 +1260,41 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the path for the return value context. Supports bound operations on an entity or
+	 * a collection.
+	 *
+	 * @param {object} oResponseEntity
+	 *   The result of the executed operation
+	 * @returns {string} The path for the return value context.
+	 *
+	 * @privat
+	 */
+	ODataContextBinding.prototype.getReturnValueContextPath = function (oResponseEntity) {
+		if (this.oOperation.bAdditionalQueryOptionsForRVC === undefined) {
+			throw new Error("Unexpected Value for bAdditionalQueryOptionsForRVC: undefined");
+		}
+		const sBindingParameterPath = this.oContext.getPath().slice(1);
+		const sPredicate = _Helper.getPrivateAnnotation(oResponseEntity, "predicate");
+		if (this.oOperation.bAdditionalQueryOptionsForRVC === false) {
+			const i = sBindingParameterPath.indexOf("(");
+
+			return (i < 0 ? sBindingParameterPath : sBindingParameterPath.slice(0, i)) + sPredicate;
+		}
+		const aMetaPathSegments = _Helper.getMetaPath(sBindingParameterPath).split("/");
+		const sPartner = this.oModel.getMetaModel()
+			.getObject("/" + aMetaPathSegments[0] + "/" + aMetaPathSegments[1] + "/$Partner");
+		const sPartnerPredicate
+			= this.oModel.getKeyPredicate("/" + aMetaPathSegments[0], oResponseEntity[sPartner]);
+
+		return sBindingParameterPath.split("/").map(function (sSegment, i) {
+			return sSegment.slice(0, sSegment.lastIndexOf("("))
+				+ (i ? sPredicate : sPartnerPredicate);
+		}).join("/");
+	};
+
+	/**
 	 * Handles the result of an executed operation and creates a return value context if possible.
 	 *
-	 * @param {string} sResolvedPath
-	 *   The resolved path
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
 	 * @param {object} oResponseEntity
@@ -1201,8 +1310,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.handleOperationResult = function (sResolvedPath,
-			oOperationMetadata, oResponseEntity, bReplaceWithRVC) {
+	ODataContextBinding.prototype.handleOperationResult = function (oOperationMetadata,
+			oResponseEntity, bReplaceWithRVC) {
 		var sContextPredicate, oOldValue, sResponsePredicate, sNewPath, oResult;
 
 		if (this.isReturnValueLikeBindingParameter(oOperationMetadata)) {
@@ -1218,7 +1327,17 @@ sap.ui.define([
 					this.oContext.patch(oResponseEntity);
 				}
 				if (this.hasReturnValueContext()) {
+					// determine the new path
+					sNewPath = this.getReturnValueContextPath(oResponseEntity);
 					if (bReplaceWithRVC) {
+						// replace is only possible if the path does not contain any navigation
+						// property or the key predicate of the first segment has not changed!
+						if (this.oOperation.bAdditionalQueryOptionsForRVC
+								&& this.oContext.getPath().split("/")[1]
+									!== sNewPath.split("/")[1]) {
+							throw new Error("Cannot replace due changed key predicates "
+								+ "and navigation property in path");
+						}
 						this.oCache = null;
 						this.oCachePromise = SyncPromise.resolve(null);
 						oResult = this.oContext.getBinding()
@@ -1228,11 +1347,10 @@ sap.ui.define([
 						return oResult;
 					}
 
-					sNewPath = _Helper.getReturnValueContextPath(sResolvedPath, sResponsePredicate);
 					this.oReturnValueContext = Context.createNewContext(this.oModel,
-						this, sNewPath);
+						this, "/" + sNewPath);
 					// set the resource path for late property requests
-					this.oCache.setResourcePath(sNewPath.slice(1));
+					this.oCache.setResourcePath(sNewPath);
 
 					return this.oReturnValueContext;
 				}
@@ -1254,19 +1372,30 @@ sap.ui.define([
 	 * 3. EntitySetPath of operation is the binding parameter.
 	 * 4. Operation binding has
 	 *    (a) a V4 parent context which
-	 *    (b) points to an entity from an entity set w/o navigation properties.
+	 *    (b) points to an entity from an entity set or the entity set itself w/ a maximum of one
+	 *        navigation property.
 	 *
 	 * BEWARE: It is the caller's duty to check 1. through 4.(a) via
 	 * {@link #isReturnValueLikeBindingParameter}!
 	 *
-	 * @returns {boolean} Whether a return value context is created
+	 * BEWARE: In {@link #addQueryOptionsForReturnValueContext} the flag
+	 * <code>this.oOperation.bAdditionalQueryOptionsForRVC</code> ist set. Until this is done this
+	 * function will also return true, because it seems possible to create a return value context.
+	 * If it was possbile to determine the additional needed query options in
+	 * {@link #addQueryOptionsForReturnValueContext}, we can be sure that it is possible to create a
+	 * return value context.
+	 *
+	 * @returns {boolean} Whether it seems possible to create a return value context
 	 *
 	 * @private
 	 */
 	ODataContextBinding.prototype.hasReturnValueContext = function () {
 		var aMetaSegments = _Helper.getMetaPath(this.getResolvedPath()).split("/");
 
-		// case 4b
+		if (aMetaSegments.length === 4) {
+			return this.oOperation.bAdditionalQueryOptionsForRVC !== false;
+		}
+
 		return aMetaSegments.length === 3
 			&& this.oModel.getMetaModel().getObject("/" + aMetaSegments[1]).$kind === "EntitySet";
 	};

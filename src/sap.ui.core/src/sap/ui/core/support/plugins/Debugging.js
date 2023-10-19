@@ -19,7 +19,6 @@ sap.ui.define([
 		var Debugging = Plugin.extend("sap.ui.core.support.plugins.Debugging", {
 			constructor: function(oSupportStub) {
 				Plugin.apply(this, ["sapUiSupportDebugging", "Debugging", oSupportStub]);
-				this._oStub = oSupportStub;
 				this._aEventIds = [
 					this.getId() + "ReceiveClasses",
 					this.getId() + "ReceiveClassMethods",
@@ -35,7 +34,6 @@ sap.ui.define([
 				this._mAddedClasses = {};
 				this._sSelectedClass = "";
 				this._mRebootUrls = {};
-
 			}
 		});
 
@@ -451,8 +449,7 @@ sap.ui.define([
 				"https://sdk.openui5.org/resources/sap-ui-core.js": "Public OpenUI5 server",
 				"https://sdk.openui5.org/nightly/resources/sap-ui-core.js": "Public OpenUI5 PREVIEW server",
 				"https://ui5.sap.com/resources/sap-ui-core.js": "Public SAPUI5 server",
-				"http://localhost:8080/testsuite/resources/sap-ui-core.js": "Localhost (port 8080), /testsuite ('grunt serve' URL)",
-				"http://localhost:8080/sapui5/resources/sap-ui-core.js": "Localhost (port 8080), /sapui5 (maven URL)"
+				"http://localhost:8080/resources/sap-ui-core.js": "Localhost (port 8080)"
 			};
 
 			this._testAndAddUrls(this._mRebootUrls);
@@ -525,6 +522,7 @@ sap.ui.define([
 
 		Debugging.prototype._onUseOtherUI5Version = function() {
 			var sRebootUrl = this.dom("RebootSelect").value;
+
 			if (sRebootUrl === "other") {
 				// use content of input field
 				sRebootUrl = this.dom("RebootInput").value;
@@ -539,11 +537,6 @@ sap.ui.define([
 				alert("Reboot URL cleared. App will start normally.");
 				/*eslint-enable no-alert */
 			} else {
-				// configure a reboot in the original window
-				this._oStub.sendEvent(this._techInfoId + "SetReboot", {
-					rebootUrl: sRebootUrl
-				});
-
 				// remember this URL in case it is a custom one
 				if (!this._mRebootUrls[sRebootUrl]) {
 					// need to get them from the domain of the app window
@@ -553,6 +546,14 @@ sap.ui.define([
 						callback: this.getId() + "SaveUrlIfNew"
 					});
 				}
+
+				// configure a reboot in the original window
+				this.confirmReload(function () {
+					this._oStub.sendEvent(this._techInfoId + "SetReboot", {
+						rebootUrl: sRebootUrl
+					});
+					this._oStub.sendEvent(this._oStub.getMetadata().getClass().EventType.RELOAD);
+				}.bind(this));
 			}
 		};
 

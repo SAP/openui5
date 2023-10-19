@@ -45,7 +45,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			var oCrossNavigation = oManifest["sap.app"].crossNavigation;
 			var oChangeContent = oChange.getContent();
 			DescriptorChangeCheck.checkEntityPropertyChange(oChangeContent, SUPPORTED_PROPERTIES, SUPPORTED_OPERATIONS);
@@ -54,7 +54,7 @@ sap.ui.define([
 				if (oInbound) {
 					changePropertyValueByPath(oChangeContent.entityPropertyChange, oInbound);
 				} else {
-					throw new Error("Nothing to update. Inbound with ID \"" + oChangeContent.inboundId + "\" does not exist.");
+					throw new Error(`Nothing to update. Inbound with ID "${oChangeContent.inboundId}" does not exist.`);
 				}
 			} else {
 				throw new Error("sap.app/crossNavigation or sap.app/crossNavigation/inbounds sections have not been found in manifest.json");

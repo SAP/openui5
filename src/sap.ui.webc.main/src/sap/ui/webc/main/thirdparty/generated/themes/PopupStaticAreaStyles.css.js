@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/PopupStaticAreaStyles.css",
-    content: ".ui5-block-layer {\n\tdisplay: none;\n\tposition: fixed;\n\tbackground-color: var(--sapBlockLayer_Background);\n\topacity: 0.6;\n\ttop: -500px;\n\tleft: -500px;\n\tright: -500px;\n\tbottom: -500px;\n\toutline: none;\n\tpointer-events: all;\n\tz-index: -1;\n}\n\n.ui5-block-layer:not([hidden]) {\n\tdisplay: inline-block;\n}"
+    content: ".ui5-block-layer{background-color:var(--sapBlockLayer_Background);bottom:-500px;display:none;left:-500px;opacity:.6;outline:none;pointer-events:all;position:fixed;right:-500px;top:-500px;z-index:-1}.ui5-block-layer:not([hidden]){display:inline-block}"
   };
   var _default = styleData;
   _exports.default = _default;

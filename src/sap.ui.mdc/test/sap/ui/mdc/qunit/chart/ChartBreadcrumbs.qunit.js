@@ -19,7 +19,7 @@ function(
 	QUnit.module("sap.ui.mdc.DrillBreadcrumbs", {
 
 		beforeEach: function() {
-			var TestComponent = UIComponent.extend("test", {
+			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
 						"sap.app": {
@@ -58,8 +58,8 @@ function(
 	});
 
     QUnit.test("DrillBreadcrumbs _createCrumb", function(assert) {
-		var oCrumbSettings = {dimensionKey: "testKey", dimensionText: "testText"};
-        var oCrumb = this.oMDCDrillBreadcrumbs._createCrumb(null, oCrumbSettings);
+		const oCrumbSettings = {dimensionKey: "testKey", dimensionText: "testText"};
+        const oCrumb = this.oMDCDrillBreadcrumbs._createCrumb(null, oCrumbSettings);
 
         assert.ok(oCrumb, "Crumb was created");
         assert.ok(oCrumb.data().hasOwnProperty("key"), "Custom data contains key field");
@@ -69,7 +69,7 @@ function(
 	});
 
     QUnit.test("DrillBreadcrumbs updateDrillBreadcrumbs", function(assert) {
-        var oDrillableItems = [new ChartItem({label: "label1", name: "name1"}), new ChartItem({label: "label2", name:"name2"})];
+        let oDrillableItems = [new ChartItem({label: "label1", name: "name1"}), new ChartItem({label: "label2", name:"name2"})];
         assert.ok(this.oMDCDrillBreadcrumbs.getLinks().length === 0, "No links present initially");
 
         this.oMDCDrillBreadcrumbs.updateDrillBreadcrumbs(null, oDrillableItems);

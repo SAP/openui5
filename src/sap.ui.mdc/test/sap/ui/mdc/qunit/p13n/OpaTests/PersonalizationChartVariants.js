@@ -23,8 +23,8 @@ sap.ui.define([
 		timeout: 45
 	});
 
-	var sChartID = "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart";
-	var sViewSettings = Arrangement.P13nDialog.Titles.settings;
+	const sChartID = "__component0---IDViewOfAppUnderTestChart--IDChartOfAppUnderTestChart";
+	const sViewSettings = Arrangement.P13nDialog.Titles.settings;
 
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
@@ -71,7 +71,7 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(sViewSettings);
 
-		var aLanguageFirst = [
+		const aLanguageFirst = [
 			{p13nItem: "Language", selected: true},
 			{p13nItem: "Genre", selected: true},
 			{p13nItem: "Price (average)", selected: true},
@@ -281,7 +281,7 @@ sap.ui.define([
 		Given.enableAndDeleteLrepLocalStorage();
 	});
 
-	var oChartConditions = {
+	const oChartConditions = {
 		Title:[
 			{operator:"Contains",values:["Pride"],validated:"NotValidated"}
 		]

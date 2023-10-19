@@ -2,18 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/m/MessageBox",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, MessageBox, Controller, TestUtils) {
+], function (MessageBox, Controller, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.RecursiveHierarchy.RecursiveHierarchy", {
-		onCreate : function (oEvent) {
+		onCreate : async function (oEvent) {
 			try {
 				const oParentContext = oEvent.getSource().getBindingContext();
-				oParentContext.getBinding().create({
+				await oParentContext.getBinding().create({
 					"@$ui5.node.parent" : oParentContext
 				}, /*bSkipRefresh*/true);
 			} catch (oError) {
@@ -22,13 +21,37 @@ sap.ui.define([
 			}
 		},
 
+		onCreateRoot : async function () {
+			try {
+				await this.byId("table").getBinding("rows").create({
+						// "@$ui5.node.parent" : null
+					}, /*bSkipRefresh*/true);
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
+					title : "Error"});
+			}
+		},
+
+		onCreateRootInTreeTable : async function () {
+			try {
+				await this.byId("treeTable").getBinding("rows").create({
+						"@$ui5.node.parent" : null
+					}, /*bSkipRefresh*/true);
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
+					title : "Error"});
+			}
+		},
+
 		onInit : function () {
-			const oUriParameters = UriParameters.fromQuery(window.location.search);
+			const oUriParameters = new URLSearchParams(window.location.search);
 			const sExpandTo = TestUtils.retrieveData( // controlled by OPA
 					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.expandTo")
 				|| oUriParameters.get("expandTo");
 			this._oAggregation = {
-				expandTo : parseInt(sExpandTo || "3"),
+				expandTo : sExpandTo === "*"
+					? Number.MAX_SAFE_INTEGER
+					: parseInt(sExpandTo || "3"),
 				hierarchyQualifier : "OrgChart"
 			};
 			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
@@ -37,7 +60,7 @@ sap.ui.define([
 
 			const oTable = this.byId("table");
 			if (sVisibleRowCount) {
-				oTable.setVisibleRowCount(parseInt(sVisibleRowCount));
+				oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
 			}
 			const oRowsBinding = oTable.getBinding("rows");
 			oRowsBinding.setAggregation(this._oAggregation);
@@ -53,7 +76,7 @@ sap.ui.define([
 			// enable V4 tree table flag
 			oTreeTable._oProxy._bEnableV4 = true;
 			if (sVisibleRowCount) {
-				oTreeTable.setVisibleRowCount(parseInt(sVisibleRowCount));
+				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
 			}
 			const oTreeRowsBinding = oTreeTable.getBinding("rows");
 			oTreeRowsBinding.setAggregation(this._oAggregation);
@@ -64,6 +87,33 @@ sap.ui.define([
 			oTreeRowsBinding.attachCreateCompleted(() => {
 				oTreeTable.setBusy(false);
 			});
+		},
+
+		onMove : function (oEvent) {
+			this.oNode = oEvent.getSource().getBindingContext();
+			const oSelectDialog = this.byId("moveDialog");
+			oSelectDialog.setBindingContext(this.oNode);
+			const oListBinding = oSelectDialog.getBinding("items");
+			if (oListBinding.isSuspended()) {
+				oListBinding.resume();
+			}
+			oSelectDialog.open();
+		},
+
+		onMoveConfirm : async function (oEvent) {
+			try {
+				this.getView().setBusy(true);
+				const sParentId = oEvent.getParameter("selectedItem").getBindingContext()
+					.getProperty("ID");
+				const oParent = this.oNode.getBinding().getAllCurrentContexts()
+					.find((oNode) => oNode.getProperty("ID") === sParentId);
+				await this.oNode.move({parent : oParent});
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
+					title : "Error"});
+			} finally {
+				this.getView().setBusy(false);
+			}
 		},
 
 		onNameChanged : function (oEvent) {

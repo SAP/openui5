@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "Chart-Tree-Map";
-  const pathData = "M435 20q32 0 54.5 22T512 96v307q0 32-22.5 54T435 479H77q-32 0-54-22T1 403V96q0-32 22-54t54-22h358zM205 428h102V275H205v153zm153-102h103v-51H358v51zM461 96q0-11-7.5-18T435 71H205v153h256V96zM52 403q0 25 25 25h77V71H77q-25 0-25 25v307zm383 25q11 0 18.5-7t7.5-18v-26H358v51h77z";
+  const pathData = "M422 32q38 0 64 26t26 64v268q0 38-26 64t-64 26H90q-38 0-64-26T0 390V122q0-38 26-64t64-26h332zm39 90q0-17-11-28t-28-11H211v141h250V122zM51 390q0 17 11 28t28 11h70V83H90q-17 0-28 11t-11 28v268zm160 39h77V275h-77v154zm128-109h122v-45H339v45zm83 109q17 0 28-11t11-28v-19H339v58h83z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

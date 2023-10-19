@@ -1,8 +1,7 @@
 {
-	"_version": "1.21.0",
+	"_version": "1.58.0",
 	"sap.app": {
-		"id": "sap.ui.demo.walkthrough",
-		"type": "application",
+		"id": "ui5.walkthrough",
 		"i18n": {
 			"bundleUrl": "i18n/i18n.properties",
 			"supportedLocales": [
@@ -12,12 +11,13 @@
 		},
 		"title": "{{appTitle}}",
 		"description": "{{appDescription}}",
+		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
 		},
 		"dataSources": {
 			"invoiceRemote": {
-				"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/",
+				"uri": "V2/Northwind/Northwind.svc/",
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0"
@@ -34,27 +34,22 @@
 		}
 	},
 	"sap.ui5": {
-		"rootView": {
-			"viewName": "sap.ui.demo.walkthrough.view.App",
-			"type": "XML",
-			"id": "app"
-		},
-		"dependencies": {
-			"minUI5Version": "1.98.0",
-			"libs": {
-				"sap.ui.core": {},
-				"sap.m": {}
-			}
-		},
 		"contentDensities": {
 			"compact": true,
 			"cozy": true
+		},
+		"dependencies": {
+			"minUI5Version": "1.108.0",
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
 		},
 		"models": {
 			"i18n": {
 				"type": "sap.ui.model.resource.ResourceModel",
 				"settings": {
-					"bundleName": "sap.ui.demo.walkthrough.i18n.i18n",
+					"bundleName": "ui5.walkthrough.i18n.i18n",
 					"supportedLocales": [
 						""
 					],
@@ -64,6 +59,11 @@
 			"invoice": {
 				"dataSource": "invoiceRemote"
 			}
+		},
+		"rootView": {
+			"viewName": "ui5.walkthrough.view.App",
+			"type": "XML",
+			"id": "app"
 		},
 		"resources": {
 			"css": [
@@ -77,7 +77,7 @@
 				"routerClass": "sap.m.routing.Router",
 				"type": "View",
 				"viewType": "XML",
-				"path": "sap.ui.demo.walkthrough.view",
+				"path": "ui5.walkthrough.view",
 				"controlId": "app",
 				"controlAggregation": "pages"
 			},

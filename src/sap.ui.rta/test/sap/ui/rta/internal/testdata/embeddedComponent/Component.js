@@ -22,27 +22,27 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			this._adaptButtonConfiguration();
 			this._setModels(this._startMockServer());
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 			this.getRouter().initialize();
 		},
 
-		_startMockServer: function() {
+		_startMockServer() {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/EmbeddedComponentTest/";
 			var oMockServer = new MockServer({
 				rootUri: sURL
 			});
 			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test/variantManagement");
 
-			oMockServer.simulate(this._sResourcePath + "/mockserver/metadata.xml", this._sResourcePath + "/mockserver");
+			oMockServer.simulate(`${this._sResourcePath}/mockserver/metadata.xml`, `${this._sResourcePath}/mockserver`);
 			oMockServer.start();
 
 			return sURL;
 		},
 
-		_setModels: function(sURL) {
+		_setModels(sURL) {
 			var oModel = new ODataModel(sURL, {
 				json: true,
 				loadMetadataAsync: true
@@ -65,7 +65,7 @@ sap.ui.define([
 			this.setModel(oStateModel, "state");
 		},
 
-		_adaptButtonConfiguration: function() {
+		_adaptButtonConfiguration() {
 			var oAppModel = new JSONModel({
 				showAdaptButton: false // for embedded app
 			});

@@ -6,17 +6,16 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/core/Manifest',
-	'sap/ui/core/Configuration',
 	'sap/base/Log',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions'
 ],
-	function(ManagedObjectMetadata, Manifest, Configuration, Log, extend, deepExtend, isPlainObject, LoaderExtensions) {
+	function(ManagedObjectMetadata, Manifest, Log, extend, deepExtend, isPlainObject, LoaderExtensions) {
 	"use strict";
 
-	var syncCallBehavior = Configuration.getSyncCallBehavior();
+	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
 	/**
 	 * Creates a new metadata object for a Component subclass.

@@ -29,14 +29,18 @@
 	}
 }
 
+.sapMPIValueMax .sapMPIBarRemaining {
+	display: flex;
+}
+
 .sapMPIBarRemaining {
-	z-index: -1;
 	position: absolute;
     width: ~'calc(100% - 1.25rem)';
 	border: 0.0625rem solid @sapUiProgressBorderColor;
 }
 
 .sapMPIBar {
+	z-index: 1;
 	border: 0.0625rem solid @sapUiProgressValueTextColor;
 }
 
@@ -206,7 +210,8 @@
 }
 
 /* Compact */
-.sapUiSizeCompact .sapUiTableDataCell .sapMPI:not(.sapMPIDisplayOnly) {
+.sapUiSizeCompact .sapUiTableDataCell .sapMPI:not(.sapMPIDisplayOnly),
+.sapUiSizeCompact .sapMListTblCell .sapMPI:not(.sapMPIDisplayOnly) {
 	margin: 0;
 }
 

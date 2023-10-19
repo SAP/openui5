@@ -8,12 +8,12 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/MessageScope"
-], function (UriParameters, coreLibrary, UIComponent, JSONModel, MessageScope) {
+], function (coreLibrary, Messaging, UIComponent, JSONModel, MessageScope) {
 	"use strict";
 	var MessageType = coreLibrary.MessageType,
 		aItemFilter = [{
@@ -45,7 +45,7 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.core.internal.samples.odata.v2.SalesOrders.Component", {
 		constructor : function(mParameters) {
 			var sInlineCreationRows =
-					UriParameters.fromQuery(window.location.search).get("inlineCreationRows"),
+					new URLSearchParams(window.location.search).get("inlineCreationRows"),
 				oModel;
 
 			UIComponent.apply(this, arguments);
@@ -68,7 +68,7 @@ sap.ui.define([
 				salesOrdersFilter : "",
 				useTable : false
 			}), "ui");
-			this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "messages");
+			this.setModel(Messaging.getMessageModel(), "messages");
 		},
 
 		metadata : {

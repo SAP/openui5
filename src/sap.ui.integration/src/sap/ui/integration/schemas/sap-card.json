@@ -51,7 +51,8 @@
         "1.38.0",
         "1.39.0",
         "1.40.0",
-        "1.41.0"
+        "1.41.0",
+        "1.42.0"
       ]
     },
     "designtime": {
@@ -70,12 +71,12 @@
         "modelSizeLimit": {
           "description": "[Experimental] Represents the maximum number of entries that are used for list bindings.",
           "oneOf": [
-              {
-                "type": "number"
-              },
-              {
-                "$ref": "#/definitions/simpleBinding"
-              }
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
           ],
           "default": 1000
         },
@@ -229,15 +230,7 @@
         },
         "visible": {
           "description": "[Experimental] Visibility of the footer",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -273,7 +266,6 @@
           "type": {
             "const": "Analytical"
           }
-
         }
       },
       "then": {
@@ -438,7 +430,11 @@
         },
         "title": {
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header title"
+          }
         },
         "titleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the title.",
@@ -454,7 +450,11 @@
         },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header subtitle"
+          }
         },
         "subTitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title.",
@@ -486,17 +486,13 @@
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
         },
+        "closeButton": {
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "$ref": "#/definitions/closeButton"
+        },
         "visible": {
           "description": "[Experimental] Visibility of the header",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -517,7 +513,11 @@
         },
         "title": {
           "description": "Represents a title of the header; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header title"
+          }
         },
         "titleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the title.",
@@ -533,7 +533,11 @@
         },
         "subTitle": {
           "description": "Represents a subtitle to the title; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XTIT",
+            "comment": "Header subtitle"
+          }
         },
         "subTitleMaxLines": {
           "description": "[Experimental] Limit the number of lines for the sub title.",
@@ -608,17 +612,13 @@
           "description": "Represents the status of the card",
           "$ref": "#/definitions/status"
         },
+        "closeButton": {
+          "description": "[Experimental] Represents the Close button when a card is opened by the ShowCard action.",
+          "$ref": "#/definitions/closeButton"
+        },
         "visible": {
           "description": "[Experimental] Visibility of the header",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -667,15 +667,7 @@
         },
         "visible": {
           "description": "Visibility of the main indicator",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -711,15 +703,7 @@
         },
         "visible": {
           "description": "Visibility of the side indicator",
-          "oneOf": [
-            {
-              "type": "boolean",
-              "default": true
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -799,8 +783,8 @@
           ]
         },
         "info": {
-            "description": "Defines an additional information text",
-            "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
+          "description": "Defines an additional information text",
+          "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
         },
         "highlight": {
           "type": "string",
@@ -822,26 +806,26 @@
           "$ref": "#/definitions/icon"
         },
         "attributesLayoutType": {
-            "description": "Defines the layout type of the attributes",
-            "oneOf": [
-                {
-                    "enum": [
-                        "OneColumn",
-                        "TwoColumns"
-                    ],
-                    "default": "TwoColumns"
-                },
-                {
-                    "$ref": "#/definitions/simpleBinding"
-                }
-            ]
+          "description": "Defines the layout type of the attributes",
+          "oneOf": [
+            {
+              "enum": [
+                "OneColumn",
+                "TwoColumns"
+              ],
+              "default": "TwoColumns"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
         },
         "attributes": {
-            "description": "Defines the attributes",
-            "type": "array",
-            "items": {
-                "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
-            }
+          "description": "Defines the attributes",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ContentType.List.Item.ValueStateItem"
+          }
         },
         "actions": {
           "description": "Defines actions that can be applied on the item",
@@ -863,56 +847,49 @@
       }
     },
     "ContentType.List.Item.ValueStateItem": {
-        "description": "Represents value and state information for an object",
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-            "value": {
-                "type": "string",
-                "description": "The value of the field"
+      "description": "Represents value and state information for an object",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "value": {
+          "type": "string",
+          "description": "The value of the field"
+        },
+        "state": {
+          "description": "The state of the field",
+          "oneOf": [
+            {
+              "$ref": "#/definitions/state"
             },
-            "state": {
-                "description": "The state of the field",
-                "oneOf": [
-                    {
-                        "$ref": "#/definitions/state"
-                    },
-                    {
-                        "$ref": "#/definitions/simpleBinding"
-                    }
-                ]
-            },
-            "showStateIcon": {
-              "description": "Defines if a default state icon is shown",
-              "oneOf": [
-                {
-                 "type": "boolean"
-                },
-                {
-                 "$ref": "#/definitions/simpleBinding"
-                }
-              ]
-            },
-            "customStateIcon":{
-              "description": "The custom state icon",
-              "type": "string"
-            },
-            "visible": {
-              "description": "Visibility of the item",
-              "oneOf": [
-                {
-                 "type": "boolean"
-                },
-                {
-                  "$ref": "#/definitions/simpleBinding"
-                }
-              ]
-            },
-            "title": {
-              "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of columnn names while transforming table card to list card.",
-              "type": "string"
+            {
+              "$ref": "#/definitions/simpleBinding"
             }
+          ]
+        },
+        "showStateIcon": {
+          "description": "Defines if a default state icon is shown",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "customStateIcon": {
+          "description": "The custom state icon",
+          "type": "string"
+        },
+        "visible": {
+          "description": "Visibility of the item",
+          "$ref": "#/definitions/visibility"
+        },
+        "title": {
+          "description": "Title of the data point. This is just a placeholder to store the title, title will not be rendered on the screen. This is needed to prevent the loss of columnn names while transforming table card to list card.",
+          "type": "string"
         }
+      }
     },
     "ContentType.Analytical": {
       "description": "Represents analytical content attributes",
@@ -927,7 +904,7 @@
           "type": "string",
           "oneOf": [
             {
-             "type": "string"
+              "type": "string"
             },
             {
               "$ref": "#/definitions/simpleBinding"
@@ -974,15 +951,7 @@
           "properties": {
             "visible": {
               "description": "Represents the visibility state of the title",
-              "oneOf": [
-                {
-                  "type": "boolean",
-                  "default": true
-                },
-                {
-                  "$ref": "#/definitions/simpleBinding"
-                }
-              ]
+              "$ref": "#/definitions/visibility"
             },
             "text": {
               "description": "Represents a title text",
@@ -1221,17 +1190,17 @@
           "type": "string",
           "description": "Data type of the dimension as displayed in the chart. Currently only in time series chart, it is required to set data type to 'date' if this column is going to feed the 'timeAxis'",
           "oneOf": [
-             {
-               "enum": [
-                 "string",
-                 "number",
-                 "date"
-               ],
-               "default": "string"
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
+            {
+              "enum": [
+                "string",
+                "number",
+                "date"
+              ],
+              "default": "string"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
           ]
         }
       }
@@ -1340,7 +1309,7 @@
           "description": "Defines actions that can be applied on the item level",
           "type": "array",
           "items": {
-              "$ref": "#/definitions/action"
+            "$ref": "#/definitions/action"
           }
         }
       }
@@ -1371,16 +1340,16 @@
           "description": "Represents flag for no data",
           "oneOf": [
             {
-                "type": "boolean"
+              "type": "boolean"
             },
             {
-                "type": "object"
+              "type": "object"
             },
             {
-                "type": "array"
+              "type": "array"
             },
             {
-                "$ref": "#/definitions/simpleBinding"
+              "$ref": "#/definitions/simpleBinding"
             }
           ],
           "default": true
@@ -1397,31 +1366,35 @@
       "properties": {
         "title": {
           "description": "Represents a title of the object group; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XGRP",
+            "comment": "Object group title"
+          }
         },
         "titleMaxLines": {
-            "description": "[Experimental] Limits the number of lines for wrapping the group title.",
-            "oneOf": [
-                {
-                    "type": "number"
-                },
-                {
-                    "$ref": "#/definitions/simpleBinding"
-                }
-            ],
-            "default": 1
+          "description": "[Experimental] Limits the number of lines for wrapping the group title.",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": 1
         },
         "labelWrapping": {
-            "description": "[Experimental] Determines whether the labels of the group items will be wrapped.",
-            "oneOf": [
-                {
-                    "type": "boolean"
-                },
-                {
-                    "$ref": "#/definitions/simpleBinding"
-                }
-            ],
-            "default": false
+          "description": "[Experimental] Determines whether the labels of the group items will be wrapped.",
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ],
+          "default": false
         },
         "items": {
           "description": "Represents items of information",
@@ -1640,7 +1613,7 @@
         "customStateIcon": {
           "description": "The custom state icon",
           "type": "string"
-         },
+        },
         "id": {
           "description": "ID for input fields",
           "type": "string"
@@ -1709,15 +1682,15 @@
             }
           ]
         },
-        "src" : {
+        "src": {
           "type": "string",
           "description": "Represents image source URL"
         },
-        "alt" :{
+        "alt": {
           "type": "string",
           "description": "The alternative text that is displayed in case the image is not available, or cannot be displayed."
         },
-        "fullWidth" : {
+        "fullWidth": {
           "description": "Defines if the image will take the full width of the group, including the paddings. If set to false there will be padding. For best result use together with 'alignment': 'Stretched' for the group",
           "oneOf": [
             {
@@ -1814,7 +1787,7 @@
       "description": "Definition for icons in the IconGroup",
       "type": "object",
       "additionalProperties": false,
-      "properties":  {
+      "properties": {
         "src": {
           "type": "string",
           "description": "Represents icon name or source URL"
@@ -1853,80 +1826,80 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-         "message": {
-           "description": "Defines custom validation message text",
-           "type": "string"
-         },
-         "type": {
-           "description": "Defines the validation type",
-           "oneOf": [
-             {
-               "enum": [
-                 "Error",
-                 "Warning",
-                 "Information"
-               ],
-               "default": "Error"
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
-           ]
-         },
-         "required": {
-           "description": "Defines whether the user input is required",
-           "oneOf": [
-             {
-               "type": "boolean",
-               "default": false
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
-           ]
-         },
-         "minLength": {
-           "description": "Defines the minimum number of characters",
-           "oneOf": [
-             {
-               "type": "number"
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
-           ]
-         },
-         "maxLength": {
-           "description": "Defines the maximum number of characters",
-           "oneOf": [
-             {
-               "type": "number"
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
-           ]
-         },
-         "restrictToPredefinedOptions": {
-           "description": "Defines whether the value is restricted to predefined options",
-           "oneOf": [
-             {
-               "type": "boolean",
-               "default": false
-             },
-             {
-               "$ref": "#/definitions/simpleBinding"
-             }
-           ]
-         },
-         "pattern": {
-           "description": "Sets the regular expression pattern that should match the value",
-           "type": "string"
-         },
-         "validate": {
-           "description": "An extension function used to validate the value",
-           "type": "string"
-         }
+        "message": {
+          "description": "Defines custom validation message text",
+          "type": "string"
+        },
+        "type": {
+          "description": "Defines the validation type",
+          "oneOf": [
+            {
+              "enum": [
+                "Error",
+                "Warning",
+                "Information"
+              ],
+              "default": "Error"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "required": {
+          "description": "Defines whether the user input is required",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "minLength": {
+          "description": "Defines the minimum number of characters",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "maxLength": {
+          "description": "Defines the maximum number of characters",
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "restrictToPredefinedOptions": {
+          "description": "Defines whether the value is restricted to predefined options",
+          "oneOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "pattern": {
+          "description": "Sets the regular expression pattern that should match the value",
+          "type": "string"
+        },
+        "validate": {
+          "description": "An extension function used to validate the value",
+          "type": "string"
+        }
       }
     },
     "ContentType.Table": {
@@ -1961,10 +1934,10 @@
               "description": "The highlight state of the row",
               "oneOf": [
                 {
-                   "$ref": "#/definitions/state"
+                  "$ref": "#/definitions/state"
                 },
                 {
-                   "$ref": "#/definitions/simpleBinding"
+                  "$ref": "#/definitions/simpleBinding"
                 }
               ]
             },
@@ -2008,7 +1981,11 @@
       "properties": {
         "title": {
           "description": "Represents a title of the column; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XCOL",
+            "comment": "Column title"
+          }
         },
         "width": {
           "description": "Defines the width of the column",
@@ -2103,7 +2080,7 @@
         "customStateIcon": {
           "description": "The custom state icon",
           "type": "string"
-         }
+        }
       }
     },
     "ContentType.Calendar": {
@@ -2486,14 +2463,7 @@
         },
         "visible": {
           "description": "Visibility of the icon",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -2619,6 +2589,17 @@
         }
       }
     },
+    "closeButton": {
+      "description": "[Experimental] Represents attributes of the Close button",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "visible": {
+          "description": "[Experimental] Represents the visibility of the Close button",
+          "$ref": "#/definitions/visibility"
+        }
+      }
+    },
     "data": {
       "description": "Represents request and response attributes",
       "type": "object",
@@ -2737,7 +2718,7 @@
         },
         "parameters": {
           "description": "Represents the request parameters. If it is a POST request the parameters will be put as key/value pairs into the body of the request",
-          "$ref": "#/definitions/parameters"
+          "type": "object"
         },
         "headers": {
           "description": "Represents HTTP headers",
@@ -2788,7 +2769,7 @@
         },
         "cache": {
           "description": "Cache control settings",
-          "$ref" :"#/definitions/cache"
+          "$ref": "#/definitions/cache"
         }
       }
     },
@@ -2878,7 +2859,11 @@
       "properties": {
         "label": {
           "description": "Represents a label of the field; to make this property language dependent (recommended), use a key in double curly brackets '{{key}}'",
-          "$ref": "#/definitions/i18n_key_string"
+          "$ref": "#/definitions/i18n_key_string",
+          "i18n": {
+            "type": "XFLD",
+            "comment": "Field label"
+          }
         },
         "value": {
           "type": "string",
@@ -2892,8 +2877,13 @@
     },
     "i18n_key_string": {
       "anyOf": [
-        { "type": "string", "pattern": "^\\{\\{[\\w][\\w\\.\\-]*\\}\\}$" },
-        { "type": "string" }
+        {
+          "type": "string",
+          "pattern": "^\\{\\{[\\w][\\w\\.\\-]*\\}\\}$"
+        },
+        {
+          "type": "string"
+        }
       ]
     },
     "simpleBinding": {
@@ -2941,22 +2931,14 @@
           "$ref": "#/definitions/service"
         },
         "url": {
-          "description": "Represents the URL that will be used as navigation target if no service is provided",
+          "description": "[Deprecated] Represents the URL that will be used as navigation target if no service is provided",
           "type": "string"
         },
         "parameters": {
-          "description": "Parameters passed to the navigation action handler",
-          "oneOf": [
-            {
-              "$ref": "#/definitions/parameters"
-            },
-            {
-              "$ref": "#/definitions/ibnActionParameters"
-            }
-          ]
+          "description": "Parameters passed to the navigation action handler"
         },
         "target": {
-          "description": "Specifies where to open the 'url', if it is provided",
+          "description": "[Deprecated] Specifies where to open the 'url', if it is provided",
           "type": "string",
           "oneOf": [
             {
@@ -2967,45 +2949,208 @@
             }
           ]
         }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Custom"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/customActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Navigation"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "oneOf": [
+                  {
+                    "$ref": "#/definitions/navigationActionParameters"
+                  },
+                  {
+                    "$ref": "#/definitions/navigationActionIBParameters"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "Submit"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                  "$ref": "#/definitions/submitActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ShowCard"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/showCardActionParameters"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "HideCard"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "$ref": "#/definitions/hideCardActionParameters"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "navigationActionParameters": {
+      "description": "Parameters for Navigation action",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
       }
     },
-    "parameters": {
-      "description": "Represents parameters that are passed in the actions",
-      "type": "object",
-      "additionalProperties": true
-    },
-    "ibnActionParameters": {
-      "description": "Parameters for an intent based navigation",
+    "navigationActionIBParameters": {
+      "description": "Parameters for Intent-Based Navigation action",
       "type": "object",
       "additionalProperties": false,
       "required": [
         "ibnTarget"
       ],
-      "ibnTarget": {
-        "description": "An application identifier consisting of semanticObject and action",
-        "$ref": "#/definitions/ibnTarget"
-      },
-      "ibnParam": {
-        "description": "Key/value pairs for parameters of the target application",
-        "$ref": "#/definitions/parameters"
-      },
-      "ibnAppSpecificRoute": {
-        "description": "An application specific route that is passed to the target application",
-        "type": "string"
+      "properties": {
+        "ibnTarget": {
+          "description": "An application identifier consisting of semanticObject and action",
+          "$ref": "#/definitions/ibnTarget"
+        },
+        "ibnParams": {
+          "description": "Key/value pairs for parameters of the target application",
+          "type": "object"
+        },
+        "ibnAppSpecificRoute": {
+          "description": "An application specific route that is passed to the target application",
+          "type": "string"
+        }
       }
+    },
+    "submitActionParameters": {
+      "description": "Parameters for Submit action",
+      "type": "object",
+      "additionalProperties": false
+    },
+    "showCardActionParameters": {
+      "description": "Parameters for ShowCard action",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest"
+      ],
+      "properties": {
+        "manifest": {
+          "description": "An application identifier consisting of semanticObject and action",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object"
+            }
+          ]
+        },
+        "parameters": {
+          "type": "object"
+        },
+        "data": {
+          "type": "object"
+        },
+        "width": {
+          "type": "string"
+        },
+        "baseUrl": {
+          "type": "string"
+        },
+        "resizable": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        }
+      }
+    },
+    "customActionParameters": {
+      "description": "Parameters for Custom action",
+      "type": "object",
+      "additionalProperties": true
+    },
+    "hideCardActionParameters": {
+      "description": "Parameters for HideCard action",
+      "type": "object",
+      "additionalProperties": false
     },
     "ibnTarget": {
       "description": "The application identifier consisting of semanticObject and action or ",
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "semanticObject", "action"
+        "semanticObject",
+        "action"
       ],
-      "semanticObject": {
-        "type": "string"
-      },
-      "action": {
-        "type": "string"
+      "properties": {
+        "semanticObject": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string"
+        }
       }
     },
     "state": {
@@ -3049,7 +3194,7 @@
               "type": "string"
             },
             "parameters": {
-              "$ref": "#/definitions/parameters"
+              "type": "object"
             }
           }
         }
@@ -3171,14 +3316,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3284,14 +3422,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3328,14 +3459,7 @@
         },
         "visible": {
           "description": "Determines whether the filter is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },
@@ -3753,14 +3877,7 @@
         },
         "visible": {
           "description": "Determines whether the item is visible",
-          "oneOf": [
-            {
-              "type": "boolean"
-            },
-            {
-              "$ref": "#/definitions/simpleBinding"
-            }
-          ]
+          "$ref": "#/definitions/visibility"
         }
       }
     },

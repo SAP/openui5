@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
@@ -10,8 +11,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	Lib,
 	sinon,
 	QUnitUtils,
 	ChangeIndicator,
@@ -21,12 +23,12 @@ sap.ui.define([
 	Button,
 	JSONModel,
 	DateFormat,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function createMockChange(sId, sAffectedElementId, sCommandName, sChangeCategory, mPayload) {
 		var oCreationDate = new Date();
@@ -35,7 +37,7 @@ sap.ui.define([
 			commandName: sCommandName,
 			changeCategory: sChangeCategory,
 			change: {
-				getCreation: function() {
+				getCreation() {
 					return oCreationDate;
 				}
 			},
@@ -47,19 +49,19 @@ sap.ui.define([
 	function waitForMethodCall(oObject, sMethodName) {
 		return new Promise(function(resolve) {
 			sandbox.stub(oObject, sMethodName)
-			.onFirstCall().callsFake(function() {
-				resolve(oObject[sMethodName].wrappedMethod.apply(this, arguments));
+			.onFirstCall().callsFake(function(...aArgs) {
+				resolve(oObject[sMethodName].wrappedMethod.apply(this, aArgs));
 			})
 			.callThrough();
 		});
 	}
 
 	QUnit.module("Basic tests", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button("TestButton");
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime();
 
@@ -83,19 +85,19 @@ sap.ui.define([
 			this.oDesignTime.addRootElement(this.oButton);
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 			this.oChangeIndicator.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when a change indicator with a single change is created", function(assert) {
+		QUnit.test("when a change indicator with a single change is created", async function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValue",
@@ -105,7 +107,7 @@ sap.ui.define([
 			this.oChangeIndicator.getModel().setData({
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
@@ -173,12 +175,12 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a change indicator with a single change is created and the Text or ID of the element is too long", function(assert) {
+		QUnit.test("when a change indicator with a single change is created and the Text or ID of the element is too long", async function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValueOfAFieldWithAnExtremelyLongButtonNameOrIDWhichThePopoverCouldNotCorrectlyDisplayWithoutAnyIssues",
@@ -188,7 +190,7 @@ sap.ui.define([
 			this.oChangeIndicator.getModel().setData({
 				changes: [createMockChange("someChangeId", this.oButton.getId(), "rename", "rename", mPayload)]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
@@ -247,18 +249,18 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a change was created within the session", function(assert) {
+		QUnit.test("when a change was created within the session", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [Object.assign(
 					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove"),
 					{
 						change: {
-							getCreation: function() { }
+							getCreation() { }
 						}
 					}
 				)]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorLight"),
@@ -280,7 +282,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a move change indicator is created", function(assert) {
+		QUnit.test("when a move change indicator is created", async function(assert) {
 			var oPayloadInsideGroup = {
 				sourceContainer: { id: "Group1" },
 				targetContainer: { id: "Group1" }
@@ -301,7 +303,7 @@ sap.ui.define([
 					createMockChange("changeId3", this.oButton.getId(), "move", "move", oPayloadWithoutSourceParentId)
 				]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
@@ -372,14 +374,14 @@ sap.ui.define([
 			assert.strictEqual(this.oChangeIndicator._oDetailModel.getData()[0].detailButtonText, undefined, "there is no button text");
 		});
 
-		QUnit.test("when a change indicator with two changes is created", function(assert) {
+		QUnit.test("when a change indicator with two changes is created", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
 					createMockChange("someOtherChangeId", this.oButton.getId(), "addDelegateProperty", "add")
 				]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 			assert.ok(
@@ -430,7 +432,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when a change indicator with five changes is created", function(assert) {
+		QUnit.test("when a change indicator with five changes is created", async function(assert) {
 			this.oChangeIndicator.getModel().setData({
 				changes: [
 					createMockChange("someChangeId", this.oButton.getId(), "move", "move"),
@@ -440,7 +442,7 @@ sap.ui.define([
 					createMockChange("someOtherChangeIdFour", this.oButton.getId(), "rename", "rename")
 				]
 			});
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorColorDark"),
 				"then the correct indicator color is used"
@@ -452,9 +454,9 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is focused before it is rendered", function(assert) {
+		QUnit.test("when a change indicator is focused before it is rendered", async function(assert) {
 			this.oChangeIndicator.focus();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual(
 				document.activeElement,
 				this.oChangeIndicator.getDomRef(),
@@ -462,7 +464,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is created with a change payload that has two simple strings", function(assert) {
+		QUnit.test("when a change indicator is created with a change payload that has two simple strings", async function(assert) {
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "Aftervalue"
@@ -480,7 +482,7 @@ sap.ui.define([
 				]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -489,7 +491,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is created with a change payload that has a binding and a string", function(assert) {
+		QUnit.test("when a change indicator is created with a change payload that has a binding and a string", async function(assert) {
 			var mPayload = {
 				originalLabel: "{/bindingInfo}",
 				newLabel: "AfterValue"
@@ -514,7 +516,7 @@ sap.ui.define([
 				]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -523,7 +525,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is created with a change payload that has two bindings", function(assert) {
+		QUnit.test("when a change indicator is created with a change payload that has two bindings", async function(assert) {
 			var mPayload = {
 				originalLabel: "{/bindingInfo}",
 				newLabel: "{/bindingInfo2}"
@@ -549,7 +551,7 @@ sap.ui.define([
 				]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
@@ -558,7 +560,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is created with a change payload but there is no specific visualization for that change type yet", function(assert) {
+		QUnit.test("when a change indicator is created with a change payload but there is no specific visualization for that change type yet", async function(assert) {
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "Aftervalue"
@@ -570,19 +572,19 @@ sap.ui.define([
 				]
 			});
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.strictEqual(
 				this.oChangeIndicator._oDetailModel.oData[0].description,
 				oRtaResourceBundle.getText(
 					"TXT_CHANGEVISUALIZATION_CHANGE_REMOVE",
-					"TestButton"
+					["TestButton"]
 				),
 				"then the description is the previously used generic text"
 			);
 		});
 
-		QUnit.test("When a ChangeIndicator is created on an initially narrow overlay that later increases in height", function(assert) {
+		QUnit.test("When a ChangeIndicator is created on an initially narrow overlay that later increases in height", async function(assert) {
 			var mPayload = {
 				originalLabel: "BeforeValue",
 				newLabel: "AfterValue"
@@ -593,6 +595,7 @@ sap.ui.define([
 					createMockChange("someChangeId", this.oButton.getId(), "remove", "remove", mPayload)
 				]
 			});
+			await nextUIUpdate();
 
 			assert.ok(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
@@ -600,7 +603,8 @@ sap.ui.define([
 			);
 
 			this.oButtonOverlay.getDomRef().style.height = "100px";
-			oCore.applyChanges();
+			this.oChangeIndicator.invalidate();
+			await nextUIUpdate();
 
 			assert.notOk(
 				this.oChangeIndicator.getDomRef().classList.contains("sapUiRtaChangeIndicatorVerticallyCentered"),
@@ -608,12 +612,12 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when a change indicator is hidden", function(assert) {
+		QUnit.test("when a change indicator is hidden", async function(assert) {
 			sandbox.stub(DateFormat, "getDateTimeInstance")
 			.callThrough()
 			.withArgs({ relative: "true" })
 			.returns({
-				format: function() { return "myTime"; }
+				format() { return "myTime"; }
 			});
 			var mPayload = {
 				originalLabel: "BeforeValue",
@@ -626,7 +630,7 @@ sap.ui.define([
 
 			var oOpenPopoverPromise = waitForMethodCall(this.oChangeIndicator, "setAggregation");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.oChangeIndicator.getVisible(), "then the indicator is visible");
 			QUnitUtils.triggerEvent("click", this.oChangeIndicator.getDomRef());
 

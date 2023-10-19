@@ -206,7 +206,7 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 			var oTimeFired = new Date();
 
 			setTimeout(function() {
-				var oComponentInfo = EventBroadcaster._createOwnerComponentInfo(sap.ui.getCore().byId(sElementId)),
+				var oComponentInfo = EventBroadcaster._createOwnerComponentInfo(Element.getElementById(sElementId)),
 					oData = {
 						componentId: oComponentInfo.id,
 						componentVersion: oComponentInfo.version,

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TableColumn.css",
-    content: ":host {\n\tdisplay: contents;\n}\n\nth {\n\tbackground: var(--sapList_HeaderBackground);\n\twidth: inherit;\n\tfont-weight: var(--ui5_table_header_row_font_weight);\n\tfont-size: var(--sapFontMediumSize);\n\tpadding: 0.5rem;\n\tbox-sizing: border-box;\n\ttext-align: start;\n\tvertical-align: middle;\n}\n\n:host([first]) th {\n\tpadding-inline-start: 1rem;\n}\n\nth ::slotted([ui5-label]) {\n\tfont-weight: var(--ui5_table_header_row_font_weight);\n\tfont-size: var(--sapFontMediumSize);\n}"
+    content: ":host{display:contents}th{background:var(--sapList_HeaderBackground);box-sizing:border-box;font-family:var(--ui5-v1-18-0_table_header_row_font_family);font-size:var(--sapFontMediumSize);font-weight:var(--ui5-v1-18-0_table_header_row_font_weight);padding:.5rem;text-align:start;vertical-align:middle;width:inherit}:host([first]) th{padding-inline-start:1rem}th ::slotted([ui5-label]){font-family:var(--ui5-v1-18-0_table_header_row_font_family);font-size:var(--sapFontMediumSize);font-weight:var(--ui5-v1-18-0_table_header_row_font_weight)}"
   };
   var _default = styleData;
   _exports.default = _default;

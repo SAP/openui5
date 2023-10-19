@@ -19,9 +19,9 @@ sap.ui.define([], function() {
 		};
 
 		// load and boot the core
-		sap.ui.require(["sap/ui/core/Core"], function(core) {
-			core.boot();
-			sap.ui.getCore().attachInit(function() {
+		sap.ui.require(["sap/ui/core/Core"], function(Core) {
+			Core.boot();
+			Core.ready().then(function() {
 				assert.ok(true, "Core should initalize after loading and booting it");
 				done();
 			});

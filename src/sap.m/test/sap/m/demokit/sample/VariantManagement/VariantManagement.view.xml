@@ -1,0 +1,81 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	controllerName="sap.m.sample.VariantManagement.VariantManagement">
+
+	<Panel
+		headerText="m.VariantManagement using declarative items aggregation">
+		
+		<headerToolbar>
+			<OverflowToolbar style="Clear">
+				<Title text="Custom Toolbar with a header text" />
+				<ToolbarSpacer />
+				<Button text="Toggle Modify View" press="onPress"/>
+			</OverflowToolbar>
+		</headerToolbar>
+				
+		<f:DynamicPage id="dynamicPage">
+			<f:title>
+				<f:DynamicPageTitle>
+					<f:heading>
+
+						<VariantManagement id="vm"
+							select="onSelect"
+							save="onSave"
+							manage="onManage"
+							selectedKey="2"
+							defaultKey="2"
+							showFooter="true"
+							popoverTitle="my Favorites">
+							<items>
+								<VariantItem key="Standard" title="Entry1"
+									author="B"
+									favorite="true"
+									visible="true"
+									executeOnSelect="false"
+									rename="false"
+									changeable="false"
+									remove="false"
+									sharing="public" />
+								<VariantItem key="2" title="Entry2"							
+									author="A"
+									favorite="true"
+									visible="true"
+									executeOnSelect="false"
+									rename="true"
+									changeable="true"
+									remove="true"
+									sharing="private" />
+								<VariantItem key="3" title="Entry3"								
+									author="A"
+									favorite="true"
+									visible="true"
+									executeOnSelect="true"
+									rename="true"
+									changeable="true"
+									remove="true"
+									sharing="private" />
+								<VariantItem key="4" title="Entry4"								
+									author="A"
+									favorite="false"
+									visible="true"
+									executeOnSelect="true"
+									rename="false"
+									changeable="true"
+									remove="false"
+									sharing="public" />
+							</items>
+						</VariantManagement>
+
+					</f:heading>
+
+
+				</f:DynamicPageTitle>
+			</f:title>
+
+		</f:DynamicPage>
+
+	</Panel>
+</mvc:View>

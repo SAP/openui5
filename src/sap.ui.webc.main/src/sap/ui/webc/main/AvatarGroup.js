@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.AvatarGroup.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/AvatarGroup"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -52,8 +52,10 @@ sap.ui.define([
 	 *     <li>You want to use it for other visual content than avatars.</li>
 	 * </ul>
 	 *
-	 * <h3>Keyboard Handling</h3> The component provides advanced keyboard handling. When focused, the user can use the following keyboard shortcuts in order to perform a navigation: <br>
-	 * - <code>type</code> Individual: <br>
+	 * <h3>Keyboard Handling</h3> The component provides advanced keyboard handling. When focused, the user can use the following keyboard shortcuts in order to perform a navigation:
+	 *
+	 * <br>
+	 * <code>type</code> Individual: <br>
 	 *
 	 * <ul>
 	 *     <li>[TAB] - Move focus to the overflow button</li>
@@ -63,7 +65,7 @@ sap.ui.define([
 	 *     <li>[END] - Navigate to the last avatar</li>
 	 *     <li>[SPACE],[ENTER],[RETURN] - Trigger <code>ui5-click</code> event</li>
 	 * </ul> <br>
-	 * - <code>type</code> Group: <br>
+	 * <code>type</code> Group: <br>
 	 *
 	 * <ul>
 	 *     <li>[TAB] - Move focus to the next interactive element after the component</li>

@@ -63,7 +63,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a control with no flex custom data", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
 			this.oChange = FlexObjectFactory.createFromFileContent(getChangeContent("a1", "control"));
@@ -72,7 +72,7 @@ sap.ui.define([
 				appComponent: this.oAppComponent
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAppComponent.destroy();
 			this.oControl.destroy();
 			sandbox.restore();
@@ -122,7 +122,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a control with flex custom data", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = new UIComponent();
 			this.oControl = new Control("control");
 			this.oChange = FlexObjectFactory.createFromFileContent(getChangeContent("a1", "control"));
@@ -159,7 +159,7 @@ sap.ui.define([
 				appComponent: this.oAppComponent
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oAppComponent.destroy();
 			this.oControl.destroy();
 			sandbox.restore();

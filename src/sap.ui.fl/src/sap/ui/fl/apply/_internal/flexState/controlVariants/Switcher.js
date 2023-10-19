@@ -87,7 +87,6 @@ sap.ui.define([
 	 * Provides functionality to switch variants in a variants map. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
 	 * @namespace sap.ui.fl.apply._internal.flexState.controlVariants.Switcher
-	 * @experimental Since 1.74
 	 * @since 1.74
 	 * @version ${version}
 	 * @private
@@ -109,7 +108,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		switchVariant: function(mPropertyBag) {
+		switchVariant(mPropertyBag) {
 			return Promise.resolve().then(function() {
 				// TODO: should be a function in FlexState e.g. getUIChanges()
 				mPropertyBag.changesMap = mPropertyBag.flexController._oChangePersistence.getChangesMapForComponent().mChanges;

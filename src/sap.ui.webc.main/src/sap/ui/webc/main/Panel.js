@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Panel.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Panel"
 ], function(WebComponent, library) {
@@ -19,7 +19,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -137,6 +137,14 @@ sap.ui.define([
 				 * Indicates whether the transition between the expanded and the collapsed state of the component is animated. By default the animation is enabled.
 				 */
 				noAnimation: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Indicates whether the Panel header is sticky or not. If stickyHeader is set to true, then whenever you scroll the content or the application, the header of the panel will be always visible and a solid color will be used for its design.
+				 */
+				stickyHeader: {
 					type: "boolean",
 					defaultValue: false
 				},

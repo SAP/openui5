@@ -35,7 +35,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.60
 	 * @alias sap.ui.rta.plugin.Stretch
-	 * @experimental Since 1.60. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Stretch = Plugin.extend("sap.ui.rta.plugin.Stretch", /** @lends sap.ui.rta.plugin.Stretch.prototype */ {
 		metadata: {
@@ -109,7 +108,7 @@ sap.ui.define([
 			iHeight -= parseInt(window.getComputedStyle(oParentGeometry.domRef, null).getPropertyValue("padding-top"));
 		}
 		var iParentSize = Math.round(oParentGeometry.size.width) * Math.round(iHeight);
-		aChildOverlays = aChildOverlays || OverlayUtil.getAllChildOverlays(oReferenceOverlay);
+		aChildOverlays ||= OverlayUtil.getAllChildOverlays(oReferenceOverlay);
 
 		var aChildrenGeometry = aChildOverlays.map(function(oChildOverlay) {
 			return oChildOverlay.getGeometry();
@@ -162,8 +161,9 @@ sap.ui.define([
 	 * @param {sap.ui.dt.DesignTime} oDesignTime DesignTime object
 	 * @override
 	 */
-	Stretch.prototype.setDesignTime = function(oDesignTime) {
-		Plugin.prototype.setDesignTime.apply(this, arguments);
+	Stretch.prototype.setDesignTime = function(...aArgs) {
+		const [oDesignTime] = aArgs;
+		Plugin.prototype.setDesignTime.apply(this, aArgs);
 
 		if (oDesignTime) {
 			oDesignTime.attachEventOnce("synced", this._onDTSynced, this);
@@ -195,12 +195,13 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Stretch.prototype.registerElementOverlay = function(oOverlay) {
+	Stretch.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		this._checkParentAndAddToStretchCandidates(oOverlay);
 
 		oOverlay.attachElementModified(this._onElementModified, this);
 
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -208,10 +209,11 @@ sap.ui.define([
 	 * @param  {sap.ui.dt.ElementOverlay} oOverlay overlay object
 	 * @override
 	 */
-	Stretch.prototype.deregisterElementOverlay = function(oOverlay) {
+	Stretch.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		toggleStyleClass(oOverlay, false);
 
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -240,18 +242,14 @@ sap.ui.define([
 		var oParams = oEvent.getParameters();
 		var oOverlay = oEvent.getSource();
 		if (oParams.type === "afterRendering") {
-			if (!this.fnDebounced) {
-				// the timeout should be changed to 0 as soon as DT refactoring is done
-				this.fnDebounced = _debounce(function() {
-					this._setStyleClassForAllStretchCandidates(this._getNewStretchCandidates(this._aOverlaysCollected));
-					this._aOverlaysCollected = [];
-					this.fnDebounced = undefined;
-				}.bind(this), 16);
-			}
-
-			if (!this._aOverlaysCollected) {
+			// the timeout should be changed to 0 as soon as DT refactoring is done
+			this.fnDebounced ||= _debounce(function() {
+				this._setStyleClassForAllStretchCandidates(this._getNewStretchCandidates(this._aOverlaysCollected));
 				this._aOverlaysCollected = [];
-			}
+				this.fnDebounced = undefined;
+			}.bind(this), 16);
+
+			this._aOverlaysCollected ||= [];
 
 			if (!includes(this._aOverlaysCollected, oOverlay)) {
 				this._aOverlaysCollected.push(oOverlay);

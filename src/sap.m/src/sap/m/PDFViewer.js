@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery",
-	"./PDFViewerRenderer"
+	"./PDFViewerRenderer",
+	"sap/ui/core/Lib"
 ],
 	function(
 		library,
@@ -25,7 +26,8 @@ sap.ui.define([
 		Log,
 		assert,
 		jQuery,
-		PDFViewerRenderer1
+		PDFViewerRenderer1,
+		CoreLib
 	) {
 		"use strict";
 
@@ -137,7 +139,12 @@ sap.ui.define([
 						 * A multiple aggregation for buttons that can be added to the footer of the popup
 						 * dialog. Works only if the PDF viewer is set to open in a popup dialog.
 						 */
-						popupButtons: {type: "sap.m.Button", multiple: true, singularName: "popupButton"}
+						popupButtons: {type: "sap.m.Button", multiple: true, singularName: "popupButton"},
+						/**
+						 * An illustrated message is displayed when pdf cannot be displayed
+						 * @private
+						 */
+						_illustratedMessage: { type: "sap.m.IllustratedMessage", multiple: false, visibility: "hidden" }
 					},
 					events: {
 						/**
@@ -184,10 +191,11 @@ sap.ui.define([
 
 			// state variable that shows the state of popup (rendering of pdf in popup requires it)
 			this._bIsPopupOpen = false;
+			this._isError = false;
 
 			this._initPopupControl();
 			this._initPopupDownloadButtonControl();
-			this._initPlaceholderMessagePageControl();
+			this._initPlaceholderIllustratedMessageControl();
 			this._initToolbarDownloadButtonControl();
 			this._initOverflowToolbarControl();
 
@@ -249,7 +257,6 @@ sap.ui.define([
 
 				oIframeElement.on("load", this._onLoadListener.bind(this));
 				oIframeElement.on("error", this._onErrorListener.bind(this));
-
 			}.bind(this);
 
 			try {
@@ -257,6 +264,10 @@ sap.ui.define([
 				fnInitIframeElement();
 			} catch (error) {
 				Log.error(error);
+				if (this._isError) {
+					this._isError = false;
+					this._objectsRegister.getPlaceholderIllustratedMessageControl().rerender();
+				}
 				this.setBusy(false);
 			}
 		};
@@ -287,6 +298,7 @@ sap.ui.define([
 			// It is controlled by the state variable called _bRenderPdfContent
 			// The main invalidate set the state of the control to the default and tries to load and render pdf
 			Control.prototype.invalidate.call(this);
+			//this._isError = true;
 		};
 
 		/**
@@ -525,14 +537,14 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._getLibraryResourceBundle = function () {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return CoreLib.getResourceBundleFor("sap.m");
 		};
 
 		/**
 		 * @returns {string}
 		 * @private
 		 */
-		PDFViewer.prototype._getMessagePageErrorMessage = function () {
+		PDFViewer.prototype._getIllustratedMessageErrorMessage = function () {
 			return this.getErrorPlaceholderMessage() ? this.getErrorPlaceholderMessage() :
 				this._getLibraryResourceBundle().getText("PDF_VIEWER_PLACEHOLDER_ERROR_TEXT");
 		};

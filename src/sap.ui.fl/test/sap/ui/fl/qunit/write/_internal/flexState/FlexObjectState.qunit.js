@@ -1,43 +1,41 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/UIComponent",
 	"sap/ui/core/Control",
-	"sap/base/util/UriParameters",
+	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
-	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
+	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	UIComponent,
 	Control,
-	UriParameters,
+	UIComponent,
 	FlexObjectFactory,
+	VariantManagementState,
 	FlexState,
 	ManifestUtils,
-	CompVariantState,
-	VariantManagementState,
-	FlexObjectState,
-	SessionStorageConnector,
-	Versions,
 	Version,
+	Settings,
+	SessionStorageConnector,
+	CompVariantState,
+	FlexObjectState,
+	Versions,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
 	Utils,
-	Settings,
 	JSONModel,
 	sinon
 ) {
@@ -79,10 +77,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("getFlexObjects / saveFlexObjects", {
-		before: function() {
+		before() {
 			return Settings.getInstance();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForSelector").returns(sReference);
 			const Component = UIComponent.extend(sComponentId, {
 				metadata: {
@@ -99,7 +97,7 @@ sap.ui.define([
 				reference: sReference
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			SessionStorageConnector.reset({
 				reference: sReference,
 				layer: Layer.USER
@@ -336,11 +334,7 @@ sap.ui.define([
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function() {
-					return Layer.VENDOR;
-				}
-			});
+			sandbox.stub(URLSearchParams.prototype, "get").returns(Layer.VENDOR);
 			CompVariantState.addVariant({
 				changeSpecificData: {
 					type: "pageVariant",
@@ -455,7 +449,7 @@ sap.ui.define([
 			);
 			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantReference1"]);
 			sandbox.stub(this.oAppComponent, "getModel").returns({
-				getCurrentVariantReference: function(sVariantManagementReference) {
+				getCurrentVariantReference(sVariantManagementReference) {
 					if (sVariantManagementReference === "variantReference1") {
 						return "variant1";
 					}
@@ -623,7 +617,7 @@ sap.ui.define([
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the ChangePersistence", function(assert) {
 			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges: function() {
+				getDirtyChanges() {
 					return ["mockDirty"];
 				}
 			});
@@ -635,7 +629,7 @@ sap.ui.define([
 
 		QUnit.test("hasDirtyObjects - Given flex objects and dirty changes are present in the CompVariantState", function(assert) {
 			var oStubGetChangePersistenceForComponent = sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForComponent").returns({
-				getDirtyChanges: function() {
+				getDirtyChanges() {
 					return [];
 				}
 			});

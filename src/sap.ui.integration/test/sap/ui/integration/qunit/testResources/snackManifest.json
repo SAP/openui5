@@ -1,4 +1,7 @@
 {
+	"sap.app": {
+		"id": "test.snackCard"
+	},
 	"sap.card": {
 		"type": "Object",
 		"configuration": {
@@ -11,7 +14,10 @@
 				"path": "personalInfoData>/"
 			},
 			"title": "{personalInfoData>firstName}",
-			"subTitle": "Complete your time recording {personalInfoData>email}"
+			"subTitle": "Complete your time recording {personalInfoData>email}",
+			"closeButton": {
+				"visible": false
+			}
 		},
 		"content": {
 			"groups": [

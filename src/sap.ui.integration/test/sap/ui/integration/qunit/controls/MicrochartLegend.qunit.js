@@ -30,7 +30,8 @@ sap.ui.define([
 				return [
 					{ color: this.COLOR_FROM_CHART_PALETTE },
 					{ color: this.COLOR_FROM_VALUE_COLOR },
-					{ color: this.COLOR_CSS }
+					{ color: this.COLOR_CSS },
+					{ width: 100, value: 100}
 				];
 			}.bind(this);
 

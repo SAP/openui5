@@ -3,9 +3,9 @@
  */
 sap.ui.define([
 	'sap/ui/mdc/enums/FieldEditMode',
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/core/Control',
-	'sap/base/util/ObjectPath',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/dom/containsOrEquals',
@@ -14,9 +14,9 @@ sap.ui.define([
 	'sap/m/ToggleButton'
 ], function(
 	FieldEditMode,
+	OperatorName,
 	Condition,
 	Control,
-	ObjectPath,
 	deepEqual,
 	merge,
 	containsOrEquals,
@@ -215,7 +215,7 @@ sap.ui.define([
 
 		for (i = 0; i < aConditions.length; i++) {
 			var oCondition = merge({}, aConditions[i]); // to not change the original condition
-			if (oCondition.operator === "EQ") {
+			if (oCondition.operator === OperatorName.EQ) {
 				if (oCondition.values[0] === "S1") {
 					aPressed[0] = true;
 				} else if (oCondition.values[0] === "S2") {
@@ -249,7 +249,7 @@ sap.ui.define([
 			var bFound = false;
 			for (var i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
-				if (oCondition.operator === "EQ" && oCondition.values[0] === sKey) {
+				if (oCondition.operator === OperatorName.EQ && oCondition.values[0] === sKey) {
 					bFound = true;
 					if (!bPressed) {
 						aConditions.splice(i, 1);

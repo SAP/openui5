@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
 	 * @since 1.115
 	 * @alias sap.ui.mdc.enums.ContentMode
 	 */
-	var ContentMode = {
+	const ContentMode = {
 		/**
 		 * Display mode for single value
 		 * @private
@@ -66,6 +66,8 @@ sap.ui.define(function() {
 		 */
 		 EditForHelp: "EditForHelp"
 		};
+
+	DataType.registerEnum("sap.ui.mdc.enums.ContentMode", ContentMode);
 
 	return ContentMode;
 

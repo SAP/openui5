@@ -4736,7 +4736,7 @@ sap.ui.define([
 
 		var oSpyFireSelectionFinish = this.spy(oMCB, "fireSelectionFinish");
 		var oSpySetSelection = this.spy(oMCB, "setSelection");
-		var oList = oMCB.getList();
+		var oList = oMCB._getList();
 
 		Core.applyChanges();
 
@@ -6594,7 +6594,7 @@ sap.ui.define([
 		};
 		var fnData = function() {
 			return {
-				isSelected: function () {
+				getSelected: function () {
 					return false;
 				}
 			};
@@ -6693,7 +6693,7 @@ sap.ui.define([
 		};
 		var fnData = function() {
 			return {
-				isSelected: function () {
+				getSelected: function () {
 					return false;
 				}
 			};

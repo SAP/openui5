@@ -1,0 +1,159 @@
+<mvc:View
+    height="100%"
+    controllerName="sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview.Page"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:m="sap.m"
+    xmlns:core="sap.ui.core"
+    xmlns="sap.m.upload"
+>
+    <m:Page showHeader="false">
+        <UploadSetwithTable
+            id="UploadSetTable"
+            sticky="ColumnHeaders,HeaderToolbar"
+            width="auto"
+            mode="MultiSelect"
+            fixedLayout="false"
+            inset="true"
+            autoPopinMode="true"
+            hiddenInPopin="None"
+            items="{path: '/items', templateShareable: false}"
+            maxFileNameLength="60"
+            uploadUrl="/uploadFiles"
+            multiple="true"
+            beforeInitiatingItemUpload="onBeforeInitiatingItemUpload"
+            beforeUploadStarts="onBeforeUploadStarts"
+            selectionChange="onSelectionChange"
+            itemRenamed="onDocumentRenamedSuccess"
+            uploadCompleted="onUploadCompleted"
+            previewDialog="FilePreviewDialog" >
+
+            <!-- ToolBar for UploadSetwithTable -->
+            <headerToolbar>
+                <m:OverflowToolbar>
+                    <m:Title
+                        text="{/documentTableTitle} ({= ${/items}.length})"
+                        level="H2"
+                    />
+                    <m:ToolbarSpacer />
+                    <m:SearchField
+                        width="20%"
+                        liveChange=".onSearch"
+                    >
+                        <m:layoutData>
+                            <m:OverflowToolbarLayoutData
+                                priority="NeverOverflow"
+                            />
+                        </m:layoutData>
+                    </m:SearchField>
+                    <m:ToolbarSeparator />
+                    <ActionsPlaceholder placeholderFor="UploadButtonPlaceholder" />
+                    <m:Button
+                        id="downloadSelectedButton"
+                        text="Download"
+                        enabled="false"
+                        press="onDownloadFiles"
+                    />
+                </m:OverflowToolbar>
+            </headerToolbar>
+
+            <!-- Columns for UploadSetwithTable -->
+            <columns>
+                <Column id="fileName" importance="High">
+                    <header>
+                        <m:Label text="File Name" />
+                    </header>
+                </Column>
+                <Column id="id">
+                    <header>
+                        <m:Label text="ID" />
+                    </header>
+                </Column>
+                <Column id="revision">
+                    <header>
+                        <m:Label text="Revision" />
+                    </header>
+                </Column>
+                <Column id="status">
+                    <header>
+                        <m:Label text="Status" />
+                    </header>
+                </Column>
+                <Column id="fileSize">
+                    <header>
+                        <m:Label text="File Size" />
+                    </header>
+                </Column>
+                <Column id="lastModified">
+                    <header>
+                        <m:Label text="Last Modified" />
+                    </header>
+                </Column>
+                <Column id="actionButton" importance="High" />
+            </columns>
+
+            <!-- Items aggregation with template UploadSetwithTableItem definition for each row -->
+            <items>
+                <UploadSetwithTableItem
+                    fileName="{fileName}"
+                    mediaType="{mediaType}"
+                    url="{url}"
+                    highlight="{=${uploadState} === 'Complete' ? 'Indication05' : null }"
+                    previewable="{previewable}"
+                    fileSize="{fileSize}"
+                >
+
+                <!-- Cells with cell template defining content for each column (cells and columns work with 1:1 mapping) -->
+                    <cells>
+                        <m:HBox>
+                            <m:Image
+                                src="{imageUrl}"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                                visible="{= ${imageUrl} !== undefined}"
+                            />
+                            <core:Icon
+                                src="{parts: ['mediaType', 'fileName'], formatter: '.getIconSrc' }"
+                                color="white"
+                                visible="{= ${imageUrl} === undefined || ${imageUrl} === '' }"
+                                class="sapMUSTItemImage sapMUSTItemIcon"
+                            />
+                            <m:VBox
+                                class="sapUiTinyMargin sapUiSmallMarginBegin"
+                            >
+                                <m:Link
+                                    text="{fileName}"
+                                    press="openPreview"
+                                    class="sapUiTinyMarginBottom"
+                                />
+                                <m:Text text="{documentType}" class="sapUiTinyMarginTop" />
+                            </m:VBox>
+                        </m:HBox>
+                        <m:Text text="{id}" />
+                        <m:Link text="{revision}" />
+                        <m:Text text="{status}" />
+                        <m:Text
+                            text="{parts: ['fileSize'], formatter: '.getFileSizeWithUnits'}"
+                        />
+                        <m:VBox>
+                            <m:Text text="{lastModifiedBy}" />
+                            <m:Text
+                                class="sapUiTinyMarginTop"
+                                text="{lastmodified}"
+                            />
+                        </m:VBox>
+                        <m:Button
+                            class="sapUiTinyMarginBegin"
+                            type="Transparent"
+                            icon="sap-icon://decline"
+                            press="onRemoveHandler"
+                        />
+                    </cells>
+                </UploadSetwithTableItem>
+            </items>
+            <dependents>
+                <FilePreviewDialog id="FilePreviewDialog" showCarouselArrows="true" maxFileSizeforPreview="50">
+                        <m:Button text="Check out" />
+                </FilePreviewDialog>
+            </dependents>
+        </UploadSetwithTable>
+    </m:Page>
+</mvc:View>

@@ -22,14 +22,14 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given the parameters required to create an app descriptor change...", {
-		before: function() {
+		before() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 		},
-		after: function() {
+		after() {
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.sReference = "appReference";
 			this.mFlexSettings = {
 				layer: Layer.CUSTOMER
@@ -59,7 +59,7 @@ sap.ui.define([
 
 			this.oButton = new Button("myButton");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -72,7 +72,7 @@ sap.ui.define([
 			};
 
 			var oMockDescriptorChange = {
-				store: function() {
+				store() {
 					assert.ok(true, "the descriptor change was submitted");
 					var mPassedSettings = fnAssertSpy.getCall(0).args[0];
 					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
@@ -119,7 +119,7 @@ sap.ui.define([
 			})
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -144,7 +144,7 @@ sap.ui.define([
 				});
 			})
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});

@@ -78,7 +78,7 @@ sap.ui.define([
 
 	QuickSortItem.prototype._getLabel = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		return oBundle.getText("table.COLUMNMENU_QUICK_SORT", this.getLabel());
+		return oBundle.getText("table.COLUMNMENU_QUICK_SORT", [this.getLabel()]);
 	};
 
 	QuickSortItem.prototype._createContent = function() {

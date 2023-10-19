@@ -26,6 +26,7 @@ sap.ui.define([
 	*/
 	var _LogCollector = UI5Object.extend("sap.ui.test._LogCollector", {
 		constructor: function (sMessagePattern) {
+			UI5Object.call(this);
 			this._aLogs = [];
 			if (sMessagePattern) {
 				this._oListener = getCustomListener(sMessagePattern, this._aLogs);

@@ -549,6 +549,8 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 *   Include information about the filter objects the tree has been created from
 	 * @returns {object}
 	 *   The AST of the filter tree
+	 * @throws {Error} If this filter has no or an unknown operator
+	 *
 	 * @private
 	 * @ui5-restricted sap.ui.table, sap.ui.export
 	 */

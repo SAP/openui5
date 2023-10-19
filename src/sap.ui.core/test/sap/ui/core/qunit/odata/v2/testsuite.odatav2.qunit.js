@@ -76,6 +76,10 @@ sap.ui.define(function() {
 			ODataV2ListBinding: {
 				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
 			},
+			/** @deprecated As of version 1.22.0, reason sap.ui.model.odata.Filter */
+			ODataV2ListBinding_Filter_legacyAPIs: {
+				title: "sap.ui.model.odata.v2.ODataListBinding_Filter - QUnit tests"
+			},
 			ODataV2ListBinding_Paging: {
 				title: "sap.ui.model.odata.v2.ODataListBinding_Paging - QUnit tests"
 			},

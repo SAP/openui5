@@ -5,10 +5,10 @@ QUnit.dump.maxDepth = 50;
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -17,6 +17,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",
@@ -29,10 +30,10 @@ sap.ui.define([
 ], function(
 	Button,
 	Page,
+	DesignTimeConfig,
 	Controller,
 	XMLView,
 	ComponentContainer,
-	oCore,
 	UIComponent,
 	DesignTime,
 	OverlayRegistry,
@@ -41,6 +42,7 @@ sap.ui.define([
 	PersistenceWriteAPI,
 	VerticalLayout,
 	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	Plugin,
 	ReloadManager,
@@ -56,7 +58,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before: function(assert) {
+		async before(assert) {
 			QUnit.config.fixture = null;
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
@@ -70,7 +72,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("mainPage");
 				}
 			});
@@ -144,7 +146,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
@@ -187,7 +189,7 @@ sap.ui.define([
 
 			this.oRta.start();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oRta.destroy();
 			this.oComponentContainer.destroy();
@@ -320,10 +322,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring and Outline service are created and get function is called", {
-		before: function() {
+		before() {
 
 		},
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
@@ -336,7 +338,7 @@ sap.ui.define([
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("mainPage");
 				}
 			});
@@ -385,7 +387,7 @@ sap.ui.define([
 				height: "100%"
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oComp,
@@ -401,12 +403,12 @@ sap.ui.define([
 
 			this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oComponentContainer.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 
 		}
 	}, function() {
@@ -433,7 +435,7 @@ sap.ui.define([
 			this.oButton1.destroy();
 		});
 
-		QUnit.test("when an element is inserted into an already existing aggregation", function(assert) {
+		QUnit.test("when an element is inserted into an already existing aggregation", async function(assert) {
 			var done = assert.async();
 			assert.expect(2);
 			var oExpectedResponse1 = {
@@ -479,7 +481,7 @@ sap.ui.define([
 			}
 			this.oOutline.attachEvent("update", onUpdate, this);
 			this.oLayout.addContent(new Button("newButton")); // inserts new overlay
-			oCore.applyChanges();
+			await nextUIUpdate();
 		});
 
 		QUnit.test("when setEditable is called for an existing overlay", function(assert) {
@@ -551,7 +553,7 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -599,7 +601,7 @@ sap.ui.define([
 			.then(function(oResponse) {
 				return oResponse.json();
 			})
-			.then(function(aExpectedOutlineData) {
+			.then(async function(aExpectedOutlineData) {
 				aExpectedOutlineData[1].elements[0].elements.splice(1, 1); // clean-up of unwanted element
 
 				// control editable property is initially false
@@ -615,7 +617,7 @@ sap.ui.define([
 					content: [new Button("button2")]
 				});
 				oOuterLayout.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oRta._oDesignTime.addRootElement(oOuterLayout);
 				this.oOutline.attachEventOnce("update", function(aUpdates) {
@@ -628,7 +630,7 @@ sap.ui.define([
 	});
 
 	var sXmlString =
-	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
+	'<mvc:View xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
 		'<Panel id="panel">' +
 			"<content>" +
 				'<core:ExtensionPoint name="ExtensionPoint1" />' +
@@ -672,14 +674,14 @@ sap.ui.define([
 	}
 
 	function beforeEachExtensionPoint(sXmlView, oController) {
-		sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
-		sandbox.stub(oCore.getConfiguration(), "getSuppressDeactivationOfControllerCode").returns(true);
+		sandbox.stub(DesignTimeConfig, "isDesignModeEnabled").returns(true);
+		sandbox.stub(DesignTimeConfig, "isControllerCodeDeactivationSuppressed").returns(true);
 		this.oComponent = _createComponent();
 		return _createAsyncView("myView", sXmlView, this.oComponent, oController)
-		.then(function(oXmlView) {
+		.then(async function(oXmlView) {
 			this.oXmlView = oXmlView;
 			oXmlView.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 			return new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oXmlView
@@ -704,10 +706,10 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created ", {
-		beforeEach: function() {
+		beforeEach() {
 			return beforeEachExtensionPoint.call(this, sXmlString);
 		},
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
@@ -773,7 +775,7 @@ sap.ui.define([
 	});
 
 	var oXmlSimpleForm =
-		'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:form="sap.ui.layout.form" xmlns="sap.m">' +
 			'<form:SimpleForm editable="true" layout="ResponsiveGridLayout" labelSpanL="1" labelSpanM="3" columnsL="1" ' +
 				'columnsM="1" emptySpanL="1" emptySpanM="0" width="100%" title="test_simpleform" maxContainerCols="1">' +
 				"<form:content>" +
@@ -786,10 +788,10 @@ sap.ui.define([
 		"</mvc:View>";
 
 	QUnit.module("Given that xmlView with extensionPoints, RuntimeAuthoring and Outline service are created with 'simple form'", {
-		beforeEach: function() {
+		beforeEach() {
 			return beforeEachExtensionPoint.call(this, oXmlSimpleForm);
 		},
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
@@ -837,23 +839,27 @@ sap.ui.define([
 	});
 
 	function createController(sController, oData) {
-		Controller.extend(sController, {
-			onInit: function() {
-				var oModel = new JSONModel(oData);
-				this.getView().setModel(oModel);
-			}
+		const sControllerModule = `${sController.replace(/\./g, "/")}.controller`;
+		sap.ui.define(sControllerModule, function() {
+			return Controller.extend(sController, {
+				onInit() {
+					var oModel = new JSONModel(oData);
+					this.getView().setModel(oModel);
+				}
+			});
 		});
+
 		return Controller.create({name: sController});
 	}
 
 	QUnit.module("Given that xmlView with table and extensionPoint (RuntimeAuthoring and outline service are started) - Template case", {
-		afterEach: function() {
+		afterEach() {
 			return afterEachExtensionPoint.call(this);
 		}
 	}, function() {
 		QUnit.test("for four products in the collection, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -869,7 +875,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController01", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -921,8 +927,8 @@ sap.ui.define([
 
 		QUnit.test("when an aggregation contains a template with a nested aggregation", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<VBox id="vb2">' +
 							"<items>" +
@@ -941,7 +947,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController02", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -972,8 +978,8 @@ sap.ui.define([
 
 		QUnit.test("when an aggregation contains a template with a nested template", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
-				'<VBox id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\', templateShareable: false}">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+				'<VBox id="ShortProductList" items="{path: \'/ProductCollection\', templateShareable: false}">' +
 					"<items>" +
 						'<VBox id="vb2NoTemplate">' +
 							'<Button id="vb2TopButton" text="Prepended element" />' +
@@ -996,7 +1002,7 @@ sap.ui.define([
 					{ ProductId: "HT-1010", Category: "Memory" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController03", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -1040,7 +1046,7 @@ sap.ui.define([
 
 		QUnit.test("for empty product collection, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -1051,7 +1057,7 @@ sap.ui.define([
 			var oData = {
 				ProductCollection: []
 			};
-			return createController("myController", oData)
+			return createController("myController04", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))
@@ -1078,7 +1084,7 @@ sap.ui.define([
 
 		QUnit.test("for two lists, when get() is called", function(assert) {
 			var oXmlTable =
-			'<mvc:View id="testComponent---myView" controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
+			'<mvc:View controllerName="myController" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m">' +
 				'<List id="ShortProductList" headerText="Products" items="{path: \'/ProductCollection\'}">' +
 					"<items>" +
 						'<StandardListItem title="{Name}" />' +
@@ -1100,7 +1106,7 @@ sap.ui.define([
 					{ PotatoId: "French Fries", Category: "Fried" }
 				]
 			};
-			return createController("myController", oData)
+			return createController("myController05", oData)
 			.then(function(oController) {
 				return beforeEachExtensionPoint.call(this, oXmlTable, oController);
 			}.bind(this))

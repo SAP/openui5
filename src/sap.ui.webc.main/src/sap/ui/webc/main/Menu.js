@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Menu.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Menu"
 ], function(WebComponent, library) {
@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -157,9 +157,10 @@ sap.ui.define([
 				},
 
 				/**
-				 * Fired when an item is being clicked.
+				 * Fired when an item is being clicked. <b>Note:</b> Since 1.17.0 the event is preventable, allowing the menu to remain open after an item is pressed.
 				 */
 				itemClick: {
+					allowPreventDefault: true,
 					parameters: {
 						/**
 						 * The currently clicked menu item.

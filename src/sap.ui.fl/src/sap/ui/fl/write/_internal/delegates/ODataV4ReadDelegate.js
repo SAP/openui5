@@ -66,7 +66,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		var sLabel =
 			(mDataFieldDefaultAnnotation && mDataFieldDefaultAnnotation.Label) ||
 			mPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"];
-		mProp.label = sLabel || "[LABEL_MISSING: " + sPropertyPath + "]";
+		mProp.label = sLabel || `[LABEL_MISSING: ${sPropertyPath}]`;
 		// evaluate Hidden annotation
 		var mHiddenAnnotation = mPropertyAnnotations["@com.sap.vocabularies.UI.v1.Hidden"];
 		mProp.hideFromReveal = mHiddenAnnotation;
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		var sFieldControlPath = mFieldControlAnnotation && mFieldControlAnnotation.Path;
 		if (sFieldControlPath && !mProp.hideFromReveal) {
 			// if the binding is a list binding, skip the check for field control
-			var bListBinding = BaseObject.isA(oElement.getBinding(sAggregationName), "sap/ui/model/ListBinding");
+			var bListBinding = BaseObject.isObjectA(oElement.getBinding(sAggregationName), "sap/ui/model/ListBinding");
 			if (!bListBinding) {
 				var iFieldControlValue = oElement.getBindingContext().getProperty(sFieldControlPath);
 				mProp.hideFromReveal = iFieldControlValue === 0;
@@ -133,7 +133,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		for (sElementName in mODataEntityType) {
 			mElement = mODataEntityType[sElementName];
 			if (mElement.$kind === "Property") {
-				var mPropAnnotations = oMetaModel.getObject("/" + sEntityType + "/" + sElementName + "@");
+				var mPropAnnotations = oMetaModel.getObject(`/${sEntityType}/${sElementName}@`);
 				var mProp = _enrichProperty(
 					sElementName,
 					mElement,
@@ -204,7 +204,7 @@ sap.ui.define(["sap/ui/base/Object"], function(BaseObject) {
 		 * @param {object} mPropertyBag.payload Payload parameter attached to the delegate, empty object if no payload was assigned
 		 * @returns {Promise<sap.ui.fl.delegate.PropertyInfo[]>} Metadata in a deep structure of nodes and properties
 		 */
-		getPropertyInfo: function(mPropertyBag) {
+		getPropertyInfo(mPropertyBag) {
 			return Promise.resolve().then(function() {
 				return _getODataPropertiesOfModel(mPropertyBag.element, mPropertyBag.aggregationName, mPropertyBag.payload);
 			});

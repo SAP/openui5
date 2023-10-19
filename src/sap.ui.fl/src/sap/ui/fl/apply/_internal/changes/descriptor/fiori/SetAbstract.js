@@ -34,13 +34,13 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.fl.apply._internal
 		 */
-		applyChange: function(oManifest, oChange) {
+		applyChange(oManifest, oChange) {
 			if (!oChange.getContent().hasOwnProperty("abstract")) {
 				throw new Error("No abstract in change content provided");
 			}
 
 			if (oChange.getContent().abstract !== false) {
-				throw new Error("The current change value of property abstract is '" + oChange.getContent().abstract + "'. Only allowed value for property abstract is boolean 'false'");
+				throw new Error(`The current change value of property abstract is '${oChange.getContent().abstract}'. Only allowed value for property abstract is boolean 'false'`);
 			}
 
 			ObjectPath.set(["sap.fiori", "abstract"], oChange.getContent().abstract, oManifest);

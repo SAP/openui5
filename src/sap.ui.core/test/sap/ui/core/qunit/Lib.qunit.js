@@ -1,5 +1,5 @@
 /*global QUnit sinon*/
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/theming/ThemeManager",
@@ -66,6 +66,9 @@ sap.ui.require([
 		this.spy(sap.ui.loader._, 'loadJSResourceAsync');
 		this.spy(XMLHttpRequest.prototype, 'open');
 		this.spy(sap.ui, 'require');
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
@@ -87,18 +90,27 @@ sap.ui.require([
 
 			checkLibNotInitialized('testlibs.scenario1.lib1');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib1\/library-preload\.js$/));
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
 			checkLibNotInitialized('testlibs.scenario1.lib3');
 			sinon.assert.neverCalledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib3\/library-preload\.js$/));
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib3.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib3/library']);
 
 			// lib4 and lib5 should have been preloaded
 			checkLibNotInitialized('testlibs.scenario1.lib4');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib4\/library-preload\.js$/));
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib4.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib4/library']);
 
@@ -106,6 +118,9 @@ sap.ui.require([
 			checkLibNotInitialized('testlibs.scenario1.lib5');
 			sinon.assert.calledWith(sap.ui.loader._.loadJSResourceAsync, sinon.match(/scenario1\/lib5\/library-preload\.js$/));
 			sinon.assert.calledWith(XMLHttpRequest.prototype.open, "GET", sinon.match(/scenario1\/lib5\/library-preload\.json$/));
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs.scenario1.lib5.library');
 			sinon.assert.neverCalledWith(sap.ui.require, ['testlibs/scenario1/lib5/library']);
 		});
@@ -151,14 +166,14 @@ sap.ui.require([
 
 	QUnit.module("Static methods");
 
-	QUnit.test("Static method 'get' and '_get'", function(assert) {
-		var oLib = Library.get("my.test.library");
+	QUnit.test("Static method '_get'", function(assert) {
+		var oLib = Library._get("my.test.library");
 		assert.notOk(oLib, "Library instance should not be created without giving the second parameter");
 
 		oLib = Library._get("my.test.library", true);
 		assert.ok(oLib instanceof Library, "Library instance is created");
 
-		var oLibCopy = Library.get("my.test.library");
+		var oLibCopy = Library._get("my.test.library");
 		assert.strictEqual(oLibCopy, oLib, "Multiple call to Library.get should return the same instance");
 		assert.notOk(oLib.isSettingsEnhanced(), "Lib's settings aren't enhanced yet");
 
@@ -177,6 +192,9 @@ sap.ui.require([
 
 		this.spy(Library.prototype, '_preload');
 		this.spy(sap.ui, 'require');
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		this.spy(sap.ui, 'requireSync');
 
 		// make lib3 already loaded
@@ -196,23 +214,26 @@ sap.ui.require([
 		return vResult.then(function(oLib1) {
 			checkLibInitialized('testlibs.scenario1.lib1');
 			sinon.assert.calledOn(Library.prototype._preload, oLib1, "Library.prototype.preload is called");
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			sinon.assert.neverCalledWith(sap.ui.requireSync, 'testlibs/scenario1/lib1/library');
 			sinon.assert.calledWith(sap.ui.require, ['testlibs/scenario1/lib1/library']);
 
 			// lib3 should not be preloaded as its library.js has been (pre)loaded before
 			checkLibInitialized('testlibs.scenario1.lib3');
-			var oLib3 = Library.get('testlibs.scenario1.lib3');
+			var oLib3 = Library._get('testlibs.scenario1.lib3');
 			assert.ok(oLib3, "Library instance is created");
 			sinon.assert.calledOn(Library.prototype._preload, oLib3, "Library.prototype.preload is called");
 
 			// lib4 and lib5 should have been preloaded
 			checkLibInitialized('testlibs.scenario1.lib4');
-			var oLib4 = Library.get('testlibs.scenario1.lib4');
+			var oLib4 = Library._get('testlibs.scenario1.lib4');
 			sinon.assert.calledOn(Library.prototype._preload, oLib4, "Library.prototype.preload is called");
 
 			// lib5 should load the json format as fallback
 			checkLibInitialized('testlibs.scenario1.lib5');
-			var oLib5 = Library.get('testlibs.scenario1.lib5');
+			var oLib5 = Library._get('testlibs.scenario1.lib5');
 			sinon.assert.calledOn(Library.prototype._preload, oLib5, "Library.prototype.preload is called");
 		});
 	});
@@ -388,7 +409,7 @@ sap.ui.require([
 					}
 				});
 
-				assert.ok(Library.get("sap.ui.core").controls.includes("sap.ui.core.TestControlInLibUnitTest"), "The new control is registered in the library");
+				assert.ok(Library._get("sap.ui.core").controls.includes("sap.ui.core.TestControlInLibUnitTest"), "The new control is registered in the library");
 				resolve();
 			}, reject);
 		});
@@ -420,7 +441,7 @@ sap.ui.require([
 
 				assert.notOk(Object.keys(Library.all()).includes("dummy.library"), "The library is created implicitly. But it's not listed in Library.all()");
 				assert.ok(Object.keys(Library._all(true)).includes("dummy.library"), "The library is created implicitly. And it's listed in Library._all(true) where the settings enhancement status isn't considered");
-				assert.ok(Library.get("dummy.library").controls.includes("dummy.library.TestControlInLibUnitTest"), "The new control is registered in the library");
+				assert.ok(Library._get("dummy.library").controls.includes("dummy.library.TestControlInLibUnitTest"), "The new control is registered in the library");
 				resolve();
 			}, reject);
 		});

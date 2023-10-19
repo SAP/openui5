@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
@@ -28,6 +29,7 @@ sap.ui.define([
 		Condition,
 		ValueHelpSelectionType,
 		FieldDisplay,
+		OperatorName,
 		Icon,
 		JSONModel,
 		StringType,
@@ -39,16 +41,16 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
-	var oDialog;
-	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	let oDialog;
+	const iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
 
-	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
-	var oField;
-	var oContentField;
-	var oContent;
-	var oValueHelp = { //to fake ValueHelp
+	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+	let oField;
+	let oContentField;
+	let oContent;
+	const oValueHelp = { //to fake ValueHelp
 		getControl: function() {
 			return oField;
 		},
@@ -81,16 +83,16 @@ sap.ui.define([
 			return Promise.resolve();
 		}
 	};
-	var oValueHelpConfig;
-	var oModel; // to fake ManagedObjectModel of ValueHelp
-	var oType;
-	var oAdditionalType;
+	let oValueHelpConfig;
+	let oModel; // to fake ManagedObjectModel of ValueHelp
+	let oType;
+	let oAdditionalType;
 
 	/* use dummy control to simulate Field */
 
 //	var oClock;
 
-	var _teardown = function() {
+	const _teardown = function() {
 //		if (oClock) {
 //			oClock.restore();
 //			oClock = undefined;
@@ -148,11 +150,11 @@ sap.ui.define([
 	QUnit.test("getContainerControl", function(assert) {
 
 		oDialog.setTitle("Test");
-		var oContainer = oDialog.getContainerControl();
+		const oContainer = oDialog.getContainerControl();
 //		assert.ok(oContainer instanceof Promise, "Promise returned");
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.ok(oContainer, "Container returned");
 				assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
@@ -166,14 +168,14 @@ sap.ui.define([
 				assert.ok(oContainer.getDraggable(), "draggable");
 				assert.notOk(oContainer.isPopupAdaptationAllowed(), "isPopupAdaptationAllowed");
 
-				var aButtons = oContainer.getButtons();
+				const aButtons = oContainer.getButtons();
 				assert.equal(aButtons.length, 2, "Buttons added");
 				assert.equal(aButtons[0].getText(), oResourceBundle.getText("valuehelp.OK"), "Button text");
 				assert.equal(aButtons[1].getText(), oResourceBundle.getText("valuehelp.CANCEL"), "Button text");
 
 				assert.ok(oContainer.getModel("$help").isA("sap.ui.model.base.ManagedObjectModel"), "ManagedObjectModel assigned");
 
-				var aDialogContent = oContainer.getContent();
+				const aDialogContent = oContainer.getContent();
 				assert.equal(aDialogContent.length, 1, "Dialog content length");
 				assert.ok(aDialogContent[0].isA("sap.m.VBox"), "VBox is inside Dialog");
 
@@ -193,30 +195,30 @@ sap.ui.define([
 
 		oDialog.setTitle("Test");
 
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		return oContainer.then(function (oContainer) {
-			var aDialogContent = oContainer.getContent();
+			const aDialogContent = oContainer.getContent();
 			// No content
 			assert.notOk(aDialogContent[0].getItems()[0], "No content wrapper created");
 
 
-			var oFirstContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false})});
+			const oFirstContent = new Content("Content1", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false})});
 			oDialog.addContent(oFirstContent);
 
 			return oDialog.placeContent(oContainer).then(function () {
 				// Singular content
-				var oDialogTab = aDialogContent[0].getItems()[0];
+				const oDialogTab = aDialogContent[0].getItems()[0];
 				assert.ok(oDialogTab.isA("sap.ui.mdc.valuehelp.base.DialogTab"), "DialogTab is first VBox item");
 
-				var oSecondContent = new Content("Content2", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false})});
+				const oSecondContent = new Content("Content2", {title: "Content title", shortTitle: "ShortTitle", tokenizerTitle: "TokenizerTitle", displayContent: new Icon("I2", {src:"sap-icon://sap-ui5", decorative: false})});
 				oDialog.addContent(oSecondContent);
 
 				return oDialog.placeContent(oContainer).then(function () {
 					// Multiple contents
-					var oIconTabBar = aDialogContent[0].getItems()[0];
+					const oIconTabBar = aDialogContent[0].getItems()[0];
 					assert.ok(oIconTabBar.isA("sap.m.IconTabBar"), "IconTabBar is first VBox item");
 					assert.notOk(oIconTabBar.getExpandable(), "IconTabBar expandable");
 					assert.notOk(oIconTabBar.getUpperCase(), "IconTabBar upperCase");
@@ -233,7 +235,7 @@ sap.ui.define([
 
 	QUnit.test("providesScrolling", function(assert) {
 
-		var bScrolling = oDialog.providesScrolling();
+		const bScrolling = oDialog.providesScrolling();
 		assert.notOk(bScrolling, "provides no scrolling");
 
 	});
@@ -247,7 +249,7 @@ sap.ui.define([
 				maxConditions: -1,
 				dataType: oType,
 				additionalDataType: oAdditionalType,
-				operators: ["EQ", "BT"],
+				operators: [OperatorName.EQ, OperatorName.BT],
 				display: FieldDisplay.Description
 			};
 			oModel = new JSONModel({
@@ -280,21 +282,21 @@ sap.ui.define([
 
 		oDialog.setTitle("Test");
 		sinon.spy(oContent,"getFormattedTitle");
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.equal(oContainer.getTitle(), "ShortTitle: Test", "sap.m.Dilaog title");
-				var aButtons = oContainer.getButtons();
+				const aButtons = oContainer.getButtons();
 				assert.ok(aButtons[0].getVisible(), "OK-Button visible");
 
-				var aDialogContent = oContainer.getContent();
-				var aItems = aDialogContent[0].getItems();
-				var oDialogTab = aItems[0];
-				var oPanel = aItems[1];
+				const aDialogContent = oContainer.getContent();
+				let aItems = aDialogContent[0].getItems();
+				const oDialogTab = aItems[0];
+				const oPanel = aItems[1];
 				assert.equal(oDialogTab.getContent(), oContent.getDisplayContent(), "Content control");
 
 				assert.ok(oPanel.isA("sap.m.Panel"), "Panel is second VBox item");
@@ -303,23 +305,23 @@ sap.ui.define([
 				assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
 				assert.ok(oPanel.getExpanded(), "Panel expanded");
 				assert.notOk(oPanel.getExpandable(), "Panel expandable");
-				var aPanelContent = oPanel.getContent();
+				const aPanelContent = oPanel.getContent();
 				assert.equal(aPanelContent.length, 1, "Panel content length");
 				assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 				aItems = aPanelContent[0].getItems();
 				assert.equal(aItems.length, 2, "HBox content length");
-				var oTokenMultiInput = aItems[0];
-				var aTokens = oTokenMultiInput.getTokens();
+				const oTokenMultiInput = aItems[0];
+				const aTokens = oTokenMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
-				var oBinding = aTokens[0].getBinding("text");
-				var oBindingType = oBinding.getType();
+				const oBinding = aTokens[0].getBinding("text");
+				const oBindingType = oBinding.getType();
 				assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
-				var oFormatOptions = {
+				const oFormatOptions = {
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
 					additionalValueType: oAdditionalType,
-					operators: ["EQ", "BT"],
+					operators: [OperatorName.EQ, OperatorName.BT],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
 					control: oField,
@@ -329,7 +331,7 @@ sap.ui.define([
 					convertWhitespaces: true
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
-				var oButton = aItems[1];
+				const oButton = aItems[1];
 				assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "MultiInput is first HBox item");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is second HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
@@ -346,8 +348,8 @@ sap.ui.define([
 
 	QUnit.test("getContainerControl with multiple content for multi-select", function(assert) {
 
-		var oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-		var oContent2 = new Content("Content2", {title: "Content title2", shortTitle: "ShortTitle2", tokenizerTitle: "TokenizerTitle2"});
+		const oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		const oContent2 = new Content("Content2", {title: "Content title2", shortTitle: "ShortTitle2", tokenizerTitle: "TokenizerTitle2"});
 		sinon.stub(oContent2, "getContent").returns(oContentField2);
 		oContent2.setAggregation("displayContent", oContentField2);
 		sinon.stub(oContent2, "getCount").callsFake(function (aConditions) { return aConditions.length;});
@@ -356,28 +358,28 @@ sap.ui.define([
 		sinon.spy(oContent,"getFormattedTitle");
 		sinon.spy(oContent2,"getFormattedTitle");
 		oDialog.addContent(oContent2);
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.equal(oContainer.getTitle(), "Test", "sap.m.Dilaog title");
-				var aButtons = oContainer.getButtons();
+				const aButtons = oContainer.getButtons();
 				assert.ok(aButtons[0].getVisible(), "OK-Button visible");
 
-				var aDialogContent = oContainer.getContent();
-				var aItems = aDialogContent[0].getItems();
-				var oIconTabBar = aItems[0];
-				var oPanel = aItems[1];
+				const aDialogContent = oContainer.getContent();
+				let aItems = aDialogContent[0].getItems();
+				const oIconTabBar = aItems[0];
+				const oPanel = aItems[1];
 				//assert.notOk(oIconTabBar.getSelectedKey(), "IconTabBar selectedKey"); // as only set on opening
 				assert.equal(oIconTabBar.getItems().length, 2, "items assigned");
-				var oIconTabHeader = oIconTabBar._getIconTabHeader();
+				const oIconTabHeader = oIconTabBar._getIconTabHeader();
 				assert.ok(oIconTabHeader.getVisible(), "IconTabHeader visible");
-				var oIconTabFilter = oIconTabBar.getItems()[0];
+				let oIconTabFilter = oIconTabBar.getItems()[0];
 				assert.equal(oIconTabFilter.getKey(), "Content1", "oIconTabFilter key");
-				var aIconTabContent = oIconTabFilter.getContent();
+				let aIconTabContent = oIconTabFilter.getContent();
 				assert.equal(aIconTabContent.length, 1, "IconTabFilter content length");
 				assert.ok(aIconTabContent[0].isA("sap.ui.mdc.valuehelp.base.DialogTab"), "Content of IconTabFilter");
 				assert.equal(aIconTabContent[0].getContent(), oContentField, "Content control");
@@ -400,23 +402,23 @@ sap.ui.define([
 				assert.equal(oPanel.getBackgroundDesign(), mLibrary.BackgroundDesign.Transparent, "Panel backgroundDesign");
 				assert.ok(oPanel.getExpanded(), "Panel expanded");
 				assert.notOk(oPanel.getExpandable(), "Panel expandable");
-				var aPanelContent = oPanel.getContent();
+				const aPanelContent = oPanel.getContent();
 				assert.equal(aPanelContent.length, 1, "Panel content length");
 				assert.ok(aPanelContent[0].isA("sap.m.HBox"), "HBox is inside Panel");
 				aItems = aPanelContent[0].getItems();
 				assert.equal(aItems.length, 2, "HBox content length");
-				var oTokenMultiInput = aItems[0];
-				var aTokens = oTokenMultiInput.getTokens();
+				const oTokenMultiInput = aItems[0];
+				const aTokens = oTokenMultiInput.getTokens();
 				assert.equal(aTokens.length, 1, "number of tokens");
 				assert.equal(aTokens[0].getText(), "Text", "Token text");
-				var oBinding = aTokens[0].getBinding("text");
-				var oBindingType = oBinding.getType();
+				const oBinding = aTokens[0].getBinding("text");
+				const oBindingType = oBinding.getType();
 				assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
-				var oFormatOptions = {
+				const oFormatOptions = {
 					maxConditions: -1, // as for tokens there should not be a limit on type side
 					valueType: oType,
 					additionalValueType: oAdditionalType,
-					operators: ["EQ", "BT"],
+					operators: [OperatorName.EQ, OperatorName.BT],
 					display: FieldDisplay.Description,
 					valueHelpID: "VH",
 					control: oField,
@@ -426,7 +428,7 @@ sap.ui.define([
 					convertWhitespaces: true
 				};
 				assert.deepEqual(oBindingType.getFormatOptions(), oFormatOptions, "FormatOptions of ConditionType");
-				var oButton = aItems[1];
+				const oButton = aItems[1];
 				assert.ok(oTokenMultiInput.isA("sap.m.MultiInput"), "Tokenizer is first HBox item");
 				assert.ok(oButton.isA("sap.m.Button"), "Button is first HBox item");
 				assert.equal(oButton.getType(), mLibrary.ButtonType.Transparent, "Button type");
@@ -459,19 +461,19 @@ sap.ui.define([
 		oDialog.addContent(oContent);
 		oDialog.setTitle("Test");
 		sinon.spy(oContent,"getFormattedTitle");
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
 				assert.equal(oContainer.getTitle(), "ShortTitle: Test", "sap.m.Dilaog title");
-				var aButtons = oContainer.getButtons();
+				const aButtons = oContainer.getButtons();
 				assert.notOk(aButtons[0].getVisible(), "OK-Button not visible");
 
-				var aDialogContent = oContainer.getContent();
-				var aItems = aDialogContent[0].getItems();
+				const aDialogContent = oContainer.getContent();
+				const aItems = aDialogContent[0].getItems();
 
 				assert.equal(aItems.length, 1, "No Panel is visible");
 
@@ -486,16 +488,16 @@ sap.ui.define([
 
 	QUnit.test("open / close", function(assert) {
 
-		var iOpened = 0;
+		let iOpened = 0;
 		oDialog.attachEvent("opened", function(oEvent) {
 			iOpened++;
 		});
-		var iClosed = 0;
+		let iClosed = 0;
 		oDialog.attachEvent("closed", function(oEvent) {
 			iClosed++;
 		});
-		var iConfirm = 0;
-		var bClose = false;
+		let iConfirm = 0;
+		let bClose = false;
 		oDialog.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 			bClose = oEvent.getParameter("close");
@@ -505,15 +507,15 @@ sap.ui.define([
 		sinon.spy(oContent, "onHide");
 
 		oDialog.setTitle("Test");
-		var oPromise = oDialog.open(Promise.resolve());
+		const oPromise = oDialog.open(Promise.resolve());
 		assert.ok(oPromise instanceof Promise, "open returns promise");
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					assert.equal(iOpened, 1, "Opened event fired once");
-					var oContainer = oDialog.getAggregation("_container");
+					const oContainer = oDialog.getAggregation("_container");
 					assert.ok(oContainer.isA("sap.m.Dialog"), "Container is sap.m.Dialog");
 					assert.ok(oContainer.isOpen(), "sap.m.Dialog is open");
 					assert.ok(oContent.onShow.calledOnce, "Content onShow called");
@@ -522,22 +524,22 @@ sap.ui.define([
 					assert.equal(oDialog.getUIAreaForContent(), "X", "getUIAreaForContent returns UiArea of sap.m.Dialog");
 					oContainer.getUIArea.restore();
 					assert.equal(oContainer.getTitle(), "ShortTitle: Test", "sap.m.Dilaog title");
-					var aDialogContent = oContainer.getContent();
-					var aItems = aDialogContent[0].getItems();
+					const aDialogContent = oContainer.getContent();
+					let aItems = aDialogContent[0].getItems();
 
-					var oPanel = aItems[1];
-					var aPanelContent = oPanel.getContent();
+					const oPanel = aItems[1];
+					const aPanelContent = oPanel.getContent();
 					aItems = aPanelContent[0].getItems();
-					var oTokenMultiInput = aItems[0];
-					var aTokens = oTokenMultiInput.getTokens();
-					var oBinding = aTokens[0].getBinding("text");
-					var oBindingType = oBinding.getType();
+					const oTokenMultiInput = aItems[0];
+					let aTokens = oTokenMultiInput.getTokens();
+					let oBinding = aTokens[0].getBinding("text");
+					let oBindingType = oBinding.getType();
 					assert.ok(oBindingType.isA("sap.ui.mdc.field.ConditionType"), "Token bound using ConditionType");
-					var oFormatOptions = {
+					let oFormatOptions = {
 						maxConditions: -1, // as for tokens there should not be a limit on type side
 						valueType: oType,
 						additionalValueType: oAdditionalType,
-						operators: ["EQ", "BT"],
+						operators: [OperatorName.EQ, OperatorName.BT],
 						display: FieldDisplay.Description,
 						valueHelpID: "VH",
 						control: oField,
@@ -553,7 +555,7 @@ sap.ui.define([
 					assert.equal(jQuery(oTokenMultiInput.getDomRef("inner")).css("opacity"), "0", "input part of multiInput is not visible");
 
 					// simulate ok-button click
-					var aButtons = oContainer.getButtons();
+					const aButtons = oContainer.getButtons();
 					aButtons[0].firePress();
 					assert.equal(iConfirm, 1, "Confirm event fired");
 					assert.ok(bClose, "close parameter");
@@ -568,9 +570,9 @@ sap.ui.define([
 						oType.destroy();
 						oType = new StringType(undefined, {maxLength: 10});
 						oValueHelpConfig.dataType = oType;
-						oValueHelpConfig.operators = ["EQ", "BT", "GT", "LT"];
+						oValueHelpConfig.operators = [OperatorName.EQ, OperatorName.BT, OperatorName.GT, OperatorName.LT];
 						oValueHelpConfig.display = FieldDisplay.ValueDescription;
-						var oPromise = oDialog.open(Promise.resolve());
+						const oPromise = oDialog.open(Promise.resolve());
 						assert.ok(oPromise instanceof Promise, "open returns promise");
 
 						if (oPromise) {
@@ -586,7 +588,7 @@ sap.ui.define([
 										maxConditions: -1, // as for tokens there should not be a limit on type side
 										valueType: oType,
 										additionalValueType: oAdditionalType,
-										operators: ["EQ", "BT", "GT", "LT"],
+										operators: [OperatorName.EQ, OperatorName.BT, OperatorName.GT, OperatorName.LT],
 										display: FieldDisplay.ValueDescription,
 										valueHelpID: "VH",
 										control: oField,
@@ -622,8 +624,8 @@ sap.ui.define([
 
 	QUnit.test("switch content", function(assert) {
 
-		var oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
-		var oContent2 = new Content("Content2", {title: "Content2 title"});
+		const oContentField2 = new Icon("I3", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		const oContent2 = new Content("Content2", {title: "Content2 title"});
 		sinon.stub(oContent2, "getContent").returns(oContentField2);
 		oContent2.setAggregation("displayContent", oContentField2);
 		sinon.stub(oContent2, "getCount").callsFake(function (aConditions) { return aConditions.length;});
@@ -635,18 +637,18 @@ sap.ui.define([
 		sinon.spy(oContent2, "onHide");
 
 		oDialog.setTitle("Test");
-		var oPromise = oDialog.open(Promise.resolve());
+		const oPromise = oDialog.open(Promise.resolve());
 
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function () { // wait until open
-					var oContainer = oDialog.getAggregation("_container");
+					const oContainer = oDialog.getAggregation("_container");
 					assert.equal(oContainer.getTitle(), "Test", "sap.m.Dialog title");
-					var aDialogContent = oContainer.getContent();
-					var aItems = aDialogContent[0].getItems();
-					var oIconTabBar = aItems[0];
-					var oIconTabHeader = oIconTabBar.getAggregation("_header");
+					const aDialogContent = oContainer.getContent();
+					const aItems = aDialogContent[0].getItems();
+					const oIconTabBar = aItems[0];
+					const oIconTabHeader = oIconTabBar.getAggregation("_header");
 					assert.equal(oIconTabBar.getItems().length, 2, "items assigned");
 					oIconTabHeader.setSelectedItem(oIconTabHeader.getItems()[1], false); // simulate swith
 
@@ -674,13 +676,15 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: null,
 			ariaHasPopup: "dialog",
 			role: null,
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
-		var oAttributes = oDialog.getAriaAttributes();
+		const oAttributes = oDialog.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -697,35 +701,35 @@ sap.ui.define([
 
 	QUnit.test("isTypeaheadSupported", function(assert) {
 
-		var bSupported = oDialog.isTypeaheadSupported();
+		const bSupported = oDialog.isTypeaheadSupported();
 		assert.notOk(bSupported, "not supported for dialog");
 
 	});
 
 	QUnit.test("select event", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oDialog.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
-		var iConfirm = 0;
-		var bClose = false;
+		let iConfirm = 0;
+		let bClose = false;
 		oDialog.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 			bClose = oEvent.getParameter("close");
 		});
 
-		var oContent2 = new Content("Content2", {title: "Content title 2", shortTitle: "ShortTitle 2"});
+		const oContent2 = new Content("Content2", {title: "Content title 2", shortTitle: "ShortTitle 2"});
 		sinon.stub(oContent2, "isQuickSelectSupported").returns(true);
 		oDialog.addContent(oContent2);
 
-		var oPromise = oDialog.open(Promise.resolve());
+		const oPromise = oDialog.open(Promise.resolve());
 		if (oPromise) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oPromise.then(function() {
 				setTimeout(function() { // wait until open
 					oContent.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Set});
@@ -754,12 +758,31 @@ sap.ui.define([
 
 						iSelect = 0;
 						iConfirm = 0;
-						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: ValueHelpSelectionType.Set});
-						assert.equal(iSelect, 1, "select event fired");
-						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
+
+						oContent2.fireSelect({conditions: [], type: ValueHelpSelectionType.Set});
+						assert.deepEqual(aConditions, [], "select event conditions");
 						assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
 						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
 						assert.notOk(bClose, "Close parameter not set");
+
+						oContent2.fireSelect({conditions: [], type: ValueHelpSelectionType.Add});
+						assert.deepEqual(aConditions, [], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+						assert.equal(iConfirm, 0, "ConfirmEvent not fired");
+						assert.notOk(bClose, "Close parameter not set");
+
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("Y", "Text")], type: ValueHelpSelectionType.Set});
+						assert.deepEqual(aConditions, [Condition.createItemCondition("Y", "Text")], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Set, "select event type");
+						assert.equal(iConfirm, 1, "ConfirmEvent fired");
+						assert.ok(bClose, "Close parameter set");
+
+						bClose = false;
+						oContent2.fireSelect({conditions: [Condition.createItemCondition("X", "Text")], type: ValueHelpSelectionType.Add});
+						assert.deepEqual(aConditions, [Condition.createItemCondition("X", "Text")], "select event conditions");
+						assert.equal(sType, ValueHelpSelectionType.Add, "select event type");
+						assert.equal(iConfirm, 2, "ConfirmEvent fired");
+						assert.ok(bClose, "Close parameter set");
 
 						oContent2.destroy();
 						fnDone();
@@ -775,29 +798,29 @@ sap.ui.define([
 
 	QUnit.test("delete tokens via Tokenizer", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oDialog.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
-				var aDialogContent = oContainer.getContent();
-				var aItems = aDialogContent[0].getItems();
-				var oPanel = aItems[1];
-				var aPanelContent = oPanel.getContent();
+				const aDialogContent = oContainer.getContent();
+				let aItems = aDialogContent[0].getItems();
+				const oPanel = aItems[1];
+				const aPanelContent = oPanel.getContent();
 				aItems = aPanelContent[0].getItems();
-				var oTokenMultiInput = aItems[0];
-				var aTokens = oTokenMultiInput.getTokens();
+				const oTokenMultiInput = aItems[0];
+				const aTokens = oTokenMultiInput.getTokens();
 
 				oTokenMultiInput.fireTokenUpdate({removedTokens: aTokens});
 				assert.equal(iSelect, 1, "select event fired");
@@ -822,28 +845,28 @@ sap.ui.define([
 
 	QUnit.test("delete tokens via Button", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oDialog.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 
-		var oContainer = oDialog.getContainerControl().then(function (oCont) {
+		const oContainer = oDialog.getContainerControl().then(function (oCont) {
 			return oDialog.placeContent(oCont);
 		});
 
 		if (oContainer) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContainer.then(function(oContainer) {
-				var aDialogContent = oContainer.getContent();
-				var aItems = aDialogContent[0].getItems();
-				var oPanel = aItems[1];
-				var aPanelContent = oPanel.getContent();
+				const aDialogContent = oContainer.getContent();
+				let aItems = aDialogContent[0].getItems();
+				const oPanel = aItems[1];
+				const aPanelContent = oPanel.getContent();
 				aItems = aPanelContent[0].getItems();
-				var oButton = aItems[1];
+				const oButton = aItems[1];
 
 				oButton.firePress();
 				assert.equal(iSelect, 1, "select event fired");

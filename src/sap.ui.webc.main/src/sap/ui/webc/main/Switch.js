@@ -4,9 +4,10 @@
 
 // Provides control sap.ui.webc.main.Switch.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
+	"./thirdparty/features/InputElementsFormSupport",
 	"./thirdparty/Switch"
 ], function(WebComponent, library, EnabledPropagator) {
 	"use strict";
@@ -19,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.main.Switch</code> component is used for changing between binary states. <br>
@@ -95,16 +96,37 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
 				},
 
 				/**
+				 * Determines the name with which the component will be submitted in an HTML form.
+				 *
+				 *
+				 * <br>
+				 * <br>
+				 * <b>Note:</b> When set, a native <code>input</code> HTML element will be created inside the component so that it can be submitted as part of an HTML form. Do not use this property unless you need to submit a form.
+				 */
+				name: {
+					type: "string",
+					defaultValue: ""
+				},
+
+				/**
+				 * Defines whether the component is required.
+				 */
+				required: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
 				 * Defines the text, displayed when the component is not checked. <br>
 				 * <br>
-				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off). <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
+				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
 				 */
 				textOff: {
 					type: "string",
@@ -116,7 +138,7 @@ sap.ui.define([
 				 *
 				 * <br>
 				 * <br>
-				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off). <b>Note:</b> This property will have no effect if the theme is set to <code>sap_horizon</code>.
+				 * <b>Note:</b> We recommend using short texts, up to 3 letters (larger texts would be cut off).
 				 */
 				textOn: {
 					type: "string",

@@ -6,9 +6,9 @@
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"controlEnablementReport/ElementActionDefinitionTest",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/VersionInfo"
-], function(ManagedObject, ElementActionDefinitionTest, oCore, VersionInfo) {
+], function(ManagedObject, ElementActionDefinitionTest, Lib, VersionInfo) {
 	"use strict";
 
 	/**
@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.48
 	 * @alias sap.ui.dt.test.LibraryEnablementTest2
-	 * @experimental Since 1.48. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var LibraryEnablementTest2 = ManagedObject.extend("sap.ui.dt.test.LibraryEnablementTest", /** @lends sap.ui.dt.test.LibraryEnablementTest2.prototype */ {
 	});
@@ -70,22 +69,22 @@ sap.ui.define([
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl"
 					) {
-						aLoadLibraryPromises.push(oCore.loadLibrary(oLib.name, { async: true }));
+						aLoadLibraryPromises.push(Lib.load({name: oLib.name}));
 					}
 				});
 			} else {
 				aLibraries.forEach(function(sLib) {
-					aLoadLibraryPromises.push(oCore.loadLibrary(sLib, { async: true }));
+					aLoadLibraryPromises.push(Lib.load({name: sLib}));
 				});
 			}
 			return Promise.all(aLoadLibraryPromises);
 		}).then(function() {
-			var oLoadedLibs = oCore.getLoadedLibraries();
+			var oLoadedLibs = Lib.all();
 			for (var sLibraryName in oLoadedLibs) {
 				if (aLibraries.length > 0 && aLibraries.indexOf(sLibraryName) === -1) {
 					continue;
 				}
-				var oLib = oCore.getLoadedLibraries()[sLibraryName];
+				var oLib = Lib.all()[sLibraryName];
 				if (oLib && sLibraryName !== "sap.ui.core") {
 					var aLibraryControls = oLib.controls;
 					var aLibraryElements = oLib.elements;

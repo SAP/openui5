@@ -995,7 +995,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("aria-label"), oResourceBundle.getText("MESSAGE_VIEW_ARIA_LABEL"), "The text for the aria-label attribute is set correctly");
-		assert.strictEqual(this.oMessageView.getDomRef().getAttribute("role"), "region", "The role attribute is rendered correctly");
+		assert.strictEqual(this.oMessageView.getDomRef().tagName.toLowerCase(), "section", "The root element is with role section.");
 	});
 
 	QUnit.test("SegmentedButton aria-labelledby attribute should be rendered correctly", function (assert) {

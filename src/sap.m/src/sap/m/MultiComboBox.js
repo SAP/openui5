@@ -660,7 +660,7 @@ function(
 			this._bPreventValueRemove = false;
 
 			if (this.getValue() === "" || (typeof this.getValue() === "string" && oItem.getText().toLowerCase().startsWith(this.getValue().toLowerCase()))) {
-				if (ListHelpers.getListItem(oItem).isSelected()) {
+				if (ListHelpers.getListItem(oItem).getSelected()) {
 					this.setValue('');
 				} else {
 					this.setSelection(oParam);
@@ -1400,9 +1400,10 @@ function(
 		}
 
 		if (iInputWidth <= parseInt(sPopoverMaxWidth) && !Device.system.phone) {
-			this.getPicker().getDomRef().style.setProperty("max-width", "40rem");
+			this.getPicker().addStyleClass("sapMSuggestionPopoverDefaultWidth");
 		} else {
 			this.getPicker().getDomRef().style.setProperty("max-width", iInputWidth + "px");
+			this.getPicker().addStyleClass("sapMSuggestionPopoverInputWidth");
 		}
 
 	};
@@ -1850,7 +1851,7 @@ function(
 	 */
 	MultiComboBox.prototype._getSelectedItemsOf = function(aItems) {
 		for ( var i = 0, iLength = aItems.length, aSelectedItems = []; i < iLength; i++) {
-			if (ListHelpers.getListItem(aItems[i]).isSelected()) {
+			if (ListHelpers.getListItem(aItems[i]).getSelected()) {
 				aSelectedItems.push(aItems[i]);
 			}
 		}

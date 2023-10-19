@@ -81,8 +81,8 @@ sap.ui.define([
 		}
 
 		return new Promise(function(resolve) {
-			this.oVariantManagementControl.attachSave({resolve: resolve}, storeEventParameters, this);
-			this.oVariantManagementControl.attachCancel({resolve: resolve}, handleCancel, this);
+			this.oVariantManagementControl.attachSave({resolve}, storeEventParameters, this);
+			this.oVariantManagementControl.attachCancel({resolve}, handleCancel, this);
 			this.oVariantManagementControl.openSaveAsDialogForKeyUser(rtaUtils.getRtaStyleClassName(),
 				ContextSharingAPI.createComponent(mComponentPropertyBag));
 		}.bind(this))
@@ -113,7 +113,7 @@ sap.ui.define([
 		return this.oModel._handleSave(this.oVariantManagementControl, mParams)
 		.then(function(aDirtyChanges) {
 			this._aPreparedChanges = aDirtyChanges;
-			this._oVariantChange = aDirtyChanges[0];
+			[this._oVariantChange] = aDirtyChanges;
 			this.sNewVariantReference = this._oVariantChange.getId();
 			this._aPreparedChanges.forEach(function(oChange) {
 				if (oChange.getFileType() === "change") {

@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/dialog/CustomFieldCAPDialog"
 ], function(
+	Lib,
 	ServiceValidation,
 	CustomFieldCAPDialog
 ) {
@@ -13,11 +15,11 @@ sap.ui.define([
 
 	var oCurrentControl = null;
 	var oCAPDialog = null;
-	var oTextBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
+	var oTextBundle = Lib.getResourceBundleFor("sap.ui.fl");
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.CAPAccess
-	 * @experimental Since 1.93
+	 * @since 1.93
 	 * @private
 	 * @author SAP SE
 	 * @version ${version}
@@ -84,9 +86,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	CAPAccess.onTriggerCreateExtensionData = function(aBusinessContextInfos, sRtaStyleClassName) {
-		if (!oCAPDialog) {
-			oCAPDialog = new CustomFieldCAPDialog();
-		}
+		oCAPDialog ||= new CustomFieldCAPDialog();
 		oCAPDialog.open(aBusinessContextInfos, sRtaStyleClassName);
 	};
 

@@ -95,6 +95,26 @@
 		return oUrl.toString();
 	}
 
+	// Some of the reporting configurations could be set on the frontend
+	// Take those configurations and parse them
+	function getConfig() {
+		if (!oScript) {
+			return {};
+		}
+
+		var oConfig = {};
+		var watermarkProps = ["statements", "functions", "branches", "lines"];
+		watermarkProps.reduce(function(acc, prop) {
+			if (oScript.hasAttribute("data-sap-ui-cover-watermarks-" + prop)) {
+				acc["watermarks"] = acc["watermarks"] || {};
+				acc["watermarks"][prop] = JSON.parse(oScript.getAttribute("data-sap-ui-cover-watermarks-" + prop));
+			}
+			return acc;
+		}, oConfig);
+
+		return oConfig;
+	}
+
 	// check for coverage being active or not
 	if (QUnit.urlParams.coverage) {
 
@@ -124,19 +144,53 @@
 			if (window.top !== window){
 				return;
 			}
-			sap.ui.require(["sap/base/util/fetch"], function (fetch) {
-				fetch("/.ui5/coverage/report", {
-					method: "POST",
-					body: JSON.stringify(window.top.__coverage__),
-					headers: {
-						"Content-Type": "application/json"
+			sap.ui.require(["sap/base/util/fetch", "sap/base/util/Version"], function (fetch, Version) {
+				var oConfig = getConfig();
+				var oWatermarks = oConfig.watermarks;
+
+				fetch("/.ui5/coverage/ping", {
+					method: "GET"
+				})
+				.then(function (pResponse) {
+					return pResponse.json();
+				})
+				.then(function(oMiddlewareConfig){
+					// As of version >= 1.1.0 @ui5/middleware-code-coverage supports more enhanced structure for
+					// the request body. Directly sending the new coverage object will cause an error for older versions.
+					var oMiddlewareVersion = new Version(oMiddlewareConfig.version);
+					var bIsLegacyAPI = oMiddlewareVersion.compareTo("1.1.0") < 0;
+
+					if (bIsLegacyAPI) {
+						if (oWatermarks) {
+							// eslint-disable-next-line no-console
+							console.error(
+								"Coverage option \"watermarks\" is provided, but the current version of " +
+								"@ui5/middleware-code-coverage (" + oMiddlewareVersion.toString() + ") doesn't support it. " +
+								"Please upgrade @ui5/middleware-code-coverage to v1.1.0 or higher."
+							);
+						}
+						return window.top.__coverage__; // Backwards compatibility
+					} else {
+						return {
+							coverage: window.top.__coverage__,
+							watermarks: oWatermarks
+						};
 					}
+				}).then(function (oRequestBody) {
+					return fetch("/.ui5/coverage/report", {
+						method: "POST",
+						body: JSON.stringify(oRequestBody),
+						headers: {
+							"Content-Type": "application/json"
+						}
+					});
 				})
 				.then(function (pResponse) {
 					return pResponse.json();
 				})
 				.then(function (oData) {
 					var aReports = oData.availableReports;
+					// eslint-disable-next-line max-nested-callbacks
 					var oHTMLReport = aReports.filter(function (oCurReport) {
 						// HTML is the only one that make sense and
 						// provides understandable information

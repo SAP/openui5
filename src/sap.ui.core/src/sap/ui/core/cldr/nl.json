@@ -1,7 +1,7 @@
 {
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
-	"__version": "41.0.0",
-	"__buildtime": "2022-12-19T09:41:25.319Z",
+	"__version": "43.0.0",
+	"__buildtime": "2023-09-28T11:39:07.908Z",
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abchazisch",
@@ -15,6 +15,7 @@
 		"afh": "Afrihili",
 		"agq": "Aghem",
 		"ain": "Aino",
+		"ajp": "Zuid-Levantijns-Arabisch",
 		"ak": "Akan",
 		"akk": "Akkadisch",
 		"akz": "Alabama",
@@ -24,6 +25,7 @@
 		"am": "Amhaars",
 		"an": "Aragonees",
 		"ang": "Oudengels",
+		"ann": "Obolo",
 		"anp": "Angika",
 		"ar": "Arabisch",
 		"ar_001": "modern standaard Arabisch",
@@ -41,6 +43,7 @@
 		"asa": "Asu",
 		"ase": "Amerikaanse Gebarentaal",
 		"ast": "Asturisch",
+		"atj": "Atikamekw",
 		"av": "Avarisch",
 		"avk": "Kotava",
 		"awa": "Awadhi",
@@ -63,6 +66,7 @@
 		"bfd": "Bafut",
 		"bfq": "Badaga",
 		"bg": "Bulgaars",
+		"bgc": "Haryanvi",
 		"bgn": "Westers Beloetsji",
 		"bho": "Bhojpuri",
 		"bi": "Bislama",
@@ -109,14 +113,22 @@
 		"ckb": "Soranî",
 		"ckb_alt-menu": "Koerdisch, Soranî",
 		"ckb_alt-variant": "Koerdisch, Soranî",
+		"clc": "Chilcotin",
 		"co": "Corsicaans",
 		"cop": "Koptisch",
 		"cps": "Capiznon",
 		"cr": "Cree",
+		"crg": "Michif",
 		"crh": "Krim-Tataars",
+		"crj": "Zuidoost-Cree",
+		"crk": "Plains Cree",
+		"crl": "Noordoost-Cree",
+		"crm": "Moose Cree",
+		"crr": "Carolina Algonkisch",
 		"crs": "Seychellencreools",
 		"cs": "Tsjechisch",
 		"csb": "Kasjoebisch",
+		"csw": "Swampy Cree",
 		"cu": "Kerkslavisch",
 		"cv": "Tsjoevasjisch",
 		"cy": "Welsh",
@@ -125,8 +137,6 @@
 		"dar": "Dargwa",
 		"dav": "Taita",
 		"de": "Duits",
-		"de_AT": "Duits (Oostenrijk)",
-		"de_CH": "Duits (Zwitserland)",
 		"del": "Delaware",
 		"den": "Slavey",
 		"dgr": "Dogrib",
@@ -151,18 +161,11 @@
 		"el": "Grieks",
 		"elx": "Elamitisch",
 		"en": "Engels",
-		"en_AU": "Engels (Australië)",
-		"en_CA": "Engels (Canada)",
-		"en_GB": "Engels (Verenigd Koninkrijk)",
 		"en_GB-alt-short": "Engels (VK)",
-		"en_US": "Engels (Verenigde Staten)",
 		"en_US-alt-short": "Engels (VS)",
 		"enm": "Middelengels",
 		"eo": "Esperanto",
 		"es": "Spaans",
-		"es_419": "Spaans (Latijns-Amerika)",
-		"es_ES": "Spaans (Spanje)",
-		"es_MX": "Spaans (Mexico)",
 		"esu": "Yupik",
 		"et": "Estisch",
 		"eu": "Baskisch",
@@ -180,8 +183,6 @@
 		"fo": "Faeröers",
 		"fon": "Fon",
 		"fr": "Frans",
-		"fr_CA": "Frans (Canada)",
-		"fr_CH": "Frans (Zwitserland)",
 		"frc": "Cajun-Frans",
 		"frm": "Middelfrans",
 		"fro": "Oudfrans",
@@ -222,8 +223,10 @@
 		"hai": "Haida",
 		"hak": "Hakka",
 		"haw": "Hawaïaans",
+		"hax": "Zuid-Haida",
 		"he": "Hebreeuws",
 		"hi": "Hindi",
+		"hi_Latn-alt-variant": "Hinglish",
 		"hif": "Fijisch Hindi",
 		"hil": "Hiligaynon",
 		"hit": "Hettitisch",
@@ -235,6 +238,7 @@
 		"ht": "Haïtiaans Creools",
 		"hu": "Hongaars",
 		"hup": "Hupa",
+		"hur": "Halkomelem",
 		"hy": "Armeens",
 		"hz": "Herero",
 		"ia": "Interlingua",
@@ -245,6 +249,7 @@
 		"ig": "Igbo",
 		"ii": "Yi",
 		"ik": "Inupiaq",
+		"ikt": "Westelijk Canadees Inuktitut",
 		"ilo": "Iloko",
 		"inh": "Ingoesjetisch",
 		"io": "Ido",
@@ -311,6 +316,7 @@
 		"kut": "Kutenai",
 		"kv": "Komi",
 		"kw": "Cornish",
+		"kwk": "Kwakʼwala",
 		"ky": "Kirgizisch",
 		"la": "Latijn",
 		"lad": "Ladino",
@@ -323,6 +329,7 @@
 		"lg": "Luganda",
 		"li": "Limburgs",
 		"lij": "Ligurisch",
+		"lil": "Lillooet",
 		"liv": "Lijfs",
 		"lkt": "Lakota",
 		"lmo": "Lombardisch",
@@ -332,6 +339,7 @@
 		"lou": "Louisiana-Creools",
 		"loz": "Lozi",
 		"lrc": "Noordelijk Luri",
+		"lsm": "Saamia",
 		"lt": "Litouws",
 		"ltg": "Letgaals",
 		"lu": "Luba-Katanga",
@@ -370,6 +378,7 @@
 		"mn": "Mongools",
 		"mnc": "Mantsjoe",
 		"mni": "Meitei",
+		"moe": "Innu-aimun",
 		"moh": "Mohawk",
 		"mos": "Mossi",
 		"mr": "Marathi",
@@ -422,6 +431,11 @@
 		"nzi": "Nzima",
 		"oc": "Occitaans",
 		"oj": "Ojibwa",
+		"ojb": "Noordwest-Ojibwe",
+		"ojc": "Centraal Ojibwa",
+		"ojs": "Oji-Cree",
+		"ojw": "West-Ojibwe",
+		"oka": "Okanagan",
 		"om": "Afaan Oromo",
 		"or": "Odia",
 		"os": "Ossetisch",
@@ -441,17 +455,17 @@
 		"pfl": "Paltsisch",
 		"phn": "Foenicisch",
 		"pi": "Pali",
+		"pis": "Pijin",
 		"pl": "Pools",
 		"pms": "Piëmontees",
 		"pnt": "Pontisch",
 		"pon": "Pohnpeiaans",
+		"pqm": "Maliseet-Passamaquoddy",
 		"prg": "Oudpruisisch",
 		"pro": "Oudprovençaals",
 		"ps": "Pasjtoe",
 		"ps_alt-variant": "Pashto",
 		"pt": "Portugees",
-		"pt_BR": "Portugees (Brazilië)",
-		"pt_PT": "Portugees (Portugal)",
 		"qu": "Quechua",
 		"quc": "K’iche’",
 		"qug": "Kichwa",
@@ -464,7 +478,6 @@
 		"rm": "Reto-Romaans",
 		"rn": "Kirundi",
 		"ro": "Roemeens",
-		"ro_MD": "Roemeens (Moldavië)",
 		"rof": "Rombo",
 		"rom": "Romani",
 		"rtm": "Rotumaans",
@@ -507,6 +520,7 @@
 		"sid": "Sidamo",
 		"sk": "Slowaaks",
 		"sl": "Sloveens",
+		"slh": "Zuid-Lushootseed",
 		"sli": "Silezisch Duits",
 		"sly": "Selayar",
 		"sm": "Samoaans",
@@ -526,18 +540,19 @@
 		"ssy": "Saho",
 		"st": "Zuid-Sotho",
 		"stq": "Saterfries",
+		"str": "Straits Salish",
 		"su": "Soendanees",
 		"suk": "Sukuma",
 		"sus": "Soesoe",
 		"sux": "Soemerisch",
 		"sv": "Zweeds",
 		"sw": "Swahili",
-		"sw_CD": "Swahili (Congo-Kinshasa)",
 		"swb": "Shimaore",
 		"syc": "Klassiek Syrisch",
 		"syr": "Syrisch",
 		"szl": "Silezisch",
 		"ta": "Tamil",
+		"tce": "Zuid-Tutchone",
 		"tcy": "Tulu",
 		"te": "Telugu",
 		"tem": "Timne",
@@ -545,7 +560,9 @@
 		"ter": "Tereno",
 		"tet": "Tetun",
 		"tg": "Tadzjieks",
+		"tgx": "Tagish",
 		"th": "Thai",
+		"tht": "Tahltan",
 		"ti": "Tigrinya",
 		"tig": "Tigre",
 		"tiv": "Tiv",
@@ -560,6 +577,7 @@
 		"tn": "Tswana",
 		"to": "Tongaans",
 		"tog": "Nyasa Tonga",
+		"tok": "Toki Pona",
 		"tpi": "Tok Pisin",
 		"tr": "Turks",
 		"tru": "Turoyo",
@@ -568,6 +586,7 @@
 		"tsd": "Tsakonisch",
 		"tsi": "Tsimshian",
 		"tt": "Tataars",
+		"ttm": "Noord-Tutchone",
 		"ttt": "Moslim Tat",
 		"tum": "Toemboeka",
 		"tvl": "Tuvaluaans",
@@ -624,9 +643,7 @@
 		"zgh": "Standaard Marokkaanse Tamazight",
 		"zh": "Chinees",
 		"zh_alt-menu": "Mandarijn",
-		"zh_Hans": "Chinees (vereenvoudigd)",
 		"zh_Hans-alt-long": "Mandarijn (vereenvoudigd)",
-		"zh_Hant": "Chinees (traditioneel)",
 		"zh_Hant-alt-long": "Mandarijn (traditioneel)",
 		"zu": "Zoeloe",
 		"zun": "Zuni",
@@ -713,7 +730,7 @@
 		"Jurc": "Jurchen",
 		"Kali": "Kayah Li",
 		"Kana": "Katakana",
-		"Kawi": "Kawi",
+		"Kawi": "Kawi-taal",
 		"Khar": "Kharoshthi",
 		"Khmr": "Khmer",
 		"Khoj": "Khojki",
@@ -753,7 +770,7 @@
 		"Mtei": "Meitei",
 		"Mult": "Multani",
 		"Mymr": "Birmaans",
-		"Nagm": "Nagm",
+		"Nagm": "Nag Mundari",
 		"Nand": "Nandinagari",
 		"Narb": "Oud Noord-Arabisch",
 		"Nbat": "Nabateaans",
@@ -919,7 +936,7 @@
 		"CG-alt-variant": "Congo (Republiek)",
 		"CH": "Zwitserland",
 		"CI": "Ivoorkust",
-		"CI-alt-variant": "Ivoorkust",
+		"CI-alt-variant": "Côte d’Ivoire",
 		"CK": "Cookeilanden",
 		"CL": "Chili",
 		"CM": "Kameroen",
@@ -1058,6 +1075,7 @@
 		"NR": "Nauru",
 		"NU": "Niue",
 		"NZ": "Nieuw-Zeeland",
+		"NZ-alt-variant": "Aotearoa Nieuw-Zeeland",
 		"OM": "Oman",
 		"PA": "Panama",
 		"PE": "Peru",
@@ -1117,6 +1135,7 @@
 		"TN": "Tunesië",
 		"TO": "Tonga",
 		"TR": "Turkije",
+		"TR-alt-variant": "Turkije",
 		"TT": "Trinidad en Tobago",
 		"TV": "Tuvalu",
 		"TW": "Taiwan",
@@ -1164,8 +1183,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} 'om' {0}",
-			"long": "{1} 'om' {0}",
+			"full": "{1} {0}",
+			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -1231,7 +1250,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} - {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
 					"B": "h B – h B",
 					"h": "h–h B"
@@ -1245,42 +1264,42 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "y G – y G",
-					"y": "y – y G"
+					"G": "y G – y G",
+					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M-y GGGGG – M-y GGGGG",
-					"M": "M-y – M-y GGGGG",
-					"y": "M-y – M-y GGGGG"
+					"G": "M-y GGGGG – M-y GGGGG",
+					"M": "M-y – M-y GGGGG",
+					"y": "M-y – M-y GGGGG"
 				},
 				"GyMd": {
-					"d": "d-M-y – d-M-y GGGGG",
-					"G": "d-M-y GGGGG – d-M-y GGGGG",
-					"M": "d-M-y – d-M-y GGGGG",
-					"y": "d-M-y – d-M-y GGGGG"
+					"d": "d-M-y – d-M-y GGGGG",
+					"G": "d-M-y GGGGG – d-M-y GGGGG",
+					"M": "d-M-y – d-M-y GGGGG",
+					"y": "d-M-y – d-M-y GGGGG"
 				},
 				"GyMEd": {
-					"d": "E d-M-y – E d-M-y GGGGG",
-					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
-					"M": "E d-M-y – E d-M-y GGGGG",
-					"y": "E d-M-y – E d-M-y GGGGG"
+					"d": "E d-M-y – E d-M-y GGGGG",
+					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
+					"M": "E d-M-y – E d-M-y GGGGG",
+					"y": "E d-M-y – E d-M-y GGGGG"
 				},
 				"GyMMM": {
-					"G": "MMM y G – MMM y G",
-					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
 				},
 				"GyMMMd": {
 					"d": "d–d MMM y G",
-					"G": "d MMM y G – d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"GyMMMEd": {
-					"d": "E d MMM – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d MMM – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1318,23 +1337,23 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "dd-MM – dd-MM",
+					"M": "dd-MM – dd-MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E dd-MM – E dd-MM",
+					"M": "E dd-MM – E dd-MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d–d MMM",
-					"M": "d MMM – d MMM"
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
-					"M": "E d MMM – E d MMM"
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
 				},
 				"MMMM": {
 					"M": "MMMM–MMMM"
@@ -1343,54 +1362,54 @@
 					"y": "y–y"
 				},
 				"yM": {
-					"M": "MM-y – MM-y",
-					"y": "MM-y – MM-y"
+					"M": "MM-y – MM-y",
+					"y": "MM-y – MM-y"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y",
-					"M": "dd-MM-y – dd-MM-y",
-					"y": "dd-MM-y – dd-MM-y"
+					"d": "dd-MM-y – dd-MM-y",
+					"M": "dd-MM-y – dd-MM-y",
+					"y": "dd-MM-y – dd-MM-y"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y",
-					"M": "E dd-MM-y – E dd-MM-y",
-					"y": "E dd-MM-y – E dd-MM-y"
+					"d": "E dd-MM-y – E dd-MM-y",
+					"M": "E dd-MM-y – E dd-MM-y",
+					"y": "E dd-MM-y – E dd-MM-y"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y",
-					"y": "MMM y – MMM y"
+					"y": "MMM y – MMM y"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y",
-					"M": "d MMM – d MMM y",
-					"y": "d MMM y – d MMM y"
+					"M": "d MMM – d MMM y",
+					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y",
-					"M": "E d MMM – E d MMM y",
-					"y": "E d MMM y – E d MMM y"
+					"d": "E d – E d MMM y",
+					"M": "E d MMM – E d MMM y",
+					"y": "E d MMM y – E d MMM y"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y",
-					"y": "MMMM y – MMMM y"
+					"y": "MMMM y – MMMM y"
 				}
 			}
 		},
 		"months": {
 			"format": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -1423,18 +1442,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -1691,8 +1710,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} 'om' {0}",
-			"long": "{1} 'om' {0}",
+			"full": "{1} {0}",
+			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -1753,13 +1772,13 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} - {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -1767,71 +1786,71 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "y G – y G",
-					"y": "y – y G"
+					"G": "y G – y G",
+					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M-y GGGGG – M-y GGGGG",
-					"M": "M-y – M-y GGGGG",
-					"y": "M-y – M-y GGGGG"
+					"G": "M-y GGGGG – M-y GGGGG",
+					"M": "M-y – M-y GGGGG",
+					"y": "M-y – M-y GGGGG"
 				},
 				"GyMd": {
-					"d": "d-M-y – d-M-y GGGGG",
-					"G": "d-M-y GGGGG – d-M-y GGGGG",
-					"M": "d-M-y – d-M-y GGGGG",
-					"y": "d-M-y – d-M-y GGGGG"
+					"d": "d-M-y – d-M-y GGGGG",
+					"G": "d-M-y GGGGG – d-M-y GGGGG",
+					"M": "d-M-y – d-M-y GGGGG",
+					"y": "d-M-y – d-M-y GGGGG"
 				},
 				"GyMEd": {
-					"d": "E d-M-y – E d-M-y GGGGG",
-					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
-					"M": "E d-M-y – E d-M-y GGGGG",
-					"y": "E d-M-y – E d-M-y GGGGG"
+					"d": "E d-M-y – E d-M-y GGGGG",
+					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
+					"M": "E d-M-y – E d-M-y GGGGG",
+					"y": "E d-M-y – E d-M-y GGGGG"
 				},
 				"GyMMM": {
-					"G": "MMM y G – MMM y G",
-					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
 				},
 				"GyMMMd": {
 					"d": "d–d MMM y G",
-					"G": "d MMM y G – d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"GyMMMEd": {
-					"d": "E d MMM – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d MMM – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
-					"h": "h:mm–h:mm a",
-					"m": "h:mm–h:mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
-					"h": "h:mm–h:mm a v",
-					"m": "h:mm–h:mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm v",
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -1840,23 +1859,23 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "dd-MM – dd-MM",
+					"M": "dd-MM – dd-MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E dd-MM – E dd-MM",
+					"M": "E dd-MM – E dd-MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d–d MMM",
-					"M": "d MMM – d MMM"
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
-					"M": "E d MMM – E d MMM"
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
 				},
 				"MMMM": {
 					"M": "MMMM–MMMM"
@@ -1865,36 +1884,36 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM-y – MM-y G",
+					"y": "MM-y – MM-y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "dd-MM-y – dd-MM-y G",
+					"M": "dd-MM-y – dd-MM-y G",
+					"y": "dd-MM-y – dd-MM-y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E dd-MM-y – E dd-MM-y G",
+					"M": "E dd-MM-y – E dd-MM-y G",
+					"y": "E dd-MM-y – E dd-MM-y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y – MMM y G"
+					"y": "MMM y – MMM y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G"
 				}
 			}
 		},
@@ -2210,8 +2229,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} 'om' {0}",
-			"long": "{1} 'om' {0}",
+			"full": "{1} {0}",
+			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -2272,13 +2291,13 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} - {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2286,71 +2305,71 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "y G – y G",
-					"y": "y – y G"
+					"G": "y G – y G",
+					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M-y GGGGG – M-y GGGGG",
-					"M": "M-y – M-y GGGGG",
-					"y": "M-y – M-y GGGGG"
+					"G": "M-y GGGGG – M-y GGGGG",
+					"M": "M-y – M-y GGGGG",
+					"y": "M-y – M-y GGGGG"
 				},
 				"GyMd": {
-					"d": "d-M-y – d-M-y GGGGG",
-					"G": "d-M-y GGGGG – d-M-y GGGGG",
-					"M": "d-M-y – d-M-y GGGGG",
-					"y": "d-M-y – d-M-y GGGGG"
+					"d": "d-M-y – d-M-y GGGGG",
+					"G": "d-M-y GGGGG – d-M-y GGGGG",
+					"M": "d-M-y – d-M-y GGGGG",
+					"y": "d-M-y – d-M-y GGGGG"
 				},
 				"GyMEd": {
-					"d": "E d-M-y – E d-M-y GGGGG",
-					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
-					"M": "E d-M-y – E d-M-y GGGGG",
-					"y": "E d-M-y – E d-M-y GGGGG"
+					"d": "E d-M-y – E d-M-y GGGGG",
+					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
+					"M": "E d-M-y – E d-M-y GGGGG",
+					"y": "E d-M-y – E d-M-y GGGGG"
 				},
 				"GyMMM": {
-					"G": "MMM y G – MMM y G",
-					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
 				},
 				"GyMMMd": {
 					"d": "d–d MMM y G",
-					"G": "d MMM y G – d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"GyMMMEd": {
-					"d": "E d MMM – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d MMM – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
-					"h": "h:mm–h:mm a",
-					"m": "h:mm–h:mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
-					"h": "h:mm–h:mm a v",
-					"m": "h:mm–h:mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm v",
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -2359,23 +2378,23 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "dd-MM – dd-MM",
+					"M": "dd-MM – dd-MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E dd-MM – E dd-MM",
+					"M": "E dd-MM – E dd-MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d–d MMM",
-					"M": "d MMM – d MMM"
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
-					"M": "E d MMM – E d MMM"
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
 				},
 				"MMMM": {
 					"M": "MMMM–MMMM"
@@ -2385,61 +2404,61 @@
 					"G": "y G–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G",
-					"G": "MM-y G – MM-y G"
+					"M": "MM-y – MM-y G",
+					"y": "MM-y – MM-y G",
+					"G": "MM-y G – MM-y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G",
-					"G": "dd-MM-y G – dd-MM-y G"
+					"d": "dd-MM-y – dd-MM-y G",
+					"M": "dd-MM-y – dd-MM-y G",
+					"y": "dd-MM-y – dd-MM-y G",
+					"G": "dd-MM-y G – dd-MM-y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G",
-					"G": "E dd-MM-y G – E dd-MM-y G"
+					"d": "E dd-MM-y – E dd-MM-y G",
+					"M": "E dd-MM-y – E dd-MM-y G",
+					"y": "E dd-MM-y – E dd-MM-y G",
+					"G": "E dd-MM-y G – E dd-MM-y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y – MMM y G",
-					"G": "MMM y G – MMM y G"
+					"y": "MMM y – MMM y G",
+					"G": "MMM y G – MMM y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G",
-					"G": "d MMM y G – d MMM y G"
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G",
+					"G": "d MMM y G – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G"
+					"d": "E d – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G",
-					"G": "MMMM y G – MMMM y G"
+					"y": "MMMM y – MMMM y G",
+					"G": "MMMM y G – MMMM y G"
 				}
 			}
 		},
 		"months": {
 			"format": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -2472,18 +2491,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -2749,8 +2768,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} 'om' {0}",
-			"long": "{1} 'om' {0}",
+			"full": "{1} {0}",
+			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -2811,13 +2830,13 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} - {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -2825,71 +2844,71 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "y G – y G",
-					"y": "y – y G"
+					"G": "y G – y G",
+					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M-y GGGGG – M-y GGGGG",
-					"M": "M-y – M-y GGGGG",
-					"y": "M-y – M-y GGGGG"
+					"G": "M-y GGGGG – M-y GGGGG",
+					"M": "M-y – M-y GGGGG",
+					"y": "M-y – M-y GGGGG"
 				},
 				"GyMd": {
-					"d": "d-M-y – d-M-y GGGGG",
-					"G": "d-M-y GGGGG – d-M-y GGGGG",
-					"M": "d-M-y – d-M-y GGGGG",
-					"y": "d-M-y – d-M-y GGGGG"
+					"d": "d-M-y – d-M-y GGGGG",
+					"G": "d-M-y GGGGG – d-M-y GGGGG",
+					"M": "d-M-y – d-M-y GGGGG",
+					"y": "d-M-y – d-M-y GGGGG"
 				},
 				"GyMEd": {
-					"d": "E d-M-y – E d-M-y GGGGG",
-					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
-					"M": "E d-M-y – E d-M-y GGGGG",
-					"y": "E d-M-y – E d-M-y GGGGG"
+					"d": "E d-M-y – E d-M-y GGGGG",
+					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
+					"M": "E d-M-y – E d-M-y GGGGG",
+					"y": "E d-M-y – E d-M-y GGGGG"
 				},
 				"GyMMM": {
-					"G": "MMM y G – MMM y G",
-					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
 				},
 				"GyMMMd": {
 					"d": "d–d MMM y G",
-					"G": "d MMM y G – d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"GyMMMEd": {
-					"d": "E d MMM – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d MMM – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
-					"h": "h:mm–h:mm a",
-					"m": "h:mm–h:mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
-					"h": "h:mm–h:mm a v",
-					"m": "h:mm–h:mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm v",
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -2898,23 +2917,23 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "dd-MM – dd-MM",
+					"M": "dd-MM – dd-MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E dd-MM – E dd-MM",
+					"M": "E dd-MM – E dd-MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d–d MMM",
-					"M": "d MMM – d MMM"
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
-					"M": "E d MMM – E d MMM"
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
 				},
 				"MMMM": {
 					"M": "MMMM–MMMM"
@@ -2923,36 +2942,36 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM-y – MM-y G",
+					"y": "MM-y – MM-y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "dd-MM-y – dd-MM-y G",
+					"M": "dd-MM-y – dd-MM-y G",
+					"y": "dd-MM-y – dd-MM-y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E dd-MM-y – E dd-MM-y G",
+					"M": "E dd-MM-y – E dd-MM-y G",
+					"y": "E dd-MM-y – E dd-MM-y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y – MMM y G"
+					"y": "MMM y – MMM y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G"
 				}
 			}
 		},
@@ -3268,8 +3287,8 @@
 			"short": "HH:mm"
 		},
 		"dateTimeFormats": {
-			"full": "{1} 'om' {0}",
-			"long": "{1} 'om' {0}",
+			"full": "{1} {0}",
+			"long": "{1} {0}",
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
@@ -3330,13 +3349,13 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0} - {1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"Bh": {
-					"B": "h B – h B",
+					"B": "h B – h B",
 					"h": "h–h B"
 				},
 				"Bhm": {
-					"B": "h:mm B – h:mm B",
+					"B": "h:mm B – h:mm B",
 					"h": "h:mm–h:mm B",
 					"m": "h:mm–h:mm B"
 				},
@@ -3344,71 +3363,71 @@
 					"d": "d–d"
 				},
 				"Gy": {
-					"G": "y G – y G",
-					"y": "y – y G"
+					"G": "y G – y G",
+					"y": "y – y G"
 				},
 				"GyM": {
-					"G": "M-y GGGGG – M-y GGGGG",
-					"M": "M-y – M-y GGGGG",
-					"y": "M-y – M-y GGGGG"
+					"G": "M-y GGGGG – M-y GGGGG",
+					"M": "M-y – M-y GGGGG",
+					"y": "M-y – M-y GGGGG"
 				},
 				"GyMd": {
-					"d": "d-M-y – d-M-y GGGGG",
-					"G": "d-M-y GGGGG – d-M-y GGGGG",
-					"M": "d-M-y – d-M-y GGGGG",
-					"y": "d-M-y – d-M-y GGGGG"
+					"d": "d-M-y – d-M-y GGGGG",
+					"G": "d-M-y GGGGG – d-M-y GGGGG",
+					"M": "d-M-y – d-M-y GGGGG",
+					"y": "d-M-y – d-M-y GGGGG"
 				},
 				"GyMEd": {
-					"d": "E d-M-y – E d-M-y GGGGG",
-					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
-					"M": "E d-M-y – E d-M-y GGGGG",
-					"y": "E d-M-y – E d-M-y GGGGG"
+					"d": "E d-M-y – E d-M-y GGGGG",
+					"G": "E d-M-y GGGGG – E d-M-y GGGGG",
+					"M": "E d-M-y – E d-M-y GGGGG",
+					"y": "E d-M-y – E d-M-y GGGGG"
 				},
 				"GyMMM": {
-					"G": "MMM y G – MMM y G",
-					"M": "MMM – MMM y G",
-					"y": "MMM y – MMM y G"
+					"G": "MMM y G – MMM y G",
+					"M": "MMM – MMM y G",
+					"y": "MMM y – MMM y G"
 				},
 				"GyMMMd": {
 					"d": "d–d MMM y G",
-					"G": "d MMM y G – d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"G": "d MMM y G – d MMM y G",
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"GyMMMEd": {
-					"d": "E d MMM – E d MMM y G",
-					"G": "E d MMM y G – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d MMM – E d MMM y G",
+					"G": "E d MMM y G – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"h": {
-					"a": "h a – h a",
-					"h": "h–h a"
+					"a": "h a – h a",
+					"h": "h–h a"
 				},
 				"H": {
 					"H": "HH–HH"
 				},
 				"hm": {
-					"a": "h:mm a – h:mm a",
-					"h": "h:mm–h:mm a",
-					"m": "h:mm–h:mm a"
+					"a": "h:mm a – h:mm a",
+					"h": "h:mm–h:mm a",
+					"m": "h:mm–h:mm a"
 				},
 				"Hm": {
 					"H": "HH:mm–HH:mm",
 					"m": "HH:mm–HH:mm"
 				},
 				"hmv": {
-					"a": "h:mm a – h:mm a v",
-					"h": "h:mm–h:mm a v",
-					"m": "h:mm–h:mm a v"
+					"a": "h:mm a – h:mm a v",
+					"h": "h:mm–h:mm a v",
+					"m": "h:mm–h:mm a v"
 				},
 				"Hmv": {
 					"H": "HH:mm–HH:mm v",
 					"m": "HH:mm–HH:mm v"
 				},
 				"hv": {
-					"a": "h a – h a v",
-					"h": "h–h a v"
+					"a": "h a – h a v",
+					"h": "h–h a v"
 				},
 				"Hv": {
 					"H": "HH–HH v"
@@ -3417,23 +3436,23 @@
 					"M": "M–M"
 				},
 				"Md": {
-					"d": "dd-MM – dd-MM",
-					"M": "dd-MM – dd-MM"
+					"d": "dd-MM – dd-MM",
+					"M": "dd-MM – dd-MM"
 				},
 				"MEd": {
-					"d": "E dd-MM – E dd-MM",
-					"M": "E dd-MM – E dd-MM"
+					"d": "E dd-MM – E dd-MM",
+					"M": "E dd-MM – E dd-MM"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
 				},
 				"MMMd": {
 					"d": "d–d MMM",
-					"M": "d MMM – d MMM"
+					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
-					"M": "E d MMM – E d MMM"
+					"d": "E d – E d MMM",
+					"M": "E d MMM – E d MMM"
 				},
 				"MMMM": {
 					"M": "MMMM–MMMM"
@@ -3442,54 +3461,54 @@
 					"y": "y–y G"
 				},
 				"yM": {
-					"M": "MM-y – MM-y G",
-					"y": "MM-y – MM-y G"
+					"M": "MM-y – MM-y G",
+					"y": "MM-y – MM-y G"
 				},
 				"yMd": {
-					"d": "dd-MM-y – dd-MM-y G",
-					"M": "dd-MM-y – dd-MM-y G",
-					"y": "dd-MM-y – dd-MM-y G"
+					"d": "dd-MM-y – dd-MM-y G",
+					"M": "dd-MM-y – dd-MM-y G",
+					"y": "dd-MM-y – dd-MM-y G"
 				},
 				"yMEd": {
-					"d": "E dd-MM-y – E dd-MM-y G",
-					"M": "E dd-MM-y – E dd-MM-y G",
-					"y": "E dd-MM-y – E dd-MM-y G"
+					"d": "E dd-MM-y – E dd-MM-y G",
+					"M": "E dd-MM-y – E dd-MM-y G",
+					"y": "E dd-MM-y – E dd-MM-y G"
 				},
 				"yMMM": {
 					"M": "MMM–MMM y G",
-					"y": "MMM y – MMM y G"
+					"y": "MMM y – MMM y G"
 				},
 				"yMMMd": {
 					"d": "d–d MMM y G",
-					"M": "d MMM – d MMM y G",
-					"y": "d MMM y – d MMM y G"
+					"M": "d MMM – d MMM y G",
+					"y": "d MMM y – d MMM y G"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y G",
-					"M": "E d MMM – E d MMM y G",
-					"y": "E d MMM y – E d MMM y G"
+					"d": "E d – E d MMM y G",
+					"M": "E d MMM – E d MMM y G",
+					"y": "E d MMM y – E d MMM y G"
 				},
 				"yMMMM": {
 					"M": "MMMM–MMMM y G",
-					"y": "MMMM y – MMMM y G"
+					"y": "MMMM y – MMMM y G"
 				}
 			}
 		},
 		"months": {
 			"format": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -3522,18 +3541,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"jan.",
-					"feb.",
-					"mrt.",
-					"apr.",
+					"jan",
+					"feb",
+					"mrt",
+					"apr",
 					"mei",
-					"jun.",
-					"jul.",
-					"aug.",
-					"sep.",
-					"okt.",
-					"nov.",
-					"dec."
+					"jun",
+					"jul",
+					"aug",
+					"sep",
+					"okt",
+					"nov",
+					"dec"
 				],
 				"narrow": [
 					"J",
@@ -3839,12 +3858,12 @@
 			"relative-type-0": "dit kwartaal",
 			"relative-type-1": "volgend kwartaal",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "over {0} kwartaal",
-				"relativeTimePattern-count-other": "over {0} kwartalen"
+				"relativeTimePattern-count-one": "over {0} kwart.",
+				"relativeTimePattern-count-other": "over {0} kwart."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} kwartaal geleden",
-				"relativeTimePattern-count-other": "{0} kwartalen geleden"
+				"relativeTimePattern-count-one": "{0} kwart. geleden",
+				"relativeTimePattern-count-other": "{0} kwart. geleden"
 			}
 		},
 		"quarter-narrow": {
@@ -3854,11 +3873,11 @@
 			"relative-type-1": "volgend kwartaal",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "over {0} kw.",
-				"relativeTimePattern-count-other": "over {0} kwartalen"
+				"relativeTimePattern-count-other": "over {0} kw."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} kwartaal geleden",
-				"relativeTimePattern-count-other": "{0} kwartalen geleden"
+				"relativeTimePattern-count-one": "{0} kw. geleden",
+				"relativeTimePattern-count-other": "{0} kw. geleden"
 			}
 		},
 		"month-wide": {
@@ -4208,6 +4227,7 @@
 			"Cayman": "Cayman",
 			"Chicago": "Chicago",
 			"Chihuahua": "Chihuahua",
+			"Ciudad_Juarez": "Ciudad Juárez",
 			"Costa_Rica": "Costa Rica",
 			"Creston": "Creston",
 			"Cuiaba": "Cuiabá",
@@ -4844,10 +4864,12 @@
 			},
 			"power2": {
 				"compoundUnitPattern1": "{0}²",
+				"compoundUnitPattern1-count-one": "{0}²",
 				"compoundUnitPattern1-count-other": "{0}²"
 			},
 			"power3": {
 				"compoundUnitPattern1": "{0}³",
+				"compoundUnitPattern1-count-one": "{0}³",
 				"compoundUnitPattern1-count-other": "{0}³"
 			},
 			"times": {
@@ -4940,6 +4962,7 @@
 			},
 			"area-dunam": {
 				"displayName": "dunam",
+				"unitPattern-count-one": "{0} dunam",
 				"unitPattern-count-other": "{0} dunam"
 			},
 			"concentr-karat": {
@@ -4979,10 +5002,12 @@
 			},
 			"concentr-permyriad": {
 				"displayName": "‱",
+				"unitPattern-count-one": "{0}‱",
 				"unitPattern-count-other": "{0}‱"
 			},
 			"concentr-mole": {
 				"displayName": "mol",
+				"unitPattern-count-one": "{0} mol",
 				"unitPattern-count-other": "{0} mol"
 			},
 			"consumption-liter-per-kilometer": {
@@ -5066,15 +5091,21 @@
 				"unitPattern-count-other": "{0} eeuwen"
 			},
 			"duration-decade": {
-				"displayName": "decennia",
+				"displayName": "dec.",
 				"unitPattern-count-one": "{0} dec.",
-				"unitPattern-count-other": "{0} decennia"
+				"unitPattern-count-other": "{0} dec."
 			},
 			"duration-year": {
 				"displayName": "jr",
 				"unitPattern-count-one": "{0} jr",
 				"unitPattern-count-other": "{0} jr",
 				"perUnitPattern": "{0}/jr"
+			},
+			"duration-quarter": {
+				"displayName": "kwart.",
+				"unitPattern-count-one": "{0} kwart.",
+				"unitPattern-count-other": "{0} kwart.",
+				"perUnitPattern": "{0}/kw."
 			},
 			"duration-month": {
 				"displayName": "mnd",
@@ -5179,10 +5210,12 @@
 			},
 			"energy-electronvolt": {
 				"displayName": "eV",
+				"unitPattern-count-one": "{0} eV",
 				"unitPattern-count-other": "{0} eV"
 			},
 			"energy-british-thermal-unit": {
 				"displayName": "Btu",
+				"unitPattern-count-one": "{0} Btu",
 				"unitPattern-count-other": "{0} Btu"
 			},
 			"energy-therm-us": {
@@ -5192,14 +5225,17 @@
 			},
 			"force-pound-force": {
 				"displayName": "lbf",
+				"unitPattern-count-one": "{0} lbf",
 				"unitPattern-count-other": "{0} lbf"
 			},
 			"force-newton": {
 				"displayName": "N",
+				"unitPattern-count-one": "{0} N",
 				"unitPattern-count-other": "{0} N"
 			},
 			"force-kilowatt-hour-per-100-kilometer": {
 				"displayName": "kWh/100km",
+				"unitPattern-count-one": "{0} kWh/100km",
 				"unitPattern-count-other": "{0} kWh/100km"
 			},
 			"frequency-gigahertz": {
@@ -5257,8 +5293,14 @@
 				"unitPattern-count-one": "{0} dpi",
 				"unitPattern-count-other": "{0} dpi"
 			},
+			"graphics-dot": {
+				"displayName": "pixels",
+				"unitPattern-count-one": "{0} px",
+				"unitPattern-count-other": "{0} px"
+			},
 			"length-earth-radius": {
 				"displayName": "R⊕",
+				"unitPattern-count-one": "{0} R⊕",
 				"unitPattern-count-other": "{0} R⊕"
 			},
 			"length-kilometer": {
@@ -5368,6 +5410,7 @@
 			},
 			"length-solar-radius": {
 				"displayName": "R☉",
+				"unitPattern-count-one": "{0} R☉",
 				"unitPattern-count-other": "{0} R☉"
 			},
 			"light-lux": {
@@ -5377,17 +5420,20 @@
 			},
 			"light-candela": {
 				"displayName": "cd",
+				"unitPattern-count-one": "{0} cd",
 				"unitPattern-count-other": "{0} cd"
 			},
 			"light-lumen": {
 				"displayName": "lm",
+				"unitPattern-count-one": "{0} lm",
 				"unitPattern-count-other": "{0} lm"
 			},
 			"light-solar-luminosity": {
 				"displayName": "L☉",
+				"unitPattern-count-one": "{0} L☉",
 				"unitPattern-count-other": "{0} L☉"
 			},
-			"mass-metric-ton": {
+			"mass-tonne": {
 				"displayName": "t",
 				"unitPattern-count-one": "{0} t",
 				"unitPattern-count-other": "{0} t"
@@ -5448,14 +5494,17 @@
 			},
 			"mass-dalton": {
 				"displayName": "Da",
+				"unitPattern-count-one": "{0} Da",
 				"unitPattern-count-other": "{0} Da"
 			},
 			"mass-earth-mass": {
 				"displayName": "M⊕",
+				"unitPattern-count-one": "{0} M⊕",
 				"unitPattern-count-other": "{0} M⊕"
 			},
 			"mass-solar-mass": {
 				"displayName": "M☉",
+				"unitPattern-count-one": "{0} M☉",
 				"unitPattern-count-other": "{0} M☉"
 			},
 			"mass-grain": {
@@ -5535,10 +5584,12 @@
 			},
 			"pressure-kilopascal": {
 				"displayName": "kPa",
+				"unitPattern-count-one": "{0} kPa",
 				"unitPattern-count-other": "{0} kPa"
 			},
 			"pressure-megapascal": {
 				"displayName": "MPa",
+				"unitPattern-count-one": "{0} MPa",
 				"unitPattern-count-other": "{0} MPa"
 			},
 			"speed-kilometer-per-hour": {
@@ -5583,6 +5634,7 @@
 			},
 			"torque-pound-force-foot": {
 				"displayName": "lbf⋅ft",
+				"unitPattern-count-one": "{0} lbf⋅ft",
 				"unitPattern-count-other": "{0} lbf⋅ft"
 			},
 			"torque-newton-meter": {
@@ -5712,6 +5764,7 @@
 			},
 			"volume-fluid-ounce-imperial": {
 				"displayName": "Imp. fl oz",
+				"unitPattern-count-one": "{0} fl oz Imp.",
 				"unitPattern-count-other": "{0} fl oz Imp."
 			},
 			"volume-tablespoon": {
@@ -5726,6 +5779,7 @@
 			},
 			"volume-barrel": {
 				"displayName": "bbl",
+				"unitPattern-count-one": "{0} bbl",
 				"unitPattern-count-other": "{0} bbl"
 			},
 			"volume-dessert-spoon": {
@@ -5750,6 +5804,7 @@
 			},
 			"volume-jigger": {
 				"displayName": "jigger",
+				"unitPattern-count-one": "{0} jigger",
 				"unitPattern-count-other": "{0} jigger"
 			},
 			"volume-pinch": {
@@ -5871,41 +5926,56 @@
 	},
 	"eras-gregorian": {
 		"0": {
+			"_code": "gregory-inverse",
+			"_aliases": "bc bce",
 			"_end": "0-12-31"
 		},
 		"1": {
+			"_code": "gregory",
+			"_aliases": "ad ce",
 			"_start": "1-01-01"
 		}
 	},
 	"eras-islamic": {
 		"0": {
+			"_code": "islamic",
+			"_aliases": "ah",
 			"_start": "622-7-15"
 		}
 	},
 	"eras-persian": {
 		"0": {
+			"_code": "persian",
+			"_aliases": "ap",
 			"_start": "622-01-01"
 		}
 	},
 	"eras-buddhist": {
 		"0": {
+			"_code": "buddhist",
+			"_aliases": "be",
 			"_start": "-542-01-01"
 		}
 	},
 	"eras-japanese": {
 		"232": {
+			"_code": "meiji",
 			"_start": "1868-9-8"
 		},
 		"233": {
+			"_code": "taisho",
 			"_start": "1912-7-30"
 		},
 		"234": {
+			"_code": "showa",
 			"_start": "1926-12-25"
 		},
 		"235": {
+			"_code": "heisei",
 			"_start": "1989-1-8"
 		},
 		"236": {
+			"_code": "reiwa",
 			"_start": "2019-5-1"
 		}
 	},

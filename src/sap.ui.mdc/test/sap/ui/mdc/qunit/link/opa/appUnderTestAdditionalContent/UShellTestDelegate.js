@@ -1,0 +1,20 @@
+/*!
+ * ${copyright}
+ */
+sap.ui.define([
+	"sap/ui/mdc/ushell/LinkDelegate"
+], function(LinkDelegate) {
+	"use strict";
+
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
+
+	SampleLinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
+		return new Promise(function(resolve) {
+			setTimeout(function() {
+				resolve(true);
+			}, 3000);
+		});
+	};
+
+	return SampleLinkDelegate;
+});

@@ -10,7 +10,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("applyChange", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeArray = new AppDescriptorChange({
 				flexObjectMetadata: {
 					changeType: "appdescr_app_changeInbound"

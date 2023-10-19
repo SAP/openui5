@@ -3,19 +3,19 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/util/ZIndexManager",
-	"sap/ui/dt/Util",
-	"sap/ui/core/Core"
+	"sap/ui/dt/Util"
 ], function(
+	Localization,
 	Plugin,
 	Overlay,
 	OverlayRegistry,
 	ZIndexManager,
-	DtUtil,
-	Core
+	DtUtil
 ) {
 	"use strict";
 
@@ -30,7 +30,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.101
 	 * @alias sap.ui.rta.plugin.Resize
-	 * @experimental Since 1.101. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Resize = Plugin.extend("sap.ui.rta.plugin.Resize", /** @lends sap.ui.rta.plugin.Resize.prototype */ {
 		metadata: {
@@ -51,7 +50,7 @@ sap.ui.define([
 	var FULL_SCREEN_DIV_CLASS_NAME = "sapUiRtaFullScreenDiv";
 	var MINIMUM_WIDTH = 15; // px
 
-	var bRTL = Core.getConfiguration().getRTL();
+	var bRTL = Localization.getRTL();
 	var iDirectionFactor = bRTL ? -1 : 1;
 	var sBeginDirection = bRTL ? "right" : "left";
 	var iKeyboardStep = 15 * iDirectionFactor; // px
@@ -187,7 +186,7 @@ sap.ui.define([
 		// Initially set the current size of the element
 		var iNewWidth = getWidth(oOverlay);
 		// Place the middle of the handle on the mouse position
-		oHandle.style[sBeginDirection] = (iMousePosition - iOverlayBoundary) * iDirectionFactor - iHalfOffsetWidth + "px";
+		oHandle.style[sBeginDirection] = `${(iMousePosition - iOverlayBoundary) * iDirectionFactor - iHalfOffsetWidth}px`;
 
 		this.setDragging(true);
 		oOverlay.focus();
@@ -200,7 +199,7 @@ sap.ui.define([
 			var iHandleExtensionHeight = oAction.getHandleExtensionHeight(oElement);
 			oExtension = document.createElement("div");
 			oExtension.className = HANDLE_EXTENSION_CLASS_NAME;
-			oExtension.style.height = iHandleExtensionHeight + "px";
+			oExtension.style.height = `${iHandleExtensionHeight}px`;
 			oExtension.style["pointer-events"] = "none";
 		}
 
@@ -216,7 +215,7 @@ sap.ui.define([
 			iNewWidth = this._limitNewWidth(oOverlay, iNewWidth);
 
 			// The middle of the handle is on the mouse cursor
-			oHandle.style[sBeginDirection] = iNewWidth - oHandle.offsetWidth + "px";
+			oHandle.style[sBeginDirection] = `${iNewWidth - oHandle.offsetWidth}px`;
 		}
 
 		function onMouseUp() {
@@ -303,7 +302,7 @@ sap.ui.define([
 			var oNewHandle = document.createElement("div");
 			oNewHandle.className = HANDLE_CLASS_NAME;
 			oOverlayDomElement.append(oNewHandle);
-			oNewHandle.style[sBeginDirection] = oOverlayDomElement.clientWidth - oNewHandle.clientWidth + "px";
+			oNewHandle.style[sBeginDirection] = `${oOverlayDomElement.clientWidth - oNewHandle.clientWidth}px`;
 			oNewHandle.style["z-index"] = ZIndexManager.getNextZIndex();
 			oNewHandle.addEventListener("mousedown", this._onHandleMouseDown.bind(this, oOverlay));
 			this.setHandle(oNewHandle);
@@ -390,7 +389,8 @@ sap.ui.define([
 	 *
 	 * @override
 	 */
-	Resize.prototype.registerElementOverlay = function(oOverlay) {
+	Resize.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		if (this.isEnabled([oOverlay])) {
 			oOverlay.attachBrowserEvent("mousemove", this._onOverlayMouseMove, this);
 			oOverlay.attachBrowserEvent("mouseleave", this._onOverlayMouseLeave, this);
@@ -399,7 +399,7 @@ sap.ui.define([
 			oOverlay.attachEvent("selectionChange", this._onOverlaySelectionChange, this);
 			oOverlay.attachEvent("geometryChanged", this._onOverlayGeometryChanged, this);
 		}
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -408,14 +408,15 @@ sap.ui.define([
 	 *
 	 * @override
 	 */
-	Resize.prototype.deregisterElementOverlay = function(oOverlay) {
+	Resize.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		oOverlay.detachBrowserEvent("mousemove", this._onOverlayMouseMove, this);
 		oOverlay.detachBrowserEvent("mouseleave", this._onOverlayMouseLeave, this);
 		oOverlay.detachBrowserEvent("keydown", this._onOverlayKeyDown, this);
 		oOverlay.detachBrowserEvent("focus", this._onOverlayFocus, this);
 		oOverlay.detachEvent("selectionChange", this._onOverlaySelectionChange, this);
 		oOverlay.detachEvent("geometryChanged", this._onOverlayGeometryChanged, this);
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	/**

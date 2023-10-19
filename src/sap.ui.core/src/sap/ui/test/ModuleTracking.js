@@ -139,11 +139,19 @@
 	// the initial coverage per module (identified by resource name), taken when QUnit starts
 	let mInitialCoverageByModule;
 	const mCoverageSnapshotByModule = {};
+	const bTestsFiltered = /(testId|filter)=/.test(window.location.search);
 
 	function filterCoverage() {
-		// only keep the coverage for the actually tested modules
-		if (window.__coverage__ && Object.keys(mCoverageSnapshotByModule ).length) {
-			window.__coverage__ = mCoverageSnapshotByModule;
+		if (window.__coverage__ && Object.keys(mCoverageSnapshotByModule).length) {
+			if (window.location.search.includes("moduleId=")) {
+				// only keep the coverage for the actually tested modules
+				window.__coverage__ = mCoverageSnapshotByModule;
+			} else {
+				// replace globally measured code coverage by isolated code coverage results
+				for (const [sModuleName, oCounts] of Object.entries(mCoverageSnapshotByModule)) {
+					setModuleCoverage(sModuleName, oCounts);
+				}
+			}
 		}
 	}
 
@@ -151,37 +159,58 @@
 		if (!window.__coverage__) {
 			return undefined;
 		}
+		if (sModuleName.endsWith(".js")) {
+			return sModuleName;
+		}
 		const sPath = `${sModuleName.replace(/\./g, "/")}.js`;
 		return Object.keys(window.__coverage__)
 			.find((sResourceName) => sResourceName.endsWith(sPath));
 	}
 
-	function resetBranchCounts(oCurrent, oInitial) {
-		const oCurrentCounts = oCurrent.b;
-		const oInitialCounts = oInitial.b;
-		for (const [sKey, aInitialCounts] of Object.entries(oInitialCounts)) {
-			const aCurrentCounts = oCurrentCounts[sKey];
+	/**
+	 * Replaces the current code coverage counts for branches by the given counts.
+	 *
+	 * @param {object} oCurrent The current branch counts
+	 * @param {object} oCounts The branch counts to be used
+	 */
+	function setBranchCounts(oCurrent, oCounts) {
+		const oCurrentBranchCounts = oCurrent.b;
+		const oBranchCounts = oCounts.b;
+		for (const [sKey, aInitialCounts] of Object.entries(oBranchCounts)) {
+			const aCurrentCounts = oCurrentBranchCounts[sKey];
 			aInitialCounts.forEach((iCount, i) => { aCurrentCounts[i] = iCount; });
 		}
 	}
 
-	function resetCounts(oCurrent, oInitial, sList) {
-		const oCurrentCounts = oCurrent[sList];
-		const oInitialCounts = oInitial[sList];
-		for (const [sKey, iCount] of Object.entries(oInitialCounts)) {
+	/**
+	 * Replaces the current code coverage counts by the given counts.
+	 *
+	 * @param {object} oCurrentCounts The current counts
+	 * @param {object} oCounts The counts to be used
+	 */
+	function setCounts(oCurrentCounts, oCounts) {
+		for (const [sKey, iCount] of Object.entries(oCounts)) {
 			oCurrentCounts[sKey] = iCount;
 		}
 	}
 
-	function resetModuleCoverage(sModuleName) {
+	/**
+	 * Sets the measured counts to the given values, or to the initial values if isolated counts
+	 * are not set.
+	 *
+	 * @param {string} sModuleName
+	 *   The module name
+	 * @param {object} [oIsolatedCounts]
+	 *   The measured isolated counts; if not given the initial counts are used
+	 */
+	function setModuleCoverage(sModuleName, oIsolatedCounts) {
 		const sResourceName = getResourceName(sModuleName);
 		if (sResourceName) {
-			// keep only coverage for the module loading
-			const oCurrent = window.__coverage__[sResourceName];
-			const oInitial = mInitialCoverageByModule[sResourceName];
-			resetBranchCounts(oCurrent, oInitial);
-			resetCounts(oCurrent, oInitial, "f");
-			resetCounts(oCurrent, oInitial, "s");
+			const oGlobalCounts = window.__coverage__[sResourceName];
+			const oCounts = oIsolatedCounts || mInitialCoverageByModule[sResourceName];
+			setBranchCounts(oGlobalCounts, oCounts);
+			setCounts(oGlobalCounts.f, oCounts.f);
+			setCounts(oGlobalCounts.s, oCounts.s);
 		}
 	}
 
@@ -203,6 +232,9 @@
 		}
 		const oCoverage = clone(window.__coverage__[sResourceName]);
 		mCoverageSnapshotByModule[sResourceName] = oCoverage;
+		if (bTestsFiltered) {
+			return false;
+		}
 		return Object.values(oCoverage.b).some((aCounts) => aCounts.some((iCount) => iCount === 0))
 			|| Object.values(oCoverage.f).some((iCount) => iCount === 0)
 			|| Object.values(oCoverage.s).some((iCount) => iCount === 0);
@@ -267,7 +299,7 @@
 		mHooks.before = function () {
 			const oResult = fnBefore.apply(this, arguments);
 			if (!this.__ignoreIsolatedCoverage__) {
-				resetModuleCoverage(sTitle);
+				setModuleCoverage(sTitle);
 			}
 			return oResult;
 		};
@@ -294,17 +326,20 @@
 
 		QUnit.begin(() => {
 			// allow easier module selection: larger list, one click selection
-			jQuery("body").css("overflow", "scroll"); // always show scrollbar, avoid flickering
-			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
+			document.body.style.overflow = "scroll"; // always show scrollbar, avoid flickering
+			document.getElementById("qunit-modulefilter-dropdown-list").style.maxHeight = "none";
 
-			jQuery("#qunit-modulefilter-dropdown").on("click", function (oMouseEvent) {
-				if (oMouseEvent.target.tagName === "LABEL") {
-					setTimeout(function () {
-						// click on label instead of checkbox triggers "Apply" automatically
-						jQuery("#qunit-modulefilter-actions").children().first().trigger("click");
-					});
-				}
-			});
+			document.getElementById("qunit-modulefilter-dropdown")
+				.addEventListener("click", function (oMouseEvent) {
+					if (oMouseEvent.target.tagName === "LABEL"
+							&& oMouseEvent.target.innerText !== "All modules") {
+						setTimeout(function () {
+							// click on label instead of checkbox triggers "Apply" automatically
+							document.getElementById("qunit-modulefilter-actions").firstChild
+								.dispatchEvent(new MouseEvent("click"));
+						});
+					}
+				});
 
 			// remember which lines have been covered initially, at load time
 			saveInitialCoverage();

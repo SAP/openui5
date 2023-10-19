@@ -3,8 +3,9 @@
 sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/util/File",
 	"sap/ui/fl/Layer",
@@ -15,8 +16,9 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	Core,
+	Lib,
 	Control,
+	Element,
 	Fragment,
 	FileUtil,
 	Layer,
@@ -30,17 +32,17 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	function getDownloadDialogControl(oToolbar, sId) {
-		return sap.ui.getCore().byId(oToolbar.getId() + "_download_translation_fragment--" + sId);
+		return Element.getElementById(`${oToolbar.getId()}_download_translation_fragment--${sId}`);
 	}
 
 	function getUploadDialogControl(oToolbar, sId) {
-		return sap.ui.getCore().byId(oToolbar.getId() + "_upload_translation_fragment--" + sId);
+		return Element.getElementById(`${oToolbar.getId()}_upload_translation_fragment--${sId}`);
 	}
 
 	QUnit.module("Given a Toolbar with a translation extension", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = new Adaptation({
-				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER
@@ -60,18 +62,18 @@ sap.ui.define([
 
 			return this.oToolbar._pFragmentLoaded;
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.module("a download dialog is created", {
-			beforeEach: function() {
+			beforeEach() {
 				sandbox.stub(TranslationAPI, "hasTranslationRelevantDirtyChanges").returns(false);
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oToolbar._pFragmentLoaded;
 			},
-			afterEach: function() {
+			afterEach() {
 				this.oToolbar.destroy();
 				sandbox.restore();
 			}
@@ -235,7 +237,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("a upload dialog is created", {
-			beforeEach: function() {
+			beforeEach() {
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 			}
 		}, function() {

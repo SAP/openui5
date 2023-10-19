@@ -31,11 +31,11 @@ sap.ui.define([
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
+	const ValueState = coreLibrary.ValueState;
 
-    // shortcut for sap.m.FlexJustifyContent
-	var FlexJustifyContent = mLibrary.FlexJustifyContent;
-	var core = sap.ui.getCore();
+	// shortcut for sap.m.FlexJustifyContent
+	const FlexJustifyContent = mLibrary.FlexJustifyContent;
+	const core = sap.ui.getCore();
 
 	/**
 	 * Constructor for ChartItemPanel
@@ -53,7 +53,7 @@ sap.ui.define([
 	 * @since 1.97
 	 * @alias sap.ui.mdc.p13n.panels.ChartItemPanel
 	 */
-	var ChartItemPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.ChartItemPanel", {
+	const ChartItemPanel = BasePanel.extend("sap.ui.mdc.p13n.panels.ChartItemPanel", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -107,13 +107,13 @@ sap.ui.define([
 		this._fnHandleResize = function() {
 			//var bChangeResult = false, iScrollContainerHeightOld, iScrollContainerHeightNew;
 			if (this.getParent) {
-				var $dialogCont = null;
-				var oParent = this.getParent();
+				let $dialogCont = null;
+				const oParent = this.getParent();
 				if (oParent && oParent.$) {
 					$dialogCont = oParent.$("cont");
 					if ($dialogCont.children().length > 0) {
-						var iScrollContainerWidth = this._oInnerControl.$()[0].clientWidth;
-						var iMinWidth = 570;
+						const iScrollContainerWidth = this._oInnerControl.$()[0].clientWidth;
+						const iMinWidth = 570;
 
 						if (!this._bMobileMode && iScrollContainerWidth <= iMinWidth) {
 							this._switchMobileMode(true);
@@ -153,9 +153,6 @@ sap.ui.define([
 		// list is necessary to set the template + model on
 		this._oListControl = this._createInnerListControl();
 
-		// disable 'select all'
-		this._oListControl.setMultiSelectMode("ClearAll");
-
 		this._setInnerLayout();
 		this._bindListItems();
 
@@ -163,9 +160,9 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._createInnerListControl = function() {
 
-		var sId = this._bMobileMode ? this.getId() + "-innerP13nListMobile" : this.getId() + "-innerP13nList";
+		const sId = this._bMobileMode ? this.getId() + "-innerP13nListMobile" : this.getId() + "-innerP13nList";
 
-		var oTable = new Table(sId, Object.assign(this._getListControlConfig(), {}));
+		const oTable = new Table(sId, Object.assign(this._getListControlConfig(), {}));
 		this.setEnableReorder(true); //We always want reordering to be active in this panel
 
 		oTable.addEventDelegate({
@@ -199,29 +196,29 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._bindListItems = function(mBindingInfo) {
-			var oSorter;
-			var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			let oSorter;
+			const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
 			if ( this.getPanelConfig() && this.getPanelConfig().sorter) {
 				oSorter = this.getPanelConfig().sorter;
 			} else {
 
-					var oMeasuresGroup = { text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_MEASURE_GROUP_HEADER')};
-					var oDimensionsGroup = { text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_DIMENSION_GROUP_HEADER')};
+					const oMeasuresGroup = { text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_MEASURE_GROUP_HEADER')};
+					const oDimensionsGroup = { text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_DIMENSION_GROUP_HEADER')};
 
-					var mGroupInfo = {
+					const mGroupInfo = {
 						"Aggregatable": oMeasuresGroup,
 						"Groupable" : oDimensionsGroup,
 						"Measure": oMeasuresGroup,
 						"Dimension" : oDimensionsGroup
 					};
 
-					var fGrouper = function(oContext) {
-						var group = oContext.getProperty("kind");
+					const fGrouper = function(oContext) {
+						const group = oContext.getProperty("kind");
 						return { key: group, text: mGroupInfo[group].text };
 					};
 
-					var fSorter = function(a,b) {
+					const fSorter = function(a,b) {
 						if (a === b) {
 							return 0;
 						}
@@ -237,7 +234,7 @@ sap.ui.define([
 			}
 
 
-			var oFactoryFunction;
+			let oFactoryFunction;
 			this._mTemplatesMap = new Map();
 			this._mNamesMap = new Map();
 			this._mInvalidMap = new Map();
@@ -268,15 +265,15 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getTemplateComboBox = function(sKind){
-		var oVisibleFilter = new Filter("visible", FilterOperator.EQ, false);
-		var oCollator = new window.Intl.Collator();
-		var fnSorter = function(a,b) {
+		const oVisibleFilter = new Filter("visible", FilterOperator.EQ, false);
+		const oCollator = new window.Intl.Collator();
+		const fnSorter = function(a,b) {
 			return oCollator.compare(a,b);
 		};
 
-		var oSorter = new Sorter("label", false, false, fnSorter);
+		const oSorter = new Sorter("label", false, false, fnSorter);
 
-		var oComboBox = new ComboBox({
+		const oComboBox = new ComboBox({
 			id: "p13nPanel-templateComboBox-" + sKind,
 			width: "100%",
 			placeholder: this._getPlaceholderTextForTemplate(sKind),
@@ -299,7 +296,7 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getPlaceholderTextForTemplate = function(sKind) {
-		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		return MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 	};
 
@@ -332,14 +329,14 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getNameComboBox = function(sId, sKind, sName) {
-		var oCollator = new window.Intl.Collator();
-		var fnSorter = function(a,b) {
+		const oCollator = new window.Intl.Collator();
+		const fnSorter = function(a,b) {
 			return oCollator.compare(a,b);
 		};
 
-		var oSorter = new Sorter("label", false, false, fnSorter);
+		const oSorter = new Sorter("label", false, false, fnSorter);
 
-		var oNameFilterPersistent = new Filter({
+		const oNameFilterPersistent = new Filter({
 			filters: [
 				new Filter("visible", FilterOperator.EQ, false),
 				new Filter("name", FilterOperator.EQ, sName)
@@ -370,20 +367,20 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._createListItem = function(sId, oObject){
 
-		var sRemoveBtnId, aCells = [];
+		let sRemoveBtnId;
+		const aCells = [];
 
 
 		if (oObject.getObject() && oObject.getObject().template){
 			aCells.push(this._getTemplateComboBox(oObject.getObject().kind));
 		} else {
-			var oNameComboBox;
 
 			//When user had selected an incorrect value, correct it
 			if (oObject.getObject().name != oObject.getObject().tempName){
 				oObject.getObject().tempName = oObject.getObject().name;
 			}
 
-			oNameComboBox = this._getNameComboBox(sId, oObject.getObject().kind, oObject.getObject().name);
+			const oNameComboBox = this._getNameComboBox(sId, oObject.getObject().kind, oObject.getObject().name);
 			aCells.push(oNameComboBox);
 			aCells.push(this._getRoleSelect());
 			sRemoveBtnId = this.getId() + oObject.getObject().kind + "-RemoveBtn-" + oObject.getObject().name;
@@ -406,9 +403,9 @@ sap.ui.define([
 
 		}
 
-		var oListItem;
+		let oListItem;
 		if (oObject.getObject() && oObject.getObject().template) {
-			var sKind = oObject.getObject().kind;
+			const sKind = oObject.getObject().kind;
 			oListItem = new ColumnListItem({
 				cells: aCells,
 				visible: {
@@ -436,13 +433,14 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._createListItemMobile = function(sId, oObject){
 
-		var sRemoveBtnId, aCells = [];
+		let sRemoveBtnId;
+		const aCells = [];
 
 		if (oObject.getObject() && oObject.getObject().template){
 			aCells.push(this._getTemplateComboBox(oObject.getObject().kind));
 		} else {
 
-			var oVBox = new VBox({
+			const oVBox = new VBox({
 				items: [
 					this._getNameComboBox(sId, oObject.getObject().kind, oObject.getObject().name),
 					this._getRoleSelect()
@@ -454,7 +452,7 @@ sap.ui.define([
 
 		}
 
-		var oRemoveColumn = new HBox({
+		const oRemoveColumn = new HBox({
 			justifyContent: FlexJustifyContent.End,
 			items: [new Button({
 			id: sRemoveBtnId,
@@ -473,9 +471,9 @@ sap.ui.define([
 		aCells.push(oRemoveColumn);
 
 
-		var oListItem;
+		let oListItem;
 		if (oObject.getObject() && oObject.getObject().template) {
-			var sKind = oObject.getObject().kind;
+			const sKind = oObject.getObject().kind;
 			oListItem = new ColumnListItem({
 				cells: aCells,
 				visible: {
@@ -507,7 +505,8 @@ sap.ui.define([
 		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.keyCode === KeyCode.D){
 			//Ctrl+D
 			//Remove
-			var oRemoveBtn, oListItem = core.byId(oEvent.currentTarget.id);
+			let oRemoveBtn;
+			const oListItem = core.byId(oEvent.currentTarget.id);
 
 			if (this._bMobileMode) {
 				oRemoveBtn = oListItem.getCells()[1].getItems()[oListItem.getCells()[1].getItems().length - 1];
@@ -528,7 +527,7 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._focusHandler = function(oEvt) {
 
-		var oTarget = core.byId(oEvt.target.id);
+		const oTarget = core.byId(oEvt.target.id);
 
 		//Don't handle focus on button presses as this messes up event propagation
 		if (oTarget instanceof Button){
@@ -539,25 +538,25 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._handleActivated = function(oHoveredItem) {
-		var oItem = this._getModelItemByTableItem(oHoveredItem);
+		const oItem = this._getModelItemByTableItem(oHoveredItem);
 		if (oItem && oItem.template) {
 			this.removeMoveButtons();
 		}
 
-        this._oHoveredItem = oHoveredItem;
+		this._oHoveredItem = oHoveredItem;
 		this._updateEnableOfMoveButtons(oHoveredItem, false);
-        this._addMoveButtons(oHoveredItem);
+		this._addMoveButtons(oHoveredItem);
 		this._setMoveButtonVisibility(true);
 
-    };
+	};
 
 	ChartItemPanel.prototype.onChangeOfItemName = function(oEvent) {
-		var sPrevName = oEvent.getSource().data().prevName;
-		var sKind = oEvent.getSource().data().prevKind; //Can only select fields within same kind
-		var sNewName = oEvent.getSource().getSelectedKey();
+		const sPrevName = oEvent.getSource().data().prevName;
+		const sKind = oEvent.getSource().data().prevKind; //Can only select fields within same kind
+		const sNewName = oEvent.getSource().getSelectedKey();
 
-		var oPrevItem = this._getP13nModel().getProperty("/items").find(function(it){ return it.name === sPrevName && it.kind === sKind;});
-		var oNewItem = this._getP13nModel().getProperty("/items").find(function(it){ return it.name === sNewName && it.kind === sKind;});
+		const oPrevItem = this._getP13nModel().getProperty("/items").find(function(it){ return it.name === sPrevName && it.kind === sKind;});
+		const oNewItem = this._getP13nModel().getProperty("/items").find(function(it){ return it.name === sNewName && it.kind === sKind;});
 
 		this.removeMoveButtons();
 
@@ -596,8 +595,8 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getItemIndexByNameAndKind = function(sName, sKind) {
-		var aFields = this._getP13nModel().getProperty("/items");
-		var oField = aFields.find(function(it){return (it.name === sName && it.kind === sKind && !it.template);});
+		const aFields = this._getP13nModel().getProperty("/items");
+		const oField = aFields.find(function(it){return (it.name === sName && it.kind === sKind && !it.template);});
 
 		return this._getItemIndex(oField);
 	};
@@ -606,48 +605,48 @@ sap.ui.define([
 		return this._getP13nModel().getProperty("/items").indexOf(oItem);
 	};
 
-    ChartItemPanel.prototype.removeMoveButtons = function() {
-        var oMoveButtonBox = this._getMoveButtonContainer();
+	ChartItemPanel.prototype.removeMoveButtons = function() {
+		const oMoveButtonBox = this._getMoveButtonContainer();
 
-        if (oMoveButtonBox){
+		if (oMoveButtonBox){
 			oMoveButtonBox.removeItem(this._getMoveBottomButton());
 			oMoveButtonBox.removeItem(this._getMoveDownButton());
 			oMoveButtonBox.removeItem(this._getMoveUpButton());
-            oMoveButtonBox.removeItem(this._getMoveTopButton());
-        }
+			oMoveButtonBox.removeItem(this._getMoveTopButton());
+		}
 
-    };
+	};
 
 	//Called on exit of panel; resets templates
 	ChartItemPanel.prototype.getP13nData = function() {
 
-		var aItems = this._getCleanP13nItems();
+		const aItems = this._getCleanP13nItems();
 
 		this._getP13nModel().setProperty("/items", aItems);
 
 		return aItems;
 	};
 
-    ChartItemPanel.prototype._getMoveButtonContainer = function() {
-        if (this._oMoveUpButton &&
-            this._oMoveUpButton.getParent() &&
-            this._oMoveUpButton.getParent().isA("sap.m.FlexBox")
-        ){
-            return this._oMoveUpButton.getParent();
-        }
+	ChartItemPanel.prototype._getMoveButtonContainer = function() {
+		if (this._oMoveUpButton &&
+			this._oMoveUpButton.getParent() &&
+			this._oMoveUpButton.getParent().isA("sap.m.FlexBox")
+		){
+			return this._oMoveUpButton.getParent();
+		}
 
 		return undefined;
-    };
+	};
 
 	ChartItemPanel.prototype._addMoveButtons = function(oItem) {
-        var oTableItem = oItem;
-        if (!oTableItem){
-            return;
-        }
+		const oTableItem = oItem;
+		if (!oTableItem){
+			return;
+		}
 
-        var bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
+		const bIgnore = this._getP13nModel().getProperty(oTableItem.getBindingContextPath()) ? this._getP13nModel().getProperty(oTableItem.getBindingContextPath()).template : true;
 
-        if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore){
+		if (oTableItem.getCells() && (oTableItem.getCells().length === 2 || oTableItem.getCells().length === 3) && !bIgnore){
 			if (this._bMobileMode){
 				oTableItem.getCells()[1].insertItem(this._getMoveDownButton(), 0);
 				oTableItem.getCells()[1].insertItem(this._getMoveUpButton(), 0);
@@ -658,19 +657,19 @@ sap.ui.define([
 				oTableItem.getCells()[2].insertItem(this._getMoveTopButton(), 0);
 			}
 
-        }
-    };
+		}
+	};
 
 	ChartItemPanel.prototype._moveSelectedItem = function(){
 		this._oSelectedItem = this._getMoveButtonContainer().getParent();
 
-        BasePanel.prototype._moveSelectedItem.apply(this, arguments);
-    };
+		BasePanel.prototype._moveSelectedItem.apply(this, arguments);
+	};
 
 
 	ChartItemPanel.prototype._updateAvailableRolesForItems = function() {
-		var aItems = this._getP13nModel().getProperty("/items");
-		var aAllowedRoles = [];
+		const aItems = this._getP13nModel().getProperty("/items");
+		let aAllowedRoles = [];
 		if (this.getPanelConfig() && this.getPanelConfig().allowedLayoutOptions) {
 			aAllowedRoles = this.getPanelConfig().allowedLayoutOptions;
 		} else {
@@ -693,14 +692,14 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._onPressHide = function(oEvent, oRemoveBtn) {
 
-		var sPropertyName;
+		let sPropertyName;
 		if (oRemoveBtn) {
 			sPropertyName = oRemoveBtn.data().propertyName;
 		} else {
 			sPropertyName = oEvent.getSource().data().propertyName;
 		}
 
-		var aItems = jQuery.extend([], this._getP13nModel().getProperty("/items"), true);
+		const aItems = jQuery.extend([], this._getP13nModel().getProperty("/items"), true);
 
 		aItems.filter(function(it){return it.name === sPropertyName;}).forEach(function(oItem){
 			oItem.visible = false;
@@ -719,8 +718,8 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._announce = function (sMessage) {
-		var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
-		var oInvisibleMessage = InvisibleMessage.getInstance();
+		const InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
+		const oInvisibleMessage = InvisibleMessage.getInstance();
 		oInvisibleMessage.announce(sMessage, InvisibleMessageMode.Assertive);
 	};
 
@@ -731,8 +730,8 @@ sap.ui.define([
 
 		BasePanel.prototype.setP13nData.apply(this, arguments);
 
-		var aItems = [];
-		var aAddableItems = [];
+		let aItems = [];
+		const aAddableItems = [];
 
 		this.getP13nData().forEach(function(oItem, iIndex){
 			if (!oItem.availableRoles) {
@@ -740,7 +739,7 @@ sap.ui.define([
 			}
 
 			if (this.getPanelConfig() && this.getPanelConfig().allowedLayoutOptions) {
-				var aAllowedRoles = this.getPanelConfig().allowedLayoutOptions;
+				const aAllowedRoles = this.getPanelConfig().allowedLayoutOptions;
 
 				if (aAllowedRoles && aAllowedRoles.length >= 1) {
 					oItem.availableRoles = oItem.availableRoles.filter(function(it){return aAllowedRoles.indexOf(it.key) != -1;});
@@ -785,7 +784,7 @@ sap.ui.define([
 			if (this._mVisibleIndexes.has(oItem.kind)){
 				this._mVisibleIndexes.get(oItem.kind).push(_iIndex);
 			} else {
-				var aIndexes = [_iIndex];
+				const aIndexes = [_iIndex];
 				this._mVisibleIndexes.set(oItem.kind, aIndexes);
 			}
 		}.bind(this));
@@ -794,9 +793,9 @@ sap.ui.define([
 
 	ChartItemPanel.prototype.onChangeOfTemplateName = function(oEvent){
 
-		var sSelectedName = oEvent.getSource().getSelectedKey();
+		const sSelectedName = oEvent.getSource().getSelectedKey();
 
-		var oSelectedItem = this._getCleanP13nItems().find(function(it){ return it.name === sSelectedName;});
+		const oSelectedItem = this._getCleanP13nItems().find(function(it){ return it.name === sSelectedName;});
 
 		if (oSelectedItem){
 			oSelectedItem.visible = true;
@@ -804,9 +803,9 @@ sap.ui.define([
 			oEvent.getSource().setSelectedKey(undefined);
 			this._refreshP13nModel();
 
-			var aIndexes = this._mVisibleIndexes.has(oSelectedItem.kind) ? this._mVisibleIndexes.get(oSelectedItem.kind) : [];
-			var iOldIndex = this._getItemIndexByNameAndKind(oSelectedItem.name, oSelectedItem.kind);
-			var iNewIndex = aIndexes[aIndexes.length - 1];
+			const aIndexes = this._mVisibleIndexes.has(oSelectedItem.kind) ? this._mVisibleIndexes.get(oSelectedItem.kind) : [];
+			const iOldIndex = this._getItemIndexByNameAndKind(oSelectedItem.name, oSelectedItem.kind);
+			let iNewIndex = aIndexes[aIndexes.length - 1];
 
 			if (iOldIndex > iNewIndex) {
 				iNewIndex += 1;
@@ -847,14 +846,14 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getTemplateItems = function() {
-		var aItems = [];
+		const aItems = [];
 
 		if (!this.getPanelConfig() || !this.getPanelConfig().templateConfig){
 			return [];
 		}
 
 		this.getPanelConfig().templateConfig.forEach(function(oTemplateConfig){
-			var oItem = {template: true, kind: oTemplateConfig.kind};
+			const oItem = {template: true, kind: oTemplateConfig.kind};
 
 			aItems.push(oItem);
 		});
@@ -863,7 +862,7 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getListControlConfig = function(){
-		var oConfig = BasePanel.prototype._getListControlConfig.apply(this, arguments);
+		const oConfig = BasePanel.prototype._getListControlConfig.apply(this, arguments);
 
 		if (this._bMobileMode){
 			oConfig.columns = [new Column({
@@ -873,13 +872,13 @@ sap.ui.define([
 			}), new Column()];
 		} else {
 
-			var oDescColumn = new Column({
+			const oDescColumn = new Column({
 				header: new Text({
 					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION")
 				})
 			});
 
-			var oRoleColumn = new Column({
+			const oRoleColumn = new Column({
 				header: new Text({
 					text: this._getResourceTextMDC("chart.PERSONALIZATION_DIALOG_COLUMN_ROLE")
 				})
@@ -914,11 +913,11 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype.onChangeOfRole = function (oEvent) {
-		var oSelectedItem = oEvent.getParameter("selectedItem");
+		const oSelectedItem = oEvent.getParameter("selectedItem");
 		// Fire event only for valid selection
 		if (oSelectedItem) {
 
-			var oTableItem;
+			let oTableItem;
 
 			if (this._bMobileMode){
 				oTableItem = oEvent.getSource().getParent().getParent();
@@ -939,15 +938,15 @@ sap.ui.define([
 			return;
 		}
 
-		var aIndexes, oMItem = this._getModelItemByTableItem(oTableItem);
-		var iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
-		var bUpEnabled = true, bDownEnabled = true;
+		const oMItem = this._getModelItemByTableItem(oTableItem);
+		const iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
+		let bUpEnabled = true, bDownEnabled = true;
 
 		if (!oMItem || oMItem.template) {
 			return;
 		}
 
-		aIndexes = this._mVisibleIndexes.has(oMItem.kind) ? this._mVisibleIndexes.get(oMItem.kind) : [];
+		const aIndexes = this._mVisibleIndexes.has(oMItem.kind) ? this._mVisibleIndexes.get(oMItem.kind) : [];
 
 		if (iTableItemPos == 0 || aIndexes.indexOf(iTableItemPos) === 0 ) {
 			// disable move buttons upwards, if the item is at the top
@@ -978,12 +977,12 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._onPressButtonMoveToTop = function(oEvent) {
-		var oListItem = this._getListItemFromMoveButton(oEvent.getSource());
+		const oListItem = this._getListItemFromMoveButton(oEvent.getSource());
 		if (!oListItem){
 			return;
 		}
-		var  oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
-		var oTopIndex = this._mVisibleIndexes.get(oMItem.kind)[0];
+		const  oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
+		const oTopIndex = this._mVisibleIndexes.get(oMItem.kind)[0];
 
 		this._oSelectedItem = oListItem;
 
@@ -998,14 +997,14 @@ sap.ui.define([
 		if (!oListItem){
 			return;
 		}
-		var oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
-		var aIndexes = this._mVisibleIndexes.get(oMItem.kind);
-		var iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
+		const oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
+		const aIndexes = this._mVisibleIndexes.get(oMItem.kind);
+		const iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
 
 		this._oSelectedItem = oListItem;
 
 		//TODO: Get current index
-		var oNewIndex = aIndexes[aIndexes.indexOf(iTableItemPos) - 1];
+		const oNewIndex = aIndexes[aIndexes.indexOf(iTableItemPos) - 1];
 
 		this._moveSelectedItem(oNewIndex);
 	};
@@ -1018,42 +1017,42 @@ sap.ui.define([
 		if (!oListItem){
 			return;
 		}
-		var oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
-		var aIndexes = this._mVisibleIndexes.get(oMItem.kind);
-		var iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
+		const oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
+		const aIndexes = this._mVisibleIndexes.get(oMItem.kind);
+		const iTableItemPos = this._getP13nModel().getProperty("/items").indexOf(oMItem);
 
 		this._oSelectedItem = oListItem;
 
 		//TODO: Get current index
-		var oNewIndex = aIndexes[aIndexes.indexOf(iTableItemPos) + 1];
+		const oNewIndex = aIndexes[aIndexes.indexOf(iTableItemPos) + 1];
 
 		this._moveSelectedItem(oNewIndex);
 	};
 
 	ChartItemPanel.prototype._onPressButtonMoveToBottom = function(oEvent) {
 
-		var oListItem = this._getListItemFromMoveButton(oEvent.getSource());
+		const oListItem = this._getListItemFromMoveButton(oEvent.getSource());
 		if (!oListItem){
 			return;
 		}
-		var  oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
-		var oBottomIndex = this._mVisibleIndexes.get(oMItem.kind)[this._mVisibleIndexes.get(oMItem.kind).length - 1];
+		const  oMItem = this._getP13nModel().getProperty(oListItem.getBindingContextPath());
+		const oBottomIndex = this._mVisibleIndexes.get(oMItem.kind)[this._mVisibleIndexes.get(oMItem.kind).length - 1];
 
 		this._oSelectedItem = oListItem;
 		this._moveSelectedItem(oBottomIndex);
 	};
 
 	ChartItemPanel.prototype._moveTableItem = function(oItem, iNewIndex) {
-		var aFields = this._getP13nModel().getProperty("/items");
+		const aFields = this._getP13nModel().getProperty("/items");
 
 		// index of the item in the model not the index in the aggregation
-		var iOldIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
+		const iOldIndex = aFields.indexOf(oItem.getBindingContext(this.P13N_MODEL).getObject());
 
 		this._moveItemsByIndex(iOldIndex, iNewIndex);
 	};
 
 	ChartItemPanel.prototype._moveItemsByIndex = function(iOldIndex, iNewIndex, bPreventFocusHandling) {
-		var aFields = this._getP13nModel().getProperty("/items");
+		const aFields = this._getP13nModel().getProperty("/items");
 
 		// limit the minumum and maximum index
 		iNewIndex = (iNewIndex <= 0) ? 0 : Math.min(iNewIndex, aFields.length - 1);
@@ -1074,7 +1073,7 @@ sap.ui.define([
 		if (!bPreventFocusHandling){
 			// store the moved item again due to binding
 			this._oSelectedItem = this._oListControl.getItems().find(function(it){
-				var oItem = this._getModelItemByTableItem(it);
+				const oItem = this._getModelItemByTableItem(it);
 
 				return oItem && oItem === aFields[iNewIndex];
 
@@ -1095,7 +1094,7 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._getMoveConfigForTableItem = function(oTableItem) {
 
-		var oModelItem = this._getModelItemByTableItem(oTableItem);
+		const oModelItem = this._getModelItemByTableItem(oTableItem);
 
 		if (!oModelItem) {
 			return undefined;
@@ -1110,7 +1109,7 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._getDragDropConfig = function () {
 		if (!this._oDragDropInfo) {
-			var oDndConfig = BasePanel.prototype._getDragDropConfig.apply(this, arguments);
+			const oDndConfig = BasePanel.prototype._getDragDropConfig.apply(this, arguments);
 
 			oDndConfig.attachDragStart(this._checkDragStart.bind(this));
 			oDndConfig.attachDragEnter(this._checkDrag.bind(this));
@@ -1125,9 +1124,9 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._checkDrag = function(oEvent) {
-		var oEventItem = oEvent.getParameter("target");
-		var oMoveConfigEvent = this._getMoveConfigForTableItem(oEventItem);
-		var oMoveConfigDragged = this._getMoveConfigForTableItem(this._oDraggedItem);
+		const oEventItem = oEvent.getParameter("target");
+		const oMoveConfigEvent = this._getMoveConfigForTableItem(oEventItem);
+		const oMoveConfigDragged = this._getMoveConfigForTableItem(this._oDraggedItem);
 
 		//Prevents template from being draggable
 		if (!oMoveConfigEvent || oMoveConfigEvent.template || oMoveConfigDragged.aggregationRole != oMoveConfigEvent.aggregationRole) {
@@ -1143,20 +1142,20 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._onRearrange = function(oEvent) {
-		var oDraggedItem = oEvent.getParameter("draggedControl");
-		var oDroppedItem = oEvent.getParameter("droppedControl");
-		var sDropPosition = oEvent.getParameter("dropPosition");
+		const oDraggedItem = oEvent.getParameter("draggedControl");
+		const oDroppedItem = oEvent.getParameter("droppedControl");
+		const sDropPosition = oEvent.getParameter("dropPosition");
 
-		var oMoveConfigDragged = this._getMoveConfigForTableItem(oDraggedItem);
-		var oMoveConfigDropped = this._getMoveConfigForTableItem(oDroppedItem);
+		const oMoveConfigDragged = this._getMoveConfigForTableItem(oDraggedItem);
+		const oMoveConfigDropped = this._getMoveConfigForTableItem(oDroppedItem);
 
 		if (!oMoveConfigDragged || oMoveConfigDragged.template || !oMoveConfigDropped) {
 			oEvent.preventDefault();
 			return;
 		}
 
-		var iDraggedIndex = oMoveConfigDragged.currentIndex;
-		var iDroppedIndex = oMoveConfigDropped.currentIndex;
+		const iDraggedIndex = oMoveConfigDragged.currentIndex;
+		let iDroppedIndex = oMoveConfigDropped.currentIndex;
 
 		if (oMoveConfigDropped.template && sDropPosition == "After") {
 			oEvent.preventDefault();
@@ -1227,8 +1226,8 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getChartItemTextByKey = function (sKey) {
-		var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		var oAvailableRoles = {
+		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const oAvailableRoles = {
 			Dimension: [
 				{
 					key: ChartItemRoleType.category,
@@ -1257,9 +1256,9 @@ sap.ui.define([
 		return oAvailableRoles[sKey];
 	};
 
-	ChartItemPanel.prototype._getResourceTextMDC = function(sText, vValue) {
+	ChartItemPanel.prototype._getResourceTextMDC = function(sText, aValue) {
 		this.oResourceBundleMDC = this.oResourceBundleMDC ? this.oResourceBundleMDC : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		return sText ? this.oResourceBundleMDC.getText(sText, vValue) : this.oResourceBundleMDC;
+		return sText ? this.oResourceBundleMDC.getText(sText, aValue) : this.oResourceBundleMDC;
 	};
 
 	ChartItemPanel.prototype.exit = function() {
@@ -1269,6 +1268,10 @@ sap.ui.define([
 		this._bMobileMode = null;
 
 		return BasePanel.prototype.exit.apply(this, arguments);
+	};
+
+	ChartItemPanel.prototype.onReset = function() {
+		// TODO: check why not overriding the BasePanel onReset will cause unwanted behaviour
 	};
 
 	return ChartItemPanel;

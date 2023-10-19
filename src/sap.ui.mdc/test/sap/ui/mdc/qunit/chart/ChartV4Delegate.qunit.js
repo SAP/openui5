@@ -26,10 +26,10 @@ function(
 ) {
     "use strict";
 
-    var sandbox;
-    var sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
+    let sandbox;
+    const sDelegatePath = "test-resources/sap/ui/mdc/delegates/ChartDelegate";
 
-    var getLayoutConfig = function() {
+    const getLayoutConfig = function() {
 
         return [
             {
@@ -299,7 +299,7 @@ function(
 	QUnit.module("sap.ui.mdc.delegate.odata.v4.vizChart.ChartDelegate: State Handling", {
 
 		beforeEach: function() {
-			var TestComponent = UIComponent.extend("test", {
+			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
 						"sap.app": {
@@ -348,7 +348,7 @@ function(
     QUnit.test("_setState", function(assert) {
 		assert.equal(ChartDelegate._getState(this.oMDCChart), undefined, "Undefined returned for empty state");
 
-        var testData = {test: "Test123"};
+        const testData = {test: "Test123"};
         ChartDelegate._setState(this.oMDCChart, testData);
         assert.equal(ChartDelegate._getState(this.oMDCChart), testData, "State correctly set");
 	});
@@ -356,7 +356,7 @@ function(
     QUnit.test("_setInnerStructure", function(assert) {
 		assert.equal(ChartDelegate._getState(this.oMDCChart), undefined, "Undefined returned for empty state");
 
-        var testData = {test: "Test123"};
+        const testData = {test: "Test123"};
         ChartDelegate._setInnerStructure(this.oMDCChart, testData);
         assert.equal(ChartDelegate._getState(this.oMDCChart).innerStructure, testData, "State correctly set");
 	});
@@ -364,7 +364,7 @@ function(
     QUnit.test("_setBindingInfoForState", function(assert) {
 		assert.equal(ChartDelegate._getState(this.oMDCChart), undefined, "Undefined returned for empty state");
 
-        var testData = {test: "Test123"};
+        const testData = {test: "Test123"};
         ChartDelegate._setBindingInfoForState(this.oMDCChart, testData);
         assert.equal(ChartDelegate._getState(this.oMDCChart).bindingInfo, testData, "State correctly set");
 	});
@@ -380,7 +380,7 @@ function(
     QUnit.module("sap.ui.mdc.delegate.odata.v4.vizChart.ChartDelegate: General Functions", {
 
 		beforeEach: function() {
-			var TestComponent = UIComponent.extend("test", {
+			const TestComponent = UIComponent.extend("test", {
 				metadata: {
 					manifest: {
 						"sap.app": {
@@ -412,7 +412,7 @@ function(
             this.oInnerStructure = new VBox();
             this.oInnerChart = new SapChart();
 
-            var oState = {
+            const oState = {
                 innerStructure: this.oInnerStructure,
                 innerChart: this.oInnerChart
             };
@@ -432,8 +432,8 @@ function(
     });
 
     QUnit.test("exit", function(assert) {
-		var oInnerDestroySpy = sinon.spy(this.oInnerStructure, "destroy");
-        var oDeleteSpy = sinon.spy(ChartDelegate, "_deleteState");
+		const oInnerDestroySpy = sinon.spy(this.oInnerStructure, "destroy");
+        const oDeleteSpy = sinon.spy(ChartDelegate, "_deleteState");
 
         ChartDelegate.exit(this.oMDCChart);
         ChartDelegate.exit({getId: function(){}});
@@ -443,8 +443,8 @@ function(
 	});
 
     QUnit.test("zoomIn zoomOut getZoomState", function(assert) {
-		var oZoomSpy = sinon.spy(this.oInnerChart, "zoom");
-        var oZoomInfoSpy = sinon.spy(this.oInnerChart, "getZoomInfo");
+		const oZoomSpy = sinon.spy(this.oInnerChart, "zoom");
+        const oZoomInfoSpy = sinon.spy(this.oInnerChart, "getZoomInfo");
 
         ChartDelegate.zoomIn(this.oMDCChart);
         assert.ok(oZoomSpy.calledOnce, "Zoom was called once");
@@ -464,14 +464,14 @@ function(
 	});
 
     QUnit.test("getAdaptionUI", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
 
         assert.ok(ChartDelegate._aChartTypeLayout === undefined, "No layout config cached initially");
 		assert.equal(JSON.stringify(ChartDelegate.getChartTypeLayoutConfig()), JSON.stringify(getLayoutConfig()), "Layout config is correct");
         assert.ok(ChartDelegate._aChartTypeLayout, "Layout config now cached");
 
         ChartDelegate.getAdaptionUI(this.oMDCChart).then(function(oChartPanel){
-            var oExpPanelConfig = {
+            const oExpPanelConfig = {
                 "key": "column",
                 "allowedLayoutOptions": [
                     "axis1",
@@ -524,8 +524,8 @@ function(
         assert.ok(this.oInnerChart.getVisibleDimensions().length === 0, "Visible dimensions are empty");
         assert.ok(this.oInnerChart.getVisibleMeasures().length === 0, "Visible dimensions are empty");
 
-        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable", label: "Label"});
-        var oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable", label: "Label"});
+        const oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable", label: "Label"});
+        const oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable", label: "Label"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
@@ -541,8 +541,8 @@ function(
     });
 
     QUnit.test("_createMDCChartItem function", function(assert) {
-        var done = assert.async();
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const done = assert.async();
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Item1").returns(Promise.resolve({
             name: "Item1",
             groupable: true,
@@ -557,11 +557,11 @@ function(
         ChartDelegate._createMDCChartItem("Item1", this.oMDCChart).then(function(oItemGroup){
             ChartDelegate._createMDCChartItem("Item2", this.oMDCChart).then(function(oItemAggr){
                 assert.ok(oItemGroup, "Grouped Item was created");
-                assert.equal(oItemGroup.getName(), "Item1", "Name is correct");
+                assert.equal(oItemGroup.getPropertyKey(), "Item1", "Name is correct");
                 assert.equal(oItemGroup.getType(), "groupable", "Type is correct");
                 assert.equal(oItemGroup.getLabel(), "Label 1", "Label is correct");
                 assert.ok(oItemAggr, "Aggregated Item was created");
-                assert.equal(oItemAggr.getName(), "Item2", "Name is correct");
+                assert.equal(oItemAggr.getPropertyKey(), "Item2", "Name is correct");
                 assert.equal(oItemAggr.getType(), "aggregatable", "Type is correct");
                 assert.equal(oItemAggr.getLabel(), "Label 2", "Label is correct");
 
@@ -577,7 +577,7 @@ function(
 
     QUnit.test("getChartTypeInfo", function(assert) {
 
-        var oExpectedChartTypeInfo = {
+        const oExpectedChartTypeInfo = {
             "icon": "sap-icon://vertical-bar-chart",
             "text": "Selected Chart Type: Column Chart"
         };
@@ -587,15 +587,15 @@ function(
 
     QUnit.test("getDrillableItems", function(assert) {
 
-        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
-        var oGroupItem = new Item("groupItem1", {propertyKey: "Item2", type: "groupable"});
-        var oGroupItem2 = new Item("groupItem2", {propertyKey: "Item3", type: "groupable"});
+        const oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
+        const oGroupItem = new Item("groupItem1", {propertyKey: "Item2", type: "groupable"});
+        const oGroupItem2 = new Item("groupItem2", {propertyKey: "Item3", type: "groupable"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
         this.oMDCChart.addItem(oGroupItem2);
 
-        var aDrillableItems = ChartDelegate.getDrillableItems(this.oMDCChart);
+        const aDrillableItems = ChartDelegate.getDrillableItems(this.oMDCChart);
         assert.equal(aDrillableItems.length, 2, "Two items should be returned");
         assert.equal(aDrillableItems[0], oGroupItem, "Correct item returned");
         assert.equal(aDrillableItems[1], oGroupItem2, "Correct item returned");
@@ -603,7 +603,7 @@ function(
 
     QUnit.test("setChartType", function(assert) {
 
-        var oSetSpy = sinon.spy(this.oInnerChart, "setChartType");
+        const oSetSpy = sinon.spy(this.oInnerChart, "setChartType");
 
         ChartDelegate.setChartType(this.oMDCChart, "bar");
 
@@ -617,8 +617,8 @@ function(
         assert.ok(!ChartDelegate._getState(this.oMDCChart).toolbarUpdateRequested, "Request not set");
 
         //MDC Chart with items should result in request being set
-        var oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
-        var oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable"});
+        const oAggrItem = new Item("aggrItem", {propertyKey: "Item1", type: "aggregatable"});
+        const oGroupItem = new Item("groupItem", {propertyKey: "Item2", type: "groupable"});
 
         this.oMDCChart.addItem(oAggrItem);
         this.oMDCChart.addItem(oGroupItem);
@@ -629,7 +629,7 @@ function(
     });
 
     QUnit.test("getBindingInfo", function(assert) {
-        var oDelegate = {
+        const oDelegate = {
             payload: {
                 collectionName: "TestCollection"
             }
@@ -670,7 +670,7 @@ function(
     QUnit.test("getInnerChartSelectionHandler", function(assert) {
         ChartDelegate._setChart(this.oMDCChart, "ABC");
 
-        var oSelectionHandler = ChartDelegate.getInnerChartSelectionHandler(this.oMDCChart);
+        const oSelectionHandler = ChartDelegate.getInnerChartSelectionHandler(this.oMDCChart);
 
         assert.ok(oSelectionHandler, "Selection Hanlder returned");
         assert.equal(oSelectionHandler.eventId, "_selectionDetails", "Correct eventId");
@@ -679,20 +679,20 @@ function(
 
     QUnit.test("removeItemFromInnerChart", function(assert) {
 
-        var oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){}, setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}};
+        const oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){}, setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}};
 
         ChartDelegate._setChart(this.oMDCChart, oInnerChartMock);
         ChartDelegate._getState(this.oMDCChart).inResultDimensions = [];
         sandbox.stub(ChartDelegate, "_updateColoring");
         sandbox.stub(ChartDelegate, "_updateSemanticalPattern");
 
-        var oSetVisibleDimensionSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
-        var oSetVisibleMeasuresSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
+        const oSetVisibleDimensionSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
+        const oSetVisibleMeasuresSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
 
-        var oDim = new Item({propertyKey: "Dimension1", type: "groupable"});
-        var oMeas1 = new Item({propertyKey: "Measure1", type: "aggregatable"});
-        var oMeas2 = new Item({propertyKey: "Measure2", type: "aggregatable"});
-        var oMeas3 = new Item({propertyKey: "Measure3", type: "aggregatable"});
+        const oDim = new Item({propertyKey: "Dimension1", type: "groupable"});
+        const oMeas1 = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oMeas2 = new Item({propertyKey: "Measure2", type: "aggregatable"});
+        const oMeas3 = new Item({propertyKey: "Measure3", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas3);
@@ -708,8 +708,8 @@ function(
     });
 
     QUnit.test("addItem", function(assert) {
-        var done = assert.async();
-        var oCreateSpy = sinon.spy(ChartDelegate, "_createMDCChartItem");
+        const done = assert.async();
+        const oCreateSpy = sinon.spy(ChartDelegate, "_createMDCChartItem");
         sandbox.stub(ChartDelegate, "_getPropertyInfosByName").returns(Promise.resolve(undefined));
 
         ChartDelegate.addItem(this.oMDCChart, "ABC").then(function(){
@@ -720,7 +720,7 @@ function(
     });
 
     QUnit.test("removeItem", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
 
         ChartDelegate.removeItem().then(function(oReturnValue){
             assert.ok(oReturnValue, "Return value is set to true");
@@ -729,20 +729,20 @@ function(
     });
 
     QUnit.test("checkAndUpdateMDCItems", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
 
-        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
 
-        var oLabelSpyDim = sinon.spy(oDim, "setLabel");
-        var oRoleSpyDim = sinon.spy(oDim, "setRole");
-        var oLabelSpyMeas = sinon.spy(oMeas, "setLabel");
-        var oRoleSpyMeas = sinon.spy(oMeas, "setRole");
+        const oLabelSpyDim = sinon.spy(oDim, "setLabel");
+        const oRoleSpyDim = sinon.spy(oDim, "setRole");
+        const oLabelSpyMeas = sinon.spy(oMeas, "setLabel");
+        const oRoleSpyMeas = sinon.spy(oMeas, "setRole");
 
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
             name: "Dimension1",
             groupable: true,
@@ -767,8 +767,8 @@ function(
     });
 
     QUnit.test("_createMDCChartItem", function(assert) {
-        var done = assert.async();
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const done = assert.async();
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
             name: "Dimension1",
             groupable: true,
@@ -776,7 +776,7 @@ function(
         }));
 
         ChartDelegate._createMDCChartItem("Dimension1", this.oMDCChart, "series").then(function(oCreatedItem){
-            assert.equal(oCreatedItem.getName(), "Dimension1", "Name is correct");
+            assert.equal(oCreatedItem.getPropertyKey(), "Dimension1", "Name is correct");
             assert.equal(oCreatedItem.getType(), "groupable", "Item is groupable");
             assert.equal(oCreatedItem.getRole(), "series", "Role was set correctly");
             assert.equal(oCreatedItem.getLabel(), "Label 1", "Label was set correctly");
@@ -786,19 +786,19 @@ function(
     });
 
     QUnit.test("initializeInnerChart", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
         this.oMDCChart.setNoDataText("ABCDEFG");
         sandbox.stub(ChartDelegate, "_loadChart").returns(Promise.resolve());
 
-        var oInnerStructSpy = sinon.spy(ChartDelegate, "_setInnerStructure");
-        var oObserverSpy = sinon.spy(ChartDelegate, "_setUpChartObserver");
+        const oInnerStructSpy = sinon.spy(ChartDelegate, "_setInnerStructure");
+        const oObserverSpy = sinon.spy(ChartDelegate, "_setUpChartObserver");
 
         ChartDelegate.initializeInnerChart(this.oMDCChart).then(function(){
 
             assert.ok(oInnerStructSpy.called, "InnerStruct wes set");
             assert.ok(oObserverSpy.called, "Observer was setup");
 
-            var oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
+            const oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
             assert.equal(oInnerStruct.getNoDataContent().getText(), "ABCDEFG", "No data text was set on inner struct");
             assert.ok(this.oMDCChart.hasStyleClass("sapUiMDCChartTempTextOuter"), "MDC Chart has correct style class set");
 
@@ -807,13 +807,13 @@ function(
     });
 
     QUnit.test("initializeInnerChart with noData", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
         this.oMDCChart.setNoData(new VBox("testID"));
         sandbox.stub(ChartDelegate, "_loadChart").returns(Promise.resolve());
 
         ChartDelegate.initializeInnerChart(this.oMDCChart).then(function(){
 
-            var oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
+            const oInnerStruct = ChartDelegate._getInnerStructure(this.oMDCChart);
             assert.equal(oInnerStruct.getChartNoDataContent(), "testID", "Association to noData struct set");
 
             done();
@@ -821,17 +821,17 @@ function(
     });
 
     QUnit.test("_createContentFromItems", function(assert) {
-        var done = assert.async();
-        var oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){},
+        const done = assert.async();
+        const oInnerChartMock = {getVisibleDimensions: function(){return ["Dimension3", "Dimension1", "Dimension2"];}, getVisibleMeasures: function(){return ["Measure3", "Measure1", "Measure2"];}, setVisibleDimensions: function(){},
                                 setVisibleMeasures: function(){}, getMeasureByName: function(){}, removeMeasure: function(){}, addDimension: function(){}, setInResultDimensions: function(){}};
 
-        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
 
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
 
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
             name: "Dimension1",
             groupable: true,
@@ -848,13 +848,13 @@ function(
             label: "Label 2"
         }));
 
-        var oColStub = sandbox.stub(ChartDelegate, "_updateColoring");
-        var oSemStub = sandbox.stub(ChartDelegate, "_updateSemanticalPattern");
-        var oAddDimStub = sandbox.stub(ChartDelegate, "_addInnerDimension");
-        var oAddMeasStub = sandbox.stub(ChartDelegate, "_addInnerMeasure");
-        var oSetVisDimSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
-        var oSetVisMeasSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
-        var oAddDimSpy = sinon.spy(oInnerChartMock, "addDimension");
+        const oColStub = sandbox.stub(ChartDelegate, "_updateColoring");
+        const oSemStub = sandbox.stub(ChartDelegate, "_updateSemanticalPattern");
+        const oAddDimStub = sandbox.stub(ChartDelegate, "_addInnerDimension");
+        const oAddMeasStub = sandbox.stub(ChartDelegate, "_addInnerMeasure");
+        const oSetVisDimSpy = sinon.spy(oInnerChartMock, "setVisibleDimensions");
+        const oSetVisMeasSpy = sinon.spy(oInnerChartMock, "setVisibleMeasures");
+        const oAddDimSpy = sinon.spy(oInnerChartMock, "addDimension");
 
         ChartDelegate._setState(this.oMDCChart, {innerChart: oInnerChartMock, aColMeasures: [], aInSettings: [], inResultDimensions: []});
 
@@ -874,9 +874,9 @@ function(
     });
 
     QUnit.test("_prepareColoringForItem & addCriticality", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
 
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Measure1").returns(Promise.resolve({
             name: "Measure1",
             aggregatable: true,
@@ -892,7 +892,7 @@ function(
         //sandbox.stub(ChartDelegate, "_addCriticality").returns(Promise.resolve());
         ChartDelegate._setState(this.oMDCChart, { aInSettings: [], aColMeasures : [] });
 
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
         ChartDelegate._prepareColoringForItem(oMeas).then(function(){
@@ -902,10 +902,10 @@ function(
     });
 
     QUnit.test("_updateColoring", function(assert) {
-        var done = assert.async();
-        var oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
+        const done = assert.async();
+        const oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
 
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Dimension1").returns(Promise.resolve({
             name: "Dimension1",
             groupable: true,
@@ -937,15 +937,15 @@ function(
         }));
 
         ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock, aInSettings: [], aColMeasures : [] });
-        var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
-        var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
+        const oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
+        const oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
 
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
-        var oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oDim = new Item({propertyKey: "Dimension1", type: "groupable", label: "Dim1"});
         this.oMDCChart.addItem(oMeas);
         this.oMDCChart.addItem(oDim);
 
-        var oCorrectColorConfig = {
+        const oCorrectColorConfig = {
             "Criticality": {
                 "DimensionValues": {
                     "Dimension1": {
@@ -969,7 +969,7 @@ function(
             }
         };
 
-        var oCorrectActiveColorConfig = {
+        const oCorrectActiveColorConfig = {
             "coloring": "Criticality",
             "parameters": {
                 "dimension": "Dimension1"
@@ -988,10 +988,10 @@ function(
     });
 
     QUnit.test("_updateColoring only measure", function(assert) {
-        var done = assert.async();
-        var oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
+        const done = assert.async();
+        const oInnerChartMock = {setColorings: function(){}, setActiveColoring: function(){}};
 
-        var oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
+        const oStub = sandbox.stub(this.oMDCChart, "_getPropertyByNameAsync");
         oStub.withArgs("Measure1").returns(Promise.resolve({
             name: "Measure1",
             aggregatable: true,
@@ -1006,19 +1006,19 @@ function(
         }));
 
         ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock, aInSettings: [], aColMeasures : [] });
-        var oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
-        var oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
+        const oColorSpy = sinon.spy(oInnerChartMock, "setColorings");
+        const oActiveColorSpy = sinon.spy(oInnerChartMock, "setActiveColoring");
 
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
-        var oCorrectColorConfig = {
+        const oCorrectColorConfig = {
             "Criticality": {
                 "MeasureValues": {}
             }
         };
 
-        var oCorrectActiveColorConfig = {
+        const oCorrectActiveColorConfig = {
             "coloring": "Criticality",
             "parameters": {
                 "measure": [
@@ -1037,10 +1037,10 @@ function(
     });
 
     QUnit.test("_updateSemanticalPattern", function(assert) {
-        var oMeasureMock =  { setSemantics : function(){}, setSemanticallyRelatedMeasures: function(){} };
-        var oInnerChartMock = {getVisibleMeasures: function(){return ["Measure1"];}, getMeasureByName: function(){return oMeasureMock;}};
+        const oMeasureMock =  { setSemantics : function(){}, setSemanticallyRelatedMeasures: function(){} };
+        const oInnerChartMock = {getVisibleMeasures: function(){return ["Measure1"];}, getMeasureByName: function(){return oMeasureMock;}};
 
-        var oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
+        const oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
         oStub.withArgs("Measure1").returns({
             name: "Measure1",
             aggregatable: true,
@@ -1051,12 +1051,12 @@ function(
             }
         });
 
-        var oSemanticsSpy = sinon.spy(oMeasureMock, "setSemantics");
-        var oRelMeasSpy = sinon.spy(oMeasureMock, "setSemanticallyRelatedMeasures");
+        const oSemanticsSpy = sinon.spy(oMeasureMock, "setSemantics");
+        const oRelMeasSpy = sinon.spy(oMeasureMock, "setSemanticallyRelatedMeasures");
 
         ChartDelegate._setState(this.oMDCChart, { innerChart: oInnerChartMock});
 
-        var oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
+        const oMeas = new Item({propertyKey: "Measure1", type: "aggregatable"});
         this.oMDCChart.addItem(oMeas);
 
         ChartDelegate._updateSemanticalPattern(this.oMDCChart);
@@ -1101,13 +1101,13 @@ function(
     });
 
     QUnit.test("getAvailableChartTypes", function(assert) {
-        var oMockTypes =  {available : [{chart: "bar"}, {chart: "column"}]};
-        var oMockChart = {getAvailableChartTypes: function(){return oMockTypes;}};
+        const oMockTypes =  {available : [{chart: "bar"}, {chart: "column"}]};
+        const oMockChart = {getAvailableChartTypes: function(){return oMockTypes;}};
         ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
 
-        var oChartSpy = sinon.spy(oMockChart, "getAvailableChartTypes");
+        const oChartSpy = sinon.spy(oMockChart, "getAvailableChartTypes");
 
-        var aResult = ChartDelegate.getAvailableChartTypes(this.oMDCChart);
+        const aResult = ChartDelegate.getAvailableChartTypes(this.oMDCChart);
 
         assert.equal(aResult.length, 2, "2 Chart Types retuened");
         assert.ok(oChartSpy.calledOnce, "Chart types were get from inner chart");
@@ -1117,11 +1117,11 @@ function(
     });
 
     QUnit.test("getDrillStack", function(assert) {
-        var oMockStack =  [{dimension: ["A"]}, {dimension: ["A", "B"]}];
-        var oMockChart = {getDrillStack: function(){return oMockStack;}};
+        const oMockStack =  [{dimension: ["A"]}, {dimension: ["A", "B"]}];
+        const oMockChart = {getDrillStack: function(){return oMockStack;}};
         ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
 
-        var oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
+        const oStub = sandbox.stub(ChartDelegate, "getPropertyFromNameAndKind");
         oStub.withArgs("A").returns({
             name: "A"
         });
@@ -1129,9 +1129,9 @@ function(
             name: "B"
         });
 
-        var oChartSpy = sinon.spy(oMockChart, "getDrillStack");
+        const oChartSpy = sinon.spy(oMockChart, "getDrillStack");
 
-        var aResult = ChartDelegate.getDrillStack(this.oMDCChart);
+        const aResult = ChartDelegate.getDrillStack(this.oMDCChart);
 
         assert.ok(oChartSpy.calledOnce, "DrillStack was called on inner chart");
         assert.equal(aResult.length, 2, "DrillStack has a depth of 2");
@@ -1144,7 +1144,7 @@ function(
     });
 
     QUnit.test("_sortPropertyDimensions", function(assert) {
-        var aProps = [
+        const aProps = [
             {
                 label: "C",
                 groupable: true
@@ -1163,7 +1163,7 @@ function(
             }
         ];
 
-        var aRes = ChartDelegate._sortPropertyDimensions(aProps);
+        const aRes = ChartDelegate._sortPropertyDimensions(aProps);
         assert.equal(aRes.length, 3, "Measure was filtered out");
         assert.equal(aRes[0].label, "A", "Pos 1 is correct");
         assert.equal(aRes[1].label, "B", "Pos 2 is correct");
@@ -1175,11 +1175,11 @@ function(
     });
 
     QUnit.test("_performInitialBind", function(assert) {
-        var oMockChart = {bindData: function(){}};
+        const oMockChart = {bindData: function(){}};
         ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}, innerStructure: new ChartImplementationContainer()});
 
-        var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
-        var oBindSpy = sinon.spy(oMockChart, "bindData");
+        const oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
+        const oBindSpy = sinon.spy(oMockChart, "bindData");
 
         ChartDelegate._performInitialBind(this.oMDCChart, {Test: true, binding: {}});
 
@@ -1191,14 +1191,14 @@ function(
     });
 
     QUnit.test("createInnerMeasure", function(assert) {
-        var oMockChart = {addMeasure: function(){}};
+        const oMockChart = {addMeasure: function(){}};
         ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
-        var oSpy = sinon.spy(oMockChart, "addMeasure");
-        var done = assert.async();
+        const oSpy = sinon.spy(oMockChart, "addMeasure");
+        const done = assert.async();
         ChartDelegate._loadChart().then(function(){
             assert.ok(true, "Loaded completed");
 
-            var oMockProps = {
+            const oMockProps = {
                 name: "test1",
                 aggregatable: true,
                 label: "Label1",
@@ -1213,14 +1213,14 @@ function(
     });
 
     QUnit.test("_addInnerDimension", function(assert) {
-        var oMockChart = {addDimension: function(){}};
+        const oMockChart = {addDimension: function(){}};
         ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}});
-        var oSpy = sinon.spy(oMockChart, "addDimension");
-        var done = assert.async();
+        const oSpy = sinon.spy(oMockChart, "addDimension");
+        const done = assert.async();
         ChartDelegate._loadChart().then(function(){
             assert.ok(true, "Loaded completed");
 
-            var oMockProps = {
+            const oMockProps = {
                 name: "test1",
                 groupable: true,
                 label: "Label1",
@@ -1247,11 +1247,11 @@ function(
     });
 
     QUnit.test("rebind", function(assert) {
-        var oMockChart = {bindData: function(){}};
+        const oMockChart = {bindData: function(){}};
         ChartDelegate._setState(this.oMDCChart, {innerChart: oMockChart, dataLoadedCallback: function(){}, innerStructure: new ChartImplementationContainer()});
 
-        var oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
-        var oBindSpy = sinon.spy(oMockChart, "bindData");
+        const oStub = sandbox.stub(ChartDelegate, "_addBindingListener");
+        const oBindSpy = sinon.spy(oMockChart, "bindData");
 
         ChartDelegate.rebind(this.oMDCChart, {Test: true, binding: {}});
 
@@ -1275,13 +1275,13 @@ function(
 
     QUnit.test("getSorters", function(assert) {
         this.oMDCChart.setSortConditions({sorters: [{name: "Test1", descending: true}, {name: "Test2", descending: false}, {name: "Test3", descending: true}]});
-        var oDim = new Item({propertyKey: "Test1", type: "groupable"});
-        var oMeas = new Item({propertyKey: "Test2", type: "aggregatable"});
+        const oDim = new Item({propertyKey: "Test1", type: "groupable"});
+        const oMeas = new Item({propertyKey: "Test2", type: "aggregatable"});
         this.oMDCChart.addItem(oDim);
         this.oMDCChart.addItem(oMeas);
 
 
-        var oRes = ChartDelegate.getSorters(this.oMDCChart);
+        const oRes = ChartDelegate.getSorters(this.oMDCChart);
 
         assert.equal(oRes.length, 2, "One sorter returned");
         assert.equal(oRes[0].sPath, "Test1", "Correct path returned");
@@ -1292,7 +1292,7 @@ function(
     });
 
     QUnit.test("getAggregatedMeasureNameForMDCItem", function(assert) {
-        var oMeas = new Item({propertyKey: "Test1"});
+        const oMeas = new Item({propertyKey: "Test1"});
 
         assert.equal(ChartDelegate._getAggregatedMeasureNameForMDCItem(oMeas), "Test1", "Should just return name in standard implementation");
     });
@@ -1310,7 +1310,7 @@ function(
     });
 
     QUnit.test("_loadChart", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
         ChartDelegate._loadChart().then(function(){
             assert.ok(true, "Loaded completed");
 
@@ -1327,8 +1327,8 @@ function(
     });
 
     QUnit.test("setNoDataText", function(assert) {
-        var oMockChart = {setCustomMessages: function(){}};
-        var oSpy = sinon.spy(oMockChart, "setCustomMessages");
+        const oMockChart = {setCustomMessages: function(){}};
+        const oSpy = sinon.spy(oMockChart, "setCustomMessages");
         ChartDelegate._setState(this.oMDCChart, { innerChart: oMockChart});
 
         ChartDelegate.setNoDataText(this.oMDCChart, "ABC");
@@ -1339,11 +1339,11 @@ function(
     });
 
     QUnit.test("_onDataLoadComplete", function(assert){
-        var oMockImplContainer = new ChartImplementationContainer();
-        var oMockChart = { getNoData : function(){ return {};}, _innerChartDataLoadComplete : function(){}, getControlDelegate : function(){return { _getInnerStructure : function(){ return oMockImplContainer; } };}};
-        var oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return []; } }; } };
+        const oMockImplContainer = new ChartImplementationContainer();
+        const oMockChart = { getNoData : function(){ return {};}, _innerChartDataLoadComplete : function(){}, getControlDelegate : function(){return { _getInnerStructure : function(){ return oMockImplContainer; } };}};
+        let oMockEvent = { getSource : function(){ return { getCurrentContexts : function() { return []; } }; } };
 
-        var oSetVisibleSpy = sinon.spy(oMockImplContainer, "setShowNoDataStruct");
+        const oSetVisibleSpy = sinon.spy(oMockImplContainer, "setShowNoDataStruct");
 
 
         ChartDelegate._onDataLoadComplete.apply(oMockChart, [oMockEvent]);

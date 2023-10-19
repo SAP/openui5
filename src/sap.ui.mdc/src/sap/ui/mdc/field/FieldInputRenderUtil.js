@@ -20,11 +20,11 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	var FieldInputRenderUtil = {
+	const FieldInputRenderUtil = {
 
 		getAriaRole: function (oInput, oRenderer) {
 
-			var oAriaAttributes = oInput.getAriaAttributes();
+			const oAriaAttributes = oInput.getAriaAttributes();
 
 			if (oAriaAttributes.role) {
 				return oAriaAttributes.role;
@@ -36,23 +36,23 @@ sap.ui.define([
 
 		getAccessibilityState: function (oInput, oRenderer) {
 
-			var oAriaAttributes = oInput.getAriaAttributes();
-			var mAccessibilityState = oRenderer.getAccessibilityState.apply(this, arguments);
+			const oAriaAttributes = oInput.getAriaAttributes();
+			const mAccessibilityState = oRenderer.getAccessibilityState.apply(this, arguments);
 
 			// add aria attributes
 			if (oAriaAttributes.aria) {
-				for (var sAttribute in oAriaAttributes.aria) {
+				for (const sAttribute in oAriaAttributes.aria) {
 					mAccessibilityState[sAttribute] = oAriaAttributes.aria[sAttribute];
 				}
 			}
 
 			if (!oAriaAttributes.valueHelpEnabled && mAccessibilityState.describedby) {
 				// remove "value help enabled" text if not needed
-				var sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
-				var aIDs = mAccessibilityState.describedby.value.split(" ");
-				var sIDs = "";
-				for (var i = 0; i < aIDs.length; i++) {
-					var sID = aIDs[i];
+				const sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
+				const aIDs = mAccessibilityState.describedby.value.split(" ");
+				let sIDs = "";
+				for (let i = 0; i < aIDs.length; i++) {
+					const sID = aIDs[i];
 					if (sID !== sValueHelpEnabledID) {
 						sIDs = sIDs ? sIDs + " " + sID : sID;
 					}
@@ -72,10 +72,10 @@ sap.ui.define([
 
 			oRenderer.writeInnerAttributes.apply(this, arguments);
 
-			var oAriaAttributes = oInput.getAriaAttributes();
+			const oAriaAttributes = oInput.getAriaAttributes();
 
 			// add all not aria specific attributes
-			for (var sAttribute in oAriaAttributes) {
+			for (const sAttribute in oAriaAttributes) {
 				if (sAttribute !== "aria" && sAttribute !== "role" && sAttribute !== "valueHelpEnabled") {
 					oRm.attr(sAttribute, oAriaAttributes[sAttribute]);
 				}

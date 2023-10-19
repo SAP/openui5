@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/date/UI5Date",
+	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/Configuration"
 ], function(
 	DynamicDateRange,
@@ -28,6 +29,7 @@ sap.ui.define([
 	Label,
 	Device,
 	UI5Date,
+	CalendarWeekNumbering,
 	Configuration
 ) {
 	"use strict";
@@ -877,8 +879,8 @@ sap.ui.define([
 			.getAggregation('content')[0]
 			.getText();
 
-		//Check the label.
-		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:12:37 AM – Jan 8, 2023, 12:13:37 AM", "correct label for last minute");
+		//Check the label. Char code \u202f is a Narrow No-Break Space and \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual(sLabelText, "Selected: Jan 8, 2023, 12:12:37\u202fAM\u2009\u2013\u2009Jan 8, 2023, 12:13:37\u202fAM", "correct label for last minute");
 
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTHOURS");
@@ -892,8 +894,8 @@ sap.ui.define([
 			.getAggregation('content')[0]
 			.getText();
 
-		//Check the label.
-		assert.strictEqual(sLabelText, "Selected: Jan 7, 2023, 11:13:37 PM – Jan 8, 2023, 12:13:37 AM", "correct label for last hour");
+		//Check the label. Char code \u202f is a Narrow No-Break Space and \u2009 is a thin space (both introduced with CLDR version 43), \u2013 is a dash
+		assert.strictEqual(sLabelText, "Selected: Jan 7, 2023, 11:13:37\u202fPM\u2009\u2013\u2009Jan 8, 2023, 12:13:37\u202fAM", "correct label for last hour");
 
 		//cleanup
 		oDDR.destroy();
@@ -908,9 +910,9 @@ sap.ui.define([
 		//act
 		aResultRange = DynamicDateRange.toDates({ operator: "DATE", values: [UI5Date.getInstance(2021, 8, 23)] });
 
-		// assert
-		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
-		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59 PM", "correct end date");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00\u202fAM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 23, 2021, 11:59:59\u202fPM", "correct end date");
 	});
 
 	QUnit.test("toDates - DATERANGE", function(assert) {
@@ -921,9 +923,9 @@ sap.ui.define([
 		//act
 		aResultRange = DynamicDateRange.toDates({ operator: "DATERANGE", values: [UI5Date.getInstance(2021, 8, 23), UI5Date.getInstance(2021, 8, 24)] });
 
-		// assert
-		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00 AM", "correct start date");
-		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59 PM", "correct end date");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(aResultRange[0]), "Sep 23, 2021, 12:00:00\u202fAM", "correct start date");
+		assert.equal(oDateFormatter.format(aResultRange[1]), "Sep 24, 2021, 11:59:59\u202fPM", "correct end date");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
@@ -1053,8 +1055,8 @@ sap.ui.define([
 		//act
 		oResult = DynamicDateRange.toDates({ operator: "DATETIME", values: [oDate] });
 
-		// assert
-		assert.equal(oDateFormatter.format(oResult[0]), "Dec 20, 2021, 3:50:00 PM", "correct date/time");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(oResult[0]), "Dec 20, 2021, 3:50:00\u202fPM", "correct date/time");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
@@ -1175,8 +1177,8 @@ sap.ui.define([
 		//act
 		oResult = this.ddr.toDates({ operator: "DATETIMERANGE", values: [oDate, oDate2] });
 
-		// assert
-		assert.equal(oDateFormatter.format(oResult[0]) + " - " + oDateFormatter.format(oResult[1]), "Dec 20, 2021, 3:50:00 PM - Dec 29, 2021, 3:50:00 PM", "correct date/time");
+		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(oDateFormatter.format(oResult[0]) + " - " + oDateFormatter.format(oResult[1]), "Dec 20, 2021, 3:50:00\u202fPM - Dec 29, 2021, 3:50:00\u202fPM", "correct date/time");
 	});
 
 	QUnit.test("valueHelpUITypes objects lifecycle", function(assert) {
@@ -1242,6 +1244,79 @@ sap.ui.define([
 		oDynamicDateRange.destroy();
 	});
 
+	QUnit.module("StandardDynamicDateOption first day of week / this week", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.setStandardOptions([]);
+
+			this.ddr.addStandardOption("FIRSTDAYWEEK");
+			this.ddr.addStandardOption("THISWEEK");
+
+			this.ddr.placeAt("qunit-fixture");
+
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("Week options respect calendarWeekNumbering", function(assert) {
+		var sOriginalLocale = oCore.getConfiguration().getFormatLocale();
+
+		// test with "en" locale
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.Default, 0);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// test with "en_GB" locale
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.Default, 1);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "en_GB", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// test with "bg" locale
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.Default, 1);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.ISO_8601, 1);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.WesternTraditional, 0);
+		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.MiddleEastern, 6);
+
+		// restore original locale
+		oCore.getConfiguration().setFormatLocale(sOriginalLocale);
+
+		// Tests the DDR control 'First Day Of Week' and 'This Week' options return values first day of week by setting specific locale and calendarWeekNumbering
+		function testFirstDayOfWeek(oDDR, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
+			var oFirstDayOfWeek,
+				oThisWeek,
+				aDates;
+
+			// arrange
+			oCore.getConfiguration().setFormatLocale(sLocale);
+			oDDR.setCalendarWeekNumbering(sCalendarWeekNumbering);
+			oDDR.open();
+			oCore.applyChanges();
+			oFirstDayOfWeek = oCore.byId(oDDR.getId() + '-option-FIRSTDAYWEEK');
+			oThisWeek = oCore.byId(oDDR.getId() + '-option-THISWEEK');
+
+			// act
+			oFirstDayOfWeek.firePress();
+			oCore.applyChanges();
+			aDates = oDDR.toDates(oDDR.getValue());
+
+			// assert
+			assert.strictEqual(aDates[0].getDay(), iFirstDayOfWeek, "FIRSTDAYWEEK: First day of week is proper for locale '" + sLocale + "' and calendarWeekNumbering '" + sCalendarWeekNumbering + "'");
+
+			// act
+			oThisWeek.firePress();
+			oCore.applyChanges();
+			aDates = oDDR.toDates(oDDR.getValue());
+
+			// assert
+			assert.strictEqual(aDates[0].getDay(), iFirstDayOfWeek, "THISWEEK: First day of week is proper for locale '" + sLocale + "' and calendarWeekNumbering '" + sCalendarWeekNumbering + "'");
+		}
+	});
+
 	QUnit.module("Clear Icon", {
 		beforeEach: function() {
 			this.oDDR = new DynamicDateRange({});
@@ -1288,7 +1363,8 @@ sap.ui.define([
 				id: 'myDDR',
 				value: {operator: 'DATE', values: [UI5Date.getInstance('2023-01-09T18:00:00')]},
 				calendarWeekNumbering: "MiddleEastern"
-			});
+			}),
+			sCalendarId;
 
 			oDRS.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1300,8 +1376,9 @@ sap.ui.define([
 
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			var oMonthDomRef = oCore.byId("__calendar3").getAggregation("month")[0].getDomRef();
-			var aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar3 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			var oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			var aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 
 			//Assert
 			assert.strictEqual(aWeekHeaders.length, 7, "7 weekheaders rendered");
@@ -1311,8 +1388,9 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar4").getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar4 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
 
@@ -1320,8 +1398,9 @@ sap.ui.define([
 			oCore.applyChanges();
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
-			oMonthDomRef = oCore.byId("__calendar5").getAggregation("month")[0].getDomRef();
-			aWeekHeaders = oMonthDomRef.querySelectorAll("#__calendar5 .sapUiCalWH:not(.sapUiCalDummy)");
+			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
+			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 
@@ -1363,6 +1442,21 @@ sap.ui.define([
 		oResult = this.ddr._parseValue("Jul 1, 10000, 11:33:00 AM");
 		// assert
 		assert.strictEqual(oResult, null, "(datetime) When year is > 9999, parsing returns null (value is not parsed)");
+	});
+
+
+	QUnit.test("DynamicDateFormat doesn't cut ' in different language", function (assert) {
+		var sLanguage = oCore.getConfiguration().getLanguage();
+
+		oCore.getConfiguration().setLanguage("fr_FR");
+
+		// act
+		this.ddr.setValue({values: Array(0), operator: 'TODAY'});
+
+		// assert
+		assert.ok(this.ddr._oInput.getValue().indexOf("Aujourd'hui") !== -1, "The year is correct");
+
+		oCore.getConfiguration().setLanguage(sLanguage);
 	});
 
 	QUnit.test("Open DynamicDateRange from Button", function(assert) {
@@ -1673,5 +1767,76 @@ sap.ui.define([
 		testDate(assert, aDateRange[0], 2, "NEXTDAYS", 2022, 11, 25, 0,0,0,0);
 		testDate(assert, aDateRange[1], 2, "NEXTDAYS", 2023, 0, 7, 23,59,59,999);
 	});
+
+	QUnit.test("ValueHelp responsive popover cancels bubbling of internal validation errors", function(assert) {
+		var validationErrorHandler = {
+				handler: function(){}
+			},
+			validationErrorSpy = this.spy(validationErrorHandler, "handler"),
+			oLastMinutes,
+			oInnerInput,
+			oPopup,
+			fnDone = assert.async();
+
+		// act
+		this.ddr.attachValidationError(validationErrorHandler.handler);
+		this.ddr.setStandardOptions(["LASTDAYS"]);
+		this.ddr.open();
+		oCore.applyChanges();
+		oPopup = this.ddr._oPopup;
+
+		oPopup.attachAfterClose(function() {
+			// assert - check if the validation handler's bubbling is cancelled by the responsive popover
+			assert.ok(validationErrorSpy.notCalled, "Validation Error Handler is not called when there is validation error in an option");
+			fnDone();
+		});
+
+		// open LASTDAYS option
+		oLastMinutes =  oCore.byId(this.ddr.getId() + '-option-LASTDAYS');
+		oLastMinutes.firePress();
+		oCore.applyChanges();
+
+		// simulate entering of 0
+		oInnerInput = oCore.byId(document.querySelector(".sapMStepInput").id);
+		oInnerInput.setValue(0);
+		oInnerInput._verifyValue();
+		oCore.applyChanges();
+
+		// close the DDR option
+		this.ddr._oPopup.close();
+	});
+
+	QUnit.module("Groups", {
+		beforeEach: function() {
+			this.ddr = new DynamicDateRange();
+			this.ddr.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: function() {
+			this.ddr.destroy();
+		}
+	});
+
+	QUnit.test("addGroup and removeGroups", function(assert) {
+		this.ddr.addGroup("Test", "Test Group");
+
+		assert.strictEqual(this.ddr._getGroups()["Test"], 7, "A new group is added");
+
+		this.ddr.removeCustomGroups();
+
+		assert.strictEqual(Object.keys(this.ddr._getGroups()).length, 6, "All new groups are deleted");
+	});
+
+	QUnit.test("changne group header", function(assert) {
+		this.ddr.addGroup("Test", "Test Group");
+
+		assert.strictEqual(this.ddr._getGroups()["Test"], 7, "A new group is added");
+		assert.strictEqual(this.ddr._getCustomGroupHeader("Test"), "Test Group", "A new group is added");
+
+		this.ddr.setGroupHeader("Test", "Not a Test Group");
+
+		assert.strictEqual(this.ddr._getCustomGroupHeader("Test"), "Not a Test Group", "A new group is added");
+	});
+
 });
 

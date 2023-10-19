@@ -347,6 +347,11 @@ sap.ui.define([
 			}
 		}
 
+		function logDeprecationError(sClassName) {
+			Log.error(`The routing related class '${sClassName}' was loaded synchronously as a result of a synchronous Component creation. Resolving a class in this fashion is deprecated. ` +
+			          `Please use the asynchronous Component.create() factory instead and ensure all non-default routing relevant classes are maintained in the manifest.json.`);
+		}
+
 		// create the routing
 		// extend the metadata config, so that the metadata object cannot be modified afterwards
 		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
@@ -368,17 +373,23 @@ sap.ui.define([
 				fnRouterConstructor = getConstructorFunctionFor(sRouterClassName);
 			} else {
 				// require default Router class
-				fnRouterConstructor = sap.ui.require("sap/ui/core/routing/Router")
-					|| sap.ui.requireSync("sap/ui/core/routing/Router"); // legacy-relevant: Sync path
+				fnRouterConstructor = sap.ui.require("sap/ui/core/routing/Router");
+				/** @deprecated since 1.120 */
+				if (!fnRouterConstructor) {
+					fnRouterConstructor = sap.ui.requireSync("sap/ui/core/routing/Router"); // legacy-relevant: Sync path
+					logDeprecationError("sap/ui/core/routing/Router");
+				}
 			}
 			this._oRouter = new fnRouterConstructor(vRoutes, oRoutingConfig, this, oRoutingManifestEntry.targets, this._oRouterHashChanger);
 			this._oTargets = this._oRouter.getTargets();
 			this._oViews = this._oRouter.getViews();
 		} else if (oRoutingManifestEntry.targets) {
-			// legacy-relevant: Sync path via sync component factory.
-			// For async, no sync request is triggered as the class is already loaded by the component factory.
-			var Views = sap.ui.require("sap/ui/core/routing/Views")
-				|| sap.ui.requireSync("sap/ui/core/routing/Views"); // legacy-relevant: Sync path
+			var Views = sap.ui.require("sap/ui/core/routing/Views");
+			/** @deprecated since 1.120 */
+			if (!Views) {
+				// For async, no sync request is triggered as the class is already loaded by the component factory.
+				Views = sap.ui.requireSync("sap/ui/core/routing/Views"); // legacy-relevant: Sync path
+			}
 
 			this._oViews = new Views({
 				component: this
@@ -389,9 +400,13 @@ sap.ui.define([
 			if (oRoutingConfig.targetsClass) {
 				fnTargetsConstructor = getConstructorFunctionFor(oRoutingConfig.targetsClass);
 			} else {
-				// For async, no sync request is triggered as the class is already loaded by the component factory.
-				fnTargetsConstructor = sap.ui.require("sap/ui/core/routing/Targets")
-					|| sap.ui.requireSync("sap/ui/core/routing/Targets"); // legacy-relevant: Sync path
+				fnTargetsConstructor = sap.ui.require("sap/ui/core/routing/Targets");
+				/** @deprecated since 1.120 */
+				if (!fnTargetsConstructor) {
+					// For async, no sync request is triggered as the class is already loaded by the component factory.
+					fnTargetsConstructor = sap.ui.requireSync("sap/ui/core/routing/Targets"); // legacy-relevant: Sync path
+					logDeprecationError("sap/ui/core/routing/Targets");
+				}
 			}
 			this._oTargets = new fnTargetsConstructor({
 				targets: oRoutingManifestEntry.targets,
@@ -426,8 +441,19 @@ sap.ui.define([
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
 		var fnConstructor;
 		if (typeof vRoutingObjectConstructor === "string") {
-			fnConstructor = sap.ui.require(vRoutingObjectConstructor.replace(/\./g, "/"))
-				|| ObjectPath.get(vRoutingObjectConstructor);
+			fnConstructor = sap.ui.require(vRoutingObjectConstructor.replace(/\./g, "/"));
+			/**
+			 * Legacy relevant: Lookup class in global namespace.
+			 * @deprecated since 1.120
+			 */
+			if (!fnConstructor) {
+				fnConstructor = ObjectPath.get(vRoutingObjectConstructor); // legacy-relevant: Sync path. Async path loads the Router/Target class accordingly beforehand.
+				if (fnConstructor) {
+					Log.error(`The class '${vRoutingObjectConstructor}' was accessed via globals. ` +
+							  "Retrieving routing classes via globals is deprecated and a result of synchronous Component creation, " +
+							  "please use the asynchronous sap.ui.core.Component.create() factory instead.");
+				}
+			}
 			if (!fnConstructor) {
 				Log.error("The specified class for router or targets '" + vRoutingObjectConstructor + "' is undefined.", this);
 			}
@@ -607,7 +633,7 @@ sap.ui.define([
 	 * @public
 	 */
 	UIComponent.prototype.byId = function(sId) {
-		return Element.registry.get(this.createId(sId));
+		return Element.getElementById(this.createId(sId));
 	};
 
 	/**

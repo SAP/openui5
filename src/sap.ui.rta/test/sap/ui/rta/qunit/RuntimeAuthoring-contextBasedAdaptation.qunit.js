@@ -34,13 +34,13 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
-			getServiceAsync: function() {
+			getServiceAsync() {
 				return Promise.resolve({
-					toExternal: function() {},
-					getHash: function() {
+					toExternal() {},
+					getHash() {
 						return "Action-somestring";
 					},
-					parseShellHash: function() {
+					parseShellHash() {
 						var mHash = {
 							semanticObject: "Action",
 							action: "somestring"
@@ -51,18 +51,18 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter: function() {},
-					registerNavigationFilter: function() {},
+					unregisterNavigationFilter() {},
+					registerNavigationFilter() {},
 					reloadCurrentApp: fnFLPReloadStub,
-					getUser: function() {},
-					getCurrentApplication: function() {}
+					getUser() {},
+					getCurrentApplication() {}
 				});
 			}
 		});
 	}
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			var oDefaultAdaptation = {
 				id: "DEFAULT",
@@ -94,13 +94,12 @@ sap.ui.define([
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			this.oLoadVersionSpy = sandbox.spy(VersionsAPI, "loadVersionForApplication");
 			this.oLoadAdaptationsStub = sandbox.stub(ContextBasedAdaptationsAPI, "load");
-			this.oFlexStateStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			return this.oRta.start().then(function() {
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -117,7 +116,6 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
 				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
 				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
@@ -144,7 +142,6 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
 				assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
-				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
 				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
 				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
@@ -158,7 +155,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch adaptation event from the toolbar in the FLP, save is enabled and a dialog fires an event", {
-		beforeEach: function() {
+		beforeEach() {
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp
@@ -171,7 +168,7 @@ sap.ui.define([
 			this.sAdaptationId = "id_1234";
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -237,7 +234,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a delete adaptation event from the toolbar in the FLP", {
-		beforeEach: function() {
+		beforeEach() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			givenAnFLP(sandbox.stub(), {});
 			this.oRta = new RuntimeAuthoring({
@@ -275,7 +272,7 @@ sap.ui.define([
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}

@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
+	"sap/ui/core/date/UI5Date",
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
@@ -31,6 +32,7 @@ sap.ui.define([
 	coreLibrary,
 	Locale,
 	LocaleData,
+	UI5Date,
 	YearPickerRenderer,
 	KeyCodes,
 	jQuery,
@@ -149,6 +151,9 @@ sap.ui.define([
 	/* eslint-disable no-lonely-if */
 
 	YearPicker.prototype.init = function(){
+		var oInitialDate = UI5Date.getInstance();
+		oInitialDate.setFullYear(2000);
+		this.setProperty("date", oInitialDate);
 		// to format year with era in Japanese
 		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
@@ -179,6 +184,12 @@ sap.ui.define([
 		return this.getDomRef() && this._oItemNavigation.getItemDomRefs()[this._iSelectedIndex];
 	};
 
+	/**
+	 * Sets year for the YearPicker.
+	 * @deprecated as of version 1.34, replaced by <code>setDate/code>
+	 * @param {int} iCount The counter to be set to
+	 * @returns {this} this for chaining
+	*/
 	YearPicker.prototype.setYear = function(iYear){
 
 		// no rerendering needed, just select new year or update years
@@ -228,6 +239,9 @@ sap.ui.define([
 		oCalDate.setMonth(0, 1);
 
 		this.setProperty("date", oDate);
+		/**
+		 * @deprecated As of version 1.34
+		 */
 		this.setProperty("year", oCalDate.getYear());
 		this._oDate = oCalDate;
 
@@ -254,7 +268,7 @@ sap.ui.define([
 	YearPicker.prototype._getDate = function(){
 
 		if (!this._oDate) {
-			var iYear = this.getYear();
+			var iYear = this.getDate().getFullYear();
 			this._oDate = new CalendarDate(iYear, 0, 1, this._getPrimaryCalendarType());
 		}
 
@@ -698,6 +712,10 @@ sap.ui.define([
 			// if rendering happens, the year picker will immediately render the beginning of the interval in the middle
 			var bSuppressInvalidate = true;
 		}
+
+		/**
+		 * @deprecated As of version 1.34
+		 */
 		this.setProperty("year", oFocusedDate.getYear(), bSuppressInvalidate);
 		this.setProperty("date", oFocusedDate.toLocalJSDate(), bSuppressInvalidate);
 

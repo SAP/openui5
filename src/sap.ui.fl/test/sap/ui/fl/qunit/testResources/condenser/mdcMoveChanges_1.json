@@ -2,7 +2,7 @@
 	{
 		"fileName": "id_01_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 2
@@ -17,7 +17,7 @@
 	{
 		"fileName": "id_02_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 1
@@ -32,7 +32,7 @@
 	{
 		"fileName": "id_03_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 0
@@ -47,7 +47,7 @@
 	{
 		"fileName": "id_04_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 1
@@ -62,7 +62,7 @@
 	{
 		"fileName": "id_05_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 2
@@ -77,7 +77,7 @@
 	{
 		"fileName": "id_06_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 0
@@ -92,7 +92,7 @@
 	{
 		"fileName": "id_07_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 1
@@ -107,7 +107,7 @@
 	{
 		"fileName": "id_08_moveColumn",
 		"changeType": "moveColumn",
-		"reference": "test.Component",
+		"reference": "test",
 		"content": {
 			"name": "column0",
 			"index": 0

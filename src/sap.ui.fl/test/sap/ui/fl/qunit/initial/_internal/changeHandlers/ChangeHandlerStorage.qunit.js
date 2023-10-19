@@ -23,7 +23,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("ChangeHandlerStorage without standard predefined change handlers", {
-		beforeEach: function() {
+		beforeEach() {
 			// when the library is loaded the library loads the predefined change handlers
 			ChangeHandlerStorage.clearAll();
 
@@ -40,7 +40,7 @@ sap.ui.define([
 				completeChangeContent: sandbox.stub()
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -274,7 +274,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ChangeHandlerStorage handles the PUBLIC layer the same way as USER", {
-		beforeEach: function() {
+		beforeEach() {
 			// when the library is loaded the library loads the predefined change handlers
 			ChangeHandlerStorage.clearAll();
 
@@ -291,7 +291,7 @@ sap.ui.define([
 				completeChangeContent: sandbox.stub()
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -338,9 +338,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("registerChangeHandlersForLibrary / getChangeHandler with incomplete information", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -3,7 +3,7 @@
  */
 
 // sap.ui.core.message.MessageMixin
-sap.ui.define(["sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnablement"], function(library, Log, LabelEnablement) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnablement"], function(Element, library, Log, LabelEnablement) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnableme
 			aMessages.forEach(function(oMessage) {
 				if (aLabels && aLabels.length > 0) {
 					// we simply take the first label text and ignore all others
-					var oLabel = sap.ui.getCore().byId(sLabelId);
+					var oLabel = Element.getElementById(sLabelId);
 					if (oLabel.getMetadata().isInstanceOf("sap.ui.core.Label") && oLabel.getText) {
 						if (oMessage.getAdditionalText() !== oLabel.getText()) {
 							oMessage.setAdditionalText(oLabel.getText());
@@ -62,10 +62,10 @@ sap.ui.define(["sap/ui/core/library", "sap/base/Log", "sap/ui/core/LabelEnableme
 				}
 			}.bind(this));
 
-			var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-			if (MessageManager) {
+			var Messaging = sap.ui.require("sap/ui/core/Messaging");
+			if (Messaging) {
 				// Update the model to apply the changes
-				var oMessageModel = MessageManager.getMessageModel();
+				var oMessageModel = Messaging.getMessageModel();
 				oMessageModel.checkUpdate(bForceUpdate, true);
 			}
 			// propagate messages

@@ -44,11 +44,13 @@
 			window.measureApplyStylesAfterStartUpWithStretchPlugin = function() {
 				sap.ui.require([
 					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/core/Element",
 					"sap/ui/dt/OverlayRegistry",
 					"sap/base/util/restricted/_debounce",
 					"sap/base/Log"
-				], function (
+				], function(
 					RtaPerformanceTestUtil,
+					Element,
 					OverlayRegistry,
 					_debounce,
 					BaseLog
@@ -56,7 +58,7 @@
 					var aStack = [];
 					aStack.push(new Date().getTime());
 
-					RtaPerformanceTestUtil.startRta(sap.ui.getCore().byId("visibleLayout")).then(function() {
+					RtaPerformanceTestUtil.startRta(Element.getElementById("visibleLayout")).then(function() {
 						var iCountCall = 0;
 						var bMeasurementDone = false;
 
@@ -86,11 +88,13 @@
 			window.measureApplyStylesAfterStartUpWithoutStretchPlugin = function() {
 				sap.ui.require([
 					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/core/Element",
 					"sap/ui/dt/OverlayRegistry",
 					"sap/base/util/restricted/_debounce",
 					"sap/base/Log"
-				], function (
+				], function(
 					RtaPerformanceTestUtil,
+					Element,
 					OverlayRegistry,
 					_debounce,
 					BaseLog
@@ -98,7 +102,7 @@
 					var aStack = [];
 					aStack.push(new Date().getTime());
 
-					RtaPerformanceTestUtil.startRtaWithoutStretch(sap.ui.getCore().byId("visibleLayout")).then(function() {
+					RtaPerformanceTestUtil.startRtaWithoutStretch(Element.getElementById("visibleLayout")).then(function() {
 						aStack.push(new Date().getTime());
 						var iCountCall = 0;
 						var bMeasurementDone = false;

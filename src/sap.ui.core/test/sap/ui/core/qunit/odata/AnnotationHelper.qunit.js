@@ -11,6 +11,9 @@ sap.ui.define([
 	"sap/ui/model/odata/AnnotationHelper",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/test/TestUtils",
+	// following imports are only used while template processing
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/DateTime",
@@ -25,11 +28,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Single",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/test/TestUtils"
+	"sap/ui/model/odata/v4/ODataUtils",
+	"sap/ui/thirdparty/URITemplate"
 ], function (Log, ObjectPath, BindingParser, ManagedObject, UI5Date, JSONModel, AnnotationHelper, Basics, Expression,
-		Boolean, Byte, DateTime, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, SByte, Single, StringType,
-		Time, ODataModel, TestUtils
+		ODataModel, TestUtils
 ) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/

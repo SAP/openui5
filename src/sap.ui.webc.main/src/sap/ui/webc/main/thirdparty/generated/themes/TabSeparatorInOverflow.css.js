@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TabSeparatorInOverflow.css",
-    content: ".ui5-tc__separator {\n\tmin-height: 0.25rem;\n\tborder-bottom: 0.0625rem solid var(--sapGroup_TitleBorderColor);\n\tmargin-inline-start: calc(var(--_ui5-tab-indentation-level) * 0.5rem);\n\tmargin-inline-end: 0.5rem;\n}\n\n[ui5-list] > .ui5-tc__separator:first-child {\n\tmin-height: 0.5rem;\n}\n"
+    content: ".ui5-tc__separator{border-bottom:.0625rem solid var(--sapGroup_TitleBorderColor);margin-inline-end:.5rem;margin-inline-start:calc(var(--_ui5-v1-18-0-tab-indentation-level)*.5rem);min-height:.25rem}[ui5-list]>.ui5-tc__separator:first-child{min-height:.5rem}"
   };
   var _default = styleData;
   _exports.default = _default;

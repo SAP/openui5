@@ -18,7 +18,7 @@ sap.ui.define([
 		 * @param {string} oCondenserInfo - Condenser information
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 		 */
-		addToChangesMap: function(mProperties, oCondenserInfo, oChange) {
+		addToChangesMap(mProperties, oCondenserInfo, oChange) {
 			if (!mProperties[oCondenserInfo.uniqueKey]) {
 				oCondenserInfo.change = oChange;
 				mProperties[oCondenserInfo.uniqueKey] = oCondenserInfo;
@@ -28,7 +28,7 @@ sap.ui.define([
 			}
 		},
 
-		getChangesFromMap: function(mObjects, sUniqueKey) {
+		getChangesFromMap(mObjects, sUniqueKey) {
 			var aChanges = [];
 			each(mObjects[sUniqueKey], function(sKey, oCondenserInfo) {
 				aChanges.push(oCondenserInfo.change);

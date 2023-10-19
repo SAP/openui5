@@ -5,11 +5,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Panel",
 	"sap/ui/dt/DesignTimeMetadata",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
-	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/LREPSerializer",
 	"sap/ui/rta/command/Stack",
@@ -20,11 +20,11 @@ sap.ui.define([
 	Input,
 	Panel,
 	DesignTimeMetadata,
-	PersistenceWriteAPI,
-	ChangesWriteAPI,
-	Layer,
-	Settings,
 	Version,
+	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	Settings,
+	Layer,
 	CommandFactory,
 	CommandSerializer,
 	CommandStack,
@@ -59,7 +59,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
-		before: function() {
+		before() {
 			return FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: oMockedAppComponent
@@ -67,7 +67,7 @@ sap.ui.define([
 				this.oModel = oInitializedModel;
 			}.bind(this));
 		},
-		beforeEach: function() {
+		beforeEach() {
 			return RtaQunitUtils.clear(oMockedAppComponent)
 			.then(function() {
 				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -95,20 +95,20 @@ sap.ui.define([
 				});
 
 				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isKeyUser: function() {
+					isKeyUser() {
 						return true;
 					},
-					isCondensingEnabled: function() {
+					isCondensingEnabled() {
 						return false;
 					},
-					hasPersoConnector: function() {
+					hasPersoConnector() {
 						return false;
 					},
-					getUserId: function() {}
+					getUserId() {}
 				});
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			return this.oSerializer.saveCommands({saveAsDraft: false}).then(function() {
 				this.oCommandStack.destroy();
 				this.oSerializer.destroy();
@@ -120,7 +120,7 @@ sap.ui.define([
 				return RtaQunitUtils.clear(oMockedAppComponent);
 			}.bind(this));
 		},
-		after: function() {
+		after() {
 			this.oModel.destroy();
 		}
 	}, function() {

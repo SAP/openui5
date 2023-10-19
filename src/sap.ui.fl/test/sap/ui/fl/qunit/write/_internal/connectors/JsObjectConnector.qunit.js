@@ -44,7 +44,7 @@ sap.ui.define([
 	});
 
 	function parameterizedTest(oConnectorStorage, sConnector) {
-		QUnit.module("Storage functions - " + sConnector, function() {
+		QUnit.module(`Storage functions - ${sConnector}`, function() {
 			QUnit.test("setItem / getItem / clear", function(assert) {
 				oConnectorStorage.setItem("key1", "value1");
 				oConnectorStorage.setItem("key2", "value2");

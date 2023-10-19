@@ -6,11 +6,10 @@ sap.ui.define([
 	'./Target',
 	'./async/Targets',
 	'./sync/Targets',
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/base/util/deepExtend"
 ],
-	function(EventProvider, Target, asyncTargets, syncTargets, UriParameters, Log, deepExtend) {
+	function(EventProvider, Target, asyncTargets, syncTargets, Log, deepExtend) {
 		"use strict";
 
 		/**
@@ -99,7 +98,7 @@ sap.ui.define([
 
 				// temporarily: for checking the url param
 				function checkUrl() {
-					if (UriParameters.fromQuery(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
+					if (new URLSearchParams(window.location.search).get("sap-ui-xx-asyncRouting") === "true") {
 						Log.warning("Activation of async view loading in routing via url parameter is only temporarily supported and may be removed soon", "Targets");
 						return true;
 					}

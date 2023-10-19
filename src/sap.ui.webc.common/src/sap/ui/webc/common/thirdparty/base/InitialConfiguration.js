@@ -4,7 +4,7 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
-  _exports.getTimezone = _exports.getThemeRoot = _exports.getTheme = _exports.getRTL = _exports.getNoConflict = _exports.getLanguage = _exports.getFormatSettings = _exports.getFetchDefaultLanguage = _exports.getCalendarType = _exports.getAnimationMode = void 0;
+  _exports.getTimezone = _exports.getThemeRoot = _exports.getTheme = _exports.getSecondaryCalendarType = _exports.getRTL = _exports.getNoConflict = _exports.getLanguage = _exports.getFormatSettings = _exports.getFetchDefaultLanguage = _exports.getCalendarType = _exports.getAnimationMode = void 0;
   _merge = _interopRequireDefault(_merge);
   _validateThemeRoot = _interopRequireDefault(_validateThemeRoot);
   _AnimationMode = _interopRequireDefault(_AnimationMode);
@@ -18,6 +18,7 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     language: undefined,
     timezone: undefined,
     calendarType: undefined,
+    secondaryCalendarType: undefined,
     noConflict: false,
     formatSettings: {},
     fetchDefaultLanguage: false
@@ -71,11 +72,16 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
     initConfiguration();
     return initialConfig.calendarType;
   };
+  _exports.getCalendarType = getCalendarType;
+  const getSecondaryCalendarType = () => {
+    initConfiguration();
+    return initialConfig.secondaryCalendarType;
+  };
   /**
    * Returns the configured IANA timezone ID.
    * @returns { String } the configured IANA timezone ID, e.g. "America/New_York"
    */
-  _exports.getCalendarType = getCalendarType;
+  _exports.getSecondaryCalendarType = getSecondaryCalendarType;
   const getTimezone = () => {
     initConfiguration();
     return initialConfig.timezone;
@@ -150,7 +156,7 @@ sap.ui.define(["exports", "./thirdparty/merge", "./FeaturesRegistry", "./generat
   };
   const applyOpenUI5Configuration = () => {
     const openUI5Support = (0, _FeaturesRegistry.getFeature)("OpenUI5Support");
-    if (!openUI5Support || !openUI5Support.isLoaded()) {
+    if (!openUI5Support || !openUI5Support.isOpenUI5Detected()) {
       return;
     }
     const OpenUI5Config = openUI5Support.getConfigurationSettingsObject();

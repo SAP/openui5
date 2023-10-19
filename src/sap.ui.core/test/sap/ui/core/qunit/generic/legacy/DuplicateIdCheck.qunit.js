@@ -17,8 +17,9 @@ sap.ui.define([
 	"sap/ui/commons/TextField",
 	"sap/m/Text",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, require) {
+], function (Log, ObjectPath, VersionInfo, DataType, Element, Control, Item, Library, CommonsTextField, MobileText, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	var aKnownLibraries = [
@@ -62,14 +63,32 @@ sap.ui.define([
 		"sap.ui.commons.SearchFieldCB",
 		"sap.ui.commons.Accordion",
 		"sap.ui.core.ComponentContainer",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.XMLComposite",
 		"sap.ui.core.UIComponent",
+		/**
+		 * @deprecated since 1.108
+		 */
 		"sap.ui.core.mvc.HTMLView",
+		/**
+		 * @deprecated since 1.120
+		 */
 		"sap.ui.core.mvc.JSONView",
+		/**
+		 * @deprecated since 1.90
+		 */
 		"sap.ui.core.mvc.JSView",
 		"sap.ui.core.mvc.XMLView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.tmpl.Template",
 		"sap.m.DateTimeInput", // setting an invalid type crashes and only leaks a picker control because of this
 		"sap.m.FacetFilterItem",
@@ -389,16 +408,16 @@ sap.ui.define([
 			fillControlAggregations(oControl1, assert),
 			fillControlProperties(oControl2),
 			fillControlAggregations(oControl2, assert)
-		]).then(function() {
+		]).then(async function() {
 
 			if (bCanRender) {
 				oControl1.placeAt("qunit-fixture");
 				oControl2.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				await nextUIUpdate();
 
-				oControl1.rerender();
-				oControl2.rerender();
-				sap.ui.getCore().applyChanges();
+				oControl1.invalidate();
+				oControl2.invalidate();
+				await nextUIUpdate();
 
 				iFullyTestedControls++;
 				assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");
@@ -410,7 +429,7 @@ sap.ui.define([
 			// cleanup
 			oControl1.destroy();
 			oControl2.destroy();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		});
 	}
 

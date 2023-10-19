@@ -16,33 +16,42 @@ sap.ui.define([
 	 * @since 1.101
 	 * @private
 	 */
-	var Util = {};
+	const Util = {};
 
 	Util.APPLY = "apply";
 	Util.REVERT = "revert";
 
-	/*
-	* Hack to prevent invalidation/rendering until all changes are applied. This seems to be needed now because our change handlers are now async and
-	* get executed once micro-task execution starts and can lead to other JS event loop tasks being executed after every promise resolution. If we
-	* add the item synchronously (as was done before), this is not observed as we run to completion with change application before continuing to
-	* other tasks in the JS event loop (e.g. rendering). The change has to be async as consumers (mainly FE) want to use the same fragment-based mechanism
-	* mechanism to apply changes. One might also have to wait for some metadata to be loaded and then continue with application of such changes.
-	* @TODO: As this is a generic issue on applying multiple changes, we need a mechanism (preferably in Core/FL) to be able to prevent invalidation
-	* while such processing (mainly application of flex changes on a control is taking place). This is NOT an issue during normal JS handling and can
-	* also happen for other controls where execution is async and multiple changes are applied.
-	*/
-	function delayInvalidate(oControl) {
-		if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
-			oControl.iSuppressInvalidate = 1;
-			Engine.getInstance().waitForChanges(oControl).then(function() {
-				oControl.iSuppressInvalidate = 0;
-				oControl.findElements(false, function(oElement) {
-					if (oElement.isA("sap.ui.core.Control")) {
-						oElement.invalidate();
-					}
-				});
-				oControl.invalidate();
-			});
+	/**
+	 * Whenever a set of changes is going to be applied to a control instance, the flex change processing
+	 * will trigger invalidation through generic setters/getters by manipulating the controls aggregations
+	 * and properties (such as adding columns, changing widths, setting filter values, ...) since there is no
+	 * generic handling in place that ensures that invalidation/rendering is only happening once, it needs
+	 * to be ensured that flickeruing and invalidation is deferred/suppressed until all pending changes have been
+	 * applied. UIArea#suppressInvalidationFor has been designed to suppress the invalidation for a given control
+	 * instance by retrieving its UIArea that its located in and to trigger all pending changes done on resuming
+	 * the invalidation for the provided control. This process will also include the controls children in case
+	 * invalidation has been triggerd for any nested elements. The suppress/resume needs to be balanced, hence
+	 * it should always be suppressed/resumed for a control instance once.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl
+	 */
+	function suppressInvalidation(oControl) {
+		const oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
+		if (oUIArea && !oControl._bInvalidationSuppressed) {
+			oControl._bInvalidationSuppressed = oUIArea.suppressInvalidationFor(oControl);
+		}
+	}
+
+	/**
+	 * Resume for invalidation suppressed controls. This will also reset/remove the _bInvalidationSuppressed flag.
+	 *
+	 * @param {sap.ui.mdc.Control} oControl
+	 */
+	function resumeInvalidation(oControl) {
+		const oUIArea = oControl && oControl.getUIArea && oControl.getUIArea();
+		if (oUIArea && oControl._bInvalidationSuppressed) {
+			oUIArea.resumeInvalidationFor(oControl);
+			delete oControl._bInvalidationSuppressed;
 		}
 	}
 
@@ -59,9 +68,10 @@ sap.ui.define([
 
 			if (!oControl._pPendingModification && oControl._onModifications instanceof Function) {
 				oControl._pPendingModification = Engine.getInstance().waitForChanges(oControl).then(function() {
-					var aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
+					const aAffectedControllerKeys = Engine.getInstance().getTrace(oControl);
 					Engine.getInstance().clearTrace(oControl);
 					delete oControl._pPendingModification;
+					resumeInvalidation(oControl);
 					return oControl._onModifications(aAffectedControllerKeys);
 				});
 			}
@@ -74,18 +84,18 @@ sap.ui.define([
 	 * in case it's available.
 	 *
 	 * @param {object} mSettings An object defining the changehandler settings
-	 * @param {function} mSettings.apply The changehandler applyChange function
-	 * @param {function} mSettings.revert The changehandler revertChange function
-	 * @param {function} [mSettings.complete] The changehandler completeChangeContent function
-	 * @param {function} [mSettings.getCondenserInfo] The changehandler condenser info
+	 * @param {(function(oChange, oControl, mPropertyBag): Promise)} mSettings.apply The changehandler applyChange function
+	 * @param {(function(oChange, oControl, mPropertyBag): Promise)} mSettings.revert The changehandler revertChange function
+	 * @param {(function(oChange, mChangeSpecificInfo, mPropertyBag): Promise)} [mSettings.complete] The changehandler completeChangeContent function
+	 * @param {(function(oChange, mPropertyBag): Promise)} [mSettings.getCondenserInfo] The changehandler condenser info
 	 *
 	 * @returns {object} A Changehandler object
 	 */
 	Util.createChangeHandler = function(mSettings) {
 
-		var fApply = mSettings.apply instanceof Function && mSettings.apply;
-		var fRevert = mSettings.revert instanceof Function && mSettings.revert;
-		var fComplete = mSettings.complete instanceof Function && mSettings.complete;
+		const fApply = mSettings.apply instanceof Function && mSettings.apply;
+		const fRevert = mSettings.revert instanceof Function && mSettings.revert;
+		const fComplete = mSettings.complete instanceof Function && mSettings.complete;
 
 		if (!fApply || !fRevert) {
 			throw new Error("Please provide atleast an apply and revert function!");
@@ -94,7 +104,7 @@ sap.ui.define([
 		return {
 			"changeHandler": {
 				applyChange: function(oChange, oControl, mPropertyBag) {
-					delayInvalidate(oControl);
+					suppressInvalidation(oControl);
 					return fApply(oChange, oControl, mPropertyBag, Util.APPLY)
 					.then(function(){
 						fConfigModified(oControl, oChange);
@@ -106,19 +116,19 @@ sap.ui.define([
 					}
 				},
 				revertChange: function(oChange, oControl, mPropertyBag) {
-					delayInvalidate(oControl);
+					suppressInvalidation(oControl);
 					return fRevert(oChange, oControl, mPropertyBag, Util.REVERT)
 					.then(function(){
 						fConfigModified(oControl, oChange);
 					});
 				},
 				onAfterXMLChangeProcessing: function(oControl, mPropertyBag) {
-					mPropertyBag.modifier.getProperty(oControl, "delegate")
+					return mPropertyBag.modifier.getProperty(oControl, "delegate")
 					.then(function(oDelegate){
 						if (oDelegate) {
-							loadModules(oDelegate.name)
+							return loadModules(oDelegate.name)
 							.then(function(aModules){
-								var oDelegate = aModules[0];
+								const oDelegate = aModules[0];
 
 								if (oDelegate.onAfterXMLChangeProcessing instanceof Function) {
 									oDelegate.onAfterXMLChangeProcessing(oControl, mPropertyBag);

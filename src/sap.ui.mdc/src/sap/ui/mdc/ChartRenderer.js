@@ -10,7 +10,7 @@ sap.ui.define(['./library'],
          * Chart renderer.
          * @namespace
          */
-        var ChartRenderer = {
+        const ChartRenderer = {
             apiVersion: 2
         };
 

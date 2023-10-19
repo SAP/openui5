@@ -17,7 +17,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		createContent: function() {
+		createContent() {
 			// create Vertical Layout
 			var oLayout = new VerticalLayout("visibleLayout");
 			PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /* visible */);

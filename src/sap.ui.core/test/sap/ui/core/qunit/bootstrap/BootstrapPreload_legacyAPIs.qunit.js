@@ -135,8 +135,6 @@ sap.ui.define([
 		} else {
 			assert.ok(!id, "browser is unknown: data-sap-ui-browser should not have been set (or empty)");
 		}
-
-		assert.deepEqual(Configuration.getValue("modules"), ["sap.ui.layout.library","sap.m.library", "sap.ui.table.library"], "Libraries");
 	});
 
 	["sap.ui.core","sap.ui.layout","sap.m", "sap.ui.table"].forEach(function(sLib) {

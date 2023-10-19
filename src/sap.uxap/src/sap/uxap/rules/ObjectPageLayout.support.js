@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/base/Object"],
 
 						var parent = oControl.getParent();
 						while (parent) {
-							if (BaseObject.isA(parent, "sap.ui.core.Component")) {
+							if (BaseObject.isObjectA(parent, "sap.ui.core.Component")) {
 								return parent;
 							} else {
 								parent = parent.getParent();

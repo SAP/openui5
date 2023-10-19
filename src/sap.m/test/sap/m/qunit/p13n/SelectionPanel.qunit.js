@@ -14,6 +14,9 @@ sap.ui.define([
 	// shortcut for sap.m.ListType
 	var ListType = mLibrary.ListType;
 
+	// shortcut for sap.m.MultiSelectMode
+	var MultiSelectMode = mLibrary.MultiSelectMode;
+
 	QUnit.module("API Tests", {
 		getTestData: function() {
 			return [
@@ -313,6 +316,19 @@ sap.ui.define([
 		assert.equal(this.oSelectionPanel.getAggregation("_template").aDelegates.length, 0, "No hover event delegate registered");
 	});
 
+	QUnit.test("Check keyboard mode upon 'Show Values' switch", function(assert){
+		this.oSelectionPanel.setEnableReorder(true);
+
+		this.oSelectionPanel.showFactory(true);
+
+		assert.equal(this.oSelectionPanel._oListControl.getKeyboardMode(), "Edit", "List is in edit mode");
+
+		this.oSelectionPanel.showFactory(false);
+
+		assert.equal(this.oSelectionPanel._oListControl.getKeyboardMode(), "Navigation", "List is in navigation mode");
+
+	});
+
 	QUnit.test("Use growing only when necessary (e.g. factory provided)", function(assert){
 
 		assert.ok(this.oSelectionPanel._oListControl.getGrowing(), "Growing enabled as factory is provided");
@@ -521,5 +537,17 @@ sap.ui.define([
 
 		assert.equal(oSelectionPanel.getFieldColumn(), testText, "The updated text has been set");
 
+	});
+
+	QUnit.test("Check 'multiSelectMode'", function(assert) {
+		var oPanel = this.oSelectionPanel;
+
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.ClearAll, "Correct default value for 'multiSelectMode' set in inner ListControl.");
+
+		oPanel.setMultiSelectMode(MultiSelectMode.Default);
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.Default, "Correct value forwarded to inner ListControl.");
+
+		oPanel.setMultiSelectMode(MultiSelectMode.SelectAll);
+		assert.equal(oPanel._oListControl.getMultiSelectMode(), MultiSelectMode.SelectAll, "Correct value forwarded to inner ListControl.");
 	});
 });

@@ -27,6 +27,10 @@ sap.ui.define([
 			}
 		},
 
+		onLinkPress: function() {
+			MessageToast.show("Pressed on Link");
+		},
+
 		pressSlideTile: function (evt) {
 			var oTile = evt.getSource();
 

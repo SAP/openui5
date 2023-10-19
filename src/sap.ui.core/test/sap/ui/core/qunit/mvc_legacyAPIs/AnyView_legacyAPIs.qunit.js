@@ -7,8 +7,9 @@ sap.ui.define([
 	"sap/ui/core/mvc/JSView",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/mvc/HTMLView",
-	"sap/ui/qunit/QUnitUtils"
-], function(ObjectPath, Device, Controller, JSONView, JSView, XMLView, HTMLView, qutils) {
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ObjectPath, Device, Controller, JSONView, JSView, XMLView, HTMLView, qutils, nextUIUpdate) {
 	"use strict";
 
 	// create content div
@@ -68,11 +69,11 @@ sap.ui.define([
 			window.onInitCalled = false;
 		});
 
-		QUnit.test("Lifecycle: onAfterRendering", function(assert) {
+		QUnit.test("Lifecycle: onAfterRendering", async function(assert) {
 			assert.expect(6);
 			window.onAfterRenderingCalled = false;
 			view.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			function doCheck() {
 				assert.ok(window.onAfterRenderingCalled, "controller.onAfterRendering should be called by now");
@@ -156,12 +157,12 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("Re-Rendering", function(assert) {
+		QUnit.test("Re-Rendering", async function(assert) {
 			assert.expect(5 + oConfig.idsToBeChecked.length);
 			window.onBeforeRenderingCalled = false;
 			window.onAfterRenderingCalled = false;
 			view.invalidate();
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			function doCheck() {
 				for (var i = 0; i < oConfig.idsToBeChecked.length; i++) {

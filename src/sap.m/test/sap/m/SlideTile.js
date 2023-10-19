@@ -19,7 +19,6 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/core/Title",
 	"sap/m/App",
-	"sap/base/util/UriParameters",
 	"sap/ui/util/Mobile"
 ], function(
 	JSONModel,
@@ -42,7 +41,6 @@ sap.ui.define([
 	SimpleForm,
 	Title,
 	App,
-	UriParameters,
 	Mobile
 ) {
 	"use strict";
@@ -58,7 +56,7 @@ sap.ui.define([
 			red : "#FF6666",
 			green : "#66FF66"
 		};
-		var sParam = UriParameters.fromQuery(window.location.search).get("sap-ui-suite-background-color");
+		var sParam = new URLSearchParams(window.location.search).get("sap-ui-suite-background-color");
 		if (sParam) {
 			var sColor = oColors[sParam.toLowerCase()];
 			if (sColor) {

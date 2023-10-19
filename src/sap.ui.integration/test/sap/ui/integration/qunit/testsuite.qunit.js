@@ -209,6 +209,7 @@ sap.ui.define([
 			"cards/actions/CardActions": {
 				module: [
 					"./cards/actions/CardActions.qunit",
+					"./cards/actions/ShowHideCardActions.qunit",
 					"./cards/actions/SubmitAction.qunit"
 				],
 				coverage: {
@@ -305,6 +306,7 @@ sap.ui.define([
 			"util/ContentFactory": {},
 			"util/ManifestResolver": {},
 			"util/SkeletonCard": {},
+			"util/loadCardEditor": {},
 			"model/ContextModel": {
 				coverage: {
 					only: [
@@ -500,6 +502,9 @@ sap.ui.define([
 				},
 				sinon: false
 			},
+			/**
+			 * @deprecated as of version 1.81
+			 */
 			"designtime/baseEditor/propertyEditor/enumStringEditor/EnumStringEditor": {
 				group: "Base DesignTime Editor",
 				coverage: {

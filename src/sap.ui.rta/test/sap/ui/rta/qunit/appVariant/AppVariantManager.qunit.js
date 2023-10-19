@@ -22,7 +22,7 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	AppVariantManager,
 	RtaAppVariantFeature,
@@ -45,20 +45,20 @@ sap.ui.define([
 	includes,
 	sinon,
 	RtaQunitUtils,
-	oCore
+	Element
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given an AppVariantManager is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			var oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: oRootControl});
 			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppVariantManager.destroy();
 		}
@@ -72,7 +72,7 @@ sap.ui.define([
 			var fnCancel;
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = oCore.byId("appVariantDialog");
+			var oAppVariantDialog = Element.getElementById("appVariantDialog");
 			oAppVariantDialog.fireCreate();
 
 			assert.equal(bCreate, true, "then the create event is correctly triggered");
@@ -87,7 +87,7 @@ sap.ui.define([
 			};
 
 			this.oAppVariantManager._openDialog(fnCreate, fnCancel);
-			var oAppVariantDialog = oCore.byId("appVariantDialog");
+			var oAppVariantDialog = Element.getElementById("appVariantDialog");
 			oAppVariantDialog.fireCancel();
 
 			assert.equal(bCancel, true, "then the cancel event is correctly triggered");
@@ -112,7 +112,7 @@ sap.ui.define([
 				};
 
 				var oResult = {
-					getParameters: function() {
+					getParameters() {
 						return oParameters;
 					}
 				};
@@ -136,7 +136,7 @@ sap.ui.define([
 	var oServer;
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "TestId");
 
 			var oRtaCommandStack = new Stack();
@@ -159,7 +159,7 @@ sap.ui.define([
 				icon: "App Variant Icon"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oAppComponent.destroy();
 			this.oAppVariantManager.destroy();
@@ -177,10 +177,10 @@ sap.ui.define([
 
 			return oAppVariantManager.createAllInlineChanges(oAppVariantData, oAppComponent)
 			.then(function(aAllInlineChanges) {
-				assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, "then ChangesWriteAPI.create method is called " + fnCreateChangesSpy.callCount + " times");
+				assert.equal(fnCreateChangesSpy.callCount, aAllInlineChanges.length, `then ChangesWriteAPI.create method is called ${fnCreateChangesSpy.callCount} times`);
 				aAllInlineChanges.forEach(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
-					assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, "then inline change " + sChangeType + " got successfully created");
+					assert.equal(includes(DescriptorChangeTypes.getChangeTypes(), sChangeType), true, `then inline change ${sChangeType} got successfully created`);
 				});
 				assert.equal(aAllInlineChanges.some(function(oInlineChange) {
 					var sChangeType = oInlineChange._oInlineChange.getMap().changeType;
@@ -233,7 +233,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRootControl = new Control();
 			var oRtaCommandStack = new Stack();
 			this.oCommandSerializer = new LREPSerializer({commandStack: oRtaCommandStack, rootControl: this.oRootControl});
@@ -241,7 +241,7 @@ sap.ui.define([
 			this.oAppVariantManager = new AppVariantManager({commandSerializer: this.oCommandSerializer, layer: Layer.CUSTOMER});
 			oServer = sinon.fakeServer.create();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			oServer.restore();
 		}

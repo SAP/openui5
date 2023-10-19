@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var FilterBarP13nMode = {
+    const FilterBarP13nMode = {
         /**
          * Filter item personalization is enabled.
          *
@@ -28,6 +28,8 @@ sap.ui.define(function() {
          */
         Value: "Value"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.FilterBarP13nMode", FilterBarP13nMode);
 
     return FilterBarP13nMode;
 

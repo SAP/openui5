@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		getChangeTypes: function() {
+		getChangeTypes() {
 			return [
 				"appdescr_ovp_addNewCard",
 				"appdescr_ovp_removeCard",
@@ -59,7 +59,7 @@ sap.ui.define([
 				"appdescr_fe_changePageConfiguration"
 			];
 		},
-		getCondensableChangeTypes: function() {
+		getCondensableChangeTypes() {
 			return [
 				"appdescr_app_setTitle",
 				"appdescr_app_setInfo",

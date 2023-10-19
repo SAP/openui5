@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/PropertyStrictEquals"
-], function (Opa5, AggregationFilled, Press, PropertyStrictEquals) {
+	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/EnterText"
+], function (Opa5, AggregationFilled, Press, PropertyStrictEquals, EnterText) {
 	"use strict";
 
 	var sTreeTableId = "ruleList",
@@ -117,7 +118,7 @@ sap.ui.define([
 
 				iPressTableHeader: function () {
 					return this.waitFor({
-						id: "__xmlview0--analysis--rulesColumn",
+						id: "rulesColumn",
 						viewName: sViewName,
 						viewNamespace: sViewNameSpace,
 						actions: new Press(),
@@ -131,39 +132,60 @@ sap.ui.define([
 
 				iEnterFilterValue: function (sFilteringString) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuTextFieldItem",
-						matchers: new PropertyStrictEquals({name:"label", value:"Filter"}),
-						success: function (oMenuTextItem) {
-							oMenuTextItem[0].setValue(sFilteringString);
-							Opa5.assert.ok(oMenuTextItem[0].getValue() === sFilteringString, "Entered filtering text");
+						id: "tableColumnMenu",
+						success: function (oMenu) {
+							this.waitFor({
+								controlType: "sap.m.Input",
+								matchers: {
+									ancestor: oMenu
+								},
+								actions: new EnterText({
+									text: sFilteringString
+								}),
+								errorMessage: "Was not able to find input element or enter filtering text"
+							});
 						},
-						errorMessage: "Was not able to enter filtering text"
+						errorMessage: "Column list menu was not found"
 					});
 				},
 
 				iFilterColumnOfTable: function () {
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuTextFieldItem",
-						matchers: new PropertyStrictEquals({name:"label", value:"Filter"}),
-						actions: new Press(),
-						success: function (oMenuTextItem) {
-							var $test =  oMenuTextItem[0].$();
-							$test.trigger({ type : 'keyup', key : 'Enter', keyCode:13 });
-							Opa5.assert.ok(true, "Filtered by entered word");
+						id: "tableColumnMenu",
+						success: function (oMenu) {
+							this.waitFor({
+								controlType: "sap.m.Input",
+								matchers: {
+									ancestor: oMenu
+								},
+								actions: new Press(),
+								errorMessage: "Was not able to filter by entered word"
+							});
 						},
-						errorMessage: "Was not able to filter by entered word"
+						errorMessage: "Column list menu was not found"
 					});
 				},
 
-				iPressSortAscendingButton: function () {
+				iPressSortDescendingButton: function () {
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuItem",
-						matchers: new PropertyStrictEquals({name:"icon", value:"sap-icon://sort-descending"}),
-						actions: new Press(),
-						success: function (oMenuItem) {
-							Opa5.assert.ok(true, "Sort ascending was pressed");
+						id: "tableColumnMenu",
+						success: function (oMenu) {
+							this.waitFor({
+								controlType: "sap.m.Button",
+								matchers: {
+									ancestor: oMenu,
+									properties: {
+										text: "Descending"
+									}
+								},
+								actions: new Press(),
+								success: function () {
+									Opa5.assert.ok(true, "Sort descending was pressed");
+								},
+								errorMessage: "Was not able to press Sort descending"
+							});
 						},
-						errorMessage: "Was not able to press Sort ascending"
+						errorMessage: "Column list menu was not found"
 					});
 				},
 
@@ -426,7 +448,7 @@ sap.ui.define([
 							var bResult = isLibrarySelectedInModel(oTable, iLibIndex, iRuleIndex);
 							Opa5.assert.ok(!bResult, "Library is deselected in model");
 						},
-						errorMessage: "Rule is not deselected in Model"
+						errorMessage: "Library is not deselected in Model"
 					});
 				},
 
@@ -543,9 +565,14 @@ sap.ui.define([
 
 				iShouldSeeColumnListMenu: function () {
 					return this.waitFor({
-						controlType: "sap.ui.table.ColumnMenu",
+						id: "tableColumnMenu",
+						check: function (oMenu) {
+							var oActiveElement = document.activeElement.contentDocument.activeElement;
+
+							return oMenu.getDomRef().contains(oActiveElement);
+						},
 						success: function () {
-							Opa5.assert.ok(document.activeElement.contentDocument.activeElement.getAttribute("id") === "__xmlview0--analysis--rulesColumn-menu-asc", "Column list menu is opened");
+							Opa5.assert.ok(true, "Column list menu is opened and focus is applied in it");
 						},
 						errorMessage: "Column list menu was not found"
 					});
@@ -553,11 +580,23 @@ sap.ui.define([
 
 				iShouldSeeFilterTextEnteredInFilterField: function (sFilterValue) {
 					return this.waitFor({
-						controlType: "sap.ui.unified.MenuTextFieldItem",
-						success: function (oMenuTextFieldItem) {
-							Opa5.assert.ok(oMenuTextFieldItem[0].getValue() === sFilterValue, "filter was applied on column rules with keyword" + sFilterValue);
+						id: "tableColumnMenu",
+						success: function (oMenu) {
+							this.waitFor({
+								controlType: "sap.m.Input",
+								matchers: {
+									ancestor: oMenu,
+									properties: {
+										value: sFilterValue
+									}
+								},
+								success: function () {
+									Opa5.assert.ok(true, "filter was applied on column rules with keyword" + sFilterValue);
+								},
+								errorMessage: "Was not able to filter by: " + sFilterValue
+							});
 						},
-						errorMessage: "Was not able to filter by: " + sFilterValue
+						errorMessage: "Column list menu was not found"
 					});
 				},
 

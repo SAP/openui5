@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	RuntimeAuthoring,
@@ -20,14 +20,14 @@ function(
 	Button,
 	OverlayRegistry,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		async before() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -37,7 +37,7 @@ function(
 						}
 					}
 				},
-				createContent: function() {
+				createContent() {
 					return new Page("page", {
 						content: [
 							new Button("button")
@@ -48,17 +48,17 @@ function(
 
 			this.oComponent = new FixtureComponent();
 			this.oPage = this.oComponent.getRootControl();
-			this.oButton = this.oPage.getContent()[0];
+			[this.oButton] = this.oPage.getContent();
 
 			this.oComponentContainer = new ComponentContainer("CompCont1", {
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: this.oPage
@@ -80,10 +80,10 @@ function(
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			sandbox.restore();

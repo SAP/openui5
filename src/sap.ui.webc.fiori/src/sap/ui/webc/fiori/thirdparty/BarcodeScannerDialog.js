@@ -27,6 +27,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var BarcodeScannerDialog_1;
+
+  // Texts
+
+  // Template
+
+  // Styles
+
   // some tools handle named exports from UMD files and the window object is not assigned but the imports work (vitejs)
   // other tools do not handle named exports (they are undefined after the import), but the window global is assigned and can be used (web dev server)
   const effectiveZXing = {

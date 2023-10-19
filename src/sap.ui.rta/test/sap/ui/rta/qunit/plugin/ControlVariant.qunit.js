@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/m/FlexBox",
 	"sap/m/MessageBox",
 	"sap/m/Page",
-	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextSharingAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantConfigure",
 	"sap/ui/rta/command/ControlVariantSave",
@@ -39,7 +41,8 @@ sap.ui.define([
 	FlexBox,
 	MessageBox,
 	Page,
-	oCore,
+	EventBus,
+	Lib,
 	ToolHooksPlugin,
 	DesignTime,
 	ElementOverlay,
@@ -51,6 +54,7 @@ sap.ui.define([
 	ContextSharingAPI,
 	Layer,
 	VerticalLayout,
+	nextUIUpdate,
 	CommandFactory,
 	ControlVariantConfigure,
 	ControlVariantSave,
@@ -83,7 +87,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -132,7 +136,7 @@ sap.ui.define([
 				data: this.oData,
 				appComponent: this.oMockedAppComponent,
 				initFlexState: true
-			}).then(function(oInitializedModel) {
+			}).then(async function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				sandbox.stub(VariantManagement.prototype, "_updateWithSettingsInfo").resolves(true);
@@ -172,10 +176,10 @@ sap.ui.define([
 					this.oToolHooksPlugin = new ToolHooksPlugin();
 					done();
 				}.bind(this));
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oLayoutOuter.destroy();
@@ -238,11 +242,12 @@ sap.ui.define([
 			["variant management is modified", true, "enabled"],
 			["variant management is not modified", false, "disabled"]
 		].forEach(function(obj) {
-			QUnit.test("when isVariantSaveEnabled is called with VariantManagement overlay and " + obj[0], function(assert) {
+			QUnit.test(`when isVariantSaveEnabled is called with VariantManagement overlay and ${obj[0]}`, function(assert) {
+				// eslint-disable-next-line prefer-destructuring
 				this.oModel.oData[this.sLocalVariantManagementId].modified = obj[1];
 				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 				var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
-				assert.strictEqual(bVMEnabled, obj[1], "then variant save is " + obj[2] + " for VariantManagement control");
+				assert.strictEqual(bVMEnabled, obj[1], `then variant save is ${obj[2]} for VariantManagement control`);
 			});
 		});
 
@@ -313,7 +318,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'save'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -339,7 +344,7 @@ sap.ui.define([
 
 		QUnit.test("when the current variant has unsaved changes and a user switches to another variant - user chooses 'discard'", function(assert) {
 			var fnDone = assert.async();
-			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oLibraryBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -365,14 +370,14 @@ sap.ui.define([
 			var done = assert.async();
 			var done2 = assert.async();
 
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.ControlVariant.startEdit", async function() {
 				assert.strictEqual(this.oVariantManagementOverlay.getSelected(), true, "then the overlay is still selected");
 				this.oControlVariantPlugin._oEditableControlDomRef.textContent = "Test";
 				this.oControlVariantPlugin._oEditableField.textContent = this.oControlVariantPlugin._oEditableControlDomRef.textContent;
 				var oEvent = new Event("keydown");
 				oEvent.keyCode = KeyCodes.ENTER;
 				this.oControlVariantPlugin._oEditableField.dispatchEvent(oEvent);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				done2();
 			}, this);
 
@@ -514,15 +519,15 @@ sap.ui.define([
 		});
 
 		// Integration Test
-		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", function(assert) {
+		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", async function(assert) {
 			var done = assert.async();
 			assert.notOk(this.oButtonOverlay.getVariantManagement(), "then VariantManagement Key is initially undefined");
 			this.oDesignTime.addPlugin(this.oControlVariantPlugin);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(this.oButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully propagated from ObjectPageLayout to Button (last element)");
 			var oTestButton = new Button("testButton");
 			this.oLayout.addContent(oTestButton);
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oDesignTime.attachEventOnce("synced", function() {
 				var oTestButtonOverlay = OverlayRegistry.getOverlay(oTestButton);
 				assert.equal(oTestButtonOverlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set for newly inserted ElementOverlay from parent ElementOverlays");
@@ -558,10 +563,10 @@ sap.ui.define([
 			// Switch SubMenu
 			var mPropertyBag = {
 				eventItem: {
-					getParameters: function() {
+					getParameters() {
 						return {
 							item: {
-								getProperty: function() {
+								getProperty() {
 									return "variant2";
 								}
 							}
@@ -616,7 +621,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime where variant management control is not part of responsible control tree and ControlVariant plugin are instantiated", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -652,7 +657,7 @@ sap.ui.define([
 				data: this.oData,
 				appComponent: this.oMockedAppComponent,
 				initFlexState: true
-			}).then(function(oInitializedModel) {
+			}).then(async function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
@@ -695,10 +700,10 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oLayoutOuter.destroy();
@@ -723,7 +728,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given variant management control rename is started", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -732,7 +737,7 @@ sap.ui.define([
 				data: {variantManagementReference: {variants: []}},
 				appComponent: this.oMockedAppComponent,
 				initFlexState: true
-			}).then(function(oInitializedModel) {
+			}).then(async function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
@@ -743,7 +748,7 @@ sap.ui.define([
 						actions: {}
 					}
 				};
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oDesignTime = new DesignTime({
 					designTimeMetadata: oVariantManagementDesignTimeMetadata,
 					rootElements: [this.oVariantManagementControl]
@@ -761,7 +766,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			sandbox.restore();
 			this.oVariantManagementControl.destroy();
@@ -784,8 +789,8 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
-		QUnit.test("when _handlePostRename is called two times back to back", function(assert) {
-			oCore.applyChanges();
+		QUnit.test("when _handlePostRename is called two times back to back", async function(assert) {
+			await nextUIUpdate();
 
 			sandbox.stub(this.oControlVariantPlugin, "_emitLabelChangeEvent").resolves();
 			sandbox.stub(RenameHandler, "_validateNewText");
@@ -804,7 +809,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when variant is RENAMED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
+		QUnit.test("when variant is RENAMED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", async function(assert) {
 			var sNewVariantTitle = "Existing Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
@@ -828,13 +833,13 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
 			this.oControlVariantPlugin._oEditableControlDomRef.textContent = sOldVariantTitle;
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true, true));
 		});
 
-		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", function(assert) {
+		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", async function(assert) {
 			assert.expect(1);
 			var sNewVariantTitle = "Existing Variant Title";
 
@@ -857,7 +862,7 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent.getParameter("command") instanceof ControlVariantSetTitle, "then an set title Variant event is received with a setTitle command");
@@ -866,7 +871,7 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
-		QUnit.test("when variant is RENAMED with a BLANK TITLE", function(assert) {
+		QUnit.test("when variant is RENAMED with a BLANK TITLE", async function(assert) {
 			var sExistingVariantTitle = "Existing Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
@@ -890,13 +895,13 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("\xa0");
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
 			this.oControlVariantPlugin._oEditableControlDomRef.textContent = sOldVariantTitle;
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
 		});
 
-		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
+		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", async function(assert) {
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var sExistingVariantTitle = "Existing Variant Title";
 
@@ -917,13 +922,13 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sExistingVariantTitle);
 			this.oControlVariantPlugin.setOldValue("Source Variant Title");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
 			.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
 		});
 
-		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", function(assert) {
+		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", async function(assert) {
 			assert.expect(7);
 			var sExistingVariantTitle = "Existing Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
@@ -942,7 +947,7 @@ sap.ui.define([
 			var sOldVariantTitle = "Old Variant Title";
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title Copy");
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -960,7 +965,7 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
-		QUnit.test("when variant is RENAMED with a CHANGED TITLE, after which _handlePostRename is called", function(assert) {
+		QUnit.test("when variant is RENAMED with a CHANGED TITLE, after which _handlePostRename is called", async function(assert) {
 			var sExistingVariantTitle = "Source Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
@@ -978,8 +983,8 @@ sap.ui.define([
 
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
 			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-			this.oControlVariantPlugin.setOldValue(sExistingVariantTitle + " Copy");
-			oCore.applyChanges();
+			this.oControlVariantPlugin.setOldValue(`${sExistingVariantTitle} Copy`);
+			await nextUIUpdate();
 
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
@@ -1033,7 +1038,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given variant management control is renamed", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -1042,7 +1047,7 @@ sap.ui.define([
 				data: {variantManagementReference: {variants: []}},
 				appComponent: this.oMockedAppComponent,
 				initFlexState: true
-			}).then(function(oInitializedModel) {
+			}).then(async function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement("varMgtKey").placeAt("qunit-fixture");
@@ -1053,7 +1058,7 @@ sap.ui.define([
 						actions: {}
 					}
 				};
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.oDesignTime = new DesignTime({
 					designTimeMetadata: oVariantManagementDesignTimeMetadata,
 					rootElements: [this.oVariantManagementControl]
@@ -1070,7 +1075,7 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			sandbox.restore();
 			this.oVariantManagementControl.destroy();
@@ -1169,7 +1174,7 @@ sap.ui.define([
 				this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 				var oEditableWrapperDOM = this.oVariantManagementOverlay.getDomRef().querySelector(".sapUiRtaEditableField");
-				assert.equal(oEditableWrapperDOM.getBoundingClientRect().width + "px", sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
+				assert.equal(`${oEditableWrapperDOM.getBoundingClientRect().width}px`, sInnerControlOverlayWidth, "then correct width is set for the editable field wrapper, outer control width not considered");
 			}.bind(this));
 		});
 
@@ -1183,9 +1188,9 @@ sap.ui.define([
 				pluginMethodName: "plugin.ControlVariant.startEdit"
 			};
 
-			sandbox.stub(RenameHandler, "startEdit").callsFake(function() {
+			sandbox.stub(RenameHandler, "startEdit").callsFake(function(...aArgs) {
 				assert.ok(true, "RenameHandler.startEdit called in the end");
-				assert.deepEqual(arguments[0], mPropertyBag, "then correct map argument passed to RenameHandler");
+				assert.deepEqual(aArgs[0], mPropertyBag, "then correct map argument passed to RenameHandler");
 				done();
 			});
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
@@ -1193,7 +1198,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and ControlVariant plugin are instantiated and the model has only one visible variant", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var done = assert.async();
 
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -1221,7 +1226,7 @@ sap.ui.define([
 				data: this.oData,
 				appComponent: this.oMockedAppComponent,
 				initFlexState: true
-			}).then(function(oInitializedModel) {
+			}).then(async function(oInitializedModel) {
 				this.oModel = oInitializedModel;
 				sandbox.stub(this.oMockedAppComponent, "getModel").returns(this.oModel);
 				this.oVariantManagementControl = new VariantManagement(this.sLocalVariantManagementId);
@@ -1233,7 +1238,7 @@ sap.ui.define([
 				};
 
 				this.oVariantManagementControl.placeAt("qunit-fixture");
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				this.oDesignTime = new DesignTime({
 					designTimeMetadata: oVariantManagementDesignTimeMetadata,
@@ -1248,10 +1253,10 @@ sap.ui.define([
 					done();
 				}.bind(this));
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oMockedAppComponent.destroy();
 			this.oVariantManagementControl.destroy();

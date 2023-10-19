@@ -16,7 +16,7 @@ sap.ui.define([
 	var RELATIVE_POS_LEFT = -35;
 
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oContent = document.createElement("div");
 			this.oContent.style.background = "red";
 			this.oContent.style.width = "200px";
@@ -32,19 +32,20 @@ sap.ui.define([
 			this.oContainer.append(this.oContent);
 			document.getElementById("qunit-fixture").append(this.oContainer);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oContainer.remove();
 		}
 	}, function() {
 		QUnit.test("when getOffsetFromParent is called for the content without scrolling", function(assert) {
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
-			// TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH : RELATIVE_POS_LEFT;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? RELATIVE_POS_LEFT - SCROLLBAR_WIDTH
+				: RELATIVE_POS_LEFT;
 			// in some cases (special physical devices) the offset is returend as decimal value
 			// actually we need to round the offset for chrome browser on mac
-			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, "the left offset is correct - result: " +
-				Math.ceil(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
+			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft, `the left offset is correct - result: ${
+				Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
 			assert.strictEqual(mOffset.top, 40, "the top offset is correct");
 		});
 
@@ -52,8 +53,9 @@ sap.ui.define([
 			var oContentGeometry = DOMUtil.getGeometry(this.oContent);
 			var iScrollValue = -50;
 			var iRelativePosLeft = iScrollValue + RELATIVE_POS_LEFT;
-			// TODO: Remove when bug in Chrome and Safari is fixed
-			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile) ? iRelativePosLeft - SCROLLBAR_WIDTH : iRelativePosLeft;
+			var iExpectedOffsetLeft = (Device.browser.safari && !Device.browser.mobile)
+				? iRelativePosLeft - SCROLLBAR_WIDTH
+				: iRelativePosLeft;
 			var iMaxScrollWidth = this.oContainer.scrollWidth - this.oContainer.clientWidth;
 			iScrollValue = iMaxScrollWidth + iScrollValue;
 			// scrollLeftRTL is a function from UI5 Core JQuery
@@ -62,13 +64,13 @@ sap.ui.define([
 			var mOffset = DOMUtil.getOffsetFromParent(oContentGeometry, this.oContainer);
 			// round for offset value is actually nedded for chrome browser on mac
 			assert.strictEqual(Math.ceil(mOffset.left), iExpectedOffsetLeft,
-				"the left offset is correct - result: " + Math.ceil(mOffset.left) + " / expected value: " + iExpectedOffsetLeft);
+				`the left offset is correct - result: ${Math.ceil(mOffset.left)} / expected value: ${iExpectedOffsetLeft}`);
 			assert.strictEqual(mOffset.top, 100, "the top offset is correct");
 		});
 	});
 
 	QUnit.module("getScrollLeft()", {
-		beforeEach: function() {
+		beforeEach() {
 			var oInnerPanel = document.createElement("div");
 			oInnerPanel.style.width = "200px";
 			oInnerPanel.style.height = "200px";
@@ -79,7 +81,7 @@ sap.ui.define([
 			this.oPanel.append(oInnerPanel);
 			document.getElementById("qunit-fixture").append(this.oPanel);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPanel.remove();
 		}
 	}, function() {

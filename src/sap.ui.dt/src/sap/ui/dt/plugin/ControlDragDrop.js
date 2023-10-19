@@ -29,8 +29,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.plugin.ControlDragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {
 		metadata: {
@@ -55,8 +53,8 @@ sap.ui.define([
 
 	var sDROP_ZONE_STYLE = "sapUiDtOverlayDropZone";
 
-	ControlDragDrop.prototype.init = function() {
-		DragDrop.prototype.init.apply(this, arguments);
+	ControlDragDrop.prototype.init = function(...aArgs) {
+		DragDrop.prototype.init.apply(this, aArgs);
 		this.setElementMover(new ElementMover());
 	};
 
@@ -104,8 +102,9 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	ControlDragDrop.prototype.deregisterElementOverlay = function(oOverlay) {
-		DragDrop.prototype.deregisterElementOverlay.apply(this, arguments);
+	ControlDragDrop.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		DragDrop.prototype.deregisterElementOverlay.apply(this, aArgs);
 		oOverlay.setMovable(false);
 
 		if (this.oDraggedElement) {

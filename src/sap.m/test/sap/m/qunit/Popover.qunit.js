@@ -544,7 +544,7 @@ sap.ui.define([
 	QUnit.test("Vertical calculation of Popover position when Popover's content is bigger than the screen height and preferredVertical is set", function(assert){
 
 		var oList = new List();
-		var oPopover = new Popover({ placement: "VerticalPreferedBottom"});
+		var oPopover = new Popover({ placement: "VerticalPreferredBottom"});
 
 		for (var i = 0; i < 1000; i++) {
 			oList.addItem(new StandardListItem());
@@ -642,22 +642,14 @@ sap.ui.define([
 			stubWindowWidth.restore();
 		};
 
-		testCase(400, 50, 500, PlacementType.HorizontalPreferedLeft, PlacementType.Left);
-
 		// Preferred Left
-		testCase(400, 50, 500, PlacementType.HorizontalPreferedLeft, PlacementType.Left); // You have enough space to the Left and Left space is greater than the Right space
 		testCase(400, 50, 500, PlacementType.HorizontalPreferredLeft, PlacementType.Left); // You have enough space to the Left and Left space is greater than the Right space
-		testCase(100, 50, 500, PlacementType.HorizontalPreferedLeft, PlacementType.Left); // You have enough space to the Left but Left space is smaller than the Right space
 		testCase(100, 50, 500, PlacementType.HorizontalPreferredLeft, PlacementType.Left); // You have enough space to the Left but Left space is smaller than the Right space
-		testCase(40, 50, 500, PlacementType.HorizontalPreferedLeft, PlacementType.Right); // You do not have enough space at the preferred position, so the position with more space is used
 		testCase(40, 50, 500, PlacementType.HorizontalPreferredLeft, PlacementType.Right); // You do not have enough space at the preferred position, so the position with more space is used
 
 		// Preferred Right
-		testCase(100, 50, 500, PlacementType.HorizontalPreferedRight, PlacementType.Right); // You have enough space to the Right and Right space is greater than the Left space
 		testCase(100, 50, 500, PlacementType.HorizontalPreferredRight, PlacementType.Right); // You have enough space to the Right and Right space is greater than the Left space
-		testCase(350, 50, 500, PlacementType.HorizontalPreferedRight, PlacementType.Right); // You have enough space to the Right but Right space is smaller than the Left space
 		testCase(350, 50, 500, PlacementType.HorizontalPreferredRight, PlacementType.Right); // You have enough space to the Right but Right space is smaller than the Left space
-		testCase(450, 50, 500, PlacementType.HorizontalPreferedRight, PlacementType.Left); // You do not have enough space at the preferred position, so the position with more space is used
 		testCase(450, 50, 500, PlacementType.HorizontalPreferredRight, PlacementType.Left); // You do not have enough space at the preferred position, so the position with more space is used
 	});
 

@@ -132,6 +132,69 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		});
+
+		QUnit.module("Data and items length", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Data and items length when maxItems property is set", function (assert) {
+			// Arrange
+			var done = assert.async(),
+				oManifest = {
+					"sap.app": {
+						"id": "testTimelineCardItemsLength"
+					},
+					"sap.card": {
+						"type": "Timeline",
+						"header": {
+							"title": "TImeline Card"
+						},
+						"content": {
+							"data": {
+								"json": [
+									{
+										"Title": "Weekly sync: Marketplace / Design Stream"
+									},
+									{
+										"Title": "Video Conference for FLP@SF, S4,Hybris"
+									},
+									{
+										"Title": "Call 'Project Nimbus'"
+									}
+								]
+							},
+							"item": {
+								"title": {
+									"value": "{Title}"
+								}
+							},
+							"maxItems": 2
+						}
+					}
+				};
+
+			this.oCard.attachEvent("_ready", function () {
+				assert.strictEqual(this.oCard.getCardContent().getItemsLength(), 2, "#getItemsLength result should be correct");
+				assert.strictEqual(this.oCard.getCardContent().getDataLength(), 3, "#getDataLength result should be correct");
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
+		});
 	}).catch(function () {
 		QUnit.module("Timeline Card");
 		QUnit.test("Timeline content not supported", function (assert) {

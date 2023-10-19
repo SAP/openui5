@@ -8,21 +8,19 @@
 
 	<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.layout,sap.m">
 	</script>
-	<script src="/testsuite/resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="/resources/sap/ui/thirdparty/sinon.js"></script>
 
-	<script src="/testsuite/test-resources/sap/ui/core/qunit/ODataMessagesFakeService.js"></script>
+	<script src="/test-resources/sap/ui/core/qunit/odata/data/ODataMessagesFakeService.js"></script>
 
 	<script>
 		sap.ui.require([
+			"sap/ui/core/Messaging",
 			"sap/ui/core/message/Message",
-			"sap/ui/core/message/MessageManager",
 			"sap/ui/model/odata/ODataMessageParser",
-			"sap/ui/model/odata/v2/ODataModel"], 
-		function(Message, MessageManager, ODataMessageParser, ODataModel) {
+			"sap/ui/model/odata/v2/ODataModel"],
+		function(Messaging, Message, ODataMessageParser, ODataModel) {
 
-			var oMM = new MessageManager();
-
-			sap.ui.getCore().setMessageManager(oMM);
+			var oMM = Messaging;
 
 			var sServiceURI = "fakeService://testdata/odata/northwind/";
 			var mModelOptions = {
@@ -31,7 +29,7 @@
 				useBatch: false
 			};
 			var oModel = new ODataModel(sServiceURI, mModelOptions);
-			var oParser = new ODataMessageParser();
+			var oParser = new ODataMessageParser(sServiceURI);
 			oModel.setMessageParser(oParser);
 			// sap.ui.getCore().setModel(oModel);
 

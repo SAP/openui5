@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/mvc/Controller",
@@ -36,8 +37,8 @@ sap.ui.define([
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
 ], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter, FilterOperator,
-		FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
+		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
@@ -346,7 +347,7 @@ sap.ui.define([
 
 		oDocument = XMLHelper.parse(
 			'<mvc:View xmlns="sap.m" xmlns:f="sap.f" xmlns:mvc="sap.ui.core.mvc" \
-				xmlns:t="sap.ui.table">'
+				xmlns:t="sap.ui.table" xmlns:trm="sap.ui.table.rowmodes">'
 			+ sViewXML
 			+ '</mvc:View>',
 			"application/xml"
@@ -366,16 +367,28 @@ sap.ui.define([
 	 */
 	function xmlConvertGridTables(oDocument) {
 		function convertElements(aElements) {
-			var oChildNode, aChildNodes, oColumn, oElement, i, j, oTemplate;
+			var oChildNode, aChildNodes, oColumn, oElement, i, j, oTemplate,
+				oRowMode, oFixedRowMode;
 
 			for (i = aElements.length - 1; i >= 0; i -= 1) {
 				oElement = aElements[i];
+
+				if (oElement.hasAttribute("visibleRowCount")) {
+					oRowMode = document.createElementNS("sap.ui.table", "rowMode");
+					oElement.appendChild(oRowMode);
+					oFixedRowMode = document.createElementNS("sap.ui.table.rowmodes", "Fixed");
+					oFixedRowMode.setAttribute("rowCount", oElement.getAttribute("visibleRowCount"));
+					oRowMode.appendChild(oFixedRowMode);
+					oElement.removeAttribute("visibleRowCount");
+				}
 
 				aChildNodes = oElement.childNodes;
 				for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 					oChildNode = aChildNodes[j];
 					if (oChildNode.nodeType === Node.ELEMENT_NODE
-							&& oChildNode.localName !== "Column") {
+							&& oChildNode.localName !== "AnalyticalColumn"
+							&& oChildNode.localName !== "Column"
+							&& oChildNode.localName !== "rowMode") {
 						oColumn = document.createElementNS("sap.ui.table", "Column");
 						oElement.insertBefore(oColumn, oChildNode);
 						oElement.removeChild(oChildNode);
@@ -387,6 +400,7 @@ sap.ui.define([
 			}
 		}
 
+		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "AnalyticalTable"));
 		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "Table"));
 		convertElements(oDocument.getElementsByTagNameNS("sap.ui.table", "TreeTable"));
 	}
@@ -505,9 +519,6 @@ sap.ui.define([
 			this.mChanges = {};
 			// counter for OData messages created during a test
 			this.iODataMessageCount = 0;
-			// {map<string, true>}
-			// If an ID is in this.mIgnoredChanges, change events with null are ignored
-			this.mIgnoredChanges = {};
 			// {map<string, string[][]>}
 			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
 			// the control with ID "id" in row i
@@ -526,7 +537,7 @@ sap.ui.define([
 			// {string} sText with the expected text
 			this.aValueStates = [];
 
-			// If the "VisibleRowCountMode" of the sap.ui.table.* is "Auto", the table uses the
+			// If the "rowMode" of the sap.ui.table.* is "Auto", the table uses the
 			// screen height (Device.resize.height) to compute the amount of contexts it requests
 			// initially. Make sure that this is stable across devices.
 			this._oSandbox.stub(Device.resize, "height").value(1000);
@@ -576,8 +587,9 @@ sap.ui.define([
 				}
 				delete this.mListChanges[sControlId];
 			}
-			if (Core.getUIDirty()
-					|| Core.getMessageManager().getMessageModel().getObject("/").length	< this.aMessages.length) {
+
+			if (Rendering.isPending()
+					|| Messaging.getMessageModel().getObject("/").length < this.aMessages.length) {
 				setTimeout(this.checkFinish.bind(this, assert), 10);
 
 				return;
@@ -595,7 +607,7 @@ sap.ui.define([
 		 * @param {object} assert The QUnit assert object
 		 */
 		checkMessages : function (assert) {
-			var aCurrentMessages = Core.getMessageManager().getMessageModel()
+			var aCurrentMessages = Messaging.getMessageModel()
 					.getObject("/").sort(compareMessages),
 				aExpectedMessages = this.aMessages.slice().sort(compareMessages);
 
@@ -654,9 +666,7 @@ sap.ui.define([
 				sVisibleId = iRow === undefined ? sControlId : sControlId + "[" + iRow + "]";
 
 			if (!aExpectedValues || !aExpectedValues.length) {
-				if (!(sControlId in this.mIgnoredChanges && sValue === null)) {
-					assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
-				}
+				assert.ok(false, sVisibleId + ": " + JSON.stringify(sValue) + " (unexpected)");
 			} else {
 				sExpectedValue = aExpectedValues.shift();
 				// Note: avoid bad performance of assert.strictEqual(), e.g. DOM manipulation
@@ -766,6 +776,8 @@ sap.ui.define([
 			 * @param {object} oHandler The request handler object
 			 * @param {object} oHttpClient The HttpClient object
 			 * @param {object} oMetadata The metadata object
+			 * @returns {object}
+			 *   An object with a property <code>abort</code>, containing a function to abort the request
 			 */
 			function checkRequest(oRequest, fnSuccess, fnError, oHandler, oHttpClient, oMetadata) {
 				if (oRequest.requestUri.includes("$batch")) {
@@ -1049,7 +1061,14 @@ sap.ui.define([
 				? vModel
 				: {undefined : vModel || createSalesOrdersModel()};
 			this.oModel = mNamedModels.undefined;
-			this.mock(datajs).expects("request").atLeast(0).callsFake(checkRequest);
+			const oDatajsMock = this.mock(datajs);
+			oDatajsMock.expects("request")
+				.withArgs(/*request*/sinon.match.any, /*success*/sinon.match.any, /*error*/sinon.match.any,
+					sinon.match((handler) => handler !== datajs.metadataHandler),
+					/*httpClient*/sinon.match.any, /*metadata*/sinon.match.any)
+				.atLeast(0).callsFake(checkRequest);
+			// always load $metadata resources via TestUtils fake server, they are not mocked
+			oDatajsMock.expects("request").atLeast(0).callThrough();
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.assert = assert;
 
@@ -1088,12 +1107,12 @@ sap.ui.define([
 					that.oView.setModel(mNamedModels[sModelName], sModelName);
 				}
 				// enable parse error messages in the message manager
-				Core.getMessageManager().registerObject(that.oView, true);
+				Messaging.registerObject(that.oView, true);
 				// Place the view in the page so that it is actually rendered. In some situations,
 				// esp. for the table.Table this is essential.
 				that.oView.placeAt("qunit-fixture");
 
-				return that.waitForChanges(assert);
+				return that.waitForChanges(assert, "create view");
 			});
 		},
 
@@ -1467,19 +1486,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Allows that the property "text" of the control with the given ID is set to undefined or
-		 * null. This may happen when bindings are initialized before the model value is available.
-		 *
-		 * @param {string} sControlId The control ID
-		 * @returns {object} The test instance for chaining
-		 */
-		ignoreNullChanges : function (sControlId) {
-			this.mIgnoredChanges[sControlId] = true;
-
-			return this;
-		},
-
-		/**
 		 * Observes and checks value changes for a control. In case the test uses {#expectChange},
 		 * checks the model internal value by attaching a formatter; if the test uses
 		 * {#expectValue}, checks the control value in its external representation using a managed
@@ -1665,12 +1671,11 @@ sap.ui.define([
 		 * Removes all persistent and technical message from the message model.
 		 */
 		removePersistentAndTechnicalMessages : function () {
-			var oMessageManager = Core.getMessageManager(),
-				aMessages = oMessageManager.getMessageModel().getObject("/").filter(function (oMessage) {
+			var aMessages = Messaging.getMessageModel().getObject("/").filter(function (oMessage) {
 					return oMessage.getPersistent() || oMessage.getTechnical();
 				});
 
-			oMessageManager.removeMessages(aMessages);
+			Messaging.removeMessages(aMessages);
 		},
 
 		/**
@@ -1678,15 +1683,17 @@ sap.ui.define([
 		 * states.
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {number} [iTimeout=3000] The timeout time in milliseconds
+		 * @param {string} [sTitle] Title for this section of a test
+		 * @param {number} [iWaitTimeout=3000] The timeout time in milliseconds
 		 * @returns {Promise} A promise that is resolved when all requests have been responded,
 		 *   all expected values for controls have been set, all expected messages and all value
 		 *   states have been checked
 		 */
-		waitForChanges : function (assert, iTimeout) {
+		waitForChanges : function (assert, sTitle, iWaitTimeout) {
 			var oPromise,
 				that = this;
 
+			iWaitTimeout = iWaitTimeout || 3000;
 			oPromise = new SyncPromise(function (resolve) {
 				that.resolve = resolve;
 				// After three seconds everything should have run through
@@ -1694,11 +1701,11 @@ sap.ui.define([
 				setTimeout(function () {
 					if (oPromise.isPending()) {
 						assert.ok(false, "Timeout in waitForChanges");
-						resolve();
+						resolve(true);
 					}
-				}, iTimeout || 3000);
+				}, iWaitTimeout);
 				that.checkFinish(assert);
-			}).then(function () {
+			}).then(function (bTimeout) {
 				var sControlId, aExpectedValuesPerRow, i, j;
 
 				// Report missing requests
@@ -1724,8 +1731,8 @@ sap.ui.define([
 					}
 				}
 				that.checkMessages(assert);
-				return that.aValueStates.length === 0
-					? undefined
+				return (that.aValueStates.length === 0
+					? SyncPromise.resolve()
 					// Checks the controls' value state after waiting some time for the control to
 					// set it.
 					: resolveLater(function () {
@@ -1741,6 +1748,9 @@ sap.ui.define([
 									+ oControl.getValueStateText());
 						});
 						that.aValueStates = [];
+					})).then(() => {
+						assert.ok(!bTimeout, "waitForChanges(" + (sTitle || "") + "): "
+							+ (bTimeout ? "Timeout (" + iWaitTimeout + " ms)" : "Done"));
 					});
 			});
 
@@ -4714,7 +4724,7 @@ usePreliminaryContext : false}}">\
 		oModel.setMessageScope(MessageScope.BusinessObject);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			oMessage = Core.getMessageManager().getMessageModel().getObject("/")[0];
+			oMessage = Messaging.getMessageModel().getObject("/")[0];
 			oObjectPage = that.oView.byId("objectPage");
 
 			assert.deepEqual(oMessage.getControlIds(), []);
@@ -5018,7 +5028,7 @@ usePreliminaryContext : false}}">\
 				}]
 			})
 			.expectValue("connectionID", ["10"])
-			.expectValue("flightDate", ["5/30/15, 1:47 PM"])
+			.expectValue("flightDate", ["5/30/15, 1:47\u202FPM"])
 			.expectMessage(oFlight10PriceError, "/FlightCollection",
 				"/CarrierCollection('1')/carrierFlights")
 			.expectMessage(oFlight20PriceWarning, "/FlightCollection",
@@ -5035,7 +5045,7 @@ usePreliminaryContext : false}}">\
 			});
 		}).then(function (oFilter) {
 			that.expectValue("connectionID", ["20"])
-				.expectValue("flightDate", ["6/30/15, 1:47 PM"]);
+				.expectValue("flightDate", ["6/30/15, 1:47\u202FPM"]);
 
 			oItemsBinding.filter(oFilter);
 
@@ -5300,7 +5310,7 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					created : true,
 					data : {
-						__metadata :  {type : "GWSAMPLE_BASIC.SalesOrderLineItem"}
+						__metadata : {type : "GWSAMPLE_BASIC.SalesOrderLineItem"}
 					},
 					method : "POST",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
@@ -5430,7 +5440,7 @@ usePreliminaryContext : false}}">\
 		}).then(function () {
 			var oResetPromise;
 
-			if (bWithFailedPOST && bPersistTechnicalMessages && !bDeleteCreatedEntities) {
+			if (bWithFailedPOST && bPersistTechnicalMessages) {
 				that.expectMessages([{
 						code : "UF0",
 						fullTarget : "/SalesOrderSet('1')/ToLineItems('~key~')",
@@ -7970,6 +7980,133 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 	//*********************************************************************************************
 	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.json.JSONPropertyBinding</code>s and composite bindings containing such
+	// bindings.
+	// JIRA: CPOUI5MODELS-1397
+	QUnit.test("JSONPropertyBinding and CompositeBindings: ignoreMessages", function (assert) {
+		var oJSONModel = new JSONModel({
+				data: {SalesOrderID: "1", Note: "Note"}
+			}),
+			oMessage = {
+				processor: oJSONModel,
+				target: ["/data/Note"],
+				message: "Foo",
+				type: MessageType.Warning
+			},
+			sView = '\
+<FlexBox id="objectPage" binding="{/data}">\
+	<Input id="Note0" value="{Note}" />\
+	<Input id="Note1" value="{path: \'Note\', parameters: {ignoreMessages: false}}" />\
+	<Input id="Note2" value="{path: \'Note\', parameters: {ignoreMessages: true}}" />\
+	<Input id="Composite0" value="{= ${SalesOrderID} + ${value: \' - \'} + ${Note}}" />\
+	<Input id="Composite1" value="{= ${SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'Note\',\
+			parameters: {ignoreMessages: false}\
+		}}" />\
+	<Input id="Composite2" value="{= ${SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'Note\',\
+			parameters: {ignoreMessages: true}\
+		}}" />\
+	<Input id="Composite3" value="{parts: [\'SalesOrderID\', {value: \'-\'}, {\
+			path: \'Note\',\
+			parameters: {ignoreMessages: false}\
+		}]}" />\
+	<Input id="Composite4" value="{parts: [\'SalesOrderID\', {value: \'-\'}, {\
+			path: \'Note\',\
+			parameters: {ignoreMessages: true}\
+		}]}" />\
+</FlexBox>';
+
+		this.expectValue("Note0", "Note")
+			.expectValue("Note1", "Note")
+			.expectValue("Note2", "Note")
+			.expectValue("Composite0", "1 - Note")
+			.expectValue("Composite1", "1 - Note")
+			.expectValue("Composite2", "1 - Note")
+			.expectValue("Composite3", "1 - Note")
+			.expectValue("Composite4", "1 - Note")
+			.expectValueState("Note0", "Warning", "Foo")
+			.expectValueState("Note1", "Warning", "Foo")
+			.expectValueState("Note2", "None", "")
+			.expectValueState("Composite0", "Warning", "Foo")
+			.expectValueState("Composite1", "Warning", "Foo")
+			.expectValueState("Composite2", "None", "")
+			.expectValueState("Composite3", "Warning", "Foo")
+			.expectValueState("Composite4", "None", "")
+			.expectMessages([oMessage]);
+
+		Messaging.addMessages([new Message(oMessage)]);
+
+		// code under test
+		return this.createView(assert, sView, oJSONModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
+	// can control whether messages are displayed at the control. It works for
+	// <code>sap.ui.model.xml.XMLPropertyBinding</code>s and composite bindings containing such
+	// bindings.
+	// JIRA: CPOUI5MODELS-1397
+	QUnit.test("XMLPropertyBinding and CompositeBindings: ignoreMessages", function (assert) {
+		var oXMLModel = new XMLModel(),
+			oMessage = {
+				processor: oXMLModel,
+				target: ["/data/0/@Note"],
+				message: "Foo",
+				type: MessageType.Warning
+			},
+			sView = '\
+<FlexBox id="objectPage" binding="{/data/0}">\
+	<Input id="Note0" value="{@Note}" />\
+	<Input id="Note1" value="{path: \'@Note\', parameters: {ignoreMessages: false}}" />\
+	<Input id="Note2" value="{path: \'@Note\', parameters: {ignoreMessages: true}}" />\
+	<Input id="Composite0" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${@Note}}" />\
+	<Input id="Composite1" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: false}\
+		}}" />\
+	<Input id="Composite2" value="{= ${@SalesOrderID} + ${value: \' - \'} + ${\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: true}\
+		}}" />\
+	<Input id="Composite3" value="{parts: [\'@SalesOrderID\', {value: \'-\'}, {\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: false}\
+		}]}" />\
+	<Input id="Composite4" value="{parts: [\'@SalesOrderID\', {value: \'-\'}, {\
+			path: \'@Note\',\
+			parameters: {ignoreMessages: true}\
+		}]}" />\
+</FlexBox>';
+
+		this.expectValue("Note0", "Note")
+			.expectValue("Note1", "Note")
+			.expectValue("Note2", "Note")
+			.expectValue("Composite0", "1 - Note")
+			.expectValue("Composite1", "1 - Note")
+			.expectValue("Composite2", "1 - Note")
+			.expectValue("Composite3", "1 - Note")
+			.expectValue("Composite4", "1 - Note")
+			.expectValueState("Note0", "Warning", "Foo")
+			.expectValueState("Note1", "Warning", "Foo")
+			.expectValueState("Note2", "None", "")
+			.expectValueState("Composite0", "Warning", "Foo")
+			.expectValueState("Composite1", "Warning", "Foo")
+			.expectValueState("Composite2", "None", "")
+			.expectValueState("Composite3", "Warning", "Foo")
+			.expectValueState("Composite4", "None", "")
+			.expectMessages([oMessage]);
+
+		oXMLModel.setXML('<?xml version="1.0"?><root><data SalesOrderID="1" Note="Note"/></root>');
+		Messaging.addMessages([new Message(oMessage)]);
+
+		// code under test
+		return this.createView(assert, sView, oXMLModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: With the binding parameter <code>ignoreMessages</code> the application developer
 	// can control whether messages are displayed at the control. For
 	// <code>sap.ui.model.type.Currency</code> the parameter <code>ignoreMessages</code> is
 	// determined automatically based on the format option <code>showMeasure</code>. Manual setting
@@ -8102,11 +8239,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				ID : "1",
 				TimezoneID : "America/New_York"
 			}, {"sap-message" : getMessageHeader(oDateWarning)})
-			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48 AM")
+			.expectValue("dateAndTime", "Jan 17, 2022, 4:54:48\u202FAM")
 			.expectValue("date", "Jan 17, 2022")
-			.expectValue("time", "4:54:48 AM")
+			.expectValue("time", "4:54:48\u202FAM")
 			.expectValue("timezone", "Americas, New York")
-			.expectValue("default", "Jan 17, 2022, 4:54:48 AM Americas, New York")
+			.expectValue("default", "Jan 17, 2022, 4:54:48\u202FAM Americas, New York")
 			.expectMessage(oDateWarning, "/DateTimeWithTimezoneSet('1')/")
 			.expectValueState("dateAndTime", "Warning", "Foo")
 			.expectValueState("date", "Warning", "Foo")
@@ -10115,8 +10252,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	<t:TreeTable id="table"\
 			rows="{path : \'to_AllwncReqToFe\', parameters : \
 				{countMode : \'Inline\', groupId : \'myGroup\', usePreliminaryContext : true}}"\
-			visibleRowCount="1"\
-			visibleRowCountMode="Fixed">\
+			visibleRowCount="1">\
 		<Text id="orgID" text="{ForceElementOrgID}" />\
 	</t:TreeTable>\
 </FlexBox>';
@@ -10185,11 +10321,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		threshold="0"\
-		visibleRowCount="1"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="1">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
+		let oTable;
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -10210,12 +10345,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					MaintenanceOrder : "Foo"
 				}]
 			})
-			.expectValue("person", "Alice")
-			.ignoreNullChanges("maintenanceOrder") //FIXME: unexpected change occurring in testsuite
-			.expectValue("maintenanceOrder", ["Foo"]);
+			.expectValue("person", "Alice");
 
-		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest({
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["Foo"]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					data : {
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
@@ -10235,16 +10373,17 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('1')"},
 						MaintenanceOrder : "Bar"
 					}]
-				})
-				.expectValue("maintenanceOrder", ["Bar"]);
+				});
 
 			// code under test
 			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('1')/MaintenanceOrder", "Bar");
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["Bar"]]);
+
+			this.expectRequest({
 					batchNo : 4,
 					data : {
 						Person : "Bob"
@@ -10264,7 +10403,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test: scenario 2
 			oModel.update("/I_UserContactCard('foo')", {"Person" : "Bob"});
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
 		});
 	});
 
@@ -10289,8 +10428,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				},\
 				path : \'to_C_RSHMaintSchedSmltdOrdAndOp\'\
 			}"\
-			visibleRowCount="1"\
-			visibleRowCountMode="Fixed">\
+			visibleRowCount="1">\
 		<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
 	</t:TreeTable>\
 </FlexBox>',
@@ -10496,7 +10634,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -10534,7 +10672,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("note", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/Note",
@@ -10662,8 +10800,10 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	// Scenario: TreeTable#collapseAll for a table using ODataTreeBindingAdapter resets the number
 	// of levels expanded automatically in subsequent read requests to 0.
 	// BCP: 66039 / 2021
+	// Scenario: ODataTreeBinding#expandNodeToLevel expands all children up to the given level.
+	// JIRA: CPOUI5MODELS-1437
 	QUnit.test("ODataTreeBindingAdapter: collapseToLevel prevents auto expand of child nodes with"
-			+ " higher level", function (assert) {
+			+ " higher level and expandNodeToLevel works as expected", function (assert) {
 		var oModel = createSpecialCasesModel(),
 			oTable,
 			sView = '\
@@ -10682,11 +10822,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
 		threshold="0"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0"
@@ -10727,22 +10865,23 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						OrderOperationRowID : "id-0.1",
 						OrderOperationRowLevel : 1
 					}]
-				})
-			.expectValue("maintenanceOrder", ["0", "1"])
-			.expectValue("maintenanceOrder", "0.0", 1);
+				});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectValue("maintenanceOrder", "1", 1);
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
 
 			// code under test
 			oTable.collapseAll();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
+
 			//TODO expect $top=2 instead of $top=4, check TreeBindingAdapter#_getContextsOrNodes?
-			that.expectRequest("C_RSHMaintSchedSmltdOrdAndOp"
+			this.expectRequest("C_RSHMaintSchedSmltdOrdAndOp"
 				+ "?$filter=OrderOperationRowLevel eq 0&$skip=2&$top=4",
 				{
 					results : [{
@@ -10758,17 +10897,192 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						OrderOperationRowID : "id-3",
 						OrderOperationRowLevel : 0
 					}]
-				})
-				.expectValue("maintenanceOrder", "", 2)
-				.expectValue("maintenanceOrder", "", 3)
-				.expectValue("maintenanceOrder", "2", 2)
-				.expectValue("maintenanceOrder", "3", 3);
+				});
 
 			// code under test
 			// scroll down shows additional level 0 nodes, but must NOT load or show their children
 			oTable.setFirstVisibleRow(2);
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
+
+			this.expectRequest(
+				"C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowID eq 'id-2' and OrderOperationRowLevel le 2",
+				{
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder : "2",
+						OrderOperationIsExpanded : "expanded",
+						OrderOperationRowID : "id-2",
+						OrderOperationRowLevel : 0
+					}, {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('id-2.0')"},
+						MaintenanceOrder : "2.0",
+						OrderOperationIsExpanded : "leaf",
+						OrderOperationParentRowID : "id-2",
+						OrderOperationRowID : "id-2.0",
+						OrderOperationRowLevel : 1
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(2, 2),
+				this.waitForChanges(assert)
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["2.0"]]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All read requests of the tree binding except $count requests, consider "transitionMessagesOnly"
+	// parameter.
+	// JIRA: CPOUI5MODELS-1437
+	QUnit.test("ODataTreeBinding: transtionMessagesOnly", function (assert) {
+		const oModel = createSpecialCasesModel();
+		let oTable;
+		const sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {\
+				countMode : \'Request\',\
+				numberOfExpandedLevels: 1,\
+				transitionMessagesOnly: true,\
+				treeAnnotationProperties: {\
+					hierarchyDrillStateFor: \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor: \'OrderOperationRowLevel\',\
+					hierarchyNodeFor: \'OrderOperationRowID\',\
+					hierarchyParentNodeFor: \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path: \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		threshold="0"\
+		visibleRowCount="2">\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationRowLevel eq 0", "273")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0')"},
+						MaintenanceOrder: "0",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-0",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-1')"},
+						MaintenanceOrder: "1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-1",
+						OrderOperationRowLevel: 0
+					}]
+				})
+			// triggered by ODataTreeBinding#_getCountForNodeId
+			.expectRequest("C_RSHMaintSchedSmltdOrdAndOp/$count?$filter=OrderOperationParentRowID eq 'id-0'", "5")
+			.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationParentRowID eq 'id-0'"
+						+ "&$skip=0&$top=2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.0')"},
+						MaintenanceOrder: "0.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.0",
+						OrderOperationRowLevel: 1
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-0.1')"},
+						MaintenanceOrder: "0.1",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-0",
+						OrderOperationRowID: "id-0.1",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["0.0"]]);
+
+			// code under test
+			oTable.collapseAll();
+
+			return this.waitForChanges(assert, "collapse all nodes");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubNodes
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?$filter=OrderOperationRowLevel eq 0&$skip=2&$top=4"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "collapsed",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-3')"},
+						MaintenanceOrder: "3",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationRowID: "id-3",
+						OrderOperationRowLevel: 0
+					}]
+				});
+
+			// code under test
+			oTable.setFirstVisibleRow(2);
+
+			return this.waitForChanges(assert, "scroll down");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["3"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBinding#_loadSubTree
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "C_RSHMaintSchedSmltdOrdAndOp?"
+						+ "$filter=OrderOperationRowID eq 'id-2' and OrderOperationRowLevel le 2"
+				}, {
+					results: [{
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2')"},
+						MaintenanceOrder: "2",
+						OrderOperationIsExpanded: "expanded",
+						OrderOperationRowID: "id-2",
+						OrderOperationRowLevel: 0
+					}, {
+						__metadata: {uri: "C_RSHMaintSchedSmltdOrdAndOp('id-2.0')"},
+						MaintenanceOrder: "2.0",
+						OrderOperationIsExpanded: "leaf",
+						OrderOperationParentRowID: "id-2",
+						OrderOperationRowID: "id-2.0",
+						OrderOperationRowLevel: 1
+					}]
+				});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(2, 2),
+				this.waitForChanges(assert, "expand node to level 2")
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["2"], ["2.0"]]);
+
+			// code under test
+			oTable.setFirstVisibleRow(0);
+
+			return this.waitForChanges(assert, "scroll up again");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"]]);
 		});
 	});
 
@@ -10798,8 +11112,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
 		}"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text text="{MaintenanceOrder}" />\
 </t:TreeTable>';
 
@@ -11583,7 +11896,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}])
 				.expectValueState("quantity", "Error", "Some message");
 
-			Core.getMessageManager().addMessages(new Message({
+			Messaging.addMessages(new Message({
 				message : "Some message",
 				processor : oModel,
 				target : "/RequestedQuantity",
@@ -14268,6 +14581,57 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.ok(aAllCurrentContextsPaths.includes(oCreatedContext.getPath()));
 			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('9')"));
 			assert.ok(aAllCurrentContextsPaths.includes("/SalesOrderSet('10')"));
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If a list binding contains created entries at the start of the list and the
+	// binding's length is final, ensure that all data is requested if the user scrolls to the end
+	// of the list.
+	// BCP: 002075129400006921272023
+	QUnit.test("Created entries at start: scrolling to the end reads all data", function (assert) {
+		var oTable,
+			oModel = createSalesOrdersModel({defaultCountMode : CountMode.Inline}),
+			sView = '\
+<Table growing="true" growingThreshold="3" id="table" items="{/SalesOrderSet}">\
+	<Input id="note" value="{Note}"/>\
+</Table>',
+		that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet?$skip=0&$top=3&$inlinecount=allpages", {
+				__count : "5",
+				results : [
+					{__metadata : {uri : "SalesOrderSet('1')"}, Note : "SO1", SalesOrderID : "1"},
+					{__metadata : {uri : "SalesOrderSet('2')"}, Note : "SO2", SalesOrderID : "2"},
+					{__metadata : {uri : "SalesOrderSet('3')"}, Note : "SO3", SalesOrderID : "3"}
+				]
+			})
+			.expectValue("note", ["SO1", "SO2", "SO3"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectValue("note", ["SONew", "SO1", "SO2", "SO3"]);
+
+			// code under test - create an item at the start of the list
+			oTable.getBinding("items").create({Note : "SONew"});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderSet?$skip=3&$top=2", {
+				results : [
+					{__metadata : {uri : "SalesOrderSet('4')"}, Note : "SO4", SalesOrderID : "4"},
+					{__metadata : {uri : "SalesOrderSet('5')"}, Note : "SO5", SalesOrderID : "5"}
+				]
+			});
+
+			that.expectValue("note", ["SO3", "SO4", "SO5"], 3);
+
+			// code under test - scroll down to get all data from server
+			oTable.requestItems();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -17792,11 +18156,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -17806,34 +18168,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					method : "DELETE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
 				}, NO_CONTENT)
-				.expectValue("itemName", "", 2)
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
@@ -17855,10 +18219,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oBinding.removeContext(oTable.getContextByIndex(2));
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "bar: renamed", 1)
-				.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
+
+			this.expectRequest({
 					batchNo : 5,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
@@ -17873,7 +18238,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar: renamed"], [""]]);
 		});
 	});
 });
@@ -17943,11 +18310,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -17957,34 +18322,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					method : "DELETE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
 				}, NO_CONTENT)
-				.expectValue("itemName", "", 2)
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
@@ -18006,10 +18373,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oBinding.removeContext(oTable.getContextByIndex(2));
 			oBinding.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "bar: renamed", 1)
-				.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
+
+			this.expectRequest({
 					batchNo : 5,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
@@ -18018,9 +18386,8 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
-				}, NO_CONTENT);
-
-			that.expectRequest({
+				}, NO_CONTENT)
+				.expectRequest({
 					batchNo : 6,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=1&$inlinecount=allpages"
 						+ "&$filter=HierarchyDistanceFromRoot le 0"
@@ -18041,7 +18408,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
 			oBinding.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar: renamed"], [""]]);
 		});
 	});
 });
@@ -18106,11 +18475,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18120,34 +18487,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					method : "DELETE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
 				}, NO_CONTENT)
-				.expectValue("itemName", "", 2)
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
@@ -18155,34 +18524,34 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [oNode100]
-				})
-				.expectValue("itemName", "", 1); // binding gets refreshed, no restore tree state
+				});
 
 			// code under test: hierarchy change
 			oBinding.removeContext(oTable.getContextByIndex(2));
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			oTable = that.oView.byId("table");
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// binding gets refreshed, no restore tree state
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
 
-			that.expectRequest({
+			this.expectRequest({
 					batchNo : 5,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
-				})
-				.expectValue("itemName", "bar", 1);
+				});
 
 			// manually expand the node again
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "bar: renamed", 1)
-				.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
+
+			this.expectRequest({
 					batchNo : 6,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
@@ -18197,7 +18566,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar: renamed"], [""]]);
 		});
 	});
 
@@ -18262,11 +18633,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18276,34 +18645,36 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					method : "DELETE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
 				}, NO_CONTENT)
-				.expectValue("itemName", "", 2)
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
@@ -18311,34 +18682,34 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [oNode100]
-				})
-				.expectValue("itemName", "", 1); // binding gets refreshed, no restore tree state
+				});
 
 			// code under test: hierarchy change
 			oBinding.removeContext(oTable.getContextByIndex(2));
 			oBinding.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			oTable = that.oView.byId("table");
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// binding gets refreshed, no restore tree state
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
 
-			that.expectRequest({
+			this.expectRequest({
 					batchNo : 5,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
-				})
-				.expectValue("itemName", "bar", 1);
+				});
 
 			// manually expand the node again
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "bar: renamed", 1)
-				.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
+
+			this.expectRequest({
 					batchNo : 6,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
@@ -18347,24 +18718,24 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					key : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')",
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"
-				}, NO_CONTENT);
-
-				that.expectRequest({
-						batchNo : 7,
-						requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
-							+ "&$filter=HierarchyDistanceFromRoot le 0"
-					}, {
-						__count : "1",
-						results : [oNode100]
-					})
-					// binding gets refreshed, no restore tree state
-					.expectValue("itemName", "", 1);
+				}, NO_CONTENT)
+				.expectRequest({
+					batchNo : 7,
+					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
+						+ "&$filter=HierarchyDistanceFromRoot le 0"
+				}, {
+					__count : "1",
+					results : [oNode100]
+				});
 
 			// code under test: property change
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
 			oBinding.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// binding gets refreshed, no restore tree state
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
 		});
 	});
 
@@ -18425,11 +18796,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18439,48 +18808,50 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
-				})
-				.expectValue("itemName", "bar", 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			oTable = that.oView.byId("table");
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
 
-			that.expectRequest({
+			this.expectRequest({
 					batchNo : 3,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '200'"
 				}, {
 					__count : "1",
 					results : [oNode300]
-				})
-				.expectValue("itemName", "baz", 2);
+				});
 
 			oTable.expand(1);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			var oMoveContext = oTable.getContextByIndex(2),
 				oParentContext = oTable.getContextByIndex(0);
 
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"]]);
+
+			this.expectRequest({
 					batchNo : 4,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"},
@@ -18490,7 +18861,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					method : "MERGE",
 					requestUri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='300')"
 				}, NO_CONTENT)
-				.expectValue("itemName", ["baz", "bar"], 1)
 				.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
@@ -18498,35 +18868,35 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [oNode100]
-				})
-				.expectValue("itemName", ["", ""], 1); // binding gets refreshed
+				}); // binding gets refreshed
 
 			// code under test: hierarchy change
 			oBinding.removeContext(oMoveContext);
 			oBinding.addContexts(oParentContext, [oMoveContext]);
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			oTable = that.oView.byId("table");
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// binding gets refreshed
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
 
-			that.expectRequest({
+			this.expectRequest({
 					batchNo : 5,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "1",
 					results : [oNode200]
-				})
-				.expectValue("itemName", "bar", 1);
+				});
 
 			// manually expand the node again
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "bar: renamed", 1)
-				.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""]]);
+
+			this.expectRequest({
 					batchNo : 6,
 					data : {
 						__metadata : {uri : "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='200')"},
@@ -18543,15 +18913,16 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [oNode100]
-				})
-				// binding gets refreshed, no restore tree state
-				.expectValue("itemName", "", 1);
+				});
 
 			// code under test: property change
 			oModel.setProperty("ErhaOrderItemName", "bar: renamed", oTable.getContextByIndex(1));
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			// binding gets refreshed, no restore tree state
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""]]);
 		});
 	});
 
@@ -18690,11 +19061,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="4"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="4">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18704,33 +19073,33 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode100]
-			})
-			.expectValue("itemName", ["foo", "", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["bar", "baz"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			var oCreatedContext, oExpectedEntry;
 
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"], [""]]);
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
-
-			that.expectValue("itemName", ["qux", "bar", "baz"], 1);
 
 			// code under test: add node
 			oCreatedContext = oBinding.createEntry({properties : {ErhaOrderItemName : "qux"}});
@@ -18746,9 +19115,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.deepEqual(oPendingChanges[sKey], oExpectedEntry);
 			}
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", ["bar", "baz", ""], 1);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["qux"], ["bar"], ["baz"]]);
 
 			// code under test: reset added node
 			oModel.resetChanges();
@@ -18756,11 +19125,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			var oMovedContext = oTable.getContextByIndex(2);
 
-			that.expectValue("itemName", "", 2);
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"], [""]]);
 
 			// code under test: move node
 			oBinding.removeContext(oMovedContext);
@@ -18774,9 +19143,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.deepEqual(oPendingChanges[sKey], {HierarchyParentNode : "200"});
 			}
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "baz", 2);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""], [""]]);
 
 			// code under test: reset moved node
 			oModel.resetChanges();
@@ -18784,11 +19153,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
 			var oRemovedContext = oTable.getContextByIndex(2);
 
-			that.expectValue("itemName", "", 2);
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"], [""]]);
 
 			// code under test: remove node
 			oBinding.removeContext(oRemovedContext);
@@ -18801,9 +19170,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				assert.deepEqual(oPendingChanges[sKey], {});
 			}
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "baz", 2);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], [""], [""]]);
 
 			// code under test: reset removed node
 			oModel.resetChanges();
@@ -18811,9 +19180,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(oModel.hasPendingChanges(), false);
 			assert.deepEqual(oModel.getPendingChanges(), {});
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", ["qux2", "bar", "baz"], 1);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"], [""]]);
 
 			// code under test: cancelled creation (add)
 			oCancelledContext = oBinding.createEntry({properties : {ErhaOrderItemName : "qux2"}});
@@ -18821,9 +19190,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			// #hasPendingChanges and #getPendingChanges tested in "added case"
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", ["bar", "baz", ""], 1);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["qux2"], ["bar"], ["baz"]]);
 
 			// code under test: cancelled creation (remove)
 			oBinding.removeContext(oCancelledContext);
@@ -18834,7 +19203,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test: no request as created entry has been removed again
 			oModel.submitChanges();
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"], ["baz"], [""]]);
 		});
 	});
 
@@ -18855,11 +19226,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="3"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="3">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -18917,30 +19286,30 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					HierarchyPreorderRank : 3,
 					HierarchySiblingRank : 2
 				}]
-			})
-			.expectValue("itemName", ["099", "100", "110"]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
 
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["099"], ["100"], ["110"]]);
 			assert.strictEqual(oBinding.isExpanded(1), true, "row 2 expanded");
 			assert.strictEqual(oBinding.isExpanded(3), false, "row 4 collapsed");
 			assert.strictEqual(oBinding.getLength(), 4, "initial binding length is 3");
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", "200", 2);
-
+			return this.waitForChanges(assert);
+		}).then(() => {
 			// code under test
 			oBinding.collapse(1);
 
 			assert.strictEqual(oBinding.getLength(), 3,
 				"first collapse reduces binding length to 3");
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["099"], ["100"], ["200"]]);
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=103&$inlinecount=allpages&"
 						+ "$filter=HierarchyParentNode eq '200'"
@@ -18964,8 +19333,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			// code under test
 			oBinding.expand(2);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["099"], ["100"], ["200"]]);
 			assert.strictEqual(oBinding.isExpanded(2), true, "row 2 expanded");
 			assert.strictEqual(oBinding.getLength(), 4,
 				"expand of row 2 increases binding length to 4");
@@ -18990,11 +19360,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			},\
 			path : \'/ErhaOrder(\\\'1\\\')/to_Item\'\
 		}"\
-		visibleRowCount="2"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="2">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -19016,12 +19384,14 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					HierarchyPreorderRank : 0,
 					HierarchySiblingRank : 0
 				}]
-			})
-			.expectValue("itemName", ["foo", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 			oBinding = oTable.getBinding("rows");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["foo"], [""]]);
 
 			// code under test: add node
 			oCreatedContext = oBinding.createEntry({
@@ -19030,18 +19400,18 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			assert.strictEqual(oBinding.isExpanded(0), false);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectValue("itemName", ["bar"], 1);
-
+			return this.waitForChanges(assert);
+		}).then(() => {
 			// code under test
 			oTable.expand(0);
 
 			assert.strictEqual(oBinding.isExpanded(0), true);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({ // POST for entity creation
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"]]);
+
+			this.expectRequest({ // POST for entity creation
 					batchNo : 2,
 					created : true,
 					data : {
@@ -19133,10 +19503,195 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 
 			return Promise.all([
 				oCreatedContext.created(),
-				that.waitForChanges(assert)
+				this.waitForChanges(assert)
 			]);
 		}).then(function () {
+			assert.deepEqual(getTableContent(oTable), [["foo"], ["bar"]]);
 			assert.strictEqual(oBinding.isExpanded(0), true, "expanded state is restored");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: All read requests of the ODataTreeBindingFlat, consider "transitionMessagesOnly" parameter.
+	// JIRA: CPOUI5MODELS-1437
+	QUnit.test("ODataTreeBindingFlat: transitionMessagesOnly", function (assert) {
+		const oModel = createHierarchyMaintenanceModel();
+		let oTable;
+		const sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters: {countMode: \'Inline\', numberOfExpandedLevels: 1, transitionMessagesOnly: true},\
+			path: \'/ErhaOrder(\\\'1\\\')/to_Item\'\
+		}"\
+		visibleRowCount="4">\
+	<Text id="itemName" text="{ErhaOrderItemName}" />\
+</t:TreeTable>';
+
+		this.expectHeadRequest()
+			.expectRequest({ // triggered by ODataTreeBindingFlat#_requestServerIndexNodes
+				batchNo: 1,
+				headers: {"sap-messages": "transientOnly"},
+				requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+					+ "&$filter=HierarchyDistanceFromRoot le 1"
+			}, {
+				__count: "4",
+				results: [{
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "0",
+					ErhaOrderItemName: "0",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "0",
+					HierarchyPreorderRank: 0,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1",
+					ErhaOrderItemName: "1",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 2,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1",
+					HierarchyPreorderRank: 1,
+					HierarchySiblingRank: 1
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0",
+					ErhaOrderItemName: "1.0",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "collapsed",
+					HierarchyNode: "1.0",
+					HierarchyPreorderRank: 2,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.1",
+					ErhaOrderItemName: "1.1",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.1",
+					HierarchyPreorderRank: 3,
+					HierarchySiblingRank: 1
+				}]
+			});
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.1"]]);
+
+			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestChildren
+					batchNo: 2,
+					headers: {"sap-messages": "transientOnly"},
+					requestUri: "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
+						+ "&$filter=HierarchyParentNode eq '1.0'"
+				}, {
+					__count: "1",
+					results: [{
+						__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')"},
+						ErhaOrder: "1",
+						ErhaOrderItem: "1.0.0",
+						ErhaOrderItemName: "1.0.0",
+						HierarchyParentNode: "1.0",
+						HierarchyDescendantCount: 0,
+						HierarchyDistanceFromRoot: 2,
+						HierarchyDrillState: "leaf",
+						HierarchyNode: "1.0.0",
+						HierarchyPreorderRank: 0,
+						HierarchySiblingRank: 0
+					}]
+				});
+
+			// code under test
+			oTable.expand(2);
+
+			return this.waitForChanges(assert, "expand node '1.0'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
+
+			// code under test
+			oTable.collapse(1);
+
+			return this.waitForChanges(assert, "collapse node '1'");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], [""], [""]]);
+
+			this.expectRequest({ // triggered by ODataTreeBindingFlat#_requestSubTree
+				batchNo: 3,
+				headers: {"sap-messages": "transientOnly"},
+				requestUri: "ErhaOrder('1')/to_Item?$filter=HierarchyNode eq '1' and HierarchyDistanceFromRoot le 2"
+			}, {
+				__count: "3",
+				results: [{
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1",
+					ErhaOrderItemName: "1",
+					HierarchyParentNode: "",
+					HierarchyDescendantCount: 3,
+					HierarchyDistanceFromRoot: 0,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1",
+					HierarchyPreorderRank: 1,
+					HierarchySiblingRank: 1
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0",
+					ErhaOrderItemName: "1.0",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 1,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "expanded",
+					HierarchyNode: "1.0",
+					HierarchyPreorderRank: 2,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.0.0')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.0.0",
+					ErhaOrderItemName: "1.0.0",
+					HierarchyParentNode: "1.0",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 2,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.0.0",
+					HierarchyPreorderRank: 0,
+					HierarchySiblingRank: 0
+				}, {
+					__metadata: {uri: "ErhaOrderItem(ErhaOrder='1',ErhaOrderItem='1.1')"},
+					ErhaOrder: "1",
+					ErhaOrderItem: "1.1",
+					ErhaOrderItemName: "1.1",
+					HierarchyParentNode: "1",
+					HierarchyDescendantCount: 0,
+					HierarchyDistanceFromRoot: 1,
+					HierarchyDrillState: "leaf",
+					HierarchyNode: "1.1",
+					HierarchyPreorderRank: 3,
+					HierarchySiblingRank: 1
+				}]
+			});
+
+			return Promise.all([
+				// code under test
+				oTable.getBinding("rows").expandNodeToLevel(1, 2),
+				this.waitForChanges(assert, "expand node '1' to level 2")
+			]);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["0"], ["1"], ["1.0"], ["1.0.0"]]);
 		});
 	});
 
@@ -19193,6 +19748,97 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			assert.deepEqual(aCreateActivateCalledBy, ["table after rebind"]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: A table has an inactive created entity and a 'createActivate' event handler
+	// suppresses the activation until all conditions are fulfilled. After re-binding the table the
+	// activation is still only done if all conditions are fulfilled. Destroyed bindings don't
+	// influence the activation.
+	// BCP: 2380123522
+	QUnit.test("ODataListBinding: createActivate-event works with destroyed bindings", function (assert) {
+		var oBinding, oCreatedContext, oTable,
+			oModel = createSalesOrdersModel({defaultBindingMode: BindingMode.TwoWay, refreshAfterChange: false}),
+			sView = '\
+<t:Table id="table" rows="{/BusinessPartnerSet}" visibleRowCount="2">\
+	<Input id="company" value="{CompanyName}"/>\
+</t:Table>',
+			that = this;
+
+		function onCreateActivate(oEvent) {
+			assert.strictEqual(oEvent.getParameter("context"), oCreatedContext);
+			assert.strictEqual(oCreatedContext.isInactive(), true);
+			if (oCreatedContext.getObject("").CompanyName !== "SAP") {
+				oEvent.preventDefault();
+			}
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results: []})
+			.expectValue("company", ["", ""]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oBinding = oTable.getBinding("rows");
+
+			that.expectValue("company", "Initial", 0);
+
+			// code under test: attach createActivate on initial binding; create inactive entity
+			oBinding.attachCreateActivate(onCreateActivate);
+			oCreatedContext = oBinding.create({CompanyName: "Initial"}, false, {inactive: true});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Foo", 0);
+
+			// code under test: change the value that prevents activation
+			oTable.getRows()[0].getCells()[0].setValue("Foo");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("BusinessPartnerSet?$skip=0&$top=102", {results: []});
+
+			// code under test: rebind table and attach event on new binding
+			oTable.bindRows(oTable.getBindingInfo("rows"));
+			oBinding = oTable.getBinding("rows");
+			oBinding.attachCreateActivate(onCreateActivate);
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectValue("company", "Bar", 0);
+
+			// code under test: on new binding change value that still not activate the entry
+			oTable.getRows()[0].getCells()[0].setValue("Bar");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					created: true,
+					data: {
+						__metadata: {type: "GWSAMPLE_BASIC.BusinessPartner"},
+						CompanyName: "SAP"
+					},
+					method: "POST",
+					requestUri: "BusinessPartnerSet"
+				}, {
+					data: {
+						__metadata: {uri: "BusinessPartnerSet('42')"},
+						BusinessPartnerID: "42",
+						CompanyName: "SAP"
+					},
+					statusCode: 201
+				})
+				.expectValue("company", "SAP", 0);
+
+			// code under test: change the value that activation is done
+			oTable.getRows()[0].getCells()[0].setValue("SAP");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
 		});
 	});
 
@@ -19804,7 +20450,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				]
 			})
 			.expectValue("SalesOrderID", ["1", "2"])
-			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00 AM", "Jan 29, 2023, 11:00:00 PM"]);
+			.expectValue("CreatedAt", ["Jan 25, 2023, 12:00:00\u202FAM", "Jan 29, 2023, 11:00:00\u202FPM"]);
 
 		return this.createView(assert, sView, mModels).then(function () {
 			that.oView.byId("DateRangeSelection").setValue("Jan 30, 2023 - Jan 31, 2023");
@@ -19812,7 +20458,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectValue("SalesOrderID", ["3"])
-				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00 PM"]);
+				.expectValue("CreatedAt", ["Jan 31, 2023, 11:00:00\u202FPM"]);
 
 			// code under test
 			that.oView.byId("Table").getBinding("items").filter(new Filter({
@@ -20176,11 +20822,9 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				{path : \'CreatedByUser\', operator : \'EQ\', value1 : \'user1\'}\
 			]\
 		}"\
-		visibleRowCount="4"\
-		visibleRowCountMode="Fixed">\
+		visibleRowCount="4">\
 	<Text id="itemName" text="{ErhaOrderItemName}" />\
-</t:TreeTable>',
-			that = this;
+</t:TreeTable>';
 
 		this.expectHeadRequest()
 			.expectRequest({
@@ -20191,13 +20835,15 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			}, {
 				__count : "1",
 				results : [oNode050]
-			})
-			.expectValue("itemName", ["node050", "", "", ""]);
+			});
 
-		return this.createView(assert, sView, oModel).then(function () {
-			oTable = that.oView.byId("table");
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
 
-			that.expectRequest({
+			// don't use expectValue to avoid timing issues causing flaky tests
+			assert.deepEqual(getTableContent(oTable), [["node050"], [""], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 2,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 						+ "&$filter=HierarchyDistanceFromRoot le 0"
@@ -20205,8 +20851,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "1",
 					results : [oNode100]
-				})
-				.expectValue("itemName", ["node100"], 0);
+				});
 
 			// code under test
 			oTable.getBinding("rows").filter([
@@ -20214,9 +20859,11 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				new Filter("CreatedByUser", FilterOperator.EQ, "user3")
 			], FilterType.Application);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["node100"], [""], [""], [""]]);
+
+			this.expectRequest({
 					batchNo : 3,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 						+ "&$filter=HierarchyParentNode eq '100'"
@@ -20224,27 +20871,29 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				}, {
 					__count : "2",
 					results : [oNode200, oNode300]
-				})
-				.expectValue("itemName", ["node200", "node300"], 1);
+				});
 
 			oTable.expand(0);
 
-			return that.waitForChanges(assert);
-		}).then(function () {
-			that.expectRequest({
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["node100"], ["node200"], ["node300"], [""]]);
+
+			this.expectRequest({
 					batchNo : 4,
 					requestUri : "ErhaOrder('1')/to_Item?$skip=0&$top=104&$inlinecount=allpages"
 						+ "&$filter=HierarchyDistanceFromRoot le 0"
 				}, {
 					__count : "2",
 					results : [oNode050, oNode100NoFilter]
-				})
-				.expectValue("itemName", ["node050", "node100", ""]);
+				});
 
 			// code under test
 			oTable.getBinding("rows").filter([], FilterType.Application);
 
-			return that.waitForChanges(assert);
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [["node050"], ["node100"], [""], [""]]);
 		});
 	});
 
@@ -20377,6 +21026,519 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If the server uses server side paging and the OData model uses "Client" mode all
+	// data is requested up to the model size limit.
+	// BCP: 2380127053
+[false, true].forEach(function (bShortRead) {
+	QUnit.test("OperationMode.Client: with server side paging, short read:" + bShortRead, function (assert) {
+		var oTable,
+			iDataReceived = 0,
+			iDataRequested = 0,
+			iExpectedSize = bShortRead ? 15 : 30,
+			oModel = createSalesOrdersModel({defaultOperationMode: "Client"}),
+			sView = '\
+<t:Table id="table">\
+	<Text id="note" text="{Note}"/>\
+</t:Table>',
+			that = this;
+
+		function dataRequested() {
+			iDataRequested += 1;
+		}
+		function dataReceived(oEvent) {
+			var oEventData = oEvent.getParameter("data");
+
+			iDataReceived += 1;
+			// responses are merged
+			assert.strictEqual(oEventData.results.length, iExpectedSize);
+			oEventData.results.forEach((oData, i) => {
+				assert.strictEqual(oData.Note, "SO" + (i + 1));
+			});
+			assert.strictEqual(oEventData.__count, "" + iExpectedSize);
+		}
+
+		oModel.setSizeLimit(30);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			function createItems(iFrom, iLength) {
+				var i,
+					aItems = [];
+
+				for (i = 0; i < iLength; i += 1) {
+					aItems.push({
+						__metadata: {uri : "SalesOrderSet('" + iFrom + "')"},
+						Note: "SO" + iFrom,
+						SalesOrderID: "" + iFrom
+					});
+					iFrom += 1;
+				}
+
+				return aItems;
+			}
+
+			that.expectHeadRequest()
+				.expectRequest("SalesOrderSet", {
+					__next: "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$skiptoken=3",
+					results: createItems(1, 3) // whitout $top server returns 3; in real maybe 100
+				})
+				.expectRequest("SalesOrderSet?$skip=3&$top=27", {
+					// if $top is given server limit is used; here 10, in real maybe 5000
+					__next: "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SalesOrderSet?$top=24$skiptoken=13",
+					results: createItems(4, 10)
+				})
+				.expectRequest("SalesOrderSet?$skip=13&$top=17", {
+					// no _next link, that means server returned all requestd entries; there may be
+					// more on the server but the amount of data exceeds the model size limit
+					results: createItems(14, bShortRead ? 2 : 17)
+				});
+
+			oTable = that.oView.byId("table");
+			// code under test - client mode reads all data
+			oTable.bindRows({
+					events: {
+						dataRequested: dataRequested,
+						dataReceived: dataReceived
+					},
+					filter: [new Filter("GrossAmount", FilterOperator.GT, 500)],
+					path: "/SalesOrderSet",
+					sorter: [new Sorter("CompanyCode", true)]
+				});
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oBinding.getLength(), iExpectedSize);
+			assert.strictEqual(oBinding.getCount(), iExpectedSize);
+			assert.strictEqual(iDataRequested, 1);
+			assert.strictEqual(iDataReceived, 1);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Skip server cache for security tokens, so that two services running on different backends behind
+	// a reverse proxy can be consumed without a failing $batch due to a token for a different system taken from server
+	// cache.
+	// JIRA:CPOUI5MODELS-1381
+	QUnit.test("Skip server cache for security tokens", function (assert) {
+		const sView = '\
+<FlexBox binding="{/SalesOrderSet(\'1\')}">\
+	<Text id="id0" text="{SalesOrderID}" />\
+</FlexBox>\
+<FlexBox id="box1">\
+	<Text id="id1" text="{model1>ContactCardID}" />\
+</FlexBox>';
+
+		function checkServiceCache(aTokens) {
+			const oServiceCache = ODataModel.mSharedData.service;
+			assert.deepEqual(
+				Object.values(oServiceCache).map((oCacheEntry) => oCacheEntry.securityToken).sort(),
+				aTokens.sort());
+		}
+
+		function clearCaches() {
+			ODataModel.mSharedData.server = {};
+			ODataModel.mSharedData.service = {};
+		}
+
+		clearCaches(); // clear static caches on ODataModel to prevent effects from previous tests
+		// create model *after* clearing the caches as the token is lost otherwise
+		const oModel0 = createSalesOrdersModel({tokenHandling : "skipServerCache"});
+		this.expectRequest({
+				deepPath : "",
+				headers : {"x-csrf-token" : "Fetch"},
+				method : "HEAD",
+				requestUri : ""
+			}, {}, {"x-csrf-token" : "token0"})
+			.expectRequest("SalesOrderSet('1')", {
+				SalesOrderID : "1"
+			})
+			.expectValue("id0", "1");
+
+		// code under test
+		return this.createView(assert, sView, oModel0).then(() => {
+			checkServiceCache(["token0"]);
+
+			this.expectRequest({
+					deepPath : "",
+					headers : {"x-csrf-token" : "Fetch"},
+					method : "HEAD",
+					requestUri : "/special/cases/"
+				}, {}, {"x-csrf-token" : "token1"})
+				.expectRequest({
+					requestUri : "I_UserContactCard('ID')"
+				}, {
+					ContactCardID : "ID"
+				})
+				.expectValue("id1", "ID");
+
+			// code under test: request data for second service *after* security token for first has been retrieved
+			const oModel1 = createSpecialCasesModel({tokenHandling : "skipServerCache"});
+			this.oView.setModel(oModel1, "model1");
+			this.oView.byId("box1").bindElement("model1>/I_UserContactCard('ID')");
+
+			assert.deepEqual(ODataModel.mSharedData.server, {}, "server cache for tokens is empty");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			checkServiceCache(["token0", "token1"]);
+		}).finally(clearCaches);
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a table where transient entries have messages, the filter returned by requestFilterForMessages does
+	// not refer to these entries. For the BCP incident, check the case that no item loaded from the backend has a
+	// message: the filter is Filter.NONE then.
+	// BCP: 2370088390
+	// When the list is filtered only the transient entry is shown and no entries are requested.
+	// JIRA: CPOUI5MODELS-1421
+	QUnit.test("Filter table where only transient items have messages", function (assert) {
+		let oCreatedContext, oRowsBinding;
+		const oModel = createSalesOrdersModel({preliminaryContext : true});
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="2">\
+	<Input id="itemPosition" value="{ItemPosition}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=102"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					Note : "Baz",
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("itemPosition", ["10", "20"])
+			.expectValue("note", ["Bar", "Baz"]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectValue("itemPosition", ["", "10"])
+				.expectValue("note", ["Foo", "Bar"]);
+
+			// code under test
+			oRowsBinding = this.oView.byId("table").getBinding("rows");
+			oCreatedContext = oRowsBinding.create({Note : "Foo"}, /*bAtEnd*/ false, {inactive: true});
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			const oMessage = { // usually, this message occurs on activation
+				message: "Item position is required",
+				type: "Error",
+				target: oCreatedContext.getPath() + "/ItemPosition",
+				fullTarget: oCreatedContext.getDeepPath() + "/ItemPosition",
+				processor: oModel
+			};
+			this.expectMessages(oMessage);
+
+			// code under test
+			Messaging.addMessages(new Message(oMessage));
+
+			return Promise.all([
+				oRowsBinding.requestFilterForMessages(),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], Filter.NONE, "Filter.NONE message filter, only transient item has message");
+
+			this.expectValue("itemPosition", "", 1)
+				.expectValue("note", "", 1);
+
+			oRowsBinding.filter(aResults[0], FilterType.Application);
+
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: For a table where only transient entries have messages, the filter returned by requestFilterForMessages
+	// is Filter.NONE. When the list is filtered, only the transient entries are shown and no $filter and no $count
+	// request occurs. It is still possible to create new inactive entries. Check that count and length of the binding
+	// is always correct.
+	// JIRA:CPOUI5MODELS-1421
+["Default", "Client"].forEach((sOperationMode) => {
+	const sTitle = "Filter table where only transient items have messages: operation mode=" + sOperationMode;
+	QUnit.test(sTitle, function (assert) {
+		let oMessage, oRowsBinding, oTable;
+		let aExpectedMessages = [];
+		const oModel = createSalesOrdersModel({
+				defaultBindingMode : BindingMode.TwoWay,
+				defaultCountMode : CountMode.Request,
+				defaultOperationMode : sOperationMode,
+				preliminaryContext : true
+			});
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="3">\
+	<Input id="itemPosition" value="{ItemPosition}" />\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+		const that = this;
+
+		/* Prevents activation of passed inactive context, adds a message to the message model for
+		this context, creates another inactive context at the end if ItemPosition is empty.*/
+		function onCreateActivate(oEvent) {
+			const oCreatedContext = oEvent.getParameter("context");
+			if (!oCreatedContext.getObject("").ItemPosition) {
+				oMessage = {
+					message : "Item position is required",
+					type : "Error",
+					target : oCreatedContext.getPath() + "/ItemPosition",
+					fullTarget : oCreatedContext.getDeepPath() + "/ItemPosition",
+					processor : oModel
+				};
+				aExpectedMessages.push(oMessage);
+				that.expectMessages(aExpectedMessages);
+				Messaging.addMessages(new Message(oMessage));
+				oEvent.preventDefault();
+			} else {
+				const aCurrentMessages = Messaging.getMessageModel().getObject("/");
+				aCurrentMessages.some((oMessage) => {
+					if (oMessage.getTargets()[0] === oCreatedContext.getPath() + "/ItemPosition") {
+						Messaging.removeMessages(oMessage);
+						aExpectedMessages = aExpectedMessages.slice(0, 1);
+						return true;
+					}
+					return false;
+				});
+				that.expectMessages(aExpectedMessages);
+
+				return; // do not create another inactive row
+			}
+
+			// code under test - create works also if binding length is not final but Filter.NONE is set
+			oRowsBinding.create({}, /*bAtEnd*/ true, {inactive: true});
+		}
+
+		this.expectHeadRequest()
+			.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems"
+					+ (sOperationMode === "Default" ? "?$skip=0&$top=103" : "")
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}]
+			})
+			.expectValue("itemPosition", ["10", "", ""])
+			.expectValue("note", ["Bar", "", ""]);
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+			oRowsBinding.attachCreateActivate(onCreateActivate);
+			oRowsBinding.create({}, /*bAtEnd*/ true, {inactive: true});
+
+			assert.strictEqual(oRowsBinding.getCount(), 1, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 2, "length is 2");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("note", "Foo", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[1].setValue("Foo");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 1, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 3, "length is 3");
+
+			return Promise.all([
+				oRowsBinding.requestFilterForMessages(),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], Filter.NONE, "only transient items have messages");
+
+			this.expectValue("itemPosition", "", 0)
+				.expectValue("note", "Foo", 0)
+				.expectValue("note", "", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			// code under test - no requests
+			oRowsBinding.filter(aResults[0], FilterType.Application);
+
+			assert.strictEqual(oRowsBinding.getCount(), 0, "no active entry - count 0");
+			assert.strictEqual(oRowsBinding.getLength(), 2, "length is 2");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("note", "Bar", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[1].setValue("Bar");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectValue("itemPosition", "30", 1)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "Item position is required")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			oTable.getRows()[1].getCells()[0].setValue("30");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 1, "one active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 3, "length is 3");
+			if (sOperationMode === "Default" ) {
+				this.expectRequest("SalesOrderSet('1')/ToLineItems/$count", "1")
+					.expectRequest({
+						requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+					}, {
+						results : [{
+							__metadata : {
+								uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+							},
+							Note : "Bar",
+							ItemPosition : "10",
+							SalesOrderID : "1"
+						}]
+					});
+			}
+			this.expectValue("itemPosition", ["10", "", "30"])
+				.expectValue("note", ["Bar", "Foo", "Bar"]);
+
+			// code under test
+			oRowsBinding.filter([], FilterType.Application);
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			assert.strictEqual(oRowsBinding.getCount(), 2, "1 active entry - count 1");
+			assert.strictEqual(oRowsBinding.getLength(), 4, "length is 4");
+
+			return Promise.all([
+				// code under test (filter out all messages)
+				oRowsBinding.requestFilterForMessages(() => false),
+				this.waitForChanges(assert)
+			]);
+		}).then((aResults) => {
+			assert.strictEqual(aResults[0], null);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: The data state of a control in a table needs to be reevaluated if the row context changes but the
+	// value of the property binding does not change.
+	// JIRA: CPOUI5MODELS-1421
+	QUnit.test("Filter table with messages, every line has the correct data state", function (assert) {
+		let oRowsBinding, oTable;
+		const oModel = createSalesOrdersModel({preliminaryContext : true});
+		const oResponseMessage = this.createResponseMessage("(SalesOrderID='1',ItemPosition='20')/Note",
+			"~errorMessage");
+		const sView = '\
+<t:Table id="table" rows="{/SalesOrderSet(\'1\')/ToLineItems}" visibleRowCount="3">\
+	<Input id="note" value="{Note}" />\
+</t:Table>';
+
+		this.expectHeadRequest()
+			.expectRequest({
+				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103"
+			}, {
+				results : [{
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+					},
+					Note : "Bar",
+					ItemPosition : "10",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+					},
+					Note : "Baz",
+					ItemPosition : "20",
+					SalesOrderID : "1"
+				}, {
+					__metadata : {
+						uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+					},
+					Note : "Baz", // same value as for 20
+					ItemPosition : "30",
+					SalesOrderID : "1"
+				}]
+			}, {
+				"sap-message" : getMessageHeader(oResponseMessage)
+			})
+			.expectValue("note", ["Bar", "Baz", "Baz"])
+			.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems");
+
+		return this.createView(assert, sView, oModel).then(() => {
+			oTable = this.oView.byId("table");
+			oRowsBinding = oTable.getBinding("rows");
+
+			this.expectValueState(oTable.getRows()[0].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			this.expectRequest({
+					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=103&$filter=ItemPosition gt '10'"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='20')"
+						},
+						Note : "Baz",
+						ItemPosition : "20",
+						SalesOrderID : "1"
+					}, {
+						__metadata : {
+							uri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='30')"
+						},
+						Note : "Baz", // same value as for 20
+						ItemPosition : "30",
+						SalesOrderID : "1"
+					}]
+				}, {
+					"sap-message" : getMessageHeader(oResponseMessage)
+				})
+				.expectValue("note", "Baz", 0)
+				.expectValue("note", "", 2)
+				.expectMessage(oResponseMessage, "/SalesOrderLineItemSet", "/SalesOrderSet('1')/ToLineItems", true)
+				.expectValueState(oTable.getRows()[0].getCells()[0], "Error", "~errorMessage")
+				.expectValueState(oTable.getRows()[1].getCells()[0], "None", "")
+				.expectValueState(oTable.getRows()[2].getCells()[0], "None", "");
+
+			// filter out item 10
+			oRowsBinding.filter(new Filter({
+					path : "ItemPosition",
+					operator : FilterOperator.GT,
+					value1 : "10"
+				})
+			);
+
+			return this.waitForChanges(assert);
 		});
 	});
 });

@@ -166,7 +166,7 @@ sap.ui.define([
 
 	function _addPackageAndTransport(oAppVariant, mPropertyBag) {
 		if (!oAppVariant) {
-			throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
+			throw new Error(`App variant with ID: ${mPropertyBag.id}does not exist`);
 		}
 
 		mPropertyBag.package = oAppVariant.getPackage();
@@ -181,7 +181,7 @@ sap.ui.define([
 	}
 
 	var SaveAs = {
-		saveAs: function(mPropertyBag) {
+		saveAs(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 
@@ -255,7 +255,7 @@ sap.ui.define([
 				throw oError;
 			});
 		},
-		updateAppVariant: function(mPropertyBag) {
+		updateAppVariant(mPropertyBag) {
 			var oAppVariantClosure;
 			var oAppVariantResultClosure;
 
@@ -266,7 +266,7 @@ sap.ui.define([
 			})
 			.then(function(oAppVariant) {
 				if (!oAppVariant) {
-					throw new Error("App variant with ID: " + mPropertyBag.id + "does not exist");
+					throw new Error(`App variant with ID: ${mPropertyBag.id}does not exist`);
 				}
 
 				oAppVariantClosure = merge({}, oAppVariant);
@@ -319,7 +319,7 @@ sap.ui.define([
 				throw oError;
 			});
 		},
-		deleteAppVariant: function(mPropertyBag) {
+		deleteAppVariant(mPropertyBag) {
 			return AppVariantFactory.prepareDelete(_omit(mPropertyBag, "selector"))
 			.catch(function(oError) {
 				oError.messageKey = "MSG_LOAD_APP_VARIANT_FAILED";

@@ -34,7 +34,7 @@ sap.ui.define([
 
 				return {
 					key: sKey,
-					value: value
+					value
 				};
 			});
 		});

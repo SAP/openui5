@@ -7,10 +7,10 @@ sap.ui.define([
 ], function(LinkDelegate, LinkItem) {
 	"use strict";
 
-	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.fetchLinkItems = function() {
-		var aLinkItems = [
+		const aLinkItems = [
 			new LinkItem({
 				key: "IDLinkItem00",
 				text: "{ProductId}",

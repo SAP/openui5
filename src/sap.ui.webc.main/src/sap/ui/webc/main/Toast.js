@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Toast.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Toast"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -77,18 +77,6 @@ sap.ui.define([
 				/**
 				 * Defines the placement of the component. <br>
 				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>TopStart</code></li>
-				 *     <li><code>TopCenter</code></li>
-				 *     <li><code>TopEnd</code></li>
-				 *     <li><code>MiddleStart</code></li>
-				 *     <li><code>MiddleCenter</code></li>
-				 *     <li><code>MiddleEnd</code></li>
-				 *     <li><code>BottomStart</code></li>
-				 *     <li><code>BottomCenter</code></li>
-				 *     <li><code>BottomEnd</code></li>
-				 * </ul>
 				 */
 				placement: {
 					type: "sap.ui.webc.main.ToastPlacement",

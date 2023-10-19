@@ -140,8 +140,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change total number of rows if activated after binding initialization", function(assert) {
-		this.oTable.insertPlugin(new (SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin"))(), 0);
-		this.oTable.getPlugins()[0].destroy();
+		this.oTable.insertDependent(new (SelectionPlugin.extend("sap.ui.table.test.SelectionPlugin"))(), 0);
+		this.oTable.getDependents()[0].destroy();
 		this.oTable.setSelectionInterval(2, 6);
 		this.oSelectionChangeSpy.resetHistory();
 		this.oTable.getBinding().getModel().getData().push({});
@@ -160,5 +160,43 @@ sap.ui.define([
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4, 5, 6], "Selection");
 		}.bind(this));
+	});
+
+	QUnit.test("#onKeyboardShortcut - Event Marking", function(assert) {
+		const sEventMarker = "sapUiTableClearAll";
+		const oEvent = {
+			setMarked: function() {}
+		};
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
+		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
+		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");
+
+		oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
+		assert.ok(oSelectAllSpy.calledOnce, "select all called");
+		assert.ok(oSetMarkedSpy.notCalled, `Event has not been marked with ${sEventMarker}`);
+
+		oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
+		assert.ok(oClearSelectionSpy.calledOnce, "clear all called");
+		assert.ok(oSetMarkedSpy.calledOnceWithExactly(sEventMarker), `Event has been marked with ${sEventMarker}`);
+
+		oSelectionPlugin.onKeyboardShortcut("clear", oEvent);
+		assert.ok(oClearSelectionSpy.calledTwice, "Selection is cleared");
+		assert.ok(oSetMarkedSpy.calledTwice, `Event marked twice`);
+		assert.ok(oSetMarkedSpy.calledWithExactly(sEventMarker), `Event has been marked with ${sEventMarker}`);
+
+		oSetMarkedSpy.reset();
+
+		oSelectionPlugin.onKeyboardShortcut("toggle");
+		assert.ok(oSelectAllSpy.callCount, 2, "select all called");
+		assert.ok(oSetMarkedSpy.notCalled, "Event has not been marked");
+
+		oSelectionPlugin.onKeyboardShortcut("toggle");
+		assert.ok(oClearSelectionSpy.calledThrice, "clear all called");
+		assert.ok(oSetMarkedSpy.notCalled, `Event has not been marked, as there was no event passed`);
+
+		oSetMarkedSpy.reset();
+		oClearSelectionSpy.reset();
+		oSelectAllSpy.reset();
 	});
 });

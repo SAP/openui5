@@ -42,26 +42,26 @@ sap.ui.define([
 	}
 
 	QUnit.module("getPersistencyKey with a control implementing...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oGetVariantManagementStub = sandbox.stub();
-			this.oGetPersonalizableControlPersistencyKeyStub = sandbox.stub().returns("myFancyPeristencyKey");
+			this.oGetPersonalizableControlPersistencyKeyStub = sandbox.stub().returns("myFancyPersistencyKey");
 			this.oGetPersistencyKeyStub = sandbox.stub().returns("myNotSoFancyPersistencyKey");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("without control", function(assert) {
-			assert.strictEqual(Utils.getPersistencyKey(), undefined, "nothing gets retutned");
+			assert.strictEqual(Utils.getPersistencyKey(), undefined, "nothing gets returned");
 		});
 
 		QUnit.test("none of the used functions", function(assert) {
-			assert.strictEqual(Utils.getPersistencyKey({}), undefined, "nothing gets retutned");
+			assert.strictEqual(Utils.getPersistencyKey({}), undefined, "nothing gets returned");
 		});
 
 		QUnit.test("getVariantManagement and getPersonalizableControlPersistencyKey", function(assert) {
 			var oControl = stubControls.call(this, true, true, false);
-			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPeristencyKey", "the correct persistencyKey is returned");
+			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPersistencyKey", "the correct persistencyKey is returned");
 		});
 
 		QUnit.test("getVariantManagement and getPersistencyKey", function(assert) {
@@ -71,12 +71,12 @@ sap.ui.define([
 
 		QUnit.test("getVariantManagement and getPersistencyKey and getPersonalizableControlPersistencyKey", function(assert) {
 			var oControl = stubControls.call(this, true, true, true);
-			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPeristencyKey", "the correct persistencyKey is returned");
+			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPersistencyKey", "the correct persistencyKey is returned");
 		});
 
 		QUnit.test("getPersonalizableControlPersistencyKey", function(assert) {
 			var oControl = stubControls.call(this, false, true, false);
-			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPeristencyKey", "the correct persistencyKey is returned");
+			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPersistencyKey", "the correct persistencyKey is returned");
 		});
 
 		QUnit.test("getPersistencyKey", function(assert) {
@@ -86,7 +86,182 @@ sap.ui.define([
 
 		QUnit.test("getPersistencyKey and getPersonalizableControlPersistencyKey", function(assert) {
 			var oControl = stubControls.call(this, false, true, true);
-			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPeristencyKey", "the correct persistencyKey is returned");
+			assert.strictEqual(Utils.getPersistencyKey(oControl), "myFancyPersistencyKey", "the correct persistencyKey is returned");
+		});
+	});
+
+	QUnit.module("getDefaultVariantId...", {
+		beforeEach: () => {
+			this.mCompVariantsMap = {
+				defaultVariants: [],
+				variants: []
+			};
+		},
+		afterEach: () => {
+			sandbox.restore();
+		}
+	}, () => {
+		QUnit.test("One defaultVariant change with two variants", (assert) => {
+			const sVariantName = "MyDummyVariant";
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return sVariantName;
+				}
+			}, {
+				getId: () => {
+					return "AnotherVariant";
+				}
+			}];
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				sVariantName,
+				"the correct variant is returned"
+			);
+		});
+
+		QUnit.test("Two defaultVariant changes with two variants", (assert) => {
+			const sFirstVariantName = "FirstVariant";
+			const sSecondVariantName = "SecondVariant";
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sSecondVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.defaultVariants[1] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sFirstVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return sFirstVariantName;
+				}
+			}, {
+				getId: () => {
+					return sSecondVariantName;
+				}
+			}];
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				sFirstVariantName,
+				"the last defaultVariant change is returned"
+			);
+		});
+
+		QUnit.test("Two defaultVariant changes with one variant => the variant from the last defaultVariant change was removed", (assert) => {
+			const sRemovedVariant = "RemovedVariant";
+			const sSecondVariantName = "SecondVariant";
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sSecondVariantName
+					};
+				}
+			};
+			this.mCompVariantsMap.defaultVariants[1] = {
+				getContent: () => {
+					return {
+						defaultVariantName: sRemovedVariant
+					};
+				}
+			};
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return sSecondVariantName;
+				}
+			}];
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				sSecondVariantName,
+				"the defaultVariant change of the still existing variant is the default"
+			);
+		});
+
+		QUnit.test("No defaultVariant changes", (assert) => {
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return "FirstVariant";
+				}
+			}, {
+				getId: () => {
+					return "SecondVariant";
+				}
+			}];
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				"",
+				"the function returns an empty string"
+			);
+		});
+
+		QUnit.test("No valid variants", (assert) => {
+			this.mCompVariantsMap.variants = [{
+				getId: () => {
+					return "FirstVariant";
+				}
+			}, {
+				getId: () => {
+					return "SecondVariant";
+				}
+			}];
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: "PreviouslyExistingVariant1"
+					};
+				}
+			};
+			this.mCompVariantsMap.defaultVariants[1] = {
+				getContent: () => {
+					return {
+						defaultVariantName: "PreviouslyExistingVariant2"
+					};
+				}
+			};
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				"",
+				"the function returns an empty string"
+			);
+		});
+
+		QUnit.test("No variants", (assert) => {
+			this.mCompVariantsMap.defaultVariants[0] = {
+				getContent: () => {
+					return {
+						defaultVariantName: "PreviouslyExistingVariant1"
+					};
+				}
+			};
+			this.mCompVariantsMap.defaultVariants[1] = {
+				getContent: () => {
+					return {
+						defaultVariantName: "PreviouslyExistingVariant2"
+					};
+				}
+			};
+
+			assert.strictEqual(
+				Utils.getDefaultVariantId(this.mCompVariantsMap),
+				"",
+				"the function returns an empty string"
+			);
 		});
 	});
 

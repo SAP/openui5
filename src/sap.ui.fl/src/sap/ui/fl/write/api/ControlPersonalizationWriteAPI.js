@@ -39,7 +39,6 @@ sap.ui.define([
 	 * Provides an API for controls to implement personalization.
 	 *
 	 * @namespace sap.ui.fl.write.api.ControlPersonalizationWriteAPI
-	 * @experimental Since 1.69
 	 * @since 1.69
 	 * @private
 	 * @ui5-restricted UI5 controls that allow personalization
@@ -106,7 +105,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		add: function(mPropertyBag) {
+		add(mPropertyBag) {
 			if (!mPropertyBag.changes.length) {
 				return Promise.resolve([]);
 			}
@@ -236,7 +235,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		reset: function(mPropertyBag) {
+		reset(mPropertyBag) {
 			if (!mPropertyBag.selectors || mPropertyBag.selectors.length === 0) {
 				return logAndReject("At least one control ID has to be provided as a parameter");
 			}
@@ -272,7 +271,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		restore: function(mPropertyBag) {
+		restore(mPropertyBag) {
 			if (!mPropertyBag || !mPropertyBag.selector) {
 				return Promise.reject("No selector was provided");
 			}
@@ -301,7 +300,7 @@ sap.ui.define([
 		 * @param {string[]} [mPropertyBag.changeTypes] - Types of changes
 		 * @returns {boolean} True if the control has dirty flex objects
 		 */
-		hasDirtyFlexObjects: function(mPropertyBag) {
+		hasDirtyFlexObjects(mPropertyBag) {
 			if (!mPropertyBag || !mPropertyBag.selector) {
 				throw Error("No selector was provided");
 			}
@@ -343,7 +342,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		save: function(mPropertyBag) {
+		save(mPropertyBag) {
 			var oAppComponent = mPropertyBag.selector.appComponent || Utils.getAppComponentForControl(mPropertyBag.selector);
 			if (!oAppComponent) {
 				return logAndReject("App Component could not be determined");
@@ -367,7 +366,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted
 		 */
-		buildSelectorFromElementIdAndType: function(mPropertyBag) {
+		buildSelectorFromElementIdAndType(mPropertyBag) {
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.element);
 			if (!oAppComponent || !mPropertyBag.elementId || !mPropertyBag.elementType) {
 				throw new Error("Not enough information given to build selector.");
@@ -389,7 +388,7 @@ sap.ui.define([
 		 * @private
 		 * @sapui5-restricted sap.ovp
 		 */
-		isCondensingEnabled: function() {
+		isCondensingEnabled() {
 			return Settings.getInstance()
 			.then(function(oSettings) {
 				return oSettings.isCondensingEnabled(Layer.USER);
@@ -405,7 +404,7 @@ sap.ui.define([
 		 * @private
 		 * @sapui5-restricted sap.ui.rta
 		 */
-		attachChangeCreation: function(oControl, fnCallback) {
+		attachChangeCreation(oControl, fnCallback) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
 			mChangeCreationListeners[sFlexReference] = (mChangeCreationListeners[sFlexReference] || []).concat(fnCallback);
 		},
@@ -418,7 +417,7 @@ sap.ui.define([
 		 * @private
 		 * @sapui5-restricted sap.ui.rta
 		 */
-		detachChangeCreation: function(oControl, fnCallback) {
+		detachChangeCreation(oControl, fnCallback) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
 			if (Array.isArray(mChangeCreationListeners[sFlexReference])) {
 				mChangeCreationListeners[sFlexReference] = mChangeCreationListeners[sFlexReference].filter(function(fnRegisteredCallback) {
@@ -434,7 +433,7 @@ sap.ui.define([
 		 * @private
 		 * @sapui5-restricted sap.ui.rta
 		 */
-		detachAllChangeCreationListeners: function(oControl) {
+		detachAllChangeCreationListeners(oControl) {
 			if (oControl) {
 				var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oControl});
 				delete mChangeCreationListeners[sFlexReference];

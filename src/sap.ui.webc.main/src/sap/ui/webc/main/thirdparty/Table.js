@@ -34,6 +34,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Table_1;
+
+  // Ensure the dependency as it is being used in the renderer
+  // Texts
+  // Template
+  // Styles
   const GROWING_WITH_SCROLL_DEBOUNCE_RATE = 250; // ms
   const PAGE_UP_DOWN_SIZE = 20;
   var TableFocusTargetElement;

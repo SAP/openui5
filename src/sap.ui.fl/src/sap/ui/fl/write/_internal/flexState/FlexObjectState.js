@@ -82,9 +82,7 @@ sap.ui.define([
 	}
 
 	function getChangePersistence(mPropertyBag) {
-		if (!mPropertyBag.reference) {
-			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
-		}
+		mPropertyBag.reference ||= ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 		return ChangePersistenceFactory.getChangePersistenceForComponent(mPropertyBag.reference);
 	}
 

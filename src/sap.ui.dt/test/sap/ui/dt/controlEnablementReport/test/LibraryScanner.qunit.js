@@ -8,11 +8,11 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that a sap.ui.testLibrary Library is tested", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oLibraryScanner = new LibraryScanner();
 			this.aLibraries = ["sap.ui.testLibrary"];
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLibraryScanner.destroy();
 		}
 	}, function() {

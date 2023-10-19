@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/ui/core/mvc/View",
 	"sap/base/Log",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ], function(
 	OverlayRegistry,
 	ElementOverlay,
@@ -29,7 +29,7 @@ sap.ui.define([
 	_omit,
 	View,
 	Log,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -40,7 +40,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.Outline
 	 * @author SAP SE
-	 * @experimental Since 1.56
 	 * @since 1.56
 	 * @version ${version}
 	 * @private
@@ -144,7 +143,7 @@ sap.ui.define([
 				if (!oPassedOverlay) {
 					throw DtUtil.createError(
 						"services.Outline#get",
-						"Cannot find element with id= " + sId + ". A valid or empty value for the initial element id should be provided.", "sap.ui.rta"
+						`Cannot find element with id= ${sId}. A valid or empty value for the initial element id should be provided.`, "sap.ui.rta"
 					);
 				}
 				aInitialOverlays.push(oPassedOverlay);
@@ -184,7 +183,7 @@ sap.ui.define([
 		};
 
 		oOutline._enrichExtensionPointData = function(oData, oOverlay) {
-			var bIsDesignMode = Configuration.getDesignMode();
+			var bIsDesignMode = DesignTime.isDesignModeEnabled();
 			if (!bIsDesignMode) {
 				return undefined;
 			}
@@ -462,7 +461,7 @@ sap.ui.define([
 					// Only send new root overlays as updates; children elements are part of their outlines already
 					if (mParams.elementOverlay.isRoot()) {
 						var sRootElementId = mParams.elementOverlay.getElement().getId();
-						oResponse.element = oOutline._getOutline(sRootElementId)[0];
+						[oResponse.element] = oOutline._getOutline(sRootElementId);
 						oResponse.type = "new";
 						break;
 					}
@@ -470,13 +469,13 @@ sap.ui.define([
 
 				case "elementOverlayAdded":
 					// Overlays added to existing aggregations
-					oResponse.element = oOutline._getOutline(sElementId)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId);
 					oResponse.targetId = sTargetId;
 					oResponse.type = "new";
 					break;
 
 				case "elementOverlayMoved":
-					oResponse.element = oOutline._getOutline(sElementId, 0)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId, 0);
 					oResponse.targetId = sTargetId;
 					oResponse.type = "move";
 					break;
@@ -497,7 +496,8 @@ sap.ui.define([
 						oResponse.element.id =
 							oResponse.elementOverlay.getElement()
 								? oResponse.elementOverlay.getElement().getId()
-								: oResponse.elementOverlay.getAssociation("element"); // Triggered via DesignTime elementOverlayDestroyed event
+								// Triggered via DesignTime elementOverlayDestroyed event
+								: oResponse.elementOverlay.getAssociation("element");
 						oResponse.type = "destroy";
 						break;
 					}
@@ -514,7 +514,7 @@ sap.ui.define([
 
 				case "elementPropertyChanged":
 					// Trigger origin is ManagedObjectObserver
-					oResponse.element = oOutline._getOutline(sElementId, 0)[0];
+					[oResponse.element] = oOutline._getOutline(sElementId, 0);
 					oResponse.type = "elementPropertyChange";
 					break;
 

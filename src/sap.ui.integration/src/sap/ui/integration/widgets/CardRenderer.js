@@ -42,6 +42,8 @@ sap.ui.define([
 			if (oCard.getPreviewMode() === CardPreviewMode.Abstract) {
 				oRm.class("sapFCardPreview");
 			}
+
+			oRm.class("sapUiIntCard" + oCard.getDisplayVariant());
 		},
 
 		/**

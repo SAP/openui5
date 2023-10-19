@@ -4,11 +4,12 @@ sap.ui.define([
     "sap/ui/mdc/LinkDelegate",
     "sap/ui/mdc/link/LinkItem",
     "sap/ui/mdc/Link",
-    "sap/ui/test/actions/Press"
-], function(QUnit, LinkDelegate, LinkItem, Link, Press) {
+    "sap/ui/test/actions/Press",
+	"sap/ui/mdc/enums/LinkType"
+], function(QUnit, LinkDelegate, LinkItem, Link, Press, LinkType) {
     "use strict";
 
-    var aLinkItems = [
+    const aLinkItems = [
         new LinkItem({
             text: "testLInkItem",
             href: window.location.href + "#Link1",
@@ -17,7 +18,7 @@ sap.ui.define([
     ];
 
     QUnit.test("Default values for delegate calls", function(assert) {
-        var done = assert.async(5);
+        const done = assert.async(5);
 
         LinkDelegate.fetchLinkItems().then(function(aLinkItems) {
             assert.equal(aLinkItems, null, "fetchLinkItems returns null");
@@ -25,11 +26,11 @@ sap.ui.define([
         });
 
         LinkDelegate.fetchLinkType().then(function(oLinkType) {
-            var oDefaultInitialType = {
-                type: 2,
+            const oDefaultInitialType = {
+                type: LinkType.Popover,
                 directLink: undefined
             };
-            assert.deepEqual(oLinkType.initialType, oDefaultInitialType, "initialType has type 2 and undefined direct link");
+            assert.deepEqual(oLinkType.initialType, oDefaultInitialType, "initialType has type 'Popover' and undefined direct link");
             assert.equal(oLinkType.runtimeType, null, "runtimeType is null");
             done();
         });
@@ -51,8 +52,8 @@ sap.ui.define([
     });
 
     QUnit.test("Function call parameters", function(assert) {
-        var done = assert.async(5);
-        var oLink = new Link({
+        const done = assert.async(5);
+        const oLink = new Link({
             delegate: {
                 name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
                 payload: {
@@ -61,19 +62,19 @@ sap.ui.define([
             }
         });
 
-        var oBindingContext = oLink._getControlBindingContext();
-        var oInfoLog = oLink._getInfoLog();
+        const oBindingContext = oLink._getControlBindingContext();
+        const oInfoLog = oLink._getInfoLog();
 
-        var fnCheckFetchLinkItems = function(oDelegate) {
-            var oSpyFetchLinkItems = sinon.spy(oDelegate, "fetchLinkItems");
+        const fnCheckFetchLinkItems = function(oDelegate) {
+            const oSpyFetchLinkItems = sinon.spy(oDelegate, "fetchLinkItems");
             oLink._retrieveUnmodifiedLinkItems().then(function() {
                 assert.ok(oSpyFetchLinkItems.alwaysCalledWith(oLink, oBindingContext, oInfoLog), "fetchLinkItems called with correct parameters");
                 done();
             });
         };
 
-        var fnCheckFetchLinkType = function(oDelegate) {
-            var oSpyFetchLinkType = sinon.spy(oDelegate, "fetchLinkType");
+        const fnCheckFetchLinkType = function(oDelegate) {
+            const oSpyFetchLinkType = sinon.spy(oDelegate, "fetchLinkType");
 
             oLink.retrieveLinkType().then(function() {
                 assert.ok(oSpyFetchLinkType.alwaysCalledWith(oLink), "fetchLinkType called with correct parameters");
@@ -81,8 +82,8 @@ sap.ui.define([
             });
         };
 
-        var fnCheckFetchAdditionalContent = function(oDelegate) {
-            var oSpyFetchAdditionalContent = sinon.spy(oDelegate, "fetchAdditionalContent");
+        const fnCheckFetchAdditionalContent = function(oDelegate) {
+            const oSpyFetchAdditionalContent = sinon.spy(oDelegate, "fetchAdditionalContent");
 
             oLink.retrieveAdditionalContent().then(function() {
                 assert.ok(oSpyFetchAdditionalContent.alwaysCalledWith(oLink), "fetchAdditionalContent called with correct parameters");
@@ -90,8 +91,8 @@ sap.ui.define([
             });
         };
 
-        var fnCheckModifyLinkItems = function(oDelegate) {
-            var oSpyModifyLinkItems = sinon.spy(oDelegate, "modifyLinkItems");
+        const fnCheckModifyLinkItems = function(oDelegate) {
+            const oSpyModifyLinkItems = sinon.spy(oDelegate, "modifyLinkItems");
             oLink._retrieveUnmodifiedLinkItems().then(function(aUnmodifiedLinkItems) {
                 oLink.retrieveLinkItems().then(function() {
                     assert.ok(oSpyModifyLinkItems.alwaysCalledWith(oLink, oBindingContext, aUnmodifiedLinkItems), "modifyLinkitems called with correct parameters");
@@ -100,10 +101,10 @@ sap.ui.define([
             });
         };
 
-        var fnCheckBeforeNavigationCallback = function(oDelegate) {
-            var oSpyBeforeNavigationCallback = sinon.spy(oDelegate, "beforeNavigationCallback");
+        const fnCheckBeforeNavigationCallback = function(oDelegate) {
+            const oSpyBeforeNavigationCallback = sinon.spy(oDelegate, "beforeNavigationCallback");
             oLink.getContent().then(function(oPanel) {
-                var oEvent = {
+                const oEvent = {
                     href: "testHref",
                     target: undefined
                 };
@@ -114,7 +115,7 @@ sap.ui.define([
         };
 
         oLink.awaitControlDelegate().then(function() {
-            var oDelegate = oLink.getControlDelegate();
+            const oDelegate = oLink.getControlDelegate();
 
             fnCheckFetchLinkItems(oDelegate);
             fnCheckFetchLinkType(oDelegate);

@@ -20,7 +20,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana onPremise systems", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
@@ -30,7 +30,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -619,7 +619,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana Cloud systems", {
-		beforeEach: function() {
+		beforeEach() {
 			// define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
@@ -630,7 +630,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

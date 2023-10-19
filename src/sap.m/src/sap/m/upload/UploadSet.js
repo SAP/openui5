@@ -32,10 +32,12 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/m/MenuButton"
+	"sap/m/MenuButton",
+	"sap/ui/core/Lib"
 ], function (Control, KeyCodes, Log, deepEqual, MobileLibrary, Button, Dialog, List, MessageBox, OverflowToolbar,
 			 StandardListItem, Text, ToolbarSpacer, FileUploader, UploadSetItem, Uploader, Renderer, UploaderHttpRequestMethod,
-			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType, IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton) {
+			DragDropInfo, DropInfo, Library, UploadSetToolbarPlaceholder, IllustratedMessage,IllustratedMessageType,
+			IllustratedMessageSize, Core, InvisibleText, Menu, MenuItem, MenuButton, CoreLib) {
 	"use strict";
 
 	var UploadType = Library.UploadType;
@@ -504,7 +506,7 @@ sap.ui.define([
 	/* ================== */
 
 	UploadSet.prototype.init = function () {
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = CoreLib.getResourceBundleFor("sap.m");
 
 		this._oList = null;
 		this._oEditedItem = null;
@@ -646,7 +648,7 @@ sap.ui.define([
 		if (this._oEditedItem && this._oEditedItem._getFileNameEdit().$("inner")[0] === oEvent.target) {
 			oItem = this._oEditedItem;
 		} else if (oEvent.target) {
-			oListItem = sap.ui.getCore().byId(oEvent.target.id);
+			oListItem = Core.byId(oEvent.target.id);
 			if (oListItem) {
 				oItem = this._mListItemIdToItemMap[oListItem.getId()];
 			}
@@ -676,8 +678,6 @@ sap.ui.define([
 			case KeyCodes.ENTER:
 				if (oItem === this._oEditedItem) {
 					this._handleItemEditConfirmation(oEvent, oItem);
-				} else {
-					oItem._handleFileNamePressed();
 				}
 				break;
 			default:
@@ -1003,13 +1003,16 @@ sap.ui.define([
 
 	UploadSet.prototype.getUploadButtonForIllustratedMessage = function () {
 		if (!this._oUploadButton) {
+			var oAccIds = this.getAggregation("_illustratedMessage").getAccessibilityReferences();
+			var sTitleId = oAccIds.title;
+			var sDescriptionId = oAccIds.description;
 			this._oUploadButton = new Button({
 				id: this.getId() + "-uploadButton",
 				type: MobileLibrary.ButtonType.Standard,
 				enabled: this.getUploadEnabled(),
 				visible: !this.getUploadButtonInvisible(),
 				text: this._oRb.getText("UPLOADCOLLECTION_UPLOAD"),
-				ariaDescribedBy: this.getAggregation("_illustratedMessage").getId(),
+				ariaDescribedBy: [sTitleId,sDescriptionId],
 				press: function () {
 					var FileUploader = this.getDefaultFileUploader();
 					FileUploader.$().find("input[type=file]").trigger("click");

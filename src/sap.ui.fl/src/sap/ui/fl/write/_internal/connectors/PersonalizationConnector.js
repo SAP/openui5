@@ -34,8 +34,8 @@ sap.ui.define([
 		layers: InitialConnector.layers,
 
 		ROUTES: {
-			CHANGES: PREFIX + API_VERSION + "/changes/",
-			TOKEN: PREFIX + API_VERSION + "/actions/getcsrftoken"
+			CHANGES: `${PREFIX + API_VERSION}/changes/`,
+			TOKEN: `${PREFIX + API_VERSION}/actions/getcsrftoken`
 		},
 
 		/**
@@ -43,7 +43,7 @@ sap.ui.define([
 		 *
 		 * @returns {Promise<object>} Promise resolves with an object containing the flex features
 		 */
-		loadFeatures: function() {
+		loadFeatures() {
 			return Promise.resolve(FEATURES);
 		}
 	});

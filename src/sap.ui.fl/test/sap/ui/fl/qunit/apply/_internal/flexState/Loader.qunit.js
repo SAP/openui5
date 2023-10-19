@@ -2,20 +2,18 @@
 
 sap.ui.define([
 	"sap/ui/core/Manifest",
+	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/apply/_internal/flexState/Loader",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/_internal/connectors/JsObjectConnector",
 	"sap/ui/fl/initial/_internal/Storage",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Manifest,
+	JsObjectConnector,
 	Loader,
 	ManifestUtils,
-	JsObjectConnector,
 	ApplyStorage,
-	Utils,
 	Version,
 	sinon
 ) {
@@ -30,7 +28,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Loader", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRawManifest = {
 				property: "value"
 			};
@@ -102,7 +100,7 @@ sap.ui.define([
 			this.oGetBaseCompNameStub = sandbox.stub(ManifestUtils, "getBaseComponentNameFromManifest").returns("baseName");
 			this.oGetCacheKeyStub = sandbox.stub(ManifestUtils, "getCacheKeyFromAsyncHints").returns("cacheKey");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -179,7 +177,7 @@ sap.ui.define([
 			details: "with a manifest JSON",
 			manifest: {"sap.ovp": {}}
 		}].forEach(function(oTestData) {
-			QUnit.test("when loadFlexData is called with a ovp app and " + oTestData.details, function(assert) {
+			QUnit.test(`when loadFlexData is called with a ovp app and ${oTestData.details}`, function(assert) {
 				var mPropertyBag = {
 					manifest: oTestData.manifest,
 					otherValue: "a",
@@ -284,7 +282,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("partialFlexState", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oStorageCompleteFlexDataStub = sandbox.spy(ApplyStorage, "completeFlexData");
 			this.oStorageLoadFlexDataStub = sandbox.spy(ApplyStorage, "loadFlexData");
 			this.oRawManifest = {
@@ -292,7 +290,7 @@ sap.ui.define([
 			};
 			this.oManifest = new Manifest(this.oRawManifest);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -317,7 +315,7 @@ sap.ui.define([
 			var sCacheKey = "abc";
 			var oPreview = {
 				maxLayer: "PARTNER",
-				reference: "SeleniumListReportAdaptation.Component"
+				reference: "SeleniumListReportAdaptation"
 			};
 			var mPropertyBag = {
 				manifest: this.oManifest,
@@ -368,13 +366,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given new connector configuration in bootstrap", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRawManifest = {
 				property: "value"
 			};
 			this.oManifest = new Manifest(this.oRawManifest);
 		},
-		afterEach: function() {
+		afterEach() {
 			JsObjectConnector.storage.clear();
 			sandbox.restore();
 		}

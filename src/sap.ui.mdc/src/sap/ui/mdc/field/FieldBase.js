@@ -2,27 +2,27 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/Device',
+	'sap/ui/mdc/Control',
+	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/enums/FieldEditMode',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/field/FieldBaseRenderer',
-	'sap/ui/mdc/condition/FilterOperatorUtil',
-	'sap/ui/mdc/condition/Condition',
-	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/field/splitValue',
-	'sap/ui/mdc/enums/BaseType',
 	'sap/ui/mdc/field/content/ContentFactory',
-	'sap/ui/mdc/Control',
-	"sap/ui/mdc/util/loadModules",
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/condition/ConditionValidateException',
+	'sap/ui/mdc/util/loadModules',
 	'sap/ui/core/library',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/message/MessageMixin',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
-	'sap/base/Log',
+	'sap/base/util/restricted/_debounce',
 	'sap/ui/dom/containsOrEquals',
 	'sap/ui/model/BindingMode',
 	'sap/ui/model/FormatException',
@@ -30,31 +30,29 @@ sap.ui.define([
 	'sap/ui/model/ValidateException',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/base/ManagedObjectObserver',
-	'sap/ui/base/SyncPromise',
-	'sap/base/util/restricted/_debounce',
 	'sap/ui/events/KeyCodes'
 ], function(
-	Device,
+	Control,
+	BaseType,
 	FieldEditMode,
 	FieldDisplay,
 	ConditionValidated,
+	OperatorName,
 	FieldBaseRenderer,
-	FilterOperatorUtil,
-	Condition,
-	ConditionValidateException,
 	ConditionType,
 	ConditionsType,
 	splitValue,
-	BaseType,
 	ContentFactory,
-	Control,
+	FilterOperatorUtil,
+	Condition,
+	ConditionValidateException,
 	loadModules,
 	coreLibrary,
 	LabelEnablement,
 	MessageMixin,
 	deepEqual,
 	merge,
-	Log,
+	debounce,
 	containsOrEquals,
 	BindingMode,
 	FormatException,
@@ -62,15 +60,13 @@ sap.ui.define([
 	ValidateException,
 	ManagedObjectModel,
 	ManagedObjectObserver,
-	SyncPromise,
-	debounce,
 	KeyCodes
 ) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-	var TextAlign = coreLibrary.TextAlign;
-	var TextDirection = coreLibrary.TextDirection;
+	const ValueState = coreLibrary.ValueState;
+	const TextAlign = coreLibrary.TextAlign;
+	const TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Modules for {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.MultiValueField MultiValueField}, and {@link sap.ui.mdc.FilterField FilterField}
@@ -107,7 +103,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
+	const FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
 			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent", "sap.m.IOverflowToolbarContent"],
 			designtime: "sap/ui/mdc/designtime/field/FieldBase.designtime",
@@ -321,7 +317,7 @@ sap.ui.define([
 				 *
 				 * <b>Note</b> Empty means the <code>Field</code> holds no value. If an empty string is a valid value,
 				 * the <code>Field</code> might show nothing, depending on the <code>display</code> settings and assigned description
-				 * or <code>FieldHelp</code>.
+				 * or <code>ValueHelp</code>.
 				 *
 				 * @since 1.85.0
 				 */
@@ -334,7 +330,7 @@ sap.ui.define([
 				/**
 				 * Internal property to bind the <code>showValueHelp</code> property of the internal <code>Input</code> control.
 				 */
-				_fieldHelpEnabled: {
+				_valueHelpEnabled: {
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: false,
@@ -558,7 +554,7 @@ sap.ui.define([
 	// apply the message mixin so all message on the input will get the associated label-texts injected
 	MessageMixin.call(FieldBase.prototype);
 
-	var oContentEventDelegateBefore = {
+	const oContentEventDelegateBefore = {
 		onsapup: _handleKeybordEvent,
 		onsapdown: _handleKeybordEvent,
 		onsaphome: _handleKeybordEvent,
@@ -567,16 +563,17 @@ sap.ui.define([
 		onsappagedown: _handleKeybordEvent,
 
 		onsapbackspace: _handleKeybordEvent,
+		onkeydown: _handleKeybordEvent,
 		onchange: _handleContentOnchange,
 		onsapfocusleave: _handleContentOnsapfocusleave,
 		onpaste: _handlePaste
 	};
 
-	var oContentEventDelegateAfter = {
+	const oContentEventDelegateAfter = {
 		onsapenter: _handleEnter
 	};
 
-	var mDefaultHelps;
+	let mDefaultHelps;
 
 	// private function to initialize globals for qUnit tests
 	FieldBase._init = function() {
@@ -667,20 +664,20 @@ sap.ui.define([
 		return this._oContentFactory;
 	};
 
-	var _setFocusTimer = function (oEvent) {
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (this.getEditMode() === FieldEditMode.Editable && oFieldHelp && !this._iFocusTimer && oFieldHelp.shouldOpenOnFocus() && !oFieldHelp.isOpen()) {
+	const _setFocusTimer = function (oEvent) {
+		const oValueHelp = _getValueHelp.call(this);
+		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp && !this._iFocusTimer && oValueHelp.shouldOpenOnFocus() && !oValueHelp.isOpen()) {
 			this._iFocusTimer = setTimeout(function () {
-				if (!this.isFieldDestroyed() && !oFieldHelp.isOpen()) {
+				if (!this.isFieldDestroyed() && !oValueHelp.isOpen()) {
 					_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
-					this._redirectFocus(oEvent, oFieldHelp);
+					this._redirectFocus(oEvent, oValueHelp);
 				}
 				this._iFocusTimer = null;
 			}.bind(this),300);
 		}
 	};
 
-	var _clearFocusTimer = function () {
+	const _clearFocusTimer = function () {
 		if (this._iFocusTimer) {
 			clearTimeout(this._iFocusTimer);
 			this._iFocusTimer = null;
@@ -691,21 +688,21 @@ sap.ui.define([
 
 		_clearFocusTimer.call(this);
 
-		var oFieldInfo = this.getFieldInfo();
+		const oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
 			// as aggregations are destroyed after exit
 			oFieldInfo.detachEvent("dataUpdate", _handleInfoDataUpdate, this);
 		}
 
-		var oContent = this.getContent();
+		const oContent = this.getContent();
 		if (oContent) {
 			_detachContentHandlers.call(this, oContent);
 		}
-		var oContentEdit = this.getContentEdit();
+		const oContentEdit = this.getContentEdit();
 		if (oContentEdit) {
 			_detachContentHandlers.call(this, oContentEdit);
 		}
-		var oContentDisplay = this.getContentDisplay();
+		const oContentDisplay = this.getContentDisplay();
 		if (oContentDisplay) {
 			_detachContentHandlers.call(this, oContentDisplay);
 		}
@@ -719,12 +716,12 @@ sap.ui.define([
 		this._oObserver = undefined;
 		this._oCreateContentPromise = undefined;
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp) {
-			oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
+		const oValueHelp = _getValueHelp.call(this);
+		if (oValueHelp) {
+			oValueHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 			if (this._bConnected) {
-				_disconnectFieldhelp.call(this, oFieldHelp); // remove event listeners
-				oFieldHelp.connect(); // disconnect FieldHelp to remove callbacks
+				_disconnectValueHelp.call(this, oValueHelp); // remove event listeners
+				oValueHelp.connect(); // disconnect ValueHelp to remove callbacks
 			}
 		}
 
@@ -757,7 +754,7 @@ sap.ui.define([
 		// (multipleLines mostly changed together with editMode -> update once on rendering)
 		if (sPropertyName === "editMode") {
 			// only invalidate if switched between edit and display, not for redonly or disabled
-			var sOld = this.getEditMode();
+			const sOld = this.getEditMode();
 			if (sOld !== FieldEditMode.Display && sOld !== FieldEditMode.EditableDisplay && vValue !== FieldEditMode.Display && vValue !== FieldEditMode.EditableDisplay) {
 				bSuppressInvalidate = true;
 			}
@@ -779,9 +776,27 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Sets the focus on the stored focus DOM reference.
+	 *
+	 * @param {object} [oFocusInfo={}] Options for setting the focus
+	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 If set to <code>true</code>, the focused
+	 *   element won't be moved into the viewport if it's not completely visible before the focus is set
+	 * @param {any} [oFocusInfo.targetInfo] @since 1.98 Further control-specific setting of the focus target within the control
+	 * @param {boolean} [oFocusInfo.targetInfo.silent] @since 1.114 Suppresses typeahead opening
+	 * @public
+	 */
+	FieldBase.prototype.focus = function (oFocusInfo) {
+		this._oFocusInfo = oFocusInfo;
+		Control.prototype.focus.call(this, oFocusInfo);
+		delete this._oFocusInfo;
+	};
+
 	FieldBase.prototype.onfocusin = function(oEvent) {
-		_connectFieldhelp.call(this);
-		_setFocusTimer.call(this, oEvent);
+		_connectValueHelp.call(this);
+		if (!this._oFocusInfo?.targetInfo?.silent) {
+			_setFocusTimer.call(this, oEvent);
+		}
 	};
 
 	FieldBase.prototype.onsapfocusleave = function(oEvent) {
@@ -795,17 +810,16 @@ sap.ui.define([
 	// fire change event only if unit and currency field are left
 	function _validateFieldGroup(oEvent) {
 
-		var aFieldGroupIds = oEvent.getParameter("fieldGroupIds");
+		const aFieldGroupIds = oEvent.getParameter("fieldGroupIds");
 		oEvent.cancelBubble(); // do not use automatic handling, do this on corresponding Field event
 		oEvent.preventDefault();
 
-		var iIndex = aFieldGroupIds.indexOf(this.getId());
+		const iIndex = aFieldGroupIds.indexOf(this.getId());
 		if (iIndex > -1) { //own FieldGroup left
 			if (this._bPendingChange) {
-				var oFocusedElement = document.activeElement;
-				var oFieldHelp = _getFieldHelp.call(this);
-				if (!(oFocusedElement && oFieldHelp && containsOrEquals(oFieldHelp.getDomRef(), oFocusedElement))) {
-					var oPromise = _getAsyncPromise.call(this);
+				const oValueHelp = _getValueHelp.call(this);
+				if (!(oValueHelp && _isFocused.call(oValueHelp))) {
+					const oPromise = _getAsyncPromise.call(this);
 
 					if (oPromise) {
 						_executeChange.call(this, undefined, undefined, undefined, oPromise);
@@ -859,17 +873,17 @@ sap.ui.define([
 	FieldBase.prototype._handleNavigate = function(oEvent, iStep) {
 
 		if (this.getEditMode() === FieldEditMode.Editable) {
-			var oFieldHelp = _getFieldHelp.call(this);
-			var oSource = oEvent.srcControl;
+			const oValueHelp = _getValueHelp.call(this);
+			const oSource = oEvent.srcControl;
 
-			if (oFieldHelp) {
-				if (oFieldHelp.isNavigationEnabled(iStep) && // if open let ValueHelp decide if and how to navigate
+			if (oValueHelp) {
+				if (oValueHelp.isNavigationEnabled(iStep) && // if open let ValueHelp decide if and how to navigate
 					(!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) { // for Currenncy/Unit field navigate only in part with valueHelp
 					// if only type-ahead but no real value help, only navigate if open
 					oEvent.preventDefault();
 					oEvent.stopPropagation();
-					oFieldHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
-					oFieldHelp.navigate(iStep);
+					oValueHelp.setFilterValue(this._sFilterValue); // to be sure to filter for typed value
+					oValueHelp.navigate(iStep);
 				}
 			}
 		}
@@ -879,38 +893,46 @@ sap.ui.define([
 	FieldBase.prototype.onsapenter = function(oEvent) {
 
 		// if same value is entered again no change event is triggered, So we need to close the suggestion here
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && oFieldHelp.isOpen()) {
-			oFieldHelp.close();
+		const oValueHelp = _getValueHelp.call(this);
+		if (oValueHelp && oValueHelp.isOpen()) {
+			oValueHelp.close();
 		}
 		this._sFilterValue = "";
+		if (this._oNavigateCondition) {
+			const oSource = oEvent.srcControl;
+			this._oNavigateCondition = undefined; // navigation now finished
+			this.getContentFactory().updateConditionType();
+			if (oSource.selectText && oSource.getDOMValue) {
+				oSource.selectText(oSource.getDOMValue().length, oSource.getDOMValue().length); // deselect highlighting
+			}
+		}
 
 	};
 
 	FieldBase.prototype.onsapescape = function(oEvent) {
 
-		// close FieldHelp also if escape pressed without changing value
+		// close ValueHelp also if escape pressed without changing value
 		this.onsapenter(oEvent);
 
 	};
 
-	FieldBase.prototype._redirectFocus = function (oEvent, oFieldHelp) {
-		var oSource = oEvent.srcControl;
-		if (oFieldHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
+	FieldBase.prototype._redirectFocus = function (oEvent, oValueHelp) {
+		const oSource = oEvent.srcControl;
+		if (oValueHelp.isOpen() && (!this.getContentFactory().isMeasure() || (oSource.getShowValueHelp && oSource.getShowValueHelp()))) {
 			oSource.addStyleClass("sapMFocus"); // to show focus outline again after navigation
-			oFieldHelp.removeFocus();
+			oValueHelp.removeFocus();
 		}
 	};
 
 	FieldBase.prototype.ontap = function(oEvent) {
 
 		// in "Select"-case the suggestion help should open on click into field
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (this.getEditMode() === FieldEditMode.Editable && oFieldHelp) {
-			if (oFieldHelp.shouldOpenOnClick() && !oFieldHelp.isOpen()) {
+		const oValueHelp = _getValueHelp.call(this);
+		if (this.getEditMode() === FieldEditMode.Editable && oValueHelp) {
+			if (oValueHelp.shouldOpenOnClick() && !oValueHelp.isOpen()) {
 				_handleValueHelpRequest.call(this, oEvent, true); // open typeahead
 			}
-			this._redirectFocus(oEvent, oFieldHelp);
+			this._redirectFocus(oEvent, oValueHelp);
 		}
 
 	};
@@ -921,25 +943,25 @@ sap.ui.define([
 		// attach it after clone again
 		this.detachEvent("modelContextChange", this.handleModelContextChange, this);
 
-		var oContent = this.getContent();
+		const oContent = this.getContent();
 		if (oContent) {
 			_detachContentHandlers.call(this, oContent);
 		}
-		var oContentEdit = this.getContentEdit();
+		const oContentEdit = this.getContentEdit();
 		if (oContentEdit) {
 			_detachContentHandlers.call(this, oContentEdit);
 		}
-		var oContentDisplay = this.getContentDisplay();
+		const oContentDisplay = this.getContentDisplay();
 		if (oContentDisplay) {
 			_detachContentHandlers.call(this, oContentDisplay);
 		}
 
-		var oFieldInfo = this.getFieldInfo();
+		const oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
 			oFieldInfo.detachEvent("dataUpdate", _handleInfoDataUpdate, this);
 		}
 
-		var oClone = Control.prototype.clone.apply(this, arguments);
+		const oClone = Control.prototype.clone.apply(this, arguments);
 
 		this.attachEvent("modelContextChange", this.handleModelContextChange, this);
 
@@ -978,7 +1000,7 @@ sap.ui.define([
 	// @deprecated as of 1.115.0, replaced by {@link #setPropertyKey propertyKey} property
 	FieldBase.prototype.getFieldPath = function() {
 
-		var sBindingPath = this.getBindingPath("conditions");
+		const sBindingPath = this.getBindingPath("conditions");
 		if (sBindingPath && sBindingPath.startsWith("/conditions/")) {
 			return sBindingPath.slice(12);
 		} else {
@@ -1005,7 +1027,7 @@ sap.ui.define([
 			if (bValid) {
 				oPromise = Promise.resolve(this.getResultForChangePromise(aConditions));
 			} else {
-				var oException = this._getInvalidInputException();
+				const oException = this._getInvalidInputException();
 				if (oException) {
 					oPromise = Promise.reject(oException);
 				} else { // maybe e.g. DatePicker fires change with valid=false but no exception
@@ -1037,7 +1059,7 @@ sap.ui.define([
 
 	function _handleEnter(oEvent) {
 
-		var sEditMode = this.getEditMode();
+		const sEditMode = this.getEditMode();
 
 		if (this._aAsyncChanges.length === 0) {
 			this._bDirty = false; // as user might change value back to original one no change event might be fired
@@ -1045,8 +1067,8 @@ sap.ui.define([
 
 		if (ContentFactory._getEditable(sEditMode) && (this.hasListeners("submit") || this._bPendingChange)) {
 			// collect all pending promises for ENTER, only if all resolved it's not pending. (Normally there should be only one.)
-			var oPromise = _getAsyncPromise.call(this);
-			var bPending = false;
+			let oPromise = _getAsyncPromise.call(this);
+			let bPending = false;
 
 			if (oPromise) {
 				bPending = true;
@@ -1071,24 +1093,24 @@ sap.ui.define([
 
 	function _handlePaste(oEvent) {
 
-		var iMaxConditions = this.getMaxConditions();
+		const iMaxConditions = this.getMaxConditions();
 
 		if (iMaxConditions === 1) { // only for multi-value
 			return;
 		}
 
 		// for the purpose to copy from column in excel and paste in FilterField/MultiValueField
-		var sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
-		var aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
+		const sOriginalText = oEvent.originalEvent.clipboardData.getData('text/plain');
+		const aSeparatedText = splitValue(sOriginalText, true); // check without BT support as if TAB is inside the Paste logic needs to be used anyhow
 
 		if (aSeparatedText.length <= 1) {
 			// only one entry -> use default logic
 			return;
 		}
 
-		var oControl = oEvent.srcControl;
-		var sBoundProperty;
-		for (var sProperty in oControl.getMetadata().getAllProperties()) {
+		const oControl = oEvent.srcControl;
+		let sBoundProperty;
+		for (const sProperty in oControl.getMetadata().getAllProperties()) {
 			if (oControl.getBindingPath(sProperty) === "/conditions") {
 				sBoundProperty = sProperty;
 				break;
@@ -1102,10 +1124,10 @@ sap.ui.define([
 		oEvent.source = oEvent.srcControl; // to align with other events
 		oEvent.parameters = {}; // to align with other events
 		// as change might be async
-		var iLength = this._aAsyncChanges.length;
-		var oPromise;
-		var bValid;
-		var aConditions;
+		const iLength = this._aAsyncChanges.length;
+		let oPromise;
+		let bValid;
+		let aConditions;
 		if (iLength > 0) {
 			this._aAsyncChanges[iLength - 1].changeFired = true;
 			this._aAsyncChanges[iLength - 1].changeEvent = oEvent;
@@ -1148,7 +1170,7 @@ sap.ui.define([
 	};
 
 	function _getDataTypeName() {
-		var oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
+		const oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
 		if (oDataType && typeof oDataType === "object") {
 			return oDataType.getMetadata().getName();
 		} else if (this.bDelegateInitialized) {
@@ -1159,7 +1181,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeConstraints() {
-		var oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
+		const oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
 		if (oDataType && typeof oDataType === "object" && oDataType.getConstraints()) {
 			return oDataType.getConstraints();
 		} else {
@@ -1168,7 +1190,7 @@ sap.ui.define([
 	}
 
 	function _getDataTypeFormatOptions() {
-		var oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
+		const oDataType = this.getContentFactory().getDateOriginalType() || this.getContentFactory().getUnitOriginalType() || this.getContentFactory().getDataType(); // use original data type
 		if (oDataType && typeof oDataType === "object" && oDataType.getFormatOptions()) {
 			return oDataType.getFormatOptions();
 		} else {
@@ -1182,20 +1204,20 @@ sap.ui.define([
 	 * @protected
 	 */
 	FieldBase.prototype.getBaseType = function() {
-		var sDataType = _getDataTypeName.call(this);
-		var oDataTypeConstraints = _getDataTypeConstraints.call(this);
-		var oDataTypeFormatOptions = _getDataTypeFormatOptions.call(this);
-		var sBaseType = this.getTypeMap().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
+		const sDataType = _getDataTypeName.call(this);
+		const oDataTypeConstraints = _getDataTypeConstraints.call(this);
+		const oDataTypeFormatOptions = _getDataTypeFormatOptions.call(this);
+		const sBaseType = this.getTypeMap().getBaseType(sDataType, oDataTypeFormatOptions, oDataTypeConstraints);
 
 		return sBaseType;
 	};
 
 	function _handleConditionsChange(aConditions, aConditionsOld) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (oFieldHelp && this._bConnected) {
-			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+		if (oValueHelp && this._bConnected) {
+			_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 		}
 
 	}
@@ -1207,7 +1229,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getCurrentContent = function() {
 
-		var oContent = this.getContent();
+		let oContent = this.getContent();
 
 		if (!oContent) {
 			if (this.getEditMode() === FieldEditMode.Display) {
@@ -1264,7 +1286,7 @@ sap.ui.define([
 		if (oChanges.name === "dataType") {
 			// check only if different type (in Field type might be already taken from binding)
 			if (this.getContentFactory().getDataType()) {
-				var fnCheck = function(sType) {
+				const fnCheck = function(sType) {
 					this.getContentFactory().checkDataTypeChanged(sType).then(function(bChanged) {
 						if (bChanged && !this.isFieldDestroyed()) {
 							this.initDataType();
@@ -1302,10 +1324,10 @@ sap.ui.define([
 			_handleConditionsChange.call(this, oChanges.current, oChanges.old);
 
 			// try to find the corresponding async. change
-			var bFound = false;
-			var i = 0;
+			let bFound = false;
+			let i = 0;
 			for (i = 0; i < this._aAsyncChanges.length; i++) {
-				var oChange = this._aAsyncChanges[i];
+				const oChange = this._aAsyncChanges[i];
 				if (oChange.waitForUpdate && deepEqual(oChange.result, oChanges.current)) {
 					_performContentChange.call(this, oChange);
 					bFound = true;
@@ -1328,7 +1350,7 @@ sap.ui.define([
 		}
 
 		if ((oChanges.name === "fieldHelp" || oChanges.name === "valueHelp") && oChanges.ids) {
-			_fieldHelpChanged.call(this, oChanges.ids, oChanges.mutation);
+			_valueHelpChanged.call(this, oChanges.ids, oChanges.mutation);
 			this.getContentFactory().updateConditionType();
 		}
 
@@ -1381,7 +1403,7 @@ sap.ui.define([
 	// return the focus DOM elementof the used control
 	FieldBase.prototype.getFocusDomRef = function() {
 
-		var aContent = this.getCurrentContent();
+		const aContent = this.getCurrentContent();
 
 		if (aContent.length > 0) {
 			return aContent[0].getFocusDomRef();
@@ -1394,8 +1416,8 @@ sap.ui.define([
 	// return the ID of the label DOM elementof the used control
 	FieldBase.prototype.getIdForLabel = function() {
 
-		var sId;
-		var aContent = this.getCurrentContent();
+		let sId;
+		const aContent = this.getCurrentContent();
 		if (aContent.length > 0) {
 			sId = aContent[0].getIdForLabel();
 		} else {
@@ -1423,9 +1445,9 @@ sap.ui.define([
 	 */
 	 FieldBase.prototype.getControlForSuggestion = function() {
 
-		var aContent = this.getCurrentContent();
+		const aContent = this.getCurrentContent();
 		if (aContent.length > 0) {
-			if (this.getContentFactory().isMeasure()) {
+			if (this.getContentFactory().isMeasure() && aContent.length > 1) { // if two parts, ValueHelp is assigned to second control
 				return aContent[1];
 			} else {
 				return aContent[0];
@@ -1447,11 +1469,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.valueHelp.base.Container
 	 */
 	FieldBase.prototype.getFocusElementForValueHelp = function(bTypeahead) {
-		var oSuggestControl = this.getControlForSuggestion();
-		var aIcons = oSuggestControl && oSuggestControl.getMetadata().getAllPrivateAggregations()._endIcon && oSuggestControl.getAggregation("_endIcon", []);
-		var oIcon;
+		const oSuggestControl = this.getControlForSuggestion();
+		const aIcons = oSuggestControl && oSuggestControl.getMetadata().getAllPrivateAggregations()._endIcon && oSuggestControl.getAggregation("_endIcon", []);
+		let oIcon;
 		if (aIcons) {
-			for (var i = 0; i < aIcons.length; i++) { // as MultiInput can have a invisible icon before visible icon
+			for (let i = 0; i < aIcons.length; i++) { // as MultiInput can have a invisible icon before visible icon
 				if (aIcons[i].getVisible()) {
 					oIcon = aIcons[i];
 					break;
@@ -1487,29 +1509,29 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getFormFormattedValue = function() {
 
-		var aConditions = this.getConditions();
-		var bShowEmptyIndicator = this.getShowEmptyIndicator() && aConditions.length === 0 && !this.getContent() && !this.getContentDisplay();
+		const aConditions = this.getConditions();
+		const bShowEmptyIndicator = this.getShowEmptyIndicator() && aConditions.length === 0 && !this.getContent() && !this.getContentDisplay();
 
 		if (bShowEmptyIndicator) {
 			if (!this._oResourceBundleM) {
 				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			}
 			return this._oResourceBundleM.getText("EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
-		} else if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitOriginalType()) {
+		} else if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitOriginalType(true)) {
 			// in unit case use original data type for formatting (as internal type hides unit)
-			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
+			const aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
 			return this.getContentFactory().getUnitOriginalType().formatValue(aValue, "string");
-		} else if (this.getContentFactory().getDateOriginalType()) {
+		} else if (this.getContentFactory().getDateOriginalType(true)) {
 			// in date case use original data type for formatting (as internal type formats to ISO format)
-			var vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
+			const vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
 			return this.getContentFactory().getDateOriginalType().formatValue(vValue, "string");
 		} else {
-			var oConditionsType = this.getContentFactory().getConditionsType();
-			var oFormatOptions = oConditionsType.getFormatOptions();
-			var bNoFormatting = oFormatOptions.noFormatting;
+			const oConditionsType = this.getContentFactory().getConditionsType();
+			const oFormatOptions = oConditionsType.getFormatOptions();
+			const bNoFormatting = oFormatOptions.noFormatting;
 			oFormatOptions.noFormatting = false; // for display text always format
 			oConditionsType.setFormatOptions(oFormatOptions);
-			var sResult = oConditionsType.formatValue(aConditions);
+			const sResult = oConditionsType.formatValue(aConditions);
 			oFormatOptions.noFormatting = bNoFormatting; // turn back
 			oConditionsType.setFormatOptions(oFormatOptions);
 			return sResult;
@@ -1550,7 +1572,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
 
-		var oParent = this.getParent();
+		const oParent = this.getParent();
 
 		if (oParent && oParent.enhanceAccessibilityState) {
 			// use aria properties of rendered inner control. Also use inner control as aria properties (labelledby) might depent on the control.
@@ -1567,7 +1589,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getAccessibilityInfo = function() {
 
-		var aContent = this.getCurrentContent();
+		const aContent = this.getCurrentContent();
 		if (aContent.length === 1 && aContent[0].getAccessibilityInfo) {
 			return aContent[0].getAccessibilityInfo(); // use accessibility info of content field
 		} else if (aContent.length > 0) {
@@ -1582,8 +1604,8 @@ sap.ui.define([
 	function _ariaLabelledByChanged(sId, sMutation) {
 
 		// forward to all content controls (internal and external
-		var aContent = this.getAggregation("_content", []);
-		var oContent = this.getContent();
+		const aContent = this.getAggregation("_content", []);
+		let oContent = this.getContent();
 		if (oContent) {
 			aContent.push(oContent);
 		}
@@ -1598,7 +1620,7 @@ sap.ui.define([
 			aContent.push(oContent);
 		}
 
-		for (var i = 0; i < aContent.length; i++) {
+		for (let i = 0; i < aContent.length; i++) {
 			oContent = aContent[i];
 			if (oContent.getMetadata().getAllAssociations().ariaLabelledBy) {
 				if (sMutation === "remove") {
@@ -1613,12 +1635,12 @@ sap.ui.define([
 
 	function _setAriaAttributes(bOpen, sItemId) {
 
-		var oAttributes = { aria: {} };
-		var oFieldHelp = _getFieldHelp.call(this);
+		const oAttributes = { aria: {} };
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (oFieldHelp) {
-			var oAriaAttributes = oFieldHelp.getAriaAttributes(this.getMaxConditionsForHelp());
-			var sRoleDescription = oAriaAttributes.roleDescription;
+		if (oValueHelp) {
+			const oAriaAttributes = oValueHelp.getAriaAttributes(this.getMaxConditionsForHelp());
+			const sRoleDescription = oAriaAttributes.roleDescription;
 			oAttributes["role"] = oAriaAttributes.role;
 			if (sRoleDescription) {
 				oAttributes.aria["roledescription"] = sRoleDescription;
@@ -1637,6 +1659,9 @@ sap.ui.define([
 				oAttributes.aria["expanded"] = "false"; // only allowed for combobox, listbox...
 			}
 			oAttributes["valueHelpEnabled"] = oAriaAttributes.valueHelpEnabled;
+			if (oAriaAttributes.autocomplete && oAriaAttributes.autocomplete !== "none") { // if no autocomplete attribute must not be set
+				oAttributes.aria["autocomplete"] = oAriaAttributes.autocomplete;
+			}
 		}
 
 		this.setProperty("_ariaAttributes", oAttributes, true);
@@ -1671,9 +1696,9 @@ sap.ui.define([
 	 */
 	function _refreshLabel() {
 
-		var aLabels = LabelEnablement.getReferencingLabels(this);
-		for (var i = 0; i < aLabels.length; i++) {
-			var oLabel = sap.ui.getCore().byId(aLabels[i]);
+		const aLabels = LabelEnablement.getReferencingLabels(this);
+		for (let i = 0; i < aLabels.length; i++) {
+			const oLabel = sap.ui.getCore().byId(aLabels[i]);
 			oLabel.invalidate();
 		}
 
@@ -1713,7 +1738,7 @@ sap.ui.define([
 			this.getContentFactory().setNoFormatting(false); // initialize
 			this.awaitControlDelegate().then(function() {
 				if (!this.isFieldDestroyed()) {
-					var bHideOperator = _isOnlyOneSingleValue.call(this, this.getSupportedOperators());
+					const bHideOperator = _isOnlyOneSingleValue.call(this, this.getSupportedOperators());
 					if (bHideOperator !== this.getContentFactory().getHideOperator()) {
 						this.getContentFactory().setHideOperator(bHideOperator); // in single value eq Field hide operator
 						this.getContentFactory()._setUsedConditionType(this.getContent(), this.getContentEdit(), this.getContentDisplay(), this.getEditMode()); // if external content use it's conditionType
@@ -1722,9 +1747,9 @@ sap.ui.define([
 			}.bind(this));
 
 			// find out what is bound to conditions
-			var oBindingInfo;
-			var sProperty;
-			var bPropertyBound = false;
+			let oBindingInfo;
+			let sProperty;
+			let bPropertyBound = false;
 			for (sProperty in oContent.getMetadata().getAllProperties()) {
 				if (oContent.getBindingPath(sProperty) === "/conditions") {
 					oBindingInfo = oContent.getBindingInfo(sProperty);
@@ -1761,19 +1786,19 @@ sap.ui.define([
 					oContent.bindProperty(sProperty, { path: "$field>/placeholder" });
 				}
 				if (sProperty === "showValueHelp" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.bindProperty(sProperty, { path: "$field>/_fieldHelpEnabled" });
+					oContent.bindProperty(sProperty, { path: "$field>/_valueHelpEnabled" });
 				}
 				if (sProperty === "valueHelpIconSrc" && !oContent.getBindingPath(sProperty) && oContent.isPropertyInitial(sProperty)) {
-					oContent.setValueHelpIconSrc(this._getFieldHelpIcon());
+					oContent.setValueHelpIconSrc(this._getValueHelpIcon());
 				}
 			}
 
-			for (var sAggregation in oContent.getMetadata().getAllAggregations()) {
+			for (const sAggregation in oContent.getMetadata().getAllAggregations()) {
 				if (oContent.getBindingPath(sAggregation) === "/conditions") {
 					oBindingInfo = oContent.getBindingInfo(sAggregation);
 					if (oBindingInfo && oBindingInfo.template) {
 						for (sProperty in oBindingInfo.template.getMetadata().getAllProperties()) {
-							var oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
+							const oTemplateBindingInfo = oBindingInfo.template.getBindingInfo(sProperty);
 							if (oTemplateBindingInfo && oTemplateBindingInfo.type && oTemplateBindingInfo.type instanceof ConditionType) {
 								this.getContentFactory().getContentConditionTypes()[sName].oConditionType = oTemplateBindingInfo.type;
 								if (bPropertyBound) { // both value and tokens are bound -> don't format Value, only parse it
@@ -1856,7 +1881,7 @@ sap.ui.define([
 	}
 
 	function _createInternalContentWrapper() {
-		var fnCreateInternalContent = function() {
+		const fnCreateInternalContent = function() {
 			if (!this.bDelegateInitialized) {
 				// wait until delegate is loaded
 				this.awaitControlDelegate().then(function() { _createInternalContentWrapper.call(this); }.bind(this));
@@ -1881,7 +1906,7 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.checkCreateInternalContent = function() {
 
-		if (!this.isFieldDestroyed() && this.getVisible() && this.getContentFactory().getDataType()) {
+		if (!this.isFieldDestroyed() && this.getVisible()) { // check if DataType provided needs to be in Field, FilterField, MultiValueField
 			_createInternalContentWrapper.call(this);
 		}
 
@@ -1913,13 +1938,13 @@ sap.ui.define([
 			return; // for destroyed field do nothing on internal control
 		}
 
-		var sEditMode = this.getEditMode();
-		var oContent = this.getContent();
-		var oContentEdit = this.getContentEdit();
-		var oContentDisplay = this.getContentDisplay();
+		const sEditMode = this.getEditMode();
+		const oContent = this.getContent();
+		const oContentEdit = this.getContentEdit();
+		const oContentDisplay = this.getContentDisplay();
 
 		this.getContentFactory()._setUsedConditionType(oContent, oContentEdit, oContentDisplay, sEditMode); // if external content use it's conditionType
-		_checkFieldHelpExist.call(this, this._getValueHelp()); // as ValueHelp might be created after ID is assigned to Field
+		_checkValueHelpExist.call(this, this._getValueHelp()); // as ValueHelp might be created after ID is assigned to Field
 		_setAriaAttributes.call(this, false);
 
 
@@ -1927,7 +1952,7 @@ sap.ui.define([
 			(sEditMode === FieldEditMode.Display && oContentDisplay) ||
 			(sEditMode !== FieldEditMode.Display && oContentEdit)) {
 			this.destroyInternalContent();
-			var aContent = this.getCurrentContent(); // external set content
+			const aContent = this.getCurrentContent(); // external set content
 			if (aContent.length === 1) {
 				_setModelOnContent.call(this, aContent[0]); // bind to ManagedObjectModel
 			}
@@ -1935,25 +1960,24 @@ sap.ui.define([
 		}
 
 		// Moved to ContentFactory logic
-		var iMaxConditions = this.getMaxConditions();
-		var aOperators = this.getSupportedOperators();
-		var sControlName;
-		var aContentOld = this.getAggregation("_content", []);
-		var oContentOld;
-		var sControlNameOld;
+		const iMaxConditions = this.getMaxConditions();
+		const aOperators = this.getSupportedOperators();
+		const aContentOld = this.getAggregation("_content", []);
+		let oContentOld;
+		let sControlNameOld;
 
-		var bMultipleLines = this.getMultipleLines();
-		var bIsTriggerable = this._bTriggerable;
-		var oContentType = this.getContentFactory().getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
+		const bMultipleLines = this.getMultipleLines();
+		const bIsTriggerable = this._bTriggerable;
+		const oContentType = this.getContentFactory().getContentType(this.getBaseType(), this.getMaxConditions(), bIsTriggerable);
 
 		if (aContentOld.length > 0) {
 			oContentOld = aContentOld[0];
 			sControlNameOld = oContentOld.getMetadata().getName().replace(/\./g, "/");
 		}
 
-		var sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
-		var aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
-		sControlName = aControlNames[0];
+		const sContentMode = this.getContentFactory().getContentMode(oContentType, sEditMode, iMaxConditions, bMultipleLines, aOperators);
+		const aControlNames = oContentType.getControlNames(sContentMode, aOperators[0]);
+		const sControlName = aControlNames[0];
 		if (sControlName !== sControlNameOld) {
 			this.getContentFactory().setHideOperator(_isOnlyOneSingleValue.call(this, aOperators)); // in single value eq Field hide operator
 
@@ -1968,19 +1992,19 @@ sap.ui.define([
 				this.getContentFactory().updateConditionType();
 			}
 
-			if (_useDefaultFieldHelp.call(this, oContentType, aOperators, sEditMode, iMaxConditions)) {
+			if (_useDefaultValueHelp.call(this, oContentType, aOperators, sEditMode, iMaxConditions)) {
 				// use default field help
-				_createDefaultFieldHelp.call(this, oContentType.getUseDefaultFieldHelp().name);
-			} else if (this._sDefaultFieldHelp) {
-				delete this._sDefaultFieldHelp; // do not destroy as might used on other Fields too
+				_createDefaultValueHelp.call(this, oContentType.getUseDefaultValueHelp().name);
+			} else if (this._sDefaultValueHelp) {
+				delete this._sDefaultValueHelp; // do not destroy as might used on other Fields too
 			}
 
-			var sId = _getIdForInternalControl.call(this);
+			const sId = _getIdForInternalControl.call(this);
 			this._oCreateContentPromise = this.getContentFactory().createContent(oContentType, sContentMode, sId);
 			this._oCreateContentPromise.then(function(aControls) {
 				delete this._oCreateContentPromise; // after finished new creation request can be sync again (clear at the beginning as error might break function before end)
-				for (var iIndex = 0; iIndex < aControls.length; iIndex++) { // if already destroyed ContentFactory will not create any content control
-					var oControl = aControls[iIndex];
+				for (let iIndex = 0; iIndex < aControls.length; iIndex++) { // if already destroyed ContentFactory will not create any content control
+					const oControl = aControls[iIndex];
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
 					oControl.attachEvent("validationSuccess", _handleValidationSuccess, this);
@@ -2041,36 +2065,45 @@ sap.ui.define([
 	}
 
 	function _handleKeybordEvent(oEvent) {
-		// if FieldHelp is open, do not use native arrow handling of control
+		// if ValueHelp is open, do not use native arrow handling of control
 
-		var bPrevent = false;
-		var oFieldHelp = _getFieldHelp.call(this);
+		let bPrevent = false;
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (!oFieldHelp) {
-			return; // no FieldHelp -> just use logic of content control
+		if (!oValueHelp) {
+			return; // no ValueHelp -> just use logic of content control
 		} else { // not if only type-ahead
-			// FieldHelp closed, but enabled, prevent only arrow up and down as used to navigate
+			// ValueHelp closed, but enabled, prevent only arrow up and down as used to navigate
 			switch (oEvent.type) {
 				case "sapup":
-					bPrevent = oFieldHelp.isNavigationEnabled(-1);
+					bPrevent = oValueHelp.isNavigationEnabled(-1);
 					break;
 				case "sapdown":
-					bPrevent = oFieldHelp.isNavigationEnabled(1);
+					bPrevent = oValueHelp.isNavigationEnabled(1);
 					break;
 				case "saphome":
-					bPrevent = oFieldHelp.isNavigationEnabled(-9999);
+					bPrevent = oValueHelp.isNavigationEnabled(-9999);
 					break;
 				case "sapend":
-					bPrevent = oFieldHelp.isNavigationEnabled(9999);
+					bPrevent = oValueHelp.isNavigationEnabled(9999);
 					break;
 				case "sappageup":
-					bPrevent = oFieldHelp.isNavigationEnabled(-10);
+					bPrevent = oValueHelp.isNavigationEnabled(-10);
 					break;
 				case "sappagedown":
-					bPrevent = oFieldHelp.isNavigationEnabled(10);
+					bPrevent = oValueHelp.isNavigationEnabled(10);
+					break;
+				case "sapbackspace":
+					bPrevent = oValueHelp.isOpen();
+					this._bPreventAutocomplete = true;
+					break;
+				case "keydown":
+					if (oEvent.which !== KeyCodes.BACKSPACE && oEvent.which !== KeyCodes.DELETE) {
+						this._bPreventAutocomplete = false;
+					}
 					break;
 				default:
-					bPrevent = oFieldHelp.isOpen();
+					bPrevent = oValueHelp.isOpen();
 					break;
 			}
 		}
@@ -2125,32 +2158,32 @@ sap.ui.define([
 	}
 
 
-	function _createDefaultFieldHelp(sType) {
+	function _createDefaultValueHelp(sType) {
 
-		this._sDefaultFieldHelp = mDefaultHelps[sType].id;
+		this._sDefaultValueHelp = mDefaultHelps[sType].id;
 
-		var oValueHelp = mDefaultHelps[sType].control;
+		let oValueHelp = mDefaultHelps[sType].control;
 
 		if (oValueHelp && oValueHelp.isDestroyed()) {
-			// someone destroyed FieldHelp -> initialize
+			// someone destroyed ValueHelp -> initialize
 			mDefaultHelps[sType].control = undefined;
 			oValueHelp = undefined;
 		}
 
 		if (!oValueHelp) {
 			if (mDefaultHelps[sType].promise) {
-				mDefaultHelps[sType].promise.then(_defaultFieldHelpUpdate.bind(this, mDefaultHelps[sType].id));
+				mDefaultHelps[sType].promise.then(_defaultValueHelpUpdate.bind(this, mDefaultHelps[sType].id));
 			} else {
 				mDefaultHelps[sType].promise = loadModules(mDefaultHelps[sType].modules).catch(function(oError) {
-					throw new Error("loadModules promise rejected in sap.ui.mdc.field.FieldBase:_createDefaultFieldHelp function call - could not load controls " + JSON.stringify(mDefaultHelps[sType].modules));
+					throw new Error("loadModules promise rejected in sap.ui.mdc.field.FieldBase:_createDefaultValueHelp function call - could not load controls " + JSON.stringify(mDefaultHelps[sType].modules));
 				}).then(function(aModules) {
-					var ValueHelp = aModules[0];
-					var Container = aModules[1];
-					var Content = aModules[2];
+					const ValueHelp = aModules[0];
+					const Container = aModules[1];
+					const Content = aModules[2];
 					oValueHelp = new ValueHelp(mDefaultHelps[sType].id, {
 						delegate: {name: "sap/ui/mdc/ValueHelpDelegate", payload: {isDefaultHelp: true}} // use base-delegate as TypeUtil of delegate is not used in current ValueHelp implementation as we transfer the Type of the Field into the ValueHelp (oConfig)
 					});
-					var oContainer = new Container(mDefaultHelps[sType].id + "-container", {
+					const oContainer = new Container(mDefaultHelps[sType].id + "-container", {
 						content: [new Content(mDefaultHelps[sType].id + "-content", mDefaultHelps[sType].contentProperties)]
 					});
 					oValueHelp._bIsDefaultHelp = true;
@@ -2163,38 +2196,38 @@ sap.ui.define([
 					}
 					//				this.addDependent(oValueHelp); // TODO: where to add to control tree
 					oValueHelp.connect(this); // to forward dataType
-					_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
+					_defaultValueHelpUpdate.call(this, mDefaultHelps[sType].id);
 				}.bind(this)).unwrap();
 			}
 		} else {
-			_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
+			_defaultValueHelpUpdate.call(this, mDefaultHelps[sType].id);
 		}
 
 		_setAriaAttributes.call(this, false);
 
 	}
 
-	function _defaultFieldHelpUpdate(sId) {
+	function _defaultValueHelpUpdate(sId) {
 
-		_fieldHelpChanged.call(this, sId, "insert");
+		_valueHelpChanged.call(this, sId, "insert");
 
 	}
 
-	function _useDefaultFieldHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
+	function _useDefaultValueHelp(oContentType, aOperators, sEditMode, iMaxConditions) {
 
-		var oUseDefaultFieldHelp = oContentType.getUseDefaultFieldHelp();
-		if (oUseDefaultFieldHelp && !this._getValueHelp() && sEditMode !== FieldEditMode.Display) {
-			if ((iMaxConditions === 1 && oUseDefaultFieldHelp.single) || (iMaxConditions !== 1 && oUseDefaultFieldHelp.multi)) {
+		const oUseDefaultValueHelp = oContentType.getUseDefaultValueHelp();
+		if (oUseDefaultValueHelp && !this._getValueHelp() && sEditMode !== FieldEditMode.Display) {
+			if ((iMaxConditions === 1 && oUseDefaultValueHelp.single) || (iMaxConditions !== 1 && oUseDefaultValueHelp.multi)) {
 				if (aOperators.length === 1) {
-					var bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
+					const bIsSingleValue = _isOnlyOneSingleValue.call(this, aOperators); // if operator not exists unse no field help
 					// not if operator is handled by special control (like DatePicker)
 					if (iMaxConditions === 1) {
 						if (!(oContentType.getEditOperator() && oContentType.getEditOperator()[aOperators[0]]) &&
-								(oUseDefaultFieldHelp.oneOperatorSingle || !bIsSingleValue)) {
+								(oUseDefaultValueHelp.oneOperatorSingle || !bIsSingleValue)) {
 							// "bool" case (always default field help) or operator needs more than one value (e.g. between)
 							return true;
 						}
-					} else if (oUseDefaultFieldHelp.oneOperatorMulti || !bIsSingleValue) {
+					} else if (oUseDefaultValueHelp.oneOperatorMulti || !bIsSingleValue) {
 						// DatePicker case - in multi-value use default help to get DatePicker controls
 						return true;
 					}
@@ -2212,7 +2245,7 @@ sap.ui.define([
 	function _isOnlyOneSingleValue(aOperators) {
 
 		if (aOperators.length === 1) {
-			var oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
+			const oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
 			return !oOperator || oOperator.isSingleValue();
 		} else {
 			return false;
@@ -2222,7 +2255,7 @@ sap.ui.define([
 
 	FieldBase.prototype._setInvalidInput = function(oException, vValue, sReason, oSource) {
 
-		var sSourceId = oSource ? oSource.getId() : this.getId();
+		const sSourceId = oSource ? oSource.getId() : this.getId();
 
 		if (!this._oInvalidInput) {
 			this._oInvalidInput = {};
@@ -2233,7 +2266,7 @@ sap.ui.define([
 
 	FieldBase.prototype._getInvalidInputException = function(oContent) {
 
-		var oException;
+		let oException;
 
 		if (this._oInvalidInput) {
 			if (oContent) {
@@ -2244,7 +2277,7 @@ sap.ui.define([
 				}
 			} else {
 				// just take the exception we have
-				for (var sId in this._oInvalidInput) {
+				for (const sId in this._oInvalidInput) {
 					oException = this._oInvalidInput[sId].exception;
 					if (oException) {
 						break;
@@ -2265,9 +2298,11 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.resetInvalidInput = function(bRemoveUIMessage) {
 
-		this._oInvalidInput = null;
-		if (bRemoveUIMessage) {
-			this._removeUIMessage(); // to be sure that valueState is removed, even for Unit fields
+		if (this._oInvalidInput) { // only remove valueStates set from parsing/validating, valueState set from outside should only be removed from outside
+			this._oInvalidInput = null;
+			if (bRemoveUIMessage) {
+				this._removeUIMessage(); // to be sure that valueState is removed, even for Unit fields
+			}
 		}
 
 	};
@@ -2293,13 +2328,13 @@ sap.ui.define([
 	function _handleParseError(oEvent) {
 
 		// as change event if inner control is fired even Input is wrong, check parse exception from binding
-		var vValue = oEvent.getParameter("newValue");
-		var oException = oEvent.getParameter("exception");
-		var oSource = oEvent.getSource();
+		const vValue = oEvent.getParameter("newValue");
+		const oException = oEvent.getParameter("exception");
+		const oSource = oEvent.getSource();
 		this._setInvalidInput(oException, vValue, "ParseError", oSource);
 		this._sFilterValue = "";
 
-		var oBinding = oSource.getBinding("valueState");
+		const oBinding = oSource.getBinding("valueState");
 		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
 			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
 			_setUIMessage.call(this, oEvent.getParameter("message"));
@@ -2310,19 +2345,19 @@ sap.ui.define([
 	function _handleValidationError(oEvent) {
 
 		// as change event if inner control is fired even Input is wrong, check validation exception from binding
-		var vValue = oEvent.getParameter("newValue");
-		var oException = oEvent.getParameter("exception");
-		var oSource = oEvent.getSource();
+		const vValue = oEvent.getParameter("newValue");
+		const oException = oEvent.getParameter("exception");
+		const oSource = oEvent.getSource();
 		this._setInvalidInput(oException, vValue, "ValidationError", oSource);
 		this._sFilterValue = "";
 
 		// try to find the corresponding async. change and reject it
-		var aWrongConditions = oException && oException instanceof ConditionValidateException && oException.getConditions(); // we store the conditions in the ConditionValidationException
-		var bFound = false;
-		var i = 0;
+		const aWrongConditions = oException && oException instanceof ConditionValidateException && oException.getConditions(); // we store the conditions in the ConditionValidationException
+		let bFound = false;
+		let i = 0;
 
 		for (i = 0; i < this._aAsyncChanges.length; i++) {
-			var oChange = this._aAsyncChanges[i];
+			const oChange = this._aAsyncChanges[i];
 			if (oChange.waitForUpdate && Array.isArray(oChange.result)) {
 				if (oChange.result.length === 0 && vValue === "") {
 					// for empty string no condition is created
@@ -2340,7 +2375,7 @@ sap.ui.define([
 			this._aAsyncChanges.splice(i, 1);
 		}
 
-		var oBinding = oSource.getBinding("valueState");
+		const oBinding = oSource.getBinding("valueState");
 		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
 			// for unit fields the valueState binding is OneWay, so we need to set the valueState manually
 			_setUIMessage.call(this, oEvent.getParameter("message"));
@@ -2350,11 +2385,11 @@ sap.ui.define([
 
 	function _handleValidationSuccess(oEvent) {
 
-		var oSource = oEvent.getSource();
+		const oSource = oEvent.getSource();
 
 		if (this._isInvalidInputForContent(oSource)) {
-			var oBinding = oSource.getBinding("valueState");
-			var bRemoveUIMessage = false; // for TwoWay-binding let the binding remove the valueState
+			const oBinding = oSource.getBinding("valueState");
+			let bRemoveUIMessage = false; // for TwoWay-binding let the binding remove the valueState
 			if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
 				// for unit fields the valueState binding is OneWay, so we need to remove the valueState manually
 				bRemoveUIMessage = true;
@@ -2367,8 +2402,8 @@ sap.ui.define([
 
 	function _handleContentChange(oEvent) {
 
-		var oChangeEvent = { parameters: merge({}, oEvent.getParameters()), source: oEvent.getSource() };
-		var iLength = this._aAsyncChanges.length;
+		const oChangeEvent = { parameters: merge({}, oEvent.getParameters()), source: oEvent.getSource() };
+		const iLength = this._aAsyncChanges.length;
 
 		if (iLength > 0 && !this._aAsyncChanges[iLength - 1].changeFired) {
 			// as change event in Input is directly fired after setValue this must be the change event corresponding to the last async change.
@@ -2379,7 +2414,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oChange = { changeEvent: oChangeEvent };
+		const oChange = { changeEvent: oChangeEvent };
 
 		_performContentChange.call(this, oChange);
 
@@ -2387,10 +2422,10 @@ sap.ui.define([
 
 	function _performContentChange(oChange) {
 
-		var aConditions = this.getConditions();
-		var bValid = true;
-		var vWrongValue;
-		var oSource = oChange.changeEvent.source;
+		const aConditions = this.getConditions();
+		let bValid = true;
+		let vWrongValue;
+		const oSource = oChange.changeEvent.source;
 
 		if (oChange.changeEvent.parameters.hasOwnProperty("valid")) {
 			bValid = oChange.changeEvent.parameters["valid"];
@@ -2402,15 +2437,15 @@ sap.ui.define([
 			vWrongValue = oChange.changeEvent.parameters["value"];
 		}
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && this._bConnected) {
+		const oValueHelp = _getValueHelp.call(this);
+		if (oValueHelp && this._bConnected) {
 			if (sap.ui.getCore().getCurrentFocusedControlId() === oSource.getId()) {
-				oFieldHelp.close(); // if focus is not in field, Field help closes automatically
+				oValueHelp.close(); // if focus is not in field, Field help closes automatically
 			}
 			this._sFilterValue = "";
 			if (bValid) {
-				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
-				oFieldHelp.onControlChange();
+				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
+				oValueHelp.onControlChange();
 			}
 			// do not trigger async suggestion
 			_clearLiveChangeTimer.call(this);
@@ -2419,6 +2454,9 @@ sap.ui.define([
 		if (this._oNavigateCondition) {
 			this._oNavigateCondition = undefined; // navigation now finished
 			this.getContentFactory().updateConditionType();
+			if (oSource.selectText && oSource.getDOMValue) {
+				oSource.selectText(oSource.getDOMValue().length, oSource.getDOMValue().length); // deselect highlighting
+			}
 		}
 
 		if (oChange.resolve) {
@@ -2432,10 +2470,10 @@ sap.ui.define([
 
 	function _handleContentLiveChange(oEvent) {
 
-		var vValue;
-		var vPreviousValue;
-		var bEscPressed = false;
-		var oSource = oEvent.getSource();
+		let vValue;
+		let vPreviousValue;
+		let bEscPressed = false;
+		const oSource = oEvent.getSource();
 
 		this._oNavigateCondition = undefined; // navigation item is not longer valid
 		this.getContentFactory().updateConditionType();
@@ -2454,36 +2492,36 @@ sap.ui.define([
 		if ("previousValue" in oEvent.getParameters()) {
 			vPreviousValue = oEvent.getParameter("previousValue");
 		} else {
-			var aConditions = this.getConditions();
+			const aConditions = this.getConditions();
 			vPreviousValue = aConditions[0] && aConditions[0].values[0];
 		}
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (oFieldHelp && (!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
+		if (oValueHelp && (!this.getContentFactory().isMeasure() || oSource.getShowValueHelp())) {
 			if (bEscPressed) {
-				// close FieldHelp if escape pressed and not repoen it for last typed characters
-				if (oFieldHelp.isOpen()) {
-					oFieldHelp.close();
-					_setConditionsOnFieldHelp.call(this, this.getConditions(), oFieldHelp); // reset conditions
+				// close ValueHelp if escape pressed and not repoen it for last typed characters
+				if (oValueHelp.isOpen()) {
+					oValueHelp.close();
+					_setConditionsOnValueHelp.call(this, this.getConditions(), oValueHelp); // reset conditions
 					_clearLiveChangeTimer.call(this);
 					this._sFilterValue = "";
 				}
 			} else {
-				var aOperators = this.getSupportedOperators(); // show suggestion only if equal operators are supported
-				var bUseFieldHelp = false;
+				const aOperators = this.getSupportedOperators(); // show suggestion only if equal operators are supported
+				let bUseValueHelp = false;
 
 				// check if at least one operator supports field help
 				// TODO: let field help decide what operator to use
-				for (var i = 0; i < aOperators.length; i++) {
-					var oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
+				for (let i = 0; i < aOperators.length; i++) {
+					const oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
 					if (oOperator.validateInput) {
-						bUseFieldHelp = true;
+						bUseValueHelp = true;
 						break;
 					}
 				}
 
-				if (bUseFieldHelp) {
+				if (bUseValueHelp) {
 					this._bIgnoreInputValue = false; // after typing the input value is the current one and should be used
 					this._vLiveChangeValue = vValue;
 					if (!this._fnLiveChangeTimer) {
@@ -2491,7 +2529,7 @@ sap.ui.define([
 						_clearFocusTimer.call(this);
 
 						this._fnLiveChangeTimer = debounce(function() {
-							var sDisplay = this.getDisplay();
+							const sDisplay = this.getDisplay();
 							// remove "(", ")" from serach string
 							// TODO: better solution to search in this case?
 
@@ -2501,8 +2539,8 @@ sap.ui.define([
 
 							if (this._vLiveChangeValue) {
 								// use EQ operator
-								var oOperator = FilterOperatorUtil.getEQOperator();
-								var aParts = oOperator.getValues(this._vLiveChangeValue, sDisplay, true);
+								const oOperator = FilterOperatorUtil.getEQOperator();
+								const aParts = oOperator.getValues(this._vLiveChangeValue, sDisplay, true);
 								if (aParts[0]) {
 									this._sFilterValue = aParts[0];
 									if (aParts[1]) {
@@ -2514,47 +2552,45 @@ sap.ui.define([
 								}
 							}
 
-							var _handleTypeahead = function () {
-								var oFocusedElement = document.activeElement;
-								if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement))) { // only if still connected and focussed
-									var bIsFHOpen = oFieldHelp.isOpen();
-									oFieldHelp.setFilterValue(this._sFilterValue);
-									if (this.getMaxConditionsForHelp() === 1 && oFieldHelp.getConditions().length > 0) {
+							const _handleTypeahead = function () {
+								if (_isFocused.call(this)) { // only if still connected and focussed
+									const bIsFHOpen = oValueHelp.isOpen();
+									if (this.getMaxConditionsForHelp() === 1 && oValueHelp.getConditions().length > 0) {
 										// While single-suggestion no item is selected
-										oFieldHelp.setConditions([]);
+										oValueHelp.setConditions([]);
 									}
+									oValueHelp.setFilterValue(this._sFilterValue);
 									if (!bIsFHOpen) {
 										/*
 											sap.ui.mdc.ValueHelp can only be "asked" to open a typeahead by a connected control.
 											It will then decide on actual opening after content initialization via ValueHelpDelegate.showTypeahead which can be customized by applications.
 											An already open typeahead content will consult showTypeahead again on any every filtervalue update and eventually close.
 										*/
-										oFieldHelp.open(true);
+										oValueHelp.open(true);
 									} else {
 										_setShowValueStateMessage.call(this, false);
 									}
-									_setAriaAttributes.call(this, true);
+									// _setAriaAttributes.call(this, bIsFHOpen); // change open state for aria only if really opened or closed (_handleValueHelpOpened/_handleValueHelpAfterClose)
 									delete this._vLiveChangeValue;
 								}
 							}.bind(this);
 
 							if (this._bConnected && this.getCurrentContent()[0]) {
-								oFieldHelp.isTypeaheadSupported().then(function (bTypeahead) {
+								oValueHelp.isTypeaheadSupported().then(function (bTypeahead) {
 									return !!bTypeahead && _handleTypeahead();
 								});
 								delete this._vLiveChangeValue;
 							}
 						}.bind(this), 300, { leading: false, trailing: true });
 
-						// on first call init FieldHelp (trigger loading metadata on first typing)
-						oFieldHelp.initBeforeOpen(true);
+						// on first call init ValueHelp (trigger loading metadata on first typing)
+						oValueHelp.initBeforeOpen(true);
 					}
-					var vOpenByTyping = oFieldHelp.isTypeaheadSupported(); // trigger determination of search functionality
+					const vOpenByTyping = oValueHelp.isTypeaheadSupported(); // trigger determination of search functionality
 					if (vOpenByTyping instanceof Promise) {
 						vOpenByTyping.then(function(bOpenByTyping) {
 							// trigger open after Promise resolved
-							var oFocusedElement = document.activeElement;
-							if (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
+							if (_isFocused.call(this) && this._fnLiveChangeTimer) { // if destroyed this._fnLiveChangeTimer is removed
 								this._fnLiveChangeTimer(); // if resolved while initial debounce-time frame, it will not triggered twice
 							}
 							this._bOpenByTyping = bOpenByTyping;
@@ -2582,7 +2618,7 @@ sap.ui.define([
 
 	function _handleContentPress(oEvent) {
 
-		var oFieldInfo = this.getFieldInfo();
+		const oFieldInfo = this.getFieldInfo();
 		if (oFieldInfo) {
 			oFieldInfo.getTriggerHref().then(function(sHref) {
 				if (!sHref) {
@@ -2599,16 +2635,16 @@ sap.ui.define([
 	function _handleTokenUpdate(oEvent) {
 
 		if (oEvent.getParameter("type") === "removed") {
-			var aRemovedTokens = oEvent.getParameter("removedTokens");
-			var aConditions = this.getConditions();
-			var sUnit;
-			var oPayload;
-			var i;
+			const aRemovedTokens = oEvent.getParameter("removedTokens");
+			let aConditions = this.getConditions();
+			let sUnit;
+			let oPayload;
+			let i;
 
 			for (i = 0; i < aRemovedTokens.length; i++) {
-				var oRemovedToken = aRemovedTokens[i];
-				var sPath = oRemovedToken.getBindingContext("$field").sPath;
-				var iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
+				const oRemovedToken = aRemovedTokens[i];
+				const sPath = oRemovedToken.getBindingContext("$field").sPath;
+				const iIndex = parseInt(sPath.slice(sPath.lastIndexOf("/") + 1));
 				aConditions[iIndex].delete = true;
 			}
 
@@ -2635,28 +2671,28 @@ sap.ui.define([
 
 	}
 
-	function _fieldHelpChanged(sId, sMutation) {
+	function _valueHelpChanged(sId, sMutation) {
 
-		var oFieldHelp;
+		let oValueHelp;
 
 		if (sMutation === "remove") {
-			oFieldHelp = sap.ui.getCore().byId(sId);
-			if (oFieldHelp) {
-				_disconnectFieldhelp.call(this, oFieldHelp);
-				oFieldHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
+			oValueHelp = sap.ui.getCore().byId(sId);
+			if (oValueHelp) {
+				_disconnectValueHelp.call(this, oValueHelp);
+				oValueHelp.detachEvent("dataUpdate", _handleHelpDataUpdate, this);
 			}
-			this.resetProperty("_fieldHelpEnabled");
+			this.resetProperty("_valueHelpEnabled");
 		} else if (sMutation === "insert") {
-			if (this._sDefaultFieldHelp && sId !== this._sDefaultFieldHelp) { // remove default help
-				_fieldHelpChanged.call(this, this._sDefaultFieldHelp, "remove");
-				delete this._sDefaultFieldHelp; // do not destroy as might used on other Fields too
+			if (this._sDefaultValueHelp && sId !== this._sDefaultValueHelp) { // remove default help
+				_valueHelpChanged.call(this, this._sDefaultValueHelp, "remove");
+				delete this._sDefaultValueHelp; // do not destroy as might used on other Fields too
 			}
-			_checkFieldHelpExist.call(this, sId);
+			_checkValueHelpExist.call(this, sId);
 
 			// update icon (on remove not necessary as hidden)
-			var oControl = this.getCurrentContent()[0];
+			const oControl = this.getCurrentContent()[0];
 			if (oControl && oControl.setValueHelpIconSrc) {
-				oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
+				oControl.setValueHelpIconSrc(this._getValueHelpIcon());
 			}
 		}
 
@@ -2664,62 +2700,62 @@ sap.ui.define([
 
 	}
 
-	function _checkFieldHelpExist(sId) {
+	function _checkValueHelpExist(sId) {
 
-		if (sId && this.isPropertyInitial("_fieldHelpEnabled")) {
-			var oFieldHelp = sap.ui.getCore().byId(sId);
-			if (oFieldHelp) {
-				oFieldHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
-				if (oFieldHelp.getIcon()) { //if there is no icon, the value help is only used as typeahead
-					this.setProperty("_fieldHelpEnabled", true, true);
+		if (sId && this.isPropertyInitial("_valueHelpEnabled")) {
+			const oValueHelp = sap.ui.getCore().byId(sId);
+			if (oValueHelp) {
+				oValueHelp.attachEvent("dataUpdate", _handleHelpDataUpdate, this);
+				if (oValueHelp.getIcon()) { //if there is no icon, the value help is only used as typeahead
+					this.setProperty("_valueHelpEnabled", true, true);
 				}
 			}
 		}
 
 	}
 
-	// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
+	// TODO: remove this function and replace by getValueHelp once ValueHelp association is completetly removed.
 	FieldBase.prototype._getValueHelp = function() {
 
 		return this.getValueHelp() || (this.getFieldHelp && this.getFieldHelp()); // as getFieldHelp not exist in legacy-free UI5
 
 	};
 
-	function _getFieldHelp() {
+	function _getValueHelp() {
 
-		var sId = this._getValueHelp();
-		var oFieldHelp;
+		let sId = this._getValueHelp();
+		let oValueHelp;
 
-		if (!sId && this._sDefaultFieldHelp) {
-			sId = this._sDefaultFieldHelp;
+		if (!sId && this._sDefaultValueHelp) {
+			sId = this._sDefaultValueHelp;
 		}
 
 		if (sId) {
-			oFieldHelp = sap.ui.getCore().byId(sId);
+			oValueHelp = sap.ui.getCore().byId(sId);
 		}
 
-		return oFieldHelp;
+		return oValueHelp;
 
 	}
 
-	function _setConditionsOnFieldHelp(aConditions, oFieldHelp) {
+	function _setConditionsOnValueHelp(aConditions, oValueHelp) {
 
-		if (!oFieldHelp) {
-			oFieldHelp = _getFieldHelp.call(this);
+		if (!oValueHelp) {
+			oValueHelp = _getValueHelp.call(this);
 		}
 
-		var aHelpConditions;
+		let aHelpConditions;
 		if (this.isInvalidInput() && this.getMaxConditionsForHelp() === 1) {
 			// if parsing error and single value case do not see the old (outdated) condition as selected
 			// TODO: handling if error only on unit or number part
 			aHelpConditions = [];
 		} else if (this.getContentFactory().isMeasure()) {
-			// for unit or curreny add only the unit/currency to FieldHelp
+			// for unit or curreny add only the unit/currency to ValueHelp
 			aHelpConditions = [];
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
+			for (let i = 0; i < aConditions.length; i++) {
+				const oCondition = aConditions[i];
 				if (oCondition.values[0] && oCondition.values[0][1]) {
-					var oHelpCondition = Condition.createItemCondition(oCondition.values[0][1], undefined, oCondition.inParameters, oCondition.outParameters, oCondition.payload);
+					const oHelpCondition = Condition.createItemCondition(oCondition.values[0][1], undefined, oCondition.inParameters, oCondition.outParameters, oCondition.payload);
 					aHelpConditions.push(oHelpCondition);
 				}
 			}
@@ -2727,24 +2763,24 @@ sap.ui.define([
 			aHelpConditions = aConditions;
 		}
 
-		oFieldHelp.setConditions(aHelpConditions);
+		oValueHelp.setConditions(aHelpConditions);
 
 	}
 
 	function _handleValueHelpRequest(oEvent, bOpenAsTypeahed) { // if triggered by valueHelpRequest event alway open as dialog, if called from Tap or Focus as typeahead
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (oFieldHelp) {
+		if (oValueHelp) {
 			if (this._fnLiveChangeTimer) { // as live change might pending we need to update the filterValue
 				this._fnLiveChangeTimer.flush();
 			}
-			oFieldHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening FieldHelp
-			var aConditions = this.getConditions();
-			_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
-			oFieldHelp.toggleOpen(!!bOpenAsTypeahed);
-			var oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
-			if (!oFieldHelp.isFocusInHelp()) {
+			oValueHelp.setFilterValue(this._sFilterValue); // use types value for filtering, even if reopening ValueHelp
+			const aConditions = this.getConditions();
+			_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
+			oValueHelp.toggleOpen(!!bOpenAsTypeahed);
+			const oContent = oEvent.srcControl || oEvent.getSource(); // as, if called from Tap or other browser event getSource is not available
+			if (!oValueHelp.isFocusInHelp()) {
 				// need to reset bValueHelpRequested in Input, otherwise on focusout no change event and navigation don't work
 				if (oContent.bValueHelpRequested) {
 					oContent.bValueHelpRequested = false; // TODO: need API
@@ -2765,24 +2801,24 @@ sap.ui.define([
 		});
 	}
 
-	function _handleFieldHelpSelect(oEvent) {
+	function _handleValueHelpSelect(oEvent) {
 
-		var aConditions = this.getConditions();
-		var aNewConditions = oEvent.getParameter("conditions");
-		var bAdd = oEvent.getParameter("add");
-		var bClose = oEvent.getParameter("close");
-		var oFieldHelp = oEvent.oSource;
-		var iMaxConditions = this.getMaxConditions();
-		var oCondition;
-		var oContent = this.getControlForSuggestion();
-		var sDOMValue;
-		var i = 0;
+		let aConditions = this.getConditions();
+		const aNewConditions = oEvent.getParameter("conditions");
+		const bAdd = oEvent.getParameter("add");
+		const bClose = oEvent.getParameter("close");
+		const oValueHelp = oEvent.oSource;
+		const iMaxConditions = this.getMaxConditions();
+		let oCondition;
+		const oContent = this.getControlForSuggestion();
+		let sDOMValue;
+		let i = 0;
 
 		if (this.getContentFactory().isMeasure()) {
 			if (aNewConditions.length > 1) {
 				throw new Error("Only one item must be selected! " + this);
 			}
-			if (aNewConditions[0].operator !== "EQ") {
+			if (aNewConditions[0].operator !== OperatorName.EQ) {
 				throw new Error("Only EQ allowed! " + this);
 			}
 
@@ -2790,7 +2826,7 @@ sap.ui.define([
 				// TODO: update all conditions?
 				for (i = 0; i < aConditions.length; i++) {
 					aConditions[i].values[0][1] = aNewConditions[0].values[0];
-					if (aConditions[i].operator === "BT") {
+					if (aConditions[i].operator === OperatorName.BT) {
 						aConditions[i].values[1][1] = aNewConditions[0].values[0];
 					}
 					if (aNewConditions[0].inParameters) {
@@ -2804,12 +2840,12 @@ sap.ui.define([
 					}
 				}
 			} else {
-				var oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators());
-				var aValue = [null, aNewConditions[0].values[0]];
+				const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators());
+				const aValue = [null, aNewConditions[0].values[0]];
 				oCondition = Condition.createCondition(oOperator.name, [aValue], aNewConditions[0].inParameters, aNewConditions[0].outParameters, ConditionValidated.NotValidated, aNewConditions[0].payload);
 				aConditions.push(oCondition);
-				var oConditionType = this.getContentFactory().getConditionType(true);
-				var oConditionsType = this.getContentFactory().getUnitConditionsType(true);
+				const oConditionType = this.getContentFactory().getConditionType(true);
+				const oConditionsType = this.getContentFactory().getUnitConditionsType(true);
 				// TODO: format once to update current value in type (as empty condtions are not displayed as token)
 				if (oConditionType) {
 					sDOMValue = oConditionType.formatValue(oCondition);
@@ -2829,7 +2865,7 @@ sap.ui.define([
 				}
 
 				// take what ever comes from field help as valid - even if it is an empty key
-				var iIndex = bAdd ? FilterOperatorUtil.indexOfCondition(oCondition, aConditions) : -1; // check if already exist
+				const iIndex = bAdd ? FilterOperatorUtil.indexOfCondition(oCondition, aConditions) : -1; // check if already exist
 				if (iIndex === -1) { // new -> add
 					aConditions.push(oCondition);
 				} else if (oCondition.validated === ConditionValidated.Validated && oCondition.values.length > 1 && (aConditions[iIndex].values.length === 1 || oCondition.values[1] !== aConditions[iIndex].values[1])) {
@@ -2844,13 +2880,13 @@ sap.ui.define([
 			aConditions.splice(0, aConditions.length - iMaxConditions);
 		}
 
-		var bChangeAfterError = false;
+		let bChangeAfterError = false;
 		if (oContent && oContent.setDOMValue) {
 			if (this.getMaxConditionsForHelp() === 1 && aConditions.length > 0) {
 				// the focus is still in the Field. The update of the inner control is done via ManagedObjectModel binding.
 				// The inner Input is configured to prefer user input in this case.
 				// so we need to set the DOM value here. Otherwise it is not updated or, if empty, selected.
-				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType()) {
+				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true)) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue(aConditions);
 				} else if (this.getContentFactory().getConditionType(true)) {
 					sDOMValue = this.getContentFactory().getConditionType().formatValue(aConditions[0]);
@@ -2858,8 +2894,8 @@ sap.ui.define([
 					sDOMValue = this.getContentFactory().getConditionsType().formatValue(aConditions);
 				}
 
-				var fnUpdateDOMValue = function(sText) {
-					var sOldDOMValue = oContent.getDOMValue();
+				const fnUpdateDOMValue = function(sText) {
+					const sOldDOMValue = oContent.getDOMValue();
 					oContent.setDOMValue(""); // to overwrite it even if the text is the same -> otherwise cursor position could be wrong
 					oContent.setDOMValue(sText);
 					if (sOldDOMValue !== sText && iMaxConditions === 1) {
@@ -2890,7 +2926,7 @@ sap.ui.define([
 			}
 		}
 
-		var aConditionsOld = this.getConditions();
+		const aConditionsOld = this.getConditions();
 
 		if (!deepEqual(aConditions, aConditionsOld)) {
 			this._oNavigateCondition = undefined;
@@ -2900,7 +2936,7 @@ sap.ui.define([
 
 			if (!FilterOperatorUtil.compareConditionsArray(aConditions, aConditionsOld)) { // update only if real change
 				// handle out-parameters
-				oFieldHelp.onControlChange();
+				oValueHelp.onControlChange();
 				_triggerChange.call(this, aConditions, true);
 			}
 		} else if (bChangeAfterError) { // last valif value choosen again
@@ -2908,29 +2944,29 @@ sap.ui.define([
 		}
 	}
 
-	function _handleFieldHelpNavigated(oEvent) {
+	function _handleValueHelpNavigated(oEvent) {
 
-		var sValue = oEvent.getParameter("value");
-		var vKey = oEvent.getParameter("key");
-		var oCondition = oEvent.getParameter("condition");
-		var sItemId = oEvent.getParameter("itemId");
-		var bLeaveFocus = oEvent.getParameter("leaveFocus");
+		let sValue = oEvent.getParameter("value");
+		let vKey = oEvent.getParameter("key");
+		let oCondition = oEvent.getParameter("condition");
+		const sItemId = oEvent.getParameter("itemId");
+		const bLeaveFocus = oEvent.getParameter("leaveFocus");
 
 		if (!oCondition && vKey) {
 			oCondition = Condition.createItemCondition(vKey, sValue); // TODO: delete if outdated?
 		}
 
-		var sNewValue;
-		var sDOMValue;
-		var oContent = this.getControlForSuggestion();
-		var oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
-		var oFieldHelp = _getFieldHelp.call(this);
+		let sNewValue;
+		let sDOMValue;
+		const oContent = this.getControlForSuggestion();
+		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
+		const oValueHelp = _getValueHelp.call(this);
 
 		if (bLeaveFocus) {
 			// nothing to navigate, just set focus visualization back to field
 			oContent.addStyleClass("sapMFocus");
 			oContent.focus();
-			oFieldHelp.removeFocus();
+			oValueHelp.removeFocus();
 			return;
 		}
 
@@ -2944,12 +2980,12 @@ sap.ui.define([
 		}
 
 		if (this.getContentFactory().isMeasure()) {
-			var aConditions = this.getConditions();
+			const aConditions = this.getConditions();
 			// use number of first condition. In Multicase all conditions must be updated in change event
 			if (aConditions.length > 0) {
 				this._oNavigateCondition.operator = aConditions[0].operator;
 				this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], vKey];
-				if (aConditions[0].operator === "BT") {
+				if (aConditions[0].operator === OperatorName.BT) {
 					this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
 				} else if (this._oNavigateCondition.values.length > 1) {
 					this._oNavigateCondition.values.splice(1);
@@ -2974,11 +3010,11 @@ sap.ui.define([
 			sNewValue = vKey;
 		}
 
-		var bOpen = oFieldHelp.isOpen();
+		const bOpen = oValueHelp.isOpen();
 
 		if (oContent && oContent.setDOMValue) {
 			if (!sDOMValue) {
-				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType() && this._oNavigateCondition) {
+				if (this.getContentFactory().isMeasure() && this.getContentFactory().getUnitConditionsType(true) && this._oNavigateCondition) {
 					sDOMValue = this.getContentFactory().getUnitConditionsType().formatValue([this._oNavigateCondition]);
 				} else if (this.getContentFactory().getConditionType(true) && this._oNavigateCondition) {
 					sDOMValue = this.getContentFactory().getConditionType().formatValue(this._oNavigateCondition);
@@ -3008,9 +3044,64 @@ sap.ui.define([
 
 	}
 
-	function _handleFieldHelpAfterClose(oEvent) {
+	function _handleValueHelpTypeaheadSuggested(oEvent) {
 
-		var oContent = this.getControlForSuggestion();
+		const oCondition = oEvent.getParameter("condition");
+		const sFilterValue = oEvent.getParameter("filterValue");
+		const sItemId = oEvent.getParameter("itemId");
+		const oContent = this.getControlForSuggestion();
+		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
+
+		if (_isFocused.call(this) && oContent && oContent.setDOMValue && oContent.selectText && !this._bPreventAutocomplete && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
+			const oContentFactory = this.getContentFactory();
+			const bIsMeasure = oContentFactory.isMeasure();
+			const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
+			let oDataType;
+
+			if (bIsMeasure) {
+				const aCompositeTypes = this.getContentFactory().getCompositeTypes();
+				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
+					oDataType = aCompositeTypes[1];
+				}
+			} else {
+				oDataType = oContentFactory.getDataType();
+			}
+
+			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._sFilterValue, sFilterValue, oDataType, oContentFactory.getAdditionalDataType());
+
+			if (oAutocomplete && oAutocomplete.text) { // only if something returned
+				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
+				this._oNavigateCondition.operator = oOperator.name;
+
+				if (bIsMeasure) {
+					const aConditions = this.getConditions();
+					// use number of first condition. In Multicase all conditions must be updated in change event
+					if (aConditions.length > 0) {
+						this._oNavigateCondition.operator = aConditions[0].operator;
+						this._oNavigateCondition.values[0] = [aConditions[0].values[0][0], oCondition.values[0]];
+						if (aConditions[0].operator === OperatorName.BT) {
+							this._oNavigateCondition.values[1] = [aConditions[0].values[1][0], this._oNavigateCondition.values[0][1]];
+						} else if (this._oNavigateCondition.values.length > 1) {
+							this._oNavigateCondition.values.splice(1);
+						}
+					} else {
+						this._oNavigateCondition.values = [[null, oCondition.values[0]]];
+					}
+				}
+
+				oContent.setDOMValue(oAutocomplete.text);
+				oContent.selectText(oAutocomplete.selectionStart, oAutocomplete.selectionEnd);
+
+				oContentFactory.updateConditionType();
+				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?
+			}
+		}
+
+	}
+
+	function _handleValueHelpAfterClose(oEvent) {
+
+		const oContent = this.getControlForSuggestion();
 		if (this._bIgnoreInputValue) {
 			// remove filter value from input and don't use it as input
 			this._bIgnoreInputValue = false;
@@ -3026,16 +3117,20 @@ sap.ui.define([
 
 		_setAriaAttributes.call(this, false);
 
-		// sync conditions with FieldHelp as we cannot e sure that it still is in sync
-		var oFieldHelp = oEvent.getSource();
-		var aConditions = this.getConditions();
-		_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+		// sync conditions with ValueHelp as we cannot e sure that it still is in sync
+		const oValueHelp = oEvent.getSource();
+		const aConditions = this.getConditions();
+		_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
 	}
 
-	function _handleFieldHelpOpened(oEvent) {
+	function _handleValueHelpOpened(oEvent) {
 
-		_setAriaAttributes.call(this, true);
+		let sItemId;
+		if (this.getMaxConditionsForHelp() === 1 || this._sFilterValue) { // set aria-activedescendant only in singleValue or typeahead
+			sItemId = oEvent.getParameter("itemId");
+		}
+		_setAriaAttributes.call(this, true, sItemId);
 		_setShowValueStateMessage.call(this, false);
 
 		// close ValueState message on opening, because opened is sometimes very delayed what would lead to strange effect
@@ -3044,7 +3139,7 @@ sap.ui.define([
 
 	function _handleFieldSwitchToValueHelp(oEvent) {
 
-		var oContent = this.getControlForSuggestion();
+		const oContent = this.getControlForSuggestion();
 		oContent.focus(); // move focus back to Field before opening valueHelp
 		if (oContent.fireValueHelpRequest) {
 			// fake valueHelp icon pressed
@@ -3056,7 +3151,7 @@ sap.ui.define([
 
 	function _handleHelpDataUpdate(oEvent) {
 
-		var isEditing = this.getEditMode() === FieldEditMode.Editable && this.getCurrentContent().length > 0 &&
+		const isEditing = this.getEditMode() === FieldEditMode.Editable && this.getCurrentContent().length > 0 &&
 			sap.ui.getCore().getCurrentFocusedControlId() === this.getCurrentContent()[0].getId();
 
 		//		// also in display mode to get right text
@@ -3074,43 +3169,44 @@ sap.ui.define([
 
 	function _handleDisconnect(oEvent) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		_disconnectFieldhelp.call(this, oFieldHelp);
+		const oValueHelp = _getValueHelp.call(this);
+		_disconnectValueHelp.call(this, oValueHelp);
 
 	}
 
-	function _disconnectFieldhelp(oFieldHelp) {
+	function _disconnectValueHelp(oValueHelp) {
 
 		if (this._bConnected) {
-			oFieldHelp.detachEvent("select", _handleFieldHelpSelect, this);
-			oFieldHelp.detachEvent("navigated", _handleFieldHelpNavigated, this);
-			oFieldHelp.detachEvent("disconnect", _handleDisconnect, this);
-			oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
-			oFieldHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
-			oFieldHelp.detachEvent("closed", _handleFieldHelpAfterClose, this);
-			oFieldHelp.detachEvent("opened", _handleFieldHelpOpened, this);
+			oValueHelp.detachEvent("select", _handleValueHelpSelect, this);
+			oValueHelp.detachEvent("navigated", _handleValueHelpNavigated, this);
+			oValueHelp.detachEvent("disconnect", _handleDisconnect, this);
+			oValueHelp.detachEvent("afterClose", _handleValueHelpAfterClose, this); // TODO: remove
+			oValueHelp.detachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
+			oValueHelp.detachEvent("closed", _handleValueHelpAfterClose, this);
+			oValueHelp.detachEvent("opened", _handleValueHelpOpened, this);
+			oValueHelp.detachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
 		this._bConnected = false;
 		}
 
 	}
 
-	function _connectFieldhelp() {
+	function _connectValueHelp() {
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp) { // as Config or BindingContext might change, update connection on every focus
-			var oType;
-			var bIsMeasure = this.getContentFactory().isMeasure();
+		const oValueHelp = _getValueHelp.call(this);
+		if (oValueHelp) { // as Config or BindingContext might change, update connection on every focus
+			let oType;
+			const bIsMeasure = this.getContentFactory().isMeasure();
 
 			if (bIsMeasure) {
 				// for value help, use the basic type of the unit part, not the unit type. (As ony this part is tranfered, not the composite-array.)
-				var aCompositeTypes = this.getContentFactory().getCompositeTypes();
+				const aCompositeTypes = this.getContentFactory().getCompositeTypes();
 				if (aCompositeTypes && aCompositeTypes.length > 1) { // if no type is defined the default (String) will be used
 					oType = aCompositeTypes[1];
 				}
 			} else {
 				oType = this.getContentFactory().getDataType(); // use data type of Field
 			}
-			var oConfig = { // TODO: only what is needed (also for DefineConditions and Tokenizer)
+			const oConfig = { // TODO: only what is needed (also for DefineConditions and Tokenizer)
 					maxConditions: this.getMaxConditions(), // TODO: in unit case only 1?
 					dataType: oType,
 					additionalDataType: this.getContentFactory().getAdditionalDataType(),
@@ -3121,23 +3217,24 @@ sap.ui.define([
 					payload: this.getPayload(),
 					defaultOperatorName: this.getDefaultOperator ? this.getDefaultOperator() : null
 			};
-			oFieldHelp.connect(this, oConfig);
+			oValueHelp.connect(this, oConfig);
 
 			if (!this._bConnected) { // do not attach events again if already attached
 				this._bConnected = true;
-				oFieldHelp.attachEvent("select", _handleFieldHelpSelect, this);
-				oFieldHelp.attachEvent("navigated", _handleFieldHelpNavigated, this);
-				oFieldHelp.attachEvent("disconnect", _handleDisconnect, this);
-				oFieldHelp.attachEvent("afterClose", _handleFieldHelpAfterClose, this); // TODO: remove
-				oFieldHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
-				oFieldHelp.attachEvent("closed", _handleFieldHelpAfterClose, this);
-				oFieldHelp.attachEvent("opened", _handleFieldHelpOpened, this);
-				var aConditions = this.getConditions();
-				_setConditionsOnFieldHelp.call(this, aConditions, oFieldHelp);
+				oValueHelp.attachEvent("select", _handleValueHelpSelect, this);
+				oValueHelp.attachEvent("navigated", _handleValueHelpNavigated, this);
+				oValueHelp.attachEvent("disconnect", _handleDisconnect, this);
+				oValueHelp.attachEvent("afterClose", _handleValueHelpAfterClose, this); // TODO: remove
+				oValueHelp.attachEvent("switchToValueHelp", _handleFieldSwitchToValueHelp, this);
+				oValueHelp.attachEvent("closed", _handleValueHelpAfterClose, this);
+				oValueHelp.attachEvent("opened", _handleValueHelpOpened, this);
+				oValueHelp.attachEvent("typeaheadSuggested", _handleValueHelpTypeaheadSuggested, this);
+				const aConditions = this.getConditions();
+				_setConditionsOnValueHelp.call(this, aConditions, oValueHelp);
 
-				if (oFieldHelp._bIsDefaultHelp) {
+				if (oValueHelp._bIsDefaultHelp) {
 					// use label as default title for FilterField
-					mDefaultHelps[oFieldHelp._sDefaultHelpType].updateTitle(oFieldHelp, this.getLabel());
+					mDefaultHelps[oValueHelp._sDefaultHelpType].updateTitle(oValueHelp, this.getLabel());
 				}
 			}
 		}
@@ -3146,21 +3243,24 @@ sap.ui.define([
 
 	function _handleContentOnsapfocusleave(oEvent) {
 
-		var oFieldHelp = _getFieldHelp.call(this);
-		var oContent = this.getControlForSuggestion();
-		var oSourceControl = oEvent.srcControl;
+		const oValueHelp = _getValueHelp.call(this);
+		const oContent = this.getControlForSuggestion();
+		const oSourceControl = oEvent.srcControl;
 
-		if (oFieldHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
-			var oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
+		if (oValueHelp && oContent === oSourceControl) { // in unit case only handle content with assigned value help
+			const oFocusedControl = sap.ui.getCore().byId(oEvent.relatedControlId);
 			if (oFocusedControl) {
-				if (containsOrEquals(oFieldHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
+				if (containsOrEquals(oValueHelp.getDomRef(), oFocusedControl.getFocusDomRef())) {
 					oEvent.stopPropagation(); // to prevent focusleave on Field itself
 					oEvent.stopImmediatePropagation(true); // to prevent focusleave on content
 					if (oContent.bValueHelpRequested) {
 						oContent.bValueHelpRequested = false; // to enable change-event after closing value help
 					}
+					if (this._sFilterValue) { // remove Autocomplete as selection is not shown if focus goes to ValueHelp
+						oContent.setDOMValue(this._sFilterValue);
+					}
 				} else {
-					oFieldHelp.skipOpening();
+					oValueHelp.skipOpening();
 				}
 			}
 		}
@@ -3169,7 +3269,7 @@ sap.ui.define([
 
 	function _handleContentOnchange(oEvent) {
 
-		if (_getFieldHelp.call(this)) { // there is a similar logic in sap.m.Input to not execute change if ValueHelp or suggestion is used
+		if (_getValueHelp.call(this)) { // there is a similar logic in sap.m.Input to not execute change if ValueHelp or suggestion is used
 			oEvent.stopImmediatePropagation(true);
 		}
 
@@ -3179,12 +3279,12 @@ sap.ui.define([
 	 * Gets the icon that needs to be rendered for used value help.
 	 * @returns {sap.ui.core.URI|null} Icon
 	 */
-	FieldBase.prototype._getFieldHelpIcon = function() {
+	FieldBase.prototype._getValueHelpIcon = function() {
 
-		var oFieldHelp = _getFieldHelp.call(this);
+		const oValueHelp = _getValueHelp.call(this);
 
-		if (oFieldHelp) {
-			return oFieldHelp.getIcon();
+		if (oValueHelp) {
+			return oValueHelp.getIcon();
 		}
 
 	};
@@ -3202,16 +3302,16 @@ sap.ui.define([
 
 	function _handleInfoDataUpdate() {
 
-		var oFieldInfo = this.getFieldInfo();
-		var that = this;
+		const oFieldInfo = this.getFieldInfo();
+		const that = this;
 		oFieldInfo.isTriggerable().then(function(bTriggerable) {
 			that._bTriggerable = bTriggerable;
-			var aContent = that.getAggregation("_content", []);
+			let aContent = that.getAggregation("_content", []);
 			if (aContent.length > 0 && that.getEditMode() === FieldEditMode.Display) {
 				_createInternalContentWrapper.call(that);
 				if (that._bTriggerable) {
 					aContent = that.getAggregation("_content", []);
-					var oLink = aContent[0];
+					const oLink = aContent[0];
 					oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
 						ContentFactory._updateLink(oLink, oLinkItem);
 					});
@@ -3241,11 +3341,11 @@ sap.ui.define([
 			additionalValueType: this.getContentFactory().retrieveAdditionalDataType(),
 			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
 			display: this.getContentFactory().isMeasure() ? FieldDisplay.Value : this.getDisplay(),
-			valueHelpID: this.getContentFactory().isMeasure() ? undefined : this._getValueHelp() || this._sDefaultFieldHelp,
+			valueHelpID: this.getContentFactory().isMeasure() ? undefined : this._getValueHelp() || this._sDefaultValueHelp,
 			operators: this.getSupportedOperators(),
 			hideOperator: this.getContentFactory().getHideOperator(),
 			maxConditions: this.getMaxConditions(),
-			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
+			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table ValueHelp might be connected to other row)
 			asyncParsing: this._asyncParsingCall,
 			navigateCondition: this._oNavigateCondition,
 			delegate: this.getControlDelegate(),
@@ -3278,8 +3378,8 @@ sap.ui.define([
 		}
 
 		if (vValue === "" || (typeof (vValue) === "string" && vValue.match(/^0+$/))) { // if String is dig-sequence, initial value contains only "0"s
-			var oType = this.getContentFactory().retrieveDataType();
-			var vResult = oType.parseValue("", "string");
+			const oType = this.getContentFactory().retrieveDataType();
+			const vResult = oType.parseValue("", "string");
 			if (vResult === vValue) {
 				return true; // it's initial value
 			} else {
@@ -3291,7 +3391,7 @@ sap.ui.define([
 				}
 			}
 		} else {
-			var sDataType = _getDataTypeName.call(this);
+			const sDataType = _getDataTypeName.call(this);
 			if (this.getTypeMap().getBaseType(sDataType) === BaseType.Unit
 				&& Array.isArray(vValue) && vValue.length > 1 && (vValue[0] === undefined || vValue[0] === null) && !vValue[1]) { // as 0 is a valid number
 				//no number and no unit -> initial
@@ -3325,11 +3425,11 @@ sap.ui.define([
 			additionalValueType: this.getContentFactory().retrieveAdditionalDataType(),
 			additionalCompositeTypes: this.getContentFactory().getAdditionalCompositeTypes(), // only set if CompositeType used
 			display: this.getDisplay(),
-			valueHelpID: this._getValueHelp() || this._sDefaultFieldHelp,
-			operators: ["EQ"],
+			valueHelpID: this._getValueHelp() || this._sDefaultValueHelp,
+			operators: [OperatorName.EQ],
 			hideOperator: true, // TODO: no operator for units
 			maxConditions: 1, // TODO: only one unit allowed
-			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table FieldHelp might be connected to other row)
+			bindingContext: this.getBindingContext(), // to dertmine text and key usding in/out-parameter using correct bindingContext (In Table ValueHelp might be connected to other row)
 			asyncParsing: this._asyncParsingCall,
 			navigateCondition: this._oNavigateCondition,
 			delegate: this.getControlDelegate(),
@@ -3347,25 +3447,21 @@ sap.ui.define([
 	function _asyncParsingCall(oPromise) {
 
 		// close FieldHelp to prevent action on it during parsing (only if still focused, otherwise let autoclose do its work)
-		var oFieldHelp = _getFieldHelp.call(this);
-		if (oFieldHelp && oFieldHelp.isOpen()) {
-			var oFocusedElement = document.activeElement;
-			if (oFocusedElement
-				&& (containsOrEquals(this.getDomRef(), oFocusedElement) || containsOrEquals(oFieldHelp.getDomRef(), oFocusedElement))) {
-				oFieldHelp.close();
-			}
+		const oValueHelp = _getValueHelp.call(this);
+		if (oValueHelp && oValueHelp.isOpen() && (_isFocused.call(this) || _isFocused.call(oValueHelp))) {
+			oValueHelp.close();
 		}
 
 		// as async parsing can be called again while one is still running we have to map the promises to resolve the right one.
-		var oChange = {};
-		var oMyPromise = new Promise(function(fResolve, fReject) {
+		const oChange = {};
+		const oMyPromise = new Promise(function(fResolve, fReject) {
 			oChange.resolve = fResolve;
 			oChange.reject = fReject;
 
 			oPromise.then(function(vResult) {// vResult can be a condition or an array of conditions
 				oChange.result = vResult;
 				this.resetInvalidInput(); // UIMessage will be removed by ValidationSuccess handling
-				var aConditions = this.getConditions();
+				const aConditions = this.getConditions();
 				if (deepEqual(vResult, aConditions)) {
 					// parsingResult is same as current value -> no update will happen
 					_resolveAsyncChange.call(this, oChange);
@@ -3379,7 +3475,7 @@ sap.ui.define([
 					throw oException;
 				}
 				// as async parsing only happens on content control with value help, use this ID
-				var oContent = this.getControlForSuggestion();
+				const oContent = this.getControlForSuggestion();
 				this._setInvalidInput(oException, undefined, "AsyncParsing", oContent);
 				fReject(oException);
 				_removeAsyncChange.call(this, oChange);
@@ -3393,9 +3489,9 @@ sap.ui.define([
 
 	function _getAsyncPromise() {
 
-		var aPromises = [];
+		const aPromises = [];
 
-		for (var i = 0; i < this._aAsyncChanges.length; i++) {
+		for (let i = 0; i < this._aAsyncChanges.length; i++) {
 			aPromises.push(this._aAsyncChanges[i].promise);
 		}
 
@@ -3434,8 +3530,8 @@ sap.ui.define([
 
 	function _removeAsyncChange(oChange) {
 
-		var bFound = false;
-		var i = 0;
+		let bFound = false;
+		let i = 0;
 		for (i = 0; i < this._aAsyncChanges.length; i++) {
 			if (oChange === this._aAsyncChanges[i]) {
 				bFound = true;
@@ -3464,13 +3560,13 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.getSupportedOperators = function() {
 
-		var aOperators;
+		let aOperators;
 		if (this.isSearchField()) {
 			// for SearchField use Contains operator
-			aOperators =  ["Contains"];
+			aOperators =  [OperatorName.Contains];
 		} else {
 			// get default operators for type
-			var sBaseType = this.getBaseType(); // TODO what if delegate not loaded
+			let sBaseType = this.getBaseType(); // TODO what if delegate not loaded
 
 			if (sBaseType === BaseType.Unit) {
 				sBaseType = BaseType.Numeric;
@@ -3495,8 +3591,8 @@ sap.ui.define([
 	 */
 	FieldBase.prototype.isSearchField = function() {
 
-		var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
-		var sFieldPath = this.getFieldPath();
+		const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+		const sFieldPath = this.getFieldPath();
 		return regexp.test(sFieldPath) && this.getMaxConditions() === 1;
 
 	};
@@ -3507,9 +3603,9 @@ sap.ui.define([
 	 */
 	function _isValidOperator(sOperator) {
 
-		var aOperators = this.getSupportedOperators();
+		const aOperators = this.getSupportedOperators();
 
-		for (var i = 0; i < aOperators.length; i++) {
+		for (let i = 0; i < aOperators.length; i++) {
 			if (sOperator === aOperators[i]) {
 				return true;
 			}
@@ -3577,11 +3673,11 @@ sap.ui.define([
 	/**
 	 * Returns the configuration for the additional data type.
 	 *
-	 * In {@link sap.ui.mdc.Field Field} case it is determined from the binding of the <code>additionalValue</code>
-	 * In {@link sap.ui.mdc.MultiValueField MultiValueField} case it is determined from the binding of <code>description</code> of an item
-	 * In {@link sap.ui.mdc.FilterField FilterField} case it is provided via <code>additionalDataType</code> property.
+	 * For a {@link sap.ui.mdc.Field Field}, the data type is determined from the binding of the <code>additionalValue</code>.
+	 * For a {@link sap.ui.mdc.MultiValueField MultiValueField}, the data type is determined from the binding of the <code>description</code> of an item.
+	 * For a {@link sap.ui.mdc.FilterField FilterField}, the data type is provided via the <code>additionalDataType</code> property.
 	 *
-	 * @returns {sap.ui.model.Type|object} return a type instance ot a configuration object
+	 * @returns {sap.ui.model.Type|object} Type instance of a configuration object
 	 * @protected
 	 * @since 1.118.0
 	 */
@@ -3590,6 +3686,13 @@ sap.ui.define([
 		return null;
 
 	};
+
+	function _isFocused() {
+
+		const oFocusedElement = document.activeElement;
+		return (oFocusedElement && (containsOrEquals(this.getDomRef(), oFocusedElement)));
+
+	}
 
 	return FieldBase;
 

@@ -18,7 +18,6 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/Cache",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" // we have to ensure to load fl, so that change handler gets registered
@@ -37,7 +36,6 @@ sap.ui.define([
 	Model,
 	Settings,
 	PersistenceWriteAPI,
-	Cache,
 	Layer,
 	sinon
 ) {
@@ -102,8 +100,8 @@ sap.ui.define([
 		}
 		var sandbox = sinon.createSandbox();
 
-		mOptions.before = mOptions.before || function() {};
-		mOptions.after = mOptions.after || function() {};
+		mOptions.before ||= function() {};
+		mOptions.after ||= function() {};
 
 		// Do QUnit tests
 		QUnit.module(sMsg, function() {
@@ -140,7 +138,7 @@ sap.ui.define([
 					}
 				}
 			},
-			createContent: function() {
+			createContent() {
 				var mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 
@@ -262,17 +260,17 @@ sap.ui.define([
 					oAction.name[1]
 				);
 				assert.ok(oAddAction,
-					"the " + oAction[0] + " via " + oAction.name[1] + " action is available in the designtime"
+					`the ${oAction[0]} via ${oAction.name[1]} action is available in the designtime`
 				);
 			} else if (oAction.name === "createContainer" || oAction.name === "addIFrame") {
 				assert.ok(oAggregationDesignTimeMetadata.getAction(oAction.name, oControl),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			} else if (oAction.name === "move") {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oMovedElement),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			} else {
 				assert.ok(oElementDesignTimeMetadata.getAction(oAction.name, oControl),
-					"the " + oAction.name + "action is available in the calculated designtime metadata during execution");
+					`the ${oAction.name}action is available in the calculated designtime metadata during execution`);
 			}
 		}
 
@@ -303,11 +301,11 @@ sap.ui.define([
 				var oControlOverlay = OverlayRegistry.getOverlay(oControlWithDesigntimeActionDefinition || oTargetControl);
 				if (!oControlOverlay) {
 					throw new Error(
-						"The provided control " + oTargetControl.getId() + "does not have any overlay existing during test execution. "
-						+ "With this testsetup it is no possible to check for designtime action definition. In some cases it is not "
-						+ "possible to identify the control with the designtime metadata automatically just by the given 'action.control'. "
-						+ "In this case please provide the 'action.designtimeActionControl' property with a valid control containing "
-						+ "the designtime metadata definition for this check."
+						`The provided control ${oTargetControl.getId()}does not have any overlay existing during test execution. `
+						+ `With this testsetup it is no possible to check for designtime action definition. In some cases it is not `
+						+ `possible to identify the control with the designtime metadata automatically just by the given 'action.control'. `
+						+ `In this case please provide the 'action.designtimeActionControl' property with a valid control containing `
+						+ `the designtime metadata definition for this check.`
 					);
 				}
 				oElementDesignTimeMetadata = oControlOverlay.getDesignTimeMetadata();
@@ -393,8 +391,8 @@ sap.ui.define([
 			.then(function(oCommand) {
 				assert.ok(
 					oCommand,
-					"then the registration for action to change type, the registration for change and " +
-					"control type to change handler is available and " + mOptions.action.name + " is a valid action"
+					`then the registration for action to change type, the registration for change and ` +
+					`control type to change handler is available and ${mOptions.action.name} is a valid action`
 				);
 				return oCommand;
 			})
@@ -551,8 +549,7 @@ sap.ui.define([
 		function applyChangeOnXML(assert) {
 			// Stub LREP access to have the command as UI change (needs the view to build the correct ids)
 			var aChanges = [];
-			sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").resolves(aChanges);
-			sandbox.stub(ChangePersistence.prototype, "getCacheKey").resolves("etag-123");
+			sandbox.stub(ChangePersistence.prototype, "getChangesForView").resolves(aChanges);
 
 			return createViewInComponent.call(this, SYNC)
 			.then(buildCommandsAndApplyChangesOnXML.bind(this, assert, aChanges));
@@ -586,18 +583,18 @@ sap.ui.define([
 
 		// XML View checks
 		if (!mOptions.jsOnly) {
-			QUnit.module(sMsg + " on async views", {
-				before: function(assert) {
+			QUnit.module(`${sMsg} on async views`, {
+				before(assert) {
 					this.hookContext = {};
 					return mOptions.before.call(this.hookContext, assert);
 				},
-				after: function(assert) {
+				after(assert) {
 					return mOptions.after.call(this.hookContext, assert);
 				},
-				beforeEach: function() {
+				beforeEach() {
 					sandbox.stub(Settings, "getInstance").resolves({_oSettings: {}});
 				},
-				afterEach: function() {
+				afterEach() {
 					this.oUiComponentContainer.destroy();
 					this.oDesignTime.destroy();
 					destroyCommands(this.aCommands);
@@ -675,17 +672,16 @@ sap.ui.define([
 		}
 
 		QUnit.module(sMsg, {
-			before: function(assert) {
+			before(assert) {
 				this.hookContext = {};
 				return mOptions.before.call(this.hookContext, assert);
 			},
-			after: function(assert) {
+			after(assert) {
 				return mOptions.after.call(this.hookContext, assert);
 			},
-			beforeEach: function(assert) {
+			beforeEach(assert) {
 				// no LREP response needed
 				sandbox.stub(ChangePersistence.prototype, "getChangesForComponent").returns(Promise.resolve([]));
-				sandbox.stub(ChangePersistence.prototype, "getCacheKey").returns(Cache.NOTAG); // no cache key => no xml view processing
 				sandbox.stub(Settings, "getInstance").returns(Promise.resolve({_oSettings: {}}));
 
 				return createViewInComponent.call(this, SYNC)
@@ -694,7 +690,7 @@ sap.ui.define([
 					this.aCommands = aCommands;
 				}.bind(this));
 			},
-			afterEach: function() {
+			afterEach() {
 				this.oDesignTime.destroy();
 				this.oUiComponentContainer.destroy();
 				destroyCommands(this.aCommands);

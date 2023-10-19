@@ -19,15 +19,15 @@ sap.ui.define([
 
 	function createAppComponent(bFlexExtensionPointEnabled) {
 		return {
-			getManifestEntry: function() {
+			getManifestEntry() {
 				return {
 					flexExtensionPointEnabled: bFlexExtensionPointEnabled
 				};
 			},
-			getComponentData: function() {},
-			getManifestObject: function() {
+			getComponentData() {},
+			getManifestObject() {
 				return {
-					getEntry: function() {
+					getEntry() {
 						return {
 							appVariantId: "appId"
 						};
@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("ManifestUtils.getFlexReferenceForControl / getFlexReferenceForSelector", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -66,7 +66,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ManifestUtils.getFlexReference", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -156,12 +156,12 @@ sap.ui.define([
 		QUnit.test("with manifest object at design time and getComponentName is available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
-					getEntry: function() {
+					getEntry() {
 						return {
 							id: APP_ID_AT_DESIGN_TIME
 						};
 					},
-					getComponentName: function() {
+					getComponentName() {
 						return "appId";
 					}
 				}
@@ -172,7 +172,7 @@ sap.ui.define([
 		QUnit.test("with manifest object at design time and getComponentName is not available", function(assert) {
 			var mPropertyBag = {
 				manifest: {
-					getEntry: function() {
+					getEntry() {
 						return {
 							id: APP_ID_AT_DESIGN_TIME
 						};
@@ -213,14 +213,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("ManifestUtils.getAppIdFromManifest", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with a getEntry function (manifest instance)", function(assert) {
 			var sId = "appId";
 			var oManifest = {
-				getEntry: function() {
+				getEntry() {
 					return {
 						id: sId
 					};
@@ -247,7 +247,7 @@ sap.ui.define([
 				"sap.app": {
 					id: APP_ID_AT_DESIGN_TIME
 				},
-				getComponentName: function() {
+				getComponentName() {
 					return sId;
 				}
 			};
@@ -436,7 +436,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ManifestUtils.isFlexExtensionPointHandlingEnabled", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

@@ -99,8 +99,11 @@ sap.ui.define([
 			"sap.m.DialogRoleType",
 			"sap.m.DialogType",
 			"sap.m.DraftIndicatorState",
+			"sap.m.DynamicDateRangeGroups",
+			"sap.m.EmptyIndicatorMode",
 			"sap.m.FacetFilterListDataType",
 			"sap.m.FacetFilterType",
+			"sap.m.FilterPanelField",
 			"sap.m.FlexAlignContent",
 			"sap.m.FlexAlignItems",
 			"sap.m.FlexAlignSelf",
@@ -182,14 +185,17 @@ sap.ui.define([
 			"sap.m.VerticalPlacementType",
 			"sap.m.WrappingType",
 			"sap.m.WizardRenderMode",
+			"sap.m.plugins.CopyPreference",
 			"sap.m.semantic.SemanticRuleSetType",
 			"sap.m.table.columnmenu.Category",
-			"sap.m.upload.UploaderHttpRequestMethod"
+			"sap.m.upload.UploaderHttpRequestMethod",
+			"sap.m.UploadSetwithTableActionPlaceHolder"
 		],
 		interfaces: [
 			"sap.m.IBar",
 			"sap.m.IBadge",
 			"sap.m.IBreadcrumbs",
+			"sap.m.ITableItem",
 			"sap.m.p13n.IContent",
 			"sap.m.IconTab",
 			"sap.m.IScale",
@@ -377,8 +383,8 @@ sap.ui.define([
 			"sap.m.UploadCollectionToolbarPlaceholder",
 			"sap.m.upload.UploadSet",
 			"sap.m.upload.UploadSetToolbarPlaceholder",
-			"sap.m.upload.UploadSetTable",
-			"sap.m.upload.UploadSetTableItem",
+			"sap.m.upload.UploadSetwithTable",
+			"sap.m.upload.UploadSetwithTableItem",
 			"sap.m.VariantManagement",
 			"sap.m.VBox",
 			"sap.m.ViewSettingsDialog",
@@ -417,6 +423,7 @@ sap.ui.define([
 			"sap.m.IconTabSeparator",
 			"sap.m.ImageCustomData",
 			"sap.m.LightBoxItem",
+			"sap.m.LinkTileContent",
 			"sap.m.OverflowToolbarLayoutData",
 			"sap.m.MaskInputRule",
 			"sap.m.MenuItem",
@@ -453,6 +460,7 @@ sap.ui.define([
 			"sap.m.upload.Uploader",
 			"sap.m.upload.UploaderTableItem",
 			"sap.m.upload.UploadSetItem",
+			"sap.m.upload.FilePreviewDialog",
 			"sap.m.VariantItem",
 			"sap.m.ViewSettingsCustomItem",
 			"sap.m.ViewSettingsCustomTab",
@@ -615,7 +623,8 @@ sap.ui.define([
 				},
 				"sap.m.ObjectHeader": {
 					"moveControls": "default"
-				}
+				},
+				"sap.m.upload.UploadSetwithTable":"sap/m/upload/p13n/flexibility/UploadSetwithTable"
 			},
 			//Configuration used for rule loading of Support Assistant
 			"sap.ui.support": {
@@ -658,6 +667,36 @@ sap.ui.define([
 		Translucent : "Translucent"
 
 	};
+
+	/**
+	*  Defines the placeholder type for the control to be replaced.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.120
+	*/
+	thisLib.UploadSetwithTableActionPlaceHolder = {
+	   /**
+		* Placeholder for variant management.
+		* @public
+		*/
+	   VariantManagementPlaceholder: "VariantManagementPlaceholder",
+	   /**
+		* Placeholder for personalization settings button.
+		* @public
+		*/
+	   PersonalizationSettingsPlaceholder: "PersonalizationSettingsPlaceholder",
+	   /**
+		* Placeholder for upload button control.
+		* @public
+		*/
+	   UploadButtonPlaceholder : "UploadButtonPlaceholder",
+	   /**
+		* Placeholder for cloud file picker button.
+		* @public
+	   */
+	   CloudFilePickerButtonPlaceholder : "CloudFilePickerButtonPlaceholder"
+   };
 
 	/**
 	 * Types of state of {@link sap.m.BadgeEnabler} to expose its current state.
@@ -2096,6 +2135,16 @@ sap.ui.define([
 
 	/**
 	 *
+	 * Common interface for sap.m.ColumnListItem and sap.m.GroupHeaderListItem
+	 *
+	 * @since 1.119
+	 * @name sap.m.ITableItem
+	 * @interface
+	 * @public
+	 */
+
+	/**
+	 *
 	 * Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
 	 * Implementation of this interface should implement the following methods:
 	 * <ul>
@@ -2771,7 +2820,6 @@ sap.ui.define([
 	/**
 	 * Defines the keyboard handling behavior of the <code>sap.m.List</code> or <code>sap.m.Table</code>.
 	 *
-	 * @deprecated Since version 1.118. This has no more effect on the keyboard handling.
 	 * @enum {string}
 	 * @public
 	 * @since 1.38.0
@@ -2779,21 +2827,22 @@ sap.ui.define([
 	thisLib.ListKeyboardMode = {
 
 		/**
-		 * This default mode is suitable if the number of items is unlimited or if there is no editable field
-		 * within the item.
+		 * This default mode is suitable if the List or Table contains editable and/or non-editable fields.
 		 *
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves
-		 * the focus to the next/previous element in the tab chain after/before the <code>sap.m.List</code>
-		 * or <code>sap.m.Table</code>.
+		 * In this mode, the first focus goes to the first item.
+		 * If the focus is on the item, or cell, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
+		 * the <code>sap.m.List</code> or <code>sap.m.Table</code> control.
+		 * If the focus is on the interactive element, pressing tab/shift+tab moves the focus to the next/previous element in the tab chain after/before
+		 * the focused interactive element.
 		 * @public
 		 */
 		Navigation : "Navigation",
 
 		/**
-		 * This mode is suitable if the number of items is limited and if there are editable fields within the item.
+		 * This mode is suitable if there are only editable fields within the item.
 		 *
-		 * While the last/first interactive element within an item has the focus, pressing tab/shift+tab moves
-		 * the focus to the next/previous element in the tab chain after/before the item </code>.
+		 * In this mode, the first focus goes to the first interactive element within the first item and this is the only difference between the <code>Edit</code>
+		 * and <code>Navigation</code> mode.
 		 * @public
 		 */
 		Edit : "Edit"
@@ -2921,6 +2970,52 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines the groups in {@link sap.m.DynamicDateRange}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.118
+	 */
+	 thisLib.DynamicDateRangeGroups = {
+
+		/**
+		 * Group of options that provide selection of single dates.
+		 * @public
+		 */
+		SingleDates: "SingleDates",
+
+		/**
+		 * Group of options that provide selection of date ranges.
+		 * @public
+		 */
+		DateRanges: "DateRanges",
+
+		/**
+		 * Group of options that provide selection of week related ranges.
+		 * @public
+		 */
+		Weeks: "Weeks",
+
+		/**
+		 * Group of options that provide selection of month related ranges.
+		 * @public
+		 */
+		Month: "Month",
+
+		/**
+		 * Group of options that provide selection of quarter related ranges.
+		 * @public
+		 */
+		Quarters: "Quarters",
+
+		/**
+		 * Group of options that provide selection of year related ranges.
+		 * @public
+		 */
+		Years: "Years"
+	};
+
+	/**
 	 * Enumeration of possible load statuses.
 	 *
 	 * @enum {string}
@@ -2964,14 +3059,14 @@ sap.ui.define([
 	thisLib.MenuButtonMode = {
 
 		/**
-		 * Default regular type (Menu button appears as a regular button, pressing opens a menu)
+		 * Default Regular type - MenuButton appears as a regular button, pressing it opens a menu.
 		 * @public
 		 */
 		Regular: "Regular",
 
 		/**
-		 * Split type (Menu button appears as a split button, pressing fires the default action a menu,
-		 * pressing the arrow part opens a menu)
+		 * Split type - MenuButton appears as a split button separated into two areas: the text and the arrow button. Pressing the
+		 * text area fires the default (or last) action, pressing the arrow part opens a menu.
 		 * @public
 		 */
 		Split: "Split"
@@ -3173,15 +3268,22 @@ sap.ui.define([
 	 *
 	 * Interface for P13nPopup which are suitable as content for the <code>sap.m.p13n.Popup</code>.
 	 * Implementation of this interface should include the following methods:
+	 *
 	 * <ul>
 	 * <li><code>getTitle</code></li>
+	 * </ul>
+	 *
+	 * Implementation of this interface can optionally provide the following methods:
+	 *
+	 * <ul>
+	 * <li><code>getVerticalScrolling</code></li>
+	 * <li><code>onReset</code></li>
 	 * </ul>
 	 *
 	 * @since 1.97
 	 * @name sap.m.p13n.IContent
 	 * @interface
 	 * @public
-	 * @experimental
 	 */
 
 	/**
@@ -3192,7 +3294,25 @@ sap.ui.define([
 	 * @function
 	 * @name sap.m.p13n.IContent.getTitle
 	 * @public
-	 * @experimental
+	 */
+
+	/**
+	 * Optionally returns the enablement of the contents vertical scrolling in case only one panel is used to determine if the content provides its own
+	 * scrolling capabilites.
+	 *
+	 * @returns {boolean} The enablement of the vertical scrolling enablement for the <code>sap.m.p13n.Popup</code>.
+	 *
+	 * @function
+	 * @name sap.m.p13n.IContent.getVerticalScrolling?
+	 * @public
+	 */
+
+	/**
+	 * Optional hook that will be executed when the panel is used by a <code>sap.m.p13n.Popup</code> that may trigger a reset on the panel
+	 *
+	 * @function
+	 * @name sap.m.p13n.IContent.onReset?
+	 * @public
 	 */
 
 	/**
@@ -4972,6 +5092,30 @@ sap.ui.define([
 		SelectAll: "SelectAll"
 	};
 
+	thisLib.plugins = thisLib.plugins || {};
+
+	/**
+	 * Enumeration of the <code>copyPreference</code> in <code>CopyProvider</code>. Determines what is copied during a copy operation.
+	 * @enum {string}
+	 * @public
+	 * @since 1.119
+	 */
+	thisLib.plugins.CopyPreference = {
+		/**
+		 * The entire selected scope is copied, including both row and cell selection.
+		 * @public
+		 */
+		Full: "Full",
+
+		/**
+		 * If cells are selected, only the content of the selected cells is copied,
+		 * regardless of any other rows or elements that might also be selected. If no cells are selected,
+		 * the copy operation will default to copying the selected rows.
+		 * @public
+		 */
+		Cells: "Cells"
+	};
+
 	/**
 	 * @deprecated since 1.56 as lazy loading implies sync loading
 	 */
@@ -5848,135 +5992,6 @@ sap.ui.define([
 		return oInputODataSuggestProvider;
 	}());
 
-	// implement Form helper factory with m controls
-	// possible is set before layout lib is loaded.
-	ObjectPath.set("sap.ui.layout.form.FormHelper", {
-		Label: undefined,
-		Button: undefined,
-		Text: undefined,
-		init: function() {
-			// normally this basic controls should be always loaded
-			this.Label = sap.ui.require("sap/m/Label");
-			this.Text = sap.ui.require("sap/m/Text");
-			this.Button = sap.ui.require("sap/m/Button");
-
-			if (!this.Label || !this.Text || !this.Button) {
-				if (!this.oInitPromise) {
-					this.oInitPromise = new Promise(function(fResolve, fReject) {
-						sap.ui.require(["sap/m/Label", "sap/m/Text", "sap/m/Button"], function(Label, Text, Button) {
-							this.Label = Label;
-							this.Text = Text;
-							this.Button = Button;
-							fResolve(true);
-						}.bind(this));
-					}.bind(this));
-				}
-				return this.oInitPromise;
-			} else if (this.oInitPromise) {
-				delete this.oInitPromise; // not longer needed
-			}
-			return null;
-		},
-		createLabel: function(sText, sId){
-			return new this.Label(sId, {text: sText});
-		},
-		createButton: function(sId, fnPressFunction, oListener){
-			var oButton = new this.Button(sId, {type: thisLib.ButtonType.Transparent});
-			oButton.attachEvent("press", fnPressFunction, oListener); // attach event this way to have the right this-reference in handler
-			return oButton;
-		},
-		setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){
-			oButton.setText(sText);
-			oButton.setTooltip(sTooltip);
-			oButton.setIcon(sIcon);
-			oButton.setActiveIcon(sIconHovered);
-		},
-		addFormClass: function(){ return "sapUiFormM"; },
-		setToolbar: function(oToolbar){
-			var oOldToolbar = this.getToolbar();
-			if (oOldToolbar && oOldToolbar.setDesign) {
-				// check for setDesign because we don't know what kind of custom toolbars might be used.
-				oOldToolbar.setDesign(oOldToolbar.getDesign(), true);
-			}
-			if (oToolbar && oToolbar.setDesign) {
-				oToolbar.setDesign(sap.m.ToolbarDesign.Transparent, true);
-			}
-			return oToolbar;
-		},
-		getToolbarTitle: function(oToolbar) {
-			// determine Title to point aria-label on this. As Fallback use the whole Toolbar
-			if (oToolbar) {
-				var aContent = oToolbar.getContent();
-				for (var i = 0; i < aContent.length; i++) {
-					var oContent = aContent[i];
-					if (oContent.isA("sap.m.Title")) {
-						return oContent.getId();
-					}
-				}
-				return oToolbar.getId(); // fallback
-			}
-		},
-		createDelimiter: function(sDelimiter, sId){
-			return new this.Text(sId, {text: sDelimiter, textAlign: CoreLibrary.TextAlign.Center});
-		},
-		createSemanticDisplayControl: function(sText, sId){
-			return new this.Text(sId, {text: sText});
-		},
-		updateDelimiter: function(oText, sDelimiter){
-			oText.setText(sDelimiter);
-		},
-		updateSemanticDisplayControl: function(oText, sText){
-			oText.setText(sText);
-		},
-		bArrowKeySupport: false, /* disables the keyboard support for arrow keys */
-		bFinal: true
-	});
-
-	//implement FileUploader helper factory with m controls
-	ObjectPath.set("sap.ui.unified.FileUploaderHelper", {
-		createTextField: function(sId){
-			var oTextField = new sap.m.Input(sId);
-			return oTextField;
-		},
-		setTextFieldContent: function(oTextField, sWidth){
-			oTextField.setWidth(sWidth);
-		},
-		createButton: function(sId){
-			var oButton = new sap.m.Button(sId);
-			return oButton;
-		},
-		addFormClass: function(){ return "sapUiFUM"; },
-		bFinal: true
-	});
-
-	// implements ColorPicker helper factory with common controls
-	ObjectPath.set("sap.ui.unified.ColorPickerHelper", {
-		isResponsive: function () {
-			return true;
-		},
-		factory: {
-			createLabel: function (mConfig) {
-				return new sap.m.Label(mConfig);
-			},
-			createInput: function (sId, mConfig) {
-				return new sap.m.InputBase(sId, mConfig);
-			},
-			createSlider: function (sId, mConfig) {
-				return new sap.m.Slider(sId, mConfig);
-			},
-			createRadioButtonGroup: function (mConfig) {
-				return new sap.m.RadioButtonGroup(mConfig);
-			},
-			createRadioButtonItem: function (mConfig) {
-				return new sap.m.RadioButton(mConfig);
-			},
-			createButton: function (sId, mConfig) {
-				return new sap.m.Button(sId, mConfig);
-			}
-		},
-		bFinal: true
-	});
-
 	//implement table helper factory with m controls
 	//possible is set before layout lib is loaded.
 	/**
@@ -5993,12 +6008,31 @@ sap.ui.define([
 		bFinal: true /* This table helper wins, even when commons helper was set before */
 	});
 
+	/**
+	 * @deprecated As of version 1.120
+	 */
 	ObjectPath.set("sap.ui.layout.GridHelper", {
 		getLibrarySpecificClass: function () {
 			return "";
 		},
 		bFinal: true
 	});
+
+	/**
+	 * An object type that represents sap.m.upload.FilterPanel fields properties.
+	 * @typedef {object}
+	 * @public
+	 * @property {string} label field name.
+	 * @property {string} path model path.
+	 */
+	thisLib.FilterPanelField = DataType.createType("sap.m.FilterPanelField", {
+		isValid: function (oValue) {
+			var aValueKeys = Object.keys(oValue);
+			return ["label", "path"].every(function (sKey) {
+				return aValueKeys.indexOf(sKey) !== -1;
+			});
+		}
+	}, "object");
 
 	/* Android browsers do not scroll a focused input into the view correctly after resize */
 	if (Device.os.android) {

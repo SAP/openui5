@@ -3,7 +3,8 @@
 	controllerName="sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:table="sap.ui.table">
+	xmlns:table="sap.ui.table"
+	xmlns:tablerm="sap.ui.table.rowmodes">
 
 	<Title text="Responsive Table" titleStyle="H1"/>
 
@@ -52,7 +53,7 @@
 
 	<!-- Note: for $$aggregation, see controller's onInit! -->
 	<table:Table id="tTable" rows="{path : '/BusinessPartners', suspended : true}"
-			selectionMode="None" threshold="0" visibleRowCount="5">
+			selectionMode="None" threshold="0">
 		<table:extension>
 			<Toolbar class="sapMTBHeader-CTX">
 				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2"/>
@@ -65,6 +66,9 @@
 					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid"/>
 			</Toolbar>
 		</table:extension>
+		<table:rowMode>
+			<tablerm:Fixed rowCount="5"/>
+		</table:rowMode>
 		<table:Column>
 			<Label text="Region"/>
 			<table:template>

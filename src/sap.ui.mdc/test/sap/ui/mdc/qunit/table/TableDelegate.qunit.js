@@ -20,6 +20,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableMultiSelectMode",
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableType",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
@@ -42,13 +44,15 @@ sap.ui.define([
 	TableMultiSelectMode,
 	TableSelectionMode,
 	TableType,
+	ConditionValidated,
+	OperatorName,
 	FilterUtil
 ) {
 	"use strict";
 
-	var sDelegatePath = "sap/ui/mdc/TableDelegate";
+	const sDelegatePath = "sap/ui/mdc/TableDelegate";
 
-	var fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
+	const fnOriginalUpdateBindingInfo = TableDelegate.updateBindingInfo;
 	TableDelegate.updateBindingInfo = function(oTable, oBindingInfo) {
 		fnOriginalUpdateBindingInfo.apply(this, arguments);
 		oBindingInfo.path = oTable.getPayload() ? oTable.getPayload().collectionPath : "/foo";
@@ -99,7 +103,8 @@ sap.ui.define([
 			TableQUnitUtils.stubPropertyInfos(Table.prototype, [{
 				name: "Name",
 				path: "Name_Path",
-				label: "Name_Label"
+				label: "Name_Label",
+				dataType: "String"
 			}]);
 		},
 		afterEach: function() {
@@ -114,8 +119,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("GridTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -132,7 +137,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
 			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
@@ -165,7 +170,7 @@ sap.ui.define([
 				});
 			});
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 			return oPlugin.addSelectionInterval(1, 1).then(function() {
 				return oTable;
 			});
@@ -176,8 +181,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -194,7 +199,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 
 			assert.ok(oPlugin, "Applied sap.ui.table.plugins.MultiSelectionPlugin");
 			assert.equal(oPlugin.getLimit(), 1337, "Selection limit");
@@ -227,7 +232,7 @@ sap.ui.define([
 				});
 			});
 		}).then(function(oTable) {
-			var oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
+			const oPlugin = PluginBase.getPlugin(oTable._oTable, "sap.ui.table.plugins.MultiSelectionPlugin");
 			return oPlugin.addSelectionInterval(1, 1).then(function() {
 				return oTable;
 			});
@@ -238,8 +243,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("ResponsiveTableType", function(assert) {
-		var mSelectionChangeParameters;
-		var oSelectionChangeStub = sinon.stub();
+		let mSelectionChangeParameters;
+		const oSelectionChangeStub = sinon.stub();
 
 		oSelectionChangeStub.callsFake(function(oEvent) {
 			mSelectionChangeParameters = oEvent.getParameters();
@@ -254,7 +259,7 @@ sap.ui.define([
 		}, function(oTable) {
 			assert.deepEqual(oTable.getSelectedContexts(), [], "#getSelectedContexts if not yet initialized");
 		}).then(function(oTable) {
-			var oInnerTable = oTable._oTable;
+			const oInnerTable = oTable._oTable;
 
 			assert.equal(oInnerTable.getMode(), "SingleSelectLeft", "Selection mode");
 			assert.equal(oInnerTable.getMultiSelectMode(), "ClearAll", "Multi select mode");
@@ -352,9 +357,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("validateState", function(assert) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		var oState = {};
-		var oValidationState = this.oTable.validateState(oState, "Group");
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oState = {};
+		let oValidationState = this.oTable.validateState(oState, "Group");
 
 		assert.equal(oValidationState.validation, coreLibrary.MessageType.None, "No message");
 		assert.equal(oValidationState.message, undefined, "Message text is not defined");
@@ -366,30 +371,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("updateBindingInfo", function(assert) {
-		var oTable = this.oTable;
+		const oTable = this.oTable;
 		oTable.setP13nMode(["Sort", "Filter"]);
-		var oFilterConditions = {
+		const oFilterConditions = {
 			Name: [
 				{
 					isEmpty: null,
-					operator: "EQ",
-					validated: "NotValidated",
+					operator: OperatorName.EQ,
+					validated: ConditionValidated.NotValidated,
 					values: ["test"]
 				}
 			]
 		};
 
-		var oStub = sinon.stub(oTable, "getConditions").returns(oFilterConditions);
-		var aExpectedFilter = [];
+		const oStub = sinon.stub(oTable, "getConditions").returns(oFilterConditions);
+		let aExpectedFilter = [];
 		return TableQUnitUtils.waitForBindingInfo(oTable).then(function() {
 			oTable.setSortConditions({sorters: [{name: "Name", descending: true}]});
 			oTable.setGroupConditions({groupLevels: [{name: "Name"}]});
 			oTable.rebind();
 			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
-			var aSorter = [new Sorter("Name_Path", true)];
+			const aSorter = [new Sorter("Name_Path", true)];
 			aExpectedFilter = [FilterUtil.getFilterInfo(oTable.getControlDelegate().getTypeMap(), oTable.getConditions(), oTable.getPropertyHelper().getProperties()).filters];
-			var oBindingInfo = {};
+			const oBindingInfo = {};
 
 			assert.deepEqual(oTable._oTable.getBindingInfo("rows").sorter, aSorter, "Correct sorter assigned");
 			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
@@ -398,7 +403,7 @@ sap.ui.define([
 			oTable.setType("ResponsiveTable");
 			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
-			var oSorter = oTable._oTable.getBindingInfo("items").sorter[0];
+			const oSorter = oTable._oTable.getBindingInfo("items").sorter[0];
 
 			assert.ok(oTable._oTable.getBindingInfo("items").sorter.length, 1, "One sorter assigned");
 			assert.ok(oSorter.sPath === "Name_Path" && oSorter.bDescending === true && oSorter.vGroup != null, "Sorter properties");
@@ -408,7 +413,7 @@ sap.ui.define([
 			oTable.rebind();
 			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
-			var aSorters = oTable._oTable.getBindingInfo("items").sorter;
+			const aSorters = oTable._oTable.getBindingInfo("items").sorter;
 
 			assert.ok(aSorters, 2, "Two sorters assigned");
 			assert.ok(aSorters[0].sPath === "FirstName_Path" && aSorters[0].bDescending === false && aSorters[0].vGroup != null,
@@ -416,7 +421,7 @@ sap.ui.define([
 			assert.ok(aSorters[1].sPath === "Name_Path" && aSorters[1].bDescending === true && aSorters[1].vGroup == null,
 				"Second sorter properties");
 
-			var oBindingInfo = {};
+			const oBindingInfo = {};
 			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
 			assert.ok(deepEqual(aSorters, oBindingInfo.sorter), "The new sorters are equal to the old sorters if grouping didn't change");
 
@@ -424,8 +429,8 @@ sap.ui.define([
 			oTable.rebind();
 			return TableQUnitUtils.waitForBindingUpdate(oTable);
 		}).then(function() {
-			var aSorter = [new Sorter("Name_Path", true)];
-			var oBindingInfo = {};
+			const aSorter = [new Sorter("Name_Path", true)];
+			const oBindingInfo = {};
 
 			assert.deepEqual(oTable._oTable.getBindingInfo("items").sorter, aSorter, "Correct sorter assigned");
 			TableDelegate.updateBindingInfo(oTable, oBindingInfo);
@@ -435,8 +440,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("formatGroupHeader", function(assert) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		var oContext = new Context();
+		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oContext = new Context();
 
 		sinon.stub(oContext, "getProperty").callsFake(function(sPath) {
 			switch (sPath) {
@@ -471,9 +476,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("getSupportedFeatures", function(assert) {
-		var fnTest = function(sTableType, oExpectedFeatures) {
+		const fnTest = function(sTableType, oExpectedFeatures) {
 			return this.oTable.setType(sTableType).initialized().then(function(oTable) {
-				var oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
+				const oFeatures = oTable.getControlDelegate().getSupportedFeatures(oTable);
 				assert.deepEqual(oFeatures, oExpectedFeatures, sTableType + ": supported features are correct");
 			});
 		}.bind(this);

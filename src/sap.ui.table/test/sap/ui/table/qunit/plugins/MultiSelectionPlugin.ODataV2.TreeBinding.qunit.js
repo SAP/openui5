@@ -29,7 +29,7 @@ sap.ui.define([
 	oAnnotationMockServer.start();
 
 	TableQUnitUtils.setDefaultSettings({
-		plugins: [new MultiSelectionPlugin()],
+		dependents: [new MultiSelectionPlugin()],
 		rows: {
 			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
 			parameters: {
@@ -44,7 +44,7 @@ sap.ui.define([
 	QUnit.module("Load data", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable(TreeTable);
-			this.oMultiSelectionPlugin = this.oTable.getPlugins()[0];
+			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 
 			// The binding is expanding to level 4 in 4 steps. We need to wait for completion before test execution.
 			function waitForLevel4(oTable) {

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/BaseCreate",
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog"
 ], function(
+	Lib,
 	BaseCreate,
 	FlexUtils,
 	DtUtil,
@@ -22,7 +24,7 @@ sap.ui.define([
 	function getCreateMenuItemText(sAggregationName, sTextKey, oTextResources, oOverlay) {
 		var bSibling = !sAggregationName;
 		var oAction = this.getCreateAction(bSibling, oOverlay, sAggregationName);
-		return oTextResources.getText(sTextKey, oAction.text);
+		return oTextResources.getText(sTextKey, [oAction.text]);
 	}
 
 	function getAddIFrameCommand(oModifiedElement, mSettings, oDesignTimeMetadata, sVariantManagementKey) {
@@ -47,7 +49,8 @@ sap.ui.define([
 			url: mSettings.frameUrl,
 			width: sWidth,
 			height: sHeight,
-			title: mSettings.title
+			title: mSettings.title,
+			useLegacyNavigation: mSettings.useLegacyNavigation
 		}, oDesignTimeMetadata, sVariantManagementKey);
 	}
 
@@ -119,7 +122,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.75
 	 * @alias sap.ui.rta.plugin.AddIFrame
-	 * @experimental Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AddIFrame = BaseCreate.extend("sap.ui.rta.plugin.AddIFrame", /** @lends sap.ui.rta.plugin.AddIFrame.prototype */{
 		metadata: {
@@ -150,9 +152,9 @@ sap.ui.define([
 	 * @return {array} Array of context menu items
 	 * @override
 	 */
-	AddIFrame.prototype.getMenuItems = function(aElementOverlays) {
+	AddIFrame.prototype.getMenuItems = async function(aElementOverlays) {
 		function getCommonProperties(sAggregationName) {
-			var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+			var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 			var sIFrameGroupText = oTextResources.getText("CTX_ADDIFRAME_GROUP");
 			return {
 				text: getCreateMenuItemText.bind(this, sAggregationName, "CTX_ADDIFRAME", oTextResources),
@@ -169,8 +171,9 @@ sap.ui.define([
 			collectionName: "tnt",
 			fontFamily: "SAP-icons-TNT",
 			fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/fonts"),
-			lazy: true
+			lazy: false
 		});
+		await IconPool.fontLoaded("tnt");
 
 		var iBaseRank = 140;
 		var aMenuItems = [];
@@ -196,7 +199,7 @@ sap.ui.define([
 			.map(function(oAction, iIndex) {
 				var oParentMenuItem = Object.assign({
 					action: oAction,
-					id: "CTX_CREATE_CHILD_IFRAME_" + oAction.aggregation.toUpperCase(),
+					id: `CTX_CREATE_CHILD_IFRAME_${oAction.aggregation.toUpperCase()}`,
 					rank: iBaseRank + 10 * iIndex
 				}, getCommonProperties.call(this, oAction.aggregation));
 

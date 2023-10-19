@@ -1,15 +1,19 @@
 /* global QUnit */
-sap.ui.define(["sap/ui/core/Configuration"], function(Configuration) {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/ui/core/Theming"
+], function(
+	Core,
+	Theming
+) {
 	"use strict";
 	QUnit.module("Basic");
 
 	QUnit.test("ExternalConfig", function(assert) {
-
-		var oConfig = Configuration;
-
-		assert.equal(oConfig.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
-		assert.ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
-		assert.ok(sap.m === undefined, "sap.m must not be preloaded");
-
+		return Core.ready().then(() => {
+			assert.equal(Theming.getTheme(), "sap_bluecrystal", "Theme must be sap_blucrystal");
+			assert.ok(sap.ui.commons !== undefined, "sap.ui.commons must be preloaded");
+			assert.ok(sap.m === undefined, "sap.m must not be preloaded");
+		});
 	});
 });

@@ -4,14 +4,14 @@
 
 // Provides control sap.ui.webc.main.MultiInput.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/library",
-	"./thirdparty/MultiInput",
 	"./thirdparty/features/InputElementsFormSupport",
-	"./thirdparty/features/InputSuggestions"
+	"./thirdparty/features/InputSuggestions",
+	"./thirdparty/MultiInput"
 ], function(WebComponent, library, EnabledPropagator, ManagedObjectObserver, coreLibrary) {
 	"use strict";
 
@@ -24,7 +24,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> A <code>sap.ui.webc.main.MultiInput</code> field allows the user to enter multiple values, which are displayed as <code>sap.ui.webc.main.Token</code>.
@@ -69,7 +69,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -158,7 +158,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the HTML type of the component. Available options are: <code>Text</code>, <code>Email</code>, <code>Number</code>, <code>Password</code>, <code>Tel</code>, and <code>URL</code>. <br>
+				 * Defines the HTML type of the component. <br>
 				 * <br>
 				 * <b>Notes:</b>
 				 * <ul>
@@ -182,16 +182,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the value state of the component. <br>
-				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul>
+				 * Defines the value state of the component.
 				 */
 				valueState: {
 					type: "sap.ui.core.ValueState",

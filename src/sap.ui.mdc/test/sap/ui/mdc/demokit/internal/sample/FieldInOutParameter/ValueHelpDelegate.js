@@ -9,14 +9,15 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
+	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/core/Core',
 	'sap/base/util/deepEqual'
 ], function(
-	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, Core, deepEqual
+	ODataV4ValueHelpDelegate, StateUtil, Condition, FilterOperatorUtil, ConditionValidated, ValueHelpSelectionType, OperatorName, Core, deepEqual
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
 	ValueHelpDelegate.adjustSearch = function(oPayload, bTypeahead, sSearch) {
 
@@ -33,28 +34,28 @@ sap.ui.define([
 
 	ValueHelpDelegate.createConditionPayload = function (oPayload, oContent, aValues, vContext) {
 
-		var _addContext = function(oContext, aProperties, oStore) {
+		const _addContext = function(oContext, aProperties, oStore) {
 			if (!Array.isArray(aProperties)) {
 				aProperties = [aProperties];
 			}
 			aProperties.forEach( function(sPath) {
-				var vProp = oContext.getProperty(sPath);
+				const vProp = oContext.getProperty(sPath);
 				if (vProp) {
 					oStore[sPath] = vProp;
 				}
 			});
 		};
 
-		var aPayloadInfos = oPayload.payloadInfos || [];
-		var sContentId = oContent.getId();
-		var oConditionPayload = {};
+		const aPayloadInfos = oPayload.payloadInfos || [];
+		const sContentId = oContent.getId();
+		const oConditionPayload = {};
 
 		aPayloadInfos.forEach(function(oPayloadInfo){
 			if (sContentId.endsWith(oPayloadInfo.contentId)) {
 				oConditionPayload[oPayloadInfo.contentId] = [];
 
 				if (vContext) {
-					var oEntry = {};
+					const oEntry = {};
 
 					_addContext(vContext, oPayloadInfo.path, oEntry);
 
@@ -70,24 +71,24 @@ sap.ui.define([
 
 	ValueHelpDelegate.modifySelectionBehaviour = function (oPayload, oContent, oChange) {
 
-		var aConditions = oChange.conditions;
-		var aOldConditions = oContent.getConditions();
+		const aConditions = oChange.conditions;
+		const aOldConditions = oContent.getConditions();
 
 		if (oChange.type === ValueHelpSelectionType.Remove) {
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
-				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aOldConditions);
+			for (let i = 0; i < aConditions.length; i++) {
+				const oCondition = aConditions[i];
+				const iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aOldConditions);
 				if (iIndex < 0) { // not found
 					// check if a similar condition with different payload exists
-					for (var j = 0; j < aOldConditions.length; j++) {
-						var oOldCondition = aOldConditions[j];
+					for (let j = 0; j < aOldConditions.length; j++) {
+						const oOldCondition = aOldConditions[j];
 						if (oCondition.operator === oOldCondition.operator && oCondition.values[0] === oOldCondition.values[0] && (oCondition.values.length < 2 || oCondition.values[1] === oOldCondition.values[1])) {
 							// same operator and key -> could be the same condition - compare in/out (see ColletiveSearch with different content as different Conditions)
-							var bFound = false;
-							for (var sKey in oCondition.payload) {
-								var oNewPayload = oCondition.payload[sKey];
-								for (var sOldKey in oOldCondition.payload) {
-									var oOldPayload = oOldCondition.payload[sOldKey];
+							let bFound = false;
+							for (const sKey in oCondition.payload) {
+								const oNewPayload = oCondition.payload[sKey];
+								for (const sOldKey in oOldCondition.payload) {
+									const oOldPayload = oOldCondition.payload[sOldKey];
 									if (deepEqual(oNewPayload, oOldPayload)) {
 										bFound = true; // content of payload is similar - use as same condition
 									}
@@ -108,12 +109,12 @@ sap.ui.define([
 
 	ValueHelpDelegate.getFilterConditions = function (oPayload, oContent, oConfig) {
 
-		var aInParameters = oPayload.inParameters || [];
-		var oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
-		var oField = (oConfig && oConfig.control) || (oContent && oContent.getControl());
-		var sContentId = oContent.getId();
-		var aPropertyPromises = [];
-		var aPropertyPromiseTargets = [];
+		const aInParameters = oPayload.inParameters || [];
+		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(oPayload, oContent, oConfig);
+		const oField = (oConfig && oConfig.control) || (oContent && oContent.getControl());
+		const sContentId = oContent.getId();
+		const aPropertyPromises = [];
+		const aPropertyPromiseTargets = [];
 
 		if (!oField) {
 			return oConditions;
@@ -121,7 +122,7 @@ sap.ui.define([
 
 		aInParameters.forEach(function(oInParameter) {
 			if (sContentId.endsWith(oInParameter.contentId)) {
-				var oContext = oField.getBindingContext();
+				const oContext = oField.getBindingContext();
 				aPropertyPromises.push(oContext.requestProperty(oInParameter.source));
 				aPropertyPromiseTargets.push(oInParameter.target);
 			}
@@ -131,7 +132,7 @@ sap.ui.define([
 			return Promise.all(aPropertyPromises).then(function(aResults) {
 				aResults.forEach(function(vResult, index){
 					if (vResult) { // only for already filled properties. But what id "" is a valid key?
-						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition("EQ", [vResult], null, null, ConditionValidated.Validated, null)];
+						oConditions[aPropertyPromiseTargets[index]] = [Condition.createCondition(OperatorName.EQ, [vResult], null, null, ConditionValidated.Validated, null)];
 					}
 				});
 				return oConditions;
@@ -144,24 +145,24 @@ sap.ui.define([
 
 	ValueHelpDelegate.onConditionPropagation = function (oPayload, oValueHelp, sReason) {
 
-		var aOutParameters = oPayload.outParameters || [];
-		var oField = oValueHelp.getControl();
+		const aOutParameters = oPayload.outParameters || [];
+		const oField = oValueHelp.getControl();
 
 		//handle only ControlChange reason
 		if (!oField || sReason !== "ControlChange") {
 			return;
 		}
 
-		var mAllOutValues = {};
+		const mAllOutValues = {};
 
 		aOutParameters.forEach(function(oOutParameter) {
 
 			// find all conditions carrying outParameter.source information
-			var aOutValues = oField.getConditions().reduce(function (aResult, oCondition) {
+			const aOutValues = oField.getConditions().reduce(function (aResult, oCondition) {
 				if (oCondition.payload) {
 					Object.values(oCondition.payload).forEach(function (aSegments) {
 						aSegments.forEach(function (oSegment) {
-							var sSource = oSegment[oOutParameter.source];
+							const sSource = oSegment[oOutParameter.source];
 							if (sSource && aResult.indexOf(sSource) === -1) {
 								aResult.push(sSource);
 							}
@@ -176,11 +177,11 @@ sap.ui.define([
 
 		aOutParameters.forEach(function(oOutParameter) {
 
-			var sTarget = oOutParameter.target;
-			var aAllOutValues = mAllOutValues[sTarget];
+			const sTarget = oOutParameter.target;
+			const aAllOutValues = mAllOutValues[sTarget];
 			if (aAllOutValues && aAllOutValues.length) {
 				if (oOutParameter.target && oOutParameter.mode === "Always") {
-					var oBindingContext = oField.getBindingContext();
+					const oBindingContext = oField.getBindingContext();
 					if (oBindingContext) {
 						oBindingContext.setProperty(oOutParameter.target, aAllOutValues[0]);
 					}

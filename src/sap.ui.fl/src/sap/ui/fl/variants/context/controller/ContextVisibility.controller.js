@@ -58,13 +58,13 @@ sap.ui.define([
 	}
 
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
-		onInit: function() {
+		onInit() {
 			this.oSelectedContextsModel = this.getView().getModel("selectedContexts");
 			this.oContextsModel = this.getView().getModel("contexts");
 			this.oI18n = this.getView().getModel("i18n").getResourceBundle();
 		},
 
-		onBeforeRendering: function() {
+		onBeforeRendering() {
 			this.oSelectedContextsModel.refresh(true);
 			if (!this.oSelectedContextsModel.getProperty("/noDataText")) {
 				this.oSelectedContextsModel.setProperty("/noDataText", this.oI18n.getText("NO_SELECTED_ROLES"));
@@ -78,7 +78,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		_onSelectionChange: function(oEvent) {
+		_onSelectionChange(oEvent) {
 			var oSelectedItem = itemToJson(oEvent.getParameter("listItem"));
 			if (oEvent.getParameter("selected") === true) {
 				this.oCurrentSelection.push(oSelectedItem);
@@ -89,16 +89,14 @@ sap.ui.define([
 			}
 		},
 
-		isSelected: function(oItem, aSelectedItems) {
+		isSelected(oItem, aSelectedItems) {
 			return aSelectedItems.some(function(oSelectedItem) {
 				return oSelectedItem.id === oItem.id;
 			});
 		},
 
-		formatTooltip: function(sDescription) {
-			if (!this.oI18n) {
-				this.oI18n = this.getView().getModel("i18n").getResourceBundle();
-			}
+		formatTooltip(sDescription) {
+			this.oI18n ||= this.getView().getModel("i18n").getResourceBundle();
 			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
 		},
 
@@ -107,7 +105,7 @@ sap.ui.define([
 		 * If not, it retrieves the next chunk from the back end and then updates the model.
 		 * @returns {Promise} Resolves with additional data
 		 */
-		_appendDataFromBackend: function() {
+		_appendDataFromBackend() {
 			var oRoles = this.oContextsModel.getProperty("/values");
 			if (this.oContextsModel.getProperty("/lastHitReached") === false) {
 				var mConfig = {$skip: oRoles.length};
@@ -123,7 +121,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event object
 		 * @returns {Promise} Resolves with additional data
 		 */
-		_updateStartedHandler: function(oEvent) {
+		_updateStartedHandler(oEvent) {
 			if (oEvent.getParameter && oEvent.getParameter("reason") === "Growing") {
 				return this._appendDataFromBackend();
 			}
@@ -135,7 +133,7 @@ sap.ui.define([
 		 * @param {object} oDialog - The Select Contexts dialog
 		 * @returns {Promise} Resolves as soon as the dialog is opened
 		 */
-		_addContexts: function(oDialog) {
+		_addContexts(oDialog) {
 			oDialog.clearSelection();
 			this.oCurrentSelection = this.oSelectedContextsModel.getProperty("/selected") || [];
 			return getData.call(this, {}).then(function() {
@@ -147,10 +145,8 @@ sap.ui.define([
 		 * Proxy handler method that calls <code>_addContext</code> if the <code>Select Contexts</code> dialog is not yet opened.
 		 * @returns {Promise} Resolves as soon as the dialog is opened
 		 */
-		onAddContextsHandler: function() {
-			if (!this._oDialog) {
-				this._oDialog = loadFragment.call(this);
-			}
+		onAddContextsHandler() {
+			this._oDialog ||= loadFragment.call(this);
 			return this._oDialog.then(function(oDialog) {
 				return this._addContexts(oDialog);
 			}.bind(this));
@@ -161,7 +157,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event object
 		 * @returns {Promise<object>} The data
 		 */
-		onSearch: function(oEvent) {
+		onSearch(oEvent) {
 			oEvent.getSource().clearSelection();
 			var mConfig = {$filter: oEvent.getParameter("value")};
 			return getData.call(this, mConfig);
@@ -171,7 +167,7 @@ sap.ui.define([
 		 * Triggered if user clicks on <code>Select<code> button in <code>Select Contexts</code> dialog.
 		 * Formats selected items, then updates the model accordingly.
 		 */
-		onSelectContexts: function() {
+		onSelectContexts() {
 			this.oSelectedContextsModel.setProperty("/selected", this.oCurrentSelection);
 			this.oSelectedContextsModel.refresh(true);
 			this.oCurrentSelection = [];
@@ -181,7 +177,7 @@ sap.ui.define([
 		 * Removes a single selected context.
 		 * @param {sap.ui.base.Event} oEvent - Event object
 		 */
-		onDeleteContext: function(oEvent) {
+		onDeleteContext(oEvent) {
 			var aItems = this.oSelectedContextsModel.getProperty("/selected");
 			var oToBeDeleted = oEvent.getParameter("listItem");
 			var oNewData = aItems.filter(function(oItem) {
@@ -196,15 +192,15 @@ sap.ui.define([
 		/**
 		 * Removes all selected contexts.
 		 */
-		removeAll: function() {
+		removeAll() {
 			this.oSelectedContextsModel.setProperty("/selected", []);
 		},
 
-		isRemoveAllEnabled: function(aSelectedRoleIds) {
+		isRemoveAllEnabled(aSelectedRoleIds) {
 			return aSelectedRoleIds && aSelectedRoleIds.length !== 0;
 		},
 
-		isMessageStripVisible: function(aSelectedRoles, bShowMessageStrip) {
+		isMessageStripVisible(aSelectedRoles, bShowMessageStrip) {
 			return bShowMessageStrip && aSelectedRoles.length === 0;
 		}
 	});

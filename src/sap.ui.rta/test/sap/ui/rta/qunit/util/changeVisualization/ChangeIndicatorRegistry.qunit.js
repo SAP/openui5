@@ -39,7 +39,7 @@ sap.ui.define([
 
 	function createMockVersioning(aDraftChangeFileNames) {
 		return {
-			getData: function() {
+			getData() {
 				return {
 					draftFilenames: aDraftChangeFileNames
 				};
@@ -48,7 +48,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic tests", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRegistry = new ChangeIndicatorRegistry({
 				changeCategories: {
 					fooCategory: [
@@ -63,7 +63,7 @@ sap.ui.define([
 			sandbox.stub(JsControlTreeModifier, "bySelector").returns(this.oControl);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRegistry.destroy();
 			this.oControl.destroy();
 			sandbox.restore();
@@ -95,7 +95,7 @@ sap.ui.define([
 		QUnit.test("when a settings command change is registered with a valid category", function(assert) {
 			ChangesWriteAPI.getChangeHandler.reset();
 			ChangesWriteAPI.getChangeHandler.resolves({
-				getChangeVisualizationInfo: function() {
+				getChangeVisualizationInfo() {
 					return {
 						descriptionPayload: {
 							category: "fooCategory"
@@ -111,7 +111,7 @@ sap.ui.define([
 		QUnit.test("when a settings command change is registered with an invalid category", function(assert) {
 			ChangesWriteAPI.getChangeHandler.reset();
 			ChangesWriteAPI.getChangeHandler.resolves({
-				getChangeVisualizationInfo: function() {
+				getChangeVisualizationInfo() {
 					return {
 						descriptionPayload: {
 							category: "move123"
@@ -137,7 +137,7 @@ sap.ui.define([
 		QUnit.test("when a not settings command change is registered with a category", function(assert) {
 			ChangesWriteAPI.getChangeHandler.reset();
 			ChangesWriteAPI.getChangeHandler.resolves({
-				getChangeVisualizationInfo: function() {
+				getChangeVisualizationInfo() {
 					return {
 						descriptionPayload: {
 							category: "fooCategory"
@@ -152,7 +152,7 @@ sap.ui.define([
 
 		QUnit.test("when a change indicator is registered", function(assert) {
 			var oIndicator = {
-				destroy: function() {}
+				destroy() {}
 			};
 			this.oRegistry.registerChangeIndicator("someChangeIndicator", oIndicator);
 			assert.strictEqual(this.oRegistry.getChangeIndicator("someChangeIndicator"), oIndicator, "then the saved reference is returned");
@@ -164,7 +164,7 @@ sap.ui.define([
 			ChangesWriteAPI.getChangeHandler
 			.onFirstCall()
 			.resolves({
-				getChangeVisualizationInfo: function() {
+				getChangeVisualizationInfo() {
 					return {
 						updateRequired: true
 					};
@@ -206,7 +206,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Cleanup", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRegistry = new ChangeIndicatorRegistry({
 				changeCategories: {
 					fooCategory: [
@@ -215,7 +215,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -225,7 +225,7 @@ sap.ui.define([
 				this.oRegistry.registerChange(createMockChange("barChange"), "bar")
 			]).then(function() {
 				var oIndicator = {
-					destroy: function() {}
+					destroy() {}
 				};
 				var oDestructionSpy = sandbox.spy(oIndicator, "destroy");
 				this.oRegistry.registerChangeIndicator("someChangeIndicator", oIndicator);

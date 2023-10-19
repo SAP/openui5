@@ -2,272 +2,48 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.core.Configuration
 sap.ui.define([
-	'../Device',
-	'../base/Object',
-	'./AnimationMode',
-	'./ControlBehavior',
-	'./Locale',
-	"./format/TimezoneUtil",
-	"sap/ui/core/_ConfigurationProvider",
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Theming",
-	"sap/base/util/Version",
-	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/config",
 	"sap/base/Event",
-	"sap/base/strings/camelize",
-	"sap/base/util/deepClone",
+	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
-	"sap/base/i18n/Formatting"
-],
-	function(
-		Device,
-		BaseObject,
-		AnimationMode,
-		ControlBehavior,
-		Locale,
-		TimezoneUtil,
-		_ConfigurationProvider,
-		CalendarWeekNumbering,
-		Theming,
-		Version,
-		Log,
-		assert,
-		BaseConfig,
-		BaseEvent,
-		camelize,
-		deepClone,
-		Localization,
-		Formatting
-	) {
+	"sap/base/util/Version",
+	"sap/ui/base/DesignTime",
+	"sap/ui/base/Object",
+	"sap/ui/core/AnimationMode",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/getCompatibilityVersion",
+	"sap/ui/core/Locale",
+	"sap/ui/core/Supportability",
+	"sap/ui/core/Theming",
+	"sap/ui/security/Security"
+], function(
+	assert,
+	BaseConfig,
+	BaseEvent,
+	Log,
+	Formatting,
+	Localization,
+	Version,
+	DesignTime,
+	BaseObject,
+	AnimationMode,
+	ControlBehavior,
+	getCompatibilityVersion,
+	Locale,
+	Supportability,
+	Theming,
+	Security
+) {
 	"use strict";
 
-	var M_SETTINGS;
-	var VERSION = "${version}";
-	var mCompatVersion;
-
-	// Helper Functions
-	function _calcCompatVersions() {
-		var PARAM_CVERS = "sapUiCompatversion";
-
-		function _getCVers(key){
-			var v = !key ? DEFAULT_CVERS || BASE_CVERS.toString()
-					: BaseConfig.get({
-						name: camelize(PARAM_CVERS + "-" + key.toLowerCase()),
-						type: BaseConfig.Type.String
-					}) || DEFAULT_CVERS || M_COMPAT_FEATURES[key] || BASE_CVERS.toString();
-			v = Version(v.toLowerCase() === "edge" ? VERSION : v);
-			//Only major and minor version are relevant
-			return Version(v.getMajor(), v.getMinor());
-		}
-
-		var DEFAULT_CVERS = BaseConfig.get({
-			name: PARAM_CVERS,
-			type: BaseConfig.Type.String
-		});
-		var BASE_CVERS = Version("1.14");
-		mCompatVersion = {};
-
-		mCompatVersion._default = _getCVers();
-		for (var n in M_COMPAT_FEATURES) {
-			mCompatVersion[n] = _getCVers(n);
-		}
-
-		return mCompatVersion;
-	}
-
-	function detectLanguage() {
-
-		function navigatorLanguage() {
-			if ( Device.os.android ) {
-				// on Android, navigator.language is hardcoded to 'en', so check UserAgent string instead
-				var match = navigator.userAgent.match(/\s([a-z]{2}-[a-z]{2})[;)]/i);
-				if ( match ) {
-					return match[1];
-				}
-				// okay, we couldn't find a language setting. It might be better to fallback to 'en' instead of having no language
-			}
-			return navigator.language;
-		}
-
-		return convertToLocaleOrNull( (navigator.languages && navigator.languages[0]) || navigatorLanguage() || navigator.userLanguage || navigator.browserLanguage ) || new Locale("en");
-	}
-
-	function setValue(sName, vValue) {
-		if ( vValue == null ) {
-			return;
-		}
-		config[sName] = convertToType(sName, vValue);
-	}
-
-	function convertToType(sName, vValue) {
-		if ( vValue == null ) {
-			return;
-		}
-		switch (M_SETTINGS[sName].type) {
-		case "boolean":
-			if ( typeof vValue === "string" ) {
-				if (M_SETTINGS[sName].defaultValue) {
-					return vValue.toLowerCase() != "false";
-				} else {
-					return vValue.toLowerCase() === "true" || vValue.toLowerCase() === "x";
-				}
-			} else {
-				// boolean etc.
-				return !!vValue;
-			}
-		case "string":
-			return "" + vValue; // enforce string
-		case "code":
-			return typeof vValue === "function" ? vValue : String(vValue);
-		case "function":
-			if ( typeof vValue !== "function" ) {
-				throw new Error("unsupported value");
-			}
-			return vValue;
-		case "function[]":
-			vValue.forEach(function(fnFunction) {
-				if ( typeof fnFunction !== "function" ) {
-					throw new Error("Not a function: " + fnFunction);
-				}
-			});
-			return vValue.slice();
-		case "string[]":
-			if ( Array.isArray(vValue) ) {
-				return vValue;
-			} else if ( typeof vValue === "string" ) {
-				return vValue.split(/[ ,;]/).map(function(s) {
-					return s.trim();
-				});
-			} else {
-				throw new Error("unsupported value");
-			}
-		case "object":
-			if ( typeof vValue !== "object" ) {
-				throw new Error("unsupported value");
-			}
-			return vValue;
-		case "Locale":
-			var oLocale = convertToLocaleOrNull(vValue);
-			if ( oLocale || M_SETTINGS[sName].defaultValue == null ) {
-				return oLocale;
-			} else {
-				throw new Error("unsupported value");
-			}
-		default:
-			// When the type is none of the above types, check if an object as enum is provided to validate the value.
-			var vType = M_SETTINGS[sName].type;
-			if (typeof vType === "object") {
-				BaseConfig._.checkEnum(vType, vValue, sName);
-				return vValue;
-			} else {
-				throw new Error("illegal state");
-			}
-		}
-	}
-
-	function getMetaTagValue(sName) {
-		var oMetaTag = document.querySelector("META[name='" + sName + "']"),
-			sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
-		if (sMetaContent) {
-			return sMetaContent;
-		}
-	}
-
-	// Definition of supported settings
-	// Valid property types are: string, boolean, string[], code, object, function, function[].
-	// Objects as an enumeration list of valid values can also be provided (e.g. Configuration.AnimationMode).
-	var M_SETTINGS = {
-		"theme"                 : { type : "string",   defaultValue : "base" },
-		"language"              : { type : "Locale",   defaultValue : detectLanguage() },
-		"timezone"              : { type : "string",   defaultValue : TimezoneUtil.getLocalTimezone() },
-		"formatLocale"          : { type : "Locale",   defaultValue : null },
-		"calendarType"          : { type : "string",   defaultValue : null },
-		"calendarWeekNumbering" : { type : CalendarWeekNumbering, defaultValue : CalendarWeekNumbering.Default},
-		"trailingCurrencyCode"  : { type : "boolean",  defaultValue : true },
-		"accessibility"         : { type : "boolean",  defaultValue : true },
-		"autoAriaBodyRole"      : { type : "boolean",  defaultValue : false,     noUrl:true }, //whether the framework automatically adds the ARIA role 'application' to the html body
-		"animation"             : { type : "boolean",  defaultValue : true }, // deprecated, please use animationMode
-		"animationMode"         : { type : AnimationMode, defaultValue : undefined }, // If no value is provided, animationMode will be set on instantiation depending on the animation setting.
-		"rtl"                   : { type : "boolean",  defaultValue : null },
-		"debug"                 : { type : "boolean",  defaultValue : false },
-		"inspect"               : { type : "boolean",  defaultValue : false },
-		"originInfo"            : { type : "boolean",  defaultValue : false },
-		"noConflict"            : { type : "boolean",  defaultValue : false,     noUrl:true },
-		"noDuplicateIds"        : { type : "boolean",  defaultValue : true },
-		"trace"                 : { type : "boolean",  defaultValue : false,     noUrl:true },
-		"modules"               : { type : "string[]", defaultValue : [],        noUrl:true },
-		"areas"                 : { type : "string[]", defaultValue : null,      noUrl:true },
-		"onInit"                : { type : "code",     defaultValue : undefined, noUrl:true }, // could be either a reference to a JavaScript function, the name of a global function (string value) or the name of a module (indicated with prefix "module:")
-		"uidPrefix"             : { type : "string",   defaultValue : "__",      noUrl:true },
-		"ignoreUrlParams"       : { type : "boolean",  defaultValue : false,     noUrl:true },
-		"preload"               : { type : "string",   defaultValue : "auto" },
-		"rootComponent"         : { type : "string",   defaultValue : "",        noUrl:true },
-		"preloadLibCss"         : { type : "string[]", defaultValue : [] },
-		"application"           : { type : "string",   defaultValue : "" },
-		"appCacheBuster"        : { type : "string[]", defaultValue : [] },
-		"bindingSyntax"         : { type : "string",   defaultValue : "default", noUrl:true }, // default|simple|complex
-		"versionedLibCss"       : { type : "boolean",  defaultValue : false },
-		"manifestFirst"         : { type : "boolean",  defaultValue : false },
-		"flexibilityServices"   : { type : "string",   defaultValue : "/sap/bc/lrep"},
-		"whitelistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // deprecated, use allowlistService instead
-		"allowlistService"      : { type : "string",   defaultValue : null,      noUrl:true }, // url/to/service
-		"frameOptions"          : { type : "string",   defaultValue : "default", noUrl:true }, // default/allow/deny/trusted (default => allow)
-		"frameOptionsConfig"    : { type : "object",   defaultValue : undefined, noUrl:true },  // advanced frame options configuration
-		"support"               : { type : "string[]", defaultValue : null },
-		"testRecorder"          : { type : "string[]", defaultValue : null },
-		"activeTerminologies"   : { type : "string[]", defaultValue : undefined},
-		"fileShareSupport"      : { type : "string",   defaultValue : undefined, noUrl:true }, // Module name (AMD syntax)
-		"securityTokenHandlers"	: { type : "function[]", defaultValue: [],       noUrl:true },
-		"productive"			: { type : "boolean",  defaultValue: false,      noUrl:true },
-		"themeRoots"			: { type : "object",   defaultValue: {},  noUrl:true },
-		"xx-placeholder"		: { type : "boolean",  defaultValue : true },
-		"xx-rootComponentNode"  : { type : "string",   defaultValue : "",        noUrl:true },
-		"xx-appCacheBusterMode" : { type : "string",   defaultValue : "sync" },
-		"xx-appCacheBusterHooks": { type : "object",   defaultValue : undefined, noUrl:true }, // e.g.: { handleURL: fn, onIndexLoad: fn, onIndexLoaded: fn }
-		"xx-disableCustomizing" : { type : "boolean",  defaultValue : false,     noUrl:true },
-		"xx-viewCache"          : { type : "boolean",  defaultValue : true },
-		"xx-depCache"           : { type : "boolean",  defaultValue : false },
-		"xx-libraryPreloadFiles": { type : "string[]", defaultValue : [] },
-		"xx-componentPreload"   : { type : "string",   defaultValue : "" },
-		"xx-designMode"         : { type : "boolean",  defaultValue : false },
-		"xx-supportedLanguages" : { type : "string[]", defaultValue : [] }, // *=any, sapui5 or list of locales
-		"xx-bootTask"           : { type : "function", defaultValue : undefined, noUrl:true },
-		"xx-suppressDeactivationOfControllerCode" : { type : "boolean",  defaultValue : false }, //temporarily to suppress the deactivation of controller code in design mode
-		"xx-lesssupport"        : { type : "boolean",  defaultValue : false },
-		"xx-handleValidation"   : { type : "boolean",  defaultValue : false },
-		"xx-fiori2Adaptation"   : { type : "string[]",  defaultValue : [] },
-		"xx-cache-use"          : { type : "boolean",  defaultValue : true},
-		"xx-cache-excludedKeys" : { type : "string[]", defaultValue : []},
-		"xx-cache-serialization": { type : "boolean",  defaultValue : false},
-		"xx-nosync"             : { type : "string",   defaultValue : "" },
-		"xx-waitForTheme"       : { type : "string",  defaultValue : ""}, // rendering|init
-		"xx-hyphenation" : { type : "string",  defaultValue : ""}, // (empty string)|native|thirdparty|disable
-		"xx-flexBundleRequestForced" : { type : "boolean",  defaultValue : false },
-		"xx-skipAutomaticFlLibLoading" : { type : "boolean",  defaultValue: false },
-		"xx-cssVariables"       : { type : "string",   defaultValue : "false" }, // false|true|additional (additional just includes the css_variables.css in addition)
-		"xx-debugModuleLoading"	: { type : "boolean",  defaultValue: false },
-		"statistics"            : { type : "boolean",  defaultValue : false },
-		"xx-acc-keys"           : { type : "boolean",  defaultValue : false },
-		"xx-measure-cards"      : { type : "boolean",  defaultValue : false }
-	};
-
-	var M_COMPAT_FEATURES = {
-		"xx-test"               : "1.15", //for testing purposes only
-		"flexBoxPolyfill"       : "1.14",
-		"sapMeTabContainer"     : "1.14",
-		"sapMeProgessIndicator" : "1.14",
-		"sapMGrowingList"       : "1.14",
-		"sapMListAsTable"       : "1.14",
-		"sapMDialogWithPadding" : "1.14",
-		"sapCoreBindingSyntax"  : "1.24"
-	};
+	var oVersion = new Version("${version}");
+	var oFormatSettings;
 
 	// Lazy dependency to core
-	var oCore;
+	var Core;
 
 	// ---- change handling ----
 
@@ -284,7 +60,7 @@ sap.ui.define([
 			var mChangesToReport = mChanges;
 			delete mChanges.__count;
 			mChanges = undefined;
-			oCore && oCore.fireLocalizationChanged(mChangesToReport);
+			Core?.fireLocalizationChanged(mChangesToReport);
 		}
 	}
 
@@ -325,21 +101,15 @@ sap.ui.define([
 	 * @extends sap.ui.base.Object
 	 * @public
 	 * @alias sap.ui.core.Configuration
-	 *
-	 * @borrows module:sap/base/i18n/Localization.getSAPLogonLanguage as getSAPLogonLanguage
-	 * @borrows module:sap/base/i18n/Localization.getTimezone as getTimezone
-	 * @borrows module:sap/base/i18n/Localization.setLanguage as setLanguage
-	 * @borrows module:sap/base/i18n/Localization.getRTL as getRTL
-	 * @borrows module:sap/base/i18n/Localization.setRTL as setRTL
+	 * @deprecated As of Version 1.120
 	 * @borrows module:sap/base/i18n/Localization.getLanguagesDeliveredWithCore as getLanguagesDeliveredWithCore
 	 * @borrows module:sap/base/i18n/Localization.getSupportedLanguages as getSupportedLanguages
-	 * @borrows module:sap/ui/core/Theming.getTheme as getTheme
-	 * @borrows module:sap/ui/core/Theming.setTheme as setTheme
-	 * @borrows module:sap/ui/core/ControlBehavior.isAccessibilityEnabled as getAccessibility
+	 * @borrows module:sap/ui/core/getCompatibilityVersion as getCompatibilityVersion
 	 */
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
 		constructor : function() {
+			BaseObject.call(this);
 			Log.error(
 				"Configuration is designed as a singleton and should not be created manually! " +
 				"Please require 'sap/ui/core/Configuration' instead and use the module export directly without using 'new'."
@@ -350,140 +120,6 @@ sap.ui.define([
 
 	});
 
-	/* Object that carries the real configuration data */
-	var config = {};
-
-	var bInitialized = false;
-
-	function init() {
-		bInitialized = true;
-
-		// apply settings from global config object (already merged with script tag attributes)
-		var oCfg = window["sap-ui-config"] || {};
-		oCfg.oninit = oCfg.oninit || oCfg["evt-oninit"];
-		for (var n in M_SETTINGS) {
-			// collect the defaults
-			config[n] = Array.isArray(M_SETTINGS[n].defaultValue) ? [] : M_SETTINGS[n].defaultValue;
-			if ( oCfg.hasOwnProperty(n.toLowerCase()) ) {
-				setValue(n, oCfg[n.toLowerCase()]);
-			} else if ( !/^xx-/.test(n) && oCfg.hasOwnProperty("xx-" + n.toLowerCase()) ) {
-				setValue(n, oCfg["xx-" + n.toLowerCase()]);
-			}
-		}
-
-		// if libs are configured, convert them to modules and prepend them to the existing modules list
-		if ( oCfg.libs ) {
-			config.modules = oCfg.libs.split(",").map(function(lib) {
-				return lib.trim() + ".library";
-			}).concat(config.modules);
-		}
-
-		var oUriParams;
-
-		// apply the settings from the url (only if not blocked by app configuration)
-		if ( !config.ignoreUrlParams ) {
-			var sUrlPrefix = "sap-ui-";
-			oUriParams = new URLSearchParams(window.location.search);
-
-			if (oUriParams.has('sap-statistics')) {
-				var sValue = oUriParams.get('sap-statistics');
-				setValue('statistics', sValue);
-			}
-
-			// now analyze sap-ui parameters
-			for (var n in M_SETTINGS) {
-				if ( M_SETTINGS[n].noUrl ) {
-					continue;
-				}
-				var sValue = oUriParams.get(sUrlPrefix + n);
-				if ( sValue == null && !/^xx-/.test(n) ) {
-					sValue = oUriParams.get(sUrlPrefix + "xx-" + n);
-				}
-				if (sValue === "") {
-					//empty URL parameters set the parameter back to its system default
-					config[n] = M_SETTINGS[n].defaultValue;
-				} else {
-					//sets the value (null or empty value ignored)
-					setValue(n, sValue);
-				}
-			}
-		}
-
-		//parse fiori 2 adaptation parameters
-		var vAdaptations = config['xx-fiori2Adaptation'];
-		if ( vAdaptations.length === 0 || (vAdaptations.length === 1 && vAdaptations[0] === 'false') ) {
-			vAdaptations = false;
-		} else if ( vAdaptations.length === 1 && vAdaptations[0] === 'true' ) {
-			vAdaptations = true;
-		}
-
-		config['xx-fiori2Adaptation'] = vAdaptations;
-
-		config["allowlistService"] = config["allowlistService"] || /* fallback to legacy config */ config["whitelistService"];
-
-		// Configure allowlistService / frameOptions via <meta> tag if not already defined via UI5 configuration
-		if (!config["allowlistService"]) {
-			var sAllowlistMetaTagValue = getMetaTagValue('sap.allowlistService') || /* fallback to legacy config */ getMetaTagValue('sap.whitelistService');
-			if (sAllowlistMetaTagValue) {
-				config["allowlistService"] = sAllowlistMetaTagValue;
-				// Set default "frameOptions" to "trusted" instead of "allow"
-				if (config["frameOptions"] === "default") {
-					config["frameOptions"] = "trusted";
-				}
-			}
-		}
-
-		// Verify and set default for "frameOptions" configuration
-		if (config["frameOptions"] === "default" ||
-			(config["frameOptions"] !== "allow"
-			&& config["frameOptions"] !== "deny"
-			&& config["frameOptions"] !== "trusted")) {
-
-			// default => allow
-			config["frameOptions"] = "allow";
-		}
-
-		// frameOptionsConfig: Handle compatibility of renamed config option
-		var oFrameOptionsConfig = config["frameOptionsConfig"];
-		if (oFrameOptionsConfig) {
-			oFrameOptionsConfig.allowlist = oFrameOptionsConfig.allowlist || oFrameOptionsConfig.whitelist;
-		}
-
-		// in case the flexibilityServices configuration was set to a non-empty, non-default value, sap.ui.fl becomes mandatory
-		// if not overruled by xx-skipAutomaticFlLibLoading
-		if (config.flexibilityServices
-				&& config.flexibilityServices !== M_SETTINGS.flexibilityServices.defaultValue
-				&& !config['xx-skipAutomaticFlLibLoading']
-				&& config.modules.indexOf("sap.ui.fl.library") == -1) {
-			config.modules.push("sap.ui.fl.library");
-		}
-
-		// log  all non default value
-		for (var n in M_SETTINGS) {
-			if ( config[n] !== M_SETTINGS[n].defaultValue ) {
-				Log.info("  " + n + " = " + config[n]);
-			}
-		}
-
-		// The following code can't be done in the _ConfigurationProvider
-		// because of cyclic dependency
-		var syncCallBehavior = Configuration.getSyncCallBehavior();
-		sap.ui.loader.config({
-			reportSyncCalls: syncCallBehavior
-		});
-
-		if ( syncCallBehavior && oCfg.__loaded ) {
-			var sMessage = "[nosync]: configuration loaded via sync XHR";
-			if (syncCallBehavior === 1) {
-				Log.warning(sMessage);
-			} else {
-				Log.error(sMessage);
-			}
-		}
-	}
-
-	var oFormatSettings;
-
 	Object.assign(Configuration, /** @lends sap.ui.core.Configuration */ {
 		/**
 		 * Returns the version of the framework.
@@ -492,46 +128,30 @@ sap.ui.define([
 		 *
 		 * @return {module:sap/base/util/Version} the version
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/VersionInfo.load} instead.
 		 */
 		getVersion: function () {
-			if (config._version) {
-				return config._version;
-			}
-
-			config._version = new Version(VERSION);
-			return config._version;
+			return oVersion;
 		},
+
+		getCompatibilityVersion : getCompatibilityVersion,
 
 		/**
-		 * Returns the used compatibility version for the given feature.
-		 *
-		 * @param {string} sFeature the key of desired feature
-		 * @return {module:sap/base/util/Version} the used compatibility version
+		 * Returns the theme name
+		 * @return {string} the theme name
+		 * @function
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.getTheme} instead.
 		 */
-		getCompatibilityVersion : function (sFeature) {
-			var mCompatVersion = _calcCompatVersions();
-			if (typeof (sFeature) === "string" && mCompatVersion[sFeature]) {
-				return mCompatVersion[sFeature];
-			}
-			return mCompatVersion._default;
-		},
-
 		getTheme : Theming.getTheme,
 
 		/**
-		 * Returns whether placeholders are active or not
-		 * @returns {boolean} Whether placeholders are active or not
+		 * Allows setting the theme name
+		 * @param {string} sTheme the theme name
+		 * @return {this} <code>this</code> to allow method chaining
+		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme} instead.
 		 */
-		getPlaceholder : function() {
-			return BaseConfig.get({
-				name: "sapUiXxPlaceholder",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				defaultValue: true
-			});
-		},
-
 		setTheme : function (sTheme) {
 			Theming.setTheme(sTheme);
 			return this;
@@ -568,10 +188,79 @@ sap.ui.define([
 		 * @return {string} Language string as configured
 		 * @function
 		 * @public
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguage} instead.
 		 */
 		getLanguage :  Localization.getLanguage,
 
-		setLanguage : Localization.setLanguage,
+
+		/**
+		 * Sets a new language to be used from now on for language/region dependent
+		 * functionality (e.g. formatting, data types, translated texts, ...).
+		 *
+		 * When the language can't be interpreted as a BCP47 language (using the relaxed syntax
+		 * described in {@link #getLanguage}, an error will be thrown.
+		 *
+		 * When the language has changed, the Core will fire its
+		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
+		 *
+		 *
+		 * <h3>Restrictions</h3>
+		 *
+		 * The framework <strong>does not</strong> guarantee that already created, language
+		 * dependent objects will be updated by config call. It therefore remains best practice
+		 * for applications to switch the language early, e.g. before any language dependent
+		 * objects are created. Applications that need to support more dynamic changes of
+		 * the language should listen to the <code>localizationChanged</code> event and adapt
+		 * all language dependent objects that they use (e.g. by rebuilding their UI).
+		 *
+		 * Currently, the framework notifies the following objects about a change of the
+		 * localization settings before it fires the <code>localizationChanged</code> event:
+		 *
+		 * <ul>
+		 * <li>date and number data types that are used in property bindings or composite
+		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
+		 * <li>ResourceModels currently assigned to the Core, a UIArea, Component,
+		 *     Element or Control</li>
+		 * <li>Elements or Controls that implement the <code>onlocalizationChanged</code> hook
+		 *     (note the lowercase 'l' in onlocalizationChanged)</li>
+		 * </ul>
+		 *
+		 * It furthermore derives the RTL mode from the new language, if no explicit RTL
+		 * mode has been set. If the RTL mode changes, the following additional actions will be taken:
+		 *
+		 * <ul>
+		 * <li>the URLs of already loaded library theme files will be changed</li>
+		 * <li>the <code>dir</code> attribute of the page will be changed to reflect the new mode.</li>
+		 * <li>all UIAreas will be invalidated (which results in a rendering of the whole UI5 UI)</li>
+		 * </ul>
+		 *
+		 * config method does not accept SAP language codes for <code>sLanguage</code>. Instead, a second
+		 * parameter <code>sSAPLogonLanguage</code> can be provided with an SAP language code corresponding
+		 * to the given language. A given value will be returned by the {@link #getSAPLogonLanguage} method.
+		 * It is up to the caller to provide a consistent pair of BCP47 language and SAP language code.
+		 * The SAP language code is only checked to be of length 2 and must consist of letters or digits only.
+		 *
+		 * <b>Note</b>: When using config method please take note of and respect the above mentioned restrictions.
+		 *
+		 * @param {string} sLanguage the new language as a BCP47 compliant language tag; case doesn't matter
+		 *   and underscores can be used instead of dashes to separate components (compatibility with Java Locale IDs)
+		 * @param {string} [sSAPLogonLanguage] SAP language code that corresponds to the <code>sLanguage</code>;
+		 *   if a value is specified, future calls to <code>getSAPLogonLanguage</code> will return that value;
+		 *   if no value is specified, the framework will use the ISO639 language part of <code>sLanguage</code>
+		 *   as SAP Logon language.
+		 * @throws {Error} When <code>sLanguage</code> can't be interpreted as a BCP47 language or when
+		 *   <code>sSAPLanguage</code> is given and can't be interpreted as SAP language code.
+		 * @return {this} <code>this</code> to allow method chaining
+		 *
+		 * @see http://scn.sap.com/docs/DOC-14377
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setLanguage} instead.
+		 */
+		setLanguage : function() {
+			Localization.setLanguage.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns a BCP47-compliant language tag for the current language.
@@ -582,14 +271,35 @@ sap.ui.define([
 		 * e.g. sr-Latn (Serbian (Cyrillic)), he (Hebrew), yi (Yiddish)
 		 *
 		 * @returns {string} The language tag for the current language, conforming to BCP47
+		 * @function
 		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
 		 */
 		getLanguageTag : function () {
 			return Localization.getLanguageTag().toString();
 		},
 
+		/**
+		 * Returns an SAP logon language for the current language.
+		 *
+		 * It will be returned in uppercase.
+		 * e.g. "EN", "DE"
+		 *
+		 * @returns {string} The SAP logon language code for the current language
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getSAPLogonLanguage} instead.
+		 */
 		getSAPLogonLanguage : Localization.getSAPLogonLanguage,
 
+		/**
+		 * Retrieves the configured IANA timezone ID.
+		 *
+		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getTimezone} instead.
+		 */
 		getTimezone : Localization.getTimezone,
 
 		/**
@@ -612,8 +322,12 @@ sap.ui.define([
 		 * @public
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @since 1.99.0
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setTimezone} instead.
 		 */
-		setTimezone : Localization.setTimezone,
+		setTimezone : function() {
+			Localization.setTimezone.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns the calendar type which is being used in locale dependent functionality.
@@ -623,6 +337,9 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.CalendarType} the current calendar type, e.g. <code>Gregorian</code>
 		 * @since 1.28.6
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType} instead.
 		 */
 		getCalendarType: Formatting.getCalendarType,
 
@@ -634,12 +351,47 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering} instead.
 		 */
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
+		/**
+		 * Returns whether the page uses the RTL text direction.
+		 *
+		 * If no mode has been explicitly set (neither <code>true</code> nor <code>false</code>),
+		 * the mode is derived from the current language setting.
+		 *
+		 * @returns {boolean} whether the page uses the RTL text direction
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getRTL} instead.
+		 */
 		getRTL :Localization.getRTL,
 
-		setRTL : Localization.setRTL,
+		/**
+		 * Sets the character orientation mode to be used from now on.
+		 *
+		 * Can either be set to a concrete value (true meaning right-to-left,
+		 * false meaning left-to-right) or to <code>null</code> which means that
+		 * the character orientation mode should be derived from the current
+		 * language (incl. region) setting.
+		 *
+		 * After changing the character orientation mode, the framework tries
+		 * to update localization specific parts of the UI. See the documentation of
+		 * {@link #setLanguage} for details and restrictions.
+		 *
+		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
+		 *
+		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
+		 * @returns {this} <code>this</code> to allow method chaining
+		 * @function
+		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setRTL} instead.
+		 */
+		setRTL : function() {
+			Localization.setRTL.apply(Localization, arguments);
+			return Configuration;
+		},
 
 		/**
 		 * Returns a Locale object for the current language.
@@ -648,70 +400,11 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} The locale
 		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
 		 */
 		getLocale : function() {
 			var oLanguageTag = Localization.getLanguageTag();
 			return Locale._getCoreLocale(oLanguageTag);
-		},
-
-		/**
-		 * Checks whether the Cache Manager is switched on.
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.37.0
-		 * @returns {boolean} If cache is enabled
-		 * @private
-		 */
-		isUI5CacheOn: function () {
-			return Configuration.getValue("xx-cache-use");
-		},
-
-		/**
-		 * Enables/Disables the Cache configuration.
-		 * @since 1.37.0
-		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {this} The Configuration for chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		setUI5CacheOn: function (on) {
-			config["xx-cache-use"] = on;
-			return this;
-		},
-
-		/**
-		 * Checks whether the Cache Manager serialization support is switched on.
-		 * @since 1.37.0
-		 * @returns {boolean} Wether cache serialization is supported or not
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		isUI5CacheSerializationSupportOn: function () {
-			return Configuration.getValue("xx-cache-serialization");
-		},
-
-		/**
-		 * Enables/Disables the Cache serialization support
-		 * @since 1.37.0
-		 * @param {boolean} on true to switch it on, false if to switch it off
-		 * @returns {this} The Configuration for chaining
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 */
-		setUI5CacheSerializationSupport: function (on) {
-			config["xx-cache-serialization"] = on;
-			return this;
-		},
-
-		/**
-		 * Returns all keys, that the CacheManager will ignore when set/get values.
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.37.0
-		 * @returns {string[]} array of keys that CacheManager should ignore
-		 * @see sap.ui.core.cache.LRUPersistentCache#keyMatchesExclusionStrings
-		 */
-		getUI5CacheExcludedKeys: function () {
-			return Configuration.getValue("xx-cache-excludedKeys");
 		},
 
 		/**
@@ -723,6 +416,7 @@ sap.ui.define([
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.28.6
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType} instead.
 		 */
 		setCalendarType : function(sCalendarType) {
 			Formatting.setCalendarType.apply(Formatting, arguments);
@@ -743,6 +437,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.113.0
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering} instead.
 		 */
 		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
 			Formatting.setCalendarWeekNumbering.apply(Formatting, arguments);
@@ -755,6 +450,7 @@ sap.ui.define([
 		 *
 		 * @return {string} the format locale string with language and country code
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			return Formatting.getLanguageTag().toString();
@@ -784,6 +480,7 @@ sap.ui.define([
 		 *   components (compatibility with Java Locale IDs)
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag} instead.
 		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 */
@@ -796,6 +493,14 @@ sap.ui.define([
 
 		getSupportedLanguages : Localization.getSupportedLanguages,
 
+		/**
+		 * Returns whether the accessibility mode is enabled or not.
+		 * @return {boolean} whether the accessibility mode is enabled or not
+		 * @public
+		 * @since 1.20
+		 * @function
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled} instead.
+		 */
 		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
 		/**
@@ -804,16 +509,17 @@ sap.ui.define([
 		 * @return {boolean} Wether the ARIA role 'application' should be added to the HTML body or not
 		 * @since 1.27.0
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getAutoAriaBodyRole : function () {
-			return Configuration.getValue("autoAriaBodyRole");
+			return BaseConfig.get({ name: "sapUiAutoAriaBodyRole", type: BaseConfig.Type.Boolean });
 		},
 
 		/**
 		 * Returns whether the animations are globally used.
 		 * @return {boolean} whether the animations are globally used
 		 * @public
-		 * @deprecated As of version 1.50.0, replaced by {@link sap.ui.core.Configuration#getAnimationMode}
+		 * @deprecated As of version 1.50. Please use {@link sap.ui.core.Configuration#getAnimationMode} instead.
 		 */
 		getAnimation : function () {
 			var sAnimationMode = Configuration.getAnimationMode();
@@ -822,13 +528,14 @@ sap.ui.define([
 		},
 
 		/**
-         * Returns the current animation mode.
-         *
-         * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
-         * @since 1.50.0
+		 * Returns the current animation mode.
+		 *
+		 * @return {sap.ui.core.Configuration.AnimationMode} The current animationMode
+		 * @since 1.50.0
 		 * @function
-         * @public
-         */
+		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode} instead.
+		 */
 		getAnimationMode : ControlBehavior.getAnimationMode,
 
 		/**
@@ -845,6 +552,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode} instead.
 		 */
 		setAnimationMode : ControlBehavior.setAnimationMode,
 
@@ -853,61 +561,61 @@ sap.ui.define([
 		 * @return {boolean|string} false - no adaptation, true - full adaptation, comma-separated list - partial adaptation
 		 * Possible values: style, collapse, title, back, hierarchy
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getFiori2Adaptation : function () {
-			return Configuration.getValue("xx-fiori2Adaptation");
+			var aAdaptations = BaseConfig.get({
+					name: "sapUiXxFiori2Adaptation",
+					type: BaseConfig.Type.StringArray,
+					external: true
+				}),
+				bAdaptationEnabled;
+			//parse fiori 2 adaptation parameters
+			if ( aAdaptations.length === 0 || (aAdaptations.length === 1 && aAdaptations[0] === 'false') ) {
+				bAdaptationEnabled = false;
+			} else if ( aAdaptations.length === 1 && aAdaptations[0] === 'true' ) {
+				bAdaptationEnabled = true;
+			}
+
+			return bAdaptationEnabled === undefined ? aAdaptations : bAdaptationEnabled;
 		},
 
 		/**
 		 * Returns whether the page runs in full debug mode.
 		 * @returns {boolean} Whether the page runs in full debug mode
 		 * @public
+		 * @function
+		 * @deprecated As of version 1.120
 		 */
-		getDebug : function () {
-			// Configuration only maintains a flag for the full debug mode.
-			// ui5loader-autoconfig calculates detailed information also for the partial debug
-			// mode and writes it to window["sap-ui-debug"].
-			// Only a value of true must be reflected by this getter
-			return window["sap-ui-debug"] === true || BaseConfig.get({name: "sapUiDebug", type: BaseConfig.Type.Boolean, external: true});
-		},
+		getDebug : Supportability.isDebugModeEnabled,
 
 		/**
 		 * Returns whether the UI5 control inspe ctor is displayed.
 		 * Has only an effect when the sap-ui-debug module has been loaded
 		 * @return {boolean} whether the UI5 control inspector is displayed
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120
 		 */
-		getInspect : function () {
-			return Configuration.getValue("inspect");
-		},
+		getInspect : Supportability.isControlInspectorEnabled,
 
 		/**
 		 * Returns whether the text origin information is collected.
 		 * @return {boolean} whether the text info is collected
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120
 		 */
-		getOriginInfo : function () {
-			return Configuration.getValue("originInfo");
-		},
+		getOriginInfo : Supportability.collectOriginInfo,
 
 		/**
 		 * Returns whether there should be an exception on any duplicate element IDs.
 		 * @return {boolean} whether there should be an exception on any duplicate element IDs
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getNoDuplicateIds : function () {
 			return BaseConfig.get({ name: "sapUiNoDuplicateIds", type: BaseConfig.Type.Boolean, defaultValue: true, external: true });
-		},
-
-		/**
-		 * Whether a trace view should be shown or not.
-		 *
-		 * Has only an effect when the sap-ui-debug module has been loaded
-		 * either by explicitly loading it or by setting the 'debug' option to true.
-		 * @return {boolean} whether a trace view should be shown
-		 */
-		getTrace : function () {
-			return Configuration.getValue("trace");
 		},
 
 		/**
@@ -916,11 +624,12 @@ sap.ui.define([
 		 *
 		 * @returns {string} the prefix to be used
 		 * @public
+		 * @deprecated As of Version 1.119. Please use {@link sap.ui.base.ManagedObjectMetadata.getUIDPrefix ManagedObjectMetadata.getUIDPrefix} instead.
 		 */
 		getUIDPrefix : function() {
-			return Configuration.getValue("uidPrefix");
+			var ManagedObjectMetadata = sap.ui.require("sap/ui/base/ManagedObjectMetadata");
+			return ManagedObjectMetadata.getUIDPrefix();
 		},
-
 
 		/**
 		 * Return whether the design mode is active or not.
@@ -929,15 +638,9 @@ sap.ui.define([
 		 * @since 1.13.2
 		 * @private
 		 * @ui5-restricted sap.ui.core.Core, sap.watt, com.sap.webide, sap.ui.fl, sap.ui.rta, sap.ui.comp, SAP Business Application Studio
+		 * @deprecated As of Version 1.120
 		 */
-		getDesignMode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxDesignMode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
+		getDesignMode : DesignTime.isDesignModeEnabled,
 
 		/**
 		 * Return whether the activation of the controller code is suppressed.
@@ -946,15 +649,9 @@ sap.ui.define([
 		 * @since 1.13.2
 		 * @private
 		 * @ui5-restricted sap.watt, com.sap.webide
+		 * @deprecated As of Version 1.120
 		 */
-		getSuppressDeactivationOfControllerCode : function() {
-			return BaseConfig.get({
-				name: "sapUiXxSuppressDeactivationOfControllerCode",
-				type: BaseConfig.Type.Boolean,
-				external: true,
-				freeze: true
-			});
-		},
+		getSuppressDeactivationOfControllerCode : DesignTime.isControllerCodeDeactivationSuppressed,
 
 		/**
 		 * Return whether the controller code is deactivated. During design mode the.
@@ -963,20 +660,19 @@ sap.ui.define([
 		 * @since 1.26.4
 		 * @private
 		 * @ui5-restricted sap.watt, com.sap.webide
+		 * @deprecated As of Version 1.120
 		 */
-		getControllerCodeDeactivated : function() {
-			return Configuration.getDesignMode() && !Configuration.getSuppressDeactivationOfControllerCode();
-		},
+		getControllerCodeDeactivated : DesignTime.isControllerCodeDeactivated,
 
 		/**
 		 * The name of the application to start or empty.
 		 *
 		 * @returns {string} name of the application
 		 * @public
-		 * @deprecated Since 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
+		 * @deprecated As of Version 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getApplication : function() {
-			return Configuration.getValue("application");
+			return BaseConfig.get({ name: "sapUiApplication", type: BaseConfig.Type.String, external: true });
 		},
 
 		/**
@@ -984,10 +680,10 @@ sap.ui.define([
 		 *
 		 * @returns {string} name of the root component
 		 * @public
-		 * @deprecated Since 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
+		 * @deprecated As of Version 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getRootComponent : function() {
-			return Configuration.getValue("rootComponent");
+			return BaseConfig.get({ name: "sapUiRootComponent", type: BaseConfig.Type.String });
 		},
 
 		/**
@@ -995,6 +691,7 @@ sap.ui.define([
 		 *
 		 * @returns {string[]} array of base URLs
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getAppCacheBuster : function() {
 			return BaseConfig.get({name: "sapUiAppCacheBuster", type: BaseConfig.Type.StringArray, external: true, freeze: true});
@@ -1003,23 +700,12 @@ sap.ui.define([
 		/**
 		 * The loading mode (sync|async|batch) of the AppCacheBuster (sync is default)
 		 *
-		 * @returns {string} "sync" | "async"
+		 * @returns {string} "sync" | "async" | "batch"
 		 * @public
+		 * @deprecated As of Version 1.120
 		 */
 		getAppCacheBusterMode : function() {
 			return BaseConfig.get({name: "sapUiXxAppCacheBusterMode", type: BaseConfig.Type.String, defaultValue: "sync", external: true, freeze: true});
-		},
-
-		/**
-		 * Object defining the callback hooks for the AppCacheBuster like e.g.
-		 * <code>handleURL</code>, <code>onIndexLoad</code> or <code>onIndexLoaded</code>.
-		 *
-		 * @returns {object} object containing the callback functions for the AppCacheBuster
-		 * @private
-		 * @ui5-restricted
-		 */
-		getAppCacheBusterHooks : function() {
-			return BaseConfig.get({name: "sapUiXxAppCacheBusterHooks", type: BaseConfig.Type.Object, defaultValue: undefined, freeze: true});
 		},
 
 		/**
@@ -1028,86 +714,10 @@ sap.ui.define([
 		 * @returns {boolean} true if customizing is disabled
 		 * @private
 		 * @ui5-restricted
+		 * @deprecated As of Version 1.120
 		 */
 		getDisableCustomizing : function() {
 			return BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean});
-		},
-
-		/**
-		 * Flag, representing the status of the view cache.
-		 * @see {sap.ui.xmlview}
-		 *
-		 * @returns {boolean} true if view cache is enabled
-		 * @private
-		 * @experimental Since 1.44
-		 */
-		getViewCache : function() {
-			return Configuration.getValue("xx-viewCache");
-		},
-
-		/**
-		 * Currently active preload mode for libraries or falsy value.
-		 *
-		 * @returns {string} preload mode
-		 * @private
-		 * @ui5-restricted sap.ui.core.Core
-		 * @since 1.16.3
-		 */
-		getPreload : function() {
-			// if debug sources are requested, then the preload feature must be deactivated
-			if (Configuration.getDebug() === true) {
-				return "";
-			}
-			// determine preload mode (e.g. resolve default or auto)
-			var sPreloadMode = BaseConfig.get({name: "sapUiPreload", type: BaseConfig.Type.String, defaultValue: "auto", external: true});
-			// when the preload mode is 'auto', it will be set to 'async' or 'sync' for optimized sources
-			// depending on whether the ui5loader is configured async
-			if ( sPreloadMode === "auto" ) {
-				if (window["sap-ui-optimized"]) {
-					sPreloadMode = sap.ui.loader.config().async ? "async" : "sync";
-				} else {
-					sPreloadMode = "";
-				}
-			}
-			return sPreloadMode;
-		},
-
-		/**
-		 * Currently active syncCallBehavior
-		 *
-		 * @returns {int} syncCallBehavior
-		 * @private
-		 * @ui5-restricted sap.ui.core
-		 * @since 1.106.0
-		 */
-		getSyncCallBehavior : function() {
-			var syncCallBehavior = 0; // ignore
-			var mOptions = {
-				name: "sapUiXxNoSync",
-				type: BaseConfig.Type.String,
-				external: true,
-				freeze: true
-			};
-			var sNoSync = BaseConfig.get(mOptions);
-			if (sNoSync === 'warn') {
-				syncCallBehavior = 1;
-			} else {
-				mOptions.type = BaseConfig.Type.Boolean;
-				if (BaseConfig.get(mOptions)) {
-					syncCallBehavior = 2;
-				}
-			}
-			return syncCallBehavior;
-		},
-
-		/**
-		 * Whether dependency cache info files should be loaded instead of preload files.
-		 *
-		 * This is an experimental feature intended for HTTP/2 scenarios.
-		 * @private
-		 */
-		getDepCache : function() {
-			return BaseConfig.get({name: "sapUiXxDepCache", type: BaseConfig.Type.Boolean, external: true});
 		},
 
 		/**
@@ -1116,6 +726,7 @@ sap.ui.define([
 		 * @returns {boolean} true if a Component should load the manifest first
 		 * @public
 		 * @since 1.33.0
+		 * @deprecated As of Version 1.120. 'manifest-first' is the default for the {@link sap.ui.core.Component.create} factory.
 		 */
 		getManifestFirst : function() {
 			return BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true});
@@ -1128,54 +739,36 @@ sap.ui.define([
 		 * @returns {object[]} Flexibility services configuration
 		 * @public
 		 * @since 1.60.0
+		 * @deprecated As of Version 1.120
 		 */
 		getFlexibilityServices : function() {
-			var vFlexibilityServices = Configuration.getValue("flexibilityServices") || [];
-
-			if (typeof vFlexibilityServices === 'string') {
-				if (vFlexibilityServices[0] === "/") {
-					vFlexibilityServices = [{
-						url : vFlexibilityServices,
-						layers : ["ALL"],
-						connector : "LrepConnector"
-					}];
-				} else {
-					vFlexibilityServices = JSON.parse(vFlexibilityServices);
-				}
+			var FlexConfig = sap.ui.require("sap/ui/fl/initial/_internal/FlexConfiguration");
+			var vFlexibilityServices;
+			if (FlexConfig) {
+				vFlexibilityServices = FlexConfig.getFlexibilityServices();
+			} else {
+				const aDefaultValue = [{
+					url: "/sap/bc/lrep",
+					connector: "LrepConnector"
+				}];
+				vFlexibilityServices = BaseConfig.get({
+					name: "sapUiFlexibilityServices",
+					type: (value) => {
+						if (value && typeof value === "string") {
+							if (value[0] === "/") {
+								aDefaultValue[0].url = value;
+								value = aDefaultValue;
+							} else {
+								value = JSON.parse(value);
+							}
+						}
+						return value || [];
+					},
+					defaultValue: aDefaultValue,
+					external: true
+				});
 			}
-			config.flexibilityServices = vFlexibilityServices;
-
-			return config.flexibilityServices;
-		},
-
-		/**
-		 * Sets the UI5 flexibility services configuration.
-		 *
-		 * @param {object[]} aFlexibilityServices Connector configuration
-		 * @param {string} [aFlexibilityServices.connector] Name of the connector
-		 * @param {string} [aFlexibilityServices.applyConnector] Name of the full module name of the custom apply connector
-		 * @param {string} [aFlexibilityServices.writeConnector] Name of the full module name of the custom write connector
-		 * @param {boolean} [aFlexibilityServices.custom=false] Flag to identify the connector as custom or fl owned
-		 * @param {string} [aFlexibilityServices.url] Url for requests sent by the connector
-		 * @param {string} [aFlexibilityServices.path] Path for loading data in the ObjectPath connector
-		 * @param {sap.ui.fl.Layer[]} [aFlexibilityServices.layers] List of layers in which the connector is allowed to write
-		 * @private
-		 * @ui5-restricted sap.ui.fl, other ui5 bootstrapping tools
-		 * @since 1.73.0
-		 */
-		setFlexibilityServices: function (aFlexibilityServices) {
-			config.flexibilityServices = aFlexibilityServices.slice();
-		},
-
-		/**
-		 * Currently active preload mode for components or falsy value.
-		 *
-		 * @returns {string} component preload mode
-		 * @private
-		 * @experimental Since 1.16.3, might change completely.
-		 */
-		getComponentPreload : function() {
-			return BaseConfig.get({name: "sapUiXxComponentPreload", type: BaseConfig.Type.String, external: true}) || Configuration.getPreload();
+			return vFlexibilityServices;
 		},
 
 		/**
@@ -1183,6 +776,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 		 */
 		getFormatSettings : function() {
 			return oFormatSettings;
@@ -1193,33 +787,32 @@ sap.ui.define([
 		 *
 		 * @return {string} frameOptions mode
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getFrameOptions} instead.
 		 */
-		getFrameOptions : function() {
-			return Configuration.getValue("frameOptions");
-		},
+		getFrameOptions : Security.getFrameOptions,
 
 		/**
 		 * URL of the whitelist service.
 		 *
 		 * @return {string} whitelist service URL
 		 * @public
-		 * @deprecated Since 1.85.0. Use {@link sap.ui.core.Configuration#getAllowlistService} instead.
+		 * @function
+		 * @deprecated As of Version 1.85. Use {@link module:sap/ui/security/Security.getAllowlistService} instead.
 		 * SAP strives to replace insensitive terms with inclusive language.
 		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
-		getWhitelistService : function() {
-			return Configuration.getAllowlistService();
-		},
+		getWhitelistService : Security.getAllowlistService,
 
 		/**
 		 * URL of the allowlist service.
 		 *
 		 * @return {string} allowlist service URL
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getAllowlistService} instead.
 		 */
-		getAllowlistService : function() {
-			return Configuration.getValue("allowlistService");
-		},
+		getAllowlistService : Security.getAllowlistService,
 
 		/**
 		 * Name (ID) of a UI5 module that implements file share support.
@@ -1231,29 +824,14 @@ sap.ui.define([
 		 * @returns {string|undefined} Module name (ID) of a file share support module
 		 * @public
 		 * @since 1.102
+		 * @deprecated As of version 1.120
 		 */
 		getFileShareSupport : function() {
-			return Configuration.getValue("fileShareSupport") || undefined;
-		},
-
-		/**
-		 * Whether support mode is enabled.
-		 *
-		 * @return {boolean} support mode is enabled
-		 * @experimental
-		 */
-		getSupportMode : function() {
-			return Configuration.getValue("support");
-		},
-
-		/**
-		 * Whether test tools are enabled.
-		 *
-		 * @return {boolean} test tools are enabled
-		 * @experimental
-		 */
-		getTestRecorderMode : function() {
-			return Configuration.getValue("testRecorder");
+			return BaseConfig.get({
+				name: "sapUiFileShareSupport",
+				type: BaseConfig.Type.String,
+				defaultValue: undefined
+			});
 		},
 
 		/**
@@ -1264,12 +842,11 @@ sap.ui.define([
 		 *
 		 * @returns {boolean} statistics flag
 		 * @private
-		 * @deprecated since 1.106.0. Renamed for clarity, use {@link sap.ui.core.Configuration#getStatisticsEnabled} instead
+		 * @function
 		 * @since 1.20.0
+		 * @deprecated As of Version 1.106. Renamed for clarity, use {@link sap.ui.core.Configuration#getStatisticsEnabled} instead.
 		 */
-		getStatistics : function() {
-			return Configuration.getStatisticsEnabled();
-		},
+		getStatistics : Configuration.getStatisticsEnabled,
 
 		/**
 		 * Flag if statistics are requested.
@@ -1280,38 +857,21 @@ sap.ui.define([
 		 * @returns {boolean} Whether statistics are enabled
 		 * @public
 		 * @since 1.106.0
+		 * @function
+		 * @deprecated As of Version 1.120
 		 */
-		getStatisticsEnabled : function() {
-			var result = Configuration.getValue("statistics");
-			try {
-				result = result || window.localStorage.getItem("sap-ui-statistics") == "X";
-			} catch (e) {
-				// access to local storage might fail due to security / privacy settings
-			}
-			return result;
-		},
+		getStatisticsEnabled : Supportability.isStatisticsEnabled,
 
 		/**
 		 * Return whether native scrolling should be suppressed on touch devices.
 		 *
 		 * @returns {boolean} whether native scrolling is suppressed on touch devices
 		 * @since 1.20.0
-		 * @deprecated since 1.26.0. Always use native scrolling
+		 * @deprecated As of Version 1.26.0. Always use native scrolling.
 		 * @private
 		 */
 		getNoNativeScroll : function() {
 			return false;
-		},
-
-		/**
-		 * Return whether type validation is handled by core.
-		 *
-		 * @returns {boolean} whether whether type validation is handled by core
-		 * @since 1.28.0
-		 * @private
-		 */
-		getHandleValidation : function() {
-			return Configuration.getValue("xx-handleValidation");
 		},
 
 		/**
@@ -1320,33 +880,21 @@ sap.ui.define([
 		 * @returns {string[]|undefined} if no active terminologies are set, the default value <code>undefined</code> is returned.
 		 * @since 1.77.0
 		 * @public
+		 * @function
+		 * @deprecated As of Version 1.118. Please use {@link module:sap/base/i18n/Localization.getActiveTerminologies} instead.
 		 */
-		getActiveTerminologies : function() {
-			return BaseConfig.get({name: "sapUiActiveTerminologies", type: BaseConfig.Type.StringArray, defaultValue: undefined, external: true});
-		},
+		getActiveTerminologies : Localization.getActiveTerminologies,
 
 		/**
 		 * Returns the security token handlers of an OData V4 model.
 		 *
 		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
-		 * @since 1.95.0
+		 * @function
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getSecurityTokenHandlers} instead.
 		 * @see #setSecurityTokenHandlers
 		 */
-		getSecurityTokenHandlers : function () {
-			return Configuration.getValue("securityTokenHandlers").slice();
-		},
-
-		/**
-		 * Gets if performance measurement for UI5 Integration Cards should happen.
-		 *
-		 * @returns {boolean} whether measurement should be executed
-		 * @since 1.112.0
-		 * @experimental
-		 */
-		getMeasureCards: function () {
-			return Configuration.getValue("xx-measure-cards");
-		},
+		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
 
 		/**
 		 * Sets the security token handlers for an OData V4 model. See chapter
@@ -1354,29 +902,11 @@ sap.ui.define([
 		 *
 		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
-		 * @since 1.95.0
+		 * @function
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.setSecurityTokenHandlers} instead.
 		 * @see #getSecurityTokenHandlers
 		 */
-		setSecurityTokenHandlers : function (aSecurityTokenHandlers) {
-			aSecurityTokenHandlers.forEach(function (fnSecurityTokenHandler) {
-				check(typeof fnSecurityTokenHandler === "function",
-					"Not a function: " + fnSecurityTokenHandler);
-			});
-			config.securityTokenHandlers = aSecurityTokenHandlers.slice();
-		},
-
-		getBindingSyntax: function() {
-			var sBindingSyntax = BaseConfig.get({
-				name: "sapUiBindingSyntax",
-				type: BaseConfig.Type.String,
-				defaultValue: "default",
-				freeze: true
-			});
-			if ( sBindingSyntax === "default" ) {
-				sBindingSyntax = (Configuration.getCompatibilityVersion("sapCoreBindingSyntax").compareTo("1.26") < 0) ? "simple" : "complex";
-			}
-			return sBindingSyntax;
-		},
+		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
 
 		/**
 		 * Applies multiple changes to the configuration at once.
@@ -1410,6 +940,7 @@ sap.ui.define([
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.38.6
+		 * @deprecated As of Version 1.120
 		 */
 		applySettings: function(mSettings) {
 
@@ -1443,64 +974,12 @@ sap.ui.define([
 		 *
 		 * @private
 	 	 * @ui5-restricted sap.ui.core.Core
+		 * @deprecated As of Version 1.120
 		 */
-		setCore: function (oNewCore) {
+		setCore: function (oCore) {
 			// Setting the core needs to happen before init
 			// because getValue relies on oCore and is used in init
-			oCore = oNewCore;
-			init();
-		},
-
-		/**
-		 * Generic getter for configuration options that are not explicitly exposed via a dedicated own getter.
-		 *
-		 * For now, this getter only supports configuration options that are known to Configuration.js
-		 * (as maintained in the M_SETTINGS, see code).
-		 *
-		 * @param {string} sName Name of the configuration parameter, must be a key of M_SETTINGS
-		 * @returns {any} Value of the configuration parameter, will be of the type specified in M_SETTINGS
-		 *
-		 * @private
-	 	 * @ui5-restricted sap.ui.core.Core, jquery.sap.global
-	 	 * @since 1.106
-		 */
-		getValue: function(sName) {
-			var vValue;
-			if (typeof sName !== "string" || !Object.hasOwn(M_SETTINGS, sName)) {
-				throw new TypeError(
-					"Parameter 'sName' must be the name of a valid configuration option (one of "
-					+ Object.keys(M_SETTINGS).map(function(key) {
-						return "'" + key + "'";
-					  }).sort().join(", ")
-					+ ")"
-				);
-			}
-
-			// Until the Configuration is initialized we return the configuration value either from the instance
-			// (if a setter was called), from URL or window["sap-ui-config"].
-			// In case there is no value or the type conversion fails we return the defaultValue.
-			// After the Configuration is initialized we only return the value of the configuration.
-			if (bInitialized || config.hasOwnProperty(sName)) {
-				vValue = config[sName];
-			} else {
-				if (!config.ignoreUrlParams && !M_SETTINGS[sName].noUrl) {
-					var oUriParams = new URLSearchParams(window.location.search);
-					vValue = oUriParams.get("sap-ui-" + sName) || oUriParams.get("sap-" + sName);
-				}
-				vValue = vValue ? vValue : window["sap-ui-config"][sName] || window["sap-ui-config"][sName.toLowerCase()];
-				try {
-					vValue = vValue === undefined ? M_SETTINGS[sName].defaultValue : convertToType(sName, vValue);
-				} catch (error) {
-					// If type conversion fails return defaultValue
-					vValue = M_SETTINGS[sName].defaultValue;
-				}
-			}
-			// Return copy of array or object instead of reference
-			if (typeof M_SETTINGS[sName].type === "string" &&
-				(M_SETTINGS[sName].type.endsWith("[]") || M_SETTINGS[sName].type === "object")) {
-				vValue = deepClone(vValue);
-			}
-			return vValue;
+			Core = oCore;
 		}
 	});
 
@@ -1515,6 +994,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Configuration.AnimationMode
 	 * @since 1.50.0
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/AnimationMode} instead.
 	 */
 
 	/**
@@ -1546,21 +1026,6 @@ sap.ui.define([
 	 */
 	Configuration.AnimationMode = AnimationMode;
 
-	/*
-	 * Helper that creates a Locale object from the given language
-	 * or, if that fails, returns null.
-	 * A value of null indicates that the language was not BCP47 compliant.
-	 */
-	function convertToLocaleOrNull(sLanguage) {
-		try {
-			if ( sLanguage && typeof sLanguage === 'string' ) {
-				return new Locale( sLanguage );
-			}
-		} catch (e) {
-			// ignore
-		}
-	}
-
 	function check(bCondition, sMessage) {
 		if ( !bCondition ) {
 			throw new Error(sMessage);
@@ -1578,6 +1043,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Configuration.FormatSettings
 	 * @extends sap.ui.base.Object
 	 * @public
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
 	 * @borrows module:sap/base/i18n/Formatting.getCustomUnits as #getCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.setCustomUnits as #setCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.addCustomUnits as #addCustomUnits
@@ -1602,6 +1068,7 @@ sap.ui.define([
 	 */
 	var FormatSettings = BaseObject.extend("sap.ui.core.Configuration.FormatSettings", /** @lends sap.ui.core.Configuration.FormatSettings.prototype */ {
 		constructor : function() {
+			BaseObject.call(this);
 			this.mSettings = {};
 		},
 
@@ -1618,6 +1085,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} the format locale
 		 * @public
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			var oLocale = Formatting.getLanguageTag();
@@ -1628,13 +1096,25 @@ sap.ui.define([
 
 		getCustomUnits: Formatting.getCustomUnits,
 
-		setCustomUnits: Formatting.setCustomUnits,
+		setCustomUnits: function() {
+			Formatting.setCustomUnits.apply(Formatting, arguments);
+			return this;
+		},
 
-		addCustomUnits: Formatting.addCustomUnits,
+		addCustomUnits: function() {
+			Formatting.addCustomUnits.apply(Formatting, arguments);
+			return this;
+		},
 
-		setUnitMappings: Formatting.setUnitMappings,
+		setUnitMappings: function() {
+			Formatting.setUnitMappings.apply(Formatting, arguments);
+			return this;
+		},
 
-		addUnitMappings: Formatting.addUnitMappings,
+		addUnitMappings: function() {
+			Formatting.addUnitMappings.apply(Formatting, arguments);
+			return this;
+		},
 
 		getUnitMappings: Formatting.getUnitMappings,
 
@@ -1659,7 +1139,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setDatePattern : Formatting.setDatePattern,
+		setDatePattern : function() {
+			Formatting.setDatePattern.apply(Formatting, arguments);
+			return this;
+		},
 
 		getTimePattern : Formatting.getTimePattern,
 
@@ -1682,7 +1165,10 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setTimePattern : Formatting.setTimePattern,
+		setTimePattern : function() {
+			Formatting.setTimePattern.apply(Formatting, arguments);
+			return this;
+		},
 
 		getNumberSymbol : Formatting.getNumberSymbol,
 
@@ -1706,13 +1192,22 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setNumberSymbol : Formatting.setNumberSymbol,
+		setNumberSymbol : function() {
+			Formatting.setNumberSymbol.apply(Formatting, arguments);
+			return this;
+		},
 
 		getCustomCurrencies : Formatting.getCustomCurrencies,
 
-		setCustomCurrencies : Formatting.setCustomCurrencies,
+		setCustomCurrencies : function() {
+			Formatting.setCustomCurrencies.apply(Formatting, arguments);
+			return this;
+		},
 
-		addCustomCurrencies: Formatting.addCustomCurrencies,
+		addCustomCurrencies: function() {
+			Formatting.addCustomCurrencies.apply(Formatting, arguments);
+			return this;
+		},
 
 		/**
 		 * Defines the day used as the first day of the week.
@@ -1733,7 +1228,7 @@ sap.ui.define([
 		 * @param {int} iValue must be an integer value between 0 and 6
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
-		 * @deprecated Since 1.113.0. Use {@link sap.ui.core.Configuration.FormatSettings#setCalendarWeekNumbering} instead.
+		 * @deprecated As of Version 1.113. Use {@link sap.ui.core.Configuration.FormatSettings#setCalendarWeekNumbering} instead.
 		 */
 		setFirstDayOfWeek : function(iValue) {
 			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");
@@ -1743,7 +1238,7 @@ sap.ui.define([
 
 		_setDayPeriods: Formatting._setDayPeriods,
 
-		getLegacyDateFormat : Formatting.getLegacyDateFormat,
+		getLegacyDateFormat : Formatting.getABAPDateFormat,
 
 		/**
 		 * Allows to specify one of the legacy ABAP date formats.
@@ -1762,9 +1257,12 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyDateFormat : Formatting.setLegacyDateFormat,
+		setLegacyDateFormat : function() {
+			Formatting.setABAPDateFormat.apply(Formatting, arguments);
+			return this;
+		},
 
-		getLegacyTimeFormat : Formatting.getLegacyTimeFormat,
+		getLegacyTimeFormat : Formatting.getABAPTimeFormat,
 
 		/**
 		 * Allows to specify one of the legacy ABAP time formats.
@@ -1784,9 +1282,12 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyTimeFormat : Formatting.setLegacyTimeFormat,
+		setLegacyTimeFormat : function() {
+			Formatting.setABAPTimeFormat.apply(Formatting, arguments);
+			return this;
+		},
 
-		getLegacyNumberFormat : Formatting.getLegacyNumberFormat,
+		getLegacyNumberFormat : Formatting.getABAPNumberFormat,
 
 		/**
 		 * Allows to specify one of the legacy ABAP number format.
@@ -1805,35 +1306,54 @@ sap.ui.define([
 		 * @public
 		 * @function
 		 */
-		setLegacyNumberFormat : Formatting.setLegacyNumberFormat,
+		setLegacyNumberFormat : function() {
+			Formatting.setABAPNumberFormat.apply(Formatting, arguments);
+			return this;
+		},
 
-		setLegacyDateCalendarCustomizing : Formatting.setLegacyDateCalendarCustomizing,
+		setLegacyDateCalendarCustomizing : function() {
+			Formatting.setLegacyDateCalendarCustomizing.apply(Formatting, arguments);
+			return this;
+		},
 
 		getLegacyDateCalendarCustomizing : Formatting.getLegacyDateCalendarCustomizing,
 
-		setTrailingCurrencyCode : Formatting.setTrailingCurrencyCode,
+		setTrailingCurrencyCode : function() {
+			Formatting.setTrailingCurrencyCode.apply(Formatting, arguments);
+			return this;
+		},
 
 		getTrailingCurrencyCode : Formatting.getTrailingCurrencyCode,
 
 		getCustomLocaleData : Formatting.getCustomLocaleData
 	});
 
+	/**
+	 * @deprecated As of Version 1.120
+	 */
 	oFormatSettings = new FormatSettings(this);
 
 	//enable Eventing
 	Localization.attachChange(function(oEvent) {
-		if (!mChanges && oCore) {
-			oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
+		if (!mChanges && Core) {
+			Core.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
 		} else if (mChanges) {
 			Object.assign(mChanges, BaseEvent.getParameters(oEvent));
 		}
 	});
 
 	Formatting.attachChange(function(oEvent) {
-		if (!mChanges && oCore) {
-			oCore.fireLocalizationChanged(BaseEvent.getParameters(oEvent));
+		const mParameters = BaseEvent.getParameters(oEvent);
+		Object.keys(oEvent).forEach((sName) => {
+			if (["ABAPDateFormat", "ABAPTimeFormat", "ABAPNumberFormat"].includes(sName)) {
+				mParameters[sName.replace("ABAP", "legacy")] = mParameters[sName];
+				delete mParameters[sName];
+			}
+		});
+		if (!mChanges && Core) {
+			Core.fireLocalizationChanged(mParameters);
 		} else if (mChanges) {
-			Object.assign(mChanges, BaseEvent.getParameters(oEvent));
+			Object.assign(mChanges, mParameters);
 		}
 	});
 

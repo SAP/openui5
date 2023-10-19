@@ -21,7 +21,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.Action
 	 * @author SAP SE
-	 * @experimental Since 1.58
 	 * @since 1.58
 	 * @version ${version}
 	 * @private
@@ -91,7 +90,7 @@ sap.ui.define([
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
 				if (!oElementOverlay) {
-					throw new Error(DtUtil.printf('Control with id="{0}" is not under the one of root elements or ignored.', sControlId));
+					throw new Error(`Control with id="${sControlId}" is not under a root element or ignored.'`);
 				}
 
 				return oElementOverlay;
@@ -111,7 +110,7 @@ sap.ui.define([
 				var oElementOverlay = OverlayRegistry.getOverlay(sControlId);
 
 				if (!oElementOverlay) {
-					throw new Error(DtUtil.printf('Control with id="{0}" is not under the one of root elements or ignored.', sControlId));
+					throw new Error(`Control with id="${sControlId}" is not under a root element or ignored.`);
 				}
 
 				return oElementOverlay;
@@ -185,7 +184,7 @@ sap.ui.define([
 				 * @public
 				 * @function
 				 */
-				get: get,
+				get,
 
 				/**
 				 * Returns a list of available actions for the specified control(s).
@@ -197,7 +196,7 @@ sap.ui.define([
 				 * @public
 				 * @function
 				 */
-				execute: execute
+				execute
 			}
 		};
 	};

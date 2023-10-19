@@ -36,10 +36,10 @@
 		"dependencies": {
 			"minUI5Version": "1.61",
 			"libs": {
-				"sap.ui.core": {},
 				"sap.m": {},
-				"sap.ui.mdc": {},
-				"sap.ui.fl": {}
+				"sap.ui.core": {},
+				"sap.ui.fl": {},
+				"sap.ui.mdc": {}
 			}
 		},
 		"handleValidation": true,

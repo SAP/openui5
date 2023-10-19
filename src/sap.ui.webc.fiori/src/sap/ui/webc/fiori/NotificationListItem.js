@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.NotificationListItem.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/webc/main/library",
 	"./thirdparty/NotificationListItem"
@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The <code>sap.ui.webc.fiori.NotificationListItem</code> is a type of list item, meant to display notifications. <br>
@@ -92,13 +92,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the <code>priority</code> of the item. Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Low</code></li>
-				 *     <li><code>Medium</code></li>
-				 *     <li><code>High</code></li>
-				 * </ul>
+				 * Defines the <code>priority</code> of the item.
 				 */
 				priority: {
 					type: "sap.ui.webc.main.Priority",
@@ -111,6 +105,14 @@ sap.ui.define([
 				 * <b>Note:</b> if set to <code>false</code> the <code>titleText</code> has bold font, if set to true - it has a normal font.
 				 */
 				read: {
+					type: "boolean",
+					defaultValue: false
+				},
+
+				/**
+				 * Defines the selected state of the <code>ListItem</code>.
+				 */
+				selected: {
 					type: "boolean",
 					defaultValue: false
 				},

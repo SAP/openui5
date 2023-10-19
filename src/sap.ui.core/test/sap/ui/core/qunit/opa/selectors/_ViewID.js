@@ -3,18 +3,17 @@ sap.ui.define([
 	"sap/ui/test/selectors/_ControlSelectorGenerator",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
-	'sap/m/App',
 	'sap/ui/core/Element',
-	'sap/ui/core/mvc/XMLView'
-], function (_ControlSelectorGenerator, $, Button, App, Element, XMLView) {
+	'sap/ui/core/mvc/XMLView',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_ControlSelectorGenerator, $, Button, Element, XMLView, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("_ViewID", {
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			Promise.all([
+			return Promise.all([
 				XMLView.create({
 					id: "myView",
 					definition: createViewContent("myView")
@@ -27,8 +26,7 @@ sap.ui.define([
 				this.oButton.placeAt("qunit-fixture");
 				this.oViewWithId = aViews[0].placeAt("qunit-fixture");
 				this.oViewNoId = aViews[1].placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});

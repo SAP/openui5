@@ -2102,7 +2102,9 @@ function(
 	 * @since 1.91
 	 */
 	SplitContainer.prototype.showPlaceholder = function(mSettings) {
-		if (!Configuration.getPlaceholder()) {
+		var Placeholder = sap.ui.require("sap/ui/core/Placeholder");
+
+		if (!Placeholder || !Placeholder.isEnabled()) {
 			return;
 		}
 

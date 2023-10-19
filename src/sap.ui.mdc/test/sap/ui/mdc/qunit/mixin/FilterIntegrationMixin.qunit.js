@@ -13,16 +13,16 @@ sap.ui.define([
 ) {
     "use strict";
 
-    var TestClass;
-    var oSomeInstance;
+    let TestClass;
+    let oSomeInstance;
 
     //can be used to toggle inbuilt filtering
-    var bInbuiltEnabled = false;
+    let bInbuiltEnabled = false;
 
     //Can be used for assertions
-    var fnExecuteOnRebind = function(){};
+    let fnExecuteOnRebind = function(){};
 
-    var fnExtendTestClass = function () {
+    const fnExtendTestClass = function () {
         TestClass = Control.extend("temp",{
             metadata: {
                 associations: {
@@ -38,7 +38,7 @@ sap.ui.define([
 
     };
 
-    var fnCreateValidInstance = function () {
+    const fnCreateValidInstance = function () {
         fnExtendTestClass();
         oSomeInstance = new TestClass();
         oSomeInstance._rebind = function() {
@@ -63,7 +63,7 @@ sap.ui.define([
         return oSomeInstance;
     };
 
-    var fnCleanup = function () {
+    const fnCleanup = function () {
         if (oSomeInstance) {
             oSomeInstance.destroy();
             oSomeInstance = undefined;
@@ -97,8 +97,8 @@ sap.ui.define([
     });
 
     QUnit.test("setFilter error for invalid 'IFilter' connections", function (assert) {
-        var vFilter = new Control();
-        var IFILTER = "sap.ui.mdc.IFilter";
+        const vFilter = new Control();
+        const IFILTER = "sap.ui.mdc.IFilter";
         assert.throws(
             function () {
                 oSomeInstance = fnCreateValidInstance();
@@ -116,7 +116,7 @@ sap.ui.define([
     });
 
     QUnit.test("setFilter vor valid 'IFiter' connections", function(assert) {
-        var oFilter = new FilterBarBase();
+        const oFilter = new FilterBarBase();
         oSomeInstance = fnCreateValidInstance();
         oSomeInstance.setFilter(oFilter);
         assert.ok("'setFilter' does not crash when used with a valid 'IFilter' implementing control");
@@ -155,9 +155,9 @@ sap.ui.define([
     });
 
     QUnit.test("Check 'search' registration", function(assert) {
-        var done = assert.async();
+        const done = assert.async();
 
-        var oExternalFilter = new FilterBarBase();
+        const oExternalFilter = new FilterBarBase();
 
         oSomeInstance.setFilter(oExternalFilter);
 
@@ -208,8 +208,8 @@ sap.ui.define([
 
         bInbuiltEnabled = false;
 
-        var oExternalFilter = new FilterBarBase();
-        var oInternalFilter = new FilterBarBase();
+        const oExternalFilter = new FilterBarBase();
+        const oInternalFilter = new FilterBarBase();
 
         oSomeInstance.setFilter(oExternalFilter);
 
@@ -217,8 +217,8 @@ sap.ui.define([
             return Promise.resolve(oInternalFilter);
         };
 
-        var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
-        var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        const oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
+        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.rebind();
 
@@ -231,13 +231,13 @@ sap.ui.define([
 
         bInbuiltEnabled = true;
 
-        var oInternalFilter = new FilterBarBase();
+        const oInternalFilter = new FilterBarBase();
 
         oSomeInstance.retrieveInbuiltFilter = function() {
             return Promise.resolve(oInternalFilter);
         };
 
-        var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.rebind();
 
@@ -249,13 +249,13 @@ sap.ui.define([
 
         bInbuiltEnabled = false;
 
-        var oInternalFilter = new FilterBarBase();
+        const oInternalFilter = new FilterBarBase();
 
         oSomeInstance.retrieveInbuiltFilter = function() {
             return Promise.resolve(oInternalFilter);
         };
 
-        var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.rebind();
 
@@ -267,8 +267,8 @@ sap.ui.define([
 
         bInbuiltEnabled = true;
 
-        var oExternalFilter = new FilterBarBase();
-        var oInternalFilter = new FilterBarBase();
+        const oExternalFilter = new FilterBarBase();
+        const oInternalFilter = new FilterBarBase();
 
         oSomeInstance.setFilter(oExternalFilter);
 
@@ -276,8 +276,8 @@ sap.ui.define([
             return Promise.resolve(oInternalFilter);
         };
 
-        var oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
-        var oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
+        const oExternalFilterSpy = sinon.spy(oExternalFilter, "validate");
+        const oRetrieveInnerSpy = sinon.spy(oSomeInstance, "retrieveInbuiltFilter");
 
         oSomeInstance.rebind();
 
@@ -287,12 +287,12 @@ sap.ui.define([
     });
 
     QUnit.test("Hooks", function(assert) {
-		var oFilter = new FilterBarBase();
-		var oOtherFilter = new FilterBarBase();
-		var oOnFilterProvided = sinon.spy();
-		var oOnFilterRemoved = sinon.spy();
-		var oOnFiltersChanged = sinon.spy();
-		var oOnFilterSearch = sinon.spy();
+		const oFilter = new FilterBarBase();
+		const oOtherFilter = new FilterBarBase();
+		const oOnFilterProvided = sinon.spy();
+		const oOnFilterRemoved = sinon.spy();
+		const oOnFiltersChanged = sinon.spy();
+		const oOnFilterSearch = sinon.spy();
 
 		oSomeInstance._onFilterProvided = oOnFilterProvided;
 		oSomeInstance._onFilterRemoved = oOnFilterRemoved;
@@ -342,7 +342,7 @@ sap.ui.define([
         oSomeInstance = fnCreateValidInstance();
 
         //Act
-        var aLabels = oSomeInstance._getLabelsFromFilterConditions();
+        const aLabels = oSomeInstance._getLabelsFromFilterConditions();
 
         //Assert
         assert.equal(aLabels.length, 2, "Expected two filter labels");

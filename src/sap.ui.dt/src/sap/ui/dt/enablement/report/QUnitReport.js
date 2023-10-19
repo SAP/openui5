@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.enablement.report.QUnitReport
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var QUnitReport = ManagedObject.extend("sap.ui.dt.enablement.report.QUnitReport", /** @lends sap.ui.dt.enablement.report.QUnitReport.prototype */ {
 		metadata: {
@@ -47,7 +46,7 @@ sap.ui.define([
 		 * Called when the QUnit is initialized
 		 * @protected
 		 */
-		init: function() {
+		init() {
 			if (!QUnit) {
 				throw new Error("QUnit is required for this report.");
 			}
@@ -59,7 +58,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		setData: function(oData) {
+		setData(oData) {
 			if (oData) {
 				var aChildren = oData.children;
 				aChildren.forEach(function(oGroup) {
@@ -72,7 +71,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createModule: function(oGroup) {
+		_createModule(oGroup) {
 			QUnit.module(oGroup.message);
 			oGroup.children.forEach(function(oGroup) {
 				this._createTest(oGroup);
@@ -82,8 +81,8 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createTest: function(oGroup) {
-			QUnit.test(oGroup.name + ": " + oGroup.message, function(assert) {
+		_createTest(oGroup) {
+			QUnit.test(`${oGroup.name}: ${oGroup.message}`, function(assert) {
 				oGroup.children.forEach(function(oGroup) {
 					this._createAssertion(assert, oGroup);
 				}, this);
@@ -93,13 +92,13 @@ sap.ui.define([
 		/**
 		 * @private
 		 */
-		_createAssertion: function(assert, oGroup) {
+		_createAssertion(assert, oGroup) {
 			if (oGroup.children.length > 0) {
 				oGroup.children.forEach(function(oTest) {
-					assert.ok(oTest.result, oGroup.name + ": " + oTest.message);
+					assert.ok(oTest.result, `${oGroup.name}: ${oTest.message}`);
 				});
 			} else {
-				assert.ok(true, oGroup.name + ": " + oGroup.message);
+				assert.ok(true, `${oGroup.name}: ${oGroup.message}`);
 			}
 		}
 	});

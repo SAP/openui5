@@ -5,13 +5,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/encodeURL",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Log,
 	encodeURL,
-	Core,
+	Lib,
 	FlexUtils,
 	jQuery
 ) {
@@ -106,9 +106,7 @@ sap.ui.define([
 				oEntitySet = oModel.oMetadata._getEntitySetByType(oEntityType);
 			}
 
-			if (!oEntitySet) {
-				oEntitySet = oModel.oMetadata._getEntitySetByPath(sBindingPath);
-			}
+			oEntitySet ||= oModel.oMetadata._getEntitySetByPath(sBindingPath);
 
 			return oEntitySet ? oEntitySet.name : null;
 		});
@@ -154,9 +152,7 @@ sap.ui.define([
 				oEntityType = oModel.oMetadata._getEntityTypeByName(sEntityType);
 			}
 
-			if (!oEntityType) {
-				oEntityType = oModel.oMetadata._getEntityTypeByPath(sBindingPath);
-			}
+			oEntityType ||= oModel.oMetadata._getEntityTypeByPath(sBindingPath);
 
 			return oEntityType ? oEntityType.name : null;
 		});
@@ -245,9 +241,10 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.Utils
-	 * @experimental Since 1.87.0
+	 * @since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
 	 */
 	var Utils = {};
 
@@ -382,7 +379,7 @@ sap.ui.define([
 	 * @returns {string} Translated text
 	 */
 	Utils.getText = function(sTextKey) {
-		return Core.getLibraryResourceBundle("sap.ui.fl").getText(sTextKey);
+		return Lib.getResourceBundleFor("sap.ui.fl").getText(sTextKey);
 	};
 
 	/**
@@ -401,12 +398,12 @@ sap.ui.define([
 
 		Object.keys(mParameters).forEach(function(sName) {
 			if (sName) {
-				var sValue = "'" + encodeURL(mParameters[sName] || "") + "'";
-				aUrlParameters.push(encodeURL(sName) + "=" + sValue);
+				var sValue = `'${encodeURL(mParameters[sName] || "")}'`;
+				aUrlParameters.push(`${encodeURL(sName)}=${sValue}`);
 			}
 		});
 
-		return aUrlParameters.length === 0 ? "" : "?" + aUrlParameters.join("&");
+		return aUrlParameters.length === 0 ? "" : `?${aUrlParameters.join("&")}`;
 	};
 
 	/**

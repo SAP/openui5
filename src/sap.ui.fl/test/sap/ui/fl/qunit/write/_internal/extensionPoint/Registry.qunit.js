@@ -1,5 +1,6 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/ui/base/DesignTime",
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
@@ -8,8 +9,10 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Label",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	DesignTime,
 	Component,
 	JsControlTreeModifier,
 	Processor,
@@ -18,7 +21,8 @@ sap.ui.define([
 	XMLView,
 	Label,
 	sinon,
-	oCore
+	Element,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -48,47 +52,45 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.fl.write._internal.extensionPoint.Registry", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Processor, "applyExtensionPoint");
 
 			var sXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
-					'<HBox id="hbox">' +
-						"<items>" +
-							'<Label id="label1" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName1 + '" />' +
-							'<Label id="label2" />' +
-						"</items>" +
-						"<dependents>" +
-							'<Label id="label3" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName4 + '" />' +
-						"</dependents>" +
-					"</HBox>" +
-					'<Panel id="panel">' +
-						"<content>" +
-							'<core:ExtensionPoint name="' + sExtensionPointName2 + '" />' +
-							'<Label id="label4" />' +
-							'<core:ExtensionPoint name="' + sExtensionPointName3 + '" >' +
-								'<Label id="ep3-label1" text="Extension point label1 - default content" />' +
-								'<Label id="ep3-label2" text="Extension point label2 - default content" />' +
-							"</core:ExtensionPoint>" +
-						"</content>" +
-					"</Panel>" +
-					'<HBox id="hbox1">' +
-						"<items>" +
-							'<core:ExtensionPoint name="' + sExtensionPointName5 + '" />' +
-						"</items>" +
-					"</HBox>" +
-				"</mvc:View>";
+				`<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">` +
+					`<HBox id="hbox">` +
+						`<items>` +
+							`<Label id="label1" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName1}" />` +
+							`<Label id="label2" />` +
+						`</items>` +
+						`<dependents>` +
+							`<Label id="label3" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName4}" />` +
+						`</dependents>` +
+					`</HBox>` +
+					`<Panel id="panel">` +
+						`<content>` +
+							`<core:ExtensionPoint name="${sExtensionPointName2}" />` +
+							`<Label id="label4" />` +
+							`<core:ExtensionPoint name="${sExtensionPointName3}" >` +
+								`<Label id="ep3-label1" text="Extension point label1 - default content" />` +
+								`<Label id="ep3-label2" text="Extension point label2 - default content" />` +
+							`</core:ExtensionPoint>` +
+						`</content>` +
+					`</Panel>` +
+					`<HBox id="hbox1">` +
+						`<items>` +
+							`<core:ExtensionPoint name="${sExtensionPointName5}" />` +
+						`</items>` +
+					`</HBox>` +
+				`</mvc:View>`;
 			return XMLView.create({id: "testComponent---myView", definition: sXmlString})
 			.then(function(oXMLView) {
 				this.oXMLView = oXMLView;
-				this.oHBox = this.oXMLView.getContent()[0];
-				this.oPanel = this.oXMLView.getContent()[1];
-				this.oHBoxWithSingleEP = this.oXMLView.getContent()[2];
+				[this.oHBox, this.oPanel, this.oHBoxWithSingleEP] = this.oXMLView.getContent();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oXMLView.destroy();
 			ExtensionPointRegistry.clear();
 			sandbox.restore();
@@ -97,7 +99,7 @@ sap.ui.define([
 		QUnit.test("when calling function 'clear'", function(assert) {
 			var oObserverDisconnectSpy = sandbox.spy(ManagedObjectObserver.prototype, "disconnect");
 			var oObserverDestroySpy = sandbox.spy(ManagedObjectObserver.prototype, "destroy");
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId()).length, 1,
 				"then after registration one item is registered by parent");
@@ -112,7 +114,7 @@ sap.ui.define([
 				"then after exit the registration map for viewId is empty");
 		});
 		QUnit.test("given the extensionpoint is the single node in aggregation when calling 'registerExtensionPoint'", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			var mExtensionPoint = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName5, this.oHBoxWithSingleEP, "items", 0);
 			assert.equal(ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oHBoxWithSingleEP.getId()).length, 1,
@@ -122,7 +124,7 @@ sap.ui.define([
 			assert.equal(oObserverObserveSpy.callCount, 1, "then after registration one observer is registered");
 		});
 		QUnit.test("given the extensionpoint in an aggregation with cardinality '0..1'", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var oObserverObserveSpy = sandbox.spy(ManagedObjectObserver.prototype, "observe");
 			var oLabel1 = new Label("newLabel1");
 			sandbox.stub(JsControlTreeModifier, "getAggregation").returns(oLabel1);
@@ -134,7 +136,7 @@ sap.ui.define([
 			oLabel1.destroy();
 		});
 		QUnit.test("given a control containing two extension points in an aggregation", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPointInfo2 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1);
 			var sParentId = mExtensionPointInfo2.targetControl.getId();
@@ -168,7 +170,7 @@ sap.ui.define([
 			oLabel2.destroy();
 		});
 		QUnit.test("given a control containing two extension points in two aggregations", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 			var mExtensionPointInfo1 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName1, this.oHBox, "items", 1);
 			var mExtensionPointInfo4 = _createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName4, this.oHBox, "dependents", 1);
 			var sParentId = mExtensionPointInfo1.targetControl.getId();
@@ -252,7 +254,7 @@ sap.ui.define([
 			assert.deepEqual(ExtensionPointRegistry.getExtensionPointInfo("not_registered_EP", this.oXMLView), undefined,
 				"undefined is returned for an invalid extension point name");
 			var oFakeView = {
-				getId: function() {
+				getId() {
 					return "not_registered_view";
 				}
 			};
@@ -313,15 +315,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("when destroying a default control of an extension point (e.g. because another content is added to it)", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
-			this.oLabel = this.oXMLView.getContent()[1].getContent()[1];
-			this.oLabel2 = this.oXMLView.getContent()[1].getContent()[2];
-			var aDefaultContent = [this.oLabel, this.oLabel2];
+			[, this.oPanel] = this.oXMLView.getContent();
+			[, this.oLabel, this.oLabel2] = this.oXMLView.getContent()[1].getContent();
+			const aDefaultContent = [this.oLabel, this.oLabel2];
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName3, this.oPanel, "content", 1, aDefaultContent);
-			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			let [mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 2, "before the destroy there are two default controls");
 			this.oLabel.destroy();
-			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			[mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(mExtensionPointInfo.defaultContent.length, 1,
 				"then the removed default control is also removed from the registry entry");
 			assert.strictEqual(mExtensionPointInfo.defaultContent[0].getId(), this.oLabel2.getId(),
@@ -329,7 +330,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler)", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId"]);
 			var mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
@@ -339,7 +340,7 @@ sap.ui.define([
 				"then the first control is added to the registry"
 			);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId2"]);
-			mExtensionPointInfo = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId())[0];
+			[mExtensionPointInfo] = ExtensionPointRegistry.getExtensionPointInfoByParentId(this.oPanel.getId());
 			assert.strictEqual(
 				mExtensionPointInfo.createdControls[0],
 				"newControlId",
@@ -353,7 +354,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when controls are added to an extension point (e.g. called by the Change Handler) which was not registered yet", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId", "newControlId2"]);
 			ExtensionPointRegistry.addCreatedControls(sExtensionPointName2, "testComponent---myView", ["newControlId3"]);
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
@@ -376,7 +377,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when a previously added control is removed from the extension point", function(assert) {
-			this.oPanel = this.oXMLView.getContent()[1];
+			[, this.oPanel] = this.oXMLView.getContent();
 			_createAndRegisterExtensionPoint(this.oXMLView, sExtensionPointName2, this.oPanel, "content", 0);
 			var oNewControl = new Label("addedLabel");
 			var oNewControl2 = new Label("addedLabel2");
@@ -406,8 +407,8 @@ sap.ui.define([
 	 * @deprecated Since version 1.77 due to deprecation of sap.ui.control when create view with design mode true
 	 */
 	QUnit.module("Given an extensionPoint.Registry instantiated by the fl extensionPoint.Processor", {
-		beforeEach: async function() {
-			sandbox.stub(oCore.getConfiguration(), "getDesignMode").returns(true);
+		async beforeEach() {
+			sandbox.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 			var sXmlString =
 				'<mvc:View id="myView" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -440,20 +441,19 @@ sap.ui.define([
 			});
 
 			return this.oComponent.runAsOwner(async () => {
-				if (sap.ui.getCore().byId("myView")) {
-					sap.ui.getCore().byId("myView").destroy();
+				if (Element.getElementById("myView")) {
+					Element.getElementById("myView").destroy();
 				}
 				this.oXMLView = await XMLView.create({
 					id: "myView",
 					definition: sXmlString,
 					async: true
 				});
-				this.oHBox = this.oXMLView.getContent()[0];
-				this.oPanel = this.oXMLView.getContent()[1];
-				oCore.applyChanges();
+				[this.oHBox, this.oPanel] = this.oXMLView.getContent();
+				await nextUIUpdate();
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			this.oXMLView.destroy();
 			ExtensionPointRegistry.clear();
@@ -490,7 +490,7 @@ sap.ui.define([
 			assert.deepEqual(mExtensionPointInfo1.targetControl, this.oHBox, "then parameter 'targetControl' is correct");
 			assert.equal(mExtensionPointInfo1.aggregationName, "items", "then parameter 'aggregationName' is correct");
 			assert.equal(mExtensionPointInfo1.index, 1, "then parameter 'index' is correct");
-			assert.deepEqual(mExtensionPointInfo1.defaultContent, [oCore.byId("myView--defaultFragment--defaultButton")],
+			assert.deepEqual(mExtensionPointInfo1.defaultContent, [Element.getElementById("myView--defaultFragment--defaultButton")],
 				"then parameter 'defaultAggregation' is correct");
 		});
 	});

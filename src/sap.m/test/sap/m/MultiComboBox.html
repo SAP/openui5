@@ -1043,6 +1043,18 @@
 	});
 	var oLabelItemsOrder = new sap.m.Label("orderLabel", {text: "MultiComboBox with strange keys", width:"100%", labelFor: "multiComboBoxStrangeKeys"});
 
+	var aTexts = ["Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6", "Item 1", "Item 2", "Item 3", "Item 4", "Item 5", "Item 6"];
+
+	var aItems = aTexts.map(text => new sap.ui.core.Item({ text: text }));
+
+	var oLongValueStateHeader = new sap.m.MultiComboBox("longHeader", {
+		selectionChange: () => {
+			oLongValueStateHeader.setValueStateText("Minim tempor id amet adipiscing laboris mollit minim consequat dolor in sunt incididunt Excepteur Lorem mollit tempor incididunt ea dolor velit enim ea amet ex laborum occaecat dolore cillum eiusmod nisi cupidatat tempor veniam amet nostrud Lorem in anim anim laborum elit.")
+		},
+		valueState: "Error",
+		items: aItems
+	});
+
 	// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
 	var oCustomCssButton = new sap.m.Button ("customCssButton",{
 			text: "Toggle custom CSS for visual test",
@@ -1072,7 +1084,7 @@
 			oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
 			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, oMultiComboBoxFourItems,
 			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oMultiComboBoxSelectAll, oToolbar, oEmptyMultiComboBox, oLabelWrapping, oMultiComboBoxLongSuggestions,
-			oLabelItemsOrder, oMultiComboBoxStrangeKeys
+			oLabelItemsOrder, oMultiComboBoxStrangeKeys, oLongValueStateHeader
 		],
 		showNavButton : true,
 		navButtonPress : function() {

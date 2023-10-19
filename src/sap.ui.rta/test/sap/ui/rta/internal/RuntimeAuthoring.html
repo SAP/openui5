@@ -22,28 +22,27 @@
 	</script>
 
 	<script type="text/javascript">
-		sap.ui.getCore().attachInit(function () {
-			sap.ui.require([
-				"sap/ui/core/ComponentContainer",
-				"sap/ui/core/Component"
-			], function (ComponentContainer, Component) {
-
+		sap.ui.require([
+			"sap/ui/core/ComponentContainer",
+			"sap/ui/core/Component",
+			"sap/ui/core/Core"
+		], function(ComponentContainer, Component, Core) {
+			return Core.ready().then(() => {
 				return Component.create({
 					name: "sap.ui.rta.test",
 					id: "Comp1",
 					componentData: {
 						"showAdaptButton": true
 					}
-				})
-				.then(function(oComponent) {
-					return new ComponentContainer("CompCont1", {
-						component: oComponent,
-						async: true
-					});
-				})
-				.then(function (oComponentContainer) {
-					oComponentContainer.placeAt("content");
 				});
+			}).then((oComponent) => {
+				return new ComponentContainer("CompCont1", {
+					component: oComponent,
+					async: true
+				});
+			})
+			.then((oComponentContainer) => {
+				oComponentContainer.placeAt("content");
 			});
 		});
 	</script>

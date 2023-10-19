@@ -408,7 +408,9 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-
+	/**
+	 * @deprecated As of version 1.20 the <code>tap</code> event has been replaced by the <code>press</code> event
+	 */
 	QUnit.test("Tap event should not be fired when the button is set to invisible", function(assert) {
 		// Arrange
 		var oRenderSpy,
@@ -1018,8 +1020,10 @@ sap.ui.define([
 		}
 	});
 
-		// this test is needed only on non-IE browsers
-
+	/**
+	 * This test is needed only on non-IE browsers
+	 * @deprecated as of version 1.20, replaced by <code>press</code> event
+	 */
 	QUnit.test("Trigger TAP event in some cases missed by the core (for non-IE browsers only)", function(assert) {
 		var spy = this.spy(b15, "ontap");
 

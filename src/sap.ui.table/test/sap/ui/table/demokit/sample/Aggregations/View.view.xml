@@ -15,7 +15,6 @@
 				id="table"
 				selectionMode="MultiToggle"
 				rows="{/ProductCollection}"
-				visibleRowCount="7"
 				ariaLabelledBy="title">
 				<extension>
 					<m:HBox>

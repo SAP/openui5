@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/MessageBox",
 	"sap/ui/core/mvc/XMLView",
-	"sap/base/util/ObjectPath",
-	"sap/ui/core/Core"
+	"sap/ui/core/EventBus"
 ], function(
 	UIComponent,
 	ABAPAccess,
@@ -16,8 +15,7 @@ sap.ui.define([
 	App,
 	MessageBox,
 	XMLView,
-	ObjectPath,
-	oCore
+	EventBus
 ) {
 	"use strict";
 
@@ -26,11 +24,11 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init: function() {
+		init(...aArgs) {
 			this._enableExtensibility();
 
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
-			UIComponent.prototype.init.apply(this, arguments);
+			UIComponent.prototype.init.apply(this, aArgs);
 		},
 
 		/**
@@ -38,7 +36,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent: function() {
+		createContent() {
 			var oApp = new App();
 
 			var oModel = new JSONModel({
@@ -60,10 +58,10 @@ sap.ui.define([
 		 * Create stub answers from extensibility service
 		 * @private
 		 */
-		_enableExtensibility: function() {
+		_enableExtensibility() {
 			var aExtensionData;
 			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
-				aExtensionData = [{ businessContext: sEntityTypeName + " EntityTypeContext", description: "Other BusinessContext description" }, { businessContext: sEntitySetName + " EntitySetContext", description: "Some BusinessContext description"}];
+				aExtensionData = [{ businessContext: `${sEntityTypeName} EntityTypeContext`, description: "Other BusinessContext description" }, { businessContext: `${sEntitySetName} EntitySetContext`, description: "Some BusinessContext description"}];
 				return Promise.resolve({
 					extensionData: aExtensionData,
 					entityType: sEntityTypeName,
@@ -76,21 +74,21 @@ sap.ui.define([
 				return Promise.resolve("./extensibilityTool.html");
 			};
 
-			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
+			var oUshellContainer = sap.ui.require("sap/ushell/Container");
 			if (oUshellContainer) {
 				ABAPAccess.isExtensibilityEnabled = function() {
 					return Promise.resolve(true);
 				};
 				sap.ushell.Container = Object.assign({}, sap.ushell.Container, {
-					getLogonSystem: function() {
+					getLogonSystem() {
 						return {
-							getName: function() {
+							getName() {
 								return "ABC";
 							},
-							getClient: function() {
+							getClient() {
 								return "123";
 							},
-							isTrial: function() {
+							isTrial() {
 								return false;
 							}
 						};
@@ -98,7 +96,7 @@ sap.ui.define([
 				});
 			}
 
-			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
+			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				MessageBox.warning("Service Outdated, Please restart the UI - In real world other dialog will come up, that can restart the UI");
 			});
 		}

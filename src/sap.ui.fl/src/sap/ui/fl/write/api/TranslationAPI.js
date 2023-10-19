@@ -3,20 +3,18 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/base/util/isEmptyObject",
+	"sap/base/i18n/Localization",
 	"sap/ui/fl/Utils"
 ], function(
-	Core,
 	FlexObjectState,
 	ManifestUtils,
 	Storage,
-	ChangePersistenceFactory,
 	isEmptyObject,
+	Localization,
 	Utils
 ) {
 	"use strict";
@@ -25,8 +23,8 @@ sap.ui.define([
 	 * Provides an API for tools like {@link sap.ui.rta} to get source languages, download XLIFF files or upload translations.
 	 *
 	 * @namespace sap.ui.fl.write.api.TranslationAPI
-	 * @experimental Since 1.97
 	 * @since 1.97
+	 * @private
 	 * @ui5-restricted sap.ui.rta, similar tools
 	 *
 	 */
@@ -102,7 +100,7 @@ sap.ui.define([
 
 		return Storage.translation.getSourceLanguages(mPropertyBag)
 		.then(function(aLanguages) {
-			var sCurrentLanguage = Core.getConfiguration().getLanguage();
+			var sCurrentLanguage = Localization.getLanguage();
 			if (!aLanguages.includes(sCurrentLanguage) && TranslationAPI.hasTranslationRelevantDirtyChanges(mPropertyBag)) {
 				aLanguages.push(sCurrentLanguage);
 			}

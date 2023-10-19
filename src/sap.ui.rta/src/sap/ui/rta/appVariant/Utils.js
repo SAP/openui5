@@ -21,9 +21,9 @@ function(
 
 	var Utils = {};
 
-	var sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
+	var sModulePath = `${sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/")}webapp`;
 	var oI18n = ResourceBundle.create({
-		url: sModulePath + "/i18n/i18n.properties"
+		url: `${sModulePath}/i18n/i18n.properties`
 	});
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
@@ -33,7 +33,7 @@ function(
 			return oNavigationService.getLinks(oNavigationParams);
 		})
 		.catch(function(vError) {
-			throw new Error("Error retrieving ushell service CrossApplicationNavigation: " + vError);
+			throw new Error(`Error retrieving ushell service CrossApplicationNavigation: ${vError}`);
 		});
 	};
 
@@ -177,6 +177,7 @@ function(
 		// Adding the tooltip to every icon which is shown on the App Variant Overview Dialog
 		var sIconUrl = oAppVariantInfo.iconUrl;
 		if (sIconUrl && IconPool.isIconURI(sIconUrl)) {
+			// eslint-disable-next-line prefer-destructuring
 			oAppVariantInfo.iconText = sIconUrl.split("//")[1];
 		}
 

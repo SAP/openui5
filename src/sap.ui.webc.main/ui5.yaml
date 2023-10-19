@@ -43,11 +43,16 @@ customConfiguration:
   ui5-tooling-webc:
     packages:
       # main
-      '@ui5/webcomponents':
+      "@ui5/webcomponents":
         aliases: # used to convert ES6 imports to UI5 module paths
           "^@ui5\/webcomponents\/dist\/(.*?).js$": "sap/ui/webc/main/thirdparty/$1"
         reverseAliases: # used by the middleware to serve third-party files as UI5 modules
           "^/resources/sap/ui/webc/main/thirdparty/(.*?)$": "@ui5/webcomponents/dist/$1"
+        cyclicDependencies:
+          "sap/ui/webc/main/thirdparty/popup-utils/PopoverRegistry":
+            - "sap/ui/webc/main/thirdparty/Popover"
+          "sap/ui/webc/main/thirdparty/Popover":
+            - "sap/ui/webc/main/thirdparty/popup-utils/PopoverRegistry"
         inputPath: "dist/" # where to find the web components
         inputPathFilters: # relative to the inputPath, can be inclusive or exclusive(!) filters
           - "**/*{.js,.json,.css}"
@@ -76,6 +81,7 @@ customConfiguration:
             - sap.ui.webc.main.TimePickerBase
             - sap.ui.webc.main.TimeSelection
             - sap.ui.webc.main.Tokenizer
+            - sap.ui.webc.main.ToolbarItem
             - sap.ui.webc.main.TreeListItem
             - sap.ui.webc.main.WheelSlider
             - sap.ui.webc.main.YearPicker
@@ -119,6 +125,8 @@ customConfiguration:
             - sap.ui.webc.main.SegmentedButtonItem
             - sap.ui.webc.main.StandardListItem
             - sap.ui.webc.main.Select
+            - sap.ui.webc.main.SelectMenu
+            - sap.ui.webc.main.SelectMenuOption
             - sap.ui.webc.main.Slider
             - sap.ui.webc.main.StepInput
             - sap.ui.webc.main.SuggestionGroupItem
@@ -135,6 +143,11 @@ customConfiguration:
             - sap.ui.webc.main.Title
             - sap.ui.webc.main.Toast
             - sap.ui.webc.main.Token
+            - sap.ui.webc.main.ToolbarButton
+            - sap.ui.webc.main.ToolbarSelect
+            - sap.ui.webc.main.ToolbarSelectOption
+            - sap.ui.webc.main.ToolbarSeparator
+            - sap.ui.webc.main.ToolbarSpacer
             - sap.ui.webc.main.Tree
             - sap.ui.webc.main.TreeItem
             - sap.ui.webc.main.TreeItemCustom
@@ -152,6 +165,7 @@ customConfiguration:
             - sap.ui.webc.main.MultiComboBoxItem
             - sap.ui.webc.main.Option
             - sap.ui.webc.main.SegmentedButtonItem
+            - sap.ui.webc.main.SelectMenuOption
             - sap.ui.webc.main.StandardListItem
             - sap.ui.webc.main.SuggestionGroupItem
             - sap.ui.webc.main.SuggestionItem
@@ -162,6 +176,11 @@ customConfiguration:
             - sap.ui.webc.main.TableRow
             - sap.ui.webc.main.TabSeparator
             - sap.ui.webc.main.Token
+            - sap.ui.webc.main.ToolbarButton
+            - sap.ui.webc.main.ToolbarSelect
+            - sap.ui.webc.main.ToolbarSelectOption
+            - sap.ui.webc.main.ToolbarSeparator
+            - sap.ui.webc.main.ToolbarSpacer
             - sap.ui.webc.main.TreeItem
             - sap.ui.webc.main.TreeItemCustom
           additionalProperties:
@@ -295,6 +314,20 @@ customConfiguration:
             sap.ui.webc.main.BorderDesign: 1.115.0
             sap.ui.webc.main.SegmentedButtonMode: 1.115.0
             sap.ui.webc.main.TreeItemCustom: 1.115.0
+            sap.ui.webc.main.SelectMenu: 1.120.0
+            sap.ui.webc.main.SelectMenuOption: 1.120.0
+            sap.ui.webc.main.Toolbar: 1.120.0
+            sap.ui.webc.main.ToolbarButton: 1.120.0
+            sap.ui.webc.main.ToolbarSelect: 1.120.0
+            sap.ui.webc.main.ToolbarSelectOption: 1.120.0
+            sap.ui.webc.main.ToolbarSeparator: 1.120.0
+            sap.ui.webc.main.ToolbarSpacer: 1.120.0
+            sap.ui.webc.main.ISelectMenuOption: 1.120.0
+            sap.ui.webc.main.IToolbarItem: 1.120.0
+            sap.ui.webc.main.IToolbarSelectOption: 1.120.0
+            sap.ui.webc.main.ButtonType: 1.120.0
+            sap.ui.webc.main.ToolbarAlign: 1.120.0
+            sap.ui.webc.main.ToolbarItemOverflowBehavior: 1.120.0
           designtime:
             sap.ui.webc.main.Avatar:
               - hide

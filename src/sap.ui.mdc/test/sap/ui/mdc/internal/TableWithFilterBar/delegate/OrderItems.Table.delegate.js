@@ -11,11 +11,11 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/odata/type/Int32",
-	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text) {
+	"sap/m/Text",
+	"delegates/util/DelegateCache"
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, Int32Type, Text, DelegateCache) {
 	"use strict";
 	var OrderItemssTableDelegate = Object.assign({}, ODataTableDelegate);
-	OrderItemssTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
@@ -30,8 +30,8 @@ sap.ui.define([
 		return oODataProps.then(function (aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
-			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
-			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
+			// Provide the ValueHelp for some of the properties. Without ValueHelp the filter panel will not provide the expected VH.
+			// TODO ValueHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oPropertyInfo){
 				if (oPropertyInfo.name === "book_ID") {
 					oPropertyInfo.dataType = "Edm.Int32";
@@ -42,6 +42,9 @@ sap.ui.define([
 					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 25}}; // as the title is shown
 				}
 			});
+
+			DelegateCache.add(oTable, {"book_ID": {display: FieldDisplay.Description, additionalValue: "{book/title}"}}, "$Columns");
+			DelegateCache.add(oTable, {"book_ID": {valueHelp: "FH-Books"}}, "$Filters");
 
 			return aProperties;
 		});
@@ -59,10 +62,6 @@ sap.ui.define([
 
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
-
-					if (sPropertyName === "book_ID") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Books"));
-					}
 					return oFilterField;
 				});
 			}
@@ -71,19 +70,14 @@ sap.ui.define([
 
 	OrderItemssTableDelegate._createColumnTemplate = function (oTable, oProperty) {
 
-		var oCtrlProperties = {
+		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
-		};
-
-		if (oProperty.name === "book_ID") {
-			oCtrlProperties.additionalValue = "{book/title}";
-			oCtrlProperties.display = FieldDisplay.Description;
-		}
+		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
 		return new Field(oCtrlProperties);
 

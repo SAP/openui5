@@ -13,7 +13,7 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality", {
 
-		beforeEach: function() {
+		beforeEach() {
 			this.sModelName = "testModel";
 			this.oElement = new FixtureElement();
 			this.oManagedObjectModel = new ManagedObjectModel({
@@ -21,7 +21,7 @@ sap.ui.define([
 				name: this.sModelName
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oManagedObjectModel.destroy();
 			this.oElement.destroy();
 		}

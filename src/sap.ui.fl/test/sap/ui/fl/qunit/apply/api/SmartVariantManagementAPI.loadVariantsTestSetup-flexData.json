@@ -5,7 +5,7 @@
       "fileType":"change",
       "changeType":"standardVariant",
       "layer":"USER",
-      "reference":"sap.ui.demoapps.rta.fiorielements.Component",
+      "reference":"sap.ui.demoapps.rta.fiorielements",
       "selector":  {
         "persistencyKey":"variantManagement1"
       },
@@ -22,6 +22,17 @@
         "executeOnSelect": true
       },
       "creation":"2020-12-11T06:21:52.183Z"
+    }],
+    "defaultVariants": [{
+      "fileName": "defaultVariant1",
+      "fileType": "change",
+      "changeType": "defaultVariant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "defaultVariantName": "variant_2"
+      }
     }],
     "variants": [{
       "fileName": "variant_1",
@@ -86,7 +97,7 @@
       "fileType": "change",
       "changeType": "addFavorite",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "key": "variant_1",
@@ -119,7 +130,7 @@
       "fileType": "change",
       "changeType": "removeFavorite",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "key": "variant_1",
@@ -152,7 +163,7 @@
       "fileType": "change",
       "changeType": "addFavorite",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "key": "variant_3",
@@ -186,7 +197,7 @@
         "fileType": "change",
         "changeType": "updateVariant",
         "moduleName": "",
-        "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+        "reference": "sap.ui.demoapps.rta.fiorielements",
         "packageName": "",
         "content": {
           "key": "variant_6",
@@ -213,7 +224,7 @@
       "fileType": "change",
       "changeType": "updateVariant",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "variantContent": {
@@ -255,7 +266,7 @@
       "fileType": "change",
       "changeType": "updateVariant",
       "moduleName": "",
-      "reference": "sap.ui.demoapps.rta.fiorielements.Component",
+      "reference": "sap.ui.demoapps.rta.fiorielements",
       "packageName": "",
       "content": {
         "visible": false

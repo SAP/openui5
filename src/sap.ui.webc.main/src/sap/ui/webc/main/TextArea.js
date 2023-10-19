@@ -4,12 +4,12 @@
 
 // Provides control sap.ui.webc.main.TextArea.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/library",
-	"./thirdparty/TextArea",
-	"./thirdparty/features/InputElementsFormSupport"
+	"./thirdparty/features/InputElementsFormSupport",
+	"./thirdparty/TextArea"
 ], function(WebComponent, library, EnabledPropagator, coreLibrary) {
 	"use strict";
 
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -71,7 +71,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: true,
 					mapping: {
-						type: "attribute",
+						type: "property",
 						to: "disabled",
 						formatter: "_mapEnabled"
 					}
@@ -184,15 +184,8 @@ sap.ui.define([
 				/**
 				 * Defines the value state of the component. <br>
 				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>None</code></li>
-				 *     <li><code>Error</code></li>
-				 *     <li><code>Warning</code></li>
-				 *     <li><code>Success</code></li>
-				 *     <li><code>Information</code></li>
-				 * </ul> <br>
-				 * <br>
+				 *
+				 *
 				 * <b>Note:</b> If <code>maxlength</code> property is set, the component turns into "Warning" state once the characters exceeds the limit. In this case, only the "Error" state is considered and can be applied.
 				 */
 				valueState: {

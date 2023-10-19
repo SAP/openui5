@@ -11,164 +11,164 @@
 
 		<script>
 
-			var oCore = sap.ui.getCore();
+			sap.ui.require(["sap/ui/core/Core", "sap/ui/core/Element"],function(Core, Element) {
 
-			try{
-				oCore.loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
-			}
-			jQuery.sap.require("sap/base/security/URLListValidator");
-			var URLListValidator = sap.ui.require("sap/base/security/URLListValidator");
-
-			oCore.attachInit(function () {
-
-				function onChange(oEvent){
-					var oInput = oCore.byId("Input1");
-					var sUrl = oInput.getValue();
-					var sValid = URLListValidator.validate(sUrl);
-
-					if (sValid){
-						oInput.setValueState(sap.ui.core.ValueState.Success);
-					}else{
-						oInput.setValueState(sap.ui.core.ValueState.Error);
-					}
+				try{
+					Core.loadLibrary("sap.ui.commons");
+				}catch(e){
+					alert("This test page requires the library 'sap.ui.commons' which is not available.");
+					throw(e);
 				}
+				jQuery.sap.require("sap/base/security/URLListValidator");
+				var URLListValidator = sap.ui.require("sap/base/security/URLListValidator");
 
-				function onLiveChange(oEvent){
-					var oInput = oEvent.oSource;
+				Core.ready().then(function () {
 
-					if (oEvent.getParameter("liveValue") != oInput.getValue()){
-						// only during typing
-						oInput.setValueState(sap.ui.core.ValueState.None);
+					function onChange(oEvent){
+						var oInput = Element.getElementById("Input1");
+						var sUrl = oInput.getValue();
+						var sValid = URLListValidator.validate(sUrl);
+
+						if (sValid){
+							oInput.setValueState(sap.ui.core.ValueState.Success);
+						}else{
+							oInput.setValueState(sap.ui.core.ValueState.Error);
+						}
 					}
-				}
 
-				function fillListBox(){
-					var aAllowlist = URLListValidator.entries();
-					var oListBox = oCore.byId("ListBox1");
-					oListBox.removeAllItems();
+					function onLiveChange(oEvent){
+						var oInput = oEvent.oSource;
 
-					if (aAllowlist instanceof Array && aAllowlist.length > 0){
-						for(var i=0; i<aAllowlist.length; i++){
-							if (aAllowlist[i] instanceof Object){
-								oListBox.addItem(new sap.ui.core.ListItem({text: aAllowlist[i].protocol +"|"+ aAllowlist[i].host +"|"+ aAllowlist[i].port +"|"+ aAllowlist[i].path}));
+						if (oEvent.getParameter("liveValue") != oInput.getValue()){
+							// only during typing
+							oInput.setValueState(sap.ui.core.ValueState.None);
+						}
+					}
+
+					function fillListBox(){
+						var aAllowlist = URLListValidator.entries();
+						var oListBox = Element.getElementById("ListBox1");
+						oListBox.removeAllItems();
+
+						if (aAllowlist instanceof Array && aAllowlist.length > 0){
+							for(var i=0; i<aAllowlist.length; i++){
+								if (aAllowlist[i] instanceof Object){
+									oListBox.addItem(new sap.ui.core.ListItem({text: aAllowlist[i].protocol +"|"+ aAllowlist[i].host +"|"+ aAllowlist[i].port +"|"+ aAllowlist[i].path}));
+								}
 							}
 						}
 					}
-				}
 
-				function addToAllowlist(oEvent){
-					var oProtocol = oCore.byId("Protocol");
-					var oHost = oCore.byId("Host");
-					var oPort = oCore.byId("Port");
-					var oPath = oCore.byId("Path");
-					var oListBox = oCore.byId("ListBox1");
-					var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
-					oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
-					URLListValidator.add(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
-					oProtocol.setValue("");
-					oHost.setValue("");
-					oPort.setValue("");
-					oPath.setValue("");
-					onChange(oEvent);
-				}
+					function addToAllowlist(oEvent){
+						var oProtocol = Element.getElementById("Protocol");
+						var oHost = Element.getElementById("Host");
+						var oPort = Element.getElementById("Port");
+						var oPath = Element.getElementById("Path");
+						var oListBox = Element.getElementById("ListBox1");
+						var sNewUrl = oProtocol.getValue() +"|"+ oHost.getValue() +"|"+ oPort.getValue() +"|"+ oPath.getValue();
+						oListBox.addItem(new sap.ui.core.ListItem({text: sNewUrl}));
+						URLListValidator.add(oProtocol.getValue(), oHost.getValue(), oPort.getValue(), oPath.getValue());
+						oProtocol.setValue("");
+						oHost.setValue("");
+						oPort.setValue("");
+						oPath.setValue("");
+						onChange(oEvent);
+					}
 
-				function removeFromAllowlist(oEvent){
-					var oListBox = oCore.byId("ListBox1");
-					var iIndex = oListBox.getSelectedIndex();
-					var oItem = oListBox.getSelectedItem();
-					oListBox.removeItem(oItem);
-					oItem.destroy();
-					URLListValidator._delete(URLListValidator.entries()[iIndex]);
-					onChange(oEvent)
-				}
+					function removeFromAllowlist(oEvent){
+						var oListBox = Element.getElementById("ListBox1");
+						var iIndex = oListBox.getSelectedIndex();
+						var oItem = oListBox.getSelectedItem();
+						oListBox.removeItem(oItem);
+						oItem.destroy();
+						URLListValidator._delete(URLListValidator.entries()[iIndex]);
+						onChange(oEvent)
+					}
 
-				function clearAllowlist(oEvent){
-					var oListBox = oCore.byId("ListBox1");
-					URLListValidator.clear();
-					oListBox.destroyItems();
-					onChange(oEvent)
-				}
+					function clearAllowlist(oEvent){
+						var oListBox = Element.getElementById("ListBox1");
+						URLListValidator.clear();
+						oListBox.destroyItems();
+						onChange(oEvent)
+					}
 
-				var oInput = new sap.ui.commons.TextField('Input1',{
-					width: "50em",
-					change: onChange,
-					liveChange: onLiveChange,
+					var oInput = new sap.ui.commons.TextField('Input1',{
+						width: "50em",
+						change: onChange,
+						liveChange: onLiveChange,
+					});
+				var oLabel = new sap.ui.commons.Label({ text: "URL: ", labelFor: oInput});
+			oLabel.placeAt("target0");
+					oInput.placeAt("target0");
+
+					// allowlist
+				oLabel = new sap.ui.commons.Label({ text: "Allowlist: "});
+			oLabel.placeAt("target1");
+					var oListBox = new sap.ui.commons.ListBox("ListBox1",{
+						width: "50em",
+						visibleItems: 10,
+						editable: true
+					}).placeAt("target1");
+					fillListBox();
+
+					oLabel.setLabelFor(oListBox);
+					var oButton = new sap.ui.commons.Button("Button1",{
+						text: "Refresh",
+						width: "7em",
+						press: fillListBox
+					});
+					var oButton2 = new sap.ui.commons.Button("Button2",{
+						text: "Remove",
+						width: "7em",
+						style: sap.ui.commons.ButtonStyle.Reject,
+						press: removeFromAllowlist
+					});
+					var oButton3 = new sap.ui.commons.Button("Button3",{
+						text: "Clear",
+						width: "7em",
+						style: sap.ui.commons.ButtonStyle.Reject,
+						press: clearAllowlist
+					});
+					var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
+						content: [oButton, oButton2, oButton3]
+					}).placeAt("target1");
+
+					var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow("Row1");
+					var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow("Row2");
+					var oLyt = new sap.ui.commons.layout.MatrixLayout("AllowlistEntry",{
+						colums: 5,
+						widths: ["6em", "16em", "5em", "31em", "auto"],
+						rows: [oRow1, oRow2]
+						}).placeAt("target2");
+					oInput = new sap.ui.commons.TextField('Protocol',{width: "5em"});
+					oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+				oLabel = new sap.ui.commons.Label({ text: "Protocol:", labelFor: oInput});
+					oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+					oInput = new sap.ui.commons.TextField('Host',{width: "15em"});
+					oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+				oLabel = new sap.ui.commons.Label({ text: "Host:", labelFor: oInput});
+					oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+					oInput = new sap.ui.commons.TextField('Port',{width: "4em"});
+					oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+				oLabel = new sap.ui.commons.Label({ text: "Port:", labelFor: oInput});
+					oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+					oInput = new sap.ui.commons.TextField('Path',{width: "30em"});
+					oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
+				oLabel = new sap.ui.commons.Label({ text: "Path:", labelFor: oInput});
+					oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
+
+					var oButton = new sap.ui.commons.Button("Button4",{
+						text: "Add",
+						style: sap.ui.commons.ButtonStyle.Accept,
+						press: addToAllowlist
+					});
+					oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oButton}));
+
 				});
-		    var oLabel = new sap.ui.commons.Label({ text: "URL: ", labelFor: oInput});
-	  	  oLabel.placeAt("target0");
-				oInput.placeAt("target0");
-
-				// allowlist
-		    oLabel = new sap.ui.commons.Label({ text: "Allowlist: "});
-	  	  oLabel.placeAt("target1");
-				var oListBox = new sap.ui.commons.ListBox("ListBox1",{
-					width: "50em",
-					visibleItems: 10,
-					editable: true
-				}).placeAt("target1");
-				fillListBox();
-
-				oLabel.setLabelFor(oListBox);
-				var oButton = new sap.ui.commons.Button("Button1",{
-					text: "Refresh",
-					width: "7em",
-					press: fillListBox
-				});
-				var oButton2 = new sap.ui.commons.Button("Button2",{
-					text: "Remove",
-					width: "7em",
-					style: sap.ui.commons.ButtonStyle.Reject,
-					press: removeFromAllowlist
-				});
-				var oButton3 = new sap.ui.commons.Button("Button3",{
-					text: "Clear",
-					width: "7em",
-					style: sap.ui.commons.ButtonStyle.Reject,
-					press: clearAllowlist
-				});
-				var oLayout = new sap.ui.layout.VerticalLayout("Layout1", {
-					content: [oButton, oButton2, oButton3]
-				}).placeAt("target1");
-
-				var oRow1 = new sap.ui.commons.layout.MatrixLayoutRow("Row1");
-				var oRow2 = new sap.ui.commons.layout.MatrixLayoutRow("Row2");
-				var oLyt = new sap.ui.commons.layout.MatrixLayout("AllowlistEntry",{
-					colums: 5,
-					widths: ["6em", "16em", "5em", "31em", "auto"],
-					rows: [oRow1, oRow2]
-					}).placeAt("target2");
-				oInput = new sap.ui.commons.TextField('Protocol',{width: "5em"});
-				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
-		    oLabel = new sap.ui.commons.Label({ text: "Protocol:", labelFor: oInput});
-				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
-
-				oInput = new sap.ui.commons.TextField('Host',{width: "15em"});
-				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
-		    oLabel = new sap.ui.commons.Label({ text: "Host:", labelFor: oInput});
-				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
-
-				oInput = new sap.ui.commons.TextField('Port',{width: "4em"});
-				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
-		    oLabel = new sap.ui.commons.Label({ text: "Port:", labelFor: oInput});
-				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
-
-				oInput = new sap.ui.commons.TextField('Path',{width: "30em"});
-				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oInput}));
-		    oLabel = new sap.ui.commons.Label({ text: "Path:", labelFor: oInput});
-				oRow1.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oLabel}));
-
-				var oButton = new sap.ui.commons.Button("Button4",{
-					text: "Add",
-					style: sap.ui.commons.ButtonStyle.Accept,
-					press: addToAllowlist
-				});
-				oRow2.addCell(new sap.ui.commons.layout.MatrixLayoutCell({content: oButton}));
-
 			});
-
 		</script>
 
 </head>

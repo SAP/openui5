@@ -13,7 +13,7 @@ sap.ui.define([], function() {
 			actions: sNotAdaptable
 		};
 		var oAggregationDT = {
-			propagateMetadata: function() {
+			propagateMetadata() {
 				return {
 					actions: sNotAdaptable
 				};

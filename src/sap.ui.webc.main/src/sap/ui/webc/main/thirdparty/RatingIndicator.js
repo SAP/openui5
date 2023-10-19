@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/Float", "./generated/i18n/i18n-defaults", "./generated/templates/RatingIndicatorTemplate.lit", "./Icon", "sap/ui/webc/common/thirdparty/icons/favorite", "sap/ui/webc/common/thirdparty/icons/unfavorite", "./generated/themes/RatingIndicator.css"], function (_exports, _customElement, _event, _property, _UI5Element, _LitRenderer, _Keys, _i18nBundle, _Integer, _Float, _i18nDefaults, _RatingIndicatorTemplate, _Icon, _favorite, _unfavorite, _RatingIndicator) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/base/util/AriaLabelHelper", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/types/Integer", "sap/ui/webc/common/thirdparty/base/types/Float", "./generated/i18n/i18n-defaults", "./generated/templates/RatingIndicatorTemplate.lit", "./Icon", "sap/ui/webc/common/thirdparty/icons/favorite", "sap/ui/webc/common/thirdparty/icons/unfavorite", "./generated/themes/RatingIndicator.css"], function (_exports, _customElement, _event, _property, _UI5Element, _LitRenderer, _Keys, _AriaLabelHelper, _i18nBundle, _Integer, _Float, _i18nDefaults, _RatingIndicatorTemplate, _Icon, _favorite, _unfavorite, _RatingIndicator) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -24,6 +24,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var RatingIndicator_1;
+
+  // Styles
+
   /**
    * @class
    *
@@ -168,6 +171,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     get _ariaDisabled() {
       return this.disabled || undefined;
     }
+    get _ariaLabel() {
+      return (0, _AriaLabelHelper.getEffectiveAriaLabelText)(this);
+    }
+    get _ariaDescription() {
+      return this.required ? RatingIndicator_1.i18nBundle.getText(_i18nDefaults.RATING_INDICATOR_ARIA_DESCRIPTION) : undefined;
+    }
     get ariaReadonly() {
       return this.readonly ? "true" : undefined;
     }
@@ -187,6 +196,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     type: Boolean
   })], RatingIndicator.prototype, "readonly", void 0);
   __decorate([(0, _property.default)()], RatingIndicator.prototype, "accessibleName", void 0);
+  __decorate([(0, _property.default)({
+    defaultValue: ""
+  })], RatingIndicator.prototype, "accessibleNameRef", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean
+  })], RatingIndicator.prototype, "required", void 0);
   __decorate([(0, _property.default)({
     type: Object,
     multiple: true

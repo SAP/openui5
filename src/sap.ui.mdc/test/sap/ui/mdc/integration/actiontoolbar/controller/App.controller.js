@@ -9,16 +9,16 @@ sap.ui.define([
 ], function(Controller, startKeyUserAdaptation, ChartToolbarActionType) {
 	"use strict";
 
-	var oController = Controller.extend("sap.ui.mdc.ActionToolbarTesting.controller.App", {
+	const oController = Controller.extend("sap.ui.mdc.ActionToolbarTesting.controller.App", {
 		onPressRTA: function() {
-			var oOwnerComponent = this.getOwnerComponent();
+			const oOwnerComponent = this.getOwnerComponent();
 			startKeyUserAdaptation({
 				rootControl: oOwnerComponent.getAggregation("rootControl")
 			});
 		},
 		onInit: function() {
-			var oOwnerComponent = this.getOwnerComponent();
-			var oChart = sap.ui.getCore().byId(oOwnerComponent.getId() + "---app--actionToolbarChart");
+			const oOwnerComponent = this.getOwnerComponent();
+			const oChart = sap.ui.getCore().byId(oOwnerComponent.getId() + "---app--actionToolbarChart");
 
 			oChart.setIgnoreToolbarActions([
 				ChartToolbarActionType.ZoomInOut,

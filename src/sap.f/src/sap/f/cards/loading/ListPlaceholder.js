@@ -38,10 +38,39 @@ sap.ui.define([
 				},
 
 				/**
-				 * Item template form the list.
+				 * The presence of icon
 				 */
-				item: {
-					type: "any"
+				hasIcon: {
+					type: "boolean"
+				},
+
+				/**
+				 * The presence of description
+				 */
+				hasDescription: {
+					type: "boolean"
+				},
+
+				/**
+				 * The number of the attributes
+				 */
+				attributesLength: {
+					type: "int",
+					defaultValue: 0
+				},
+
+				/**
+				 * The presence of Chart
+				 */
+				hasChart: {
+					type: "boolean"
+				},
+
+				/**
+				 * The presence of actions strip
+				 */
+				hasActionsStrip: {
+					type: "boolean"
 				},
 
 				itemHeight: {

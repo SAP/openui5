@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.58.0
 	 * @alias sap.ui.mdc.link.LinkItem
 	 */
-	var LinkItem = Element.extend("sap.ui.mdc.link.LinkItem", /** @lends sap.ui.mdc.link.LinkItem.prototype */
+	const LinkItem = Element.extend("sap.ui.mdc.link.LinkItem", /** @lends sap.ui.mdc.link.LinkItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

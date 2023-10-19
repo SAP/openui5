@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/List",
 	"sap/m/StandardListItem",
-	"sap/m/Toolbar"
-], function (Sibling, Button, HorizontalLayout, VerticalLayout, List, StandardListItem, Toolbar) {
+	"sap/m/Toolbar",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Sibling, Button, HorizontalLayout, VerticalLayout, List, StandardListItem, Toolbar, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("Sibling", {
@@ -37,7 +38,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach : function(){
 			this.oLayout.destroy();

@@ -9,14 +9,11 @@
 	<m:App class="sapUiContentPadding">
 		<Table
 			id="table"
-			visibleRowCount="10"
 			rows="{path: '/ProductSet'}"
 			threshold="20"
 			enableBusyIndicator="true">
-			<plugins>
-				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
-			</plugins>
 			<dependents>
+				<plugins:MultiSelectionPlugin limit="100" enableNotification="true"/>
 				<m:plugins.CellSelector rangeLimit="100" />
 			</dependents>
 			<columns>
@@ -47,7 +44,7 @@
 					width="11rem">
 					<m:Label text="{/#Product/Category/@sap:label}"/>
 					<template>
-						<m:Text text="{Category}" wrapping="false"/>
+						<m:Input text="{Category}" wrapping="false"/>
 					</template>
 				</Column>
 				<Column

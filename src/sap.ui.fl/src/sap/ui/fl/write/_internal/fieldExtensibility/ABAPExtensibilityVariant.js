@@ -32,6 +32,7 @@ sap.ui.define([
 		 * @param {map} mServiceInfo - map containing <code>serviceName</code>, <code>serviceVersion</code> and <code>serviceType</code>
 		 * @param {map} mBindingInfo - map containing <code>entitySetName</code> and <code>entityTypeName</code>
 		 */
+		// eslint-disable-next-line object-shorthand
 		constructor: function(sServiceUri, mServiceInfo, mBindingInfo) {
 			this._sServiceUri = sServiceUri;
 			this._mBindingInfo = mBindingInfo;
@@ -46,7 +47,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {Promise<map>} Promise to deliver a map containing extension data
 		 */
-		getExtensionData: function() {
+		getExtensionData() {
 			return Promise.resolve(null);
 		},
 
@@ -56,7 +57,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {sap.ui.base.Metadata} metadata for the class of the object
 		 */
-		getMetadata: function() {
+		getMetadata() {
 			return this.getMetadata();
 		},
 
@@ -66,7 +67,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {Promise<string>} Promise to deliver a navigation URI
 		 */
-		getNavigationUri: function() {
+		getNavigationUri() {
 			return Promise.resolve(null);
 		},
 
@@ -76,7 +77,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {Promise<map>} Promise to deliver a map of UI texts
 		 */
-		getTexts: function() {
+		getTexts() {
 			return Promise.resolve(null);
 		},
 
@@ -86,7 +87,7 @@ sap.ui.define([
 		 * @public
 		 * @returns {Promise<boolean>} Promise to determine whether variant is active
 		 */
-		isActive: function() {
+		isActive() {
 			return Promise.resolve(true);
 		}
 	});

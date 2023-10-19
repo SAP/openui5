@@ -1,12 +1,13 @@
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/nextUIUpdate",
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/UIComponentMetadata',
 	'sap/ui/test/routing/RouterExtension',
 	'sap/base/util/deepExtend'
-], function (createAndAppendDiv, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
+], function (createAndAppendDiv, nextUIUpdate, Component, ComponentContainer, UIComponent, UIComponentMetadata, SamplesRouterExtension, deepExtend) {
 
 	"use strict";
 	/*global sinon, QUnit, foo*/
@@ -70,8 +71,8 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Simple Component Instance", function(assert){
-		sap.ui.getCore().applyChanges();
+	QUnit.test("Simple Component Instance", async function(assert){
+		await nextUIUpdate();
 		assert.ok(document.getElementById("CompCont1"));
 		var elem = document.getElementById("buttonComponent---mybutn");
 		assert.equal(elem.textContent, "Text changed through settings", "Settings applied");

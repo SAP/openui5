@@ -4,10 +4,10 @@ sap.ui.define([
 ], function (ChartItemPanel, JSONModel, VBox, sinon, Press, oCore, coreLibrary) {
 	"use strict";
 
-	var ValueState = coreLibrary.ValueState;
-	var MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const ValueState = coreLibrary.ValueState;
+	const MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
-	var oChartConfig = {
+	const oChartConfig = {
 		allowedLayoutOptions: ["axis1", "category", "series"], templateConfig: [{kind: "Dimension"},{kind: "Measure"}]
 	};
 
@@ -16,7 +16,7 @@ sap.ui.define([
 	QUnit.module("ChartItemPanelNew Unit tests", {
 		beforeEach: function(){
 
-			var aItems = [
+			const aItems = [
 				{
 					label: "Test",
 					name: "test",
@@ -70,8 +70,8 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_switchMobileMode", function(assert){
-		var oCreateListControlSpy = sinon.spy(this.oChartItemPanel, "_createInnerListControl");
-		var oBindListItemsSpy = sinon.spy(this.oChartItemPanel, "_bindListItems");
+		const oCreateListControlSpy = sinon.spy(this.oChartItemPanel, "_createInnerListControl");
+		const oBindListItemsSpy = sinon.spy(this.oChartItemPanel, "_bindListItems");
 		assert.ok(!this.oChartItemPanel._bMobileMode, "Mobile mode is set to false");
 
 		//Call with bMobile = false
@@ -98,7 +98,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_bindListItems", function(assert){
-		var oBindItemsSpy = sinon.spy(this.oChartItemPanel._oListControl, "bindItems");
+		const oBindItemsSpy = sinon.spy(this.oChartItemPanel._oListControl, "bindItems");
 
 		this.oChartItemPanel._bindListItems();
 
@@ -112,20 +112,20 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_getRoleSelect", function(assert){
-		var oSelect = this.oChartItemPanel._getRoleSelect("Measure");
+		const oSelect = this.oChartItemPanel._getRoleSelect("Measure");
 
 		assert.ok(oSelect.isA("sap.m.Select"), "Select is returned");
 	}.bind(this));
 
 	QUnit.test("_getNameComboBox", function(assert){
-		var oSelect = this.oChartItemPanel._getNameComboBox("Measure");
+		const oSelect = this.oChartItemPanel._getNameComboBox("Measure");
 
 		assert.ok(oSelect.isA("sap.m.ComboBox"), "ComboBox is returned");
 	}.bind(this));
 
 	QUnit.test("_updateAvailableRolesForItems", function(assert){
 		//Arrange
-		var aItems = this.oChartItemPanel._getP13nModel().getProperty("/items");
+		let aItems = this.oChartItemPanel._getP13nModel().getProperty("/items");
 		assert.ok(aItems.length == 6, "6 items are inside p13n model"); // 4 items + 2 templates
 
 		aItems[0].availableRoles = [{"key": "axis1", "text": "Axis 1"}, {"key": "axis2", "text": "Axis 2"}, {"key": "axis3", "text": "Axis 3"}];
@@ -144,9 +144,9 @@ sap.ui.define([
 
 
 	QUnit.test("onPressHide", function(assert){
-		var done = assert.async();
-		var oMockEvent = {getSource : function(){return {data : function(){return {propertyName: "test3"};}};}};
-		var oUpdateIndexesSpy = sinon.spy(this.oChartItemPanel, "_updateVisibleIndexes");
+		const done = assert.async();
+		const oMockEvent = {getSource : function(){return {data : function(){return {propertyName: "test3"};}};}};
+		const oUpdateIndexesSpy = sinon.spy(this.oChartItemPanel, "_updateVisibleIndexes");
 		assert.ok(this.oChartItemPanel.getP13nData()[2].visible, "Item3 is visible");
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
@@ -164,8 +164,8 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("setP13nData", function(assert){
-		var oUpdateIndexesSpy = sinon.spy(this.oChartItemPanel, "_updateVisibleIndexes");
-		var aItems = [
+		const oUpdateIndexesSpy = sinon.spy(this.oChartItemPanel, "_updateVisibleIndexes");
+		const aItems = [
 			{
 				label: "Test-New",
 				name: "test-new",
@@ -195,7 +195,7 @@ sap.ui.define([
 		assert.ok(this.oChartItemPanel._mVisibleIndexes.get("Dimension").length = 1, "Map contains one visible dimension");
 		assert.ok(this.oChartItemPanel._mVisibleIndexes.get("Measure").length = 2, "Map contains two visible measures");
 
-		var aItems = this.oChartItemPanel._getP13nModel().getProperty("/items");
+		const aItems = this.oChartItemPanel._getP13nModel().getProperty("/items");
 		aItems[0].visible = false;
 
 		this.oChartItemPanel._updateVisibleIndexes();
@@ -207,7 +207,7 @@ sap.ui.define([
 	//TODO: OnChangeOfTemplateName
 
 	QUnit.test("_getTemplateItems", function(assert){
-		var aTemplates = this.oChartItemPanel._getTemplateItems();
+		const aTemplates = this.oChartItemPanel._getTemplateItems();
 
 		assert.ok(aTemplates.length == 2, "Two templates created");
 		assert.ok(aTemplates[0].kind == "Dimension", "Template for Dimension was created");
@@ -215,7 +215,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_getListControlConfig", function(assert){
-		var oConfig = this.oChartItemPanel._getListControlConfig();
+		let oConfig = this.oChartItemPanel._getListControlConfig();
 
 		assert.ok(oConfig.columns.length == 3, "3 Columns were created");
 		assert.ok(oConfig.columns[0].getHeader().getText() == MDCRb.getText('chart.PERSONALIZATION_DIALOG_COLUMN_DESCRIPTION'), "Column 1 has correct text");
@@ -239,7 +239,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_fireChangeItems", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
 			assert.ok(oEvent, "change event has been fired");
@@ -272,7 +272,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_updateEnableOfMoveButtons", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[1];
+		let oTableItem = this.oChartItemPanel._oListControl.getItems()[1];
 
 		//Select first dimension
 		this.oChartItemPanel._updateEnableOfMoveButtons(oTableItem);
@@ -300,39 +300,39 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_getMoveTopButton", function(assert){
-		var oBtn = this.oChartItemPanel._getMoveTopButton();
+		const oBtn = this.oChartItemPanel._getMoveTopButton();
 		assert.ok(oBtn, "Button exists");
 		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveUpButton", function(assert){
-		var oBtn = this.oChartItemPanel._getMoveUpButton();
+		const oBtn = this.oChartItemPanel._getMoveUpButton();
 		assert.ok(oBtn, "Button exists");
 		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveDownButton", function(assert){
-		var oBtn = this.oChartItemPanel._getMoveDownButton();
+		const oBtn = this.oChartItemPanel._getMoveDownButton();
 		assert.ok(oBtn, "Button exists");
 		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getMoveBottomButton", function(assert){
-		var oBtn = this.oChartItemPanel._getMoveBottomButton();
+		const oBtn = this.oChartItemPanel._getMoveBottomButton();
 		assert.ok(oBtn, "Button exists");
 		assert.ok(oBtn.isA("sap.m.Button"), "Button is type of sap.m.Button");
 
 	}.bind(this));
 
 	QUnit.test("_getListItemFromMoveButton & _addMoveButtons", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[1];
+		const oTableItem = this.oChartItemPanel._oListControl.getItems()[1];
 
 		this.oChartItemPanel._addMoveButtons(oTableItem);
 
-		var oListItem = this.oChartItemPanel._getListItemFromMoveButton(this.oChartItemPanel._getMoveTopButton());
+		let oListItem = this.oChartItemPanel._getListItemFromMoveButton(this.oChartItemPanel._getMoveTopButton());
 		assert.ok(oListItem, "ListItem exists");
 		assert.ok(oListItem == oTableItem, "Button parent is correct");
 
@@ -351,9 +351,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onPressButtonMoveToTop", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[5];
-		var oEvent = {getSource : function() {return this.oChartItemPanel._getMoveTopButton();}.bind(this)};
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
+		const oTableItem = this.oChartItemPanel._oListControl.getItems()[5];
+		const oEvent = {getSource : function() {return this.oChartItemPanel._getMoveTopButton();}.bind(this)};
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
 		this.oChartItemPanel._addMoveButtons(oTableItem);
 
 		this.oChartItemPanel._onPressButtonMoveToTop(oEvent);
@@ -363,9 +363,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onPressButtonMoveToUp", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[5];
-		var oEvent = {getSource : function() {return this.oChartItemPanel._getMoveUpButton();}.bind(this)};
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
+		const oTableItem = this.oChartItemPanel._oListControl.getItems()[5];
+		const oEvent = {getSource : function() {return this.oChartItemPanel._getMoveUpButton();}.bind(this)};
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
 		this.oChartItemPanel._addMoveButtons(oTableItem);
 
 		this.oChartItemPanel._onPressButtonMoveUp(oEvent);
@@ -375,9 +375,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onPressButtonMoveToDown", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[4];
-		var oEvent = {getSource : function() {return this.oChartItemPanel._getMoveDownButton();}.bind(this)};
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
+		const oTableItem = this.oChartItemPanel._oListControl.getItems()[4];
+		const oEvent = {getSource : function() {return this.oChartItemPanel._getMoveDownButton();}.bind(this)};
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
 		this.oChartItemPanel._addMoveButtons(oTableItem);
 
 		this.oChartItemPanel._onPressButtonMoveDown(oEvent);
@@ -387,9 +387,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onPressButtonMoveToBottom", function(assert){
-		var oTableItem = this.oChartItemPanel._oListControl.getItems()[4];
-		var oEvent = {getSource : function() {return this.oChartItemPanel._getMoveBottomButton();}.bind(this)};
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
+		const oTableItem = this.oChartItemPanel._oListControl.getItems()[4];
+		const oEvent = {getSource : function() {return this.oChartItemPanel._getMoveBottomButton();}.bind(this)};
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveSelectedItem");
 		this.oChartItemPanel._addMoveButtons(oTableItem);
 
 		this.oChartItemPanel._onPressButtonMoveToBottom(oEvent);
@@ -399,9 +399,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_moveItemsByIndex", function(assert){
-		var oUpdateMoveSpy = sinon.spy(this.oChartItemPanel, "_updateEnableOfMoveButtons");
-		var oHandleActivatedSpy = sinon.spy(this.oChartItemPanel, "_handleActivated");
-		var done = assert.async();
+		const oUpdateMoveSpy = sinon.spy(this.oChartItemPanel, "_updateEnableOfMoveButtons");
+		const oHandleActivatedSpy = sinon.spy(this.oChartItemPanel, "_handleActivated");
+		const done = assert.async();
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
 			assert.ok(oEvent, "ChangeItems event was fired");
@@ -427,7 +427,7 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_getMoveConfigForTableItem", function(assert){
-		var oConfig = this.oChartItemPanel._getMoveConfigForTableItem(this.oChartItemPanel._oListControl.getItems()[0]);
+		let oConfig = this.oChartItemPanel._getMoveConfigForTableItem(this.oChartItemPanel._oListControl.getItems()[0]);
 		assert.ok(oConfig == undefined, "No config returned for grouping row");
 
 		oConfig = this.oChartItemPanel._getMoveConfigForTableItem(this.oChartItemPanel._oListControl.getItems()[1]);
@@ -456,19 +456,19 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onRearrange with dropPosition \"After\"", function(assert){
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
 
-		var oMockParams = {
+		const oMockParams = {
 			draggedControl: this.oChartItemPanel._oListControl.getItems()[4],
 			droppedControl: this.oChartItemPanel._oListControl.getItems()[5],
 			dropPosition: "After"
 		};
 
-		var oMockEvent = {getParameter : function(sParam){
+		const oMockEvent = {getParameter : function(sParam){
 			return oMockParams[sParam];
 		}};
 
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
 			assert.ok(oEvent, "ChangeItems event was fired");
@@ -485,19 +485,19 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onRearrange with dropPosition \"Before\"", function(assert){
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
 
-		var oMockParams = {
+		const oMockParams = {
 			draggedControl: this.oChartItemPanel._oListControl.getItems()[5],
 			droppedControl: this.oChartItemPanel._oListControl.getItems()[4],
 			dropPosition: "Before"
 		};
 
-		var oMockEvent = {getParameter : function(sParam){
+		const oMockEvent = {getParameter : function(sParam){
 			return oMockParams[sParam];
 		}};
 
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oChartItemPanel.attachEvent("changeItems", function(oEvent){
 			assert.ok(oEvent, "ChangeItems event was fired");
@@ -514,20 +514,20 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onRearrange with invalid drop position on group row", function(assert){
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
 
-		var oMockParams = {
+		const oMockParams = {
 			draggedControl: this.oChartItemPanel._oListControl.getItems()[4],
 			droppedControl: this.oChartItemPanel._oListControl.getItems()[3],
 			dropPosition: "Before"
 		};
 
-		var oMockEvent = {getParameter : function(sParam){
+		const oMockEvent = {getParameter : function(sParam){
 			return oMockParams[sParam];
 		},
 		preventDefault: function(){}};
 
-		var oPreventDefaultSpy = sinon.spy(oMockEvent, "preventDefault");
+		const oPreventDefaultSpy = sinon.spy(oMockEvent, "preventDefault");
 
 		this.oChartItemPanel._onRearrange(oMockEvent);
 
@@ -537,20 +537,20 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_onRearrange with invalid drop position on different aggration role", function(assert){
-		var oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
+		const oMoveSpy = sinon.spy(this.oChartItemPanel, "_moveItemsByIndex");
 
-		var oMockParams = {
+		const oMockParams = {
 			draggedControl: this.oChartItemPanel._oListControl.getItems()[4],
 			droppedControl: this.oChartItemPanel._oListControl.getItems()[1],
 			dropPosition: "Before"
 		};
 
-		var oMockEvent = {getParameter : function(sParam){
+		const oMockEvent = {getParameter : function(sParam){
 			return oMockParams[sParam];
 		},
 		preventDefault: function(){}};
 
-		var oPreventDefaultSpy = sinon.spy(oMockEvent, "preventDefault");
+		const oPreventDefaultSpy = sinon.spy(oMockEvent, "preventDefault");
 
 		this.oChartItemPanel._onRearrange(oMockEvent);
 
@@ -572,8 +572,8 @@ sap.ui.define([
 
 
 	QUnit.test("Template ComboBox tests", function(assert){
-		var oComboBox = this.oChartItemPanel._getTemplateComboBox("Measure");
-		var mockEvent = {getSource: function(){return oComboBox;}};
+		const oComboBox = this.oChartItemPanel._getTemplateComboBox("Measure");
+		const mockEvent = {getSource: function(){return oComboBox;}};
 
 		//Override for test
 		this.oChartItemPanel._getCleanP13nItems = function(){return [];};
@@ -593,9 +593,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_createListItem", function(assert){
-		var oMockModelContext = {getObject : function(){return {kind: "Measure", name: "test5"};}};
+		const oMockModelContext = {getObject : function(){return {kind: "Measure", name: "test5"};}};
 
-		var oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
+		const oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
 		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 3, "List Item has 3 cells");
@@ -612,9 +612,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_createListItem with template", function(assert){
-		var oMockModelContext = {getObject : function(){return {kind: "TestKind", template: true};}};
+		const oMockModelContext = {getObject : function(){return {kind: "TestKind", template: true};}};
 
-		var oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
+		const oListItem = this.oChartItemPanel._createListItem("anyId", oMockModelContext);
 
 		assert.ok(oListItem, "List item was created");
 		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
@@ -626,9 +626,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_createListItemMobile", function(assert){
-		var oMockModelContext = {getObject : function(){return {kind: "Measure", name: "test6"};}};
+		const oMockModelContext = {getObject : function(){return {kind: "Measure", name: "test6"};}};
 
-		var oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
+		const oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
 		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 2, "List Item has 2 cells");
@@ -646,9 +646,9 @@ sap.ui.define([
 	}.bind(this));
 
 	QUnit.test("_createListItemMobile with template", function(assert){
-		var oMockModelContext = {getObject : function(){return {kind: "TestKindMobile", template: true};}};
+		const oMockModelContext = {getObject : function(){return {kind: "TestKindMobile", template: true};}};
 
-		var oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
+		const oListItem = this.oChartItemPanel._createListItemMobile("anyId", oMockModelContext);
 		assert.ok(oListItem, "List item was created");
 		assert.ok(oListItem.isA("sap.m.ColumnListItem"), "List Item is of type sap.m.ColumnListItem");
 		assert.ok(oListItem.getCells().length == 2, "List Item has 2 cells");

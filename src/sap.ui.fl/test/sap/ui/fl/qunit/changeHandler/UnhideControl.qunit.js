@@ -18,7 +18,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.fl.changeHandler.UnhideControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = UnhideControlChangeHandler;
 			var oChangeJson = {
 				selector: {
@@ -28,7 +28,7 @@ sap.ui.define([
 
 			this.oChange = new UIChange(oChangeJson);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange = null;
 		}
 	}, function() {
@@ -62,8 +62,8 @@ sap.ui.define([
 
 		QUnit.test("applyChange on a xml tree", function(assert) {
 			var oDOMParser = new DOMParser();
-			var oXmlDocument = oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
-			this.oXmlButton = oXmlDocument.childNodes[0];
+			var oXmlDocument = oDOMParser.parseFromString(`<Button xmlns='sap.m' text='${this.OLD_VALUE}' enabled='true' />`, "application/xml");
+			[this.oXmlButton] = oXmlDocument.childNodes;
 
 			return this.oChangeHandler.applyChange(this.oChange, this.oXmlButton, {modifier: XmlTreeModifier})
 			.then(function() {

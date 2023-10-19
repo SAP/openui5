@@ -5,7 +5,6 @@ sap.ui.define([
 		"sap/ui/integration/widgets/Card",
 		"sap/ui/integration/util/RequestDataProvider",
 		"sap/ui/core/Core",
-		"sap/ui/integration/util/LoadingProvider",
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/cards/AnalyticalContent",
 		"sap/ui/integration/cards/Header",
@@ -14,14 +13,14 @@ sap.ui.define([
 		"sap/ui/base/Event",
 		"sap/ui/core/UIComponent",
 		"sap/ui/integration/library",
-		"sap/ui/thirdparty/jquery"
+		"sap/ui/thirdparty/jquery",
+		"sap/ui/integration/library"
 	],
 	function (
 		Log,
 		Card,
 		RequestDataProvider,
 		Core,
-		LoadingProvider,
 		BaseContent,
 		AnalyticalContent,
 		Header,
@@ -30,7 +29,8 @@ sap.ui.define([
 		Event,
 		UIComponent,
 		integrationLibrary,
-		jQuery
+		jQuery,
+		library
 	) {
 		"use strict";
 
@@ -1465,6 +1465,44 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_List_MinItems_Grouping = {
+			"sap.app": {
+				"id":  "test.card.loading.cardMinItemsGrouping"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "List Card"
+				},
+				"content": {
+					"data": {
+						"json": [{
+								"Name": "Product 1",
+								"Price": "100"
+							},
+							{
+								"Name": "Product 2",
+								"Price": "200"
+							},
+							{
+								"Name": "Product 3",
+								"Price": "200"
+							}
+						]
+					},
+					"item": {
+						"title": "{Name}"
+					},
+					"group": {
+						"title": "{= ${Price} > 150 ? 'Expensive' : 'Cheap'}",
+						"order": {
+							"path": "Price"
+						}
+					}
+				}
+			}
+		};
+
 		var oManifest_List_manifestChanges = {
 			"sap.app": {
 				"id": "test.card.loading.cardManifestChanges"
@@ -1965,17 +2003,14 @@ sap.ui.define([
 
 		});
 
-		QUnit.module("Loading Provider", {
+		QUnit.module("List Placeholder", {
 			beforeEach: function () {
-				this.oLoadingProvider = new LoadingProvider();
 				this.oCard = new Card({
 					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
-
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
-				this.oLoadingProvider.destroy();
-				this.oLoadingProvider = null;
 				this.oCard.destroy();
 				this.oCard = null;
 			}
@@ -2000,8 +2035,149 @@ sap.ui.define([
 			});
 
 			oCard.setManifest(oManifest_List_MinItems);
-			oCard.placeAt(DOM_RENDER_LOCATION);
 			oCard.showLoadingPlaceholders();
+		});
+
+		QUnit.test("Card loading placeholder has correct number of items when showLoadingPlaceholder() is called for grouped list", function (assert) {
+			var done = assert.async(),
+				oCard = this.oCard;
+
+			oCard.attachEventOnce("_ready", function () {
+				var oLoadingPlaceholder = oCard.getCardContent().getAggregation("_loadingPlaceholder");
+				oCard.getCardContent().showLoadingPlaceholders(true);
+				Core.applyChanges();
+
+				assert.strictEqual(oLoadingPlaceholder.getMinItems(), 3, "Placeholder shouldn't include the group headers");
+				done();
+			});
+
+			oCard.setManifest(oManifest_List_MinItems_Grouping);
+		});
+
+		QUnit.test("List Card in 'Abstract' preview mode - icon and title", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 5, "there are 5 image placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 5, "there are 5 row placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 5, "there are 3 lines rendered");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewModeList",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"json": {
+							"title": "List Card",
+							"items": []
+						},
+						"mockData": {
+							"json": {
+								"title": "List Card with Mocked Data",
+								"items": [
+									{
+										"title": "item1"
+									},
+									{
+										"title": "item2"
+									}
+								]
+							}
+						}
+					},
+					"header": {
+						"title": "{title}"
+					},
+					"content": {
+						"maxItems": 5,
+						"data": {
+							"path": "/items"
+						},
+						"item": {
+							"title": "{title}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"highlight": "{state}",
+							"description": "{state}",
+							"info": {
+								"value": "{info}",
+								"state": "{infoState}"
+							}
+						}
+					}
+				}
+			});
+		});
+
+		QUnit.test("List Card in 'Abstract' preview mode - icon, title and actionsStrip", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 3, "there are 3 image placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 6, "there are 6 row placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 3, "there are 3 lines rendered");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewModeList2",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						}
+					},
+					"header": {
+						"title": "{title}"
+					},
+					"content": {
+						"maxItems": 3,
+						"data": {
+							"path": "/milk"
+						},
+						"item": {
+							"title": "{Store Name}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"highlight": "{state}",
+							"description": "{state}",
+							"actionsStrip": [{
+								"text": "{Revenue}"
+							}]
+						}
+					},
+					"footer": {
+						"actionsStrip": [{
+							"text": "{milk/0/Revenue}"
+						}]
+					}
+				}
+			});
 		});
 
 		QUnit.module("Card Loading Placeholder API", {

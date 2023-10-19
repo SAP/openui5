@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a VariantManagement control and its designtime metadata are created...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sVariantManagementReference = "variantManagementReference-1";
 			this.oVariantManagement = new VariantManagement(this.sVariantManagementReference, {});
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
@@ -32,7 +32,7 @@ sap.ui.define([
 				this.oUpdateCurrentVariantStub = sandbox.stub(this.oModel, "updateCurrentVariant").resolves();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oMockedAppComponent.destroy();
 			this.oVariantManagement.destroy();
 			sandbox.restore();
@@ -72,7 +72,7 @@ sap.ui.define([
 				}, "then updateCurrentVariant after undo command is called with the correct parameters");
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
@@ -87,13 +87,13 @@ sap.ui.define([
 			var aDirtyChanges = [
 				RtaQunitUtils.createUIChange({
 					fileName: "change1",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "oldVariantReference",
 					fileType: "change"
 				}),
 				RtaQunitUtils.createUIChange({
 					fileName: "change2",
-					reference: "Dummy.Component",
+					reference: "Dummy",
 					variantReference: "oldVariantReference",
 					fileType: "ctrl_variant_management_change"
 				})
@@ -155,7 +155,7 @@ sap.ui.define([
 				assert.equal(this.oUpdateCurrentVariantStub.callCount, 0, "then updateCurrentVariant after undo command is not called");
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 	});

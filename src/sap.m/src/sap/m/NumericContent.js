@@ -11,8 +11,11 @@ sap.ui.define([
 	"./NumericContentRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/Configuration"
-], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration) {
+	"sap/ui/core/Configuration",
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming"
+], function (library, Control, IconPool, ResizeHandler, Image, NumericContentRenderer, KeyCodes, deepEqual, Configuration, Core, CoreLib, Theming) {
 	"use strict";
 
 	var LANG_MAP = { // keys are compared in lowercase
@@ -216,9 +219,9 @@ sap.ui.define([
 	/* --- Lifecycle methods --- */
 
 	NumericContent.prototype.init = function () {
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._rb = CoreLib.getResourceBundleFor("sap.m");
 		this.setTooltip("{AltText}");
-		sap.ui.getCore().attachInit(this._registerResizeHandler.bind(this));
+		Core.ready(this._registerResizeHandler.bind(this));
 	};
 
 	NumericContent.prototype._getParentTile = function () {
@@ -281,11 +284,7 @@ sap.ui.define([
 		this.$().on("mouseenter", this._addTooltip.bind(this));
 		this.$().on("mouseleave", this._removeTooltip.bind(this));
 
-		if (!sap.ui.getCore().isThemeApplied()) {
-			sap.ui.getCore().attachThemeChanged(this._checkIfIconFits, this);
-		} else {
-			this._checkIfIconFits();
-		}
+		Theming.attachApplied(this._checkIfIconFits.bind(this));
 	};
 
 	/**
@@ -411,17 +410,19 @@ sap.ui.define([
 	};
 
 	NumericContent.prototype.setIndicator = function (sDeviationIndicator) {
-		var sSrc = "sap-icon://" + (sDeviationIndicator ? sDeviationIndicator.toLowerCase() : "none");
-		if (this._oIndicatorIcon) {
-			this._oIndicatorIcon.setSrc(sSrc);
-		} else {
-			this._oIndicatorIcon = IconPool.createControlByURI({
-				id: this.getId() + "-icon-indicator",
-				size: "0.875rem",
-				src: sSrc
-			}, Image);
-			this._oIndicatorIcon.addStyleClass("sapMNCIndIcon");
-		}
+        if (sDeviationIndicator !== DeviationIndicator.None && sDeviationIndicator) {
+        var sSrc = "sap-icon://" + sDeviationIndicator.toLowerCase();
+        if (this._oIndicatorIcon) {
+            this._oIndicatorIcon.setSrc(sSrc);
+        } else {
+            this._oIndicatorIcon = IconPool.createControlByURI({
+                id: this.getId() + "-icon-indicator",
+                size: "0.875rem",
+                src: sSrc
+            }, Image);
+            this._oIndicatorIcon.addStyleClass("sapMNCIndIcon");
+        }
+	}
 		return this.setProperty("indicator", sDeviationIndicator);
 	};
 
@@ -506,8 +507,8 @@ sap.ui.define([
 		var sTrimmedValue = sValue.replace(String.fromCharCode(8206), "").replace(String.fromCharCode(8207), "");
 
 		// extract value and scale information from string using regex.
-		var aValueMatches = sTrimmedValue.match(/([+-., \d]*)/g) || [];
-		var aScaleMatches = sTrimmedValue.match(/[^+-., \d]/g) || [];
+		var aValueMatches = sTrimmedValue.match(/([+-.−, \d]*)/g) || [];
+		var aScaleMatches = sTrimmedValue.match(/[^+-.−, \d]/g) || [];
 
 		return {
 			value: aValueMatches.reduce(function (acc, curVal){

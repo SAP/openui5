@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/dom/jquery/Selectors"
 ], function(
 	jQuery,
@@ -14,12 +14,12 @@ sap.ui.define([
 	TabHandling,
 	Button,
 	VerticalLayout,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that the design time is active ", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oButton1 = new Button();
 			this.oButton2 = new Button();
 			this.oLayout = new VerticalLayout({
@@ -29,7 +29,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oTabHandling = new TabHandling();
 
@@ -42,17 +42,17 @@ sap.ui.define([
 				]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				var oOverlay = this.oDesignTime.getElementOverlays()[1];
 				oOverlay.setEditable(true);
 				oOverlay.setMovable(true);
 				oOverlay.setSelectable(true);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				this.OverlayRoot = jQuery("#overlay-container");
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}

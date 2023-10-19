@@ -3,10 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/fl/changeHandler/condenser/Classification"
 ], function(
-	Log,
 	CondenserClassification
 ) {
 	"use strict";
@@ -18,62 +16,56 @@ sap.ui.define([
 	 * @alias sap.ui.fl.changeHandler.BaseRename
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.46
+	 * @since 1.46
+	 *
 	 */
-	var BaseRename = {
+	const BaseRename = {
 		/**
 		 * Returns an instance of the rename change handler
-		 * @param  {object} mRenameSettings The settings required for the rename action
-		 *                  mRenameSettings.propertyName The property from the control to be renamed (e.g. "label")
-		 *                  mRenameSettings.changePropertyName Only use if you have to have migration changeHandler: Property name in change (for LRep; e.g. "fieldLabel")
-		 *                  mRenameSettings.translationTextType The translation text type in change (e.g. "XFLD")
-		 * @return {any} the rename change handler object
+		 * @param {object} mRenameSettings - Settings required for the rename action
+		 * @param {string} mRenameSettings.propertyName - Property from the control to be renamed (e.g. "label")
+		 * @param {string} mRenameSettings.changePropertyName -  Only use if you have migration changeHandler: Property name in change (for LRep; e.g. "fieldLabel")
+		 * @param {string} mRenameSettings.translationTextType - Translation text type in change (e.g. "XFLD")
+		 * @return {object} The rename change handler
 		 */
-		createRenameChangeHandler: function(mRenameSettings) {
-			mRenameSettings.changePropertyName = mRenameSettings.changePropertyName || "newText";
+		createRenameChangeHandler(mRenameSettings) {
+			mRenameSettings.changePropertyName ||= "newText";
 
 			return {
 				/**
 				 * Renames a control.
 				 *
-				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object with instructions to be applied on the control map
-				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
-				 * @param {object} mPropertyBag property bag
-				 * @param {object} mPropertyBag.modifier modifier for the controls
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change wrapper object with instructions to be applied on the control map
+				 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
+				 * @param {object} mPropertyBag - Property bag
+				 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 				 * @returns {Promise} Promise resolving when the change is applied
 				 * @public
 				 */
-				applyChange: function(oChange, oControl, mPropertyBag) {
-					var oModifier = mPropertyBag.modifier;
-					var sPropertyName = mRenameSettings.propertyName;
-					var sValue = oChange.getText(mRenameSettings.changePropertyName);
-
-					return Promise.resolve()
-					.then(function() {
-						if (sValue) {
-							return oModifier.getPropertyBindingOrProperty(oControl, sPropertyName)
-							.then(function(vPropertyValue) {
-								oChange.setRevertData(vPropertyValue);
-								return oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
-							});
-						}
-						return undefined;
-					});
+				async applyChange(oChange, oControl, mPropertyBag) {
+					const oModifier = mPropertyBag.modifier;
+					const sPropertyName = mRenameSettings.propertyName;
+					const sValue = oChange.getText(mRenameSettings.changePropertyName);
+					if (sValue) {
+						const vPropertyValue = await oModifier.getPropertyBindingOrProperty(oControl, sPropertyName);
+						oChange.setRevertData(vPropertyValue);
+						await oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, sValue);
+					}
 				},
 
 				/**
 				 * Reverts a Rename Change
 				 *
-				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object with instructions to be applied on the control map
-				 * @param {sap.ui.core.Control} oControl Control that matches the change selector for applying the change
-				 * @param {object} mPropertyBag property bag
-				 * @param {object} mPropertyBag.modifier modifier for the controls
+				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change wrapper object with instructions to be applied on the control map
+				 * @param {sap.ui.core.Control} oControl - Control that matches the change selector for applying the change
+				 * @param {object} mPropertyBag - Property bag
+				 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 				 * @public
 				 */
-				revertChange: function(oChange, oControl, mPropertyBag) {
-					var oModifier = mPropertyBag.modifier;
-					var sPropertyName = mRenameSettings.propertyName;
-					var vOldValue = oChange.getRevertData();
+				revertChange(oChange, oControl, mPropertyBag) {
+					const oModifier = mPropertyBag.modifier;
+					const sPropertyName = mRenameSettings.propertyName;
+					const vOldValue = oChange.getRevertData();
 
 					if (vOldValue || vOldValue === "") {
 						oModifier.setPropertyBindingOrProperty(oControl, sPropertyName, vOldValue);
@@ -81,7 +73,7 @@ sap.ui.define([
 						return;
 					}
 
-					Log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
+					throw new Error("Change without sufficient information to be reverted. It probably didn't go through applyChange.");
 				},
 
 				/**
@@ -90,31 +82,26 @@ sap.ui.define([
 				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange change wrapper object to be completed
 				 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 				 * @param {object} mPropertyBag - Property bag
-				 * @param {object} mPropertyBag.modifier - Modifier for the controls
+				 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 				 * @returns {Promise} A promise resolving when the change content is completed
 				 * @public
 				 */
-				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
-					var sChangePropertyName = mRenameSettings.changePropertyName;
-					var sTranslationTextType = mRenameSettings.translationTextType;
+				async completeChangeContent(oChange, mSpecificChangeInfo, mPropertyBag) {
+					const sChangePropertyName = mRenameSettings.changePropertyName;
+					const sTranslationTextType = mRenameSettings.translationTextType;
 
-					return Promise.resolve()
-					.then(function() {
-						return mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
-					})
-					.then(function(oControlToBeRenamed) {
-						oChange.setContent({
-							originalControlType: mPropertyBag.modifier.getControlType(oControlToBeRenamed)
-						});
-
-						if (typeof (mSpecificChangeInfo.value) === "string") {
-							oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
-						} else if (typeof (mSpecificChangeInfo.content.value) === "string") {
-							oChange.setText(sChangePropertyName, mSpecificChangeInfo.content.value, sTranslationTextType);
-						} else {
-							return Promise.reject(new Error("oSpecificChangeInfo.value attribute required"));
-						}
+					const oControlToBeRenamed = await mPropertyBag.modifier.bySelector(oChange.getSelector(), mPropertyBag.appComponent);
+					oChange.setContent({
+						originalControlType: mPropertyBag.modifier.getControlType(oControlToBeRenamed)
 					});
+
+					if (typeof (mSpecificChangeInfo.value) === "string") {
+						oChange.setText(sChangePropertyName, mSpecificChangeInfo.value, sTranslationTextType);
+					} else if (typeof (mSpecificChangeInfo.content.value) === "string") {
+						oChange.setText(sChangePropertyName, mSpecificChangeInfo.content.value, sTranslationTextType);
+					} else {
+						throw new Error("oSpecificChangeInfo.value attribute required");
+					}
 				},
 
 				/**
@@ -124,7 +111,7 @@ sap.ui.define([
 				 * @returns {object} - Condenser-specific information
 				 * @public
 				 */
-				getCondenserInfo: function(oChange) {
+				getCondenserInfo(oChange) {
 					return {
 						affectedControl: oChange.getSelector(),
 						classification: CondenserClassification.LastOneWins,
@@ -136,11 +123,11 @@ sap.ui.define([
 				 * Retrieves the information required for the change visualization.
 				 *
 				 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Object with change data
-				 * @returns {object} Object with a description payload containing the information required for the change visualization
+				 * @returns {object} - Object with a description payload containing the information required for the change visualization
 				 * @public
 				 */
-				getChangeVisualizationInfo: function(oChange) {
-					var oNewLabel = (
+				getChangeVisualizationInfo(oChange) {
+					const oNewLabel = (
 						oChange.getTexts()
 						&& oChange.getTexts()[mRenameSettings.changePropertyName]
 					);

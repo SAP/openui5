@@ -61,6 +61,7 @@ function (
 			fnUpdateDomSpy = this.spy(IllustrationPool, "_updateDOMPool"),
 			sValidSet = SAP_ILLUSTRATION_SET_NAME,
 			sValidAsset = sValidSet + "-Spot-BeforeSearch",
+			sValidPrefix = "",
 			sInfoMsg = "The asset with ID '" + sValidAsset + "' is either loaded or being loaded.",
 			oRequireSVGPromise,
 			done = assert.async();
@@ -84,7 +85,7 @@ function (
 		assert.expect(7);
 		assert.ok(fnRequireSvgSpy.calledOnce, "asset is properly required once");
 		assert.ok(oRequireSVGPromise instanceof Promise, "returned value from _requireSVG is a Promise");
-		assert.ok(fnRequireSvgSpy.calledWithExactly(sValidSet, sValidAsset, undefined),
+		assert.ok(fnRequireSvgSpy.calledWithExactly(sValidSet, sValidAsset, undefined, sValidPrefix),
 			"asset is required with the correct via the _requireSVG method with the correct arguments");
 
 		// Act
@@ -95,6 +96,24 @@ function (
 		assert.ok(fnInfoStub.calledOnce, "information is logged once");
 		assert.ok(fnInfoStub.calledWithExactly(sInfoMsg), "information is logged with the correct info message");
 		assert.strictEqual(fnRequireSvgSpy.callCount, 0, "no svg is required if the asset is already required once");
+	});
+
+	QUnit.test("valid asset ID with prefix", function (assert) {
+		// Arrange
+		var fnRequireSvgSpy = this.spy(IllustrationPool, "_requireSVG"),
+			sValidSet = SAP_ILLUSTRATION_SET_NAME,
+			sValidAsset = sValidSet + "-Spot-FaceId",
+			sValidPrefix = "v5/";
+
+		// Act
+		IllustrationPool.loadAsset(sValidAsset, undefined, sValidPrefix);
+
+		// Assert
+		assert.expect(2);
+
+		assert.ok(fnRequireSvgSpy.calledOnce, "asset is properly required once");
+		assert.ok(fnRequireSvgSpy.calledWithExactly(sValidSet, sValidAsset, undefined, sValidPrefix),
+			"asset is required with the correct via the _requireSVG method with the correct arguments");
 	});
 
 	QUnit.module("registerIllustrationSet");

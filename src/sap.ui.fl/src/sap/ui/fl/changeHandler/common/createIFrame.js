@@ -19,6 +19,7 @@ sap.ui.define([
 	 * @param {boolean} [oSelector.isLocalId] <code>true</code> if the ID within the selector is a local ID or a global ID
 	 * @param {object} [mRenameInfo] Used to retrieve text from the iFrame container
 	 * @returns {Promise} Promise resolving with the created IFrame
+	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function(oChange, mPropertyBag, oSelector, mRenameInfo) {
@@ -32,6 +33,8 @@ sap.ui.define([
 			mIFrameSettings[sIFrameProperty] = vValue;
 			mIFrameSettings._settings[sIFrameProperty] = vValue;
 		});
+		mIFrameSettings.useLegacyNavigation = !!oChangeContent.useLegacyNavigation;
+		mIFrameSettings._settings.useLegacyNavigation = !!oChangeContent.useLegacyNavigation;
 
 		if (mRenameInfo) {
 			mIFrameSettings.renameInfo = mRenameInfo;

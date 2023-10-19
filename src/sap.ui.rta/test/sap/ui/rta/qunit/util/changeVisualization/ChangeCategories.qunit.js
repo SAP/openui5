@@ -8,9 +8,9 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Base tests", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 		}
 	}, function() {
 		QUnit.test("getCategories", function(assert) {

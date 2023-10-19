@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given SmartBusinessWriteAPI", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
@@ -106,7 +106,7 @@ sap.ui.define([
 				originalLanguage: "EN"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -161,7 +161,7 @@ sap.ui.define([
 						assert.notOk("Test should not succeed!");
 					}
 				});
-				var sTextKey = oAppVariant.id + "_sap.app.title";
+				var sTextKey = `${oAppVariant.id}_sap.app.title`;
 				assert.deepEqual(oAppVariant.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
 				assert.ok(oNewConnectorCall.calledWith("/sap/bc/lrep/appdescr_variants/?changelist=U1YK123456&sap-language=EN", "POST"), "then backend call is triggered with correct parameters");
 			}.bind(this));
@@ -421,7 +421,7 @@ sap.ui.define([
 				var oRequestPayload = JSON.parse(fnNewConnectorCall.getCall(1).args[2].payload);
 				assert.strictEqual(oRequestPayload.content[1].changeType, "appdescr_app_setTitle", "then it is a correct changetype");
 				assert.deepEqual(oRequestPayload.content[1].content, {}, "then content is empty for setTitle change");
-				var sTextKey = oRequestPayload.id + "_sap.app.title";
+				var sTextKey = `${oRequestPayload.id}_sap.app.title`;
 				assert.deepEqual(oRequestPayload.content[1].texts[sTextKey], this.oDescrChangeSpecificData2.content, "then texts are correct for setTitle change");
 				Object.keys(oRequestPayload.content[1]).forEach(function(sKey) {
 					if (

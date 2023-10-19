@@ -4,7 +4,13 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
-	"sap/ui/core/date/UniversalDateUtils"
+	"sap/ui/core/date/UniversalDateUtils",
+	// load all required calendars in advance
+	"sap/ui/core/date/Buddhist",
+	"sap/ui/core/date/Gregorian",
+	"sap/ui/core/date/Islamic",
+	"sap/ui/core/date/Japanese",
+	"sap/ui/core/date/Persian"
 ], function (CalendarType, Configuration, UI5Date, UniversalDate, UniversalDateUtils) {
 	"use strict";
 
@@ -20,6 +26,9 @@ sap.ui.define([
 	};
 
 	QUnit.module("sap.ui.core.date.UniversalDateUtils", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function () {
 			Configuration.setLanguage("en_US");
 		},

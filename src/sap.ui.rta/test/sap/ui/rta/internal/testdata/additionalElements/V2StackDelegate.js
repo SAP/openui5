@@ -109,7 +109,7 @@ sap.ui.define([
 					// deep properties, could get multiple-level deep
 					mProp.properties = mComplexType.property.map(function(mComplexProperty) {
 						var mInnerProp = enrichProperty(mComplexProperty, mODataEntity, oElement, sAggregationName);
-						mInnerProp.bindingPath = mProperty.name + "/" + mComplexProperty.name;
+						mInnerProp.bindingPath = `${mProperty.name}/${mComplexProperty.name}`;
 						mInnerProp.referencedComplexPropertyName = mProp.label || mProp.name;
 						return mInnerProp;
 					})
@@ -222,27 +222,27 @@ sap.ui.define([
 		* @param {string} mPropertyBag.aggregationName - Name of the aggregation the delegate should provide additional elements
 		* @returns {Promise<sap.ui.fl.delegate.PropertyInfo>} Metadata in a deep structure of nodes and properties
 		*/
-		getPropertyInfo: function(mPropertyBag) {
+		getPropertyInfo(mPropertyBag) {
 			return _getODataPropertiesOfModel(mPropertyBag.element, mPropertyBag.aggregationName, mPropertyBag.payload);
 		},
 
-		createLabel: function(mPropertyBag) {
+		createLabel(mPropertyBag) {
 			return mPropertyBag.modifier.createControl("sap.ui.comp.smartfield.SmartLabel",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
-				mPropertyBag.labelFor + "-label",
+				`${mPropertyBag.labelFor}-label`,
 				{ labelFor: mPropertyBag.labelFor, text: mPropertyBag.bindingPath },
 				ASYNC
 			);
 		},
-		createControlForProperty: function(mPropertyBag) {
+		createControlForProperty(mPropertyBag) {
 			// see SmartField.flexibility.js fnCreateFieldWithLabel function
 			var oModifier = mPropertyBag.modifier;
 			return oModifier.createControl("sap.ui.comp.smartfield.SmartField",
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
 				mPropertyBag.fieldSelector,
-				{value: "{" + mPropertyBag.bindingPath + "}"},
+				{value: `{${mPropertyBag.bindingPath}}`},
 				ASYNC
 			).then(function(oSmartField) {
 				return {
@@ -251,7 +251,7 @@ sap.ui.define([
 			});
 		},
 
-		createLayout: function(mPropertyBag) {
+		createLayout(mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			if (_isFormRelatedElement(mPropertyBag)) {
 				// Don't provide form handling
@@ -270,7 +270,7 @@ sap.ui.define([
 				oVBox = oCreatedVBox;
 				var mFieldPropertyBag = Object.assign({}, mPropertyBag);
 				var mSmartFieldSelector = Object.assign({}, mPropertyBag.fieldSelector);
-				mSmartFieldSelector.id = mSmartFieldSelector.id + "-field";
+				mSmartFieldSelector.id = `${mSmartFieldSelector.id}-field`;
 				mFieldPropertyBag.fieldSelector = mSmartFieldSelector;
 				return Delegate.createControlForProperty(mFieldPropertyBag).then(function(mField) {
 					// labelFor prop

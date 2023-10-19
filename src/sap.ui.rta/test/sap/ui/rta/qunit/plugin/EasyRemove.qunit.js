@@ -2,10 +2,11 @@
 
 sap.ui.define([
 	"sap/m/Button",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/EasyRemove",
@@ -17,10 +18,11 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	Button,
-	oCore,
+	Element,
 	DesignTime,
 	OverlayRegistry,
 	ChangesWriteAPI,
+	nextUIUpdate,
 	QUnitUtils,
 	CommandFactory,
 	EasyRemove,
@@ -37,7 +39,7 @@ sap.ui.define([
 	var oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			//	layout
@@ -66,7 +68,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection, this.oSection2]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
@@ -80,7 +82,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -96,13 +98,13 @@ sap.ui.define([
 				done();
 			});
 
-			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			QUnitUtils.triggerEvent("tap", oDeleteButton.getDomRef());
 		});
 
-		QUnit.test("when an ObjectPageSection is rendered and one section gets removed", function(assert) {
-			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
-			var oDeleteButton2 = oCore.byId(this.oSectionOverlay2.getId() + "-DeleteIcon");
+		QUnit.test("when an ObjectPageSection is rendered and one section gets removed", async function(assert) {
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
+			var oDeleteButton2 = Element.getElementById(`${this.oSectionOverlay2.getId()}-DeleteIcon`);
 
 			assert.ok(oDeleteButton, "then the 1st Delete-Icon is displayed");
 			assert.ok(oDeleteButton.getEnabled(), "and enabled");
@@ -110,7 +112,7 @@ sap.ui.define([
 			assert.ok(oDeleteButton2.getEnabled(), "and enabled");
 
 			this.oSection.setVisible(false);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(oDeleteButton2, "after removing the 1st section, the 2nd Delete-Icon is still displayed");
 			assert.notOk(oDeleteButton2.getEnabled(), "but disabled");
@@ -129,7 +131,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated with a OP-Section without stableID", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 			this.oEasyRemovePlugin = new EasyRemove({
@@ -144,7 +146,7 @@ sap.ui.define([
 			this.oLayout = new ObjectPageLayout("layout", {
 				sections: [this.oSection]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout],
@@ -157,13 +159,13 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
 	}, function() {
 		QUnit.test("when an ObjectPageSection is rendered and the EasyRemovePlugin is used", function(assert) {
-			var oDeleteButton = oCore.byId(this.oSectionOverlay.getId() + "-DeleteIcon");
+			var oDeleteButton = Element.getElementById(`${this.oSectionOverlay.getId()}-DeleteIcon`);
 			assert.notOk(oDeleteButton, "then the Delete-Icon is not displayed");
 		});
 	});

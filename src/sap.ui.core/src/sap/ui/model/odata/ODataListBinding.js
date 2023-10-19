@@ -103,6 +103,30 @@ sap.ui.define([
 	});
 
 	/**
+	 * Returns all current contexts of this list binding in no special order. Just like
+	 * {@link #getCurrentContexts}, this method does not request any data from a back end and does
+	 * not change the binding's state. In contrast to {@link #getCurrentContexts}, it does not only
+	 * return those contexts that were last requested by a control, but all contexts that are
+	 * currently available in the binding.
+	 *
+	 * @returns {sap.ui.model.odata.v2.Context[]}
+	 *   All current contexts of this list binding, in no special order
+	 *
+	 * @public
+	 * @since 1.98.0
+	 */
+	ODataListBinding.prototype.getAllCurrentContexts = function () {
+		var aContexts = [],
+			that = this;
+
+		this.aKeys.forEach(function (sKey) {
+			aContexts.push(that.oModel.getContext("/" + sKey));
+		});
+
+		return aContexts;
+	};
+
+	/**
 	 * Return contexts for the list
 	 *
 	 * @param {int} [iStartIndex=0]

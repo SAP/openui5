@@ -1,0 +1,26 @@
+{
+	"sap.app": {
+		"id": "my.hints"
+	},
+	"sap.ui5": {
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"commands": {
+			"Save": {
+				"shortcut": "Ctrl+S"
+			},
+			"Create": {
+				"shortcut": "Ctrl+D"
+			}
+		},
+		"rootView": {
+			"viewName": "my.hints.RootView",
+			"type": "XML",
+			"async": true
+		}
+	}
+}

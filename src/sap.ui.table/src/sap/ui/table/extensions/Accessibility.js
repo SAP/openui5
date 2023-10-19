@@ -125,14 +125,15 @@ sap.ui.define([
 	};
 
 	/*
-	 * Provides utility functions used this extension
+	 * Provides utility functions used by this extension
 	 */
 	var ExtensionHelper = {
 
-		/*
+		/**
 		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
 		 * In case the focused cell is a row action the given index equals the length of the visible columns.
 		 * This function must not be used if the focus is on a row header.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 * @returns {int}
 		 */
 		getColumnIndexOfFocusedCell: function(oExtension) {
@@ -145,7 +146,7 @@ sap.ui.define([
 		 * If the current focus is on a cell of the table, this function returns
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
 		 *
-		 * @param {sap.ui.table.AccExtension} oExtension The accessibility extension.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 * @returns {sap.ui.table.utils.TableUtils.CellInfo} An object containing information about the cell.
 		 */
 		getInfoOfFocusedCell: function(oExtension) {
@@ -281,8 +282,9 @@ sap.ui.define([
 			return oRow.getIndex() + 1 + TableUtils.getHeaderRowCount(oRow.getTable());
 		},
 
-		/*
+		/**
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 */
 		updateRowColCount: function(oExtension) {
 			var oTable = oExtension.getTable(),
@@ -317,8 +319,9 @@ sap.ui.define([
 			};
 		},
 
-		/*
+		/**
 		 * Removes the acc modifications of the cell which had the focus before.
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
 		 */
 		cleanupCellModifications: function(oExtension) {
 			if (oExtension._cleanupInfo) {
@@ -626,6 +629,9 @@ sap.ui.define([
 		/**
 		 * Returns the default aria attributes for the given element type with the given settings.
 		 * @see sap.ui.table.extensions.Accessibility.ELEMENTTYPES
+		 * @param {sap.ui.table.extensions.Accessibility} oExtension The accessibility extension.
+		 * @param {string} sType
+		 * @param {object} [mParams]
 		 */
 		getAriaAttributesFor: function(oExtension, sType, mParams) {
 			var mAttributes = {},
@@ -710,8 +716,12 @@ sap.ui.define([
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
 
-					if (!bHasColSpan && oColumn && oColumn.getSorted()) {
-						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
+					if (!bHasColSpan && oColumn) {
+						mAttributes["aria-sort"] = oColumn.getSortOrder().toLowerCase();
+						/** @deprecated As of version 1.120 */
+						if (!oColumn.getSorted()) {
+							delete mAttributes["aria-sort"];
+						}
 					}
 
 					if (!bHasColSpan && oColumn) {
@@ -1125,11 +1135,12 @@ sap.ui.define([
 
 		var oTable = this.getTable();
 		var aRows = oTable.getRows();
-		var oRow, i;
+		var oRow, i, $Ref;
 
 		for (i = 0; i < aRows.length; i++) {
 			oRow = aRows[i];
-			oRow.getDomRefs(true).row.attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
+			$Ref = oRow.getDomRefs(true);
+			$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).attr("aria-rowindex", ExtensionHelper.getRowIndex(oRow));
 		}
 	};
 
@@ -1294,7 +1305,7 @@ sap.ui.define([
 			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 
 			if ($Ref.row) {
-				$Ref.row.add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
+				$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			}
 
 			if (!bIsSelected) {
@@ -1332,7 +1343,7 @@ sap.ui.define([
 			});
 		}
 
-		oDomRefs.row.attr({
+		oDomRefs.row.not(oDomRefs.rowHeaderPart).not(oDomRefs.rowActionPart).attr({
 			"aria-expanded": oRow.isExpandable() ? oRow.isExpanded() + "" : null,
 			"aria-level": oRow.getLevel()
 		});

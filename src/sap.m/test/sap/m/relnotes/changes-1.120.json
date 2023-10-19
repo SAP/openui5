@@ -1,0 +1,398 @@
+{
+  "1.120.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "8f4c93b5b2b092e9a1e54dcd91f3ef5d2b02fcd1",
+        "type": "FIX",
+        "text": " sap.m.Input: Type-ahead functionality corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370105532"
+          }
+        ]
+      },
+      {
+        "id": "074c5ed765674e4e975a1f6c3c0c601f37db5fa9",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool: Update icon font v5.7 and v4.19"
+      },
+      {
+        "id": "2e7a018cd311c65314d8d06568f4b327dccbf0f5",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Condition for validating text calculated properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103234"
+          }
+        ]
+      },
+      {
+        "id": "aff01e6a7674d0ca15c81d3d2ae9bf0ba43e473c",
+        "type": "FIX",
+        "text": "sap.m.Carousel: f7 qunit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118746"
+          }
+        ]
+      },
+      {
+        "id": "341a1914cd32bc57ab46138914c8d20d5e83169e",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          }
+        ]
+      },
+      {
+        "id": "6fc891f91c23a87ded04339bd5995f576dddd467",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "07c1355d556630ffdf4c5e722b248aa06b85385c",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: adjust keyboard interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270182080"
+          }
+        ]
+      },
+      {
+        "id": "f75b7ec552c7b7af164c8e2e19f48c598de56e0b",
+        "type": "FIX",
+        "text": " Integration Cards: List Card Placeholders rendering is now improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370100591"
+          }
+        ]
+      },
+      {
+        "id": "85f0fc2e0b41223044bfacc7c5184e042a1b779e",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "04e6b41598055440a21f273bf8ee1852ead8c581",
+        "type": "FIX",
+        "text": " sap.m.RangeSlider: apply active state to tickmarks correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370096017"
+          }
+        ]
+      },
+      {
+        "id": "dd73e2f83d8720e0417cbb9c6a91f1b4fa822b79",
+        "type": "FEATURE",
+        "text": " CellSelector: Improve removal of selection"
+      },
+      {
+        "id": "c7f74b0434b3a5d6acc6d7a3684202477de37124",
+        "type": "FIX",
+        "text": " sap.m.BusyIndicator: Position of the Busy Indicator in Bar is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091387"
+          }
+        ]
+      },
+      {
+        "id": "cb9455ca4b0090b4574283f04b2406f23224be22",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Circle is correctly aligned on RTL mode and Compact form factor",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370016563"
+          }
+        ]
+      },
+      {
+        "id": "76ac965a95974f005ceb41ae8b06e70d9594ab1d",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: week-related options now return proper values",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370111064"
+          }
+        ]
+      },
+      {
+        "id": "d71d4d81f61b1d24c53faa23e67c6840bcec1c06",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates"
+      },
+      {
+        "id": "1ce3e8496d7c490f761fc7e76d5e58ec890c7340",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: validation errors from value help are not propagated outside",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093417"
+          }
+        ]
+      },
+      {
+        "id": "4762793636c4567c69be151fd86aaab223f9ea4b",
+        "type": "FIX",
+        "text": " SinglePlanningCalendarGrid: drag & drop preview placeholder is always correctly sized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2270111715"
+          }
+        ]
+      },
+      {
+        "id": "502a7782a9f159574e1616eeca9c9a31c7e599f4",
+        "type": "FIX",
+        "text": " CellSelector: Keyboard Shortcuts should not execute when in editable content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370108423"
+          }
+        ]
+      },
+      {
+        "id": "0f4159b88e9467e11aaa6342c4c40a0261d51a8d",
+        "type": "FEATURE",
+        "text": " Deprecate static Object.isA and provide alternative"
+      },
+      {
+        "id": "d98acbb022eec6ba944ea491c9a5c1f34ea3a935",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: Set end button to pos 0 when no begin button is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380083135"
+          }
+        ]
+      },
+      {
+        "id": "bf4241bf775d2301f6faccfb27683c91a096ad14",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fire intervalSelect event date from another month",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370094258"
+          }
+        ]
+      },
+      {
+        "id": "9d90b44d13c6e48bfdc30c32b70cd7dacb51c80a",
+        "type": "FEATURE",
+        "text": "We've now introduced the linkTileContents aggregation that can render an icon and a link on the generic tile"
+      },
+      {
+        "id": "4d396df7fcb93824d899dfbb8f3bf657fd664fb5",
+        "type": "FEATURE",
+        "text": " CLDR upgrade to version 43.0.0"
+      },
+      {
+        "id": "1a000459e4d3a46f77c8395d63e3679c524c3ff8",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Reposition ValueStateHeader when long text is set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380052154"
+          }
+        ]
+      },
+      {
+        "id": "53f5bc866d215dc83289f36176d10cc0427eaa60",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: DateNavigation now uses firstDayOfWeek",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093247"
+          }
+        ]
+      },
+      {
+        "id": "7d7dfa208d4b28eb7c99ee35e1237953d5a13be1",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/DeclarativeSupport"
+      },
+      {
+        "id": "e524484cce25779181e64834c9bb86e1c83b6f38",
+        "type": "FIX",
+        "text": " sap.m.MessageView: Html structure improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380026756"
+          }
+        ]
+      },
+      {
+        "id": "92d74530a2718787ac816aaba9df4cbd8d999d08",
+        "type": "FIX",
+        "text": " sap.ui.core.IconPool: correction for icon 'slim-arrow-up' for theme 'horizon'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370103925"
+          }
+        ]
+      },
+      {
+        "id": "94a8bff9a4252bbf586c9d813598d321947f5ad9",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix overflowing controls with 100% width",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093601"
+          }
+        ]
+      },
+      {
+        "id": "86c333a9411abb71792f8111dae709a98e01832e",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value is now formatted even if matching with previous value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006449282023"
+          }
+        ]
+      },
+      {
+        "id": "fd123fc79d9f9627efb6edfc29d0c6508f8216b6",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: introduce new set of indication colors"
+      },
+      {
+        "id": "d73a742c9de5007efb19eff8f314a74fb8063d65",
+        "type": "FEATURE",
+        "text": " DataType, Library: Enable enum type registration without globals"
+      },
+      {
+        "id": "44826940534971b2a944dabd691c0ecde1dd4b82",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Avatar is not shown if there is no icon set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008015282023"
+          }
+        ]
+      },
+      {
+        "id": "ee9e4f3393055fe2985f2114b4493c1e6a51a972",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendarMonthGrid: Synchronize max appointment count",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098062"
+          }
+        ]
+      },
+      {
+        "id": "530bd33fe0b85d1a2c575131edbfea21f3316d79",
+        "type": "FIX",
+        "text": " sap.m.NotificationListBase: Priority icons are now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370102009"
+          }
+        ]
+      },
+      {
+        "id": "b7f49e9c43fb345ac3c233fe3d8788134c7574e3",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Align button type to design guidelines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380029846"
+          }
+        ]
+      },
+      {
+        "id": "c15cd6ca70492087e2b7d767336b023c37eb2a5a",
+        "type": "FIX",
+        "text": " sap.m.Input: valueHelpOnly deprecation is now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370101691"
+          }
+        ]
+      },
+      {
+        "id": "3293838dfa1996fd2d9773d19eb44ab65ee3b7f1",
+        "type": "FIX",
+        "text": " sap.m.Input: Item selection with dynamic suggestions now fixed"
+      },
+      {
+        "id": "2d5372c9ee017b789db2c76e6559a4b8d8811719",
+        "type": "FIX",
+        "text": " CopyProvider: Search owner control for CellSelector",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098720"
+          }
+        ]
+      },
+      {
+        "id": "8c499ae1ba5aaeff472e4465a71f93d7f5c28c1c",
+        "type": "FIX",
+        "text": " sap.m.IconTabFilter: Avoid reading parent properties if it doesn't exist during UI Adaptation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370098146"
+          }
+        ]
+      },
+      {
+        "id": "6dc8d61479ed1ff52c155d01e21b3e0b346d3eb4",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: adjust external label references",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380120722"
+          }
+        ]
+      }
+    ]
+  }
+}

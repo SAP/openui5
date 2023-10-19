@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/enablement/Test",
 	"sap/ui/dt/enablement/ElementEnablementTest"
 ], function(
+	Lib,
 	Test,
 	ElementEnablementTest
 ) {
@@ -29,7 +31,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.enablement.report.LibraryReport
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var LibraryReport = Test.extend("sap.ui.dt.enablement.report.LibraryReport", /** @lends sap.ui.dt.enablement.report.LibraryReport.prototype */ {
 		metadata: {
@@ -57,7 +58,7 @@ sap.ui.define([
 		var oTestData = this.getTestData() || {};
 		var sLibraryName = this.getLibraryName();
 		var aElementEnablementTest = [];
-		var oLib = sap.ui.getCore().getLoadedLibraries()[sLibraryName];
+		var oLib = Lib.all()[sLibraryName];
 		if (oLib) {
 			var aLibraryControls = oLib.controls;
 			aLibraryControls.forEach(function(sType) {

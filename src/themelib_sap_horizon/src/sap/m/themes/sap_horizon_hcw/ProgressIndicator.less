@@ -29,14 +29,18 @@
 	}
 }
 
+.sapMPIValueMax .sapMPIBarRemaining {
+	display: flex;
+}
+
 .sapMPIBarRemaining {
-	z-index: -1;
 	position: absolute;
     width: ~'calc(100% - 1.25rem)';
 	border: 0.0625rem solid @sapUiProgressBorderColor;
 }
 
 .sapMPIBar {
+	z-index: 1;
 	border: 0.0625rem solid @sapUiProgressValueTextColor;
 }
 
@@ -203,6 +207,10 @@
 		top: -1.3125rem;
 		right: -0.0675rem;
 	}
+}
+
+.sapUiSizeCompact .sapMListTblCell .sapMPI:not(.sapMPIDisplayOnly) {
+	margin: 0;
 }
 
 /* Compact and Condensed */

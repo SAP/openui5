@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.fiori.Page.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Page"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -27,6 +27,14 @@ sap.ui.define([
 	 * <h4>Header</h4> The top most area of the page is occupied by the header. The standard header includes a navigation button and a title. <h4>Content</h4> The content occupies the main part of the page. Only the content area is scrollable by default. This can be prevented by setting <code>enableScrolling</code> to <code>false</code>. <h4>Footer</h4> The footer is optional and occupies the fixed bottom part of the page. Alternatively, the footer can be floating above the bottom part of the content. This is enabled with the <code>floatingFooter</code> property.
 	 *
 	 * <b>Note:</b> <code>sap.ui.webc.fiori.Page</code> occipues the whole available space of its parent. In order to achieve the intended design you have to make sure that there is enough space for the <code>sap.ui.webc.fiori.Page</code> to be rendered. <b>Note:</b> In order for the <code>sap.ui.webc.fiori.Page</code> to be displayed, the parent element should have fixed height.
+	 *
+	 * <h3>CSS Shadow Parts</h3>
+	 *
+	 * {@link https://developer.mozilla.org/en-US/docs/Web/CSS/::part CSS Shadow Parts} allow developers to style elements inside the Shadow DOM. <br>
+	 * The <code>sap.ui.webc.fiori.Page</code> exposes the following CSS Shadow Parts:
+	 * <ul>
+	 *     <li>content - Used to style the content section of the component</li>
+	 * </ul>
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -48,11 +56,6 @@ sap.ui.define([
 				 * <br>
 				 * <b>Note:</b> When a ui5-list is placed inside the page, we recommend using “List” to ensure better color contrast. <br>
 				 * <br>
-				 * Available options are:
-				 * <ul>
-				 *     <li><code>Solid</code></li> (default) <li><code>Transparent</code></li>
-				 *     <li><code>List</code></li>
-				 * </ul>
 				 */
 				backgroundDesign: {
 					type: "sap.ui.webc.fiori.PageBackgroundDesign",

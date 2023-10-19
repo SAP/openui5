@@ -25,7 +25,6 @@ function(
 	 * @private
 	 * @since 1.54
 	 * @alias sap.ui.dt.TaskManager
-	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var TaskManager = ManagedObject.extend("sap.ui.dt.TaskManager", {
 		metadata: {
@@ -49,8 +48,9 @@ function(
 				}
 			}
 		},
-		constructor: function() {
-			ManagedObject.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			ManagedObject.apply(this, aArgs);
 			this._mQueuedTasks = {};
 			this._mPendingTasks = {};
 		},
@@ -98,7 +98,8 @@ function(
 			var fnTaskIdentifier = getTaskIdentifierFunction(vTaskIdentifier);
 			var sNewTaskIdentifier = fnTaskIdentifier(mTask);
 			if (this[sListName][mTask.type] && sNewTaskIdentifier) {
-				this[sListName][mTask.type] = this[sListName][mTask.type].filter(filterTasks.bind(this, fnTaskIdentifier, sNewTaskIdentifier));
+				this[sListName][mTask.type] = this[sListName][mTask.type]
+				.filter(filterTasks.bind(this, fnTaskIdentifier, sNewTaskIdentifier));
 			}
 		}
 	};
@@ -117,7 +118,7 @@ function(
 
 	TaskManager.prototype._addTask = function(mTask) {
 		var iTaskId = this._iNextId++;
-		this._mQueuedTasks[mTask.type] = this._mQueuedTasks[mTask.type] || [];
+		this._mQueuedTasks[mTask.type] ||= [];
 		this._mQueuedTasks[mTask.type].push(Object.assign({}, mTask, {
 			id: iTaskId
 		}));
@@ -294,12 +295,12 @@ function(
 	/**
 	 * @override
 	 */
-	TaskManager.prototype.destroy = function() {
+	TaskManager.prototype.destroy = function(...aArgs) {
 		this.setSuppressEvents(true);
 		this.getList().forEach(function(oTask) {
 			this.cancel(oTask.id);
 		}, this);
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	return TaskManager;

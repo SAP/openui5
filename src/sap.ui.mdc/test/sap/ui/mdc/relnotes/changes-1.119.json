@@ -1,0 +1,99 @@
+{
+  "1.119.0": {
+    "date": "September 2023",
+    "notes": [
+      {
+        "id": "ad6a5b7536355a5bfadcdb4caed470b9c0570a76",
+        "type": "FEATURE",
+        "text": " ui5.walkthrough: Refactor tutorial to align on latest best practices"
+      },
+      {
+        "id": "16189b16a109c9ef4de8ef0c2c485f223d1e132b",
+        "type": "FEATURE",
+        "text": " CellSelector: Publicize CellSelector & enable in MDCTable"
+      },
+      {
+        "id": "581ff0da9acb04629d69869e7b1ed80cc8107b6d",
+        "type": "FIX",
+        "text": " Field: only unit with ValueHelp fails on ValueHelp-selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126254"
+          }
+        ]
+      },
+      {
+        "id": "3a9b8d0f9245bb24ef8b43633fe81459218eb364",
+        "type": "FEATURE",
+        "text": " Table: Add rowMode aggregation"
+      },
+      {
+        "id": "a47b036c9f81dff4f5532c33ddcfed3103715ee1",
+        "type": "FIX",
+        "text": " Field: error message after invalid input",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380128680"
+          }
+        ]
+      },
+      {
+        "id": "ca03e24a06e3fd3b8891044c3117511107a37bb6",
+        "type": "FIX",
+        "text": " Field: DatePicker rendered even if ValueHelp set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380126254"
+          }
+        ]
+      },
+      {
+        "id": "5bbb8befe41c24d48bc68d0317eccddd61167d27",
+        "type": "FIX",
+        "text": " MDCTable: Sort invisible property with ODataV4",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380131026"
+          }
+        ]
+      },
+      {
+        "id": "7ef2ba357f83098147269902fae0b30b6d3560c6",
+        "type": "FIX",
+        "text": " Field: remove value state only for parse/validate error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380124881"
+          }
+        ]
+      },
+      {
+        "id": "ccce7d0663f1aff32efb28685a2faa5b254fff04",
+        "type": "FIX",
+        "text": " Field: additionalValue wrong initialized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380120806"
+          }
+        ]
+      },
+      {
+        "id": "fa4b4b97f776920672d5ea9056b436dbe663f094",
+        "type": "FIX",
+        "text": " Field: validate additionalValue only if set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127587"
+          }
+        ]
+      }
+    ]
+  }
+}

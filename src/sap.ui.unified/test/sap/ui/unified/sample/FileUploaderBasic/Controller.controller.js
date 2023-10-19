@@ -5,7 +5,8 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 	return Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
 		handleUploadComplete: function(oEvent) {
 			var sResponse = oEvent.getParameter("response"),
-				iHttpStatusCode = parseInt(/\d{3}/.exec(sResponse)[0]),
+				aRegexResult = /\d{4}/.exec(sResponse),
+				iHttpStatusCode = aRegexResult && parseInt(aRegexResult[0]),
 				sMessage;
 
 			if (sResponse) {

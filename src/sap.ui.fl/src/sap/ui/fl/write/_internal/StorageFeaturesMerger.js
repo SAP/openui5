@@ -58,7 +58,7 @@ sap.ui.define([
 		 * @param {object[]} aResponses - All responses provided by the different connectors
 		 * @returns {object} Merged result
 		 */
-		mergeResults: function(aResponses) {
+		mergeResults(aResponses) {
 			var oResult = DEFAULT_FEATURES;
 
 			aResponses.forEach(function(oResponse) {

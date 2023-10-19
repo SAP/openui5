@@ -688,6 +688,7 @@ sap.ui.define([
 			oParamsModel.setProperty("/visibleItems", sVisibleItemsCount);
 		});
 
+		oParamsModel.setProperty("/visibleItems", 0);
 		oObserver.observe(oControl, {
 			aggregations: [sAggregation]
 		});

@@ -5,8 +5,6 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Column",
-	"sap/ui/table/Table",
-	"sap/ui/table/library",
 	"sap/ui/table/menus/MobileColumnHeaderMenuAdapter",
 	"sap/m/library",
 	"sap/m/table/columnmenu/Menu",
@@ -26,8 +24,6 @@ sap.ui.define([
 	qutils,
 	TableUtils,
 	Column,
-	Table,
-	library,
 	MobileColumnHeaderMenuAdapter,
 	MLibrary,
 	ColumnMenu,
@@ -65,8 +61,9 @@ sap.ui.define([
 			});
 			this.oColumn1 = TableQUnitUtils.createTextColumn({label: "Menu with custom items"});
 			this.oColumn1.setSortProperty("F");
+			/** @deprecated As of version 1.120 */
 			this.oColumn1.setSorted(true);
-			this.oColumn1.setSortOrder(library.SortOrder.Descending);
+			this.oColumn1.setSortOrder(CoreLibrary.SortOrder.Descending);
 			this.oColumn1.setFilterProperty("F");
 			this.oColumn1.setFilterValue("initial filter value");
 			this.oColumn1.setHeaderMenu(this.oMenu1);
@@ -248,7 +245,8 @@ sap.ui.define([
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
 
-			assert.ok(oColumnSortSpy.calledOnceWithExactly(false, false), "Column#sort is called once with the correct parameters");
+			assert.ok(oColumnSortSpy.calledOnceWithExactly(CoreLibrary.SortOrder.Ascending, false),
+				"Column#_sort is called once with the correct parameters");
 			return that.closeMenu(oMenu);
 		}).then(function() {
 			that.oColumn1.setShowSortMenuEntry(false);

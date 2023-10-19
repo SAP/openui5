@@ -270,6 +270,31 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Rebind", function(assert) {
+
+		var done = assert.async();
+		this.addMessage("Error");
+
+		this.oPromise.then(function() {
+			var oMsgStrp = this.oPlugin._oMessageStrip;
+			assert.ok(oMsgStrp.getText(), "There is a Message Text");
+
+			this.oList.bindItems({
+				path: "/names",
+				template: new StandardListItem({
+					title: "{name}"
+				})
+			});
+
+			this.oPlugin.refresh();
+
+			setTimeout(function() {
+				assert.notOk(oMsgStrp.getText(), "There is no Message Text after rebind");
+				done();
+			});
+		}.bind(this));
+	});
+
 	QUnit.module("Enable Filtering", {
 		beforeEach: function() {
 			this.oModel = new JSONModel({ names: [{name: "A"}, {name: "B"}, {name: "C"}, {name: "D"}] });

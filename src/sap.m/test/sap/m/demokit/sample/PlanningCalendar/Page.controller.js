@@ -484,6 +484,10 @@ sap.ui.define([
 				} else {
 					this.byId("PC1").setSecondaryCalendarType(sKey);
 				}
+			},
+
+			handleRowHeaderPress: function (oEvent) {
+				MessageBox.show("rowHeaderPressed on row: " + oEvent.getParameter("row").getId());
 			}
 
 		});

@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "media-pause";
-  const pathData = "M390 32q11 0 18.5 7t7.5 18v397q0 11-7.5 18.5T390 480h-33q-11 0-18.5-7.5T331 454V57q0-11 7.5-18t18.5-7h33zm-234 0q11 0 18 7t7 18v397q0 11-7 18.5t-18 7.5h-34q-11 0-18.5-7.5T96 454V57q0-11 7.5-18t18.5-7h34z";
+  const pathData = "M358 480h-33q-11 0-18.5-7.5T299 454V58q0-11 7.5-18.5T325 32h33q11 0 18.5 7.5T384 58v396q0 11-7.5 18.5T358 480zm-171 0h-33q-11 0-18.5-7.5T128 454V58q0-11 7.5-18.5T154 32h33q11 0 18.5 7.5T213 58v396q0 11-7.5 18.5T187 480z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

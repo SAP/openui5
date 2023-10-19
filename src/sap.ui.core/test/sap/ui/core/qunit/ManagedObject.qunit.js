@@ -2,6 +2,7 @@
 sap.ui.define([
 	"sap/ui/base/BindingInfo",
 	"sap/ui/base/BindingParser",
+	"sap/ui/base/DataType",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
@@ -15,16 +16,18 @@ sap.ui.define([
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
 	"sap/base/util/isEmptyObject"
-], function(BindingInfo, BindingParser, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
+], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
 	"use strict";
 	var mObjects = {};
 
-	var MyEnum = window.MyEnum = {
+	var MyEnum = {
 		Good: 'Good',
 		/* default */
 		Better: 'Better',
 		Best: 'Best'
 	};
+
+	DataType.registerEnum("MyEnum", MyEnum);
 
 	// define new types for testing
 	var TestManagedObject = ManagedObject.extend("sap.ui.core.TestManagedObject", {
@@ -2774,13 +2777,13 @@ sap.ui.define([
 			assert.ok(ex.stack.indexOf("failingNamedFunction" > -1), "contained the named function in the stack");
 		}
 
-		assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
+		assert.ok(!Element.getElementById("myId"), "object was deregistered");
 	});
 
 	QUnit.test("Registration of components: duplicate IDs", function(assert) {
 		assert.expect(3);
 		new Element("myId");
-		assert.ok(sap.ui.getCore().byId("myId"), "object should be initially registered");
+		assert.ok(Element.getElementById("myId"), "object should be initially registered");
 
 		try {
 			new Element("myId");
@@ -2788,7 +2791,7 @@ sap.ui.define([
 			assert.equal(ex.message, "Error: adding element with duplicate id 'myId'");
 		}
 
-		assert.ok(sap.ui.getCore().byId("myId"), "object should still be registered");
+		assert.ok(Element.getElementById("myId"), "object should still be registered");
 	});
 
 	QUnit.test("Registration of components: do not call unregister if register fails", function(assert) {

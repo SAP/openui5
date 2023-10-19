@@ -11,17 +11,18 @@ sap.ui.define([
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var oLibrary = Core.getLoadedLibraries()["sap.ui.integration"];
+	var mCustomElements = oLibrary.extensions["sap.ui.integration"].customElements;
 	var sPrefix = "ui-integration";
-	var aCustomElements = Object.keys(oLibrary.customElements).map(function (sCustomElementName) { return sPrefix + "-" + sCustomElementName; }); // prefix custom elements names
+	var aCustomElements = Object.keys(mCustomElements).map(function (sCustomElementName) { return sPrefix + "-" + sCustomElementName; }); // prefix custom elements names
 
 	/* Helper functions */
 	function registerLibraryTags() {
-		var aTags = Object.keys(oLibrary.customElements);
+		var aTags = Object.keys(mCustomElements);
 		//collect all the implementation classes and require them
 		sap.ui.require(
 			aTags.map(
 				function (o, i) {
-					return oLibrary.customElements[aTags[i]];
+					return mCustomElements[aTags[i]];
 				}
 			)
 		);

@@ -6,7 +6,6 @@
 sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
-	'./Configuration',
 	'./Element',
 	'./RenderManager',
 	'./FocusHandler',
@@ -28,7 +27,6 @@ sap.ui.define([
 	function(
 		ManagedObject,
 		ManagedObjectRegistry,
-		Configuration,
 		Element,
 		RenderManager,
 		FocusHandler,
@@ -103,7 +101,7 @@ sap.ui.define([
 
 			for (n in mControls) {
 				// resolve oControl anew as it might have changed
-				oControl = Element.registry.get(n);
+				oControl = Element.getElementById(n);
 				/*eslint-disable no-nested-ternary */
 				mReport[n] = {
 					type: oControl ? oControl.getMetadata().getName() : (mControls[n].obj === that ? "UIArea" : "(no such control)"),
@@ -195,6 +193,8 @@ sap.ui.define([
 				this.bNeedsRerendering = this.bNeedsRerendering && !document.getElementById(oRootNode.id + "-Init");
 			}
 			this.mInvalidatedControls = {};
+			this.mSuppressedControls = {};
+			this.iSuppressedControlsLength = 0;
 
 			if (!this.bNeedsRerendering) {
 				this.bRenderSelf = false;
@@ -241,16 +241,6 @@ sap.ui.define([
 			return this.destroyAggregation("dependents", true);
 		}
 	});
-
-	/**
-	 * Returns whether re-rendering is currently suppressed on this UIArea.
-	 *
-	 * @returns {boolean} Whether re-rendering is currently suppressed on this UIArea
-	 * @protected
-	 */
-	UIArea.prototype.isInvalidateSuppressed = function() {
-		return this.iSuppressInvalidate > 0;
-	};
 
 	/**
 	 * Returns this <code>UIArea</code>'s id (as determined from provided RootNode).
@@ -338,9 +328,6 @@ sap.ui.define([
 	 * relationship to this UIArea will be cut off). Then the parent relationship for the new
 	 * content control (if not empty) will be set to this UIArea and finally, the UIArea will
 	 * be marked for re-rendering.
-	 *
-	 * The real re-rendering happens whenever the re-rendering is called. Either implicitly
-	 * at the end of any control event or by calling sap.ui.getCore().applyChanges().
 	 *
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control} oRootControl
 	 *            the Control that should be the Root for this <code>UIArea</code>.
@@ -479,6 +466,68 @@ sap.ui.define([
 	};
 
 	/**
+	 * Suppresses the invalidation for a given control and its descendants within the UIArea
+	 * until the {@link #resumeInvalidationFor} method is called for the same control.
+	 *
+	 * <b>Note:</b> This method is not intended to prevent the rendering of the control, but rather to suppress the invalidation process
+	 * which would start the rendering. For example, if the rendering process starts for a parent control, the control for which the
+	 * invalidation is suppressed, along with its descendants, may still be rendered together with the parent control.
+	 *
+	 * @param {sap.ui.core.Control} oControl The control for which the invalidation should be suppressed
+	 * @throws {TypeError} If the oControl parameter is not a type of sap.ui.core.Control
+	 * @returns {boolean} true if the invalidation was successfully suppressed, or false if invalidation was already suppressed and no action was taken.
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.118
+	 */
+	UIArea.prototype.suppressInvalidationFor = function (oControl) {
+		if (!oControl || !oControl.isA || !oControl.isA("sap.ui.core.Control")) {
+			throw new TypeError("Invalid parameter: oControl must be Control instance.");
+		}
+
+		var sId = oControl.getId();
+		if (!this.mSuppressedControls[sId]) {
+			this.mSuppressedControls[sId] = new Set();
+			this.iSuppressedControlsLength++;
+			return true;
+		}
+
+		return false;
+	};
+
+	/**
+	 * Resumes the invalidation for a given control and its descendants within the UIArea for which
+	 * the invalidation was suppressed with the {@link #suppressInvalidationFor} method.
+	 *
+	 * @param {sap.ui.core.Control} oControl The control for which the invalidation was suppressed
+	 * @throws {TypeError} If the oControl parameter is not a type of sap.ui.core.Control
+	 * @throws {Error} If the invalidation has not yet been suppressed for the given control
+	 * @private
+	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.118
+	 */
+	UIArea.prototype.resumeInvalidationFor = function (oControl) {
+		if (!oControl || !oControl.isA || !oControl.isA("sap.ui.core.Control")) {
+			throw new TypeError("Invalid parameter: oControl must be Control instance.");
+		}
+
+		var sId = oControl.getId();
+		var mControlsSuppressedFromInvalidation = this.mSuppressedControls[sId];
+		if (!mControlsSuppressedFromInvalidation) {
+			throw new Error("The invalidation has not yet been suppressed for " + oControl);
+		}
+
+		this.iSuppressedControlsLength--;
+		delete this.mSuppressedControls[sId];
+		mControlsSuppressedFromInvalidation.forEach(function(sControlId) {
+			var oControl = Element.getElementById(sControlId);
+			if (oControl) {
+				this.addInvalidatedControl(oControl);
+			}
+		}, this);
+	};
+
+	/**
 	 * Provide getBindingContext, as UIArea can be parent of an element.
 	 *
 	 * @returns {null} Always returns null.
@@ -558,15 +607,24 @@ sap.ui.define([
 			this.mInvalidatedControls[sId] = fnDbgWrap(this);
 			return;
 		}
-		if (this.mInvalidatedControls[sId]) {
+		if ( this.mInvalidatedControls[sId] ) {
 			return;
 		}
-		if (!this.bRenderSelf) {
-			//add it to the list of controls
-			this.mInvalidatedControls[sId] = fnDbgWrap(oControl);
 
-			this.bNeedsRerendering = true;
+		//determine whether the control is a child of a control for which the invalidation is suppressed
+		if ( this.iSuppressedControlsLength ) {
+			for (var oCurrent = oControl; oCurrent; oCurrent = oCurrent.getParent()) {
+				var mControlsSuppressedFromInvalidation = this.mSuppressedControls[oCurrent.getId()];
+				if (mControlsSuppressedFromInvalidation) {
+					mControlsSuppressedFromInvalidation.add(sId);
+					return;
+				}
+			}
 		}
+
+		//add it to the list of invalidated controls
+		this.mInvalidatedControls[sId] = fnDbgWrap(oControl);
+		this.bNeedsRerendering = true;
 	};
 
 	/**
@@ -699,7 +757,7 @@ sap.ui.define([
 
 			var aControlsRenderedTogetherWithAncestor = [];
 			for (var n in mInvalidatedControls) {
-				var oControl = Element.registry.get(n);
+				var oControl = Element.getElementById(n);
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
 				if ( oControl ) {
 					if ( !isRenderedTogetherWithAncestor(oControl) ) {
@@ -729,7 +787,7 @@ sap.ui.define([
 			 * The re-rendering here is only required for controls that already have DOM output.
 			 */
 			aControlsRenderedTogetherWithAncestor.forEach(function(oControl) {
-				if (!oControl._bNeedsRendering) {
+				if (!oControl._bNeedsRendering || oControl.isDestroyed()) {
 					return;
 				}
 				if (oControl.bOutput == true && oControl.getDomRef() ||
@@ -766,6 +824,11 @@ sap.ui.define([
 		var sId = oControl.getId();
 		if ( this.mInvalidatedControls[sId] ) {
 			delete this.mInvalidatedControls[sId];
+		}
+		if ( this.iSuppressedControlsLength ) {
+			Object.values(this.mSuppressedControls).forEach(function(mControlsSuppressedFromInvalidation) {
+				mControlsSuppressedFromInvalidation.delete(sId);
+			});
 		}
 	};
 	/**
@@ -925,9 +988,12 @@ sap.ui.define([
 			fnPreprocessor(oEvent);
 		});
 
-		// forward the control event:
-		// if the control propagation has been stopped or the default should be
-		// prevented then do not forward the control event.
+		/**
+		 * forward the control event:
+		 * if the control propagation has been stopped or the default should be
+		 * prevented then do not forward the control event.
+		 * @deprecated Since 1.119
+		 */
 		if (oCore) {
 			oCore._handleControlEvent(oEvent, sId);
 		}

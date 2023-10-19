@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/model/json/JSONModel",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils"
 ], function(
 	ManagedObject,
+	Element,
 	Fragment,
 	FieldExtensibility,
 	JSONModel,
@@ -35,8 +37,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.44
 	 * @alias sap.ui.rta.plugin.additionalElements.AddElementsDialog
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
-	 *			   changed in future.
 	 */
 	var AddElementsDialog = ManagedObject.extend("sap.ui.rta.plugin.additionalElements.AddElementsDialog", {
 		metadata: {
@@ -86,9 +86,7 @@ sap.ui.define([
 
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.setModel(this._oDialogModel);
-			if (!oRTAResourceModel) {
-				oRTAResourceModel = new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
-			}
+			oRTAResourceModel ||= new ResourceModel({bundleName: "sap.ui.rta.messagebundle"});
 			oDialog.setModel(oRTAResourceModel, "i18n");
 
 			oDialog.addStyleClass(Utils.getRtaStyleClassName());
@@ -97,18 +95,18 @@ sap.ui.define([
 
 			// retrieve List to set the sorting for the 'items' aggregation, since sap.ui.model.Sorter
 			// does not support binding to a model property...
-			this._oList = sap.ui.getCore().byId(this.getId() + "--rta_addElementsDialogList");
+			this._oList = Element.getElementById(`${this.getId()}--rta_addElementsDialogList`);
 			this._bDescendingSortOrder = false;
 		}.bind(this));
 	};
 
-	AddElementsDialog.prototype.exit = function() {
+	AddElementsDialog.prototype.exit = function(...aArgs) {
 		this._oDialogPromise.then(function(oDialog) {
 			oDialog.destroy();
 		});
 
 		if (ManagedObject.prototype.exit) {
-			ManagedObject.prototype.exit.apply(this, arguments);
+			ManagedObject.prototype.exit.apply(this, aArgs);
 		}
 	};
 

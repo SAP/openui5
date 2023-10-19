@@ -30,6 +30,38 @@ sap.ui.define([
 
 	var CUSTOM_DATA_NS = "http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1";
 
+	async function insertAggregation(oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex, oFoundAggregationNode) {
+		let oAggregationNode;
+		if (!oFoundAggregationNode) {
+			// named aggregation must have the same namespace as the parent
+			const sNamespaceURI = oParent.namespaceURI;
+			// no ids for aggregation nodes => no need to pass id or component
+			oAggregationNode = await this.createControl(sNamespaceURI + "." + sName, undefined, oView);
+			oParent.appendChild(oAggregationNode);
+		} else {
+			oAggregationNode = oFoundAggregationNode;
+		}
+		if (!bSkipAdjustIndex) {
+			const aChildren = oAggregationNode.children;
+			let iOffset = 0;
+			const iStopIndex = (iIndex < aChildren.length) ? iIndex : aChildren.length;
+			for (let i = 0; i < iStopIndex; i++) {
+				if (aChildren[i].namespaceURI === "sap.ui.core" && aChildren[i].tagName.includes("ExtensionPoint")) {
+					iOffset = iOffset + 1 - aChildren[i].children.length;
+				}
+			}
+			iIndex = iIndex + iOffset;
+		}
+
+		if (iIndex >= oAggregationNode.childElementCount) {
+			oAggregationNode.appendChild(oObject);
+		} else {
+			const aReferenceNodes = await this._getControlsInAggregation(oParent, oAggregationNode);
+			oAggregationNode.insertBefore(oObject, aReferenceNodes[iIndex]);
+		}
+		return undefined;
+	}
+
 	/**
 	 * Static utility class to access XMLNodes like ManagedObjects,
 	 * inside this classes oControl usually means XML node.
@@ -434,54 +466,28 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		insertAggregation: function (oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex) {
-			return XmlTreeModifier._findAggregationNode(oParent, sName)
-				.then(function (oAggregationNode) {
-					if (!oAggregationNode) {
-						// named aggregation must have the same namespace as the parent
-						var sNamespaceURI = oParent.namespaceURI;
-						// no ids for aggregation nodes => no need pass id or component
-						return XmlTreeModifier.createControl(sNamespaceURI + "." + sName, undefined, oView)
-							.then(function (oAggregationNode) {
-								oParent.appendChild(oAggregationNode);
-								return oAggregationNode;
-							});
-					}
-					return oAggregationNode;
-				})
-				.then(function (oAggregationNode) {
-					if (!bSkipAdjustIndex) {
-						var aChildren = oAggregationNode.children;
-						var iOffset = 0;
-						var iStopIndex = (iIndex < aChildren.length) ? iIndex : aChildren.length;
-						for (var i = 0; i < iStopIndex; i++) {
-							if (aChildren[i].namespaceURI === "sap.ui.core" && aChildren[i].tagName.indexOf("ExtensionPoint") > -1) {
-								iOffset = iOffset + 1 - aChildren[i].children.length;
-							}
-						}
-						iIndex = iIndex + iOffset;
-					}
-
-					if (iIndex >= oAggregationNode.childElementCount) {
-						oAggregationNode.appendChild(oObject);
-					} else {
-						return XmlTreeModifier._getControlsInAggregation(oParent, oAggregationNode)
-							.then(function (aReferenceNodes) {
-								oAggregationNode.insertBefore(oObject, aReferenceNodes[iIndex]);
-							});
-					}
-					return undefined;
-				});
+		insertAggregation: async function (oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex) {
+			const oFoundAggregationNode = await XmlTreeModifier._findAggregationNode(oParent, sName);
+			return insertAggregation.call(this, oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex, oFoundAggregationNode);
 		},
 
 		/**
 		 * @inheritDoc
 		 */
-		removeAggregation: function (oParent, sName, oObject) {
-			return XmlTreeModifier._findAggregationNode(oParent, sName)
-				.then(function (oAggregationNode) {
-					oAggregationNode.removeChild(oObject);
-				});
+		removeAggregation: async function (oParent, sName, oObject) {
+			const oAggregationNode = await XmlTreeModifier._findAggregationNode(oParent, sName);
+			oAggregationNode.removeChild(oObject);
+		},
+
+		/**
+		 * @inheritDoc
+		 */
+		moveAggregation: async function(oSourceParent, sSourceAggregationName, oTargetParent, sTargetAggregationName, oObject, iIndex, oView, bSkipAdjustIndex) {
+			const oSourceAggregationNode = await XmlTreeModifier._findAggregationNode(oSourceParent, sSourceAggregationName);
+			const oTargetAggregationNode = await XmlTreeModifier._findAggregationNode(oTargetParent, sTargetAggregationName);
+
+			oSourceAggregationNode.removeChild(oObject);
+			await insertAggregation.call(this, oTargetParent, sTargetAggregationName, oObject, iIndex, oView, bSkipAdjustIndex, oTargetAggregationNode);
 		},
 
 		/**
@@ -829,9 +835,9 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		attachEvent: function(oNode, sEventName, sFunctionPath, vData) {
-			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
+		attachEvent: function(oNode, sEventName, sFunctionPath, vData, fnCallback) {
+			if (typeof fnCallback !== "function") {
+				return Promise.reject(new Error("Can't attach event: fnCallback parameter missing or not a function"));
 			}
 			return XmlTreeModifier.getProperty(oNode, sEventName)
 				.then(function (sValue) {
@@ -857,9 +863,9 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		detachEvent: function(oNode, sEventName, sFunctionPath) {
-			if (typeof ObjectPath.get(sFunctionPath) !== "function") {
-				return Promise.reject(new Error("Can't attach event because the event handler function is not found or not a function."));
+		detachEvent: function(oNode, sEventName, sFunctionPath, fnCallback) {
+			if (typeof fnCallback !== "function") {
+				return Promise.reject(new Error("Can't detach event: fnCallback parameter missing or not a function"));
 			}
 			return XmlTreeModifier.getProperty(oNode, sEventName)
 				.then(function (sValue) {

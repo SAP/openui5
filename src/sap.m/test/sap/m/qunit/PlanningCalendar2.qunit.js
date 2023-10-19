@@ -1078,7 +1078,8 @@ sap.ui.define([
 		this.stub(this._oPC._oOneMonthsRow, "getSelectedDates").returns([]);
 
 		// act
-		this._oPC.rerender();
+		this._oPC.invalidate();
+		oCore.applyChanges();
 
 		// assert
 		assert.ok(this._oPC.$().find(".sapUiCalendarNoApps").get(0), "'No Entries' div should be rendered");

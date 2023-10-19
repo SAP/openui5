@@ -58,11 +58,11 @@
 				"icon": "learning-assistant",
 				"text": "Walkthrough",
 				"desc": "Created with the 'Walkthrough' tutorial, showing all major development paradigms",
-				"ref" : "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/mockServer.html",
+				"ref" : "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/mockServer.html",
 				"links": {
 					"View Tutorial": "topic/3da5f4be63264db99f2e5b04c5e853db",
-					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/integration/opaTests.qunit.html",
-					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/37/webapp/test/unit/unitTests.qunit.html"
+					"Run Integration Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/tutorial/walkthrough/38/webapp/test/unit/unitTests.qunit.html"
 				},
 				"category": "Tutorial",
 				"config": "test-resources/sap/m/demokit/tutorial/walkthrough/demoapp.json"
@@ -163,7 +163,8 @@
 		"samples": [
 			"sap.m.sample.Avatar",
 			"sap.m.sample.AvatarWithAffordance",
-			"sap.m.sample.AvatarValueState"
+			"sap.m.sample.AvatarValueState",
+			"sap.m.sample.AvatarActiveState"
 			]
 		},
 		{
@@ -532,6 +533,19 @@
 				"sap.m.sample.UploadSetGroupingSortingFiltering",
 				"sap.m.sample.UploadSetDirectoryUploads",
 				"sap.m.sample.UploadSetCloudUpload"
+			]
+		},
+		{
+			"id": "sap.m.upload.UploadSetwithTable",
+			"name": "Upload Set with Table",
+			"category": "Action",
+			"since": "1.120",
+			"samples":[
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads",
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview",
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
+				"sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization"
 			]
 		},
 		{
@@ -1400,7 +1414,6 @@
 			"sap.m.sample.TableScrollToIndex",
 			"sap.m.sample.TableVerticalAlignment",
 			"sap.m.sample.TableViewSettingsDialog",
-			"sap.m.sample.TableExport",
 			"sap.m.sample.TableOutdated",
 			"sap.m.sample.TableEditable",
 			"sap.m.sample.TableAlternateRowColors",
@@ -1676,7 +1689,8 @@
 			"Responsiveness",
 			"Device Adaptation",
 			"Content Density",
-			"Accessibility"
+			"Accessibility",
+			"Build"
 		  ]
 		},
 		{
@@ -1734,7 +1748,18 @@
 			"samples" : [
 				"sap.m.sample.TsTodos.webapp"
 			]
-		  }
+		  },
+		{
+			"id": "sap.m.VariantManagement",
+			"name": "Variant Management",
+		  	"category": "Action",
+			"description": "This sample demonstrates the variant management control UI5.",
+			"since": "1.120",
+			"samples": [
+				"sap.m.sample.VariantManagement",
+				"sap.m.sample.VariantManagement.model"
+			]
+		}
 	  ],
 	  "samples": [
 		{
@@ -1751,6 +1776,11 @@
 		  "id": "sap.m.sample.AvatarValueState",
 		  "name": "Avatar with badgeValueState",
 		  "description": "This sample demonstrates different badge value states of the Avatar."
+		},
+		{
+			"id": "sap.m.sample.AvatarActiveState",
+			"name": "Avatar with toggling of Active state",
+			"description": "This sample demonstrates toggling of Avatar Active state, when a User menu is opened/closed."
 		},
 		{
 		  "id": "sap.m.sample.NewsContent",
@@ -3121,11 +3151,6 @@
 		  "description": "With an InfoToolbar and some crumb logic you can navigate simple hierarchies with a breadcrumb table approach."
 		},
 		{
-		  "id": "sap.m.sample.TableExport",
-		  "name": "Table - Export",
-		  "description": "The table control provides export capabilities for downloading your data as a csv file. However, for huge tables, it is recommended that you provide an export mechanism on the server side."
-		},
-		{
 		  "id": "sap.m.sample.TableEditable",
 		  "name": "Table - Editable",
 		  "description": "Table with edit/display togglable scenario."
@@ -3521,9 +3546,29 @@
 			"description": "Shows the UploadSet with the cloudFilePicker set as enabled. Now, files can be uploaded from cloud with the integrated cloudFilePicker control."
 		},
 		{
-			"id": "sap.m.sample.UploadSetTable",
-			"name": "Upload Set Table",
-			"description": "Shows the UploadSet with Table."
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableSimple",
+			"name": "UploadSet with Table",
+			"description": "This example demonstrates the usage of UploadSetwithTable and UploadSetwithTableItem controls with the features of upload, download, drag & drop, remove and rename of files. It also demonstrates how the uploaded files can be displayed in a table that is tailored as required."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableFileUploads",
+			"name": "UploadSet With Table - File uploads with user dialogs",
+			"description": "This example demonstrates usage of itemValidationHandler callback to leverage additional validations and configurations to the UploadSetwithTableitems, and also the manual trigger of the upload process. The user input can be captured for each file with the help of the user dialog implemented at the application controller, before its upload."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableFilePreview",
+			"name": "UploadSet With Table - File Preview",
+			"description": "This example showcases how uploaded files can be previewed with FilePreviewDialog control and its related configurations. UploadSetwithTable Control creates and use default instance of FilePreviewDialog, if not defined."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTableGrowing",
+			"name": "UploadSet With Table - Growing & Selection modes",
+			"description": "The growing feature helps if the content is not being displayed at once. It paginates the content into smaller pages that are displayed one after another. Random access to the pages (e.g jumping to the end) is not possible. Depending on the model, the content is loaded on demand (OData) or it is shown on demand (JSON). This example also demonstrates modes of the control (e.g. None, SingleSelect, MultiSelect, Delete)."
+		},
+		{
+			"id": "sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization",
+			"name": "UploadSet With Table - Personalization and Variant management",
+			"description": "This example showcases personalization and variant management for UploadSetwithTable."
 		},
 		{
 		  "id": "sap.m.sample.StandardMarginsAll",
@@ -3884,7 +3929,12 @@
 		  "id": "sap.m.sample.TsTodos.webapp",
 		  "name": "TypeScript To-Do List",
 		  "description": "This to-do app demonstrates a TypeScript setup for developing UI5 applications."
+		},
+		{
+			"id": "sap.m.sample.VariantManagement",
+			"name": "VariantManagement using dedicated items",
+			"description": "VariantManagement with dedicated items"
 		}
-		]
+	  ]
 	}
 }

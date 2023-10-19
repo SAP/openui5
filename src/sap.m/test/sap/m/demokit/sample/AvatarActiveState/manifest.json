@@ -1,0 +1,37 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.AvatarActiveState",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.AvatarActiveState.view.AvatarActiveState",
+			"type": "XML",
+			"async": true
+		},
+		"resourceRoots": {
+			"sap.m.images": "../../../images"
+		},
+		"dependencies": {
+			"libs": {
+				"sap.m": {},
+				"sap.ui.core": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/AvatarActiveState.view.xml",
+					"view/Popover.fragment.xml",
+					"view/UserMenu.fragment.xml",
+					"controller/AvatarActiveState.controller.js",
+					"manifest.json",
+					"../../../images/Woman_avatar_01.png"
+				]
+			}
+		}
+	}
+}

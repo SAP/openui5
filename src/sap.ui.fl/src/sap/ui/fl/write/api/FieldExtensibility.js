@@ -5,13 +5,11 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
-	"sap/base/util/UriParameters",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/fl/Utils"
 ], function(
 	ABAPAccess,
 	CAPAccess,
-	UriParameters,
 	ManagedObject,
 	FlUtils
 ) {
@@ -38,7 +36,7 @@ sap.ui.define([
 			}
 			var oAppComponent = FlUtils.getAppComponentForControl(oControl);
 			var oManifestConfig = (oAppComponent && oAppComponent.getManifestEntry("/sap.ui5/config")) || {};
-			var oUriParams = UriParameters.fromQuery(window.location.search);
+			var oUriParams = new URLSearchParams(window.location.search);
 			if (
 				oManifestConfig.experimentalCAPScenario
 				|| oUriParams.get("sap-ui-fl-xx-capScenario") === "true"
@@ -51,10 +49,9 @@ sap.ui.define([
 		return _oCurrentScenario;
 	}
 
-	function callFunctionInImplementation() {
-		var aArgs = Array.from(arguments);
+	function callFunctionInImplementation(...aArgs) {
 		var sFunctionName = aArgs.shift();
-		var oImplementation = getImplementationForCurrentScenario.apply(null, aArgs);
+		var oImplementation = getImplementationForCurrentScenario(...aArgs);
 		if (!oImplementation) {
 			return Promise.reject("Could not determine field extensibility scenario");
 		}

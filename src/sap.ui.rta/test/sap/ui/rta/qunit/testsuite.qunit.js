@@ -754,12 +754,6 @@ sap.ui.define([
 					only: ["sap/ui/rta/util/showMessageBox"]
 				}
 			},
-			"util/UrlParser": {
-				group: "util",
-				coverage: {
-					only: ["sap/ui/rta/util/UrlParser"]
-				}
-			},
 			"util/changeVisualization/commands/CombineVisualization": {
 				group: "Change visualization",
 				coverage: {
@@ -876,7 +870,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"RuntimeAuthoring-2": {
@@ -1022,7 +1017,8 @@ sap.ui.define([
 							qunit: "test-resources/sap/ui/rta/qunit/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
-						}
+						},
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					}
 				},
 				"util/BindingsExtractor": {

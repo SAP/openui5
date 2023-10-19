@@ -11,7 +11,7 @@ sap.ui.define(function () {
      * @since 1.115
      * @alias sap.ui.mdc.enums.ValueHelpPropagationReason
      */
-    var ValueHelpPropagationReason = {
+    const ValueHelpPropagationReason = {
         /**
          * Triggered by connected control after processing valuehelp output
          *

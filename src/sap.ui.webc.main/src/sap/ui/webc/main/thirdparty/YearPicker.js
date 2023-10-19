@@ -25,6 +25,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/customE
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var YearPicker_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    *

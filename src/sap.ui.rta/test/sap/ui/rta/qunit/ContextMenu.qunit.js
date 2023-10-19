@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
 	"sap/ui/fl/changeHandler/PropertyChange",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/FieldExtensibility",
@@ -16,11 +17,13 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
 	KeyCodes,
 	OverlayRegistry,
+	DtUtil,
 	PropertyChange,
 	ChangesWriteAPI,
 	FieldExtensibility,
@@ -33,7 +36,8 @@ sap.ui.define([
 	ObjectPageSection,
 	ObjectPageSubSection,
 	QUnitUtils,
-	oCore
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
@@ -56,18 +60,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started...", {
-		before: function(assert) {
+		before(assert) {
 			var fnDone = assert.async();
-			this.oPage = oCore.byId("Comp1---idMain1--mainPage");
-			this.oSmartForm = oCore.byId("Comp1---idMain1--MainForm");
-			this.oGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
-			this.oBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-			this.oAnotherBoundGroupElement = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.Name");
-			this.oUnBoundGroupElement = oCore.byId("Comp1---idMain1--Victim");
-			this.oMultipleFieldTwoBoundGroupElements = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oMultipleBoundFieldGroupElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
-			this.oFieldInGroupWithoutStableId = oCore.byId("Comp1---idMain1--FieldInGroupWithoutStableId");
-			this.oSimpleFormWithTitles = oCore.byId("Comp1---idMain1--SimpleForm");
+			this.oPage = Element.getElementById("Comp1---idMain1--mainPage");
+			this.oSmartForm = Element.getElementById("Comp1---idMain1--MainForm");
+			this.oGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
+			this.oBoundGroupElement = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oAnotherBoundGroupElement = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.Name");
+			this.oUnBoundGroupElement = Element.getElementById("Comp1---idMain1--Victim");
+			this.oMultipleFieldTwoBoundGroupElements = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
+			this.oMultipleBoundFieldGroupElement = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
+			this.oFieldInGroupWithoutStableId = Element.getElementById("Comp1---idMain1--FieldInGroupWithoutStableId");
+			this.oSimpleFormWithTitles = Element.getElementById("Comp1---idMain1--SimpleForm");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl"),
@@ -86,19 +90,22 @@ sap.ui.define([
 				}
 			}.bind(this));
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return true;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return true;
 				}
 			});
 		},
-		afterEach: function() {
+		beforeEach() {
+			return DtUtil.waitForSynced(this.oRta._oDesignTime)();
+		},
+		afterEach() {
 			sandbox.restore();
 			return RtaQunitUtils.closeContextMenu.call(this, this.oContextMenuControl);
 		},
-		after: function() {
+		after() {
 			this.oRta.destroy();
 		}
 	}, function() {
@@ -110,16 +117,20 @@ sap.ui.define([
 			this.oContextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
-			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
+			return DtUtil.waitForSynced(this.oRta._oDesignTime)()
+			.then(RtaQunitUtils.openContextMenuWithKeyboard.bind(this, oGroupElementOverlay))
+			.then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true, "add field entry is enabled, because there are fields available");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true,
+						"add field entry is enabled, because there are fields available");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut field");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste field");
@@ -143,16 +154,43 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
-					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu items are available");
-					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), false, "add field entry is disabled, because there are no fields available");
-					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
-					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut field");
-					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste field");
+					assert.equal(
+						this.oContextMenuControl.getItems().length,
+						5,
+						"5 Menu items are available"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[0].getKey(),
+						"CTX_RENAME",
+						"we can rename a label"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[1].getKey(),
+						"CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible"
+					);
+					assert.notOk(
+						this.oContextMenuControl.getItems()[1].getEnabled(),
+						"add field entry is disabled, because there are no fields available"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[2].getKey(),
+						"CTX_REMOVE",
+						"we can remove field"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[3].getKey(),
+						"CTX_CUT",
+						"we can cut field"
+					);
+					assert.equal(
+						this.oContextMenuControl.getItems()[4].getKey(),
+						"CTX_PASTE",
+						"we can paste field"
+					);
 				} else {
 					assert.ok(false, sText);
 				}
@@ -171,7 +209,11 @@ sap.ui.define([
 			sandbox.stub(oAdditionalElementsPlugin, "getAllElements").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), false, "add field entry is disabled, because there are no available fields");
+				assert.equal(
+					this.oContextMenuControl.getItems()[1].getEnabled(),
+					false,
+					"add field entry is disabled, because there are no available fields"
+				);
 				sandbox.restore();
 			}.bind(this));
 		});
@@ -192,7 +234,8 @@ sap.ui.define([
 			sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
 				assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
-				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true, "add field entry is enabled, because custom fields creation is available");
+				assert.equal(this.oContextMenuControl.getItems()[1].getEnabled(), true,
+					"add field entry is enabled, because custom fields creation is available");
 				sandbox.restore();
 			}.bind(this));
 		});
@@ -206,12 +249,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a group");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER", "we can create group");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_REMOVE", "we can remove group");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_CUT", "we can cut group");
@@ -245,12 +289,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -273,12 +318,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay1, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -300,12 +346,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -326,12 +373,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 6) {
 					assert.equal(this.oContextMenuControl.getItems().length, 6, "6 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "we can remove field");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "we can cut groups");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "we can paste groups");
@@ -352,7 +400,7 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oGroupElementOverlay, sinon).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 2) {
 					assert.equal(this.oContextMenuControl.getItems().length, 2, "2 Menu Items are available");
@@ -371,11 +419,11 @@ sap.ui.define([
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves(PropertyChange);
 			var oGroupDesigntime = {
-				settings: function() {
+				settings() {
 					return {
 						changeType: "changeSettings",
 						isEnabled: true,
-						handler: function() {}
+						handler() {}
 					};
 				}
 			};
@@ -392,14 +440,18 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupOverlay).then(function() {
-				assert.equal(this.oContextMenuControl.getItems()[this.oContextMenuControl.getItems().length - 1].getKey(), "CTX_SETTINGS", "Settings is available");
+				assert.equal(
+					this.oContextMenuControl.getItems()[this.oContextMenuControl.getItems().length - 1].getKey(),
+					"CTX_SETTINGS",
+					"Settings is available"
+				);
 			}.bind(this));
 		});
 
-		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", function(assert) {
+		QUnit.test("when context menu (context menu) is opened (via keyboard) for a sap.m.Page without title", async function(assert) {
 			assert.expect(4);
 			this.oPage._headerTitle.destroy();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			this.oPage._headerTitle = null;
 			var oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
 			oPageOverlay.focus();
@@ -427,12 +479,13 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormElementOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename label is available");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING", "add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_SIBLING",
+						"add field entry is visible");
 					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_REMOVE", "remove field is available");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_CUT", "cut field is available");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "paste field is available");
@@ -461,7 +514,8 @@ sap.ui.define([
 
 			function fnExecuteChecks() {
 				assert.ok(bFirstCallIgnored, "the context menu only opens when ENTER is pressed again after the rename is completed");
-				assert.notOk(oFormElementOverlay.getIgnoreEnterKeyUpOnce(), "the 'ignoreEnterKeyUpOnce' property on the Overlay was set to false by the first call");
+				assert.notOk(oFormElementOverlay.getIgnoreEnterKeyUpOnce(),
+					"the 'ignoreEnterKeyUpOnce' property on the Overlay was set to false by the first call");
 				fnDone();
 			}
 
@@ -499,14 +553,16 @@ sap.ui.define([
 			return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFormContainerOverlay).then(function() {
 				var sText = "";
 				this.oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "rename title is available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getEnabled(), true, "and rename title is enabled");
-					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD", "add field entry is visible");
-					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER", "create group is available");
+					assert.equal(this.oContextMenuControl.getItems()[1].getKey(), "CTX_ADD_ELEMENTS_AS_CHILD",
+						"add field entry is visible");
+					assert.equal(this.oContextMenuControl.getItems()[2].getKey(), "CTX_CREATE_SIBLING_CONTAINER",
+						"create group is available");
 					assert.equal(this.oContextMenuControl.getItems()[3].getKey(), "CTX_REMOVE", "remove group is available");
 					assert.equal(this.oContextMenuControl.getItems()[4].getKey(), "CTX_PASTE", "paste field is available");
 				} else {
@@ -527,7 +583,8 @@ sap.ui.define([
 
 				RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay);
 				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
-					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount, "the second open is ignored and the five menu items are only added once");
+					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount,
+						"the second open is ignored and the five menu items are only added once");
 				}.bind(this));
 			}.bind(this));
 		});
@@ -548,14 +605,15 @@ sap.ui.define([
 				oGroupElementOverlay.focus();
 				oGroupElementOverlay.setSelected(true);
 				return RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay).then(function() {
-					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount, "the first open is canceled and the five menu items are only added once");
+					assert.equal(this.oContextMenuControl.getItems().length, iExpectedMenuItemsCount,
+						"the first open is canceled and the five menu items are only added once");
 				}.bind(this));
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		before: function() {
+		async before() {
 			// View
 			// 	Page
 			// 		ObjectPageLayout
@@ -568,7 +626,7 @@ sap.ui.define([
 			//					Button
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sinon);
 
-			var oEmbeddedView = oCore.byId("Comp1---idMain1");
+			var oEmbeddedView = Element.getElementById("Comp1---idMain1");
 
 			var oSubSection = new ObjectPageSubSection({
 				id: oEmbeddedView.createId("subsection1"),
@@ -602,7 +660,7 @@ sap.ui.define([
 
 			this.oObjectPageSection3 = oObjectPageSection3;
 
-			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = Element.getElementById("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),
@@ -615,7 +673,7 @@ sap.ui.define([
 			oEmbeddedPage.addContent(this.oObjectPageLayout);
 			var clock = sinon.useFakeTimers();
 			clock.tick(1000);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -625,7 +683,7 @@ sap.ui.define([
 			clock.restore();
 			return this.oRta.start();
 		},
-		after: function() {
+		after() {
 			this.oObjectPageLayout.destroy();
 			this.oMockedAppComponent._restoreGetAppComponentStub();
 			this.oMockedAppComponent.destroy();
@@ -640,10 +698,10 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -671,10 +729,10 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -702,10 +760,10 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 5) {
 					assert.equal(oContextMenuControl.getItems().length, 5, " and 5 Menu Items are available");
@@ -728,7 +786,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page without stable ids...", {
-		beforeEach: function() {
+		async beforeEach() {
 			this.oMockedAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			var oSubSection = new ObjectPageSubSection({
@@ -763,7 +821,7 @@ sap.ui.define([
 				]
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oObjectPageLayout,
@@ -772,7 +830,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oMockedAppComponent.destroy();
 			this.oObjectPageLayout.destroy();
@@ -786,10 +844,10 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				var sText = "";
 				oContextMenuControl.getItems().forEach(function(oItem) {
-					sText = sText + " - " + oItem.getKey();
+					sText = `${sText} - ${oItem.getKey()}`;
 				});
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");
@@ -806,8 +864,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started for Object Page...", {
-		beforeEach: function() {
-			var oEmbeddedView = oCore.byId("Comp1---idMain1");
+		async beforeEach() {
+			var oEmbeddedView = Element.getElementById("Comp1---idMain1");
 
 			this.oObjectPageSection1 = new ObjectPageSection({
 				title: "Section_1",
@@ -819,7 +877,7 @@ sap.ui.define([
 				visible: false
 			});
 
-			var oEmbeddedPage = oCore.byId("Comp1---idMain1--mainPage");
+			var oEmbeddedPage = Element.getElementById("Comp1---idMain1--mainPage");
 
 			this.oObjectPageLayout = new ObjectPageLayout({
 				id: oEmbeddedView.createId("ObjectPageLayout"),
@@ -834,7 +892,7 @@ sap.ui.define([
 			});
 			oPage.addContent(this.oObjectPageLayout);
 			oEmbeddedPage.addContent(oPage);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oPage,
@@ -843,7 +901,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			this.oObjectPageLayout.destroy();
 		}
@@ -855,13 +913,15 @@ sap.ui.define([
 				assert.ok(true, "the contextMenu is open");
 			});
 			return RtaQunitUtils.openContextMenuWithClick.call(this, oOverlay, sinon).then(function() {
-				var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+				var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 				assert.ok(oOverlay.isEditable(), "then the overlay is editable");
 				if (oContextMenuControl.getItems().length === 2) {
 					assert.equal(oContextMenuControl.getItems().length, 2, " and 2 Menu Items are available");
-					assert.equal(oContextMenuControl.getItems()[0].getKey(), "CTX_CREATE_CHILD_IFRAME_SECTIONS", "add iframe to section is available");
+					assert.equal(oContextMenuControl.getItems()[0].getKey(), "CTX_CREATE_CHILD_IFRAME_SECTIONS",
+						"add iframe to section is available");
 					assert.equal(oContextMenuControl.getItems()[0].getEnabled(), true, "add iframe to section is enabled");
-					assert.equal(oContextMenuControl.getItems()[1].getKey(), "CTX_CREATE_CHILD_IFRAME_HEADERCONTENT", "add iframe to header is available");
+					assert.equal(oContextMenuControl.getItems()[1].getKey(), "CTX_CREATE_CHILD_IFRAME_HEADERCONTENT",
+						"add iframe to header is available");
 					assert.equal(oContextMenuControl.getItems()[1].getEnabled(), true, "add iframe to header is enabled");
 				} else {
 					assert.ok(false, "but shows the wrong number of menu items");

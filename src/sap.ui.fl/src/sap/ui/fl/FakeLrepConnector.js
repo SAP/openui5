@@ -3,15 +3,15 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils",
-	"sap/ui/core/Configuration"
+	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector"
 ], function(
-	Cache,
-	ObjectPathConnector,
+	FlexConfiguration,
+	FlexState,
 	ObjectStorageUtils,
-	Configuration
+	ObjectPathConnector
 ) {
 	"use strict";
 
@@ -40,7 +40,7 @@ sap.ui.define([
 	};
 
 	FakeLrepConnector.setFlexibilityServicesAndClearCache = function(sStorageConnectorName, sInitialComponentJsonPath) {
-		this._oFlexibilityServices = Configuration.getFlexibilityServices();
+		this._oFlexibilityServices = FlexConfiguration.getFlexibilityServices();
 
 		var aConnectorConfig = [];
 		if (sInitialComponentJsonPath) {
@@ -48,8 +48,8 @@ sap.ui.define([
 			aConnectorConfig.push({connector: "ObjectPathConnector"});
 		}
 		aConnectorConfig.push({connector: sStorageConnectorName});
-		Configuration.setFlexibilityServices(aConnectorConfig);
-		Cache.clearEntries();
+		FlexConfiguration.setFlexibilityServices(aConnectorConfig);
+		FlexState.clearState();
 	};
 
 	/**
@@ -57,17 +57,17 @@ sap.ui.define([
 	 */
 	FakeLrepConnector.disableFakeConnector = function() {
 		FakeLrepConnector.prototype = {};
-		Cache.clearEntries();
+		FlexState.clearState();
 
 		// only reset the flexibility Services in case they were changes by the FakeConnector before
 		if (this._oFlexibilityServices) {
-			Configuration.setFlexibilityServices(this._oFlexibilityServices);
+			FlexConfiguration.setFlexibilityServices(this._oFlexibilityServices);
 			delete this._oFlexibilityServices;
 		}
 	};
 
 	FakeLrepConnector.forTesting = {
-		getNumberOfChanges: function(oConnector, sReference) {
+		getNumberOfChanges(oConnector, sReference) {
 			return oConnector.loadFlexData({reference: sReference})
 			.then(function(aResponses) {
 				return aResponses.reduce(function(iNumberOfChanges, oResponse) {
@@ -75,24 +75,24 @@ sap.ui.define([
 				}, 0);
 			});
 		},
-		spyMethod: function(sandbox, assert, oConnector, sMethod) {
+		spyMethod(sandbox, assert, oConnector, sMethod) {
 			var oSpy = sandbox.spy(oConnector, sMethod);
 
 			return function(iNumberOfExpectedObjects, iCallIndex) {
-				iCallIndex = iCallIndex || 0;
+				iCallIndex ||= 0;
 				var iNumberOfObjects = oSpy.getCall(iCallIndex).args[0].flexObjects.length;
-				assert.equal(iNumberOfObjects, iNumberOfExpectedObjects, sMethod + " was called " + iNumberOfExpectedObjects + " times");
+				assert.equal(iNumberOfObjects, iNumberOfExpectedObjects, `${sMethod} was called ${iNumberOfExpectedObjects} times`);
 			};
 		},
-		clear: function(oConnector, mPropertyBag) {
-			Cache.clearEntries();
+		clear(oConnector, mPropertyBag) {
+			FlexState.clearState();
 			return oConnector.reset(mPropertyBag);
 		},
-		setStorage: function(oConnector, oNewStorage) {
+		setStorage(oConnector, oNewStorage) {
 			oConnector.storage = oNewStorage;
 		},
 		synchronous: {
-			clearAll: function(oStorage) {
+			clearAll(oStorage) {
 				var fnRemoveItem = function(sKey) {
 					var bIsFlexObject = sKey.includes(FL_PREFIX);
 
@@ -105,12 +105,12 @@ sap.ui.define([
 
 				Object.keys(oStorage).map(fnRemoveItem);
 			},
-			store: function(oStorage, sKey, oItem) {
+			store(oStorage, sKey, oItem) {
 				var sFlexKey = ObjectStorageUtils.createFlexKey(sKey);
 				var sItem = JSON.stringify(oItem);
 				oStorage.setItem(sFlexKey, sItem);
 			},
-			getNumberOfChanges: function(oStorage, sReference) {
+			getNumberOfChanges(oStorage, sReference) {
 				return Object.keys(oStorage).filter(function(sKey) {
 					return sKey.includes(FL_PREFIX) && ObjectStorageUtils.isSameReference(JSON.parse(oStorage.getItem(sKey)), sReference);
 				}).length;

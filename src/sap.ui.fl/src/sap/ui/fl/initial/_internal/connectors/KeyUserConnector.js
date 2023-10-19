@@ -29,12 +29,12 @@ sap.ui.define([
 			Layer.CUSTOMER,
 			Layer.PUBLIC
 		],
-		API_VERSION: API_VERSION,
+		API_VERSION,
 		ROUTES: {
-			DATA: PREFIX + API_VERSION + "/data/"
+			DATA: `${PREFIX + API_VERSION}/data/`
 		},
 		isLanguageInfoRequired: true,
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			return BackendConnector.sendRequest.call(KeyUserConnector, mPropertyBag).then(function(oResult) {
 				oResult.contents.map(function(oContent, iIndex, oResult) {
 					oResult[iIndex].changes = (oContent.changes || []).concat(oContent.compVariants);

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/Tree.css",
-    content: ".ui5-hidden-text {\n\tposition: absolute;\n\tclip: rect(1px,1px,1px,1px);\n\tuser-select: none;\n\tleft: -1000px; /* ensure the invisible texts are never part of the viewport */\n\ttop: -1000px;\n\tpointer-events: none;\n\tfont-size: 0;\n}\r\n\r\n:host(:not([hidden])) {\r\n\tdisplay: block;\r\n\twidth: 100%;\r\n}\r\n\r\n.ui5-tree-root {\r\n\theight: 100%;\r\n\twidth: 100%;\r\n}\r\n"
+    content: ".ui5-hidden-text{clip:rect(1px,1px,1px,1px);font-size:0;left:-1000px;pointer-events:none;position:absolute;top:-1000px;user-select:none}:host(:not([hidden])){display:block;width:100%}.ui5-tree-root{height:100%;width:100%}"
   };
   var _default = styleData;
   _exports.default = _default;

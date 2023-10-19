@@ -9,8 +9,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
-	"sap/m/Text",
-	"sap/base/util/UriParameters"
+	"sap/m/Text"
 
 ], function(
 	ODataV4ValueHelpDelegate,
@@ -19,26 +18,24 @@ sap.ui.define([
 	Table,
 	Column,
 	ColumnListItem,
-	Text,
-	UriParameters
+	Text
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
-	ValueHelpDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+	const ValueHelpDelegate = Object.assign({}, ODataV4ValueHelpDelegate);
 
 	ValueHelpDelegate.retrieveContent = function (oValueHelp, oContainer) {
 
-		var oParams = UriParameters.fromQuery(location.search);
-		var oParamSuspended = oParams.get("suspended");
-		var bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
+		const oParams = new URLSearchParams(window.location.search);
+		const oParamSuspended = oParams.get("suspended");
+		const bSuspended = oParamSuspended ? oParamSuspended === "true" : false;
 
-		var aCurrentContent = oContainer && oContainer.getContent();
-		var oCurrentContent = aCurrentContent && aCurrentContent[0];
+		const aCurrentContent = oContainer && oContainer.getContent();
+		let oCurrentContent = aCurrentContent && aCurrentContent[0];
 
-		var bMultiSelect = oValueHelp.getMaxConditions() === -1;
+		const bMultiSelect = oValueHelp.getMaxConditions() === -1;
 
-		var oCurrentTable = oCurrentContent && oCurrentContent.getTable();
+		let oCurrentTable = oCurrentContent && oCurrentContent.getTable();
 
 		if (oContainer.isA("sap.ui.mdc.valuehelp.Popover")) {
 

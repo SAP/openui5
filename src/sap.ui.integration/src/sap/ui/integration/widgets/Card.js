@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/ErrorHandler",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/cards/filters/FilterBarFactory",
@@ -67,7 +66,6 @@ sap.ui.define([
 	HeaderFactory,
 	ContentFactory,
 	BindingResolver,
-	BindingHelper,
 	ErrorHandler,
 	IconFormatter,
 	FilterBarFactory,
@@ -97,11 +95,6 @@ sap.ui.define([
 		MODEL_SIZE_LIMIT: "/sap.card/configuration/modelSizeLimit"
 	};
 
-	/**
-	 * @const A list of model names which are used internally by the card.
-	 */
-	var INTERNAL_MODEL_NAMES = ["parameters", "filters", "paginator", "form", "messages", "context", "i18n"];
-
 	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
@@ -111,6 +104,8 @@ sap.ui.define([
 	var CardDataMode = library.CardDataMode;
 
 	var CardDesign = library.CardDesign;
+
+	var CardDisplayVariant = library.CardDisplayVariant;
 
 	var CardPreviewMode = library.CardPreviewMode;
 
@@ -307,6 +302,17 @@ sap.ui.define([
 					type: "sap.ui.integration.CardDesign",
 					group: "Appearance",
 					defaultValue: CardDesign.Solid
+				},
+
+				/**
+				 * Defines the display variant for card rendering and behavior.
+				 * @experimental Since 1.118. For usage only by Work Zone.
+				 * @since 1.118
+				 */
+				displayVariant: {
+					type: "sap.ui.integration.CardDisplayVariant",
+					group: "Appearance",
+					defaultValue: CardDisplayVariant.Standard
 				},
 
 				/**
@@ -518,10 +524,8 @@ sap.ui.define([
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 
 		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
-
 		this._iModelSizeLimit = DEFAULT_MODEL_SIZE_LIMIT;
 		this._initModels();
-
 		this._oContentFactory = new ContentFactory(this);
 		this._oCardObserver = new CardObserver(this);
 		this._aSevereErrors = [];
@@ -611,37 +615,49 @@ sap.ui.define([
 	 * Initializes the internally used models.
 	 */
 	Card.prototype._initModels = function () {
-		var oModel = new JSONModel();
-		this.setModel(oModel);
-
-		INTERNAL_MODEL_NAMES.forEach(function (sModelName) {
-			switch (sModelName) {
-				case "context":
-					oModel = new ContextModel();
-					break;
-				case "i18n":
-					oModel = new ResourceModel({
-						bundle: this._oIntegrationRb
-					});
-					break;
-				case "parameters":
-					oModel = new JSONModel(
-						ParameterMap.getParamsForModel()
-					);
-					break;
-				case "messages":
-					oModel = new JSONModel({
-						hasErrors: false,
-						hasWarnings: false,
-						records: []
-					});
-					break;
-				default:
-					oModel = new JSONModel();
+		this._INTERNAL_MODELS = {
+			"default": {
+				init: () => this.setModel(new JSONModel()),
+				reset: () => this.getModel().setData({})
+			},
+			parameters: {
+				init: () => this.setModel(new JSONModel(ParameterMap.getParamsForModel()), "parameters")
+			},
+			filters: {
+				init: () => this.setModel(new JSONModel(), "filters"),
+				reset: () => this.getModel("filters").setData({})
+			},
+			paginator: {
+				init: () => this.setModel(new JSONModel({
+					skip: 0
+				}),  "paginator"),
+				reset: () => this.getModel("paginator").setData({
+					skip: 0
+				})
+			},
+			form: {
+				init: () => this.setModel(new JSONModel(), "form")
+			},
+			messages: {
+				init: () => this.setModel(new JSONModel({
+					hasErrors: false,
+					hasWarnings: false,
+					records: []
+				}), "messages")
+			},
+			context: {
+				init: () => this.setModel(new ContextModel(), "context")
+			},
+			i18n: {
+				init: () => this.setModel(new ResourceModel({
+					bundle: this._oIntegrationRb
+				}), "i18n")
 			}
+		};
 
-			this.setModel(oModel, sModelName);
-		}.bind(this));
+		for (const modelName in this._INTERNAL_MODELS) {
+			this._INTERNAL_MODELS[modelName].init();
+		}
 	};
 
 	/**
@@ -902,6 +918,9 @@ sap.ui.define([
 				}
 
 				this._logSevereError(e.message);
+
+				// even if manifest processing or extension loading fails
+				// we want to show the maximum from the card which we can - like header, footer and etc.
 				this._applyManifest();
 			}.bind(this));
 	};
@@ -1348,10 +1367,11 @@ sap.ui.define([
 			delete this._fnOnModelChange;
 		}
 
-		this.getModel().setData({});
-		this.getModel("filters").setData({});
-		this.getModel("parameters").setData({});
-		this.getModel("paginator").setData({});
+		for (const modelName in this._INTERNAL_MODELS) {
+			if (this._INTERNAL_MODELS[modelName].reset) {
+				this._INTERNAL_MODELS[modelName].reset();
+			}
+		}
 
 		this._oContextParameters = null;
 
@@ -1773,7 +1793,6 @@ sap.ui.define([
 	 */
 
 	Card.prototype._setParametersModelData = function () {
-
 		var oPredefinedParameters = ParameterMap.getParamsForModel(),
 			oCustomParameters = {},
 			oCombinedParameters = this.getCombinedParameters(),
@@ -2041,7 +2060,7 @@ sap.ui.define([
 		this.destroyAggregation("_content");
 		this._ariaText.setText(sAriaText);
 
-		if (!oContentManifest) {
+		if (!oContentManifest || this.isTileDisplayVariant()) {
 			this.fireEvent("_contentReady");
 			return;
 		}
@@ -2066,6 +2085,21 @@ sap.ui.define([
 		}
 
 		this._setCardContent(oContent);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {boolean} If the card is rendered as a tile variant
+	 */
+	Card.prototype.isTileDisplayVariant = function () {
+		const aTileVariants = [
+			CardDisplayVariant.TileStandard,
+			CardDisplayVariant.TileStandardWide,
+			CardDisplayVariant.TileFlat,
+			CardDisplayVariant.TileFlatWide
+		];
+		return aTileVariants.indexOf(this.getDisplayVariant()) > -1;
 	};
 
 	Card.prototype.createHeader = function () {
@@ -2167,7 +2201,7 @@ sap.ui.define([
 			mMessageSettings = ErrorHandler.configureErrorInfo(mErrorInfo, this);
 		}
 
-		if (oContentSection || bIsComponentCard) {
+		if (!this.isTileDisplayVariant() && (oContentSection || bIsComponentCard)) {
 			if (oContent && oContent.isA("sap.ui.integration.cards.BaseContent")) {
 				this.showBlockingMessage(mMessageSettings);
 			} else { // case where error ocurred during content creation
@@ -2564,7 +2598,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (INTERNAL_MODEL_NAMES.indexOf(sModelName) > -1) {
+			if (this._INTERNAL_MODELS[sModelName]) {
 				Log.error("The model name (data section name) '" + sModelName + "' is reserved for cards. Can not be used for creating a custom model.");
 				return;
 			}

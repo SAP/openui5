@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.ui.mdc.qunit.p13n.test.Assertion
 	 */
-	var Assertion = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Assertion", {
+	const Assertion = Opa5.extend("sap.ui.mdc.qunit.p13n.test.Assertion", {
 		iShouldSeeButtonWithIcon: function (sIcon) {
 			return this.waitFor({
 				controlType: "sap.m.Button",
@@ -64,12 +64,12 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeVisibleDimensionsInOrder: function (aOrderedDimensionNames) {
-			var aDomElements;
+			let aDomElements;
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getJQuery();
-					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
+					const frameJQuery = Opa5.getJQuery();
+					const fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleDimensions().length === aOrderedDimensionNames.length;
 				},
@@ -77,20 +77,20 @@ sap.ui.define([
 					Opa5.assert.equal(aDomElements.length, 1, "One sap.chart.Chart control found");
 					Opa5.assert.equal(aDomElements[0].getVisibleDimensions().length, aOrderedDimensionNames.length, "Chart contains " + aOrderedDimensionNames.length + " visible dimensions");
 					aDomElements[0].getVisibleDimensions().forEach(function (sDimension, iIndex) {
-						var oDimension = aDomElements[0].getDimensionByName(sDimension);
-						var sDimensionName = oDimension.getLabel() || oDimension.getName();
+						const oDimension = aDomElements[0].getDimensionByName(sDimension);
+						const sDimensionName = oDimension.getLabel() || oDimension.getName();
 						Opa5.assert.equal(sDimensionName, aOrderedDimensionNames[iIndex], "Dimension '" + sDimensionName + "' is visible on position " + (iIndex + 1));
 					});
 				}
 			});
 		},
 		iShouldSeeVisibleMeasuresInOrder: function (aOrderedMeasureNames) {
-			var aDomElements;
+			let aDomElements;
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getJQuery();
-					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
+					const frameJQuery = Opa5.getJQuery();
+					const fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getVisibleMeasures().length === aOrderedMeasureNames.length;
 				},
@@ -98,20 +98,20 @@ sap.ui.define([
 					Opa5.assert.equal(aDomElements.length, 1, "One sap.chart.Chart control found");
 					Opa5.assert.equal(aDomElements[0].getVisibleMeasures().length, aOrderedMeasureNames.length, "Chart contains " + aOrderedMeasureNames.length + " visible measures");
 					aDomElements[0].getVisibleMeasures().forEach(function (sMeasure, iIndex) {
-						var oMeasure = aDomElements[0].getMeasureByName(sMeasure);
-						var sMeasureName = oMeasure.getLabel() || oMeasure.getName();
+						const oMeasure = aDomElements[0].getMeasureByName(sMeasure);
+						const sMeasureName = oMeasure.getLabel() || oMeasure.getName();
 						Opa5.assert.equal(sMeasureName, aOrderedMeasureNames[iIndex], "Measure '" + sMeasureName + "' is visible on position " + (iIndex + 1));
 					});
 				}
 			});
 		},
 		iShouldSeeChartOfType: function (sChartTypeKey) {
-			var aDomElements;
+			let aDomElements;
 			return this.waitFor({
 				controlType: "sap.chart.Chart",
 				check: function () {
-					var frameJQuery = Opa5.getJQuery();
-					var fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
+					const frameJQuery = Opa5.getJQuery();
+					const fnControl = Opa5.getPlugin().getControlConstructor("sap.chart.Chart");
 					aDomElements = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnControl);
 					return aDomElements[0].getChartType() === sChartTypeKey;
 				},
@@ -214,8 +214,8 @@ sap.ui.define([
 		 */
 		iShouldSeeChartP13nItems: function (vItems) {
 
-			var aVisibleItems = [];
-			var aItemNamesSelected = vItems.filter(function(oItem){return oItem.selected;}).map(function(oItem){return oItem.p13nItem;});
+			const aVisibleItems = [];
+			const aItemNamesSelected = vItems.filter(function(oItem){return oItem.selected;}).map(function(oItem){return oItem.p13nItem;});
 
 			this.waitFor({
 				searchOpenDialogs: true,
@@ -226,8 +226,8 @@ sap.ui.define([
 						controlType: "sap.m.ComboBox",
 						matchers: new Ancestor(oColumnListItem),
 						success: function (aComboBoxes) {
-							var oComboBox = aComboBoxes[0];
-							var sText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : undefined;
+							const oComboBox = aComboBoxes[0];
+							const sText = oComboBox.getSelectedItem() ? oComboBox.getSelectedItem().getText() : undefined;
 
 							//Skip template rows
 							if (sText == undefined){
@@ -285,10 +285,10 @@ sap.ui.define([
 						}
 					},
 					success: function (aSelect) {
-						var oSelectedItem = aSelect[iIndex].getSelectedItem();
+						const oSelectedItem = aSelect[iIndex].getSelectedItem();
 						Opa5.assert.equal(vItems.length, aSelect.length, "Correct amount of sorters");
 						Opa5.assert.equal(oSelectedItem.getText(), oItem.p13nItem, "Sorter " + oItem.p13nItem + " is present");
-						var bDesc = aSelect[0].getParent().getContent()[1].getSelectedKey() === "desc";
+						const bDesc = aSelect[0].getParent().getContent()[1].getSelectedKey() === "desc";
 						Opa5.assert.equal(bDesc, oItem.descending, "Correct sortorder " + oItem.descending ? "Descending" : "Ascending" + " provided");
 					}
 				});
@@ -300,18 +300,17 @@ sap.ui.define([
 				controlType: "sap.ui.table.Column",
 				matchers: {
 					properties: {
-						sorted: bSorted
+						// eslint-disable-next-line no-nested-ternary
+						sortOrder: !bSorted ? "None" : (bDescending ? "Descending" : "Ascending")
 					}
 				},
 				success: function(aColumns) {
 
-					var oColumn = aColumns.find(function(oSortedCol){
+					const oColumn = aColumns.find(function(oSortedCol){
 						return oSortedCol.getLabel().getText() === sHeader;
 					});
 
-					Opa5.assert.ok(oColumn, "Found a sorted column for: " + sHeader);
-					var bColumnSortedDescending = oColumn.getSortOrder() === "Descending";
-					Opa5.assert.equal(bColumnSortedDescending, !!bDescending, "Column is sorted " + bDescending ? "Descending" : "Ascending");
+					Opa5.assert.ok(oColumn, `Found column ${sHeader} with sort order ${oColumn.getSortOrder()}`);
 				}
 			});
 		},
@@ -320,8 +319,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.mdc.Table",
 				success: function(aTables) {
-					var oTable = aTables[0];
-					var aTableGroupConditions = oTable.getGroupConditions() ? oTable.getGroupConditions().groupLevels : undefined;
+					const oTable = aTables[0];
+					const aTableGroupConditions = oTable.getGroupConditions() ? oTable.getGroupConditions().groupLevels : undefined;
 
 					Opa5.assert.ok(aTableGroupConditions, "Group Conditions set on table");
 					if (oGroupConditions.length > 1) {
@@ -410,14 +409,14 @@ sap.ui.define([
 		 */
 		iShouldSeeP13nFilterItem: function(mSettings) {
 
-			var sItemText = mSettings.itemText;
-			var iIndex = mSettings.index;
-			var aValues = mSettings.values;
-			var oPanel = mSettings.panel;
-			var bSelected = mSettings.selected;
-			var bFilterFieldHidden = !!mSettings.hidden;
+			const sItemText = mSettings.itemText;
+			const iIndex = mSettings.index;
+			let aValues = mSettings.values;
+			const oPanel = mSettings.panel;
+			const bSelected = mSettings.selected;
+			const bFilterFieldHidden = !!mSettings.hidden;
 
-			var aMatchers = [
+			const aMatchers = [
 				new Properties({
 					text: sItemText
 				})
@@ -435,14 +434,14 @@ sap.ui.define([
 				matchers: aMatchers,
 				success: function(aLabels) {
 					//TODO: simplify and rework this method once the Table inbuilt filtering uses the same layout as the FilterBar for adaptation
-					var oListItem = aLabels[0].getParent().isA("sap.m.ListItemBase") ? aLabels[0].getParent() : aLabels[0].getParent().getParent();
+					const oListItem = aLabels[0].getParent().isA("sap.m.ListItemBase") ? aLabels[0].getParent() : aLabels[0].getParent().getParent();
 					if (bFilterFieldHidden) {
 						Opa5.assert.equal(oListItem.getContent().length, 1, "No FilterField available");
 					} else {
-						var oFilterField = oListItem.getContent ? oListItem.getContent()[1].getItems()[0] : oListItem.getCells()[1];
+						const oFilterField = oListItem.getContent ? oListItem.getContent()[1].getItems()[0] : oListItem.getCells()[1];
 						if (aValues.length > 0){
 							aValues.forEach(function(sValue, iIndex){
-								var oValue = oFilterField.getConditions()[iIndex];
+								const oValue = oFilterField.getConditions()[iIndex];
 								Opa5.assert.deepEqual(oValue ? oValue.values[0] : undefined, sValue, "Correct conditions in FF");
 							});
 						}
@@ -450,7 +449,7 @@ sap.ui.define([
 							Opa5.assert.equal(oListItem.getSelected(), bSelected, "Selection state correct");
 						}
 						Opa5.assert.equal(oFilterField.getLabel(), sItemText, "Item with label:' " + sItemText + "' has been found." );
-						var iFieldIndex = oListItem.getParent().indexOfItem(oListItem);
+						const iFieldIndex = oListItem.getParent().indexOfItem(oListItem);
 						Opa5.assert.equal(iFieldIndex, iIndex, "Item is on correct index");
 					}
 				}
@@ -501,7 +500,7 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
 				success: function (aTables) {
-					var aItems = aTables[0].getItems().filter(function (oItem) {
+					const aItems = aTables[0].getItems().filter(function (oItem) {
 						return oItem.getCells()[0].getText() === sItemText;
 					});
 					Opa5.assert.equal(aItems.length, 1);
@@ -544,7 +543,7 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				controlType: "sap.m.List",
 				success: function (aLists) {
-					var aItems = aLists[0].getItems().filter(function (oItem) {
+					const aItems = aLists[0].getItems().filter(function (oItem) {
 						return oItem.getTitle() === sItemText;
 					});
 					Opa5.assert.equal(aItems.length, 1);
@@ -559,7 +558,7 @@ sap.ui.define([
 				searchOpenDialogs: true,
 				controlType: "sap.m.Table",
 				success: function (aTables) {
-					var aItems = aTables[0].getItems().filter(function (oItem) {
+					const aItems = aTables[0].getItems().filter(function (oItem) {
 						return oItem.getCells()[0].getText() === sItemText;
 					});
 					Opa5.assert.equal(aItems.length, 1);
@@ -570,11 +569,11 @@ sap.ui.define([
 			});
 		},
 		thePersonalizationDialogShouldBeClosed: function () {
-			var aDomDialogs;
+			let aDomDialogs;
 			return this.waitFor({
 				check: function () {
-					var frameJQuery = Opa5.getJQuery();
-					var fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.ResponsivePopover');
+					const frameJQuery = Opa5.getJQuery();
+					const fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.ResponsivePopover');
 					aDomDialogs = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return !aDomDialogs.length;
 				},
@@ -604,7 +603,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.table.Table",
 				success: function(aTable) {
-					var sWidth = aTable[0].getColumns()[0].getWidth();
+					const sWidth = aTable[0].getColumns()[0].getWidth();
 					Opa5.assert.equal(sWidth, "500px", "Column width is updated");
 				}
 			});
@@ -648,7 +647,7 @@ sap.ui.define([
 				success: function (aExistingColumns) {
 					Opa5.assert.equal(aOrderedColumnNames.length, aExistingColumns.length);
 					aExistingColumns.forEach(function (oColumn, iIndex) {
-						var sName = oColumn.getPropertyKey();
+						const sName = oColumn.getPropertyKey();
 						Opa5.assert.equal(sName, aOrderedColumnNames[iIndex], "Column '" + aOrderedColumnNames[iIndex] + "' is visible on position " + (iIndex + 1));
 					});
 				}
@@ -660,7 +659,7 @@ sap.ui.define([
 				controlType: sControlType,
 				success: function(aTables) {
 					Opa5.assert.ok(aTables.length == 1);
-					var oTable = aTables[0];
+					const oTable = aTables[0];
 					oTable.initialized().then(function(oTable){
 						Opa5.assert.deepEqual(oTable.getFilterConditions(), sap.ui.base.merge(oFilterConditions), "Table holds correct filterConditions");
 					});
@@ -673,10 +672,10 @@ sap.ui.define([
 				controlType: sTableType,
 				success: function (aTables) {
 					Opa5.getContext().control = aTables[0];
-					var aExistingColumns = aTables[0].getColumns();
+					const aExistingColumns = aTables[0].getColumns();
 					Opa5.assert.equal(aOrderedColumnNames.length, aExistingColumns.length);
 					aExistingColumns.forEach(function (oColumn, iIndex) {
-						var sName = oColumn.getPropertyKey();
+						const sName = oColumn.getPropertyKey();
 						Opa5.assert.equal(sName, aOrderedColumnNames[iIndex], "Column '" + aOrderedColumnNames[iIndex] + "' is visible on position " + (iIndex + 1));
 					});
 				}
@@ -686,7 +685,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.mdc.FilterBar",
 				success: function (aFilterBar) {
-					var aFilterFields = aFilterBar[0].getFilterItems();
+					const aFilterFields = aFilterBar[0].getFilterItems();
 					aFilterFields.forEach(function (oFilterField, iIndex) {
 						Opa5.assert.equal(oFilterField.getLabel(), aFilterFieldLabels[iIndex], "correct FilterField found in view");
 					});
@@ -697,8 +696,8 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.ui.mdc.FilterBar",
 				success: function (aFilterBar) {
-					var aConditions = aFilterBar[0].getConditions();
-					var oFilterConfig = aConditions[sFilterKey] && aConditions[sFilterKey][0];
+					const aConditions = aFilterBar[0].getConditions();
+					const oFilterConfig = aConditions[sFilterKey] && aConditions[sFilterKey][0];
 					Opa5.assert.deepEqual(oFilterConfig && oFilterConfig.values, aValues, "correct filter configuration found in view");
 				}
 			});

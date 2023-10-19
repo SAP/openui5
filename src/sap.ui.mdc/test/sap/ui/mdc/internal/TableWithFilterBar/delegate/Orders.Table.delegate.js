@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/FieldEditMode",
+	'sap/ui/mdc/enums/OperatorName',
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
 	"sap/ui/core/Core",
@@ -14,11 +15,11 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Int32",
 	"sap/ui/model/odata/type/String",
-	"sap/m/Text"
-], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text) {
+	"sap/m/Text",
+	"delegates/util/DelegateCache"
+], function (ODataTableDelegate, OrdersFBDelegate, Field, Link, FieldDisplay, FieldEditMode, OperatorName, FilterUtil, DelegateUtil, Core, Filter, FilterOperator, CurrencyType, DecimalType, Int32Type, StringType, Text, DelegateCache) {
 	"use strict";
 	var OrdersTableDelegate = Object.assign({}, ODataTableDelegate);
-	OrdersTableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
 	var getFullId = function(oControl, sVHId) {
 		var oView = oControl.getParent();
@@ -33,8 +34,8 @@ sap.ui.define([
 		return oODataProps.then(function (aProperties) {
 
 			// Provide the label for the properties which are the same on the xml view. so that the column header and p13n dialog has the same names.
-			// Provide the fieldHelp for some of the properties. Without fieldHelp the filter panel will not provide the expected VH.
-			// TODO fieldHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
+			// Provide the ValueHelp for some of the properties. Without ValueHelp the filter panel will not provide the expected VH.
+			// TODO ValueHelp is not a supported property of the table propertyHelper and we will get warning logn in the console.
 			aProperties.forEach(function(oPropertyInfo){
 				if (oPropertyInfo.name === "customer_ID") {
 					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 15}}; // as the Name is shown
@@ -42,6 +43,14 @@ sap.ui.define([
 					oPropertyInfo.visualSettings = {widthCalculation: {minWidth: 8}}; // as currency is shown too
 				}
 			});
+
+			DelegateCache.add(oTable, {
+				"customer_ID": {additionalValue: "{customer/name}", display: FieldDisplay.Description}
+			}, "$Columns");
+			DelegateCache.add(oTable, {
+				"OrderNo": {valueHelp: "FH1"},
+				"currency_code": {display: FieldDisplay.Value, maxConditions: 1, operators: [OperatorName.EQ], valueHelp: "FH-Currency"}
+			}, "$Filters");
 
 			return aProperties;
 		});
@@ -60,14 +69,6 @@ sap.ui.define([
 					oFilterField.setDataTypeConstraints(oConstraints);
 					oFilterField.setDataTypeFormatOptions(oFormatOptions);
 
-					if (sPropertyName === "OrderNo") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH1"));
-					} else if (sPropertyName === "currency_code") {
-						oFilterField.setValueHelp(getFullId(oTable, "FH-Currency"));
-						oFilterField.setDisplay(FieldDisplay.Value);
-						oFilterField.setMaxConditions(1);
-						oFilterField.setOperators(["EQ"]);
-					}
 					return oFilterField;
 				});
 			}
@@ -83,14 +84,14 @@ sap.ui.define([
 			});
 		}
 
-		var oCtrlProperties = {
+		var oCtrlProperties = DelegateCache.merge({
 			id: getFullId(oTable, "F_" + oProperty.name),
 			value: {path: oProperty.path || oProperty.name, type: oProperty.typeConfig.typeInstance},
 			editMode: FieldEditMode.Display,
 			width:"100%",
 			multipleLines: false,
 			delegate: {name: 'delegates/odata/v4/FieldBaseDelegate', payload: {}}
-		};
+		}, DelegateCache.get(oTable, oProperty.name, "$Columns"));
 
 		if (oProperty.name === "total") {
 			oCtrlProperties.value = {
@@ -102,9 +103,6 @@ sap.ui.define([
 				type: new CurrencyType(),
 				mode:'TwoWay'
 			};
-		} else if (oProperty.name === "customer_ID") {
-			oCtrlProperties.additionalValue = "{customer/name}";
-			oCtrlProperties.display = FieldDisplay.Description;
 		}
 
 		return new Field(oCtrlProperties);

@@ -3,13 +3,14 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/plugin/CutPaste",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/Utils"
-],
-function(
+], function(
+	Lib,
 	ControlCutPaste,
 	DtUtil,
 	Plugin,
@@ -35,7 +36,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.plugin.CutPaste
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CutPaste = ControlCutPaste.extend("sap.ui.rta.plugin.CutPaste", /** @lends sap.ui.rta.plugin.CutPaste.prototype */ {
 		metadata: {
@@ -66,8 +66,8 @@ function(
 	/**
 	 * @override
 	 */
-	CutPaste.prototype.init = function() {
-		ControlCutPaste.prototype.init.apply(this, arguments);
+	CutPaste.prototype.init = function(...aArgs) {
+		ControlCutPaste.prototype.init.apply(this, aArgs);
 		this.setElementMover(new RTAElementMover({commandFactory: this.getCommandFactory()}));
 	};
 
@@ -116,9 +116,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.registerElementOverlay = function() {
-		ControlCutPaste.prototype.registerElementOverlay.apply(this, arguments);
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+	CutPaste.prototype.registerElementOverlay = function(...aArgs) {
+		ControlCutPaste.prototype.registerElementOverlay.apply(this, aArgs);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -126,9 +126,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	CutPaste.prototype.deregisterElementOverlay = function() {
-		ControlCutPaste.prototype.deregisterElementOverlay.apply(this, arguments);
-		Plugin.prototype.removeFromPluginsList.apply(this, arguments);
+	CutPaste.prototype.deregisterElementOverlay = function(...aArgs) {
+		ControlCutPaste.prototype.deregisterElementOverlay.apply(this, aArgs);
+		Plugin.prototype.removeFromPluginsList.apply(this, aArgs);
 	};
 
 	/**
@@ -155,8 +155,9 @@ function(
 	/**
 	 * @override
 	 */
-	CutPaste.prototype.cut = function(oOverlay) {
-		return ControlCutPaste.prototype.cut.apply(this, arguments)
+	CutPaste.prototype.cut = function(...aArgs) {
+		const [oOverlay] = aArgs;
+		return ControlCutPaste.prototype.cut.apply(this, aArgs)
 		.then(function() {
 			oOverlay.setSelected(false);
 		});
@@ -172,7 +173,7 @@ function(
 		var aMenuItems = [];
 		var oPasteMenuItem = this.enhanceItemWithResponsibleElement({
 			id: "CTX_PASTE",
-			text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_PASTE"),
+			text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_PASTE"),
 			handler: function(aElementOverlays) {
 				return this.paste(aElementOverlays[0]);
 			}.bind(this),
@@ -187,11 +188,11 @@ function(
 		if (this.isAvailable(aResponsibleElementOverlays)) {
 			var oCutMenuItem = this.enhanceItemWithResponsibleElement({
 				id: "CTX_CUT",
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_CUT"),
+				text: Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_CUT"),
 				handler: function(aElementOverlays) {
 					return this.cut(aElementOverlays[0]);
 				}.bind(this),
-				enabled: function(aElementOverlays) {
+				enabled(aElementOverlays) {
 					return aElementOverlays.length === 1;
 				},
 				rank: 70,

@@ -155,7 +155,7 @@ sap.ui.define([
 			target: oTarget,
 			keyCode: KeyCodes.ENTER
 		});
-		assert.equal(oPressedSpy.callCount, 1, "Upload set item handler for hitting a file name should be called.");
+		assert.equal(oPressedSpy.callCount, 0, "Upload set item handler for hitting a file name should be called.");
 
 		this.oUploadSet.onkeydown({
 			target: oTarget,

@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.Carousel.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/Carousel"
 ], function(WebComponent, library) {
@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3> The Carousel allows the user to browse through a set of items. The component is mostly used for showing a gallery of images, but can hold any other HTML element. <br>
@@ -87,11 +87,9 @@ sap.ui.define([
 				 * <br>
 				 * Available options are:
 				 * <ul>
-				 *     <li><code>Content</code></li>
-				 *     <li><code>Navigation</code></li>
-				 * </ul> <br>
-				 * When set to "Content", the arrows are placed on the sides of the current page. <br>
-				 * When set to "Navigation", the arrows are placed on the sides of the page indicator.
+				 *     <li><code>Content</code> - the arrows are placed on the sides of the current page.</li>
+				 *     <li><code>Navigation</code> - the arrows are placed on the sides of the page indicator.</li>
+				 * </ul>
 				 */
 				arrowsPlacement: {
 					type: "sap.ui.webc.main.CarouselArrowsPlacement",

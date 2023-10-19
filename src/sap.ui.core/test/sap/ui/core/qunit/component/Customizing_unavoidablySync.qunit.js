@@ -2,9 +2,11 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function (Event, Component, ComponentContainer, Controller, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (Event, Component, ComponentContainer, Element, Controller, createAndAppendDiv, nextUIUpdate) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -28,7 +30,7 @@ sap.ui.define([
 	this.oLifecycleSpy = sinon.spy();
 
 	function triggerButtonPress(sButtonId) {
-		var oButton = sap.ui.getCore().byId(sButtonId);
+		var oButton = Element.getElementById(sButtonId);
 		var oEvent = new Event(sButtonId, oButton, {});
 		oButton.firePress(oEvent);
 	}
@@ -56,9 +58,7 @@ sap.ui.define([
 				});
 				oCompCont.placeAt("content");
 				return oComp.getRootControl().loaded();
-			}).then(function() {
-				sap.ui.getCore().applyChanges();
-			});
+			}).then(nextUIUpdate);
 		},
 		after: destroyComponentAndContainer
 	});
@@ -75,8 +75,8 @@ sap.ui.define([
 	// ExtensionPoint default content
 
 	QUnit.test("ExtensionPoint default content", function(assert) {
-		assert.ok(sap.ui.getCore().byId("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
-		assert.ok(sap.ui.getCore().byId("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
+		assert.ok(Element.getElementById("__jsview0--defaultContentText"), "JS extension point 1 should contain default content");
+		assert.ok(Element.getElementById("iHaveCausedDestruction"), "JS Extension Point 45 Content has been correctly replaced");
 	});
 
 	QUnit.module("Controller Customizing via Hook", {
@@ -189,9 +189,7 @@ sap.ui.define([
 			});
 			oCompCont.placeAt("content");
 			return oComp.getRootControl().loaded();
-		}).then(function() {
-			sap.ui.getCore().applyChanges();
-		});
+		}).then(nextUIUpdate);
 	});
 
 

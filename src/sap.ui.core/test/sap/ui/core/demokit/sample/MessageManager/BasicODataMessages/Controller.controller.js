@@ -2,22 +2,22 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/sample/MessageManager/BasicODataMessages/localService/mockserver",
-	"sap/ui/core/Fragment"
-], function(Controller, ODataModel, mockserver, Fragment) {
+	"sap/ui/core/Fragment",
+	"sap/ui/core/Messaging"
+], function(Controller, ODataModel, mockserver, Fragment, Messaging) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.MessageManager.BasicODataMessages.Controller", {
 
 		onInit : function () {
 
-			var sODataServiceUrl, oMessageManager;
+			var sODataServiceUrl;
 
 			// set message model
-			oMessageManager = sap.ui.getCore().getMessageManager();
-			this.getView().setModel(oMessageManager.getMessageModel(), "message");
+			this.getView().setModel(Messaging.getMessageModel(), "message");
 
 			// activate automatic message generation for complete view
-			oMessageManager.registerObject(this.getView(), true);
+			Messaging.registerObject(this.getView(), true);
 
 			sODataServiceUrl = "/here/goes/your/odata/service/url/";
 
@@ -48,7 +48,7 @@ sap.ui.define([
 		},
 
 		onClearPress : function(){
-			sap.ui.getCore().getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		//################ Private APIs ###################

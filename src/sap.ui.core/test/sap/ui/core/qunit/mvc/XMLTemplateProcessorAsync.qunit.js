@@ -9,8 +9,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(Log, Button, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, XMLView, JSONModel, jQuery, Configuration) {
+	"sap/ui/base/DesignTime"
+], function(Log, Button, Component, UIComponent, XMLTemplateProcessor, XMLProcessingMode, XMLView, JSONModel, jQuery, DesignTime) {
 	"use strict";
 
 	QUnit.module("enrichTemplateIdsPromise", {
@@ -104,8 +104,7 @@ sap.ui.define([
 		assert.expect(7);
 
 		// Arrange
-		var oConfig = Configuration;
-		this.stub(oConfig, "getDesignMode").returns(true);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(true);
 
 		// Act
 		return XMLView.create({
@@ -132,8 +131,7 @@ sap.ui.define([
 		assert.expect(3);
 
 		// Arrange
-		var oConfig = Configuration;
-		this.stub(oConfig, "getDesignMode").returns(false);
+		this.stub(DesignTime, "isDesignModeEnabled").returns(false);
 
 		// Act
 		return XMLView.create({
@@ -477,10 +475,16 @@ sap.ui.define([
 
 	QUnit.module("Databinding", {
 		beforeEach: function() {
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			this.syncLoadingSpy = sinon.spy(sap.ui, "requireSync");
 			this.logErrorSpy = sinon.spy(Log, "error");
 		},
 		afterEach: function() {
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			this.syncLoadingSpy.restore();
 			this.logErrorSpy.restore();
 		}
@@ -503,12 +507,19 @@ sap.ui.define([
 			oView = oFinishedView;
 			oFinishedView.placeAt("qunit-fixture");
 
-			// check that no sync XHRs are sent
-			assert.equal(this.syncLoadingSpy.callCount, 0, "No sync XHR sent.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Integer"), "No sync XHR sent for 'sap/ui/model/type/Integer'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/String"), "No sync XHR sent for 'sap/ui/model/type/String'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Float"), "No sync XHR sent for 'sap/ui/model/type/Float'.");
-			assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Date"), "No sync XHR sent for 'sap/ui/model/type/Date'.");
+			/**
+			 * Sync call tests
+			 * @deprecated As of version 1.120
+			 */
+			(() => {
+				// check that no sync XHRs are sent
+				assert.equal(this.syncLoadingSpy.callCount, 0, "No sync XHR sent.");
+				assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Integer"), "No sync XHR sent for 'sap/ui/model/type/Integer'.");
+				assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/String"), "No sync XHR sent for 'sap/ui/model/type/String'.");
+				assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Float"), "No sync XHR sent for 'sap/ui/model/type/Float'.");
+				assert.notOk(this.syncLoadingSpy.calledWith("sap/ui/model/type/Date"), "No sync XHR sent for 'sap/ui/model/type/Date'.");
+			})();
+
 			// test binding values
 			var oInput = oView.byId("inputField");
 			assert.equal(oInput.getValue(), "1.234", "Input field has correct value '1.234'");

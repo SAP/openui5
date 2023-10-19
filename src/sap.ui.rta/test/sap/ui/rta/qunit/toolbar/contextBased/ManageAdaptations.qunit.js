@@ -3,13 +3,14 @@
 sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/ManageAdaptations",
 	"sap/ui/rta/Utils",
@@ -17,13 +18,14 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	MessageBox,
-	oCore,
 	Control,
 	Fragment,
+	Lib,
 	Layer,
 	ManifestUtils,
 	ContextBasedAdaptationsAPI,
 	JSONModel,
+	nextUIUpdate,
 	Adaptation,
 	ManageAdaptations,
 	Utils,
@@ -32,17 +34,17 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oRtaResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function getControl(oToolbar, sControlID) {
-		return oToolbar.getControl("manageAdaptationDialog--" + sControlID);
+		return oToolbar.getControl(`manageAdaptationDialog--${sControlID}`);
 	}
 
 	function getAdaptationTitle(oTableListItem) {
 		return oTableListItem.getCells()[1].getText();
 	}
 
-	function initializeToolbar() {
+	async function initializeToolbar() {
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 		this.oRootControl = new Control();
 		var oToolbar = new Adaptation({
@@ -58,7 +60,7 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		return oToolbar;
 	}
 
@@ -76,11 +78,11 @@ sap.ui.define([
 
 	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
-		beforeEach: function() {
+		async beforeEach() {
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
 			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
-			this.oToolbar = initializeToolbar.call(this);
+			this.oToolbar = await initializeToolbar.call(this);
 			this.oManageAdaptations = new ManageAdaptations({ toolbar: this.oToolbar });
 			this.oEvent = {
 				getSource: function() {
@@ -91,13 +93,13 @@ sap.ui.define([
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.module("the manage adaptations dialog is created with empty ", {
-			beforeEach: function() {
+			beforeEach() {
 				sandbox.stub(ContextBasedAdaptationsAPI, "load").resolves({adaptations: [DEFAULT_ADAPTATION]});
 				this.oFragmentLoadSpy = sandbox.spy(Fragment, "load");
 				return this.oManageAdaptations.openManageAdaptationDialog()
@@ -124,7 +126,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("the manage adaptations dialog is opened containing two adaptations", {
-			beforeEach: function() {
+			beforeEach() {
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
 				this.oContextBasedAdaptations = {
 					adaptations: [{
@@ -170,7 +172,7 @@ sap.ui.define([
 					this.oAdaptationsTable = getControl(this.oToolbar, "manageAdaptationsTable");
 					this.oSaveButton = getControl(this.oToolbar, "manageAdaptations-saveButton");
 					this.oCloseButton = getControl(this.oToolbar, "manageAdaptations-closeButton");
-					this.oFirstTableItem = this.oAdaptationsTable.getItems()[0];
+					[this.oFirstTableItem] = this.oAdaptationsTable.getItems();
 					return this.oToolbar._pFragmentLoaded;
 				}.bind(this));
 			}
@@ -178,7 +180,11 @@ sap.ui.define([
 			QUnit.test("and context-based adaptations are visible and correctly formatted", function(assert) {
 				assert.strictEqual(this.oFragmentLoadSpy.callCount, 1, "the fragment was loaded");
 				assert.ok(this.oDialog.isOpen(), "the dialog is opened");
-				assert.deepEqual(this.oDialog.getModel("contextBased").getProperty("/adaptations"), this.oContextBasedAdaptations.adaptations, "correct context-based adaptations are shown");
+				assert.deepEqual(
+					this.oDialog.getModel("contextBased").getProperty("/adaptations"),
+					this.oContextBasedAdaptations.adaptations,
+					"correct context-based adaptations are shown"
+				);
 			});
 
 			QUnit.test("and the priority of the context-based adaptations is first moved down then up again using the up and down button", function(assert) {
@@ -302,7 +308,7 @@ sap.ui.define([
 						}
 						return "";
 					}.bind(this),
-					getBindingContext: function() {
+					getBindingContext() {
 						return oFirstTableItem.getBindingContext("contextBased");
 					}
 				};
@@ -314,7 +320,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("the manage adaptations dialog is opened containing four adaptations", {
-			beforeEach: function() {
+			beforeEach() {
 				this.sManageAdaptationsDialog = "manageAdaptationDialog";
 				this.oContextBasedAdaptations = {
 					adaptations: [{

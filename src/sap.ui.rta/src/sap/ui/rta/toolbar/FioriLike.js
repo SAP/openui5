@@ -24,7 +24,6 @@ function(
 	 * @private
 	 * @since 1.84
 	 * @alias sap.ui.rta.toolbar.FioriLike
-	 * @experimental Since 1.84. This class is experimental. API might be changed in future.
 	 */
 	var FioriLike = Adaptation.extend("sap.ui.rta.toolbar.FioriLike", {
 		metadata: {

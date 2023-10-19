@@ -656,6 +656,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState"]
 				}
 			},
+			"write/_internal/flexState/UI2PersonalizationState/UI2PersonalizationState": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/flexState/UI2PersonalizationState/UI2PersonalizationState"]
+				}
+			},
 			"write/_internal/connectors/ObjectPathConnector": {
 				group: "Write Internal",
 				coverage: {
@@ -1110,11 +1116,6 @@ sap.ui.define([
 			},
 
 			// CLOUD IOI tests:
-			Cache: {
-				coverage: {
-					only: ["sap/ui/fl/Cache"]
-				}
-			},
 			library: {
 				coverage: {
 					only: ["sap/ui/fl/library"]
@@ -1330,7 +1331,8 @@ sap.ui.define([
 							"sap.ui.fl.testResources": "test-resources/sap/ui/fl/qunit/testResources",
 							delegates: "test-resources/sap/ui/mdc/delegates/"
 						},
-						libs: ["sap.ui.mdc"]
+						libs: ["sap.ui.mdc"],
+						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
 					},
 					qunit: {
 						reorder: false

@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI"
 ], function(
-	Core,
+	Element,
 	JsControlTreeModifier,
 	OverlayRegistry,
 	ChangesWriteAPI
@@ -25,7 +25,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.SupportTools
 	 * @author SAP SE
-	 * @experimental Since 1.106
 	 * @since 1.106
 	 * @version ${version}
 	 * @private
@@ -100,7 +99,7 @@ sap.ui.define([
 	 * @param {string} mPayload.overlayId
 	 */
 	function getOverlayInfo(oRta, mPayload) {
-		var oOverlay = Core.byId(mPayload.overlayId);
+		var oOverlay = Element.getElementById(mPayload.overlayId);
 		if (!oOverlay) {
 			return;
 		}
@@ -143,7 +142,7 @@ sap.ui.define([
 	 * @param {string} mPayload.pluginName
 	 */
 	function printChangeHandler(oRta, mPayload) {
-		var oOverlay = Core.byId(mPayload.overlayId);
+		var oOverlay = Element.getElementById(mPayload.overlayId);
 		var oPlugin = getPluginByName(oRta, mPayload.pluginName);
 		getPluginChangeHandler(oPlugin, oOverlay, oRta)
 		.then(console.log); // eslint-disable-line no-console
@@ -174,7 +173,7 @@ sap.ui.define([
 	 */
 	function changeOverlaySelection(oRta, mPayload) {
 		// set new focus and enforce collecting overlay info data
-		var oOverlay = Core.byId(mPayload.overlayId);
+		var oOverlay = Element.getElementById(mPayload.overlayId);
 		oOverlay.focus();
 		window.postMessage({
 			type: "getOverlayInfo",
@@ -236,7 +235,7 @@ sap.ui.define([
 	}
 
 	function printDesignTimeMetadata(oRta, mPayload) {
-		var oOverlay = Core.byId(mPayload.overlayId);
+		var oOverlay = Element.getElementById(mPayload.overlayId);
 		console.log(oOverlay.getDesignTimeMetadata().getData()); // eslint-disable-line no-console
 	}
 
@@ -340,7 +339,7 @@ sap.ui.define([
 		onRtaStart();
 
 		return {
-			destroy: function() {
+			destroy() {
 				window.removeEventListener("message", fnOnMessageReceivedBound);
 			}
 		};

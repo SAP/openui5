@@ -15,7 +15,6 @@ sap.ui.define([
 	 * Connector for saving data to the <code>window.SessionStorage</code>.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.SessionStorageConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Storage
@@ -24,8 +23,9 @@ sap.ui.define([
 		storage: window.sessionStorage
 	});
 
-	SessionStorageConnector.loadFeatures = function() {
-		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+	SessionStorageConnector.loadFeatures = function(...aArgs) {
+		return ObjectStorageConnector.loadFeatures.apply(this, aArgs)
+		.then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
 				isVariantAdaptationEnabled: true

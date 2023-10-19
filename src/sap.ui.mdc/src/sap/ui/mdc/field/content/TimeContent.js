@@ -2,9 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/field/content/DefaultContent",
-	"sap/ui/mdc/field/content/DateContent"
-], function(DefaultContent, DateContent) {
+	'sap/ui/mdc/field/content/DefaultContent',
+	'sap/ui/mdc/field/content/DateContent',
+	'sap/ui/mdc/enums/OperatorName'
+], function(DefaultContent, DateContent, OperatorName) {
 	"use strict";
 
 	/**
@@ -19,10 +20,10 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.field.content.TimeContent
 	 * @extends sap.ui.mdc.field.content.DateContent
 	 */
-	var TimeContent = Object.assign({}, DateContent, {
+	const TimeContent = Object.assign({}, DateContent, {
 		getEditOperator: function() {
 			return {
-				"EQ": { name: "sap/m/TimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
+				[OperatorName.EQ]: { name: "sap/m/TimePicker", create: this._createDatePickerControl }  // as same API as DatePicker
 			};
 		},
 		getEdit: function() {

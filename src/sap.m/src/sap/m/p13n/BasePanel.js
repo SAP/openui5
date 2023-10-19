@@ -21,9 +21,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/base/util/UriParameters",
 	"sap/ui/core/InvisibleText"
-], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, UriParameters, InvisibleText) {
+], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, InvisibleText) {
 	"use strict";
 
 	/**
@@ -157,9 +156,6 @@ sap.ui.define([
 		}
 	});
 
-	// shortcut for sap.m.MultiSelectMode
-	var MultiSelectMode = library.MultiSelectMode;
-
 	//inner model name
 	BasePanel.prototype.P13N_MODEL = "$p13n";
 
@@ -201,10 +197,6 @@ sap.ui.define([
 		this._bFocusOnRearrange = true;
 
 		this._setInnerLayout();
-
-		// experimentally enable select all
-		var oParams = UriParameters.fromQuery(window.location.search);
-		this._oListControl.setMultiSelectMode(oParams.get("sap-ui-xx-p13nSelectAll") == "true" ? MultiSelectMode.SelectAll : MultiSelectMode.ClearAll);
 	};
 
 	BasePanel.prototype.onAfterRendering = function() {
@@ -329,6 +321,17 @@ sap.ui.define([
 		this._updateMovement(bEnableReorder);
 
 		return this;
+	};
+
+	/**
+	 * Trigger to update the panel after outer influences (e.g. sap.m.p13n.Popup) trigger a reset on the panel
+	 *
+	 * @private
+	 * @ui5-restricted
+	 */
+	BasePanel.prototype.onReset = function() {
+		this._getSearchField()?.setValue("");//Reset the searchfield string
+		this._oListControl.getBinding("items")?.filter([]);//Reset the filtering
 	};
 
 	BasePanel.prototype._getDragDropConfig = function() {
@@ -499,6 +502,7 @@ sap.ui.define([
 				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
 				oEvent.setMarked();
 				oEvent.preventDefault();
+				oEvent.stopPropagation();
 
 				oButton.firePress();
 			}
@@ -614,9 +618,9 @@ sap.ui.define([
 		return this.getModel(this.P13N_MODEL);
 	};
 
-	BasePanel.prototype._getResourceText = function(sText, vValue) {
+	BasePanel.prototype._getResourceText = function(sText, aValue) {
 		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		return sText ? this.oResourceBundle.getText(sText, vValue) : this.oResourceBundle;
+		return sText ? this.oResourceBundle.getText(sText, aValue) : this.oResourceBundle;
 	};
 
 	BasePanel.prototype._addTableColumns = function(aColumns) {

@@ -6,15 +6,51 @@ sap.ui.define([
 ], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, merge, Log, CoreLibrary, FilterBarP13nMode) {
 	"use strict";
 
-	var HasPopup = CoreLibrary.aria.HasPopup;
+	const HasPopup = CoreLibrary.aria.HasPopup;
+
+	/**
+	 *
+	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.filterbar.PropertyInfo
+	 * @property {string} path
+	 *   The identifier of the property
+	 * @property {string} [name]
+	 *   The alternative identifier of the property. Either <code>path</code> or <code>name</code> property can be used. The <code>path</code> is the preferred property.
+	 * @property {string} label
+	 *   The label of the identifier
+	 * @property {string} [tooltip]
+	 *   The tooltip of the identifier
+	 * @property {string} dataType
+	 *   The data type of the property
+	 * @property {object} [constraints]
+	 *   Defines constraints for the data type of the property
+	 * @property {object} [formatOptions]
+	 *   Defines format options for the data type of the property
+	 * @property {string} [group]
+	 *   The group identifier to which the property belongs
+	 * @property {string} [groupLabel]
+	 *   The group name of the group identifier
+	 * @property {boolean} [caseSensitive = false]
+	 *   If set to <code>true</code>, the filter value is treated as case-sensitive
+	 * @property {sap.ui.mdc.enums.FieldDisplay} [display]
+	 *   Describes how the value will be presented to the user
+	 * @property {boolean} [hiddenFilter = false]
+	 *   If set to <code>false</code>, the filter is visible in the <code>FilterBar</code>
+	 * @property {boolean} [required = false]
+	 *   If set to <code>true</code>, the filter is mandatory
+	 * @property {int} [maxConditions]
+	 *   Defines if the filter supports multiple values <code>-1</code> or single values <code>1</code>
+	 *
+	 * @public
+	 * @since 1.112.0
+	 */
 
 	/**
 	 * Constructor for a new FilterBar.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>FilterBar</code> control is used to display filter attrtibutes in a user-friendly manner to populate values for a query.
+	 * @class The <code>FilterBar</code> control is used to display filter attributes in a user-friendly manner to populate values for a query.
 	 * The filters are arranged in a logical row that is divided depending on the space available and the width of the filters.
-	 * The Go button triggers the search event, and the Adapt Filters button shows the filter dialog.<br>
+	 * The Go button fires the search event, and the Adapt Filters button shows the filter dialog.<br>
 	 * The <code>FilterBar</code> control creates and handles the filters based on the provided metadata information.
 	 * The metadata information is provided via the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation. This implementation has to be provided by the application.
 	 * @extends sap.ui.mdc.filterbar.FilterBarBase
@@ -26,12 +62,12 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.FilterBar
    	 * @experimental As of version 1.61.0
 	 */
-	var FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
+	const FilterBar = FilterBarBase.extend("sap.ui.mdc.FilterBar", {
 		metadata: {
 			designtime: "sap/ui/mdc/designtime/filterbar/FilterBar.designtime",
 			properties: {
 				/**
-				 * Determines whether the Adapt Filters button is visible in the filter bar.<br>
+				 * Determines whether the Adapt Filters button is visible in the <code>FilterBar</code>.<br>
 				 * <b>Note</b>: If the <code>p13nMode</code> property does not contain the value <code>Item</code>, it is ignored.
 				 */
 				showAdaptFiltersButton: {
@@ -40,7 +76,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Determines whether the Clear button is visible in the filter bar.
+				 * Determines whether the Clear button is visible in the <code>FilterBar</code>.
 				 * @since 1.108
 				 */
 				showClearButton: {
@@ -49,7 +85,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Specifies the personalization options for the filter bar.
+				 * Specifies the personalization options for the <code>FilterBar</code>.
 				 *
 				 * @since 1.74
 				 */
@@ -70,7 +106,7 @@ sap.ui.define([
 		renderer: FilterBarBaseRenderer
 	});
 
-	var ButtonType = mLibrary.ButtonType;
+	const ButtonType = mLibrary.ButtonType;
 
 	FilterBar.prototype._createInnerLayout = function() {
 		this._cLayoutItem = FilterItemLayout;
@@ -84,12 +120,12 @@ sap.ui.define([
 	FilterBar.prototype.setP13nMode = function(aMode) {
 		this.setProperty("p13nMode", aMode || [], false);
 
-		var oRegisterConfig = {
+		const oRegisterConfig = {
 			helper: this.getPropertyHelper(),
 			controller: {}
 		};
 
-		var bItemAssigned = false;
+		let bItemAssigned = false;
 		aMode && aMode.forEach(function(sMode) {
 			if (sMode == "Item") {
 				bItemAssigned = true;
@@ -121,7 +157,6 @@ sap.ui.define([
 	FilterBar.prototype._setP13nModeItem = function(bValue) {
 		this._oModel.setProperty("/_p13nModeItem", bValue, true);
 	};
-
 
 	FilterBar.prototype._addButtons = function() {
 
@@ -202,7 +237,7 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.retrieveInbuiltFilter = function() {
-		var oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
+		const oInbuiltFilterPromise = FilterBarBase.prototype.retrieveInbuiltFilter.apply(this, arguments);
 		return oInbuiltFilterPromise.then(function(oInnerFB){
 			return oInnerFB;
 		});
@@ -218,7 +253,6 @@ sap.ui.define([
 			}.bind(this)
 		})
 		.then(function(oPopup){
-			oPopup.setVerticalScrolling(false);
 			return oPopup;
 		});
 		}.bind(this));
@@ -229,10 +263,10 @@ sap.ui.define([
 	 * Returns the external conditions of the inner condition model.
 	 * <b>Note:</b> This API returns only attributes related to the {@link sap.ui.mdc.FilterBar#setP13nMode p13nMode} property configuration.
 	 * @public
-	 * @returns {sap.ui.mdc.State} Object containing the current status of the <code>FilterBar</code>
+	 * @returns {sap.ui.mdc.State} Object containing the current status of the {@link sap.ui.mdc.FilterBar FilterBar} control
 	 */
 	FilterBar.prototype.getCurrentState = function() {
-		var oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
+		const oState = FilterBarBase.prototype.getCurrentState.apply(this, arguments);
 		if (!this.getProperty("_p13nModeItem")) {
 			delete oState.items;
 		}
@@ -243,7 +277,7 @@ sap.ui.define([
 	/**
 	 * Sets the focus on the first filter in error state.
 	 * @public
-	 * @returns {sap.ui.mdc.FilterField | null} Returns the first filter field in error state
+	 * @returns {sap.ui.mdc.FilterField | null} The first filter field in error state
 	 */
 	FilterBar.prototype.setFocusOnFirstErroneousField = function() {
 		return this._setFocusOnFirstErroneousField();

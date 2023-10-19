@@ -16,7 +16,8 @@ sap.ui.define([
 	"../QUnitUtils",
 	"sap/m/p13n/Engine",
 	"sap/ui/mdc/p13n/subcontroller/FilterController",
-	"sap/ui/mdc/util/PropertyHelper"
+	"sap/ui/mdc/util/PropertyHelper",
+	"sap/ui/mdc/enums/OperatorName"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
@@ -33,14 +34,15 @@ sap.ui.define([
 	MDCQUnitUtils,
 	Engine,
 	FilterController,
-	PropertyHelper
+	PropertyHelper,
+	OperatorName
 ) {
 	"use strict";
 
-	var oAdaptationFilterBar;
+	let oAdaptationFilterBar;
 	QUnit.module("AdaptationFilterBar - MDC Control specific tests", {
 		beforeEach: function () {
-			var aPropertyInfo = [
+			const aPropertyInfo = [
 				{
 					label: "Key 1",
 					name: "key1",
@@ -87,12 +89,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Created changes will be applied on the consuming control - test for Table", function (assert) {
-		var done = assert.async();
+		const done = assert.async();
 
-		var mSampleConditions = {
+		const mSampleConditions = {
 			key1: [
 				{
-					operator:"EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"Test"
 					]
@@ -116,7 +118,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Set propertyInfo depending on parent", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 
 		//AdaptationFilterBar should listen to parent "fetchProperties"
 		this.oAdaptationFilterBar.setAdaptationControl(this.oTestTable);
@@ -146,7 +148,7 @@ sap.ui.define([
 
 	QUnit.module("AdaptationFilterBar - MDC Control unspecific tests", {
 		createIFilter: function(mSettings) {
-			var IFilterControl = Control.extend("temp", {
+			const IFilterControl = Control.extend("temp", {
 				metadata: {
 					interfaces: [
 						"sap.ui.mdc.IFilter"
@@ -156,19 +158,19 @@ sap.ui.define([
 			return new IFilterControl(mSettings);
 		},
 		createPropertyHelper: function() {
-			var CustomHelper = PropertyHelper.extend("TestHelper");
+			const CustomHelper = PropertyHelper.extend("TestHelper");
 
 			CustomHelper.prototype.prepareProperty = function(oProperty) {
 				PropertyHelper.prototype.prepareProperty.apply(this, arguments);
-				var oParent = this.getParent();
-				var oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
+				const oParent = this.getParent();
+				const oTypeUtil = oParent._oDelegate.getTypeMap(oParent);
 				oProperty.typeConfig = oTypeUtil.getTypeConfig(oProperty.dataType, oProperty.formatOptions, oProperty.constraints);
 			};
 
 			return CustomHelper;
 		},
 		createIFilterSource: function(mSettings) {
-			var IFilterControl = Control.extend("temp", {
+			const IFilterControl = Control.extend("temp", {
 				metadata: {
 					interfaces: [
 						"sap.ui.mdc.IFilterSource"
@@ -179,7 +181,7 @@ sap.ui.define([
 		},
 		prepareTestSetup: function(bCreateIFilter) {
 			//mock parent as 'AdaptationControl'
-			var fnParentFactory = bCreateIFilter ? this.createIFilter : this.createIFilterSource;
+			const fnParentFactory = bCreateIFilter ? this.createIFilter : this.createIFilterSource;
 
 			this.oParent = fnParentFactory({
 				delegate: {
@@ -187,7 +189,7 @@ sap.ui.define([
 				}
 			});
 
-			var oController = new FilterController({
+			const oController = new FilterController({
 				control: this.oParent
 			});
 
@@ -237,7 +239,7 @@ sap.ui.define([
 			];
 
 			//Mock Delegate funcitonality
-			var oMockedPropertyInfoPromise = new Promise(function(resolve){
+			const oMockedPropertyInfoPromise = new Promise(function(resolve){
 				resolve(this.aMockProperties);
 			}.bind(this));
 
@@ -275,7 +277,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'ValueState' and 'ValueStateText' removal on cloning", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
 		this.oAddStub.callsFake(this.addItem);
@@ -312,7 +314,7 @@ sap.ui.define([
 		.then(function(){
 			oAdaptationFilterBar.createFilterFields().then(function(){
 
-				var oClonedField = oAdaptationFilterBar.getFilterItems()[0];
+				const oClonedField = oAdaptationFilterBar.getFilterItems()[0];
 
 				assert.equal(oClonedField.getValueState(), "None", "ValueState is cleared during cloning");
 				assert.equal(oClonedField.getValueStateText(), "", "ValueStateText is cleared during cloning");
@@ -322,7 +324,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Created changes should always be externalized - Check String types", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
 		Promise.all([
@@ -340,7 +342,7 @@ sap.ui.define([
 			oAdaptationFilterBar.setLiveMode(false);
 
 			oAdaptationFilterBar.setFilterConditions({"key1": [{
-				operator:"EQ",
+				operator: OperatorName.EQ,
 				values: [
 					"Externalized Test"
 				]
@@ -353,7 +355,7 @@ sap.ui.define([
 
 			//4) Assertions
 
-			var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key1"];
+			const aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key1"];
 			assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
 			oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
 				// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
@@ -365,7 +367,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Created changes should always be externalized - Check Date types", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
 		Promise.all([
@@ -383,7 +385,7 @@ sap.ui.define([
 			oAdaptationFilterBar.setLiveMode(false);
 
 			oAdaptationFilterBar.setFilterConditions({"key2": [{
-				operator:"EQ",
+				operator: OperatorName.EQ,
 				values: [
 					"Dec 31, 2020, 11:59:58 PM"
 				]
@@ -395,7 +397,7 @@ sap.ui.define([
 
 			//4) Assertions
 
-			var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key2"];
+			const aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key2"];
 
 			assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
 			assert.equal(typeof aInnerConditions[0], "object", "Internal format - type is not stringified");
@@ -412,7 +414,7 @@ sap.ui.define([
 
 	QUnit.test("Create filter fields", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(false);
 
 		oAdaptationFilterBar.setP13nData({
@@ -442,7 +444,7 @@ sap.ui.define([
 
 	QUnit.test("Create filter fields triggers 'active' update of model", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(false);
 
 		oAdaptationFilterBar.setP13nData({
@@ -456,7 +458,7 @@ sap.ui.define([
 			]
 		});
 
-		var oUpdateSpy = sinon.spy(oAdaptationFilterBar, "_updateActiveStatus");
+		const oUpdateSpy = sinon.spy(oAdaptationFilterBar, "_updateActiveStatus");
 
 		Promise.all([
 			//1) Init Parent (Delegate + PropertyHelper)
@@ -475,7 +477,7 @@ sap.ui.define([
 
 	QUnit.test("Create filter fields and check their order", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(false);
 
 		//the order (key1, key2) should be maintained in the AdaptationFilterBar
@@ -532,10 +534,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test '_checkExisting' - check 'remove' hook executions", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
-		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
+		const oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 
 		this.oAddStub.callsFake(this.addItem);
 
@@ -549,7 +551,7 @@ sap.ui.define([
 			];
 		};
 
-		var oGroupPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+		const oGroupPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
 		sinon.stub(oGroupPanel, "getSelectedFields").returns([
 			"key1"
 		]);
@@ -587,10 +589,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'FilterPanel' as inner layout and remove change event", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(false);
 
-		var oFilterPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+		const oFilterPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
 
 		oAdaptationFilterBar.setP13nData({
 			items: [
@@ -614,7 +616,7 @@ sap.ui.define([
 		.then(function(){
 			oAdaptationFilterBar.createFilterFields().then(function(){
 
-				var oConditionChangeSpy = sinon.spy(oAdaptationFilterBar.getEngine(), "createChanges");
+				const oConditionChangeSpy = sinon.spy(oAdaptationFilterBar.getEngine(), "createChanges");
 
 				oFilterPanel.fireChange({
 					item: {
@@ -631,10 +633,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions, but change the selection before", function(assert){
-		var done = assert.async(1);
+		const done = assert.async(1);
 		this.prepareTestSetup(true);
 
-		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
+		const oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 		this.oAddStub.callsFake(this.addItem);
 
 		this.oParent.getFilterItems = function() {
@@ -645,7 +647,7 @@ sap.ui.define([
 			];
 		};
 
-		var oGroupPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
+		const oGroupPanel = oAdaptationFilterBar._oFilterBarLayout.getInner();
 
 		sinon.stub(oGroupPanel, "getSelectedFields").returns([
 			"key1", "key2"
@@ -691,7 +693,7 @@ sap.ui.define([
 
 	QUnit.test("CreateFilterFields should only resolve once all Fields have been created", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
 		//Use a timeout to mock FilterField creation delay
@@ -739,7 +741,7 @@ sap.ui.define([
 
 	QUnit.test("Throw an error for undefined FilterField creation", function(assert) {
 
-		var done = assert.async();
+		const done = assert.async();
 		this.prepareTestSetup(true);
 
 		this.oAddStub.callsFake(function(){
@@ -796,7 +798,7 @@ sap.ui.define([
 
 	QUnit.module("FilterBar with bound filterItems aggregation", {
 		beforeEach: function(assert){
-			var oMyModel = new JSONModel({
+			const oMyModel = new JSONModel({
 				data: [
 					{
 						key: "key1",
@@ -845,7 +847,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Use bound label property for p13n", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oParent.getInbuiltFilter().setP13nData({
 			items: [
@@ -869,7 +871,7 @@ sap.ui.define([
 
 			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 
-				var aFilterItems = oAdaptationFilterBar.getFilterItems();
+				const aFilterItems = oAdaptationFilterBar.getFilterItems();
 				assert.ok(oAdaptationFilterBar.getModel("$custom"), "Custom model provided in AdaptationFilterBar");
 				assert.equal(aFilterItems[0].getLabel(), "Some custom label", "Initially bound label used in dialog");
 
@@ -880,7 +882,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Always destroy leftovers on exit", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oParent.getInbuiltFilter().setP13nData({
 			items: [
@@ -903,7 +905,7 @@ sap.ui.define([
 			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 
 				//Only one original from delegate as one is already present in the filteritems aggregation
-				var oFKey2 = oAdaptationFilterBar._mOriginalsForClone["key2"];
+				const oFKey2 = oAdaptationFilterBar._mOriginalsForClone["key2"];
 				assert.equal(Object.keys(oAdaptationFilterBar._mOriginalsForClone).length, 1, "1 Original from delegate callback");
 
 				oAdaptationFilterBar.destroy();
@@ -916,7 +918,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy leftover fields (also dynamically added ones)", function(assert){
-		var done = assert.async();
+		const done = assert.async();
 
 		this.oParent.getInbuiltFilter().setP13nData({
 			items: [
@@ -946,7 +948,7 @@ sap.ui.define([
 				// 1) Add the filterfield to the p13n model (usually triggered by user interaction with the AdaptationFilterBar)
 				// 2) Add the filterfield to the parent FilterBar --> check if the AdaptationFilterBar recognizes that the field has
 				// been added during runtime
-				var aP13nItems = oAdaptationFilterBar.getP13nData().items;
+				const aP13nItems = oAdaptationFilterBar.getP13nData().items;
 				aP13nItems[1].visible = true;
 				oAdaptationFilterBar.setP13nData({items: aP13nItems});
 				this.oParent.addFilterItem(new FilterField({
@@ -956,7 +958,7 @@ sap.ui.define([
 
 				oAdaptationFilterBar.executeRemoves().then(function(){
 
-					var oAddedField = oAdaptationFilterBar._mOriginalsForClone["key2"];
+					const oAddedField = oAdaptationFilterBar._mOriginalsForClone["key2"];
 
 					assert.ok(oAddedField, "The AdaptationFilterBar noticed that the field has been added and did not trigger 'removeItem'");
 

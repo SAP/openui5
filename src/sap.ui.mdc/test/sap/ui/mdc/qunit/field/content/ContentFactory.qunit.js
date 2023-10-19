@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/SearchContent",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/ui/mdc/enums/ContentMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/Link",
 	"sap/m/Text",
 	"sap/m/ExpandableText",
@@ -27,20 +28,20 @@ sap.ui.define([
 	"sap/m/SearchField",
 	"sap/m/TimePicker",
 	"sap/m/DynamicDateRange"
-], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, FieldEditMode, ContentMode, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
+], function(QUnit, FieldBase, ContentFactory, DefaultContent, LinkContent, DateContent, DateTimeContent, TimeContent, BooleanContent, UnitContent, SearchContent, FieldEditMode, ContentMode, OperatorName, MdcLink, Text, ExpandableText, Link, FieldInput, FieldMultiInput, TokenizerDisplay, TextArea, DatePicker, DateRangeSelection, DateTimePicker, SearchField, TimePicker, DynamicDateRange) {
 	"use strict";
 
 	QUnit.test("Constructor", function(assert) {
-		var oContentFactory = new ContentFactory({});
+		const oContentFactory = new ContentFactory({});
 		assert.ok(oContentFactory, "ContentFactory created using constructor.");
 
-		var oField = new FieldBase({});
+		const oField = new FieldBase({});
 		assert.ok(oField._oContentFactory, "ContentFactory created inside FieldBase.");
 	});
 
 	QUnit.module("Getters", {
 		before: function() {
-			this.oField = new FieldBase({});
+			this.oField = new FieldBase({visible: false}); // prevent creation of internal content as this initializest most ContentFactory functions
 			this.oContentFactory = this.oField.getContentFactory();
 		},
 		after: function() {
@@ -87,12 +88,12 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getField(), this.oField, "Correct Field returned.");
 	});
 
-	QUnit.test("getFieldHelpIcon", function(assert) {
-		assert.equal(this.oContentFactory.getFieldHelpIcon(), this.oField._getFieldHelpIcon(), "Correct FieldHelpIcon returned.");
+	QUnit.test("getValueHelpIcon", function(assert) {
+		assert.equal(this.oContentFactory.getValueHelpIcon(), this.oField._getValueHelpIcon(), "Correct ValueHelpIcon returned.");
 	});
 
 	QUnit.test("getConditionType", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.notOk(this.oContentFactory.getConditionType(true), "No ConditionType returned.");
 			assert.ok(this.oContentFactory.getConditionType(), "Correct ConditionType returned.");
@@ -101,7 +102,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getConditionsType", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.notOk(this.oContentFactory.getConditionsType(true), "No ConditionsType returned.");
 			assert.ok(this.oContentFactory.getConditionsType(), "Correct ConditionsType returned.");
@@ -110,7 +111,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getUnitConditionsType", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
 			assert.notOk(this.oContentFactory.getUnitConditionsType(true), "No UnitConditionsType returned.");
 			assert.ok(this.oContentFactory.getUnitConditionsType(), "Correct UnitConditionsType returned.");
@@ -148,8 +149,8 @@ sap.ui.define([
 		assert.equal(this.oContentFactory.getContentMode(null, null, 1, true, []), ContentMode.EditMultiLine, "ContentMode 'EditMultiLine' returned.");
 
 		/* ContentMode EditOperator */
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["BT"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
-		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, ["EQ"]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, [OperatorName.BT]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
+		assert.equal(this.oContentFactory.getContentMode(DateContent, null, 1, false, [OperatorName.EQ]), ContentMode.EditOperator, "ContentMode 'EditOperator' returned.");
 
 		/* ContentMode EditForHelp */
 		this.oField.setValueHelp("X"); // just ID needed
@@ -157,10 +158,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContentType", function(assert) {
-		var done = assert.async();
+		const done = assert.async();
 		this.oField.awaitControlDelegate().then(function() {
-			var sBaseType = "";
-			var iMaxConditions = -1;
+			let sBaseType = "";
+			let iMaxConditions = -1;
 
 			/* DefaultContent */
 			assert.equal(this.oContentFactory.getContentType(sBaseType, iMaxConditions, false), DefaultContent, "DefaultContent returned.");
@@ -217,7 +218,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("_updateLink", function(assert) {
-		var oLink = new Link({
+		const oLink = new Link({
 			href: "",
 			target: "_self"
 		});
@@ -225,7 +226,7 @@ sap.ui.define([
 		assert.equal(oLink.getHref(), "", "Initial Href correct.");
 		assert.equal(oLink.getTarget(), "_self", "Initial Target correct.");
 
-		var oLinkItem = {
+		const oLinkItem = {
 			href: "test",
 			target: "_blank"
 		};
@@ -236,18 +237,18 @@ sap.ui.define([
 		assert.equal(oLink.getTarget(), "_blank", "Target changed correctly.");
 	});
 
-	var fnCreateAllContents = function(oContentType, sContentTypeName) {
-		var oCreateDisplayPromise = this.oContentFactory.createContent(oContentType, ContentMode.Display, sContentTypeName + "-" + ContentMode.Display);
-		var oCreateDisplayMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiValue, sContentTypeName + "-" + ContentMode.DisplayMultiValue);
-		var oCreateDisplayMultiLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiLine, sContentTypeName + "-" + ContentMode.DisplayMultiLine);
-		var oCreateEditPromise = this.oContentFactory.createContent(oContentType, ContentMode.Edit, sContentTypeName + "-" + ContentMode.Edit);
-		var oCreateEditMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiValue, sContentTypeName + "-" + ContentMode.EditMultiValue);
-		var oCreateEditMutliLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiLine, sContentTypeName + "-" + ContentMode.EditMultiLine);
-		this.oContentFactory._sOperator = "EQ";
-		var oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "EQ");
-		this.oContentFactory._sOperator = "BT";
-		var oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + "BT");
-		var oCreateEditForHelpPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditForHelp, sContentTypeName + "-" + ContentMode.EditForHelp);
+	const fnCreateAllContents = function(oContentType, sContentTypeName) {
+		const oCreateDisplayPromise = this.oContentFactory.createContent(oContentType, ContentMode.Display, sContentTypeName + "-" + ContentMode.Display);
+		const oCreateDisplayMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiValue, sContentTypeName + "-" + ContentMode.DisplayMultiValue);
+		const oCreateDisplayMultiLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.DisplayMultiLine, sContentTypeName + "-" + ContentMode.DisplayMultiLine);
+		const oCreateEditPromise = this.oContentFactory.createContent(oContentType, ContentMode.Edit, sContentTypeName + "-" + ContentMode.Edit);
+		const oCreateEditMultiValuePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiValue, sContentTypeName + "-" + ContentMode.EditMultiValue);
+		const oCreateEditMutliLinePromise = this.oContentFactory.createContent(oContentType, ContentMode.EditMultiLine, sContentTypeName + "-" + ContentMode.EditMultiLine);
+		this.oContentFactory._sOperator = OperatorName.EQ;
+		const oCreateEditOperatorEQPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + OperatorName.EQ);
+		this.oContentFactory._sOperator = OperatorName.BT;
+		const oCreateEditOperatorBTPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditOperator, sContentTypeName + "-" + ContentMode.EditOperator + OperatorName.BT);
+		const oCreateEditForHelpPromise = this.oContentFactory.createContent(oContentType, ContentMode.EditForHelp, sContentTypeName + "-" + ContentMode.EditForHelp);
 
 		return [
 			oCreateDisplayPromise,
@@ -262,8 +263,8 @@ sap.ui.define([
 		];
 	};
 
-	var fnCheckCreatedContent = function(oExpectedContentControl, assert, done) {
-		var aContentModes = [
+	const fnCheckCreatedContent = function(oExpectedContentControl, assert, done) {
+		const aContentModes = [
 			ContentMode.Display,
 			ContentMode.DisplayMultiValue,
 			ContentMode.DisplayMultiLine,
@@ -274,19 +275,19 @@ sap.ui.define([
 			ContentMode.EditOperator + " (BT)",
 			ContentMode.EditForHelp
 		];
-		var oContentType = oExpectedContentControl.contentType;
-		var sContentTypeName = oExpectedContentControl.contentTypeName;
-		var aExpectedControlArrays = oExpectedContentControl.expectedControls;
+		const oContentType = oExpectedContentControl.contentType;
+		const sContentTypeName = oExpectedContentControl.contentTypeName;
+		const aExpectedControlArrays = oExpectedContentControl.expectedControls;
 
-		var aCreateContentPromises = fnCreateAllContents.call(this, oContentType, sContentTypeName);
+		const aCreateContentPromises = fnCreateAllContents.call(this, oContentType, sContentTypeName);
 
 		Promise.all(aCreateContentPromises).then(function(aCreatedControlsArrays) {
 			aCreatedControlsArrays.forEach(function(aCreatedControls, iIndex) {
-				var aExpectedControls = aExpectedControlArrays[iIndex];
-				var sContentMode = aContentModes[iIndex];
+				const aExpectedControls = aExpectedControlArrays[iIndex];
+				const sContentMode = aContentModes[iIndex];
 
 				aCreatedControls.forEach(function(oCreatedControl, iIndex) {
-					var oExpectedControl = aExpectedControls[iIndex];
+					const oExpectedControl = aExpectedControls[iIndex];
 					assert.ok(oExpectedControl && oCreatedControl instanceof oExpectedControl, "Correct controls returned for ContentType '" + sContentTypeName + "' in ContentMode '" + sContentMode + "'");
 				});
 			});
@@ -295,7 +296,7 @@ sap.ui.define([
 	};
 
 	QUnit.test("createContent", function(assert) {
-		var aExpectedContentControls = [
+		const aExpectedContentControls = [
 			{
 				contentType: BooleanContent,
 				contentTypeName: "BooleanContent",
@@ -417,7 +418,7 @@ sap.ui.define([
 				]
 			}
 		];
-		var done = assert.async(aExpectedContentControls.length);
+		const done = assert.async(aExpectedContentControls.length);
 
 		this.oField.awaitControlDelegate().then(function() {
 
@@ -429,7 +430,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("createContent error handling", function(assert) {
-		var DefaultContentError = Object.assign({}, DefaultContent);
+		const DefaultContentError = Object.assign({}, DefaultContent);
 
 		DefaultContentError.createDisplay = function () {
 			throw new Error("Test Error");
@@ -439,7 +440,7 @@ sap.ui.define([
 			return ["sap/ui/mdc/Link"];
 		};
 
-		var oExpectedContentControl = {
+		const oExpectedContentControl = {
 			contentType: DefaultContentError,
 			contentTypeName: "DefaultContent",
 			expectedControls: [
@@ -454,11 +455,11 @@ sap.ui.define([
 				[FieldInput]
 		]
 		};
-		var done = assert.async(2);
+		const done = assert.async(2);
 
 		this.oField.awaitControlDelegate().then(function() {
-			var oContentType = oExpectedContentControl.contentType;
-			var sContentTypeName = oExpectedContentControl.contentTypeName;
+			const oContentType = oExpectedContentControl.contentType;
+			const sContentTypeName = oExpectedContentControl.contentTypeName;
 
 			assert.throws(
 				function() {

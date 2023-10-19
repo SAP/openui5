@@ -122,7 +122,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	};
 
-	testUtils.rerender = function rerender() {
+	testUtils.triggerRerender = function triggerRerender() {
 		oCore.applyChanges();
 	};
 

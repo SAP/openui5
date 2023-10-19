@@ -5,22 +5,24 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
 	"sap/base/Log"
 ], function(
 	CompVariant,
 	FlexObjectFactory,
+	CompVariantUtils,
 	Log
 ) {
 	"use strict";
 
 	var mChangeHandlers = {
-		addFavorite: function(oVariant) {
+		addFavorite(oVariant) {
 			oVariant.setFavorite(true);
 		},
-		removeFavorite: function(oVariant) {
+		removeFavorite(oVariant) {
 			oVariant.setFavorite(false);
 		},
-		updateVariant: function(oVariant, oChange) {
+		updateVariant(oVariant, oChange) {
 			var oChangeContent = oChange.getContent();
 			if (oChangeContent.executeOnSelection !== undefined) {
 				oVariant.setExecuteOnSelection(oChangeContent.executeOnSelection);
@@ -43,7 +45,7 @@ sap.ui.define([
 				oVariant.setName(sVariantName, /* bSkipStateChange = */ true);
 			}
 		},
-		standardVariant: function(oVariant, oChange) {
+		standardVariant(oVariant, oChange) {
 			// legacy change on standard variants
 			oVariant.setExecuteOnSelection(oChange.getContent().executeOnSelect);
 		}
@@ -54,9 +56,7 @@ sap.ui.define([
 
 		mCompVariants.changes.forEach(function(oChange) {
 			var sVariantId = oChange.getSelector().variantId || oChange.getContent().key;
-			if (!mChanges[sVariantId]) {
-				mChanges[sVariantId] = [];
-			}
+			mChanges[sVariantId] ||= [];
 
 			mChanges[sVariantId].push(oChange);
 		});
@@ -65,9 +65,8 @@ sap.ui.define([
 	}
 
 	function logNoChangeHandler(oVariant, oChange) {
-		Log.error("No change handler for change with the ID '" + oChange.getId() +
-			"' and type '" + oChange.getChangeType() + "' defined.\n" +
-			"The variant '" + oVariant.getId() + "'was not modified'");
+		Log.error(`No change handler for change with the ID '${oChange.getId()}' and type '${oChange.getChangeType()}' defined.
+			The variant '${oVariant.getId()}'was not modified'`);
 	}
 
 	function createVariant(sPersistencyKey, oVariantInput) {
@@ -127,7 +126,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function(sPersistencyKey, mCompData, oStandardVariantInput) {
+		merge(sPersistencyKey, mCompData, oStandardVariantInput) {
 			var aVariants = mCompData.nonPersistedVariants.concat(mCompData.variants);
 			var mChanges = getChangesMappedByVariant(mCompData);
 
@@ -186,6 +185,15 @@ sap.ui.define([
 
 			mCompData.standardVariant = oStandardVariant;
 
+			// the default variant must always be a favorite
+			// e.g. end user sets variant to default, then key user removes it from favorites
+			const sDefaultVariantId = CompVariantUtils.getDefaultVariantId(mCompData);
+			aVariants.some((oVariant) => {
+				if (!oVariant.getFavorite() && oVariant.getId() === sDefaultVariantId) {
+					oVariant.setFavorite(true);
+				}
+			});
+
 			return {
 				standardVariant: oStandardVariant,
 				variants: aVariants
@@ -207,9 +215,9 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The created variant object
 		 */
-		createVariant: function(sPersistencyKey, oVariantInput) {
+		createVariant(sPersistencyKey, oVariantInput) {
 			return createVariant(sPersistencyKey, oVariantInput);
 		},
-		applyChangeOnVariant: applyChangeOnVariant
+		applyChangeOnVariant
 	};
 });

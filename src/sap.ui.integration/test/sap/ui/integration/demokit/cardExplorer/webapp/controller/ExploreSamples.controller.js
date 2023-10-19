@@ -27,10 +27,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/Popover",
 	"sap/m/Select",
-	"sap/m/VBox",
-	"sap/m/HBox",
-	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/designtime/editor/CardEditor"
+	"sap/m/HBox"
 ], function (
 	BaseController,
 	Constants,
@@ -60,17 +57,16 @@ sap.ui.define([
 	Panel,
 	Popover,
 	Select,
-	VBox,
-	HBox,
-	Card,
-	CardEditor
+	HBox
 ) {
 	"use strict";
+
+	// Lazy dependencies from sap.ui.integration lib
+	var CardEditor, Card;
 
 	var SAMPLE_CHANGED_ERROR = "Sample changed",
 	oConfigurationCardMFChangesforAdmin = {},
 	oConfigurationCardMFChangesforContent = {},
-	oConfigurationCardMFChangesforTranslation = {},
 	selectedFileTabKey = null;
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
@@ -231,72 +227,6 @@ sap.ui.define([
 				}
 				return fnCb.apply(this, arguments);
 			}.bind(this);
-		},
-
-		onOpenConfigurationEditor: function (oEvent) {
-			var sMode = oEvent.getSource().data("mode");
-			var sPreviewPosition = oEvent.getSource().data("previewPosition");
-			var sEditorTitle = {
-				admin: "Administrator",
-				content: "Page/Content Administrator",
-				translation: "Translator"
-			}[sMode];
-
-			this._loadConfigurationEditor()
-				.then(this._cancelIfSampleChanged(function () {
-					return Promise.all([
-						Fragment.load({
-							name: "sap.ui.demo.cardExplorer.view.CardEditorDialog",
-							controller: this
-						}),
-						this._oFileEditor.getDesigntimeContent()
-					]);
-				}))
-				.then(this._cancelIfSampleChanged(function (aArgs) {
-					var oDialog = aArgs[0],
-					adminChanges,
-					contentChanges,
-					translationChanges,
-					oManifestSettings = [];
-					if (sMode === "admin") {
-						// aChanges = JSON.parse(oConfigurationCardMFChangesforAdmin || "{}");
-						adminChanges = oConfigurationCardMFChangesforAdmin || "{}";
-					} else if (sMode === "content") {
-						// aChanges = JSON.parse(oConfigurationCardMFChangesforContent || "{}");
-						contentChanges = oConfigurationCardMFChangesforContent || "{}";
-					} else if (sMode === "translation") {
-						// aChanges = JSON.parse(oConfigurationCardMFChangesforTranslation || "{}");
-						translationChanges = oConfigurationCardMFChangesforTranslation || "{}";
-					}
-					if (sMode === "admin") {
-						oManifestSettings.push(adminChanges);
-					} else if (sMode === "content") {
-						oManifestSettings.push(adminChanges, contentChanges);
-					} else if (sMode === "translation") {
-						oManifestSettings.push(adminChanges, contentChanges, translationChanges);
-					}
-
-					oDialog.setModel(new JSONModel({
-						title: "Configuration Editor for " + sEditorTitle,
-						subTitle: "<p>Settings loaded from <em>" + this._oFileEditor.getDesigntimeFile().name + "</em>. "
-								+ "You can edit it to adjust editor fields.<p>",
-						cardId: this._oCardSample.getId(),
-						mode: sMode,
-						manifestChanges: oManifestSettings,
-						previewPosition: sPreviewPosition,
-						designtime: this._extractDesigntimeMetadata(aArgs[1]),
-						language: Core.getConfiguration().getLanguage()
-					}), "config");
-
-					oDialog.setContentWidth("750px");
-
-					oDialog.open();
-				}))
-				.catch(function (oErr) {
-					if (oErr.message !== SAMPLE_CHANGED_ERROR) {
-						this._oFileEditor.showError(oErr.name + ": " + oErr.message);
-					}
-				}.bind(this));
 		},
 
 		//User can select card editor mode to reload the related card editor
@@ -832,7 +762,10 @@ sap.ui.define([
 		_loadConfigurationEditor: function () {
 			if (!this._pLoadConfigurationEditor) {
 				this._pLoadConfigurationEditor = new Promise(function (resolve, reject) {
-					sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], resolve, reject);
+					sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], function (_CardEditor) {
+						CardEditor = _CardEditor;
+						resolve();
+					}, reject);
 				});
 			}
 
@@ -1121,6 +1054,8 @@ sap.ui.define([
 					.then(function (aArgs) {
 						var oCard = aArgs[0],
 							oHost = aArgs[1];
+
+						Card = oCard.getMetadata().getClass();
 
 						if (oSample.cache) {
 							oHost.useExperimentalCaching();
@@ -1475,12 +1410,6 @@ sap.ui.define([
 			//reset runtime card
 			this._initalChanges = this._initalChanges || this._oCardSample.getManifestChanges() || [];
 			this._oCardSample.setManifestChanges(this._initalChanges);
-		},
-
-		onEditorDialogClose: function (oEvent) {
-			var oDialog = oEvent.getSource().getParent();
-			oDialog.close();
-			oDialog.destroy();
 		},
 
 		_registerCachingServiceWorker: function () {

@@ -15,17 +15,6 @@ sap.ui.define([
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
-		// TODO : refactor hardcoded libs
-		var OPENUI5_LIBS = ["sap.ui.core", "sap.ui.dt", "sap.m", "sap.ui.fl", "sap.ui.layout", "sap.ui.mdc", "sap.ui.unified",
-			"sap.f", "sap.ui.rta", "sap.ui.commons", "sap.ui.codeeditor", "sap.ui.table", "sap.uxap", "sap.ui.integration",
-			"sap.tnt", "sap.ui.ux3", "sap.ui.suite", "sap.ui.webc.common", "sap.ui.webc.fiori", "sap.ui.webc.main" ];
-		var SAPUI5_LIBS = ["sap.ushell", "sap.fe", "sap.viz", "sap.suite.ui.microchart", "sap.chart", "sap.ui.comp", "sap.ui.generic.app",
-			"sap.fe.navigation", "sap.suite.ui.generic.template", "sap.ui.richtexteditor", "sap.suite.ui.commons", "sap.ui.export",
-			"sap.ndc", "sap.me", "sap.fe.core", "sap.fe.macros", "sap.collaboration", "sap.fe.templates", "sap.ui.generic.template",
-			"sap.zen.dsh", "sap.ovp", "sap.zen.crosstab", "sap.zen.commons", "sap.gantt", "sap.ui.mdc", "sap.fe.plugins", "sap.ui.vbm",
-			"sap.apf", "sap.rules.ui", "sap.ui.vk", "sap.ui.vtm", "sap.ushell_abap", "sap.fe.placeholder", "sap.feedback.ui",
-			"sap.fileviewer", "sap.ca.ui", "sap.landvisz"];
-
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
@@ -59,7 +48,7 @@ sap.ui.define([
 							var sMockFileName = this._aMockFiles[j];
 							if ((typeof sRawFile === "string") && sRawFile.indexOf(sMockFileName) > -1) {
 								aMockFilePromises.push(this._addFileToZip({
-									name: "mockdata/" + sMockFileName,
+									name: this._formatWebAppPath("mockdata/" + sMockFileName),
 									url: MOCK_DATA_REF + "/" + sMockFileName,
 									formatter: this._formatMockFile
 								}, oZipFile));
@@ -78,20 +67,21 @@ sap.ui.define([
 					if (oFile.name === "manifest.json") {
 						oManifestFile = oFile;
 						aPromises.push(this._addFileToZip({
-						   name: oFile.name,
-						   url: sUrl,
-						   formatter: this._formatManifestJsFile
+							name: this._formatWebAppPath(oFile.name),
+							url: sUrl,
+							formatter: this._formatManifestJsFile
 						}, oZipFile));
 						continue;
-					 }
-
-					aPromises.push(this._addFileToZip({
-						name: oFile.name.replace(new RegExp(/(\.\.\/)+/g), "./"),
-						url: sUrl,
-						formatter:  (bChangeBootstrap && !bCustomIndexHTML) ? this._changeIframeBootstrapToCloud : undefined
-					}, oZipFile));
-
-					aPromises.push(this.fetchSourceFile(sUrl).then(fnAddMockFileToZip.bind(this)));
+					} else if (this._isRootLevelFile(oFile.name)) {
+						continue;
+					} else {
+						aPromises.push(this._addFileToZip({
+							name: this._formatWebAppPath(oFile.name.replace(new RegExp(/(\.\.\/)+/g), "./")),
+							url: sUrl,
+							formatter: (bChangeBootstrap && !bCustomIndexHTML) ? this._changeIframeBootstrapToCloud : undefined
+						}, oZipFile));
+						aPromises.push(this.fetchSourceFile(sUrl).then(fnAddMockFileToZip.bind(this)));
+					}
 				}
 
 				// iframe examples have a separate index file and a component file to describe it
@@ -102,14 +92,14 @@ sap.ui.define([
 
 
 					aPromises.push(this._addFileToZip({
-						name: "Component.js",
+						name: this._formatWebAppPath("Component.js"),
 						url: sRef + "/" + "Component.js"
 					}, oZipFile));
 
 
 					if (!bCustomIndexHTML) {
 						aPromises.push(this._addFileToZip({
-							name: "index.html",
+							name: this._formatWebAppPath("index.html"),
 							url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
 							formatter: function(sIndexFile) {
 								return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
@@ -120,7 +110,7 @@ sap.ui.define([
 
 					if (!bHasManifest) {
 						aPromises.push(this._addFileToZip({
-							name: "index.js",
+							name: this._formatWebAppPath("index.js"),
 							url: TMPL_REF + "/" + "index.js.tmpl",
 							formatter: function(sIndexJsFile) {
 								return this._changeIframeBootstrapToCloud(this._formatIndexJsFile(sIndexJsFile, oData));
@@ -133,10 +123,10 @@ sap.ui.define([
 				// add extra download files
 				aExtraFiles.forEach(function (sFileName) {
 					aPromises.push(this._addFileToZip({
-						name: sFileName,
+						name: this._formatWebAppPath(sFileName),
 						url: sRef + "/" + sFileName
 					}, oZipFile));
-				});
+				}.bind(this));
 
 
 				// add generic license file
@@ -147,17 +137,17 @@ sap.ui.define([
 
 				aPromises.push(this._addFileToZip({
 					name: "ui5.yaml",
-					url: sCustomUI5Yaml ? sRef + "/" + sCustomUI5Yaml : TMPL_REF + "/ui5.yaml.tmpl",
+					url: sCustomUI5Yaml ? sRef + "/" + sCustomUI5Yaml.name : TMPL_REF + "/ui5.yaml.tmpl",
 					formatter: function(sYamlFile) {
-						return this._formatYamlFile(sYamlFile, oData);
+						return sCustomUI5Yaml ? this._formatCustomUI5Yaml(sYamlFile) : this._formatUI5Yaml(sYamlFile, oData, oManifestFile);
 					}.bind(this)
 				}, oZipFile, true));
 
 				aPromises.push(this._addFileToZip({
 					name: "package.json",
-					url: sCustomPkgJson ? sRef + "/" + sCustomPkgJson : TMPL_REF + "/package.json.tmpl",
+					url: sCustomPkgJson ? sRef + "/" + sCustomPkgJson.name : TMPL_REF + "/package.json.tmpl",
 					formatter: function(sPackageFile) {
-						return this._formatPackageJson(sPackageFile, oManifestFile, oData);
+						return sCustomPkgJson ? sPackageFile : this._formatPackageJson(sPackageFile, oData);
 					}.bind(this)
 				}, oZipFile, true));
 
@@ -220,37 +210,42 @@ sap.ui.define([
 				.join("-");
 		},
 
-		_formatPackageJson: function (sPackageFile, sManifestFile, oData) {
+		_formatPackageJson: function (sPackageFile, oData) {
 			var sFormattedPackageFile = sPackageFile.replace(/{{TITLE}}/g, oData.title)
 				.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id)),
-				oPackageFile = JSON.parse(sFormattedPackageFile),
-				oPackageDependencies = oPackageFile.dependencies,
-				oManifestFile,
-				oUi5Config,
-				oDependencies;
-
-			if (sManifestFile) {
-				oManifestFile = JSON.parse(sManifestFile.raw);
-				oUi5Config = oManifestFile["sap.ui5"];
-				oDependencies = oUi5Config && oUi5Config.dependencies;
-
-				if (oDependencies && oDependencies.libs) {
-					Object.keys(oDependencies.libs).forEach(function(sKey) {
-						if (OPENUI5_LIBS.indexOf(sKey) > -1) {
-							oPackageDependencies["@openui5/" + sKey] = "^1";
-						}
-						if (SAPUI5_LIBS.indexOf(sKey) > -1) {
-							oPackageDependencies["@sapui5/" + sKey] = "^1";
-						}
-					});
-				}
-			}
+				oPackageFile = JSON.parse(sFormattedPackageFile);
 
 			return JSON.stringify(oPackageFile, null, 2);
 		},
 
-		_formatYamlFile: function(sFile, oData) {
-			return sFile.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id));
+		_formatUI5Yaml: function(sYamlFile, oData, sManifestFile) {
+			let sFormattedYamlFile = sYamlFile.replace(/{{SAMPLE_ID}}/g, this._formatNameToNpmSpec(oData.id));
+			const bIsOpenUI5 = this.getModel("versionData").getProperty("/isOpenUI5");
+			const sUI5Version = this.getModel("versionData").getProperty("/fullVersion");
+			sFormattedYamlFile = sFormattedYamlFile.replace(/{{UI5_KIND}}/g, bIsOpenUI5 ? "OpenUI5" : "SAPUI5");
+			sFormattedYamlFile = sFormattedYamlFile.replace(/{{UI5_VERSION}}/g, sUI5Version);
+
+			if (this._isOpenUI5NightlySDK()){
+				sFormattedYamlFile = sFormattedYamlFile.replace(/libraries:/g, "libraries:" + this._getSnapshotNote());
+			}
+
+			if (sManifestFile) {
+				const oManifestFile = JSON.parse(sManifestFile.raw);
+				const oUi5Config = oManifestFile["sap.ui5"];
+				const oDependencies = oUi5Config && oUi5Config.dependencies;
+
+				if (oDependencies && oDependencies.libs) {
+					Object.keys(oDependencies.libs).forEach(function(sKey) {
+						sFormattedYamlFile += "\n    - name: " + sKey;
+					});
+				}
+			}
+			return sFormattedYamlFile;
+		},
+
+		_formatCustomUI5Yaml: function(sYamlFile){
+			const sCommentReplacement = this._isOpenUI5NightlySDK() ? this._getSnapshotNote() : "";
+			return sYamlFile.replace(/ #MainVersion#/g, sCommentReplacement);
 		},
 
 		_formatManifestJsFile: function (sRawManifestFileJs) {
@@ -283,6 +278,29 @@ sap.ui.define([
 				sBootstrapURI = oRelativeBootstrapURI.toString();
 
 			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
+		},
+
+		_formatWebAppPath: function(sPath) {
+			const sWebAppPath = "webapp/";
+			return sPath.startsWith(sWebAppPath) ? sPath : sWebAppPath + sPath;
+		},
+
+		_isRootLevelFile: function(sFileName){
+			return ["package.json", "ui5.yaml"].includes(sFileName);
+		},
+
+		_isOpenUI5NightlySDK: function(){
+			const oModel = this.getModel("versionData"),
+				bIsDevVersion = oModel.getProperty("/isDevVersion"),
+				bIsDevEnv = oModel.getProperty("/isDevEnv"),
+				bIsOpenUI5 = oModel.getProperty("/isOpenUI5");
+			return bIsDevVersion && bIsOpenUI5 && !bIsDevEnv;
+		},
+
+		_getSnapshotNote: function(){
+			return "\n  # Note: Consumption of SNAPSHOT versions is only available to SAP employees from within the corporate network.\n" +
+				"  # If this does not apply to you, please adjust the UI5 version to the latest stable version either manually\n" +
+				"  # or using the command \"ui5 use latest\".";
 		}
 	});
 }

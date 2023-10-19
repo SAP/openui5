@@ -32,8 +32,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.plugin.Rename
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Rename = Plugin.extend("sap.ui.rta.plugin.Rename", /** @lends sap.ui.rta.plugin.Rename.prototype */ {
 		metadata: {
@@ -59,8 +57,8 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Rename.prototype.exit = function() {
-		Plugin.prototype.exit.apply(this, arguments);
+	Rename.prototype.exit = function(...aArgs) {
+		Plugin.prototype.exit.apply(this, aArgs);
 
 		this.setBusy(false);
 		RenameHandler._exit.call(this);
@@ -148,10 +146,11 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Rename.prototype.registerElementOverlay = function(oOverlay) {
+	Rename.prototype.registerElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		oOverlay.attachEvent("editableChange", RenameHandler._manageClickEvent, this);
 
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -166,11 +165,12 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	Rename.prototype.deregisterElementOverlay = function(oOverlay) {
+	Rename.prototype.deregisterElementOverlay = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		oOverlay.detachEvent("editableChange", RenameHandler._manageClickEvent, this);
 		oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
 
-		Plugin.prototype.deregisterElementOverlay.apply(this, arguments);
+		Plugin.prototype.deregisterElementOverlay.apply(this, aArgs);
 	};
 
 	Rename.prototype.createRenameCommand = function(oElementOverlay, sNewText) {

@@ -6,19 +6,19 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/SplitContainer",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	OverlayRegistry,
 	Button,
 	Page,
 	SplitContainer,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given that a DesignTime is created for a SplitContainer with 2 pages, one is hidden and one is visible", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oButton1 = new Button("button1", {text: "button"});
 			this.oButton2 = new Button("button2", {text: "button"});
 
@@ -43,7 +43,7 @@ sap.ui.define([
 			});
 
 			this.oSplitContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			var done = assert.async();
 
@@ -64,7 +64,7 @@ sap.ui.define([
 				done();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oDesignTime.destroy();
 			this.oSplitContainer.destroy();
 		}
@@ -74,9 +74,9 @@ sap.ui.define([
 			assert.ok(OverlayRegistry.getOverlay(this.oButton2).isVisible(), "overlays for controls in visible page are visible");
 		});
 
-		QUnit.test("when the visibility of hidden page is changed", function(assert) {
+		QUnit.test("when the visibility of hidden page is changed", async function(assert) {
 			this.oPage1.setVisible(true);
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			assert.ok(OverlayRegistry.getOverlay(this.oButton1).isVisible(), "overlays for controls in this page are visible");
 		});

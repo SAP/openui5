@@ -24,7 +24,6 @@ sap.ui.define([
 	 * @namespace
 	 * @name sap.ui.rta.service.Property
 	 * @author SAP SE
-	 * @experimental Since 1.58
 	 * @since 1.58
 	 * @version ${version}
 	 * @private
@@ -171,7 +170,7 @@ sap.ui.define([
 							if (typeof bIgnore !== "boolean") {
 								throw DtUtil.createError(
 									"services.Property#get",
-									"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
+									`Invalid ignore property value found in designtime for element with id ${oElement.getId()} .`, "sap.ui.rta"
 								);
 							}
 
@@ -267,7 +266,7 @@ sap.ui.define([
 						if (typeof bIgnore !== "boolean" && typeof bIgnore !== "undefined") {
 							throw DtUtil.createError(
 								"services.Property#get",
-								"Invalid ignore property value found in designtime for element with id " + oElement.getId() + " .", "sap.ui.rta"
+								`Invalid ignore property value found in designtime for element with id ${oElement.getId()} .`, "sap.ui.rta"
 							);
 						}
 						// to ensure ignore function is replaced by a boolean value

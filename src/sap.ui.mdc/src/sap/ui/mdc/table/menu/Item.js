@@ -12,7 +12,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var Item = ItemBase.extend("sap.ui.mdc.table.menu.Item", {
+	const Item = ItemBase.extend("sap.ui.mdc.table.menu.Item", {
 		metadata: {
 			library: "sap.ui.mdc",
 			properties: {
@@ -22,15 +22,15 @@ sap.ui.define([
 	});
 
 	Item.prototype.initializeContent = function() {
-		var oTable = this.getTable();
-		var oColumn = Core.byId(this.getParent().getAssociation("column"));
-		var oEngine = oTable.getEngine();
-		var sKey = this.getKey();
-		var oController = oEngine.getController(oTable, sKey);
+		const oTable = this.getTable();
+		const oColumn = Core.byId(this.getParent().getAssociation("column"));
+		const oEngine = oTable.getEngine();
+		const sKey = this.getKey();
+		const oController = oEngine.getController(oTable, sKey);
 
 		if (sKey === "Filter") {
-			var aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey()).getFilterableProperties();
-			var aPropertyNames = aFilterableProperties.map(function(oProperty) {
+			const aFilterableProperties = oTable.getPropertyHelper().getProperty(oColumn.getPropertyKey()).getFilterableProperties();
+			const aPropertyNames = aFilterableProperties.map(function(oProperty) {
 				return oProperty.name;
 			});
 			oTable.getInbuiltFilter().setVisibleFields(aPropertyNames);
@@ -61,18 +61,18 @@ sap.ui.define([
 	};
 
 	Item.prototype.onPress = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		oTable.getEngine().getController(oTable, this.getKey()).update(oTable.getPropertyHelper());
 	};
 
 	Item.prototype.onConfirm = function() {
-		var oTable = this.getTable();
+		const oTable = this.getTable();
 		oTable.getEngine().handleP13n(oTable, [this.getKey()]);
 	};
 
 	Item.prototype.onReset = function() {
-		var oTable = this.getTable();
-		var sKey = this.getKey();
+		const oTable = this.getTable();
+		const sKey = this.getKey();
 
 		this.setResetButtonEnabled(false);
 
@@ -81,12 +81,11 @@ sap.ui.define([
 		});
 	};
 
-	Item.prototype.destroyContent = function() {
-		// The AdaptationFilterBar must not be destroyed! A new one cannot be created.
-		if (this.getKey() === "Filter") {
+	Item.prototype.destroyAggregation = function(sAggregationName) {
+		if (this.getKey() === "Filter" && sAggregationName === "content") {
 			return this;
 		}
-		return this.destroyAggregation("content");
+		return ItemBase.prototype.destroyAggregation.apply(this, arguments);
 	};
 
 	Item.prototype.getTable = function() {

@@ -21,24 +21,24 @@ function(
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given PluginManager exists", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPluginManager = new PluginManager();
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return true;
 				},
-				isVersioningEnabled: function(sLayer) {
+				isVersioningEnabled(sLayer) {
 					if (sLayer === Layer.USER) {
 						return true;
 					}
 					return false;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return true;
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPluginManager.destroy();
 			sandbox.restore();
 		}
@@ -81,7 +81,7 @@ function(
 		});
 		function getMockEvent(bParameter) {
 			return {
-				getParameter: function() {
+				getParameter() {
 					return bParameter;
 				}
 			};
@@ -116,7 +116,7 @@ function(
 			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
 					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
-						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
+						`then '${sPluginName}' plugin attached a handler function for the elmenetModified event`);
 				}
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,
@@ -140,7 +140,7 @@ function(
 			Object.keys(oPlugins).forEach(function(sPluginName) {
 				if (oPlugins[sPluginName].attachElementModified) {
 					assert.ok(oPlugins[sPluginName].mEventRegistry.elementModified,
-						"then '" + sPluginName + "' plugin attached a handler function for the elmenetModified event");
+						`then '${sPluginName}' plugin attached a handler function for the elmenetModified event`);
 				}
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins().settings.getCommandStack().id,
@@ -165,20 +165,20 @@ function(
 	});
 
 	QUnit.module("Given PluginManager exists", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPluginManager = new PluginManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPluginManager.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset unavailable", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return true;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return false;
 				}
 			});
@@ -188,10 +188,10 @@ function(
 
 		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with local reset available", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
-				isVariantAdaptationEnabled: function() {
+				isVariantAdaptationEnabled() {
 					return true;
 				},
-				isLocalResetEnabled: function() {
+				isLocalResetEnabled() {
 					return true;
 				}
 			});

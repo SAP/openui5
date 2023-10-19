@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	UIComponent,
@@ -20,23 +20,23 @@ sap.ui.define([
 	CustomData,
 	VerticalLayout,
 	sinon,
-	oCore,
+	Element,
 	RtaQunitUtils
 ) {
 	"use strict";
 
-	var FlexWrap = mobileLibrary.FlexWrap;
+	var {FlexWrap} = mobileLibrary;
 
 	return UIComponent.extend("rta.performance.dragAndDrop.Component", {
 		metadata: {
 			manifest: "json"
 		},
 
-		onAfterRendering: function() {
-			window.fnResolve(RtaPerformanceTestUtil.startRta(oCore.byId("HBox")));
+		onAfterRendering() {
+			window.fnResolve(RtaPerformanceTestUtil.startRta(Element.getElementById("HBox")));
 		},
 
-		createContent: function() {
+		createContent() {
 			// create Vertical Layout
 			var oLayout1 = new VerticalLayout("Layout1");
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout1, 6);

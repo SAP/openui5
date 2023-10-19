@@ -11,10 +11,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/cache/CacheManager",
-	"sap/ui/core/Configuration",
+	"sap/ui/security/Security",
 	"sap/ui/thirdparty/jquery"
 ], function (_Batch, _GroupLock, _Helper, asV2Requestor, Log, SyncPromise, CacheManager,
-		Configuration, jQuery) {
+		Security, jQuery) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -1463,20 +1463,30 @@ sap.ui.define([
 		if (!oOptimisticBatch) {
 			return;
 		}
-
+		fnOptimisticBatchEnabler = this.oModelInterface.getOptimisticBatchEnabler();
 		sKey = oOptimisticBatch.key;
 		this.oOptimisticBatch = null;
 		if (oOptimisticBatch.result) { // n+1 app start, consume optimistic batch result
 			if (_Requestor.matchesOptimisticBatch(aRequests, sGroupId,
 					oOptimisticBatch.firstBatch.requests, oOptimisticBatch.firstBatch.groupId)) {
+				if (fnOptimisticBatchEnabler) {
+					Promise.resolve(fnOptimisticBatchEnabler(sKey)).then(async (bEnabled) => {
+						if (!bEnabled) {
+							await CacheManager.del(sCachePrefix + sKey);
+							Log.info("optimistic batch: disabled, response deleted", sKey,
+								sClassName);
+						}
+					}).catch(that.oModelInterface.getReporter());
+				}
+
 				Log.info("optimistic batch: success, response consumed", sKey, sClassName);
 				return oOptimisticBatch.result;
 			}
-			CacheManager.del(sCachePrefix + sKey).catch(this.oModelInterface.getReporter());
-			Log.warning("optimistic batch: mismatch, response skipped", sKey, sClassName);
+			CacheManager.del(sCachePrefix + sKey).then(() => {
+				Log.warning("optimistic batch: mismatch, response skipped", sKey, sClassName);
+			}, this.oModelInterface.getReporter());
 		}
 
-		fnOptimisticBatchEnabler = this.oModelInterface.getOptimisticBatchEnabler();
 		if (fnOptimisticBatchEnabler) { // 1st app start, or optimistic batch payload did not match
 			bIsModifyingBatch = aRequests.some(function (oRequest) {
 					return Array.isArray(oRequest) || oRequest.method !== "GET";
@@ -1509,8 +1519,8 @@ sap.ui.define([
 
 	/**
 	 * Calls the security token handlers returned by
-	 * {@link sap.ui.core.Configuration#getSecurityTokenHandlers} one by one with the requestor's
-	 * service URL. The first handler not returning <code>undefined</code> but a
+	 * {@link module:sap/ui/security/Security.getSecurityTokenHandlers} one by one with the
+	 * requestor's service URL. The first handler not returning <code>undefined</code> but a
 	 * <code>Promise</code> is used to determine the required security tokens.
 	 *
 	 * @private
@@ -1520,7 +1530,7 @@ sap.ui.define([
 
 		this.oSecurityTokenPromise = null;
 
-		Configuration.getSecurityTokenHandlers().some(function (fnHandler) {
+		Security.getSecurityTokenHandlers().some(function (fnHandler) {
 			var oSecurityTokenPromise = fnHandler(that.sServiceUrl);
 
 			if (oSecurityTokenPromise !== undefined) {

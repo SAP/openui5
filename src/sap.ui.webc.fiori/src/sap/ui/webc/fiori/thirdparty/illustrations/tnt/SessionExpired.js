@@ -28,10 +28,12 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const name = "SessionExpired";
   const set = "tnt";
+  const collection = "V4";
   (0, _Illustrations.registerIllustration)(name, {
     dialogSvg: _tntDialogSessionExpired.default,
     sceneSvg: _tntSceneSessionExpired.default,
     spotSvg: _tntSpotSessionExpired.default,
-    set
+    set,
+    collection
   });
 });

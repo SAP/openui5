@@ -21,6 +21,7 @@ sap.ui.define([
         /**
          * Generates control selector for sap.m.Select and sap.m.ComboBox items
          * @param {object} oControl the control for which to generate a selector
+         * @param {object} mSelectorParts Options object
          * @param {object} mSelectorParts.ancestor the control selector for the parent dropdown
          * @returns {object} a plain object representation of a control. Contains the dropdown ancestor selector, item controlType and item key
          * Undefined, if the control is not a dropdown

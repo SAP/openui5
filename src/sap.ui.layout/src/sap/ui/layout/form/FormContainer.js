@@ -7,9 +7,9 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/theming/Parameters',
-	'sap/ui/layout/library',
-	"sap/base/Log"
-	], function(Element, ManagedObjectObserver, Parameters, library, Log) {
+	'./FormHelper',
+	'sap/base/Log'
+	], function(Element, ManagedObjectObserver, Parameters, FormHelper, Log) {
 	"use strict";
 
 
@@ -119,7 +119,8 @@ sap.ui.define([
 
 	FormContainer.prototype.init = function(){
 
-		this._oInitPromise = library.form.FormHelper.init();
+		this._oInitPromise = FormHelper.init(); // check for used library and request needed controls
+
 
 		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
 
@@ -152,10 +153,10 @@ sap.ui.define([
 					// module needs to be loaded -> create Button async
 					this._oInitPromise.then(function () {
 						delete this._oInitPromise; // not longer needed as resolved
-						_expandButtonCreated.call(this, library.form.FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
+						_expandButtonCreated.call(this, FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
 					}.bind(this));
 				} else {
-					_expandButtonCreated.call(this, library.form.FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
+					_expandButtonCreated.call(this, FormHelper.createButton(this.getId() + "--Exp", _handleExpButtonPress, this));
 				}
 			} else {
 				_setExpanderIcon.call(this);
@@ -187,10 +188,20 @@ sap.ui.define([
 
 	FormContainer.prototype.setToolbar = function(oToolbar) {
 
-		// for sap.m.Toolbar Auto-design must be set to transparent
-		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
+		const oOldToolbar = this.getToolbar();
 
-		this.setAggregation("toolbar", oToolbar);
+		this.setAggregation("toolbar", oToolbar); // set Toolbar synchronously as later on only the design might be changed (set it first to check validity)
+
+		// for sap.m.Toolbar Auto-design must be set to transparent
+		if (this._oInitPromise) {
+			// module needs to be loaded -> create Button async
+			this._oInitPromise.then(function () {
+				delete this._oInitPromise; // not longer needed as resolved
+				oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar); // Toolbar is only changes, so no late set is needed.
+			}.bind(this));
+		} else {
+			oToolbar = FormHelper.setToolbar(oToolbar, oOldToolbar);
+		}
 
 		return this;
 
@@ -371,7 +382,7 @@ sap.ui.define([
 			sText = "";
 		}
 
-		library.form.FormHelper.setButtonContent(this._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
+		FormHelper.setButtonContent(this._oExpandButton, sText, sTooltip, sIcon, sIconHovered);
 
 	}
 

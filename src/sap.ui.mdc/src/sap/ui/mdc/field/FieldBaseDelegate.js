@@ -7,9 +7,19 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	'sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/DefaultTypeMap', 'sap/ui/model/FormatException', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/enums/ConditionValidated'
+	'sap/ui/mdc/BaseDelegate',
+	'sap/ui/mdc/DefaultTypeMap',
+	'sap/ui/model/FormatException',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/enums/ConditionValidated',
+	'sap/ui/mdc/enums/FieldDisplay'
 ], function(
-	BaseDelegate, DefaultTypeMap, FormatException, Condition, ConditionValidated
+	BaseDelegate,
+	DefaultTypeMap,
+	FormatException,
+	Condition,
+	ConditionValidated,
+	FieldDisplay
 ) {
 	"use strict";
 
@@ -24,7 +34,7 @@ sap.ui.define([
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @alias module:sap/ui/mdc/field/FieldBaseDelegate
 	 */
-	var FieldBaseDelegate = Object.assign({}, BaseDelegate);
+	const FieldBaseDelegate = Object.assign({}, BaseDelegate);
 
 	FieldBaseDelegate.getTypeMap = function () {
 		return DefaultTypeMap;
@@ -60,7 +70,7 @@ sap.ui.define([
 	 * @since 1.107.0
 	 */
 	FieldBaseDelegate.createCondition = function (oField, oControl, aValues, oCurrentCondition) {
-		var oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
+		const oNextCondition = Condition.createItemCondition(aValues[0], aValues[1], undefined, undefined, this.createConditionPayload(oField, oControl, aValues));
 		oNextCondition.validated = ConditionValidated.Validated;
 		return oNextCondition;
 	};
@@ -159,7 +169,7 @@ sap.ui.define([
 	 * @public
 	 */
 	FieldBaseDelegate.getDescription = function(oField, oValueHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName, oConditionPayload, oControl, oType) {
-		var oConfig = {
+		const oConfig = {
 			value: vKey,
 			parsedValue: vKey,
 			parsedDescription: undefined,
@@ -173,6 +183,105 @@ sap.ui.define([
 			control: oControl
 		};
 		return oValueHelp && oValueHelp.getItemForValue(oConfig);
+
+	};
+
+	/**
+	 * Return object for the autocomplete feature.
+	 *
+	 * @static
+	 * @constant
+	 * @typedef {object} sap.ui.mdc.field.AutocompleteInfo
+	 * @property {string} text Complete text that is shown in the field
+	 * @property {int} selectionStart Start of the selected text
+	 * @property {int} selectionEnd End of the selected text
+	 * @since: 1.120.0
+	 * @public
+	 */
+
+	/**
+	 * Determines the text and selection for the autocomplete functionality.
+	 *
+	 * This function is called during a user's type-ahead into a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 *
+	 * During the programmatical selection of the text in the input field the browser moves the cursor to the beginning of the selection, so the selection should start after the text has been entered.
+	 * Otherwise this could lead to unwanted side effects.
+	 *
+	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
+	 * @param {string} sCurrentText Currently typed text (Could be changed when the type-ahed result is returned asynchronously.)
+	 * @param {string} sUsedText Text used to determine condition
+	 * @param {sap.ui.model.Type} oType Type of the value
+	 * @param {sap.ui.model.Type} oAdditionalType Type of the description
+	 * @returns {sap.ui.mdc.field.AutocompleteInfo} Object containing text and selection to show in field
+	 * @since: 1.120.0
+	 * @private
+	 */
+	FieldBaseDelegate.getAutocomplete = function(oField, oCondition, sCurrentText, sUsedText, oType, oAdditionalType) {
+
+		if (sCurrentText !== sUsedText) {
+			// user changed text after typeahead was determined, so result might be wrong
+			return null;
+		}
+
+		const sDisplay = oField.getDisplay();
+		let sKey;
+		let sDescription;
+		let sOutput;
+		let iStart;
+		let iEnd;
+
+		// get output texts
+		if (oType) {
+			sKey = oType.formatValue(oCondition.values[0], "string");
+		} else {
+			sKey = oCondition.values[0];
+		}
+
+		// check if key match
+		const bKeyMatch = sKey.startsWith(sCurrentText);
+		let bDescriptionMatch = false;
+
+		if (oCondition.values.length > 1) { // as condition could only contain a key
+			if (oAdditionalType) {
+				sDescription = oAdditionalType.formatValue(oCondition.values[1], "string");
+			} else {
+				sDescription = oCondition.values[1];
+			}
+
+			// check if description match
+			bDescriptionMatch = sDescription.startsWith(sCurrentText);
+		}
+
+		if (sDisplay === FieldDisplay.Value) {
+			if (bKeyMatch) {
+				sOutput = sKey;
+			}
+		} else if (sDisplay === FieldDisplay.Description) {
+			if (bDescriptionMatch) {
+				sOutput = sDescription;
+			}
+		} else if (sDisplay === FieldDisplay.ValueDescription) {
+			if (bKeyMatch) {
+				sOutput = sKey;
+			} else if (bDescriptionMatch) {
+				sOutput = sDescription;
+			}
+		} else if (sDisplay === FieldDisplay.DescriptionValue) {
+			if (bDescriptionMatch) {
+				sOutput = sDescription;
+			} else if (bKeyMatch) {
+				sOutput = sKey;
+			}
+		}
+
+		if (sOutput) {
+			iStart = sCurrentText.length;
+			iEnd = sOutput.length;
+			return {text: sOutput, selectionStart: iStart, selectionEnd: iEnd};
+		}
+
+		return null;
 
 	};
 

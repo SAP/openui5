@@ -26,7 +26,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.dt.OverlayRegistry
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 
 	var OverlayRegistry = {};
@@ -65,7 +64,7 @@ function(
 	OverlayRegistry.register = function(oOverlay) {
 		if (!isOverlay(oOverlay)) {
 			var sLocation = "sap.ui.dt.OverlayRegistry#register";
-			var oError = new Error(sLocation + " / Attempt to register illegal overlay");
+			var oError = new Error(`${sLocation} / Attempt to register illegal overlay`);
 			oError.name = sLocation;
 			throw oError;
 		}
@@ -86,7 +85,7 @@ function(
 	OverlayRegistry.deregister = function(oOverlay) {
 		if (!isOverlay(oOverlay)) {
 			var sLocation = "sap.ui.dt.OverlayRegistry#deregister";
-			var oError = new Error(sLocation + " / Attempt to deregister illegal overlay");
+			var oError = new Error(`${sLocation} / Attempt to deregister illegal overlay`);
 			oError.name = sLocation;
 			throw oError;
 		}

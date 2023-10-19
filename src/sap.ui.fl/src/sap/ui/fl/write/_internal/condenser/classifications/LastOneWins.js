@@ -16,7 +16,7 @@ sap.ui.define([
 		 * @param {string} oCondenserInfo - Condenser information
 		 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Change instance
 		 */
-		addToChangesMap: function(mProperties, oCondenserInfo, oChange) {
+		addToChangesMap(mProperties, oCondenserInfo, oChange) {
 			if (!mProperties[oCondenserInfo.uniqueKey]) {
 				mProperties[oCondenserInfo.uniqueKey] = [oChange];
 				oChange.condenserState = "select";

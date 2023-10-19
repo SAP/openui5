@@ -10,7 +10,7 @@ sap.ui.define([
 ], function(Utils, FlexRuntimeInfoAPI, Engine, oCore) {
 	"use strict";
 
-    var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
 	return {
         properties: {
@@ -26,13 +26,13 @@ sap.ui.define([
             if (!oField.getFieldInfo()) {
                 return [];
             }
-            var oFieldInfo = oField.getFieldInfo();
-            var oControl = typeof oFieldInfo.getSourceControl() === "string" ? oCore.byId(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
+            const oFieldInfo = oField.getFieldInfo();
+            let oControl = typeof oFieldInfo.getSourceControl() === "string" ? oCore.byId(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
             if (!oControl) {
                 oControl = oField;
             }
-            var oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
-            var sStableID = oFieldInfo._createPanelId(Utils, FlexRuntimeInfoAPI);
+            const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+            const sStableID = oFieldInfo._createPanelId(Utils, FlexRuntimeInfoAPI);
 
 			return [
                 {
@@ -50,7 +50,7 @@ sap.ui.define([
                 return {
                     name: oResourceBundle.getText("info.POPOVER_DEFINE_LINKS"),
                     handler: function (oControl, mPropertyBag) {
-                        var oFieldInfo = oControl.getFieldInfo();
+                        const oFieldInfo = oControl.getFieldInfo();
                         return oFieldInfo.getContent().then(function(oPanel) {
                             oFieldInfo.addDependent(oPanel);
                             // wait for createItem changes
@@ -60,13 +60,13 @@ sap.ui.define([
                                 mPropertyBag.fnAfterClose = function() {
                                     oPanel.destroy();
                                 };
-                                var fnGetChanges = function() {
+                                const fnGetChanges = function() {
                                     return Engine.getInstance().getRTASettingsActionHandler(oPanel, mPropertyBag, "LinkItems").then(function(aChanges) {
                                         aChanges.forEach(function(oChange) {
-                                            var oSelectorElement = oChange.selectorElement;
+                                            const oSelectorElement = oChange.selectorElement;
                                             delete oChange.selectorElement;
 
-                                            var oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
+                                            const oAppComponent = Utils.getAppComponentForControl(oControl) || Utils.getAppComponentForControl(oField);
                                             oChange.selectorControl = {
                                                 id: oSelectorElement.getId(),
                                                 controlType: oSelectorElement === oPanel ? "sap.ui.mdc.link.Panel" : "sap.ui.mdc.link.PanelItem",
@@ -76,7 +76,7 @@ sap.ui.define([
                                         return aChanges;
                                     });
                                 };
-                                var aPanelItems = oPanel.getItems();
+                                const aPanelItems = oPanel.getItems();
 
                                 if (aPanelItems.length > 0) {
                                     // wait for hideItem / revealItem changes
@@ -94,6 +94,14 @@ sap.ui.define([
                     CAUTION_variantIndependent: true
                 };
             }
-        }
+        },
+        tool: {
+			start: function(oField) {
+                oField.getFieldInfo()?.setEnablePersonalization(false);
+			},
+			stop: function(oField) {
+				oField.getFieldInfo()?.setEnablePersonalization(true);
+			}
+		}
     };
 });

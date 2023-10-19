@@ -21,8 +21,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/App",
 	"sap/ui/util/Mobile",
-	"sap/base/util/UriParameters",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject"
 ], function(
 	Log,
 	JSONModel,
@@ -46,8 +46,8 @@ sap.ui.define([
 	Label,
 	App,
 	Mobile,
-	UriParameters,
-	jQuery
+	jQuery,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -58,7 +58,7 @@ sap.ui.define([
 
 	function setDefaultParameters(oData) {
 		var sName, sValue;
-		var oUriParameters = UriParameters.fromQuery(window.location.search);
+		var oUriParameters = new URLSearchParams(window.location.search);
 
 		for (sName in oData) {
 			sValue = oUriParameters.get(sName);
@@ -567,7 +567,7 @@ sap.ui.define([
 	oModel.setData(oData);
 
 	// set the model to the core
-	sap.ui.getCore().setModel(oModel);
+	ManagedObject.setModel(oModel);
 
 	var oFileTypesModel = new JSONModel();
 

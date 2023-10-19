@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
@@ -21,6 +22,7 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	Core,
+	Element,
 	ElementOverlay,
 	OverlayRegistry,
 	JsControlTreeModifier,
@@ -38,7 +40,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -58,7 +60,7 @@ sap.ui.define([
 			this.oComponentContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
@@ -75,11 +77,11 @@ sap.ui.define([
 				return this.oRta.getService("supportTools");
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 		}
@@ -134,7 +136,7 @@ sap.ui.define([
 
 			ChangesWriteAPI.getChangeHandler({
 				changeType: "rename",
-				element: Core.byId("button1"),
+				element: Element.getElementById("button1"),
 				modifier: JsControlTreeModifier,
 				layer: "CUSTOMER"
 			}).then(function(oChangeHandler) {
@@ -394,9 +396,9 @@ sap.ui.define([
 					var aCollectedTableData = oEvent.data.content;
 					assert.strictEqual(aCollectedTableData.length, aTableMockData.length, "correct number of overlays is collected");
 					for (var iIndex = 0; iIndex < aCollectedTableData.length; iIndex++) {
-						assert.strictEqual(aCollectedTableData[iIndex].id, aTableMockData[iIndex].id, "the entry number " + (iIndex + 1) + " has the correct id");
-						assert.strictEqual(aCollectedTableData[iIndex].elementId, aTableMockData[iIndex].elementId, "the entry number " + (iIndex + 1) + " has the correct elementId");
-						assert.strictEqual(aCollectedTableData[iIndex].visible, aTableMockData[iIndex].visible, "the entry number " + (iIndex + 1) + " has the correct visible status");
+						assert.strictEqual(aCollectedTableData[iIndex].id, aTableMockData[iIndex].id, `the entry number ${iIndex + 1} has the correct id`);
+						assert.strictEqual(aCollectedTableData[iIndex].elementId, aTableMockData[iIndex].elementId, `the entry number ${iIndex + 1} has the correct elementId`);
+						assert.strictEqual(aCollectedTableData[iIndex].visible, aTableMockData[iIndex].visible, `the entry number ${iIndex + 1} has the correct visible status`);
 					}
 					window.removeEventListener("message", onCollectMessage);
 					fnDone();

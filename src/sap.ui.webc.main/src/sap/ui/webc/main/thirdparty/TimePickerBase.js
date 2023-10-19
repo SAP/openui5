@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian", "sap/ui/webc/common/thirdparty/localization/DateFormat", "sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/time-entry-request", "./Icon", "./ResponsivePopover", "./generated/templates/TimePickerTemplate.lit", "./generated/templates/TimePickerPopoverTemplate.lit", "./Input", "./Button", "./TimeSelection", "./generated/i18n/i18n-defaults", "./generated/themes/TimePicker.css", "./generated/themes/TimePickerPopover.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _i18nBundle, _getLocale, _ValueState, _Gregorian, _DateFormat, _LocaleData, _Keys, _timeEntryRequest, _Icon, _ResponsivePopover, _TimePickerTemplate, _TimePickerPopoverTemplate, _Input, _Button, _TimeSelection, _i18nDefaults, _TimePicker, _TimePickerPopover, _ResponsivePopoverCommon) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/locale/getLocale", "sap/ui/webc/common/thirdparty/base/types/ValueState", "sap/ui/webc/common/thirdparty/localization/features/calendar/Gregorian", "sap/ui/webc/common/thirdparty/localization/DateFormat", "sap/ui/webc/common/thirdparty/base/asset-registries/LocaleData", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/webc/common/thirdparty/icons/time-entry-request", "./Icon", "./Popover", "./ResponsivePopover", "./generated/templates/TimePickerTemplate.lit", "./generated/templates/TimePickerPopoverTemplate.lit", "./Input", "./Button", "./TimeSelectionClocks", "./TimeSelectionInputs", "./generated/i18n/i18n-defaults", "./generated/themes/TimePicker.css", "./generated/themes/TimePickerPopover.css", "./generated/themes/Popover.css", "./generated/themes/ResponsivePopoverCommon.css"], function (_exports, _Device, _UI5Element, _customElement, _property, _event, _slot, _LitRenderer, _i18nBundle, _getLocale, _ValueState, _Gregorian, _DateFormat, _LocaleData, _Keys, _timeEntryRequest, _Icon, _Popover, _ResponsivePopover, _TimePickerTemplate, _TimePickerPopoverTemplate, _Input, _Button, _TimeSelectionClocks, _TimeSelectionInputs, _i18nDefaults, _TimePicker, _TimePickerPopover, _Popover2, _ResponsivePopoverCommon) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -15,14 +15,17 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _ValueState = _interopRequireDefault(_ValueState);
   _DateFormat = _interopRequireDefault(_DateFormat);
   _Icon = _interopRequireDefault(_Icon);
+  _Popover = _interopRequireDefault(_Popover);
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
   _TimePickerTemplate = _interopRequireDefault(_TimePickerTemplate);
   _TimePickerPopoverTemplate = _interopRequireDefault(_TimePickerPopoverTemplate);
   _Input = _interopRequireDefault(_Input);
   _Button = _interopRequireDefault(_Button);
-  _TimeSelection = _interopRequireDefault(_TimeSelection);
+  _TimeSelectionClocks = _interopRequireDefault(_TimeSelectionClocks);
+  _TimeSelectionInputs = _interopRequireDefault(_TimeSelectionInputs);
   _TimePicker = _interopRequireDefault(_TimePicker);
   _TimePickerPopover = _interopRequireDefault(_TimePickerPopover);
+  _Popover2 = _interopRequireDefault(_Popover2);
   _ResponsivePopoverCommon = _interopRequireDefault(_ResponsivePopoverCommon);
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   var __decorate = void 0 && (void 0).__decorate || function (decorators, target, key, desc) {
@@ -33,6 +36,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var TimePickerBase_1;
+
+  // default calendar for bundling
+
+  // Styles
+
   /**
    * @class
    *
@@ -70,10 +78,54 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     get _timeSelectionValue() {
       return this.tempValue;
     }
-    onTimeSelectionChange(e) {
-      this.tempValue = e.detail.value; // every time the user changes the sliders -> update tempValue
+    get _isPhone() {
+      return (0, _Device.isPhone)();
     }
-
+    onTimeSelectionChange(e) {
+      this.tempValue = e.detail.value; // every time the user changes the time selection -> update tempValue
+    }
+    /**
+     * Opens the picker.
+     * @async
+     * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#openPicker
+     * @returns {Promise} Resolves when the picker is open
+     */
+    async openPicker() {
+      this.tempValue = this.value && this.isValid(this.value) ? this.value : this.getFormat().format(new Date());
+      const responsivePopover = await this._getPopover();
+      responsivePopover.showAt(this);
+    }
+    /**
+     * Closes the picker
+     * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#closePicker
+     * @returns {Promise} Resolves when the picker is closed
+     */
+    async closePicker() {
+      const responsivePopover = await this._getPopover();
+      responsivePopover.close();
+      this._isPickerOpen = false;
+    }
+    togglePicker() {
+      if (this.isOpen()) {
+        this.closePicker();
+      } else if (this._canOpenPicker()) {
+        this.openPicker();
+      }
+    }
+    /**
+     * Checks if the picker is open
+     * @public
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#isOpen
+     * @returns {boolean}
+     */
+    isOpen() {
+      return !!this._isPickerOpen;
+    }
     submitPickers() {
       this._updateValueAndFireEvents(this.tempValue, true, ["change", "value-changed"]);
       this.closePicker();
@@ -81,9 +133,71 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     onResponsivePopoverAfterClose() {
       this._isPickerOpen = false;
     }
-    async _handleInputClick() {
+    async onResponsivePopoverAfterOpen() {
+      this._isPickerOpen = true;
+      const responsivePopover = await this._getPopover();
+      responsivePopover.querySelector("[ui5-time-selection-clocks]")._focusFirstButton();
+    }
+    /**
+     * Opens the Inputs popover.
+     * @async
+     * @private
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#openInputsPopover
+     * @returns {Promise} Resolves when the Inputs popover is open
+     */
+    async openInputsPopover() {
+      this.tempValue = this.value && this.isValid(this.value) ? this.value : this.getFormat().format(new Date());
+      const popover = await this._getInputsPopover();
+      popover.showAt(this);
+      this._isInputsPopoverOpen = true;
+    }
+    /**
+     * Closes the Inputs popover
+     * @private
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#closeInputsPopover
+     * @returns {Promise} Resolves when the Inputs popover is closed
+     */
+    async closeInputsPopover() {
+      const popover = await this._getInputsPopover();
+      popover.close();
+    }
+    toggleInputsPopover() {
+      if (this.isInputsPopoverOpen()) {
+        this.closeInputsPopover();
+      } else if (this._canOpenInputsPopover()) {
+        this.openInputsPopover();
+      }
+    }
+    /**
+     * Checks if the inputs popover is open
+     * @private
+     * @method
+     * @name sap.ui.webc.main.TimePickerBase#isInputsPopoverOpen
+     * @returns {boolean}
+     */
+    isInputsPopoverOpen() {
+      return !!this._isInputsPopoverOpen;
+    }
+    submitInputsPopover() {
+      this._updateValueAndFireEvents(this.tempValue, true, ["change", "value-changed"]);
+      this.closeInputsPopover();
+    }
+    async onInputsPopoverAfterOpen() {
+      const popover = await this._getInputsPopover();
+      popover.querySelector("[ui5-time-selection-inputs]")._addNumericAttributes();
+    }
+    onInputsPopoverAfterClose() {
+      this._isInputsPopoverOpen = false;
+    }
+    async _handleInputClick(evt) {
+      const target = evt.target;
       if (this._isPickerOpen) {
         return;
+      }
+      if (this._isPhone && target && !target.hasAttribute("ui5-icon")) {
+        this.toggleInputsPopover();
       }
       const inputField = await this._getInputField();
       if (inputField) {
@@ -131,54 +245,19 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       const target = e.target;
       this._updateValueAndFireEvents(target.value, false, ["input"]);
     }
-    /**
-     * Closes the picker
-     * @public
-     * @method
-     * @name sap.ui.webc.main.TimePickerBase#closePicker
-     */
-    async closePicker() {
-      const responsivePopover = await this._getPopover();
-      responsivePopover.close();
-      this._isPickerOpen = false;
-    }
-    /**
-     * Opens the picker.
-     * @async
-     * @public
-     * @method
-     * @name sap.ui.webc.main.TimePickerBase#openPicker
-     * @returns {Promise} Resolves when the picker is open
-     */
-    async openPicker() {
-      this.tempValue = this.value && this.isValid(this.value) ? this.value : this.getFormat().format(new Date());
-      const responsivePopover = await this._getPopover();
-      responsivePopover.showAt(this);
-      this._isPickerOpen = true;
-    }
-    togglePicker() {
-      if (this.isOpen()) {
-        this.closePicker();
-      } else if (this._canOpenPicker()) {
-        this.openPicker();
-      }
-    }
-    /**
-     * Checks if the picker is open
-     * @public
-     * @method
-     * @name sap.ui.webc.main.TimePickerBase#isOpen
-     * @returns {boolean}
-     */
-    isOpen() {
-      return !!this._isPickerOpen;
-    }
     _canOpenPicker() {
       return !this.disabled && !this.readonly;
+    }
+    _canOpenInputsPopover() {
+      return !this.disabled && this._isPhone;
     }
     async _getPopover() {
       const staticAreaItem = await this.getStaticAreaItemDomRef();
       return staticAreaItem.querySelector("[ui5-responsive-popover]");
+    }
+    async _getInputsPopover() {
+      const staticAreaItem = await this.getStaticAreaItemDomRef();
+      return staticAreaItem.querySelector("[ui5-popover]");
     }
     _getInput() {
       return this.shadowRoot.querySelector("[ui5-input]");
@@ -188,6 +267,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
       return input && input.getInputDOMRef();
     }
     _onkeydown(e) {
+      if (this._isPhone && !this.isInputsPopoverOpen()) {
+        e.preventDefault();
+      }
       if ((0, _Keys.isShow)(e)) {
         e.preventDefault();
         this.togglePicker();
@@ -295,6 +377,30 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     _handleWheel(e) {
       e.preventDefault();
     }
+    /**
+     * Hides mobile device keyboard by temporary setting the input to readonly state.
+     */
+    _hideMobileKeyboard() {
+      this._getInput().readonly = true;
+      setTimeout(() => {
+        this._getInput().readonly = false;
+      }, 0);
+    }
+    async _onfocusin(evt) {
+      if (this._isPhone) {
+        this._hideMobileKeyboard();
+        if (this._isInputsPopoverOpen) {
+          const popover = await this._getInputsPopover();
+          popover.applyFocus();
+        }
+        evt.preventDefault();
+      }
+    }
+    _oninput(evt) {
+      if (this._isPhone) {
+        evt.preventDefault();
+      }
+    }
     get submitButtonLabel() {
       return TimePickerBase_1.i18nBundle.getText(_i18nDefaults.TIMEPICKER_SUBMIT_BUTTON);
     }
@@ -325,6 +431,10 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     type: Boolean,
     noAttribute: true
   })], TimePickerBase.prototype, "_isPickerOpen", void 0);
+  __decorate([(0, _property.default)({
+    type: Boolean,
+    noAttribute: true
+  })], TimePickerBase.prototype, "_isInputsPopoverOpen", void 0);
   __decorate([(0, _slot.default)()], TimePickerBase.prototype, "valueStateMessage", void 0);
   TimePickerBase = TimePickerBase_1 = __decorate([(0, _customElement.default)({
     languageAware: true,
@@ -332,8 +442,8 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     template: _TimePickerTemplate.default,
     styles: _TimePicker.default,
     staticAreaTemplate: _TimePickerPopoverTemplate.default,
-    staticAreaStyles: [_ResponsivePopoverCommon.default, _TimePickerPopover.default],
-    dependencies: [_Icon.default, _ResponsivePopover.default, _TimeSelection.default, _Input.default, _Button.default]
+    staticAreaStyles: [_ResponsivePopoverCommon.default, _Popover2.default, _TimePickerPopover.default],
+    dependencies: [_Icon.default, _Popover.default, _ResponsivePopover.default, _TimeSelectionClocks.default, _TimeSelectionInputs.default, _Input.default, _Button.default]
   })
   /**
    * Fired when the input operation has finished by clicking the "OK" button or

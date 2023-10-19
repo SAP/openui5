@@ -437,6 +437,13 @@ sap.ui.define([
 					oControlData.hasOwnMethods = !!oControlData.methods.length;
 				}
 
+				if (oControlData.events) {
+					oControlData.events = this.transformElements(oControlData.events, fnIsAllowedMember, fnFormatName);
+
+					// Are there remaining visible events?
+					oControlData.hasOwnevents = !!oControlData.events.length;
+				}
+
 				if (oUi5Metadata) {
 					oControlData.dnd = oUi5Metadata.dnd;
 					oControlData.hasControlProperties = !!(oUi5Metadata.properties && oUi5Metadata.properties.length);

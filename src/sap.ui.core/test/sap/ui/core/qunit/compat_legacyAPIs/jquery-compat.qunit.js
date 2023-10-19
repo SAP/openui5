@@ -1,5 +1,5 @@
 /* global QUnit */
-sap.ui.define([
+sap.ui.require([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery"
 ], function(createAndAppendDiv, jQuery) {

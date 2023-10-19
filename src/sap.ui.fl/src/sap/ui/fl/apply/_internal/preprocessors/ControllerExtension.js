@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.ui.core
 	 */
@@ -48,9 +48,8 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			sap.ui.require(
 				aCodeExtModuleNames,
-				function() {
-					// arguments are not a real array. This creates one for further processing
-					resolve(Array.prototype.slice.call(arguments));
+				function(...aArgs) {
+					resolve(aArgs);
 				},
 				function(oError) {
 					Log.error("Code Extension not found", oError.message);

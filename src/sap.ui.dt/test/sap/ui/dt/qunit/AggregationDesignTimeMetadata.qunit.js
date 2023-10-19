@@ -14,12 +14,12 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an AggregationDesignTimeMetadata is created", {
-		before: function() {
+		before() {
 			this.oAggreationDesignTimeMetadata = new AggregationDesignTimeMetadata({
 				data: {}
 			});
 		},
-		after: function() {
+		after() {
 			this.oAggreationDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}

@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/Tab.css",
-    content: ":host {\n\tdisplay: inline-block;\n\twidth: 100%;\n}\n\n.ui5-tab-root {\n\twidth: 100%;\n\theight: 100%;\n}"
+    content: ":host{display:inline-block;width:100%}.ui5-tab-root{height:100%;width:100%}"
   };
   var _default = styleData;
   _exports.default = _default;

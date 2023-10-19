@@ -7,14 +7,14 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/model/odata/type/Int32'
-], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, TypeInt32) {
+	"delegates/odata/v4/FilterBarDelegate", 'sap/ui/fl/Utils', 'sap/ui/core/util/reflection/JsControlTreeModifier', 'sap/ui/mdc/enums/FieldDisplay', 'sap/ui/mdc/enums/OperatorName', 'sap/ui/model/odata/type/Int32', 'delegates/util/DelegateCache'
+
+], function (FilterBarDelegate, FlUtils, JsControlTreeModifier, FieldDisplay, OperatorName, TypeInt32, DelegateCache) {
 	"use strict";
 
 	var FilterBarOrdersSampleDelegate = Object.assign({}, FilterBarDelegate);
-	FilterBarOrdersSampleDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 
-	FilterBarOrdersSampleDelegate.fetchProperties = function () {
+	FilterBarOrdersSampleDelegate.fetchProperties = function (oFilterBar) {
 		var oFetchPropertiesPromise = FilterBarDelegate.fetchProperties.apply(this, arguments);
 
 		var bSearchExists = false;
@@ -35,14 +35,6 @@ sap.ui.define([
 				} else if (oPropertyInfo.name === "currency_code") {
 					oPropertyInfo.maxConditions = 1; // normally only one currency should be used, otherwise it makes no sense related to price
 				}
-
-				if (oPropertyInfo.display) {
-					delete oPropertyInfo.display;
-				}
-				if (oPropertyInfo.valueHelp) {
-					delete oPropertyInfo.valueHelp;
-				}
-
 			});
 
 			if (!aProperties.find(function(aItem) { return aItem.name === "Items*/book_ID"; } ) ) {
@@ -71,51 +63,23 @@ sap.ui.define([
 				});
 			}
 
+			DelegateCache.add(oFilterBar, {
+				"OrderNo": {valueHelp: "FH1"},
+				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, operators: [OperatorName.EQ]},
+				"ID": {valueHelp: "VH-ID", display: FieldDisplay.ValueDescription, operators: [OperatorName.EQ], additionalDataType: {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}}}
+			}, "$Filters");
+
 			return aProperties;
 		});
-
-		// { name: "author_ID",
-		// groupLabel: "none",
-		// label: "Author ID",
-		// type: "Edm.Int32",
-		// baseType:new TypeInt32(),
-		// required: false,
-		// hiddenFilter: false,
-		// visible: true,
-		// maxConditions : -1,
-		// fieldHelp: "FHAuthor"}
 	};
 
 	FilterBarOrdersSampleDelegate._createFilterField = function (oProperty, oFilterBar, mPropertyBag) {
-
-
 		mPropertyBag = mPropertyBag || {
 			modifier: JsControlTreeModifier,
 			view: FlUtils.getViewForControl(oFilterBar),
 			appComponent: FlUtils.getAppComponentForControl(oFilterBar)
 		};
-
-		var oModifier = mPropertyBag.modifier;
-		// var sName = oProperty.path || oProperty.name;
-		var oFilterFieldPromise = FilterBarDelegate._createFilterField.apply(this, arguments);
-		var oView = mPropertyBag.view ? mPropertyBag.view : FlUtils.getViewForControl(oFilterBar);
-
-		oFilterFieldPromise.then(function (oFilterField) {
-			if (oProperty.name === "OrderNo") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FH1"));
-			} else if (oProperty.name === "currency_code") {
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("FH-Currency"));
-				oModifier.setProperty(oFilterField, "display", FieldDisplay.Value);
-				oModifier.setProperty(oFilterField, "operators", ["EQ"]);
-			} else if (oProperty.name === "ID") {
-				oModifier.setProperty(oFilterField, "display", FieldDisplay.ValueDescription);
-				oModifier.setProperty(oFilterField, "additionalDataType", {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}});
-				oModifier.setAssociation(oFilterField, "valueHelp", oView.createId("VH-ID"));
-			}
-		});
-
-		return oFilterFieldPromise;
-
+		return FilterBarDelegate._createFilterField.apply(this, arguments);
 	};
 
 

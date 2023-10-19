@@ -1,8 +1,8 @@
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor",
 	"sap/ui/fl/apply/api/ControlVariantApplyAPI",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/ChangePersistenceFactory",
@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/m/VBox",
 	"sap/base/Log",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
+	XmlPreprocessor,
 	ControlVariantApplyAPI,
 	FlexRuntimeInfoAPI,
 	PersistenceWriteAPI,
-	FlexControllerFactory,
 	Layer,
 	FlUtils,
 	ChangePersistenceFactory,
@@ -31,7 +32,8 @@ sap.ui.define([
 	VerticalLayout,
 	VBox,
 	Log,
-	oCore
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 	var sMassiveLabel = "applyChangesMassive";
@@ -42,16 +44,16 @@ sap.ui.define([
 	function _areAllChangesApplied() {
 		var oInstanceCache = ChangePersistenceFactory._instanceCache;
 		var sComponent = Object.keys(oInstanceCache)[0];
-		var aChanges = oInstanceCache[sComponent]._mChanges.aChanges;
+		var {aChanges} = oInstanceCache[sComponent]._mChanges;
 		return !aChanges.some(function(oChange) {
 			return !oChange.isSuccessfullyApplied();
 		});
 	}
 
 	function _writeData(sControlId) {
-		sControlId = sControlId || sIdForStatus;
-		var oLayout = oCore.byId("idMain1--Layout");
-		var sDurationText = sMassiveLabel + " = " + window.wpp.customMetrics[sMassiveLabel] + " ms";
+		sControlId ||= sIdForStatus;
+		var oLayout = Element.getElementById("idMain1--Layout");
+		var sDurationText = `${sMassiveLabel} = ${window.wpp.customMetrics[sMassiveLabel]} ms`;
 		Log.info(sDurationText);
 		_addLabel(oLayout, sControlId, sDurationText);
 		window.performance.clearMarks();
@@ -69,15 +71,15 @@ sap.ui.define([
 		FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
 		var aControlsToBeChanged = [].concat(fnAddControls(sControlId));
 		return FlexRuntimeInfoAPI.waitForChanges({ selectors: aControlsToBeChanged })
-		.then(function() {
+		.then(async function() {
 			FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
 			if (!_areAllChangesApplied()) {
-				var oLayout = oCore.byId("idMain1--Layout");
+				var oLayout = Element.getElementById("idMain1--Layout");
 				_addLabel(oLayout, "_error", "Error: not all changes were applied");
 				throw new Error("Not all changes were applied");
 			}
 			_writeData();
-			oCore.applyChanges();
+			await nextUIUpdate();
 		})
 		.catch(function(vError) {
 			Log.error(vError);
@@ -91,7 +93,7 @@ sap.ui.define([
 	 *			initialLabel (label) -- will be added as selector to apply rename changes
 	 */
 	function _createControlForRename(sControlId) {
-		var oLayout = oCore.byId("idMain1--Layout");
+		var oLayout = Element.getElementById("idMain1--Layout");
 		var oControl = new Label(sControlId, {text: sControlId});
 		oLayout.addContent(oControl);
 		return oControl;
@@ -111,14 +113,14 @@ sap.ui.define([
 	 *					.button (button) -- will be added as selector to apply changes
 	 */
 	function _createControlsForDiverse(sControlId) {
-		var oLayout = oCore.byId("idMain1--Layout");
-		var oTitleLabel = new Label(sControlId + ".title", {text: sControlId + ".title"});
-		var oInnerLabel = new Label(sControlId + ".label", {text: sControlId + ".label"});
-		var oDatePicker = new DatePicker(sControlId + ".datePicker");
-		var oSlider = new Slider(sControlId + ".slider");
-		var oRatingIndicator = new RatingIndicator(sControlId + ".ratingIndicator");
-		var oButton = new Button(sControlId + ".button", {text: sControlId + ".button"});
-		var oVBox = new VBox(sControlId + ".vbox", {
+		var oLayout = Element.getElementById("idMain1--Layout");
+		var oTitleLabel = new Label(`${sControlId}.title`, {text: `${sControlId}.title`});
+		var oInnerLabel = new Label(`${sControlId}.label`, {text: `${sControlId}.label`});
+		var oDatePicker = new DatePicker(`${sControlId}.datePicker`);
+		var oSlider = new Slider(`${sControlId}.slider`);
+		var oRatingIndicator = new RatingIndicator(`${sControlId}.ratingIndicator`);
+		var oButton = new Button(`${sControlId}.button`, {text: `${sControlId}.button`});
+		var oVBox = new VBox(`${sControlId}.vbox`, {
 			items: [
 				oInnerLabel,
 				oDatePicker,
@@ -128,7 +130,7 @@ sap.ui.define([
 			]
 		});
 		var oInnerLayout = new VerticalLayout({
-			id: sControlId + ".layout",
+			id: `${sControlId}.layout`,
 			content: [
 				oTitleLabel,
 				oVBox
@@ -157,8 +159,8 @@ sap.ui.define([
 
 	function _startVariantsScenario() {
 		_createControlsForDiverse("idMain1--dependencyScenarioControl");
-		var oComponent = FlUtils.getAppComponentForControl(oCore.byId("idMain1--Layout"));
-		var oControlToBeChanged = oCore.byId("idMain1--dependencyScenarioControl.vbox");
+		var oComponent = FlUtils.getAppComponentForControl(Element.getElementById("idMain1--Layout"));
+		var oControlToBeChanged = Element.getElementById("idMain1--dependencyScenarioControl.vbox");
 
 		return FlexRuntimeInfoAPI.waitForChanges({element: oControlToBeChanged})
 		.then(function() {
@@ -171,8 +173,8 @@ sap.ui.define([
 
 	function _startSaveAsScenario() {
 		_createControlsForDiverse("idMain1--dependencyScenarioControl");
-		var oVMControl = oCore.byId("idMain1--variantManagementOrdersTable");
-		var oControlToBeChanged = oCore.byId("idMain1--dependencyScenarioControl.vbox");
+		var oVMControl = Element.getElementById("idMain1--variantManagementOrdersTable");
+		var oControlToBeChanged = Element.getElementById("idMain1--dependencyScenarioControl.vbox");
 
 		// wait for the initial changes to be applied
 		return FlexRuntimeInfoAPI.waitForChanges({
@@ -202,23 +204,22 @@ sap.ui.define([
 	}
 
 	FlexPerformanceTestUtil.stopMeasurement = function(sMeasure) {
-		sMeasure = sMeasure || sMassiveLabel;
-		window.performance.measure(sMeasure, sMeasure + ".start");
+		sMeasure ||= sMassiveLabel;
+		window.performance.measure(sMeasure, `${sMeasure}.start`);
 		window.wpp.customMetrics[sMeasure] = window.performance.getEntriesByName(sMeasure)[0].duration;
 	};
 
 	FlexPerformanceTestUtil.startMeasurement = function(sMeasure) {
-		sMeasure = sMeasure || sMassiveLabel;
-		window.performance.mark(sMeasure + ".start");
+		sMeasure ||= sMassiveLabel;
+		window.performance.mark(`${sMeasure}.start`);
 	};
 
-	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function(oComponent) {
+	FlexPerformanceTestUtil.startMeasurementForXmlPreprocessing = function() {
 		// Monkey patching of FlexController.processXmlView function
-		var oFlexController = FlexControllerFactory.createForControl(oComponent);
-		var fnOriginalProcessXmlView = oFlexController.processXmlView.bind(oFlexController);
-		oFlexController.processXmlView = function() {
+		var fnOriginalProcessXmlView = XmlPreprocessor.process;
+		XmlPreprocessor.process = function(...aArgs) {
 			FlexPerformanceTestUtil.startMeasurement(sMassiveLabel);
-			return fnOriginalProcessXmlView.apply(this, arguments)
+			return fnOriginalProcessXmlView.apply(this, aArgs)
 			.then(function(vReturn) {
 				FlexPerformanceTestUtil.stopMeasurement(sMassiveLabel);
 				return vReturn;

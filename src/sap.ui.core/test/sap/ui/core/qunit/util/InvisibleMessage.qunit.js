@@ -1,14 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/StaticArea",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-qunit"
-
-], function (Core, coreLibrary, InvisibleMessage, Log, sinon) {
+], function (coreLibrary, InvisibleMessage, StaticArea, Log, sinon, nextUIUpdate) {
 	"use strict";
 
 	var InvisibleMessageMode = coreLibrary.InvisibleMessageMode;
@@ -26,7 +26,7 @@ sap.ui.define([
 	QUnit.test("Element announcing", function(assert) {
 		// Arrange
 		var oInvisibleMessage = InvisibleMessage.getInstance(),
-			oStatic = Core.getStaticAreaRef(),
+			oStatic = StaticArea.getDomRef(),
 			fnInfoSpy = this.spy(Log, "info"),
 			oPoliteMarkup, oAssertiveMarkup;
 
@@ -44,10 +44,10 @@ sap.ui.define([
 		assert.ok(fnInfoSpy.called, "An info message should be displayed when calling the method with invalid mode.");
 	});
 
-	QUnit.test("Clearing of element content", function(assert) {
+	QUnit.test("Clearing of element content", async function(assert) {
 		// Arrange
 		var oInvisibleMessage = InvisibleMessage.getInstance(),
-			oStatic = Core.getStaticAreaRef(),
+			oStatic = StaticArea.getDomRef(),
 			oAssertiveMarkup;
 
 		this.clock = sinon.useFakeTimers();
@@ -61,7 +61,7 @@ sap.ui.define([
 		assert.strictEqual(oAssertiveMarkup.textContent, "Announcement",  "The text of the assertive span should have been changed.");
 
 		this.clock.tick(4000);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.strictEqual(oAssertiveMarkup.textContent, "",  "The text of the assertive span should be cleared out.");

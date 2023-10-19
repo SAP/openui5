@@ -2,9 +2,7 @@ sap.ui.define(['../util/EnvHelper', "sap/base/util/merge"], function(EnvHelper, 
 
     "use strict";
 
-    window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
-    var mConfig = {
+    const mConfig = {
         name: "Library 'sap.ui.mdc' - Testsuite Chart",	/* Just for a nice title on the pages */
         defaults: {
             group: "Chart",

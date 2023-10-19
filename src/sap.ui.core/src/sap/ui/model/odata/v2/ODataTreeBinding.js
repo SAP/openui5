@@ -40,6 +40,12 @@ sap.ui.define([
 	 *   The application filters to be used initially
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters
+	 * @param {boolean} [mParameters.transitionMessagesOnly=false]
+	 *   Whether the tree binding only requests transition messages from the back end. If messages
+	 *   for entities of this collection need to be updated, use
+	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to the
+	 *   tree binding's context, with the parameter <code>updateAggregatedMessages</code> set to
+	 *   <code>true</code>.
 	 * @param {object} [mParameters.treeAnnotationProperties]
 	 *   The mapping between data properties and the hierarchy used to visualize the tree, if not
 	 *   provided by the service's metadata
@@ -182,6 +188,7 @@ sap.ui.define([
 			this.oAllKeys = null;
 			this.oAllLengths = null;
 			this.oAllFinalLengths = null;
+			this.bTransitionMessagesOnly = !!this.mParameters.transitionMessagesOnly;
 
 			// Whether a refresh has been performed
 			this.bRefresh = false;
@@ -202,6 +209,18 @@ sap.ui.define([
 		Collapsed: "collapsed",
 		Expanded: "expanded",
 		Leaf: "leaf"
+	};
+
+	/**
+	 * Gets the request headers for a read request.
+	 *
+	 * @returns {Object<string, string>|undefined}
+	 *   The request headers for a read request, or <code>undefined</code> if no headers are required
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._getHeaders = function () {
+		return this.bTransitionMessagesOnly ? {"sap-messages": "transientOnly"} : undefined;
 	};
 
 	/**
@@ -256,6 +275,7 @@ sap.ui.define([
 		if (sAbsolutePath) {
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				groupId: sGroupId,
+				headers: this._getHeaders(),
 				success: function (oData) {
 					var sNavPath = that._getNavPath(that.getPath());
 
@@ -821,16 +841,20 @@ sap.ui.define([
 
 		// figure out how to request the count
 		var sCountType = "";
+		let oHeaders;
 		if (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both) {
 			sCountType = "/$count";
+			// this.bTransitionMessagesOnly is not relevant for $count requests -> no sap-messages header
 		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 			aParams.push("$top=0");
 			aParams.push("$inlinecount=allpages");
+			oHeaders = this._getHeaders();
 		}
 
 		// send the counting request
 		if (sAbsolutePath) {
 			this.oModel.read(sAbsolutePath + sCountType, {
+				headers: oHeaders,
 				urlParameters: aParams,
 				success: _handleSuccess.bind(this),
 				error: _handleError.bind(this),
@@ -908,6 +932,7 @@ sap.ui.define([
 		if (sAbsolutePath) {
 			sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 			this.oModel.read(sAbsolutePath + "/$count", {
+				// this.bTransitionMessagesOnly is not relevant for $count requests -> no sap-messages header
 				urlParameters: aParams,
 				success: _handleSuccess,
 				error: _handleError,
@@ -1056,7 +1081,7 @@ sap.ui.define([
 				if (oData.results.length > 0) {
 					var sParentKey = this.oModel.getKey(oData.results[0]);
 					this._updateNodeKey(oNode, sParentKey);
-					var mKeys = this._createKeyMap(oData.results);
+					var mKeys = this._createKeyMap(oData.results, true);
 					this._importCompleteKeysHierarchy(mKeys);
 				}
 
@@ -1094,6 +1119,7 @@ sap.ui.define([
 			if (sAbsolutePath) {
 				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					headers: this._getHeaders(),
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
@@ -1264,6 +1290,7 @@ sap.ui.define([
 			if (sAbsolutePath) {
 				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+					headers: this._getHeaders(),
 					urlParameters: aParams,
 					success: fnSuccess,
 					error: fnError,
@@ -1399,6 +1426,7 @@ sap.ui.define([
 				aURLParams.push("$top=" + this.iTotalCollectionCount);
 			}
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
+				headers: this._getHeaders(),
 				urlParameters: aURLParams,
 				success: fnSuccess,
 				error: fnError,

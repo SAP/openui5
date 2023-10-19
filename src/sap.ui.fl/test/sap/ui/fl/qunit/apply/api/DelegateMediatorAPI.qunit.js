@@ -37,14 +37,14 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given 'registerDefaultDelegate' function is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.mPropertyBag = {
 				modelType: "test_modelType",
 				delegate: "test_delegate",
 				delegateType: "complete"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			DelegateMediator.clear();
 		}
 	}, function() {
@@ -92,11 +92,11 @@ sap.ui.define([
 		});
 
 		[["readonly", "readonly"], ["writeonly", "complete"], ["complete", "writeonly"]].forEach(function(sDelegateType) {
-			QUnit.test("When try to register the same modelType with with already existing '" + sDelegateType[0] + "' delegate", function(assert) {
-				this.mPropertyBag.delegateType = sDelegateType[0];
+			QUnit.test(`When try to register the same modelType with with already existing '${sDelegateType[0]}' delegate`, function(assert) {
+				[this.mPropertyBag.delegateType] = sDelegateType;
 				DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 				assert.throws(function() {
-					this.mPropertyBag.delegateType = sDelegateType[1];
+					[, this.mPropertyBag.delegateType] = sDelegateType;
 					DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 				}.bind(this), /is already defined!/, "then an exception is thrown");
 			});
@@ -106,7 +106,7 @@ sap.ui.define([
 	var SomeModel = JSONModel.extend("sap.ui.fl.qunit.test.Model");
 
 	QUnit.module("Given 'getDelegateForControl' function is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.mPropertyBag = {
 				modelType: SomeModel.getMetadata().getName(),
 				delegate: "sap/ui/rta/enablement/TestDelegate",
@@ -123,7 +123,7 @@ sap.ui.define([
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			DelegateMediator.clear();
 			this.oPanel.destroy();
 			sandbox.restore();
@@ -286,7 +286,7 @@ sap.ui.define([
 				delegateType: "writeonly"
 			});
 			var oFakeReadOnlyDelegate = {
-				getPropertyInfo: function() {
+				getPropertyInfo() {
 					return Promise.resolve([{
 						name: "testProperty",
 						bindingPath: "fakepath"
@@ -294,7 +294,7 @@ sap.ui.define([
 				}
 			};
 			var oFakeWriteOnlyDelegate = {
-				createLabel: function() {
+				createLabel() {
 					return Promise.resolve(new Button("myBrandNewButton"));
 				}
 			};
@@ -356,7 +356,7 @@ sap.ui.define([
 				delegateType: "readonly"
 			});
 			var oFakeReadOnlyDelegate = {
-				getPropertyInfo: function() {
+				getPropertyInfo() {
 					return Promise.resolve([{
 						name: "testProperty",
 						bindingPath: "fakepath"
@@ -364,7 +364,7 @@ sap.ui.define([
 				}
 			};
 			var oFakeWriteOnlyDelegate = {
-				createLabel: function() {
+				createLabel() {
 					return Promise.resolve(new Button("buttonFromInstancespecificDelegate"));
 				}
 			};

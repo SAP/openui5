@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
     "use strict";
 
     /**
@@ -14,7 +14,7 @@ sap.ui.define(function() {
      * @since 1.115
      * @public
      */
-    var TableRowAction = {
+    const TableRowAction = {
         /**
          * Navigation arrow (chevron) is shown in the table rows/items.
          *
@@ -22,6 +22,8 @@ sap.ui.define(function() {
          */
         Navigation: "Navigation"
     };
+
+    DataType.registerEnum("sap.ui.mdc.enums.TableRowAction", TableRowAction);
 
     return TableRowAction;
 

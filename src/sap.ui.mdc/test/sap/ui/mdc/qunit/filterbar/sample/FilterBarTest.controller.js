@@ -12,7 +12,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.mdc.filterbar.sample.FilterBarTest", {
 
 		onFiltersChanged: function(oEvent) {
-			var oText = this.getView().byId("statusTextExpanded");
+			let oText = this.getView().byId("statusTextExpanded");
 			if (oText) {
 				oText.setText(oEvent.getParameters().filtersTextExpanded);
 			}

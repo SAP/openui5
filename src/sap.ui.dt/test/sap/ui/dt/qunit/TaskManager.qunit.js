@@ -10,10 +10,10 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Public API - add()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -128,10 +128,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - complete()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -169,10 +169,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - completeBy()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -238,7 +238,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - cancelBy()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 			this.iTaskId = this.oTaskManager.add({
 				type: "foo",
@@ -246,7 +246,7 @@ sap.ui.define([
 				otherParams: "defined"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -280,10 +280,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - count()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -301,10 +301,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - isEmpty()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -339,10 +339,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - getList()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -381,10 +381,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - getQueuedTasks()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {
@@ -426,10 +426,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Public API - 'suppressEvents' property", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTaskManager = new TaskManager();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oTaskManager.destroy();
 		}
 	}, function() {

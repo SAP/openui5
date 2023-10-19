@@ -108,7 +108,6 @@ sap.ui.define([
 	 * @private
 	 */
 	function _handleVariantIdChangeInURL(oModel, sNewHash) {
-		// TODO: Check if this is really necessary, as the method is never called with a new hash and in the test the parameter is not a string
 		try {
 			var oURLParsingService = oModel.getUShellService("URLParsing");
 			if (oURLParsingService) {
@@ -430,13 +429,11 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl.variants.VariantModel
 	 */
 	 URLHandler.update = function(mPropertyBag) {
-		if (!mPropertyBag.model._oHashData) {
-			mPropertyBag.model._oHashData = {
-				hashParams: [],
-				controlPropertyObservers: [],
-				variantControlIds: []
-			};
-		}
+		mPropertyBag.model._oHashData ||= {
+			hashParams: [],
+			controlPropertyObservers: [],
+			variantControlIds: []
+		};
 		if (!mPropertyBag || !Array.isArray(mPropertyBag.parameters)) {
 			Log.info("Variant URL parameters could not be updated since invalid parameters were received");
 			return;

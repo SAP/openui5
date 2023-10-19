@@ -3,11 +3,11 @@
 sap.ui.define([
 	"sap/ui/rta/appVariant/AppVariantDialog",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	AppVariantDialog,
 	sinon,
-	oCore
+	Element
 ) {
 	"use strict";
 
@@ -15,10 +15,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a AppVariantDialog is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 			oAppVariantDialog = new AppVariantDialog();
 		},
-		afterEach: function() {
+		afterEach() {
 			oAppVariantDialog.destroy();
 			sandbox.restore();
 		}
@@ -58,7 +58,7 @@ sap.ui.define([
 		QUnit.test("When liveChange event is triggered on a title Input field with empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = oCore.byId("titleInput");
+			var oTitleInput = Element.getElementById("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), false, "then the save button is not enabled");
@@ -71,7 +71,7 @@ sap.ui.define([
 		QUnit.test("When liveChange event is triggered on a title Input field with non empty value", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oTitleInput = oCore.byId("titleInput");
+			var oTitleInput = Element.getElementById("titleInput");
 
 			oTitleInput.attachLiveChange(function() {
 				assert.equal(oAppVariantDialog.getButtons()[0].getEnabled(), true, "then the save button is not enabled");
@@ -86,10 +86,10 @@ sap.ui.define([
 		QUnit.test("When valueHelpRequest event is triggered on an Input field and then search event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = oCore.byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = oCore.byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -109,7 +109,7 @@ sap.ui.define([
 
 		QUnit.test("When liveChange event is triggered on an Input field", function(assert) {
 			oAppVariantDialog.open();
-			var oSelectInput = oCore.byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			var bEventTriggered = false;
 
@@ -125,10 +125,10 @@ sap.ui.define([
 		QUnit.test("When confirm event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = oCore.byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = oCore.byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");
@@ -152,10 +152,10 @@ sap.ui.define([
 		QUnit.test("When cancel event is triggered on SelectDialog", function(assert) {
 			var done = assert.async();
 			oAppVariantDialog.open();
-			var oSelectInput = oCore.byId("selectInput");
+			var oSelectInput = Element.getElementById("selectInput");
 
 			oSelectInput.attachValueHelpRequest(function() {
-				var oSelectDialog = oCore.byId("selectDialog");
+				var oSelectDialog = Element.getElementById("selectDialog");
 				assert.ok("then the select dialog gets opened");
 				assert.ok(oSelectDialog.getDomRef(), "then the control got rendered");
 				assert.strictEqual(oSelectDialog.getBindingPath("items"), "/icons", "then the select dialog gets bound with a correct model property");

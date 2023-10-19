@@ -90,9 +90,7 @@ sap.ui.define([
 	}
 
 	function _setInstance(sServiceUri, mBindingInfo, oInstance) {
-		if (!_mExtensibilityVariants[sServiceUri]) {
-			_mExtensibilityVariants[sServiceUri] = {};
-		}
+		_mExtensibilityVariants[sServiceUri] ||= {};
 
 		_mExtensibilityVariants[sServiceUri][mBindingInfo.entityTypeName] = oInstance;
 	}
@@ -113,9 +111,10 @@ sap.ui.define([
 
 	/**
 	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.ABAPExtensibilityVariantFactory
-	 * @experimental Since 1.87.0
+	 * @since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
+	 * @private
 	 */
 	var ABAPExtensibilityVariantFactory = {};
 

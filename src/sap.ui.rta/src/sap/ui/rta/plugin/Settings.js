@@ -28,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.44
 	 * @alias sap.ui.rta.plugin.Settings
-	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Settings = Plugin.extend("sap.ui.rta.plugin.Settings", /** @lends sap.ui.rta.plugin.Settings.prototype */ {
 		metadata: {
@@ -183,6 +182,7 @@ sap.ui.define([
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
 					return this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
 				}
+				return undefined;
 			}, this);
 		}.bind(this))
 
@@ -209,15 +209,13 @@ sap.ui.define([
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
 	Settings.prototype.handler = function(aElementOverlays, mPropertyBag, oSettingsAction) {
-		mPropertyBag = mPropertyBag || {};
+		mPropertyBag ||= {};
 		var oElement = aElementOverlays[0].getElement();
-		var fnHandler = mPropertyBag.fnHandler;
+		var {fnHandler} = mPropertyBag;
 
+		fnHandler ||= aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
 		if (!fnHandler) {
-			fnHandler = aElementOverlays[0].getDesignTimeMetadata().getAction("settings").handler;
-			if (!fnHandler) {
-				throw new Error("Handler not found for settings action");
-			}
+			throw new Error("Handler not found for settings action");
 		}
 		mPropertyBag.getUnsavedChanges = this._getUnsavedChanges.bind(this);
 		mPropertyBag.styleClass = Utils.getRtaStyleClassName();
@@ -228,6 +226,7 @@ sap.ui.define([
 			if (aChanges.length > 0) {
 				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges, oSettingsAction);
 			}
+			return undefined;
 		}.bind(this))
 
 		.catch(function(vError) {
@@ -283,14 +282,14 @@ sap.ui.define([
 							|| this.isEnabled([oElementOverlay])
 						),
 						handler: function(fnHandler, aElementOverlays, mPropertyBag) {
-							mPropertyBag = mPropertyBag || {};
+							mPropertyBag ||= {};
 							mPropertyBag.fnHandler = fnHandler;
 							return this.handler(aElementOverlays, mPropertyBag, oSettingsAction);
 						}.bind(this, oSettingsAction.handler),
 						submenu: formatSubMenuItems(oSettingsAction.submenu)
 					});
 				} else {
-					BaseLog.warning("Handler not found for settings action '" + sSettingsAction + "' or relevant container has no stable id");
+					BaseLog.warning(`Handler not found for settings action '${sSettingsAction}' or relevant container has no stable id`);
 				}
 			}, this);
 		}
@@ -302,13 +301,14 @@ sap.ui.define([
 		if (aSubMenu) {
 			return aSubMenu.map(function(oSubMenu, iIndex) {
 				return {
-					id: oSubMenu.key || sPluginId + "_SUB_" + iIndex,
+					id: oSubMenu.key || `${sPluginId}_SUB_${iIndex}`,
 					icon: oSubMenu.icon || "blank",
 					text: oSubMenu.name || "",
 					enabled: oSubMenu.hasOwnProperty("enabled") ? oSubMenu.enabled : true
 				};
 			});
 		}
+		return undefined;
 	}
 
 	function getActionIcon(oSettingsAction) {

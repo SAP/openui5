@@ -174,7 +174,7 @@ sap.ui.define([
 			}
 			if (mOptions && mOptions.url === 'testdata/resources/bundle.hdbtextbundle') {
 				var sLocale = mOptions.headers && mOptions.headers['Accept-Language'];
-				var sResource = sap.ui.require.toUrl('testdata/resources/bundle') + (sLocale ? "_" + sLocale.replace('-', '_') : '') + '.hdbtextbundle';
+				var sResource = sap.ui.require.toUrl('testdata/resources/bundle') + (sLocale !== "*" ? "_" + sLocale.replace('-', '_') : '') + '.hdbtextbundle';
 				var sResult;
 				jQuery.ajax({
 					url: sResource,

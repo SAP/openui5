@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/m/p13n/SortPanel",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core"
-], function (SortPanel, JSONModel, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Item"
+], function (SortPanel, JSONModel, oCore, Item) {
 	"use strict";
 
 	QUnit.module("SortPanel API tests", {
@@ -65,8 +66,10 @@ sap.ui.define([
 		assert.deepEqual(this.oSortPanel.getP13nData(true), aSortState, "Correct sort state");
 
 		//Change sort order of 'key1' to descending
-		oSegmentedButton.fireSelect({
-			key: "desc"
+		oSegmentedButton.fireSelectionChange({
+			item: new Item({
+				key: "desc"
+			})
 		});
 		assert.equal(oSortOrderText.getText(), "Descending", "Correct sort order text");
 		var aNewSortState = [

@@ -3,19 +3,20 @@
  */
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/ui/core/sample/common/Helper",
+	"sap/ui/core/sample/common/pages/Any",
+	"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/pages/Main",
+	"sap/ui/test/opaQunit",
+	"sap/ui/test/TestUtils",
+	"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/SandboxModel" // preload only
+], function (Log, Core, library, Helper, Any, Main, opaTest, TestUtils) {
 	"use strict";
 
-	sap.ui.require([
-		"sap/base/Log",
-		"sap/ui/core/library",
-		"sap/ui/core/sample/common/Helper",
-		"sap/ui/core/sample/common/pages/Any",
-		"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/pages/Main",
-		"sap/ui/test/opaQunit",
-		"sap/ui/test/TestUtils",
-		"sap/ui/core/sample/odata/v4/MultipleInlineCreationRowsGrid/SandboxModel" // preload only
-	], function (Log, library, Helper, Any, Main, opaTest, TestUtils) {
+	Core.ready().then(function () {
 		var MessageType = library.MessageType; // shortcut for sap.ui.core.MessageType
 
 		Helper.qUnitModule("sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid");
@@ -48,6 +49,8 @@ sap.ui.getCore().attachInit(function () {
 						name : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
 					}
 				});
+				Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 				Then.onTheListReport.checkProductsTableTitle("3 Products");
 				Then.onTheListReport.checkProductsLength(5);
 				Then.onTheListReport.checkProduct(0, "", "Inactive");
@@ -323,7 +326,6 @@ sap.ui.getCore().attachInit(function () {
 
 				Then.onAnyPage.checkLog(aExpectedLogs);
 				Then.onAnyPage.analyzeSupportAssistant();
-				Then.iTeardownMyUIComponent();
 			});
 	});
 });
@@ -340,6 +342,8 @@ sap.ui.getCore().attachInit(function () {
 				name : "sap.ui.core.sample.odata.v4.MultipleInlineCreationRowsGrid"
 			}
 		});
+		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
+
 		Then.onTheListReport.checkProductsTableTitle("3 Products");
 		Then.onTheListReport.checkProductsLength(5);
 		Then.onTheListReport.checkProduct(0, "", "Inactive");
@@ -418,7 +422,6 @@ sap.ui.getCore().attachInit(function () {
 
 		Then.onAnyPage.checkLog(aExpectedLogs);
 		Then.onAnyPage.analyzeSupportAssistant();
-		Then.iTeardownMyUIComponent();
 	});
 });
 			QUnit.start();

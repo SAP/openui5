@@ -2,12 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, Controller, Filter, JSONModel, TestUtils) {
+], function (Controller, Filter, JSONModel, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation", {
@@ -23,7 +22,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oUriParameters = UriParameters.fromQuery(window.location.search),
+			var oUriParameters = new URLSearchParams(window.location.search),
 				sFilter = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.filter")
 					|| oUriParameters.get("filter"),
@@ -67,9 +66,9 @@ sap.ui.define([
 			};
 			if (sGrandTotalAtBottomOnly) {
 				if (sGrandTotalAtBottomOnly === "true") {
-					oTable.setFixedRowCount(0);
+					oTable.getRowMode().setFixedTopRowCount(0);
 				}
-				oTable.setFixedBottomRowCount(1);
+				oTable.getRowMode().setFixedBottomRowCount(1);
 				this._oAggregation.grandTotalAtBottomOnly = sGrandTotalAtBottomOnly === "true";
 			}
 			if (sLeafCount) {

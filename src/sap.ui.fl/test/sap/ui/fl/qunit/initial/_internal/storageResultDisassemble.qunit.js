@@ -95,7 +95,7 @@ sap.ui.define([
 			assert.equal("abc123", oFlexDataResponse.cacheKey, "the cacheKey is kept in the first response");
 			assert.deepEqual({key: "value"}, oFlexDataResponse.ui2personalization, "the ui2personalization is kept in the first response");
 			// CUSTOMER response object
-			oFlexDataResponse = aResponses[1];
+			[, oFlexDataResponse] = aResponses;
 			assert.equal(2, oFlexDataResponse.variants.length, "and the second response object is for the CUSTOMER layer and contains the variants (but not the standard variant) sorted by creation timestamp in ascending order");
 			assert.equal("variant3", oFlexDataResponse.variants[0].fileName, "and variant3 is the first variant in the array");
 			assert.equal("variant4", oFlexDataResponse.variants[1].fileName, "and variant4 is the second variant in the array");
@@ -162,7 +162,7 @@ sap.ui.define([
 			assert.equal(0, oFlexDataResponse.variantChanges.length, "and the variantChanges array of the first response object is empty");
 			assert.equal(0, oFlexDataResponse.variantDependentControlChanges.length, "and the variantDependentControlChanges array of the first response object is empty");
 			// USER response object
-			oFlexDataResponse = aResponses[1];
+			[, oFlexDataResponse] = aResponses;
 			assert.equal(2, oFlexDataResponse.variantManagementChanges.length, "and the second response object is for the USER layer and contains the variant managements changes in the variantManagementChanges array sorted by creation timestamp in ascending order");
 			assert.equal("change3", oFlexDataResponse.variantManagementChanges[0].fileName, "and change3 is the first variant management change in the array");
 			assert.equal("change4", oFlexDataResponse.variantManagementChanges[1].fileName, "and change4 is the second variant management change in the array");
@@ -230,7 +230,7 @@ sap.ui.define([
 			assert.equal(0, oFlexDataResponse.variantDependentControlChanges.length, "and the variantDependentControlChanges array of the first response object is empty");
 			assert.equal(0, oFlexDataResponse.variantManagementChanges.length, "and the variantManagementChanges array of the first response object is empty");
 			// USER response object
-			oFlexDataResponse = aResponses[1];
+			[, oFlexDataResponse] = aResponses;
 			assert.equal(2, oFlexDataResponse.variantChanges.length, "and the second response object is for the USER layer and contains the variant changes in the variantChanges array sorted by creation timestamp in ascending order");
 			assert.equal("change3", oFlexDataResponse.variantChanges[0].fileName, "and change3 is the first variant change in the array");
 			assert.equal("change4", oFlexDataResponse.variantChanges[1].fileName, "and change4 is the second variant change in the array");
@@ -264,7 +264,7 @@ sap.ui.define([
 			assert.equal(0, oFlexDataResponse.variantChanges.length, "and the variantChanges array of the first response object is empty");
 			assert.equal(0, oFlexDataResponse.variantManagementChanges.length, "and the variantManagementChanges array of the first response object is empty");
 			// USER response object
-			oFlexDataResponse = aResponses[1];
+			[, oFlexDataResponse] = aResponses;
 			assert.equal(2, oFlexDataResponse.variantDependentControlChanges.length, "and the second response object is for the USER layer and contains the control changes in the variantDEpendentControlChanges array sorted by creation timestamp in ascending order");
 			assert.equal("change3", oFlexDataResponse.variantDependentControlChanges[0].fileName, "and change3 is the first control change in the array");
 			assert.equal("change4", oFlexDataResponse.variantDependentControlChanges[1].fileName, "and change4 is the second control change in the array");

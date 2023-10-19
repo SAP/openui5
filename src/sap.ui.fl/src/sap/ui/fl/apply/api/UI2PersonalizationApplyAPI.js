@@ -17,7 +17,6 @@ sap.ui.define([
 	 * Provides an API to access UI2 personalization.
 	 *
 	 * @namespace sap.ui.fl.apply.api.UI2PersonalizationApplyAPI
-	 * @experimental Since 1.71
 	 * @since 1.71
 	 * @private
 	 * @ui5-restricted
@@ -38,21 +37,20 @@ sap.ui.define([
 		 * @private
 	 	 * @ui5-restricted
 		 */
-		load: function(mPropertyBag) {
+		async load(mPropertyBag) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForSelector(mPropertyBag.selector);
 
 			if (
 				!mPropertyBag.reference
 				|| !mPropertyBag.containerKey
 			) {
-				return Promise.reject(new Error("not all mandatory properties were provided for the loading of the personalization"));
+				throw new Error("not all mandatory properties were provided for the loading of the personalization");
 			}
 
-			return FlexState.initialize({
+			await FlexState.initialize({
 				componentId: mPropertyBag.selector.getId()
-			}).then(function() {
-				return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 			});
+			return UI2PersonalizationState.getPersonalization(mPropertyBag.reference, mPropertyBag.containerKey, mPropertyBag.itemName);
 		}
 	};
 

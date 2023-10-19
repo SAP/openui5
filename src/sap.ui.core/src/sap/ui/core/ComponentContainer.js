@@ -91,7 +91,7 @@ sap.ui.define([
 				async : {type : "boolean", defaultValue : false},
 
 				/**
-				 * Enable/disable validation handling by MessageManager for this component.
+				 * Enable/disable validation handling by Messaging for this component.
 				 * The resulting Messages will be propagated to the controls.
 				 * This property can only be applied initially.
 				 */
@@ -278,9 +278,10 @@ sap.ui.define([
 	 * @since 1.91
 	 */
 	ComponentContainer.prototype.showPlaceholder = function(mSettings) {
-		var pLoaded;
+		var pLoaded,
+			Placeholder = sap.ui.require("sap/ui/core/Placeholder");
 
-		if (!Configuration.getPlaceholder()) {
+		if (!Placeholder || !Placeholder.isEnabled()) {
 			return;
 		}
 

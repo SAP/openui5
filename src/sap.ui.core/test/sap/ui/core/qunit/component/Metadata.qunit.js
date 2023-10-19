@@ -76,7 +76,7 @@ sap.ui.define([
 						"uri": "i18n/i18n.properties"
 					},
 					"sfapi": {
-						"type": "sap.ui.model.odata.ODataModel",
+						"type": "sap.ui.model.odata.v2.ODataModel",
 						"uri": "./some/odata/service"
 					}
 				},
@@ -191,7 +191,7 @@ sap.ui.define([
 							"uri": "i18n/i18n.properties"
 						},
 						"sfapi": {
-							"type": "sap.ui.model.odata.ODataModel",
+							"type": "sap.ui.model.odata.v2.ODataModel",
 							"uri": "./some/odata/service"
 						}
 					},
@@ -406,7 +406,7 @@ sap.ui.define([
 			return new Promise(function (resolve) {
 				sap.ui.require([
 					"sap/ui/model/resource/ResourceModel",
-					"sap/ui/model/odata/ODataModel",
+					"sap/ui/model/odata/v2/ODataModel",
 					"sap/ui/core/routing/Router",
 					"sap/ui/core/mvc/XMLView"
 				], function (ResourceModel, OdataModel, Router, XMLView) {

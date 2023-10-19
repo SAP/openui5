@@ -733,6 +733,9 @@ sap.ui.define([
 				'bell-2': 0xe2a0,
 				'accessibility': 0xe2a1,
 				'high-priority': 0xe2a2,
+				'da': 0x1e2a3,
+				'da-2': 0x1e2a4,
+				'ai': 0x1e2a5,
 				'gender-male-and-female': 0x1e300,
 				'rotate': 0xe301,
 				'locate-me-2': 0xe302,
@@ -756,7 +759,7 @@ sap.ui.define([
 		// Lazy load core resource bundle
 		function getCoreResourceBundle() {
 			if (!oCoreResourceBundle) {
-				oCoreResourceBundle = Library.get("sap.ui.core").getResourceBundle();
+				oCoreResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 			}
 			return oCoreResourceBundle;
 		}
@@ -1217,7 +1220,12 @@ sap.ui.define([
 						});
 					}
 					return mFontRegistry[collectionName].metadataLoaded;
-				} else if (oConfig.metadataURI) {
+				}
+
+				/**
+				 * @deprecated As of Version 1.120
+				 */
+				if (!(async && !oConfig.metadata) && oConfig.metadataURI) {
 					if (mFontRegistry[collectionName].abortController) { // there is an async request ongoing
 						// the async request is aborted before the sync request is sent
 						mFontRegistry[collectionName].abortController.abort("Replaced by sync request");
@@ -1248,10 +1256,11 @@ sap.ui.define([
 					} catch (error) {
 						fnErrorCallback();
 					}
-				} else {
-					// pass on the configuration object
-					loadFont(oConfig.metadata);
+					return;
 				}
+
+				// pass on the configuration object
+				loadFont(oConfig.metadata);
 			}
 		};
 

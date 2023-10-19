@@ -3,7 +3,7 @@
     "fileName":"id_1445501120486_25",
     "fileType":"change",
     "changeType":"hideControl",
-    "reference":"sap.ui.rta.test.Demo.md.Component",
+    "reference":"sap.ui.rta.test.Demo.md",
     "packageName":"$TMP",
     "content":{},
     "selector":{
@@ -11,7 +11,7 @@
     },
     "layer":"CUSTOMER",
     "texts":{},
-    "namespace":"sap.ui.rta.test.Demo.md.Component",
+    "namespace":"sap.ui.rta.test.Demo.md",
     "creation":"2018-10-16T08:00:07",
     "originalLanguage":"EN",
     "conditions":{},

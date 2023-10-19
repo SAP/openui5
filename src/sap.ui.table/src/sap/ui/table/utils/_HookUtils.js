@@ -3,7 +3,7 @@
  */
 
 // Provides helper sap.ui.table.utils._HookUtils.
-sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
+sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(DataType, ChangeReason) {
 	"use strict";
 
 	var Hooks = new window.WeakMap();
@@ -171,6 +171,33 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 			InvalidateColumnMenus: {
 				arguments: [
 					{type: "class:sap.ui.table.Table"}
+				]
+			}
+		},
+		TableRenderer: {
+			RenderTableStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderInTableBottomArea: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderRowContainerStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderRowStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
+				]
+			},
+			RenderCellContentStyles: {
+				arguments: [
+					{type: "object" /* RenderManager */}
 				]
 			}
 		},
@@ -499,8 +526,12 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 		});
 	}
 
+	function validateChangeReason(sReason) {
+		return typeof sReason === "string" && Object.values(ChangeReason).includes(sReason);
+	}
+
 	function validateRowsUpdateReason(sReason) { // sap.ui.table.utils.TableUtils.RowsUpdateReason
-		return sReason in HookUtils.TableUtils.RowsUpdateReason || DataType.getType("sap.ui.model.ChangeReason").isValid(sReason);
+		return sReason in HookUtils.TableUtils.RowsUpdateReason || validateChangeReason(sReason);
 	}
 
 	function validateCellInfo(oCellInfo) { // sap.ui.table.utils.TableUtils.CellInfo

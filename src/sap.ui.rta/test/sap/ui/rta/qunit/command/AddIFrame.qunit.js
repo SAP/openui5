@@ -14,6 +14,7 @@ sap.ui.define([
 		url: "https://www.sap.com",
 		width: "myFancyWidth",
 		height: "myFancyHeight",
+		useLegacyNavigation: false,
 		title: "Potato"
 	};
 

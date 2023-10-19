@@ -11,10 +11,14 @@ sap.ui.define([
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
+	'sap/ui/core/Lib',
+	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
+	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
-	'sap/ui/qunit/utils/createAndAppendDiv'
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, RenderManager, ThemeManager, createAndAppendDiv) {
+	'sap/ui/qunit/utils/createAndAppendDiv',
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -106,7 +110,7 @@ sap.ui.define([
 		this.spy(Log, 'error');
 
 		assert.strictEqual(new oRealCore.constructor(), sap.ui.getCore(), "consecutive calls to the constructor should return the facade");
-		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use .*sap.ui.getCore\(\)/)));
+		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use the module export directly without using 'new'/)));
 	});
 
 	QUnit.test("loadLibrary", function(assert) {
@@ -181,12 +185,12 @@ sap.ui.define([
 		var oBtn = new TestButton("testMyButton", {text:"Hallo JSUnit"});
 		oBtn.onThemeChanged = function(oCtrlEvent) {
 			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
-			assert.equal(oCtrlEvent.theme, oCore.getConfiguration().getTheme(), "Default theme is passed along control event");
+			assert.equal(oCtrlEvent.theme, Theming.getTheme(), "Default theme is passed along control event");
 		};
 
 		function handler(oEvent) {
 			assert.ok(oEvent, "attachThemeChanged is called");
-			assert.equal(oEvent.getParameter("theme"), oCore.getConfiguration().getTheme(), "Default theme is passed along Core event");
+			assert.equal(oEvent.getParameter("theme"), Theming.getTheme(), "Default theme is passed along Core event");
 
 			// cleanup
 			oCore.detachThemeChanged(handler);
@@ -325,7 +329,7 @@ sap.ui.define([
 		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 	});
 
-	QUnit.test("prerendering tasks", function (assert) {
+	QUnit.test("prerendering tasks", async function (assert) {
 		var bCalled1 = false,
 			bCalled2 = false;
 
@@ -338,19 +342,21 @@ sap.ui.define([
 			bCalled2 = true;
 		}
 
-		oCore.addPrerenderingTask(task1);
-		oCore.addPrerenderingTask(task2);
+		Rendering.addPrerenderingTask(task1);
+		Rendering.addPrerenderingTask(task2);
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");
-
-		oCore.applyChanges();
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
 
 		assert.ok(bCalled1, "first task called");
 		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
 	});
 
-	QUnit.test("prerendering tasks: reverse order", function (assert) {
+	QUnit.test("prerendering tasks: reverse order", async function (assert) {
 		var bCalled1 = false,
 			bCalled2 = false;
 
@@ -363,16 +369,18 @@ sap.ui.define([
 			bCalled2 = true;
 		}
 
-		oCore.addPrerenderingTask(task2);
-		oCore.addPrerenderingTask(task1, true);
+		Rendering.addPrerenderingTask(task2);
+		Rendering.addPrerenderingTask(task1, true);
 
 		assert.ok(!bCalled1, "not yet called");
 		assert.ok(!bCalled2, "not yet called");
-
-		oCore.applyChanges();
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
 
 		assert.ok(bCalled1, "first task called");
 		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
 	});
 
 
@@ -591,10 +599,10 @@ sap.ui.define([
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
 			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
-			this.oConfigurationGetPreloadStub = this.stub(Configuration, "getPreload").returns("sync");
+			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {
-			this.oConfigurationGetPreloadStub.restore();
+			this.oLibraryGetPreloadStub.restore();
 			delete window.testlibs;
 		}
 	});
@@ -660,15 +668,7 @@ sap.ui.define([
 		this.stub(privateLoaderAPI, "loadJSResourceAsync").callsFake(function() {
 			return Promise.reject(new Error());
 		});
-		this.stub(sap.ui, "require").callsFake(function(name, callback) {
-			oCore.initLibrary({
-				name: 'testlibs.scenario11.lib1',
-				noLibraryCSS: true
-			});
-			setTimeout(function() {
-				callback({});
-			}, 0);
-		});
+		this.spy(sap.ui, "require");
 
 		var loaded = oCore.loadLibrary("testlibs.scenario11.lib1", true);
 		assert.ok(loaded instanceof Promise, "loadLibrary should return a promise when called with async:true");
@@ -754,8 +754,6 @@ sap.ui.define([
 
 		return VersionInfo.load().then(function(versioninfo) {
 			this.spy(privateLoaderAPI, 'loadJSResourceAsync');
-			this.spy(sap.ui, 'require');
-			this.spy(sap.ui, 'requireSync');
 
 			var vLib8 = oCore.loadLibraries(['testlibs.scenario14.lib8']);
 			assert.ok(vLib8 instanceof Promise, "async call to loadLibraries should return a promise");

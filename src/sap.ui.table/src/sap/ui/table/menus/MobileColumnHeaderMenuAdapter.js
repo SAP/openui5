@@ -134,6 +134,7 @@ sap.ui.define([
 		}
 
 		this._prepareQuickGroup(oColumn);
+
 		this._prepareQuickTotal(oColumn);
 		this._prepareQuickFreeze(oColumn);
 		this._prepareQuickResize(oColumn);
@@ -203,12 +204,7 @@ sap.ui.define([
 			items: new QuickSortItem(),
 			change: [function(oEvent) {
 				var sSortOrder = oEvent.getParameter("item").getSortOrder();
-
-				if (sSortOrder === CoreLibrary.SortOrder.None) {
-					this._oColumn._unsort();
-				} else {
-					this._oColumn._sort(sSortOrder === CoreLibrary.SortOrder.Descending, false);
-				}
+				this._oColumn._sort(sSortOrder, false);
 			}, this]
 		});
 	};
@@ -217,7 +213,7 @@ sap.ui.define([
 		var oItem = this._oQuickSort.getItems()[0];
 
 		oItem.setLabel(TableUtils.Column.getHeaderText(oColumn));
-		oItem.setSortOrder(oColumn.getSorted() ? oColumn.getSortOrder() : CoreLibrary.SortOrder.None);
+		oItem.setSortOrder(oColumn.getSortOrder());
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickFilter = function(oColumn) {
@@ -256,13 +252,13 @@ sap.ui.define([
 		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
 		var oFilterField = this._oQuickFilter.getContent()[0];
 
-		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", TableUtils.Column.getHeaderText(oColumn)));
+		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", [TableUtils.Column.getHeaderText(oColumn)]));
 		oFilterField.setValue(oColumn.getFilterValue());
 		oFilterField.setValueState(oColumn._getFilterState());
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._prepareQuickGroup = function(oColumn) {
-		if (oColumn.isGroupableByMenu()) {
+		if (oColumn._isGroupableByMenu()) {
 			if (!this._oQuickGroup) {
 				this._oQuickGroup = this._createQuickGroup();
 			}
@@ -277,7 +273,24 @@ sap.ui.define([
 		return new QuickGroup({
 			items: new QuickGroupItem(),
 			change: [function(oEvent) {
-				this._oColumn._setGrouped(oEvent.getParameter("item").getGrouped());
+				var bGrouped = oEvent.getParameter("item").getGrouped();
+
+				if (bGrouped && (!this._oColumn.getShowIfGrouped || !this._oColumn.getShowIfGrouped())) {
+					var oTable = this._oColumn._getTable();
+					var oDomRef;
+
+					if (TableUtils.isNoDataVisible(oTable)) {
+						oDomRef = oTable.getDomRef("noDataCnt");
+					} else {
+						oDomRef = oTable.getDomRef("rowsel0");
+					}
+
+					if (oDomRef) {
+						oDomRef.focus();
+					}
+				}
+
+				this._oColumn._setGrouped(bGrouped);
 			}, this]
 		});
 	};

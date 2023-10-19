@@ -5,14 +5,12 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
 	"sap/ui/fl/Utils"
 ], function(
 	Log,
 	Component,
-	Core,
 	Element,
 	URLHandler,
 	Utils
@@ -43,7 +41,6 @@ sap.ui.define([
 	 * Provides an API for applications to work with control variants. See also {@link sap.ui.fl.variants.VariantManagement}.
 	 *
 	 * @namespace sap.ui.fl.apply.api.ControlVariantApplyAPI
-	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @version ${version}
 	 * @public
@@ -54,7 +51,7 @@ sap.ui.define([
 		 *
 		 * @returns {string} Name of the Variant Model
 		 */
-		getVariantModelName: function() {
+		getVariantModelName() {
 			return VARIANT_MODEL_NAME;
 		},
 
@@ -64,7 +61,7 @@ sap.ui.define([
 		 * @param {object} oAppComponent - Application component
 		 * @returns {Promise} Promise resolving to the Variant Model
 		 */
-		getVariantModel: function(oAppComponent) {
+		getVariantModel(oAppComponent) {
 			return waitForVariantModel(oAppComponent);
 		},
 
@@ -79,7 +76,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		clearVariantParameterInURL: function(mPropertyBag) {
+		clearVariantParameterInURL(mPropertyBag) {
 			var aUpdatedVariantParameters;
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 			var oVariantModel = oAppComponent && oAppComponent.getModel(VARIANT_MODEL_NAME);
@@ -121,7 +118,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		activateVariant: function(mPropertyBag) {
+		activateVariant(mPropertyBag) {
 			function logAndReject(oError) {
 				Log.error(oError);
 				return Promise.reject(oError);
@@ -131,7 +128,7 @@ sap.ui.define([
 			if (typeof mPropertyBag.element === "string") {
 				oElement = Component.get(mPropertyBag.element);
 				if (!(oElement instanceof Component)) {
-					oElement = Core.byId(mPropertyBag.element);
+					oElement = Element.getElementById(mPropertyBag.element);
 
 					if (!(oElement instanceof Element)) {
 						return logAndReject(Error("No valid component or control found for the provided ID"));
@@ -186,8 +183,8 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		attachVariantApplied: function(mPropertyBag) {
-			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
+		attachVariantApplied(mPropertyBag) {
+			var oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 
 			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
@@ -209,8 +206,8 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		detachVariantApplied: function(mPropertyBag) {
-			var oControl = mPropertyBag.selector.id && sap.ui.getCore().byId(mPropertyBag.selector.id) || mPropertyBag.selector;
+		detachVariantApplied(mPropertyBag) {
+			var oControl = mPropertyBag.selector.id && Element.getElementById(mPropertyBag.selector.id) || mPropertyBag.selector;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			waitForVariantModel(oAppComponent).then(function(oVariantModel) {
 				oVariantModel.detachVariantApplied(mPropertyBag.vmControlId, oControl.getId());

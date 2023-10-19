@@ -23,40 +23,40 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>ColumnLayout</code> control renders a <code>Form</code> control in a column-based responsive way.
-	 * Depending on its size, the <code>Form</code> control is divided into one or more columns.
+	 * The <code>ColumnLayout</code> control renders a {@link sap.ui.layout.form.Form Form} control in a column-based responsive way.
+	 * Depending on its size, the {@link sap.ui.layout.form.Form Form} control is divided into one or more columns.
 	 * (XL - max. 4 columns, L - max. 3 columns, M -  max. 2 columns and S - 1 column.)
 	 *
-	 * The <code>FormContainer</code> elements are spread out to the columns depending on the number of <code>FormContainer</code>
-	 * elements and their size. For example, if there are 4 columns and 2 <code>FormContainer</code> elements,
-	 * each <code>FormContainer</code> element will use 2 columns. If there are 3 columns and 2 <code>FormContainer</code> elements,
-	 * the larger one will use 2 columns, the smaller one 1 column. The size of a <code>FormContainer</code> element will be determined
-	 * based on the number of visible <code>FormElement</code> elements assigned to it.
-	 * If there are more <code>FormContainer</code> elements than columns, every <code>FormContainer</code> element uses only
-	 * one column. So the last row of the <code>Form</code> control will not be fully used.
+	 * The {@link sap.ui.layout.form.FormContainer FormContainer} elements are spread out to the columns depending on the number of {@link sap.ui.layout.form.FormContainer FormContainer}
+	 * elements and their size. For example, if there are 4 columns and 2 {@link sap.ui.layout.form.FormContainer FormContainer} elements,
+	 * each {@link sap.ui.layout.form.FormContainer FormContainer} element will use 2 columns. If there are 3 columns and 2 {@link sap.ui.layout.form.FormContainer FormContainer} elements,
+	 * the larger one will use 2 columns, the smaller one 1 column. The size of a {@link sap.ui.layout.form.FormContainer FormContainer} element will be determined
+	 * based on the number of visible {@link sap.ui.layout.form.FormElement FormElement} elements assigned to it.
+	 * If there are more {@link sap.ui.layout.form.FormContainer FormContainer} elements than columns, every {@link sap.ui.layout.form.FormContainer FormContainer} element uses only
+	 * one column. So the last row of the {@link sap.ui.layout.form.Form Form} control will not be fully used.
 	 *
-	 * The default size of the <code>FormContainer</code> element can be overwritten by using <code>ColumnContainerData</code>
-	 * as <code>LayoutData</code>. If one <code>FormContainer</code> element has <code>ColumnContainerData</code> set,
-	 * the size calculation of the other <code>FormContainer</code> elements might not lead to the expected result.
-	 * In this case, use <code>ColumnContainerData</code> also for the other <code>FormContainer</code> elements.
+	 * The default size of the {@link sap.ui.layout.form.FormContainer FormContainer} element can be overwritten by using {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData}
+	 * as <code>LayoutData</code>. If one {@link sap.ui.layout.form.FormContainer FormContainer} element has {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData} set,
+	 * the size calculation of the other {@link sap.ui.layout.form.FormContainer FormContainer} elements might not lead to the expected result.
+	 * In this case, use {@link sap.ui.layout.form.ColumnContainerData ColumnContainerData} also for the other {@link sap.ui.layout.form.FormContainer FormContainer} elements.
 	 *
-	 * The <code>FormElement</code> elements are spread out to the columns of a <code>FormContainer</code> element
+	 * The {@link sap.ui.layout.form.FormElement FormElement} elements are spread out to the columns of a {@link sap.ui.layout.form.FormContainer FormContainer} element
 	 * arranged in a newspaper-like order. The position of the labels and fields depends on the size of the used column.
 	 * If there is enough space, the labels are beside the fields, otherwise above the fields.
 	 *
-	 * The default size of a content control of a <code>FormElement</code> element can be overwritten
-	 * using <code>ColumnElementData</code> as <code>LayoutData</code>.
-	 * If one control assigned to a <code>FormElement</code> element has <code>ColumnElementData</code> set,
-	 * the size calculation of the other controls assigned to the <code>FormElement</code> element
+	 * The default size of a content control of a {@link sap.ui.layout.form.FormElement FormElement} element can be overwritten
+	 * using {@link sap.ui.layout.form.ColumnElementData ColumnElementData} as <code>LayoutData</code>.
+	 * If one control assigned to a {@link sap.ui.layout.form.FormElement FormElement} element has {@link sap.ui.layout.form.ColumnElementData ColumnElementData} set,
+	 * the size calculation of the other controls assigned to the {@link sap.ui.layout.form.FormElement FormElement} element
 	 * might not lead to the expected result.
-	 * In this case, use <code>ColumnElementData</code> for the other controls, assigned to the <code>FormElement</code> element, too.
+	 * In this case, use {@link sap.ui.layout.form.ColumnElementData ColumnElementData} for the other controls, assigned to the {@link sap.ui.layout.form.FormElement FormElement} element, too.
 	 *
-	 * The placement of the <code>FormElement</code> elements is made by the browser <code>column-count</code> logic.
+	 * The placement of the {@link sap.ui.layout.form.FormElement FormElement} elements is made by the browser <code>column-count</code> logic.
 	 * So this can be different in different browsers and lead in some cases to other results than might be expected.
 	 *
 	 * <b>Note:</b>
-	 * This control cannot be used stand-alone, it just renders a <code>Form</code> control,
-	 * so it must be assigned to a <code>Form</code> control using the <code>layout</code> aggregation.
+	 * This control cannot be used stand-alone, it just renders a {@link sap.ui.layout.form.Form Form} control,
+	 * so it must be assigned to a {@link sap.ui.layout.form.Form Form} control using the <code>layout</code> aggregation.
 	 * @extends sap.ui.layout.form.FormLayout
 	 * @version ${version}
 	 *

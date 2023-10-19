@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/Float",
 	"sap/ui/model/odata/type/TimeOfDay",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Label",
 	"sap/m/Input",
 	"sap/ui/table/Column",
@@ -11,6 +12,7 @@ sap.ui.define([
 	JSONModel,
 	Float,
 	TimeOfDay,
+	nextUIUpdate,
 	Label,
 	Input,
 	Column,
@@ -296,7 +298,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Calculated fields with table", function(assert) {
+	QUnit.test("Calculated fields with table", async function(assert) {
 		setup();
 		 var oTable = new Table({
 			columns: [
@@ -321,7 +323,7 @@ sap.ui.define([
 		oTable.bindRows("/teamMembers");
 		oTable.placeAt("table");
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		this.clock.tick(1000);
 		var counter = 0;
 

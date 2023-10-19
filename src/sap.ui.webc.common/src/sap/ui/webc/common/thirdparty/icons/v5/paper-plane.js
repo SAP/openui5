@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "paper-plane";
-  const pathData = "M304.275 403l100-256-144 145zm61-295l-256 100 111 44zm133-94q13 13 6 30l-174 444q-7 18-26 18-18 0-25-17l-73-183-183-73q-17-7-17-25 0-19 18-26l444-174q17-7 30 6z";
+  const pathData = "M455 32q10 0 17.5 7.5T480 58q0 6-2 9L323 464q-7 16-24 16-8 0-14.5-4t-9.5-12l-64-164-163-65q-16-6-16-24 0-17 16-24L445 34q6-2 10-2zM127 212l97 39 126-125zm259-50L260 287l39 98z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

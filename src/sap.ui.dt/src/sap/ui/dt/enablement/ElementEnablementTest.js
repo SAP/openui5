@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.38
 	 * @alias sap.ui.dt.test.ElementEnablementTest
-	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ElementEnablementTest = Test.extend("sap.ui.dt.test.ElementEnablementTest", /** @lends sap.ui.dt.test.ElementEnablementTest.prototype */ {
 		metadata: {
@@ -117,7 +116,7 @@ sap.ui.define([
 			var mElementTest = this.addGroup(
 				this._mResult.children,
 				this.getType(),
-				"Given that a DesignTime is created for " + this.getType()
+				`Given that a DesignTime is created for ${this.getType()}`
 			);
 
 			this._testAggregations(mElementTest.children);
@@ -149,7 +148,7 @@ sap.ui.define([
 				resolve(new Element());
 			}, function() {
 				// fall back to global name
-				Log.warning("[Deprecated] Control " + sType + " could only be loaded via global name");
+				Log.warning(`[Deprecated] Control ${sType} could only be loaded via global name`);
 				var Element = ObjectPath.get(sType || "");
 				resolve(new Element());
 			});
@@ -167,7 +166,7 @@ sap.ui.define([
 	ElementEnablementTest.prototype._getTestArea = function() {
 		if (!this._oTestAreaDomRef) {
 			this._oTestAreaDomRef = document.createElement("div");
-			this._oTestAreaDomRef.id = this.getId() + "--testArea";
+			this._oTestAreaDomRef.id = `${this.getId()}--testArea`;
 			this._oTestAreaDomRef.style.height = "500px";
 			this._oTestAreaDomRef.style.width = "1000px";
 			document.body.append(this._oTestAreaDomRef);
@@ -198,7 +197,6 @@ sap.ui.define([
 				if (!this._bNoRenderer) {
 					try {
 						this._oElement.placeAt(this._getTestArea());
-						sap.ui.getCore().applyChanges();
 					} catch (oError) {
 						this._bErrorDuringRendering = true;
 					}

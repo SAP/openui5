@@ -32,7 +32,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.version] Version of the adaptation to be loaded
 		 * @returns {Promise<object>} Promise resolving with the raw JSON parsed server response of the flex data request
 		 */
-		sendRequest: function(mPropertyBag) {
+		sendRequest(mPropertyBag) {
 			var mParameters = _pick(mPropertyBag, ["version", "allContexts"]);
 
 			if (this.isLanguageInfoRequired) {
@@ -62,7 +62,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.version] Version of the adaptation to be loaded
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed server response of the flex data request
 		 */
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			return this.sendRequest(mPropertyBag).then(function(oResponse) {
 				oResponse.changes = oResponse.changes.concat(oResponse.compVariants || []);
 				return oResponse;

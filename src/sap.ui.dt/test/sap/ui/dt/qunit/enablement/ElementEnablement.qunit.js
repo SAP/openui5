@@ -13,7 +13,7 @@ function(
 	"use strict";
 
 	var fnTestInterface = function(assert, oEntry) {
-		assert.ok(true, "... then '" + oEntry.name + " Entry' : Test Interface");
+		assert.ok(true, `... then '${oEntry.name} Entry' : Test Interface`);
 		assert.ok(oEntry.hasOwnProperty("status"), "and an entry has a property 'status'");
 		assert.ok(oEntry.hasOwnProperty("type"), "and an entry has a property 'type'");
 		assert.ok(oEntry.hasOwnProperty("message"), "and an entry has a property 'message'");
@@ -28,12 +28,12 @@ function(
 	};
 
 	QUnit.module("Given that a sap.m.Button is tested", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oElementEnablementTest = new ElementEnablementTest({
 				type: "sap.m.Button"
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementEnablementTest.destroy();
 		}
 	}, function() {
@@ -47,7 +47,7 @@ function(
 	});
 
 	QUnit.module("Given that a sap.m.Button with an create function is tested", {
-		beforeEach: function() {
+		beforeEach() {
 			function fnCreate() {
 				return new Button();
 			}
@@ -59,7 +59,7 @@ function(
 				create: this.fnSpyCreate
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementEnablementTest.destroy();
 		}
 	}, function() {

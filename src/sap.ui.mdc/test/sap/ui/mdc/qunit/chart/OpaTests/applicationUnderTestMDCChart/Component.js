@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent",
-	"sap/ui/mdc/link/FakeFlpConnector"
-], function (UIComponent,  FakeFlpConnector) {
+	"sap/ui/core/UIComponent"
+], function (UIComponent) {
 	"use strict";
 
 	return UIComponent.extend("applicationUnderTestMDCChart.Component", {
@@ -15,8 +14,6 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			this.getRouter().initialize();
-
-			//this.__initFakeFlpConnector();
 		}
 
 	});

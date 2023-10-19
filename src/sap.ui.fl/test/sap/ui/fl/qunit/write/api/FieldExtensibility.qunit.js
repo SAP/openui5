@@ -5,14 +5,12 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/cap/CAPAccess",
 	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/base/util/UriParameters",
 	"sap/ui/base/ManagedObject"
 ], function(
 	ABAPAccess,
 	CAPAccess,
 	FieldExtensibility,
 	sinon,
-	UriParameters,
 	ManagedObject
 ) {
 	"use strict";
@@ -36,23 +34,23 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given FieldExtensibility with an ABAPAccess.js", {
-		before: function() {
+		before() {
 			// Determine scenario
 			FieldExtensibility.onControlSelected(new ManagedObject());
 		},
-		beforeEach: function() {
+		beforeEach() {
 			stubAccessFunctions(ABAPAccess);
 			stubAccessFunctions(CAPAccess);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			FieldExtensibility._resetCurrentScenario();
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
-			var sText = "when the function " + sFunctionName + " is called";
+			var sText = `when the function ${sFunctionName} is called`;
 			QUnit.test(sText, function(assert) {
 				return FieldExtensibility[sFunctionName]().then(function() {
 					assert.ok(true, "the function returns a promise");
@@ -64,26 +62,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a CAP system is identified", {
-		before: function() {
-			sandbox.stub(UriParameters.prototype, "get")
+		before() {
+			sandbox.stub(URLSearchParams.prototype, "get")
 			.callThrough()
 			.withArgs("sap-ui-fl-xx-capScenario")
 			.returns("true");
 			// Determine scenario
 			FieldExtensibility.onControlSelected(new ManagedObject());
 		},
-		beforeEach: function() {
+		beforeEach() {
 			stubAccessFunctions(CAPAccess);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			FieldExtensibility._resetCurrentScenario();
 		}
 	}, function() {
 		aFunctionNames.forEach(function(sFunctionName) {
-			var sText = "when the function " + sFunctionName + " is called";
+			var sText = `when the function ${sFunctionName} is called`;
 			QUnit.test(sText, function(assert) {
 				return FieldExtensibility[sFunctionName]().then(function() {
 					assert.ok(true, "the function returns a promise");

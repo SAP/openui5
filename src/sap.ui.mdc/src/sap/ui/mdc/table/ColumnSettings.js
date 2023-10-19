@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @since 1.110
 	 */
 
-	var ColumnSettings = Element.extend("sap.ui.mdc.table.ColumnSettings", {
+	const ColumnSettings = Element.extend("sap.ui.mdc.table.ColumnSettings", {
 		metadata: {
 			library: "sap.ui.mdc",
 			"abstract": true

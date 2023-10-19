@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "command-line-interfaces";
-  const pathData = "M452 426q12 0 20 8t8 19-8 19.5-20 8.5H234q-12 0-20-8.5t-8-19.5 8-19 20-8h218zM43 154q-10-9-10-22 0-12 10-21 9-10 21-10 13 0 22 10l124 124q9 9 9 21 0 13-9 22L86 402q-9 9-22 9-12 0-21-9-10-9-10-22 0-12 10-21l102-103z";
+  const pathData = "M216 205q8 8 8 19 0 12-8 18L75 377q-7 7-17 7-11 0-18.5-7.5T32 358q0-10 8-18l121-116L40 108q-8-8-8-18 0-11 7.5-18.5T58 64q10 0 17 7zm239 192q11 0 18 7t7 18-7 18.5-18 7.5H250q-11 0-18.5-7.5T224 422t7.5-18 18.5-7h205z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

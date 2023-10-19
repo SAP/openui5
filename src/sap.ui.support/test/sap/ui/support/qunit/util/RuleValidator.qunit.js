@@ -1,10 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/VersionInfo",
 	"sap/ui/support/supportRules/util/RuleValidator",
 	"sap/ui/support/library"
-], function (VersionInfo, RuleValidator, supportLibrary) {
+], function (RuleValidator, supportLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.support.Categories
@@ -57,38 +56,30 @@ sap.ui.define([
 
 		QUnit.test("validateVersion", function (assert) {
 			//arrange
-			var done = assert.async();
 			var oRule = fnCreateRule();
 
 			//must work with "-"
 			oRule.minversion = "-";
-
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following character : '-'");
 
 			//must work with "*"
 			oRule.minversion = "*";
-
 			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following character : '*' ");
 
-			// Workaround: get the version of the framework by using the core library's version.
-			VersionInfo.load({ library: "sap.ui.core"}).then(function (oCoreLibInfo) {
+			//must work with valid version of UI5 - <digit>.<digit> case
+			oRule.minversion = "1.0";
+			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
 
-				//must work with valid version of UI5 - <digit>.<digit><digit> case
-				oRule.minversion = oCoreLibInfo.version.match(/\d\.\d\d/)[0];
-				assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
+			//must work with valid version of UI5 - <digit>.<digit><digit> case
+			oRule.minversion = "1.10";
+			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit>");
 
-				//must work with valid version of UI5 - <digit>.<digit><digit><digit> case
-				oRule.minversion = oCoreLibInfo.version.match(/\d\.\d\d\d/)[0];
-				assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit><digit>");
-
-				oRule = null;
-
-				done();
-			}.bind(this));
+			//must work with valid version of UI5 - <digit>.<digit><digit><digit> case
+			oRule.minversion = "1.100";
+			assert.equal(this.oRuleValidator.validateVersion(oRule.minversion), true, "should validate the following pattern of digits <digit>.<digit><digit><digit>");
 		});
 
 		QUnit.test("validateRuleCollection", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule(),
 				aAudiencesMock = Audiences,
@@ -117,7 +108,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("validateStringLength", function (assert) {
-
 			var oRule = fnCreateRule();
 
 			assert.equal(this.oRuleValidator.validateStringLength(oRule.description, 1, 400), true, "should validate the description property if it has fewer than 400 characters");
@@ -150,7 +140,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("validateVersion - invalidVersion", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule();
 
@@ -185,7 +174,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("validateRuleCollection - invalidCollection", function (assert) {
-
 			//arrange
 			var oRule = fnCreateRule(),
 			aAudiencesMock = Audiences,

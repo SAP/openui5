@@ -141,6 +141,23 @@ function (
 		oTitle.destroy();
 	  });
 
+	  QUnit.test("DynamicPageTitle - AriaLabelledBy is not undefined, when no heading is presented, as default heading text is available", function (assert) {
+		// Arrange
+		var oTitle = oFactory.getDynamicPageTitle();
+
+		//Act
+		oTitle.destroyAggregation("heading");
+
+		oUtil.renderObject(oTitle);
+		Core.applyChanges();
+
+		//Assert
+		assert.ok(oTitle._getFocusSpan()[0].getAttribute("aria-labelledby") != "undefined", "AriaLabelledBy is not undefined, when no heading is presented");
+
+		//Cleanup
+		oTitle.destroy();
+	  });
+
 	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();
@@ -560,6 +577,75 @@ function (
 
 		// Clean up
 		oStub.restore();
+		oDynamicPage.destroy();
+	});
+
+	QUnit.module("DynamicPageTitle - focus of snapped/expanded content", {
+		before: function() {
+			var oStyleTag = document.createElement("style");
+			oStyleTag.innerText = ".active { visibility: visible; }";
+			document.head.appendChild(oStyleTag);
+			this.styleTag = oStyleTag;
+
+		},
+		after: function() {
+			this.styleTag.remove();
+			this.styleTag = null;
+		}
+	});
+
+	QUnit.test("Prevents focus on hidden snappedContent", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oBtn = new sap.m.Button({
+				text: "snapped content"
+			});
+
+		oDynamicPageTitle.addSnappedContent(oBtn);
+
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		var oActiveElement = document.activeElement,
+			oBtnElement = oBtn.getDomRef();
+
+		// Act
+		oBtnElement.classList.add("active");
+		oBtnElement.focus();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oActiveElement, "focus is unchanged");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Prevents focus on hidden expandedContent", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oBtn = new sap.m.Button({
+				text: "expanded content"
+			});
+
+		oDynamicPage.setHeaderExpanded(false);
+		oDynamicPageTitle.addExpandedContent(oBtn);
+
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		var oActiveElement = document.activeElement,
+			oBtnElement = oBtn.getDomRef();
+
+		// Act
+		oBtnElement.classList.add("active");
+		oBtnElement.focus();
+
+		// Assert
+		assert.strictEqual(document.activeElement, oActiveElement, "focus is unchanged");
+
+		// Clean up
 		oDynamicPage.destroy();
 	});
 

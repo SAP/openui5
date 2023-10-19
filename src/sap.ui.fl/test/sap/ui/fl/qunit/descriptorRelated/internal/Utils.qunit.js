@@ -13,7 +13,7 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 	QUnit.module("Utils", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
 					isKeyUser: false,
@@ -23,7 +23,7 @@ sap.ui.define([
 				})
 			);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

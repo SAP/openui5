@@ -265,6 +265,21 @@ sap.ui.define([
 		assert.ok(this.oResponsivePopover.getEndButton(), "Should be executed without any errors");
 	});
 
+	QUnit.test("Add end button without begin button", function (assert) {
+		var oPopover = new ResponsivePopover();
+		// create footer
+		oPopover._createButtonFooter();
+		// spy
+		var oInserAggregationSpy = this.spy(oPopover._oFooter, "insertContent");
+
+		// act
+		oPopover.setEndButton(new Button());
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oInserAggregationSpy.getCall(0).args[1], 1, "insert content should be called with position 1 for end button");
+	});
+
 	QUnit.test("Clone method", function(assert) {
 
 		// Act and Arrange
@@ -398,6 +413,20 @@ sap.ui.define([
 		// Assert
 		// The Popover or the Dialog could have some additional logic for the aria-labelledby attribute. Therefore, we only need to assure that the additional ID is added to the attribute.
 		assert.ok(this.oResponsivePopover.getDomRef().getAttribute('aria-labelledby').indexOf(sInvTextId) !== -1, "should contain the id of the invisible label in the aria-labelledby attribute");
+	});
+
+	QUnit.test("Should proxy dependents aggregation correctly", function (assert) {
+		// Arrange
+		var oResponsivePopover = new sap.m.ResponsivePopover("popover", {
+			content: [new sap.m.Text({text: "Hello"})],
+			dependents: [new sap.m.Text("worldText", {text: "World!"})]
+		});
+
+		// Act
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oResponsivePopover.getDependents().length, 1, "Dependents aggregation is forwarded correctly");
 	});
 
 	QUnit.test("ResponsivePopover should not fall in infinite loop when invalidation comes from child control", function (assert) {

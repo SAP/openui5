@@ -5,8 +5,8 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/Core",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/ReloadManager",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -16,8 +16,8 @@ sap.ui.define([
 	Page,
 	ComponentContainer,
 	UIComponent,
-	oCore,
 	PersistenceWriteAPI,
+	nextUIUpdate,
 	BasePlugin,
 	ReloadManager,
 	RuntimeAuthoring,
@@ -28,7 +28,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before: function() {
+		async before() {
 			QUnit.config.fixture = null;
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -57,11 +57,11 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oHasChangeHandlerStud = sinon.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
 		},
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfoFromSession").returns({
 				isResetEnabled: true,
 				isPublishEnabled: true
@@ -83,11 +83,11 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			this.oComponentContainer.destroy();
 			this.oHasChangeHandlerStud.restore();

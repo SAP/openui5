@@ -4,13 +4,11 @@
 
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/fl/changeHandler/condenser/Classification",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/changeHandler/condenser/Classification"
 ],
 function(
 	Log,
-	CondenserClassification,
-	FlUtils
+	CondenserClassification
 ) {
 	"use strict";
 
@@ -20,7 +18,7 @@ function(
 	 * @alias sap.ui.fl.changeHandler.MoveControls
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.46
+	 * @since 1.46
 	 */
 	var MoveControls = { };
 
@@ -29,62 +27,59 @@ function(
 	MoveControls.TARGET_ALIAS = "target";
 	MoveControls.MOVED_ELEMENTS_ALIAS = "movedElements";
 
-	 function fnCheckConditions(oChange, oModifier, oView, oAppComponent) {
+	 function checkConditions(oChange, oModifier, oView, oAppComponent) {
 		if (!oChange) {
-			return Promise.reject(new Error("No change instance"));
+			throw new Error("No change instance");
 		}
 
 		var oChangeContent = oChange.getContent();
 
 		if (!oChangeContent || !oChangeContent.movedElements || oChangeContent.movedElements.length === 0) {
-			return Promise.reject(new Error("Change format invalid"));
+			throw new Error("Change format invalid");
 		}
 		if (!oChangeContent.source || !oChangeContent.source.selector) {
-			return Promise.reject(new Error("No source supplied for move"));
+			throw new Error("No source supplied for move");
 		}
 		if (!oChangeContent.target || !oChangeContent.target.selector) {
-			return Promise.reject(new Error("No target supplied for move"));
+			throw new Error("No target supplied for move");
 		}
 		if (!oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView)) {
-			return Promise.reject(new Error("Move source parent not found"));
+			throw new Error("Move source parent not found");
 		}
 		if (!oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView)) {
-			return Promise.reject(new Error("Move target parent not found"));
+			throw new Error("Move target parent not found");
 		}
 		if (!oChangeContent.source.selector.aggregation) {
-			return Promise.reject(new Error("No source aggregation supplied for move"));
+			throw new Error("No source aggregation supplied for move");
 		}
 		if (!oChangeContent.target.selector.aggregation) {
-			return Promise.reject(new Error("No target aggregation supplied for move"));
+			throw new Error("No target aggregation supplied for move");
 		}
-		return Promise.resolve();
 	}
 
-	function fnGetElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView) {
+	async function getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView) {
 		if (!mMovedElement.selector && !mMovedElement.id) {
-			return Promise.reject(new Error("Change format invalid - moveElements element has no id attribute"));
+			throw new Error("Change format invalid - moveElements element has no id attribute");
 		}
 		if (typeof mMovedElement.targetIndex !== "number") {
-			return Promise.reject(new Error("Missing targetIndex for element with id '" + mMovedElement.selector.id
-					+ "' in movedElements supplied"));
+			throw new Error(
+				`Missing targetIndex for element with id '${mMovedElement.selector.id}' in movedElements supplied`
+			);
 		}
 
-		return Promise.resolve()
-		.then(oModifier.bySelector.bind(oModifier, mMovedElement.selector || mMovedElement.id, oAppComponent, oView))
-		.then(function(oControl) {
-			if (!oControl) {
-				return Promise.reject(new Error("Control to move was not found. Id: '" + mMovedElement.selector.id + "'"));
-			}
-			return oControl;
-		});
+		const oControl = await oModifier.bySelector(mMovedElement.selector || mMovedElement.id, oAppComponent, oView);
+		if (!oControl) {
+			throw new Error(`Control to move was not found. Id: '${mMovedElement.selector.id}'`);
+		}
+		return oControl;
 	}
 
-	function fnCheckCompleteChangeContentConditions(mSpecificChangeInfo) {
+	function checkCompleteChangeContentConditions(mSpecificChangeInfo) {
 		if (!mSpecificChangeInfo.movedElements) {
-			return Promise.reject(new Error("mSpecificChangeInfo.movedElements attribute required"));
+			throw new Error("mSpecificChangeInfo.movedElements attribute required");
 		}
 		if (mSpecificChangeInfo.movedElements.length === 0) {
-			return Promise.reject(new Error("MovedElements array is empty"));
+			throw new Error("MovedElements array is empty");
 		}
 
 		mSpecificChangeInfo.movedElements.forEach(function(mElement) {
@@ -98,56 +93,45 @@ function(
 				throw new Error("TargetIndex attribute at MovedElements element is no number");
 			}
 		});
-		return Promise.resolve();
 	}
 
-	function fnGetSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent) {
+	async function completeSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent) {
 		delete mSpecificChangeInfo.source.publicAggregation;
 		delete mSpecificChangeInfo.target.publicAggregation;
 
-		var oSourceParent;
-		var oTargetParent;
+		const oSourceParent =
+			mSpecificChangeInfo.source.parent || await oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
+		const oTargetParent =
+			mSpecificChangeInfo.target.parent || await oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
+		var sSourceAggregation = mSpecificChangeInfo.source.aggregation;
+		var sTargetAggregation = mSpecificChangeInfo.target.aggregation;
+		var mAdditionalSourceInfo = {
+			aggregation: mSpecificChangeInfo.source.aggregation,
+			type: oModifier.getControlType(oSourceParent)
+		};
 
-		return Promise.resolve()
-		.then(function() {
-			return mSpecificChangeInfo.source.parent || oModifier.bySelector(mSpecificChangeInfo.source.id, oAppComponent);
-		})
-		.then(function(oRetrievedSourceParent) {
-			oSourceParent = oRetrievedSourceParent;
-			return mSpecificChangeInfo.target.parent || oModifier.bySelector(mSpecificChangeInfo.target.id, oAppComponent);
-		})
-		.then(function(oReturnedTargetParent) {
-			oTargetParent = oReturnedTargetParent;
-			var sSourceAggregation = mSpecificChangeInfo.source.aggregation;
-			var sTargetAggregation = mSpecificChangeInfo.target.aggregation;
-			var mAdditionalSourceInfo = {
-				aggregation: mSpecificChangeInfo.source.aggregation,
-				type: oModifier.getControlType(oSourceParent)
-			};
+		var mAdditionalTargetInfo = {
+			aggregation: mSpecificChangeInfo.target.aggregation,
+			type: oModifier.getControlType(oTargetParent)
+		};
 
-			var mAdditionalTargetInfo = {
-				aggregation: mSpecificChangeInfo.target.aggregation,
-				type: oModifier.getControlType(oTargetParent)
-			};
+		var mSpecificInfo = {
+			source: {
+				id: oSourceParent.getId(),
+				aggregation: sSourceAggregation,
+				type: mAdditionalSourceInfo.type,
+				selector: oModifier.getSelector(mSpecificChangeInfo.source.id, oAppComponent, mAdditionalSourceInfo)
+			},
+			target: {
+				id: oTargetParent.getId(),
+				aggregation: sTargetAggregation,
+				type: mAdditionalTargetInfo.type,
+				selector: oModifier.getSelector(mSpecificChangeInfo.target.id, oAppComponent, mAdditionalTargetInfo)
+			},
+			movedElements: mSpecificChangeInfo.movedElements
+		};
 
-			var mSpecificInfo = {
-				source: {
-					id: oSourceParent.getId(),
-					aggregation: sSourceAggregation,
-					type: mAdditionalSourceInfo.type,
-					selector: oModifier.getSelector(mSpecificChangeInfo.source.id, oAppComponent, mAdditionalSourceInfo)
-				},
-				target: {
-					id: oTargetParent.getId(),
-					aggregation: sTargetAggregation,
-					type: mAdditionalTargetInfo.type,
-					selector: oModifier.getSelector(mSpecificChangeInfo.target.id, oAppComponent, mAdditionalTargetInfo)
-				},
-				movedElements: mSpecificChangeInfo.movedElements
-			};
-
-			return mSpecificInfo;
-		});
+		return mSpecificInfo;
 	}
 
 	/**
@@ -167,89 +151,61 @@ function(
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#applyChange
 	 */
-	MoveControls.applyChange = function(oChange, oRelevantContainer, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var oView = mPropertyBag.view;
-		var oAppComponent = mPropertyBag.appComponent;
-		var oMovedElement;
-		var oSourceParent;
-		var oTargetParent;
-		var sSourceAggregation;
-		var sTargetAggregation;
-		var iSourceIndex;
-		var iInsertIndex;
-		var bChangeAlreadyPerformed = false;
-		var oChangeContent = oChange.getContent();
-		var aRevertData = [];
-		var aPromises = [];
-		return fnCheckConditions(oChange, oModifier, oView, oAppComponent)
-		.then(function() {
-			oChangeContent.movedElements.forEach(function(mMovedElement) {
-				var fnPromise = function() {
-					return Promise.resolve()
-					.then(fnGetElementControlOrThrowError.bind(null, mMovedElement, oModifier, oAppComponent, oView))
-					.then(function(oRetrievedMovedElement) {
-						oMovedElement = oRetrievedMovedElement;
-						oSourceParent = oModifier.getParent(oMovedElement);
-						// mPropertyBag.sourceAggregation and mPropertyBag.targetAggregation should always be used when available
-						return mPropertyBag.sourceAggregation || oModifier.getParentAggregationName(oMovedElement, oSourceParent);
-					})
-					.then(function(sRetrievedAggregation) {
-						sSourceAggregation = sRetrievedAggregation;
-						return oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
-					})
-					.then(function(oRetrievedTargetParent) {
-						oTargetParent = oRetrievedTargetParent;
-						sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
-						// save the current index, sourceParent and sourceAggregation for revert
-						return oModifier.findIndexInParentAggregation(oMovedElement);
-					})
-					.then(function(iRetrievedSourceIndex) {
-						iSourceIndex = iRetrievedSourceIndex;
-						iInsertIndex = mMovedElement.targetIndex;
-						if (iSourceIndex > -1) {
-							// if iIndex === iInsertIndex and source===target the operation was already performed (e.g. drag&drop in RTA)
-							// in this case we need the sourceIndex and sourceParent that is saved in the change in order to revert it to the correct index
-							// and we can't use the current aggregations/parents
-							if (
-								iSourceIndex === iInsertIndex
-										&& sSourceAggregation === sTargetAggregation
-										&& oModifier.getParent(oMovedElement) === oTargetParent
-							) {
-								iSourceIndex = mMovedElement.sourceIndex;
-								sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
-								bChangeAlreadyPerformed = true;
-								return oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView);
-							}
-						}
-						return Promise.resolve();
-					})
-					.then(function(oRetrievedSourceParent) {
-						if (oRetrievedSourceParent) {
-							oSourceParent = oRetrievedSourceParent;
-						}
-						if (iSourceIndex > -1) {
-							aRevertData.unshift({
-								index: iSourceIndex,
-								aggregation: sSourceAggregation,
-								sourceParent: oModifier.getSelector(oSourceParent, oAppComponent)
-							});
-						}
-						if (!bChangeAlreadyPerformed) {
-							return Promise.resolve()
-							.then(oModifier.removeAggregation.bind(oModifier, oSourceParent, sSourceAggregation, oMovedElement))
-							.then(oModifier.insertAggregation.bind(oModifier, oTargetParent, sTargetAggregation, oMovedElement, iInsertIndex, oView));
-						}
-						return Promise.resolve();
-					});
-				};
-				aPromises.push(fnPromise);
-			}, this);
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true);
-		}.bind(this))
-		.then(function() {
-			oChange.setRevertData(aRevertData);
-		});
+	MoveControls.applyChange = async function(oChange, oRelevantContainer, mPropertyBag) {
+		const oModifier = mPropertyBag.modifier;
+		const oView = mPropertyBag.view;
+		const oAppComponent = mPropertyBag.appComponent;
+		const oChangeContent = oChange.getContent();
+		const aRevertData = [];
+		let bChangeAlreadyPerformed = false;
+
+		checkConditions(oChange, oModifier, oView, oAppComponent);
+		for (const mMovedElement of oChangeContent.movedElements) {
+			const oMovedElement = await getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
+			let oSourceParent = oModifier.getParent(oMovedElement);
+			// mPropertyBag.sourceAggregation and mPropertyBag.targetAggregation should always be used when available
+			let sSourceAggregation =
+				mPropertyBag.sourceAggregation || await oModifier.getParentAggregationName(oMovedElement, oSourceParent);
+			const oTargetParent = await oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
+			const sTargetAggregation = mPropertyBag.targetAggregation || oChangeContent.target.selector.aggregation;
+			// save the current index, sourceParent and sourceAggregation for revert
+			let iSourceIndex = await oModifier.findIndexInParentAggregation(oMovedElement);
+			const iInsertIndex = mMovedElement.targetIndex;
+			if (iSourceIndex > -1) {
+				// if iIndex === iInsertIndex and source===target the operation was already performed (e.g. drag&drop in RTA)
+				// in this case we need the sourceIndex and sourceParent that is saved in the change in order to revert it
+				// to the correct index and we can't use the current aggregations/parents
+				if (
+					iSourceIndex === iInsertIndex &&
+					sSourceAggregation === sTargetAggregation &&
+					oModifier.getParent(oMovedElement) === oTargetParent
+				) {
+					iSourceIndex = mMovedElement.sourceIndex;
+					sSourceAggregation = mPropertyBag.sourceAggregation || oChangeContent.source.selector.aggregation;
+					bChangeAlreadyPerformed = true;
+					oSourceParent = await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView) || oSourceParent;
+				}
+			}
+			if (iSourceIndex > -1) {
+				aRevertData.unshift({
+					index: iSourceIndex,
+					aggregation: sSourceAggregation,
+					sourceParent: oModifier.getSelector(oSourceParent, oAppComponent)
+				});
+			}
+			if (!bChangeAlreadyPerformed) {
+				await oModifier.moveAggregation(
+					oSourceParent,
+					sSourceAggregation,
+					oTargetParent,
+					sTargetAggregation,
+					oMovedElement,
+					iInsertIndex,
+					oView
+				);
+			}
+		}
+		oChange.setRevertData(aRevertData);
 	};
 
 	/**
@@ -267,7 +223,7 @@ function(
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#revertChange
 	 */
-	MoveControls.revertChange = function(oChange, oRelevantContainer, mPropertyBag) {
+	MoveControls.revertChange = async function(oChange, oRelevantContainer, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oView = mPropertyBag.view;
 		var oAppComponent = mPropertyBag.appComponent;
@@ -276,62 +232,38 @@ function(
 		// because for XML changes this data can't be stored in the revertData yet.
 		var oChangeContent = oChange.getContent();
 
-		var oSourceParent;
-		var oTargetParent;
-		var sSourceAggregation;
-		var sTargetAggregation;
-		var oMovedElement;
-		var iInsertIndex;
-
-		return fnCheckConditions(oChange, oModifier, oView, oAppComponent)
-		.then(oModifier.bySelector.bind(oModifier, oChangeContent.source.selector, oAppComponent, oView))
-		.then(function(oRetrievedSourceParent) {
-			oSourceParent = oRetrievedSourceParent;
-			sSourceAggregation = oChangeContent.source.selector.aggregation;
-			sTargetAggregation = oChangeContent.target.selector.aggregation;
-			return oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
-		})
-		.then(function(oRetrievedTargetParent) {
-			oTargetParent = oRetrievedTargetParent;
-			var aRevertData = oChange.getRevertData();
-			oChangeContent.movedElements.reverse();
-			var aPromises = [];
-			oChangeContent.movedElements.forEach(function(mMovedElement, iElementIndex) {
-				var fnPromise = function() {
-					return Promise.resolve()
-					.then(fnGetElementControlOrThrowError.bind(this, mMovedElement, oModifier, oAppComponent, oView))
-					.then(function(oRetrievedMovedElement) {
-						oMovedElement = oRetrievedMovedElement;
-						if (!oMovedElement) {
-							Log.warning("Element to move not found");
-							return Promise.reject();
-						}
-						iInsertIndex = mMovedElement.sourceIndex;
-						if (aRevertData) {
-							var mRevertData = aRevertData[iElementIndex];
-							sSourceAggregation = mRevertData.aggregation;
-							iInsertIndex = mRevertData.index;
-							return oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView);
-						}
-						return Promise.resolve();
-					})
-					.then(function(oRetrievedSourceParent) {
-						if (oRetrievedSourceParent) {
-							oSourceParent = oRetrievedSourceParent;
-						}
-						return oModifier.removeAggregation(oTargetParent, sTargetAggregation, oMovedElement);
-					})
-					.then(function() {
-						return oModifier.insertAggregation(oSourceParent, sSourceAggregation, oMovedElement, iInsertIndex, oView);
-					});
-				}.bind(this);
-				aPromises.push(fnPromise);
-			}, this);
-			return FlUtils.execPromiseQueueSequentially(aPromises, true, true);
-		}.bind(this))
-		.then(function() {
-			oChange.resetRevertData();
-		});
+		checkConditions(oChange, oModifier, oView, oAppComponent);
+		let oSourceParent = await oModifier.bySelector(oChangeContent.source.selector, oAppComponent, oView);
+		const oTargetParent = await oModifier.bySelector(oChangeContent.target.selector, oAppComponent, oView);
+		let sSourceAggregation = oChangeContent.source.selector.aggregation;
+		const sTargetAggregation = oChangeContent.target.selector.aggregation;
+		const aRevertData = oChange.getRevertData();
+		oChangeContent.movedElements.reverse();
+		let iElementIndex = 0;
+		for (const mMovedElement of oChangeContent.movedElements) {
+			const oMovedElement = await getElementControlOrThrowError(mMovedElement, oModifier, oAppComponent, oView);
+			if (!oMovedElement) {
+				throw new Error("Element to move not found");
+			}
+			let iInsertIndex = mMovedElement.sourceIndex;
+			if (aRevertData) {
+				var mRevertData = aRevertData[iElementIndex];
+				sSourceAggregation = mRevertData.aggregation;
+				iInsertIndex = mRevertData.index;
+				oSourceParent = await oModifier.bySelector(mRevertData.sourceParent, oAppComponent, oView) || oSourceParent;
+			}
+			await oModifier.moveAggregation(
+				oTargetParent,
+				sTargetAggregation,
+				oSourceParent,
+				sSourceAggregation,
+				oMovedElement,
+				iInsertIndex,
+				oView
+			);
+			iElementIndex++;
+		}
+		oChange.resetRevertData();
 	};
 
 	/**
@@ -347,47 +279,36 @@ function(
 	 * @function
 	 * @name sap.ui.fl.changeHandler.MoveControls#completeChangeContent
 	 */
-	MoveControls.completeChangeContent = function(oChange, mSpecificChangeInfo, mPropertyBag) {
+	MoveControls.completeChangeContent = async function(oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 		var oAppComponent = mPropertyBag.appComponent;
 
-		return fnCheckCompleteChangeContentConditions(mSpecificChangeInfo)
-		.then(fnGetSpecificChangeInfo.bind(this, oModifier, mSpecificChangeInfo, oAppComponent))
-		.then(function(mSpecificChangeInfo) {
-			var oContent = {
-				movedElements: [],
-				source: {
-					selector: mSpecificChangeInfo.source.selector
-				},
-				target: {
-					selector: mSpecificChangeInfo.target.selector
-				}
-			};
+		checkCompleteChangeContentConditions(mSpecificChangeInfo);
+		const mCompleteSpecificChangeInfo = await completeSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent);
+		var oContent = {
+			movedElements: [],
+			source: {
+				selector: mCompleteSpecificChangeInfo.source.selector
+			},
+			target: {
+				selector: mCompleteSpecificChangeInfo.target.selector
+			}
+		};
 
-			var aPromises = [];
-			mSpecificChangeInfo.movedElements.forEach(function(mElement) {
-				var oPromise = Promise.resolve()
-				.then(function() {
-					return mElement.element || oModifier.bySelector(mElement.id, oAppComponent);
-				})
-				.then(function(oElement) {
-					oContent.movedElements.push({
-						selector: oModifier.getSelector(oElement, oAppComponent),
-						sourceIndex: mElement.sourceIndex,
-						targetIndex: mElement.targetIndex
-					});
-					oChange.addDependentControl(mSpecificChangeInfo.source.id, MoveControls.SOURCE_ALIAS, mPropertyBag);
-					oChange.addDependentControl(mSpecificChangeInfo.target.id, MoveControls.TARGET_ALIAS, mPropertyBag);
-					oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function(element) {
-						return element.id;
-					}), MoveControls.MOVED_ELEMENTS_ALIAS, mPropertyBag);
-				});
-				aPromises.push(oPromise);
+		for (const mElement of mCompleteSpecificChangeInfo.movedElements) {
+			const oElement = mElement.element || await oModifier.bySelector(mElement.id, oAppComponent);
+			oContent.movedElements.push({
+				selector: oModifier.getSelector(oElement, oAppComponent),
+				sourceIndex: mElement.sourceIndex,
+				targetIndex: mElement.targetIndex
 			});
-			return Promise.all(aPromises).then(function() {
-				oChange.setContent(oContent);
-			});
-		});
+			oChange.addDependentControl(mCompleteSpecificChangeInfo.source.id, MoveControls.SOURCE_ALIAS, mPropertyBag);
+			oChange.addDependentControl(mCompleteSpecificChangeInfo.target.id, MoveControls.TARGET_ALIAS, mPropertyBag);
+			oChange.addDependentControl(mCompleteSpecificChangeInfo.movedElements.map(function(element) {
+				return element.id;
+			}), MoveControls.MOVED_ELEMENTS_ALIAS, mPropertyBag);
+		}
+		oChange.setContent(oContent);
 	};
 
 	/**
@@ -408,15 +329,15 @@ function(
 			sourceIndex: oRevertData.index,
 			sourceAggregation: oRevertData.aggregation,
 			targetAggregation: oChangeContent.target.selector.aggregation,
-			setTargetIndex: function(oChange, iNewTargetIndex) {
+			setTargetIndex(oChange, iNewTargetIndex) {
 				var oChangeContent = oChange.getContent();
 				oChangeContent.movedElements[0].targetIndex = iNewTargetIndex;
 				oChange.setContent(oChangeContent);
 			},
-			getTargetIndex: function(oChange) {
+			getTargetIndex(oChange) {
 				return oChange.getContent().movedElements[0].targetIndex;
 			},
-			setIndexInRevertData: function(oChange, iIndex) {
+			setIndexInRevertData(oChange, iIndex) {
 				var aRevertData = oChange.getRevertData();
 				aRevertData[0].index = iIndex;
 				oChange.setRevertData(aRevertData);

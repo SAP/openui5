@@ -34,7 +34,7 @@ sap.ui.define([
 				oControl.placeAt(oContainerRef);
 			}
 
-			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.registry.get(sContainerId);
+			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.getElementById(sContainerId);
 			return [oControl.getId(), oCont];
 		}
 
@@ -105,7 +105,7 @@ sap.ui.define([
 			function setRoot() {
 				var oControl = new Button();
 				oCore.setRoot(oContainerRef, oControl);
-				var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.registry.get(sContainerId);
+				var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.getElementById(sContainerId);
 				return [oControl.getId(), oCont];
 			}
 

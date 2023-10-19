@@ -23,7 +23,7 @@ sap.ui.define([
 	var oFileContent = {
 		fileName: "foo",
 		fileType: "change",
-		reference: "sap.ui.demoapps.rta.fiorielements.Component",
+		reference: "sap.ui.demoapps.rta.fiorielements",
 		packageName: "$TMP",
 		content: {
 			originalControlType: "sap.m.Label"
@@ -54,7 +54,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Basic tests", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -70,7 +70,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("constructor - when reference is set and namespace is missing", function(assert) {
+		QUnit.test("constructor - when reference is set and namespace is missing and the reference has the legacy .Component", function(assert) {
 			var oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements.Component"
@@ -80,9 +80,14 @@ sap.ui.define([
 				"apps/sap.ui.demoapps.rta.fiorielements/changes/",
 				"then the namespace is filled"
 			);
+			assert.strictEqual(
+				oFlexObject.getFlexObjectMetadata().reference,
+				"sap.ui.demoapps.rta.fiorielements",
+				"then the .Component is removed"
+			);
 		});
 
-		QUnit.test("constructor - when both reference and namespace are set", function(assert) {
+		QUnit.test("constructor - when both reference and namespace are set and the reference has the legacy .Component", function(assert) {
 			var oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				reference: "sap.ui.demoapps.rta.fiorielements.Component",
@@ -92,6 +97,11 @@ sap.ui.define([
 				oFlexObject.getFlexObjectMetadata().namespace,
 				"apps/sap.ui.demoapps.rta.fiorielements/changes/",
 				"then the namespace is not overridden"
+			);
+			assert.strictEqual(
+				oFlexObject.getFlexObjectMetadata().reference,
+				"sap.ui.demoapps.rta.fiorielements",
+				"then the .Component is removed"
 			);
 		});
 
@@ -110,7 +120,7 @@ sap.ui.define([
 		QUnit.test("constructor - when both reference and projectId are set", function(assert) {
 			var oFlexObject = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
-				reference: "sap.ui.demoapps.rta.fiorielements.Component",
+				reference: "sap.ui.demoapps.rta.fiorielements",
 				projectId: "sap.ui.demoapps.rta.fiorielements"
 			});
 			assert.strictEqual(
@@ -122,10 +132,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Custom getters/setters", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -252,10 +262,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("State handling", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -361,10 +371,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Updates and export", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oFlexObject = FlexObjectFactory.createFromFileContent(oFileContent);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

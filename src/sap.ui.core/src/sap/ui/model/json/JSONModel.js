@@ -300,8 +300,7 @@ sap.ui.define([
 	};
 
 	/*
-	 * @see sap.ui.model.Model.prototype.bindProperty
-	 *
+	 * @see sap.ui.model.ClientModel#bindProperty
 	 */
 	JSONModel.prototype.bindProperty = function(sPath, oContext, mParameters) {
 		var oBinding = new JSONPropertyBinding(this, sPath, oContext, mParameters);

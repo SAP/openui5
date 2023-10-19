@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "excel-attachment";
-  const pathData = "M390 461q13 0 19.5 8t6.5 17q0 10-6.5 18t-19.5 8H58q-11 0-18.5-7.5T32 486V179q0-10 7-17L181 8q8-8 19-8h190q11 0 18.5 7.5T416 26v45q0 13-8 19t-18 6q-9 0-17-6t-8-19V51H211l-12 14v63q0 22-15 36.5T148 179H92l-9 10v272h307zm71-199v-51h-67v51h67zm0 103v-51h-67v51h67zM342 262v-51h-67v51h67zm0 103v-51h-67v51h67zm144-205q11 0 18.5 7.5T512 186v204q0 11-7.5 18.5T486 416H250q-11 0-18.5-7.5T224 390V186q0-11 7.5-18.5T250 160h236z";
+  const pathData = "M374 461q11 0 18.5 7t7.5 18-7.5 18.5T374 512H42q-11 0-18.5-7.5T16 486V179q0-11 7-17L166 8q6-8 18-8h190q11 0 18.5 7.5T400 26v44q0 11-7.5 18.5T374 96t-18-7.5-7-18.5V51H195l-19 21v53q0 21-15 36t-36 15H80l-13 13v272h307zm96-301q11 0 18.5 7.5T496 186v204q0 11-7.5 18.5T470 416H234q-11 0-18.5-7.5T208 390V186q0-11 7.5-18.5T234 160h236zm-25 51h-67v51h67v-51zm-186 0v51h67v-51h-67zm0 154h67v-51h-67v51zm186 0v-51h-67v51h67z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

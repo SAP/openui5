@@ -1,8 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/FlVariant",
-	"sap/ui/fl/apply/_internal/flexObjects/UIChange",
+	"sap/base/i18n/Localization",
+	"sap/base/util/isEmptyObject",
+	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Scenario",
@@ -11,17 +12,15 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/mvc/View",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
 ], function(
-	FlVariant,
-	UIChange,
+	Localization,
+	isEmptyObject,
+	Log,
 	Utils,
 	Layer,
 	Scenario,
@@ -30,14 +29,11 @@ sap.ui.define([
 	Button,
 	Component,
 	UIComponent,
-	Log,
-	isEmptyObject,
-	UriParameters,
-	Configuration,
 	Manifest,
 	View,
 	_omit,
-	sinon
+	sinon,
+	FlQUnitUtils
 ) {
 	"use strict";
 
@@ -46,8 +42,8 @@ sap.ui.define([
 	var aControls = [];
 
 	QUnit.module("sap.ui.fl.Utils", {
-		beforeEach: function() {},
-		afterEach: function() {
+		beforeEach() {},
+		afterEach() {
 			aControls.forEach(function(oControl) {
 				oControl.destroy();
 			});
@@ -56,7 +52,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: {
 							"sap-app-id": ["someId"]
@@ -72,7 +68,7 @@ sap.ui.define([
 
 		QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns({
-				getComponentData: function() {
+				getComponentData() {
 					return {
 						startupParameters: {
 							"some-other-param": ["test"]
@@ -87,13 +83,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("getClient", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-client").returns("123");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-client").returns("123");
 			var sClient = Utils.getClient();
 			assert.equal(sClient, "123");
 		});
 
 		QUnit.test("getCurrentLanguage shall return the ISO 639-1 language of a RFC4646 language", function(assert) {
-			var oGetLanguageStub = sandbox.stub(Configuration, "getLanguage").returns("en-US");
+			var oGetLanguageStub = sandbox.stub(Localization, "getLanguage").returns("en-US");
 			assert.equal(Utils.getCurrentLanguage("en-us"), "EN");
 			oGetLanguageStub.returns("de");
 			assert.equal(Utils.getCurrentLanguage("de"), "DE");
@@ -188,17 +184,17 @@ sap.ui.define([
 		QUnit.test("getAppDescriptor shall return the an appDescriptor instance", function(assert) {
 			var oAppDescriptor = {
 				id: "sap.ui.smartFormOData",
-				getEntry: function(sEntryKey) {
+				getEntry(sEntryKey) {
 					return sEntryKey === "sap.ui5" ? {} : undefined;
 				}
 			};
 			var oControl = {};
 			var oComponentMock = {
-				getMetadata: function() {
+				getMetadata() {
 					return {
-						getManifestObject: function() {
+						getManifestObject() {
 							return {
-								getJson: function() {
+								getJson() {
 									return oAppDescriptor;
 								}
 							};
@@ -306,7 +302,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("get/set URL Technical Parameter values", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -318,10 +314,10 @@ sap.ui.define([
 			};
 
 			var oURLParsingService = {
-				getHash: function() {
+				getHash() {
 					return "";
 				},
-				parseShellHash: function() {
+				parseShellHash() {
 					return oParameters;
 				}
 			};
@@ -332,8 +328,8 @@ sap.ui.define([
 
 		QUnit.test("when calling 'getParsedURLHash' with a ushell container and a URL which cannot be parsed properly", function(assert) {
 			var oURLParsingService = {
-				getHash: function() {},
-				parseShellHash: function() {}
+				getHash() {},
+				parseShellHash() {}
 			};
 
 			assert.ok(isEmptyObject(Utils.getParsedURLHash(oURLParsingService)), "then an empty object is received");
@@ -361,7 +357,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.isApplication", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -387,35 +383,35 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.isApplicationComponent and Utils.isEmbeddedComponent", {
-		before: function() {
+		before() {
 			this.oComponent = new Component();
 			this.oManifest = this.oComponent.getManifestObject();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			this.oComponent.destroy();
 		}
 	}, function() {
 		["isApplicationComponent", "isEmbeddedComponent"]
 		.forEach(function(sFunctionName) {
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest`, function(assert) {
 				assert.notOk(Utils[sFunctionName](), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and the manifest has no getEntry method", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and the manifest has no getEntry method`, function(assert) {
 				assert.notOk(Utils[sFunctionName]({}), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app']", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest['sap.app']`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.returns({});
 
 				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and there is no manifest['sap.app'].type", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and there is no manifest['sap.app'].type`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
@@ -424,7 +420,7 @@ sap.ui.define([
 				assert.notOk(Utils[sFunctionName](this.oComponent), "then false is returned");
 			});
 
-			QUnit.test("when Utils." + sFunctionName + " is called and manifest type is incorrect", function(assert) {
+			QUnit.test(`when Utils.${sFunctionName} is called and manifest type is incorrect`, function(assert) {
 				sandbox.stub(this.oManifest, "getEntry")
 				.callThrough()
 				.withArgs("sap.app")
@@ -486,7 +482,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.execPromiseQueueSequentially", {
-		beforeEach: function() {
+		beforeEach() {
 			var fnResolve = function() {
 				return Promise.resolve();
 			};
@@ -515,7 +511,7 @@ sap.ui.define([
 			sandbox.spyLog = sandbox.spy(Log, "error");
 		},
 
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -623,9 +619,9 @@ sap.ui.define([
 			});
 		});
 
-		[42, undefined, {then: 42}, {then: function() {}}]
+		[42, undefined, {then: 42}, {then() {}}]
 		.forEach(function(vResult) {
-			QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
+			QUnit.test(`when instanciated with ${vResult} value as parameter`, function(assert) {
 				var oFakePromise = new Utils.FakePromise(vResult)
 				.then(function(vValue) {
 					assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
@@ -633,8 +629,8 @@ sap.ui.define([
 				assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
 			});
 
-			QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
-				vResult = vResult || "undefined";
+			QUnit.test(`when instanciated with ${vResult} error value as second parameter`, function(assert) {
+				vResult ||= "undefined";
 				var oFakePromise = new Utils.FakePromise(undefined, vResult)
 				.then(function() {
 					assert.notOk(true, "then the 'then' method shouldn't be called");
@@ -890,7 +886,7 @@ sap.ui.define([
 			var oPromise = new Utils.FakePromise()
 			.then(function() {
 				return {
-					then: function() {}
+					then() {}
 				};
 			});
 
@@ -899,24 +895,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.getChangeFromChangesMap", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange1 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange1";
 				}
 			};
 			this.oChange2 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange2";
 				}
 			};
 			this.oChange3 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange3";
 				}
 			};
 			this.oChange4 = {
-				getId: function() {
+				getId() {
 					return "fileNameChange4";
 				}
 			};
@@ -925,7 +921,7 @@ sap.ui.define([
 				c2: [this.oChange3]
 			};
 		},
-		afterEach: function() {}
+		afterEach() {}
 	}, function() {
 		QUnit.test("when called with existing Change keys", function(assert) {
 			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1,
@@ -939,54 +935,54 @@ sap.ui.define([
 		});
 
 		QUnit.test("when called with not existing Change keys", function(assert) {
-			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined,
+			assert.equal(Utils.getChangeFromChangesMap(this.mChanges, `${this.oChange1.getId()}foo`), undefined,
 				"then no change is returned");
 		});
 	});
 
 	QUnit.module("Utils.buildLrepRootNamespace", {
-		beforeEach: function() {
+		beforeEach() {
 			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";
 			this.sNoBaseIdErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: for every scenario you need a base ID";
 		},
-		afterEach: function() {}
+		afterEach() {}
 	}, function() {
-		QUnit.test("scenario " + Scenario.VersionedAppVariant + ": New VersionedAppVariant", function(assert) {
-			this.sErrorText += "in a versioned app variant scenario you additionally need a project ID";
+		QUnit.test(`scenario ${Scenario.VersionedAppVariant}: New VersionedAppVariant`, function(assert) {
+			this.sErrorText += "in the VERSIONED_APP_VARIANT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.VersionedAppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
-				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without base id calling 'buildLrepRootNamespace' for VERSIONED_APP_VARIANT throws an error"
 			);
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("baseId", Scenario.VersionedAppVariant, "");},
 				Error(this.sErrorText),
-				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without project id calling 'buildLrepRootNamespace' for VERSIONED_APP_VARIANT throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.AppVariant + ": New AppVariant", function(assert) {
-			this.sErrorText += "in an app variant scenario you additionally need a project ID";
+		QUnit.test(`scenario ${Scenario.AppVariant}: New AppVariant`, function(assert) {
+			this.sErrorText += "in the APP_VARIANT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("", Scenario.AppVariant, "projectId");},
 				Error(this.sNoBaseIdErrorText),
-				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without base id calling 'buildLrepRootNamespace' for APP_VARIANT throws an error"
 			);
 			assert.throws(
 				function() {Utils.buildLrepRootNamespace("baseId", Scenario.AppVariant, "");},
 				Error(this.sErrorText),
-				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+				"without project id calling 'buildLrepRootNamespace' for APP_VARIANT throws an error"
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.AdaptationProject + ": Customer adapts existing app", function(assert) {
-			this.sErrorText += "in a adaptation project scenario you additionally need a project ID";
+		QUnit.test(`scenario ${Scenario.AdaptationProject}: Customer adapts existing app`, function(assert) {
+			this.sErrorText += "in the ADAPTATION_PROJECT scenario you additionally need a project ID";
 			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.AdaptationProject, "projectId"), sLrepRootNamespace,
 				"then the root namespace got build correctly");
@@ -1002,7 +998,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.FioriElementsFromScratch + ": Customer adapts new Fiori elements app", function(assert) {
+		QUnit.test(`scenario ${Scenario.FioriElementsFromScratch}: Customer adapts new Fiori elements app`, function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.FioriElementsFromScratch), sLrepRootNamespace,
 				"then the root namespace got build correctly");
@@ -1013,7 +1009,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("scenario " + Scenario.UiAdaptation + ": Customer adapts existing app using RTA", function(assert) {
+		QUnit.test(`scenario ${Scenario.UiAdaptation}: Customer adapts existing app using RTA`, function(assert) {
 			var sLrepRootNamespace = "apps/baseId/";
 			assert.equal(Utils.buildLrepRootNamespace("baseId", Scenario.UiAdaptation), sLrepRootNamespace,
 				"then the root namespace got build correctly");
@@ -1036,107 +1032,145 @@ sap.ui.define([
 	});
 
 	QUnit.module("_hasParameterAndValue is called", {
-		before: function() {
+		before() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("parameter name doesnt exist", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(null);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns(null);
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value empty string", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns("");
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value not equal", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns("notEqual");
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, false, "the function returns false");
 		});
 
 		QUnit.test("parameter value is equal", function(assert) {
-			sandbox.stub(UriParameters.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs(this.sParameterName).returns(this.sParameterValue);
 			var bResult = Utils.hasParameterAndValue(this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, true, "the function returns true");
 		});
 	});
 
 	QUnit.module("handleUrlParameter is called", {
-		before: function() {
+		before() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
-			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
+			this.sSearchParameter = `${this.sParameterName}=${this.sParameterValue}`;
 			this.sAnotherParameter = "test=true";
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with hasUrlParameterWithValue is true", function(assert) {
-			var sUrl = "?" + this.sSearchParameter;
+			var sUrl = `?${this.sSearchParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
 			assert.equal(bResult, "", "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is true and another parameter", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter + "&" + this.sSearchParameter;
+			var sUrl = `?${this.sAnotherParameter}&${this.sSearchParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is true and another parameter at the end", function(assert) {
-			var sUrl = "?" + this.sSearchParameter + "&" + this.sAnotherParameter;
+			var sUrl = `?${this.sSearchParameter}&${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false", function(assert) {
 			var sUrl = "";
 			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sSearchParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sSearchParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false and another parameter", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter;
+			var sUrl = `?${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(false);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sSearchParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}&${this.sSearchParameter}`, "no change in the url");
 		});
 
 		QUnit.test("with hasUrlParameterWithValue is false and two another parameters at the end", function(assert) {
-			var sUrl = "?" + this.sAnotherParameter + "&" + this.sAnotherParameter;
+			var sUrl = `?${this.sAnotherParameter}&${this.sAnotherParameter}`;
 			sandbox.stub(Utils, "hasParameterAndValue").returns(true);
 			var bResult = Utils.handleUrlParameters(sUrl, this.sParameterName, this.sParameterValue);
-			assert.equal(bResult, "?" + this.sAnotherParameter + "&" + this.sAnotherParameter, "no change in the url");
+			assert.equal(bResult, `?${this.sAnotherParameter}&${this.sAnotherParameter}`, "no change in the url");
+		});
+	});
+
+	QUnit.module("Utils.getUShellContainer", {
+		beforeEach() {
+		},
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when ushell is not loaded", function(assert) {
+			assert.notOk(Utils.getUshellContainer(), "then no container is returned");
+		});
+		QUnit.test("when ushell loaded but not yet bootstrapped", function(assert) {
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: "sap/ushell/Container",
+					stub: {
+						getLogonSystem() {
+							throw new Error("Container is not initialized!");
+						}
+					}
+				}
+			]);
+			assert.notOk(Utils.getUshellContainer(), "then no container is returned");
+		});
+		QUnit.test("when ushell loaded and bootstrapped", function(assert) {
+			FlQUnitUtils.stubSapUiRequire(sandbox, [
+				{
+					name: "sap/ushell/Container",
+					stub: {
+						getLogonSystem() {
+							return {};
+						}
+					}
+				}
+			]);
+			assert.ok(Utils.getUshellContainer(), "then container is returned");
 		});
 	});
 
 	QUnit.module("Utils.getUShellService", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					switch (sServiceName) {
 						case "validService":
 							return Promise.resolve("validServiceResult");
 						default:
-							return Promise.reject(new Error("Not available service: " + sServiceName));
+							return Promise.reject(new Error(`Not available service: ${sServiceName}`));
 					}
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1172,9 +1206,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Utils.getUShellServices", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					switch (sServiceName) {
 						case "validService1":
 							return Promise.resolve("validService1Result");
@@ -1183,12 +1217,12 @@ sap.ui.define([
 						case "validService3":
 							return Promise.resolve("validService3Result");
 						default:
-							return Promise.reject(new Error("Invalid service: " + sServiceName));
+							return Promise.reject(new Error(`Invalid service: ${sServiceName}`));
 					}
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {

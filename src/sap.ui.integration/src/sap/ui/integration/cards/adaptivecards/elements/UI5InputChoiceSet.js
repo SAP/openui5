@@ -46,18 +46,20 @@ sap.ui.define([
 					this.valueChanged();
 				}.bind(this));
 
+				var oDocFragment = document.createDocumentFragment();
 				for (var i = 0; i < this.choices.length; i++) {
 					var oOption = document.createElement("ui5-option");
 					oOption.value = this.choices[i].value;
-					oOption.innerHTML = this.choices[i].title;
+					oOption.textContent  = this.choices[i].title;
 
 					if (this.choices[i].value === this.defaultValue) {
 						oOption.selected = true;
 					}
 
-					this._selectElement.appendChild(oOption);
+					oDocFragment.appendChild(oOption);
 				}
 
+				this._selectElement.appendChild(oDocFragment);
 				return this._selectElement;
 			}
 			//if this.isMultiSelect is false and this.isCompact is false, we need to render a container with ui5-radio-button web components

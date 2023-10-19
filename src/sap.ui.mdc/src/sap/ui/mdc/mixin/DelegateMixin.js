@@ -2,16 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate", "sap/ui/mdc/util/mapVersions"], function (loadModules, Log, BaseDelegate, mapVersions) {
+sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDelegate"], function (loadModules, Log, BaseDelegate) {
 	"use strict";
 
-	var _validateDelegateConfig = function (oConfig) {
+	const _validateDelegateConfig = function (oConfig) {
 		if (!oConfig || !oConfig.name) {
 			throw new Error("Delegate configuration '" + (oConfig && JSON.stringify(oConfig)) +  "' invalid");
 		}
 	};
 
-	var _fnInitDelegate = function (oResult) {
+	const _fnInitDelegate = function (oResult) {
 		if (!this.bIsDestroyed) {
 			if (oResult instanceof Error) {
 				this.fnRejectDelegate(oResult);
@@ -19,7 +19,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 				this._oDelegate = oResult[0];
 				this.fnResolveDelegate(this._oDelegate);
 				this.bDelegateInitialized = true;
-				mapVersions(this._oDelegate);
 			}
 		}
 		this.bDelegateLoading = false;
@@ -69,7 +68,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 * @experimental
 	 * @ui5-restricted sap.ui.mdc
 	*/
-	var DelegateMixin = {};
+	const DelegateMixin = {};
 
 	DelegateMixin.init = function (fnInit) {
 		return function () {
@@ -123,7 +122,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 			if (oPreloadedModule) {
 				_fnInitDelegate.call(this, [oPreloadedModule]);
 			} else {
-				var oDelegate = this.getDelegate();
+				const oDelegate = this.getDelegate();
 				_validateDelegateConfig(oDelegate);
 				this.bDelegateLoading = true;
 				loadModules(oDelegate.name).then(_fnInitDelegate.bind(this)).catch(_fnInitDelegate.bind(this));
@@ -151,7 +150,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 	 */
 	DelegateMixin.getPayload = function () {
 		if (!this._oPayload) {
-			var oDelegateConfig = this.getDelegate();
+			const oDelegateConfig = this.getDelegate();
 			this._oPayload = oDelegateConfig && oDelegateConfig.payload;
 		}
 
@@ -203,7 +202,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 				throw new Error("A delegate instance is not (yet) available. You must call initControlDelegate before calling getControlDelegate.");
 			}
 		}
-		mapVersions(this._oDelegate);
 		return this._oDelegate;
 	};
 

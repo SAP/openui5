@@ -17,11 +17,18 @@ sap.ui.define([
 		triggerMouseEvent(oTarget, "mouseup");
 	}
 
-	function getBorderCellRect(oTable, sDirection, mFrom, mTo) {
+	function getBorderCellRect(oTable, sDirection, mFrom, mTo, bRTL) {
 		let mBorder = mFrom;
+
 		if (sDirection == "bottom" || sDirection == "right") {
 			mBorder = mTo;
+			if (bRTL) {
+				mBorder.colIndex = mFrom.colIndex;
+			}
+		} else if (bRTL && sDirection == "left") {
+			mBorder.colIndex = mTo.colIndex;
 		}
+
 		const oCellRef = Util.getCell(oTable, mBorder.rowIndex, mBorder.colIndex);
 		return oCellRef.getBoundingClientRect();
 	}
@@ -61,10 +68,10 @@ sap.ui.define([
 						}
 					});
 				},
-				iHoverBorder: function(sDirection, mFrom, mTo) {
+				iHoverBorder: function(sDirection, mFrom, mTo, bRtl) {
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
-							const oCellRect = getBorderCellRect(oTable, sDirection, mFrom, mTo);
+							const oCellRect = getBorderCellRect(oTable, sDirection, mFrom, mTo, bRtl);
 
 							mousemove(oTable, oTable.getDomRef(), {
 								clientX: oCellRect[sDirection],
@@ -73,10 +80,10 @@ sap.ui.define([
 						}
 					});
 				},
-				iExtendBorderTo: function(sDirection, mFrom, mTo, mTarget) {
+				iExtendBorderTo: function(sDirection, mFrom, mTo, mTarget, bRtl) {
 					Util.waitForTable.call(this, {
 						success: function(oTable) {
-							const oCellRect = getBorderCellRect(oTable, sDirection, mFrom, mTo);
+							const oCellRect = getBorderCellRect(oTable, sDirection, mFrom, mTo, bRtl);
 
 							mousemove(oTable, oTable.getDomRef(), {
 								clientX: oCellRect[sDirection],

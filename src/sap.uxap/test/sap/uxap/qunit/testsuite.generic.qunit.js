@@ -6,6 +6,11 @@ sap.ui.define([
 	var oConfig = GenericTestCollection.createTestsuiteConfig({
 		library: "sap.uxap",
 		objectCapabilities: {
+			"sap.uxap.BlockBase": {
+				knownIssues: {
+					memoryLeaks: true
+				}
+			},
 			"sap.uxap.BreadCrumbs": {
 				create: function (BreadCrumbs, mParameters) {
 					return new Promise(function (resolve, reject) {

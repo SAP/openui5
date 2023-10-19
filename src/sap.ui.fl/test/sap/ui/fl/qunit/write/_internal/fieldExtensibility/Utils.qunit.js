@@ -21,10 +21,10 @@ sap.ui.define([
 
 	QUnit.module("checkControlPrerequisites", {
 		oLogStub: null,
-		beforeEach: function() {
+		beforeEach() {
 			this.oLogStub = oSandbox.stub(Log, "warning");
 		},
-		afterEach: function() {
+		afterEach() {
 			oSandbox.restore();
 		}
 	}, function() {
@@ -38,16 +38,16 @@ sap.ui.define([
 			this.oLogStub.calledWithMatch(["Unsupported model type or protocol"]);
 
 			assert.strictEqual(Utils.checkControlPrerequisites({
-				getModel: function() {
+				getModel() {
 					return null;
 				}
 			}), false, "Prerequisites not met");
 			this.oLogStub.calledWithMatch(["Unsupported model type or protocol"]);
 
 			var oControl = {
-				getModel: function() {
+				getModel() {
 					return {
-						isA: function() {}
+						isA() {}
 					};
 				}
 			};
@@ -57,10 +57,10 @@ sap.ui.define([
 
 		QUnit.test("No service uri", function(assert) {
 			var oControl = {
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: null,
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -72,10 +72,10 @@ sap.ui.define([
 
 		QUnit.test("No binding path", function(assert) {
 			var oControl = {
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: "/someService",
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -87,17 +87,17 @@ sap.ui.define([
 
 		QUnit.test("Prerequisites met (binding path)", function(assert) {
 			var oControl = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
-						getPath: function() {
+						getPath() {
 							return "/someService/someEntity";
 						}
 					};
 				},
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: "/someService",
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -108,13 +108,13 @@ sap.ui.define([
 
 		QUnit.test("Prerequisites met (entity set)", function(assert) {
 			var oControl = {
-				getEntitySet: function() {
+				getEntitySet() {
 					return "someEntitySet";
 				},
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: "/someService",
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -125,13 +125,13 @@ sap.ui.define([
 
 		QUnit.test("Prerequisites met (entity type)", function(assert) {
 			var oControl = {
-				getEntityType: function() {
+				getEntityType() {
 					return "someEntityType";
 				},
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: "/someService",
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -143,11 +143,11 @@ sap.ui.define([
 
 	QUnit.module("executeRequest", {
 		oServer: null,
-		beforeEach: function() {
+		beforeEach() {
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
 		},
-		afterEach: function() {
+		afterEach() {
 			oSandbox.restore();
 			this.oServer.restore();
 		}
@@ -180,7 +180,7 @@ sap.ui.define([
 				assert.strictEqual(mResult.statusCode, 400, "Status code");
 				done();
 			}).catch(function(oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			});
 		});
 
@@ -204,14 +204,14 @@ sap.ui.define([
 				assert.deepEqual(mResult.result, oResponse.d, "Error messages");
 				done();
 			}).catch(function(oError) {
-				assert.ok(false, "Should not run into fail branch. Error" + oError);
+				assert.ok(false, `Should not run into fail branch. Error${oError}`);
 			});
 		});
 	});
 
 	QUnit.module("getBoundEntitySet/Type", {
 		oServer: null,
-		before: function() {
+		before() {
 			return fetch("test-resources/sap/ui/fl/qunit/write/_internal/fieldExtensibility/v2_metadata.xml")
 			.then(function(oResponse) {
 				return oResponse.text();
@@ -220,7 +220,7 @@ sap.ui.define([
 				this.sMetadataV2 = sMetadata;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			if (this.oServer && this.oServer.restore) {
 				this.oServer.restore();
 			}
@@ -255,14 +255,14 @@ sap.ui.define([
 				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
 			});
 			var oControl = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
-						getPath: function() {
+						getPath() {
 							return "/BusinessPartner(Id='1',DraftUUID=guid'00000000-0000-0000-0000-000000000000',IsActiveEntity=true)";
 						}
 					};
 				},
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			};
@@ -293,13 +293,13 @@ sap.ui.define([
 				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
 			});
 			var oControl = {
-				getEntitySet: function() {
+				getEntitySet() {
 					return "";
 				},
-				getEntityType: function() {
+				getEntityType() {
 					return "cds_c_cfdtsm_bupa.BusinessPartnerType";
 				},
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			};
@@ -330,13 +330,13 @@ sap.ui.define([
 				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
 			});
 			var oControl = {
-				getEntitySet: function() {
+				getEntitySet() {
 					return "BusinessPartner";
 				},
-				getEntityType: function() {
+				getEntityType() {
 					return "";
 				},
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			};
@@ -367,13 +367,13 @@ sap.ui.define([
 				serviceUrl: "/sap/opu/odata/sap/C_CFDTSM_BUPA/"
 			});
 			var oControl = {
-				getEntitySet: function() {
+				getEntitySet() {
 					return "cds_c_cfdtsm_bupa.BusinessPartner";
 				},
-				getEntityType: function() {
+				getEntityType() {
 					return "";
 				},
-				getModel: function() {
+				getModel() {
 					return oModel;
 				}
 			};
@@ -410,14 +410,14 @@ sap.ui.define([
 					synchronizationMode: "None"
 				});
 				var oControl = {
-					getBindingContext: function() {
+					getBindingContext() {
 						return {
-							getPath: function() {
+							getPath() {
 								return "/C_CFD_TSM_BUPA_RAP_PV('1')";
 							}
 						};
 					},
-					getModel: function() {
+					getModel() {
 						return oModel;
 					}
 				};
@@ -448,15 +448,15 @@ sap.ui.define([
 			assert.strictEqual(Utils.getServiceUri({}), null, "No service expected");
 
 			assert.strictEqual(Utils.getServiceUri({
-				getModel: function() {
+				getModel() {
 					return null;
 				}
 			}), null, "No service expected");
 
 			var oControl = {
-				getModel: function() {
+				getModel() {
 					return {
-						isA: function() {}
+						isA() {}
 					};
 				}
 			};
@@ -465,10 +465,10 @@ sap.ui.define([
 
 		QUnit.test("No service uri", function(assert) {
 			var oControl = {
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: null,
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -479,17 +479,17 @@ sap.ui.define([
 
 		QUnit.test("Service Uri given", function(assert) {
 			var oControl = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
-						getPath: function() {
+						getPath() {
 							return "/someService/someEntity";
 						}
 					};
 				},
-				getModel: function() {
+				getModel() {
 					return {
 						sServiceUrl: "/someService",
-						isA: function() {
+						isA() {
 							return true;
 						}
 					};
@@ -524,7 +524,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("isNavigationSupportedForIntents", {
-		afterEach: function() {
+		afterEach() {
 			oSandbox.restore();
 		}
 	}, function() {
@@ -553,7 +553,7 @@ sap.ui.define([
 		QUnit.test("Positive test", function(assert) {
 			var done = assert.async();
 			var oCrossApp = {
-				isNavigationSupported: function(aIntents) {
+				isNavigationSupported(aIntents) {
 					var aResults = aIntents.map(function(oIntent) {
 						return {
 							supported: oIntent.semanticObject === "CustomField" || false

@@ -9,7 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/rta/util/showMessageBox",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	ManagedObject,
 	PersistenceWriteAPI,
@@ -18,7 +18,7 @@ sap.ui.define([
 	CompositeCommand,
 	JsControlTreeModifier,
 	showMessageBox,
-	Core
+	Lib
 ) {
 	"use strict";
 
@@ -62,8 +62,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.command.Stack
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var Stack = ManagedObject.extend("sap.ui.rta.command.Stack", {
 		metadata: {
@@ -241,13 +239,13 @@ sap.ui.define([
 				}.bind(this))
 
 				.catch(function(oError) {
-					oError = oError || new Error("Executing of the change failed.");
+					oError ||= new Error("Executing of the change failed.");
 					oError.index = this._toBeExecuted;
 					oError.command = this.removeCommand(this._toBeExecuted); // remove failing command
 					this._toBeExecuted--;
-					var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+					var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 					showMessageBox(
-						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", oError.message),
+						oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", [oError.message]),
 						{title: oRtaResourceBundle.getText("HEADER_ERROR")},
 						"error"
 					);

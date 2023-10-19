@@ -1,13 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/sinon-4"
 ], function(
+	Localization,
 	Utils,
-	sinon,
-	Configuration
+	sinon
 ) {
 	"use strict";
 
@@ -15,14 +15,14 @@ sap.ui.define([
 	var oSetRequestHeaderSpy;
 
 	QUnit.module("URLHandling", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when addLanguageInfo is called", function(assert) {
 			var mParameters = {};
 			var mExpectedValue = {"sap-language": "en"};
-			sandbox.stub(Configuration, "getLanguage").returns("en");
+			sandbox.stub(Localization, "getLanguage").returns("en");
 			Utils.addLanguageInfo(mParameters);
 			assert.deepEqual(mParameters, mExpectedValue, "the sap language property is set");
 			assert.throws(function() {Utils.addLanguageInfo();}, "without any param map then an error is thrown");
@@ -31,7 +31,7 @@ sap.ui.define([
 		QUnit.test("when addSAPLogonLanguageInfo is called", function(assert) {
 			var mParameters = {};
 			var mExpectedValue = {"sap-language": "EN"};
-			sandbox.stub(Configuration, "getSAPLogonLanguage").returns("EN");
+			sandbox.stub(Localization, "getSAPLogonLanguage").returns("EN");
 			Utils.addSAPLogonLanguageInfo(mParameters);
 			assert.deepEqual(mParameters, mExpectedValue, "the sap language property is set");
 			assert.throws(function() {Utils.addSAPLogonLanguageInfo();}, "without any param map then an error is thrown");
@@ -66,12 +66,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("sendRequest", {
-		beforeEach: function() {
+		beforeEach() {
 			this.server = sinon.fakeServer.create();
 			this.server.autoRespond = true;
 			oSetRequestHeaderSpy = sandbox.spy(XMLHttpRequest.prototype, "setRequestHeader");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	},

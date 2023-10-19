@@ -4,7 +4,7 @@
 
 // Provides control sap.ui.webc.main.MessageStrip.
 sap.ui.define([
-	"sap/ui/webc/common/WebComponent",
+	"sap/ui/core/webc/WebComponent",
 	"./library",
 	"./thirdparty/MessageStrip"
 ], function(WebComponent, library) {
@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @extends sap.ui.webc.common.WebComponent
+	 * @extends sap.ui.core.webc.WebComponent
 	 * @class
 	 *
 	 * <h3>Overview</h3>
@@ -47,9 +47,7 @@ sap.ui.define([
 			properties: {
 
 				/**
-				 * Defines the component type. <br>
-				 * <br>
-				 * <b>Note:</b> Available options are <code>"Information"</code>, <code>"Positive"</code>, <code>"Negative"</code>, and <code>"Warning"</code>.
+				 * Defines the component type.
 				 */
 				design: {
 					type: "sap.ui.webc.main.MessageStripDesign",

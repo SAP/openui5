@@ -35,7 +35,7 @@ span.sapMBtnInner.sapMBtnEmphasized {
 /* --------------------- */
 .sapMBtnInner {
 	font-size: @sapMFontMediumSize;
-	height: 2.25rem;
+	height: @sapUiElementHeight;
 	min-width: 2.25rem;
 	margin: 0;
 	padding: 0;
@@ -159,6 +159,19 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMBtnActive.sapMFocusable
 	border-color:    @sapUiContentFocusColor;
 }
 
+// Value State Message buttons
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnCritical.sapMBtnActive {
+	border-color: @sapUiButtonCriticalBorderColor;
+}
+
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnNegative.sapMBtnActive {
+	border-color: @sapUiButtonNegativeBorderColor;
+}
+
+:not(.sapMBtnDisabled) > span.sapMBtnInner.sapMBtnSuccess.sapMBtnActive {
+	border-color: @sapButton_Success_BorderColor;
+}
+
 html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before {
 	content: "";
 	position: absolute;
@@ -173,16 +186,19 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBadgeIndicator):before
 }
 
 html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBadgeIndicator):before,
-html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable:not(.sapMBadgeIndicator):before,
-html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable:not(.sapMBadgeIndicator):before,
-html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBadgeIndicator):before,
-html.sap-desktop .sapMBtn:focus > .sapMBtnNeutral.sapMFocusable:not(.sapMBadgeIndicator):before {
+html.sap-desktop .sapMBtn:focus > .sapMBtnCritical.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMBtnNegative.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMBtnSuccess.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before {
 	border: 0.125rem solid @sapUiContentContrastFocusColor;
 }
 
 .sapMIBar .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost),
 .sapUxAPObjectPageHeaderIdentifierActions .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnAttention):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
 	border-color: @sapUiButtonLiteBorderColor;
+}
+
+.sapMBtn .sapMBtnNeutral.sapMBtnInner {
+	text-shadow: @sapUiContentTextShadow;
 }
 
 /* ---------------------------------------------------------------------*/
@@ -285,31 +301,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	color: @sapUiButtonLiteTextColor;
 }
 
-// box shadow on hover
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive) {
-	box-shadow: @sapContent_Interaction_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnEmphasized,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnSuccess,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNegative,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnNeutral,
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnCritical {
-	box-shadow: none;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAccept {
-	box-shadow: @sapContent_Positive_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnReject {
-	box-shadow: @sapContent_Negative_Shadow;
-}
-
-.sapMBtn:not(.sapMBtnDisabled):hover .sapMBtnInner:not(.sapMBtnActive).sapMBtnAttention {
-	box-shadow: @sapContent_Critical_Shadow;
-}
-
 /* ----------------------*/
 /* Badges                */
 /* ----------------------*/
@@ -320,4 +311,12 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnReject {
 	color: @sapContent_BadgeTextColor;
 	font-size: @sapFontSmallSize;
 	text-align: center;
+}
+
+.sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed),
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnTransparent.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+
+	bdi {
+		color: @sapUiButtonLiteHoverTextColor;
+	}
 }

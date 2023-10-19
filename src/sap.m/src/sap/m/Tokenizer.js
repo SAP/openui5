@@ -51,6 +51,7 @@ sap.ui.define([
 	var RenderMode = library.TokenizerRenderMode;
 	var PlacementType = library.PlacementType;
 	var ListMode = library.ListMode;
+	var ListType = library.ListType;
 	var ButtonType = library.ButtonType;
 
 	/**
@@ -329,7 +330,8 @@ sap.ui.define([
 			this._oTokensList = new List({
 				width: "auto",
 				mode: ListMode.Delete
-			}).attachDelete(this._handleListItemDelete, this);
+			}).attachDelete(this._handleListItemDelete, this)
+			.attachItemPress(this._handleListItemPress, this);
 		}
 
 		return this._oTokensList;
@@ -413,6 +415,24 @@ sap.ui.define([
 			});
 
 			this._adjustTokensVisibility();
+		}
+	};
+
+	/**
+	 * Handles token press from the List.
+	 *
+	 * @param oEvent
+	 * @private
+	 */
+	 Tokenizer.prototype._handleListItemPress = function (oEvent) {
+		var oListItem = oEvent.getParameter("listItem");
+		var sSelectedId = oListItem && oListItem.data("tokenId");
+		var oPressedToken = this.getTokens().filter(function(oToken){
+			return (oToken.getId() === sSelectedId);
+		})[0];
+
+		if (oPressedToken) {
+			oPressedToken.firePress();
 		}
 	};
 
@@ -554,6 +574,7 @@ sap.ui.define([
 		var oListItem = new StandardListItem({
 			selected: true,
 			wrapping: true,
+			type: ListType.Active,
 			wrapCharLimit: 10000
 		}).data("tokenId", oToken.getId());
 
@@ -712,7 +733,7 @@ sap.ui.define([
 				}
 			}
 
-			this._oIndicator.html(oRb.getText(sLabelKey, iHiddenTokensCount));
+			this._oIndicator.html(oRb.getText(sLabelKey, [iHiddenTokensCount]));
 		}
 
 		return this;
@@ -1621,7 +1642,7 @@ sap.ui.define([
 			oInvisibleText = this.getAggregation("_tokensInfo");
 
 			sTranslation = oTranslationMapping[iTokenCount] ? oTranslationMapping[iTokenCount] : "TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS";
-			sTokenizerAria = oRb.getText(sTranslation, iTokenCount);
+			sTokenizerAria = oRb.getText(sTranslation, [iTokenCount]);
 
 			oInvisibleText.setText(sTokenizerAria);
 		}

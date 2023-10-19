@@ -29,7 +29,7 @@ sap.ui.define(
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterContainer
 		 */
-		var FilterContainer = IFilterContainer.extend(
+		const FilterContainer = IFilterContainer.extend(
 			"sap.ui.mdc.filterbar.vh.FilterContainer",
 			{
 				metadata: {
@@ -93,7 +93,7 @@ sap.ui.define(
 		};
 
 		FilterContainer.prototype.removeFilterField = function (oControl) {
-			var nIdx = -1;
+			let nIdx = -1;
 			this.aLayoutItems.some(function(oLayoutItem, i){
 				if (oControl === oLayoutItem) {
 					nIdx = i;
@@ -114,13 +114,13 @@ sap.ui.define(
 		};
 
 		FilterContainer.prototype._updateFilterBarLayout = function(bShowAll) {
-			var n = this.aLayoutItems.length;
-			var iThreshold = this.getParent().getFilterFieldThreshold();
+			const n = this.aLayoutItems.length;
+			const iThreshold = this.getParent().getFilterFieldThreshold();
 
-			var bUpdate = bShowAll || n <= iThreshold + 1;
+			let bUpdate = bShowAll || n <= iThreshold + 1;
 
 			if (!bUpdate) {
-				var aItems = this.oAlgnLayout.getContent();
+				const aItems = this.oAlgnLayout.getContent();
 				aItems.some(function(oItem, i){
 					if (oItem != this.aLayoutItems[i]) {
 						bUpdate = true;
@@ -142,7 +142,7 @@ sap.ui.define(
 				}.bind(this));
 			}
 
-			var oShowAllFiltersBtn = this.oAlgnLayout.getEndContent()[0];
+			const oShowAllFiltersBtn = this.oAlgnLayout.getEndContent()[0];
 			oShowAllFiltersBtn.setVisible(!bShowAll && n > iThreshold);
 		};
 

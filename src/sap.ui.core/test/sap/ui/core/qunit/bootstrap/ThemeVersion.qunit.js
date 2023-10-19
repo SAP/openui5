@@ -1,10 +1,11 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/thirdparty/URI",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Configuration"
-], function(URI, Parameters, waitForThemeApplied, Configuration) {
+], function(URI, Theming, Parameters, waitForThemeApplied, Configuration) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -43,7 +44,7 @@ sap.ui.define([
 		} else {
 			sExpectedHref = sap.ui.require.toUrl("sap/ui/core/themes/");
 		}
-		sExpectedHref += Configuration.getTheme() + "/library.css";
+		sExpectedHref += Theming.getTheme() + "/library.css";
 		sExpectedHref = new URL(sExpectedHref, document.baseURI);
 
 		if (mOptions.versionedLibCss) {
@@ -72,7 +73,7 @@ sap.ui.define([
 		var sHref = oLink.href;
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-		var sExpectedHref = new URL("test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Configuration.getTheme() + "/custom.css", document.baseURI);
+		var sExpectedHref = new URL("test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Theming.getTheme() + "/custom.css", document.baseURI);
 
 		assert.equal(
 			sHref,
@@ -91,7 +92,7 @@ sap.ui.define([
 		// trigger loading library-parameters.json files
 		Parameters.get();
 
-		if (Configuration.getTheme() === "customcss") {
+		if (Theming.getTheme() === "customcss") {
 			// the following asserts are relevant for the 'withCredentials' probing.
 			// Since the requests goes against the UI5 bootstrap origin, the first request is done without credentials.
 			// The second request re-tries with credentials.
@@ -126,33 +127,35 @@ sap.ui.define([
 	QUnit.test("Theme Change", function(assert) {
 		var done = assert.async();
 
-		function fnThemeChanged() {
-			sap.ui.getCore().detachThemeChanged(fnThemeChanged);
+		function fnApplied(oEvent) {
+			if (oEvent.theme === "sap_bluecrystal") {
+				Theming.detachApplied(fnApplied);
 
-			var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
-			var sHref = oLink.href;
-			var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+				var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
+				var sHref = oLink.href;
+				var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-			var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css"), document.baseURI);
+				var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css"), document.baseURI);
 
-			if (mOptions.versionedLibCss) {
-				assert.equal(
-					sHref,
-					sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
-					"'sap.ui.core' library.css URL should contain version parameters."
-				);
-			} else {
-				assert.equal(
-					sHref,
-					sExpectedHref,
-					"'sap.ui.core' library.css URL should not contain version parameters."
-				);
+				if (mOptions.versionedLibCss) {
+					assert.equal(
+						sHref,
+						sExpectedHref + "?version=" + sCoreVersion + "&sap-ui-dist-version=" + oVersionInfo.version,
+						"'sap.ui.core' library.css URL should contain version parameters."
+					);
+				} else {
+					assert.equal(
+						sHref,
+						sExpectedHref,
+						"'sap.ui.core' library.css URL should not contain version parameters."
+					);
+				}
+
+				done();
 			}
-
-			done();
 		}
-		sap.ui.getCore().attachThemeChanged(fnThemeChanged);
-		sap.ui.getCore().applyTheme("sap_bluecrystal");
+		Theming.attachApplied(fnApplied);
+		Theming.setTheme("sap_bluecrystal");
 	});
 
 	QUnit.test("RTL Change", function(assert) {
@@ -162,7 +165,7 @@ sap.ui.define([
 		var sHref = oLink.href;
 		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
 
-		var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/" + Configuration.getTheme() + "/library-RTL.css"), document.baseURI);
+		var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/" + Theming.getTheme() + "/library-RTL.css"), document.baseURI);
 
 		if (mOptions.versionedLibCss) {
 			assert.equal(

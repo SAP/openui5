@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/PopupGlobal.css",
-    content: ".ui5-popup-scroll-blocker {\n\toverflow: hidden;\n}\n"
+    content: ".ui5-popup-scroll-blocker{overflow:hidden}"
   };
   var _default = styleData;
   _exports.default = _default;

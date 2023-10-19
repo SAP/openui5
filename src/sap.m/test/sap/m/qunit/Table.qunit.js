@@ -412,6 +412,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 		assert.ok(sut.hasPopin(), "Table has popins");
+		assert.equal(sut.getVisibleItems()[0].$Popin().attr("tabindex"), "-1", "Popin row has the tabindex=1. this is needed for the text selection");
 
 		var aVisibleColumns = sut.getColumns().filter(function(oCol) {
 			return oCol.getVisible() && !oCol.isPopin();
@@ -557,7 +558,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("MultiSelect - selectAll checkbox enabled behavior", function(assert) {
+	QUnit.test("MultiSelect - selectAll checkbox enabled/selected behavior", function(assert) {
 		var sut = createSUT(true, true, "MultiSelect"),
 			clock = sinon.useFakeTimers();
 		sut.placeAt("qunit-fixture");
@@ -565,13 +566,18 @@ sap.ui.define([
 
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled since there are visible items");
 
+		sut.selectAll();
+		assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected");
+
 		sut.getBinding("items").filter(new Filter("color", "EQ", "foo"));
 		clock.tick(1);
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+		assert.notOk(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is deselected");
 
 		sut.getBinding("items").filter();
 		clock.tick(1);
 		assert.ok(sut._selectAllCheckBox.getEnabled(), "SelectAll checkbox is enabled");
+		assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected again");
 
 		sut._selectAllCheckBox.setEnabled(false);
 		Core.applyChanges();
@@ -3393,7 +3399,7 @@ sap.ui.define([
 		assert.notOk(this.oTable._oItemNavigation.getItemDomRefs().includes($tblHeader[0]), "column header row is not in ItemNavigation items");
 
 		qutils.triggerKeydown(document.activeElement, "END", false, false, false);
-		assert.strictEqual(document.activeElement, oFirstItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is set on the last cell of the first row");
+		assert.strictEqual(document.activeElement, aItems[aItems.length - 1].getFocusDomRef(), "Focus is set on the last row");
 
 		qutils.triggerKeydown(document.activeElement, "HOME", false, false, false);
 		assert.strictEqual(document.activeElement, oFirstItem.getDomRef(), "Focus is set on the first row");
@@ -3746,11 +3752,30 @@ sap.ui.define([
 		this.oTable.focus();
 		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the first row");
 
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		assert.equal(document.activeElement,  this.o1stItem.getDomRef("cell0"), "Focus is on the first cell of the first row");
+
 		qutils.triggerKeydown(document.activeElement, "END");
-		assert.equal(document.activeElement, this.o1stItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is on the last focusable DOM node");
+		assert.equal(document.activeElement, this.o1stItem.$().find(".sapMTblCellFocusable").last()[0], "Focus is on the last focusable DOM node of the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "END");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell1"), "Focus is on the 2nd cell of the first row");
 
 		qutils.triggerKeydown(document.activeElement, "HOME");
-		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the header row");
+		assert.equal(document.activeElement, this.o1stItem.getDomRef("cell0"), "Focus is on the 1st cell of the first row");
+
+		qutils.triggerKeydown(document.activeElement, "HOME");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
+
+		qutils.triggerKeydown(document.activeElement, "HOME");
+		assert.equal(document.activeElement, oTable.getDomRef("tblHeader"), "Focus is on the header row");
+
+		qutils.triggerKeydown(document.activeElement, "ARROW_DOWN");
+		assert.equal(document.activeElement, this.o1stItem.getFocusDomRef(), "Focus is on the 1st row");
 
 		aColumns.forEach(function(oColumn, iIndex) {
 			qutils.triggerKeydown(document.activeElement, "ARROW_RIGHT");
@@ -3786,29 +3811,23 @@ sap.ui.define([
 		assert.equal(document.activeElement, this.o2ndItem.getDomRef("cell0"), "Focus is on the first cell of the 2nd item");
 
 		qutils.triggerKeydown(document.activeElement, "TAB", true);
-		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus is left the table");
+		assert.equal(document.activeElement, oTable.getDomRef("before"), "Focus has left the table");
 	});
 
-	QUnit.test("Drag and Drop", function(assert) {
+	QUnit.test("Drag-and-Drop and text selection", function(assert) {
 		var done = assert.async();
-
-		this.oTable.addDragDropConfig(new DragDropInfo({
-			sourceAggregation: "items",
-			targetAggregation: "items",
-			dropPosition: "Between"
-		}));
-		Core.applyChanges();
-
 		var oCellDomRef = this.o1stItem.getDomRef("cell0");
 		qutils.triggerMouseEvent(this.o1stItem.getCells()[0].getDomRef(), "mousedown");
-		assert.notOk(oCellDomRef.getAttribute("tabindex"), "tabindex is removed on mousedown for the draggable row");
+		assert.notOk(oCellDomRef.getAttribute("tabindex"), "tabindex is removed on mousedown for the row");
+		assert.ok(this.oTable._bMouseDown ,"mouse down flag is set on the table");
 
 		oCellDomRef.focus();
 		assert.equal(document.activeElement, this.o1stItem.getDomRef(), "focus is on the first row, not on the cell");
 
 		setTimeout(function() {
 			assert.equal(oCellDomRef.getAttribute("tabindex"), "-1", "tabindex is restored");
+			assert.notOk(this.oTable._bMouseDown ,"mouse down flag is reset on the table");
 			done();
-		});
+		}.bind(this));
 	});
 });

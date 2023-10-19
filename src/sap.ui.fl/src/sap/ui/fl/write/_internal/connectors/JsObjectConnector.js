@@ -14,19 +14,19 @@ sap.ui.define([
 	var oMyStorage = {
 		_itemsStoredAsObjects: true,
 		_items: {},
-		setItem: function(sKey, vValue) {
+		setItem(sKey, vValue) {
 			oMyStorage._items[sKey] = vValue;
 		},
-		removeItem: function(sKey) {
+		removeItem(sKey) {
 			delete oMyStorage._items[sKey];
 		},
-		clear: function() {
+		clear() {
 			oMyStorage._items = {};
 		},
-		getItem: function(sKey) {
+		getItem(sKey) {
 			return oMyStorage._items[sKey];
 		},
-		getItems: function() {
+		getItems() {
 			return oMyStorage._items;
 		}
 	};
@@ -35,7 +35,6 @@ sap.ui.define([
 	 * Connector that saves the data in an internal object.
 	 *
 	 * @namespace sap.ui.fl.write._internal.connectors.JsObjectConnector
-	 * @experimental Since 1.70
 	 * @since 1.70
 	 * @private
 	 * @ui5-restricted sap.ui.fl.write._internal.Connector
@@ -44,8 +43,9 @@ sap.ui.define([
 		storage: oMyStorage
 	});
 
-	JsObjectConnector.loadFeatures = function() {
-		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+	JsObjectConnector.loadFeatures = function(...aArgs) {
+		return ObjectStorageConnector.loadFeatures.apply(this, aArgs)
+		.then(function(oFeatures) {
 			return merge({
 				isPublicLayerAvailable: true,
 				isVariantAdaptationEnabled: true

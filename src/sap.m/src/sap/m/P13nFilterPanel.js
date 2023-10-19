@@ -324,7 +324,6 @@ sap.ui.define([
 	 * Setter for a KeyFields array.
 	 *
 	 * @private
-	 * @deprecated Since 1.34. This method does not work anymore - you should use the Items aggregation
 	 * @param {array} aKeyFields - array of KeyFields [{key: "CompanyCode", text: "ID"}, {key:"CompanyName", text : "Name"}]
 	 * @param {array} aKeyFieldsExclude - array of exclude KeyFields
 	 */
@@ -540,7 +539,7 @@ sap.ui.define([
 				this._modifyFieldOperationsBasedOnMaxLength(oField);
 			}, this);
 
-			this.setKeyFields(aKeyFields, aKeyFieldsExclude);
+            this.setKeyFields && this.setKeyFields(aKeyFields, aKeyFieldsExclude);
 
 			var aConditions = [];
 			sModelName = (this.getBindingInfo("filterItems") || {}).model;

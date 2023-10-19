@@ -2010,6 +2010,16 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("makeRelativeUrl", function (assert) {
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/baz", "/foo/bar"), "baz");
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/bar/qux", "/foo/baz"), "bar/qux");
+		assert.strictEqual(_Helper.makeRelativeUrl("/foo/baz", "/foo/bar/qux"), "../baz");
+		assert.strictEqual(
+			_Helper.makeRelativeUrl("/Bar(baz='2',qux=3)", "/Foo"),
+			"Bar(baz='2',qux=3)");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("drillDown", function (assert) {
 		var oObject = {
 				foo : "bar",
@@ -2256,13 +2266,21 @@ sap.ui.define([
 	QUnit.test("getPrivateAnnotation", function (assert) {
 		var oObject = {
 				"@$ui5._" : {
+					null : null,
 					transient : "foo"
 				}
 			};
 
 		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo", "~default~"), "~default~");
 		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo", "~default~"), "~default~");
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "null", "~default~"), null);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+
+		assert.throws(function () {
+			_Helper.getPrivateAnnotation(null, "foo", "~default~");
+		}, TypeError);
 	});
 
 	//*********************************************************************************************
@@ -3821,28 +3839,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[true, false].forEach(function (bAbsolute) {
-	var sTitle = "getReturnValueContextPath with "
-			+ (bAbsolute ? "absolute" : "relative") + " path";
-
-	QUnit.test(sTitle, function (assert) {
-		var sPathPrefix = bAbsolute ? "/" : "";
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getReturnValueContextPath(
-				sPathPrefix + "Artists('42')/special.cases.Action(...)", "('77')"),
-			sPathPrefix + "Artists('77')");
-
-		// code under test
-		assert.strictEqual(
-			_Helper.getReturnValueContextPath(
-				sPathPrefix + "Artists/special.cases.Action(...)", "('77')"),
-			sPathPrefix + "Artists('77')");
-	});
-});
-
-	//*********************************************************************************************
 	QUnit.test("hasPathPrefix", function (assert) {
 		var oHelperMock = this.mock(_Helper);
 
@@ -5377,6 +5373,7 @@ sap.ui.define([
 			nested2 : ["~created21~"]
 		});
 		assert.strictEqual(oCacheEntity.nested1.$created, 0);
+		assert.ok(oCacheEntity.nested1.$transfer, true);
 		assert.deepEqual(oCacheEntity.nested1.$byPredicate, {
 			"~predicate11~" : "~created11~",
 			"~predicate12~" : "~created12~"
@@ -5385,6 +5382,7 @@ sap.ui.define([
 		assert.deepEqual(oCacheEntity.nested2.$byPredicate, {
 			"~predicate21~" : "~created21~"
 		});
+		assert.notOk("$transfer" in oCacheEntity.nested2);
 		assert.notOk("$postBodyCollection" in oCacheEntity.nested1);
 	});
 

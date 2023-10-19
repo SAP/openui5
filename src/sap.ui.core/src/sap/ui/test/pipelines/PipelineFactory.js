@@ -29,6 +29,7 @@ sap.ui.define([
 			 * @constructor
 			 */
 			constructor: function(options){
+				BaseObject.call(this);
 				this._oOptions = options;
 			},
 

@@ -27,8 +27,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.76
 	 * @alias sap.ui.rta.command.AddXMLAtExtensionPoint
-	 * @experimental Since 1.76. This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
 	 */
 	var AddXMLAtExtensionPoint = FlexCommand.extend("sap.ui.rta.command.AddXMLAtExtensionPoint", {
 		metadata: {
@@ -56,11 +54,12 @@ sap.ui.define([
 	 * Overridden to suppress the {} being recognized as binding strings.
 	 * @override
 	 */
-	AddXMLAtExtensionPoint.prototype.bindProperty = function(sName, oBindingInfo) {
+	AddXMLAtExtensionPoint.prototype.bindProperty = function(...aArgs) {
+		const [sName, oBindingInfo] = aArgs;
 		if (sName === "fragment") {
 			return this.setFragment(oBindingInfo.bindingString);
 		}
-		return FlexCommand.prototype.bindProperty.apply(this, arguments);
+		return FlexCommand.prototype.bindProperty.apply(this, aArgs);
 	};
 
 	AddXMLAtExtensionPoint.prototype.getAppComponent = function() {
@@ -100,6 +99,7 @@ sap.ui.define([
 			if (!oResult.success) {
 				return Promise.reject(oResult.error);
 			}
+			return undefined;
 		});
 	};
 

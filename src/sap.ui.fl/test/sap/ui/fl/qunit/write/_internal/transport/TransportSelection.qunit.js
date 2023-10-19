@@ -28,12 +28,12 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTransportSelection = new TransportSelection();
 
 			this.oServer = sinon.fakeServer.create();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oServer.restore();
 			sandbox.restore();
 		}
@@ -224,10 +224,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.fl.write._internal.transport.TransportSelection", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oTransportSelection = new TransportSelection();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -393,7 +393,7 @@ sap.ui.define([
 				};
 
 				var oResponse = {
-					getParameters: function() {
+					getParameters() {
 						return oDialogSelection;
 					}
 				};

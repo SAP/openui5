@@ -6,14 +6,13 @@
 sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/base/util/isPlainObject",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/BusyIndicator",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
@@ -22,7 +21,8 @@ sap.ui.define([
 	"sap/ui/dt/Util",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/Version",
+	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
@@ -55,14 +55,13 @@ sap.ui.define([
 ], function(
 	capitalize,
 	isPlainObject,
-	UriParameters,
 	Log,
 	MessageBox,
 	MessageToast,
 	jQuery,
 	ManagedObject,
 	BusyIndicator,
-	Core,
+	Lib,
 	DesignTime,
 	DOMUtil,
 	ElementUtil,
@@ -71,6 +70,7 @@ sap.ui.define([
 	DtUtil,
 	KeyCodes,
 	ManifestUtils,
+	FlexRuntimeInfoAPI,
 	Version,
 	ContextBasedAdaptationsAPI,
 	ControlPersonalizationWriteAPI,
@@ -123,14 +123,14 @@ sap.ui.define([
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.RuntimeAuthoring
-	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
 		metadata: {
 			// ---- control specific ----
 			library: "sap.ui.rta",
 			associations: {
-				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
+				/** The root control which the runtime authoring should handle.
+				 * Can only be sap.ui.core.Control or sap.ui.core.UIComponent */
 				rootControl: {
 					type: "sap.ui.base.ManagedObject"
 				}
@@ -161,7 +161,6 @@ sap.ui.define([
 
 				/**
 				 * Map with flex-related settings
-				 * @experimental
 				 */
 				flexSettings: {
 					type: "object",
@@ -230,9 +229,10 @@ sap.ui.define([
 		_dependents: null,
 		_sStatus: STOPPED,
 		_bNavigationModeWarningShown: false,
-		constructor: function() {
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
 			// call parent constructor
-			ManagedObject.apply(this, arguments);
+			ManagedObject.apply(this, aArgs);
 
 			this._dependents = {};
 			this._mServices = {};
@@ -316,13 +316,13 @@ sap.ui.define([
 		bCreateGetter = typeof bCreateGetter === "undefined" ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
 			if (sName && bCreateGetter) {
-				this["get" + capitalize(sName, 0)] = this.getDependent.bind(this, sName);
+				this[`get${capitalize(sName, 0)}`] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
 		} else {
 			throw DtUtil.createError(
 				"RuntimeAuthoring#addDependent",
-				DtUtil.printf("Can't add dependency with same key '{0}'", sName),
+				`Can't add dependency with same key '${sName}'`,
 				"sap.ui.rta"
 			);
 		}
@@ -392,7 +392,7 @@ sap.ui.define([
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
-		var oUriParams = UriParameters.fromQuery(window.location.search);
+		var oUriParams = new URLSearchParams(window.location.search);
 		var sUriLayer = oUriParams.get("sap-ui-layer");
 
 		mFlexSettings = Object.assign({}, this.getFlexSettings(), mFlexSettings);
@@ -400,11 +400,16 @@ sap.ui.define([
 			mFlexSettings.layer = sUriLayer.toUpperCase();
 		}
 
-		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
+		// TODO: this will lead to incorrect information if this function is first called
+		// with scenario or baseId and then called again without.
 		if (mFlexSettings.scenario || mFlexSettings.baseId) {
-			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(
+				mFlexSettings.baseId,
+				mFlexSettings.scenario,
+				mFlexSettings.projectId
+			);
 			mFlexSettings.rootNamespace = sLRepRootNamespace;
-			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
+			mFlexSettings.namespace = `${sLRepRootNamespace}changes/`;
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
@@ -412,7 +417,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer or the layer from the uri parameter, if there is one
+	 * Checks the uri parameters for "sap-ui-layer" and returns either the current layer
+	 * or the layer from the uri parameter, if there is one
 	 *
 	 * @returns {string} The layer after checking the uri parameters
 	 * @private
@@ -422,14 +428,12 @@ sap.ui.define([
 	};
 
 	RuntimeAuthoring.prototype.getRootControlInstance = function() {
-		if (!this._oRootControl) {
-			this._oRootControl = ElementUtil.getElementInstance(this.getRootControl());
-		}
+		this._oRootControl ||= ElementUtil.getElementInstance(this.getRootControl());
 		return this._oRootControl;
 	};
 
 	RuntimeAuthoring.prototype._getTextResources = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		return Lib.getResourceBundleFor("sap.ui.rta");
 	};
 
 	/**
@@ -537,8 +541,14 @@ sap.ui.define([
 			.then(onStackModified.bind(this))
 			.then(function() {
 				// Resolve the CSS variable set in themes/base/OverlayWithScrollbar.css
-				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidth", DOMUtil.getScrollbarWidth() + "px");
-				Overlay.getOverlayContainer().get(0).style.setProperty("--sap-ui-rta-scrollbar-scrollWidthPlusTwo", DOMUtil.getScrollbarWidth() + 2 + "px");
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidth",
+					`${DOMUtil.getScrollbarWidth()}px`
+				);
+				Overlay.getOverlayContainer().get(0).style.setProperty(
+					"--sap-ui-rta-scrollbar-scrollWidthPlusTwo",
+					`${DOMUtil.getScrollbarWidth() + 2}px`
+				);
 				return oDesignTimePromise;
 			})
 			.then(function() {
@@ -790,7 +800,7 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.destroy = function() {
+	RuntimeAuthoring.prototype.destroy = function(...aArgs) {
 		var aDependentKeys = Object.keys(this._dependents);
 		aDependentKeys.forEach(function(sDependentKey) {
 			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
@@ -833,7 +843,7 @@ sap.ui.define([
 
 		window.onbeforeunload = this._oldUnloadHandler;
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		ManagedObject.prototype.destroy.apply(this, aArgs);
 	};
 
 	// ---- API ----
@@ -932,9 +942,10 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted Visual Editor
 	 */
-	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(/* aChanges */) {
-		// for now there is no functionality to only consider passed changes during condensing, so the standard save functionality is triggered
-		return this._serializeToLrep.apply(this, arguments);
+	RuntimeAuthoring.prototype.condenseAndSaveChanges = function(...aArgs/* aChanges */) {
+		// for now there is no functionality to only consider passed changes during condensing,
+		// so the standard save functionality is triggered
+		return this._serializeToLrep(...aArgs);
 	};
 
 	/**
@@ -953,7 +964,7 @@ sap.ui.define([
 	};
 
 	function shouldValidateFlexEnabled() {
-		var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-rta-skip-flex-validation");
+		var sUriParam = new URLSearchParams(window.location.search).get("sap-ui-rta-skip-flex-validation");
 		return Settings.getInstance()
 		.then(function(oSettings) {
 			return !oSettings.isCustomerSystem() && sUriParam !== "true";
@@ -1006,9 +1017,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e. Save As and Overview of App Variants) availability
-	 * The publish button shall not be available if the system is productive and if a merge error occurred during merging changes into the view on startup
-	 * The app variant support shall not be available if the system is productive and if the platform is not enabled (See Feature.js) to show the app variant tooling
+	 * Checks the publish button, draft buttons(activate and delete) and app variant support (i.e.
+	 * Save As and Overview of App Variants) availability. The publish button shall not be available
+	 * if the system is productive and if a merge error occurred during merging changes into the view on startup
+	 * The app variant support shall not be available if the system is productive and if the platform is not enabled
+	 * (See Feature.js) to show the app variant tooling.
 	 * The app variant support shall also not be available if the current app is a home page
 	 * isProductiveSystem should only return true if it is a test or development system with the provision of custom catalog extensions
 	 *
@@ -1048,10 +1061,10 @@ sap.ui.define([
 	function showTechnicalError(vError) {
 		BusyIndicator.hide();
 		var sErrorMessage = vError.userMessage || vError.stack || vError.message || vError.status || vError;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 		Log.error("Failed to transfer changes", sErrorMessage);
-		var sMsg = oTextResources.getText("MSG_LREP_TRANSFER_ERROR") + "\n"
-				+ oTextResources.getText("MSG_ERROR_REASON", sErrorMessage);
+		var sMsg = `${oTextResources.getText("MSG_LREP_TRANSFER_ERROR")}
+			${oTextResources.getText("MSG_ERROR_REASON", [sErrorMessage])}`;
 		MessageBox.error(sMsg, {
 			styleClass: Utils.getRtaStyleClassName()
 		});
@@ -1059,56 +1072,37 @@ sap.ui.define([
 
 	/**
 	 * Adapt the enablement of undo/redo/reset button
-	 *
-	 * @returns {Promise} Resolves as soon as the MessageBox is closed
 	 */
 	function onStackModified() {
-		var oCommandStack = this.getCommandStack();
-		var bCanUndo = oCommandStack.canUndo();
-
-		// FIXME Missing check whether action is saveable e.g. switching a view should not trigger this
-		// bCanUndo and _bUserDiscardedDraft seem to be redundant logic,
-		// because displayedVersion would be draft already
-		if (
-			!this.getShowToolbars() ||
-			!bCanUndo ||
-			this._bUserDiscardedDraft
-		) {
-			modifyStack.call(this);
-			return;
-		}
-
+		var bOnlySwitchVersion = !this.getShowToolbars() || !this.getCommandStack().canUndo();
 		// warn the user: the existing draft would be discarded in case the user saves
-		Utils.checkDraftOverwrite(this._oVersionsModel)
-		.then(function(bDialogShown) {
-			if (bDialogShown) {
-				this._bUserDiscardedDraft = true;
+		Utils.checkDraftOverwrite(this._oVersionsModel, bOnlySwitchVersion)
+		.then(() => {
+			if (this.getShowToolbars()) {
+				var oCommandStack = this.getCommandStack();
+				var bCanUndo = oCommandStack.canUndo();
+				var bCanRedo = oCommandStack.canRedo();
+				var bCanSave = oCommandStack.canSave();
+				var bWasSaved = oCommandStack.getSaved();
+				var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
+					TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
+
+				// TODO: move to the setter to the ChangesState
+				this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
+				this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
+				this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
+				this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
+				this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
+				this._oToolbarControlsModel.setProperty(
+					"/translation/enabled",
+					this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange
+				);
 			}
-			modifyStack.call(this);
-		}.bind(this), function() {
+			this.fireUndoRedoStackModified();
+		})
+		.catch(() => {
 			this.undo();
-		}.bind(this));
-	}
-
-	function modifyStack() {
-		if (this.getShowToolbars()) {
-			var oCommandStack = this.getCommandStack();
-			var bCanUndo = oCommandStack.canUndo();
-			var bCanRedo = oCommandStack.canRedo();
-			var bCanSave = oCommandStack.canSave();
-			var bWasSaved = oCommandStack.getSaved();
-			var bTranslationRelevantDirtyChange = this._oToolbarControlsModel.getProperty("/translation/visible") &&
-				TranslationAPI.hasTranslationRelevantDirtyChanges({layer: Layer.CUSTOMER, selector: this.getRootControlInstance()});
-
-			// TODO: move to the setter to the ChangesState
-			this._oVersionsModel.setDirtyChanges(PersistenceWriteAPI.hasDirtyChanges({selector: this.getRootControlInstance()}));
-			this._oToolbarControlsModel.setProperty("/undo/enabled", bCanUndo);
-			this._oToolbarControlsModel.setProperty("/redo/enabled", bCanRedo);
-			this._oToolbarControlsModel.setProperty("/save/enabled", bCanSave);
-			this._oToolbarControlsModel.setProperty("/restore/enabled", this.bInitialResetEnabled || bCanSave || bWasSaved);
-			this._oToolbarControlsModel.setProperty("/translation/enabled", this.bPersistedDataTranslatable || bTranslationRelevantDirtyChange);
-		}
-		this.fireUndoRedoStackModified();
+		});
 	}
 
 	function checkToolbarAndExecuteFunction(sName, vValue) {
@@ -1200,9 +1194,7 @@ sap.ui.define([
 			var sVersion = bActivateVersion ? this._oVersionsModel.getProperty("/displayedVersion") : undefined;
 
 			// If a draft is being processed, saving without exiting must retrieve the updated state of the draft version
-			if (!sVersion) {
-				sVersion = bIsExit ? undefined : Version.Number.Draft;
-			}
+			sVersion ||= bIsExit ? undefined : Version.Number.Draft;
 			mPropertyBag.version = sVersion;
 
 			// Save changes on the current layer and discard dirty changes on other layers
@@ -1287,7 +1279,8 @@ sap.ui.define([
 		var sLayer = this.getLayer();
 		var oReloadInfo = {
 			layer: sLayer,
-			removeDraft: true
+			removeDraft: true,
+			selector: this.getRootControlInstance()
 		};
 		RuntimeAuthoring.enableRestart(sLayer, this.getRootControlInstance());
 		this.getCommandStack().removeAllCommands();
@@ -1319,6 +1312,7 @@ sap.ui.define([
 	}
 
 	function deleteAdaptation() {
+		Measurement.start("onCBADeleteAdaptation", "Measurement of deleting a context-based adaptation");
 		ContextBasedAdaptationsAPI.remove({
 			control: this.getRootControlInstance(),
 			layer: this.getLayer(),
@@ -1327,6 +1321,10 @@ sap.ui.define([
 			BusyIndicator.hide();
 			var sAdaptationId = this._oContextBasedAdaptationsModel.deleteAdaptation();
 			switchAdaptation.call(this, sAdaptationId);
+			Measurement.end("onCBADeleteAdaptation");
+			if (Measurement.getActive()) {
+				Log.info(`onCBADeleteAdaptation: ${Measurement.getMeasurement("onCBADeleteAdaptation").time} ms`);
+			}
 		}.bind(this)).catch(function(oError) {
 			BusyIndicator.hide();
 			Log.error(oError.stack);
@@ -1360,6 +1358,7 @@ sap.ui.define([
 	}
 
 	function onSwitchAdaptation(oEvent) {
+		Measurement.start("onCBASwitchAdaptation", "Measurement of switching a context-based adaptation");
 		var fnCallback = oEvent.getParameter("callback") || function() {};
 		if (oEvent.getParameter("trigger") === "SaveAs") {
 			// remove all changes from command stack when triggered from saveAs dialog as they are already saved in a new adaptation
@@ -1369,10 +1368,16 @@ sap.ui.define([
 		this._sSwitchToAdaptationId = sAdaptationId;
 		return handleDataLoss.call(this, "MSG_SWITCH_VERSION_DIALOG", "BTN_SWITCH_ADAPTATIONS",
 			switchAdaptation.bind(this, this._sSwitchToAdaptationId))
-		.then(fnCallback)
+		.then(function() {
+			fnCallback();
+			Measurement.end("onCBASwitchAdaptation");
+			if (Measurement.getActive()) {
+				Log.info(`onCBASwitchAdaptation: ${Measurement.getMeasurement("onCBASwitchAdaptation").time} ms`);
+			}
+		})
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_ADAPTATION_FAILED", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		});
 	}
 
@@ -1397,7 +1402,7 @@ sap.ui.define([
 		.then(fnCallback)
 		.catch(function(oError) {
 			Utils.showMessageBox("error", "MSG_SWITCH_VERSION_FAILED", {error: oError});
-			Log.error("sap.ui.rta: " + oError.stack || oError.message || oError);
+			Log.error(`sap.ui.rta: ${oError.stack || oError.message || oError}`);
 		});
 	}
 
@@ -1412,10 +1417,11 @@ sap.ui.define([
 		}).then(function() {
 			var oReloadInfo = {
 				versionSwitch: true,
-				version: sVersion
+				version: sVersion,
+				selector: this.getRootControlInstance()
 			};
 			ReloadManager.triggerReload(oReloadInfo);
-		});
+		}.bind(this));
 	}
 
 	function onPublishVersion() {
@@ -1525,11 +1531,12 @@ sap.ui.define([
 				var bTranslationAvailable = aArguments[1];
 				var bAppVariantsAvailable = mButtonsAvailability.saveAsAvailable;
 				var bExtendedOverview = bAppVariantsAvailable && RtaAppVariantFeature.isOverviewExtended();
-				var oUriParameters = UriParameters.fromURL(window.location.href);
+				var oUriParameters = new URLSearchParams(window.location.search);
 				// the "Visualization" tab should not be visible if the "fiori-tools-rta-mode" URL-parameter is set to any value but "false"
 				var bVisualizationButtonVisible;
-				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode") || oUriParameters.get("fiori-tools-rta-mode") === "false";
-				var bFeedbackButtonVisible = Core.getConfiguration().getFlexibilityServices().some(function(oFlexibilityService) {
+				bVisualizationButtonVisible = !oUriParameters.has("fiori-tools-rta-mode")
+					|| oUriParameters.get("fiori-tools-rta-mode") === "false";
+				var bFeedbackButtonVisible = FlexRuntimeInfoAPI.getConfiguredFlexServices().some(function(oFlexibilityService) {
 					return oFlexibilityService.connector !== "LocalStorageConnector";
 				});
 				this.bPersistedDataTranslatable = false;
@@ -1628,8 +1635,9 @@ sap.ui.define([
 
 	/**
 	 * Delete all changes for current layer and root control's component.
-	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved in different Flex Persistence instances,
-	 * the changes for both places will be deleted. For App Variants all the changes are saved in one place.
+	 * In case of Base Applications (no App Variants) the App Descriptor Changes and UI Changes are saved
+	 * in different Flex Persistence instances, the changes for both places will be deleted. For App Variants
+	 * all the changes are saved in one place.
 	 *
 	 * @returns {Promise} Resolves when change persistence is reset
 	 */
@@ -1727,7 +1735,10 @@ sap.ui.define([
 
 		scheduleOnCreatedAndVisible.call(this, sNewControlID, function(oElementOverlay) {
 			// get container of the new control for rename
-			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(vAction, oElementOverlay.getElement().getId());
+			var sNewContainerID = this.getPluginManager().getPlugin("createContainer").getCreatedContainerId(
+				vAction,
+				oElementOverlay.getElement().getId()
+			);
 			var oContainerElementOverlay = OverlayRegistry.getOverlay(sNewContainerID);
 			if (oContainerElementOverlay) {
 				if (sNewContainerName) {
@@ -1777,7 +1788,7 @@ sap.ui.define([
 				return this.getCommandStack().pushAndExecute(oCommand)
 				// Error handling when a command fails is done in the Stack
 				.catch(function(oError) {
-					if (oError && oError.message && oError.message.indexOf("The following Change cannot be applied because of a dependency") > -1) {
+					if (oError?.message?.indexOf?.("The following Change cannot be applied because of a dependency") > -1) {
 						Utils.showMessageBox("error", "MSG_DEPENDENCY_ERROR", {error: oError});
 					}
 					Log.error("sap.ui.rta:", oError.message, oError.stack);
@@ -1818,7 +1829,7 @@ sap.ui.define([
 					return Promise.reject(
 						DtUtil.createError(
 							"RuntimeAuthoring#startService",
-							DtUtil.printf("Can't start the service '{0}' while RTA has been failed during a startup", sName),
+							`Can't start the service '${sName}' because RTA startup failed`,
 							"sap.ui.rta"
 						)
 					);
@@ -1833,7 +1844,7 @@ sap.ui.define([
 			return Promise.reject(
 				DtUtil.createError(
 					"RuntimeAuthoring#startService",
-					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
+					`Unknown service. Can't find any registered service by name '${sName}'`,
 					"sap.ui.rta"
 				)
 			);
@@ -1855,7 +1866,7 @@ sap.ui.define([
 					return Promise.reject(
 						DtUtil.createError(
 							"RuntimeAuthoring#startService",
-							DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
+							`Unknown service status. Service name = '${sName}'`,
 							"sap.ui.rta"
 						)
 					);
@@ -1871,9 +1882,7 @@ sap.ui.define([
 					function(fnServiceFactory) {
 						mService.factory = fnServiceFactory;
 
-						if (!this._oServiceEventBus) {
-							this._oServiceEventBus = new ServiceEventBus();
-						}
+						this._oServiceEventBus ||= new ServiceEventBus();
 
 						DtUtil.wrapIntoPromise(fnServiceFactory)(
 							this,
@@ -1883,14 +1892,14 @@ sap.ui.define([
 							if (this.bIsDestroyed) {
 								throw DtUtil.createError(
 									"RuntimeAuthoring#startService",
-									DtUtil.printf("RuntimeAuthoring instance is destroyed while initializing the service '{0}'", sName),
+									`RuntimeAuthoring instance is destroyed while initializing the service '${sName}'`,
 									"sap.ui.rta"
 								);
 							}
 							if (!isPlainObject(oService)) {
 								throw DtUtil.createError(
 									"RuntimeAuthoring#startService",
-									DtUtil.printf("Invalid service format. Service should return simple javascript object after initialization. Service name = '{0}'", sName),
+									`Invalid service format. Service should return simple javascript object after initialization. Service name = '${sName}'`,
 									"sap.ui.rta"
 								);
 							}
@@ -1931,7 +1940,7 @@ sap.ui.define([
 							DtUtil.propagateError(
 								vError,
 								"RuntimeAuthoring#startService",
-								DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
+								`Can't load service '${sName}' by its name: ${sServiceLocation}`,
 								"sap.ui.rta"
 							)
 						);
@@ -1944,7 +1953,7 @@ sap.ui.define([
 					DtUtil.propagateError(
 						vError,
 						"RuntimeAuthoring#startService",
-						DtUtil.printf("Error during service '{0}' initialization.", sName),
+						`Error initializing service '${sName}'`,
 						"sap.ui.rta"
 					)
 				);
@@ -1971,7 +1980,7 @@ sap.ui.define([
 		} else {
 			throw DtUtil.createError(
 				"RuntimeAuthoring#stopService",
-				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
+				`Can't destroy service: unable to find service with name '${sName}'`,
 				"sap.ui.rta"
 			);
 		}

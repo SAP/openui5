@@ -1,9 +1,7 @@
 sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, merge) {
 	"use strict";
 
-	window.top['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
-	var mConfig =  {
+	let mConfig =  {
 		name: "Library 'sap.ui.mdc'", /* Just for a nice title on the pages */
 		defaults: {
 			group: "Library",
@@ -164,18 +162,6 @@ sap.ui.define(['./util/EnvHelper', "sap/base/util/merge"], function (EnvHelper, 
 					only: "[sap/ui/mdc/util]"
 				},
 				sinon: true
-			},
-			"MemoryLeak": {
-				group: "Basic",
-				module: "./MemoryLeak.qunit",
-				qunit: {
-					// MemoryLeakCheck loads qunit-1
-					version: 1,
-					// make sure results are consistent/stable and the "statistics" test in the end is actually run in the end
-					reorder: false
-				},
-				// tests are added asynchronously, hence autostart is disabled and QUnit.start is called later
-				autostart: false
 			},
 			"EnforceSemanticRendering": {
 				title: "QUnit Page for Semantic Rendering Coverage"

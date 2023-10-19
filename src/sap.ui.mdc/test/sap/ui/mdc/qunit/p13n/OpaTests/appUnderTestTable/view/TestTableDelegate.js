@@ -3,8 +3,7 @@ sap.ui.define([
 ], function (TableDelegate) {
 	"use strict";
 
-	var oCustomDelegate = Object.assign({}, TableDelegate);
-	oCustomDelegate.apiVersion = 2;//CLEANUP_DELEGATE
+	const oCustomDelegate = Object.assign({}, TableDelegate);
 
 	oCustomDelegate.fetchProperties = function(oTable) {
 		return TableDelegate.fetchProperties(oTable).then(function(aProperties) {
@@ -32,20 +31,20 @@ sap.ui.define([
 	};
 
 	oCustomDelegate.addItem = function(oTable, sPropertyInfoName, mPropertyBag) {
-		var oModifier = mPropertyBag.modifier;
-		var sId = mPropertyBag.id + "--" + sPropertyInfoName;
+		const oModifier = mPropertyBag.modifier;
+		const sId = mPropertyBag.id + "--" + sPropertyInfoName;
 
-		var aInfo = oTable.data("$tablePropertyInfo");
+		const aInfo = oTable.data("$tablePropertyInfo");
 
-		var aFoundValue = [];
+		let aFoundValue = [];
 		if (aInfo){
 			aFoundValue = aInfo.find(function(oProp){
 				return oProp.name == sPropertyInfoName;
 			});
 		}
 
-		var sLabel = aFoundValue && aFoundValue.length > 0 ? aFoundValue[0].label : sPropertyInfoName;
-		var oTemplate;
+		const sLabel = aFoundValue && aFoundValue.length > 0 ? aFoundValue[0].label : sPropertyInfoName;
+		let oTemplate;
 
 		if (oTable.isA === undefined) {
 			return oModifier.createControl("sap.m.Text", mPropertyBag.appComponent, mPropertyBag.view, sId + "--text--" + sPropertyInfoName,{

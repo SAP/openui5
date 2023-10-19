@@ -16,7 +16,9 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/TileContent",
 	"sap/m/VBox",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
+	"sap/ui/core/Lib",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
@@ -27,8 +29,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	// needs to be preloaded for the test to work
 	"sap/ui/layout/form/ResponsiveGridLayout"
-],
-function(
+], function(
 	Button,
 	Dialog,
 	DialogRenderer,
@@ -41,7 +42,9 @@ function(
 	TextArea,
 	TileContent,
 	VBox,
+	Element,
 	coreLibrary,
+	Lib,
 	IconPool,
 	Title,
 	SimpleForm,
@@ -54,11 +57,11 @@ function(
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout
-	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	var {SimpleFormLayout} = layoutLibrary.form;
 
-	var ValueState = coreLibrary.ValueState;
+	var {ValueState} = coreLibrary;
 
-	var oResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+	var oResources = Lib.getResourceBundleFor("sap.ui.rta");
 	var oDataSet;
 	var oTitleLabel;
 	var oTitleInput;
@@ -112,21 +115,19 @@ function(
 	}
 
 	function _handleSelectDialog() {
-		if (!oSelectDialog) {
-			oSelectDialog = new SelectDialog("selectDialog", {
-				noDataText: oResources.getText("APP_VARIANT_ICON_NO_DATA"),
-				title: oResources.getText("APP_VARIANT_ICON_SELECT_ICON"),
-				search: function(oEvent) {
-					_handleSearch(oEvent);
-				},
-				confirm: function(oEvent) {
-					_handleClose(oEvent);
-				},
-				cancel: function(oEvent) {
-					_handleClose(oEvent);
-				}
-			});
-		}
+		oSelectDialog ||= new SelectDialog("selectDialog", {
+			noDataText: oResources.getText("APP_VARIANT_ICON_NO_DATA"),
+			title: oResources.getText("APP_VARIANT_ICON_SELECT_ICON"),
+			search(oEvent) {
+				_handleSearch(oEvent);
+			},
+			confirm(oEvent) {
+				_handleClose(oEvent);
+			},
+			cancel(oEvent) {
+				_handleClose(oEvent);
+			}
+		});
 
 		oSelectDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 
@@ -172,8 +173,8 @@ function(
 			value: "{/title}",
 			valueLiveUpdate: true,
 			placeholder: oResources.getText("SAVE_AS_DIALOG_PLACEHOLDER_TITLE_TEXT"),
-			liveChange: function() {
-				var oSaveButton = sap.ui.getCore().byId("saveButton");
+			liveChange() {
+				var oSaveButton = Element.getElementById("saveButton");
 				if (this.getValue() === "") {
 					this.setValueState(ValueState.Error); // if the field is empty after change, it will go red
 					oSaveButton.setEnabled(false);
@@ -210,10 +211,10 @@ function(
 
 		oIconInput = new Input("selectInput", {
 			showValueHelp: true,
-			liveChange: function(oEvent) {
+			liveChange(oEvent) {
 				_handleSelectDialog(oEvent);
 			},
-			valueHelpRequest: function(oEvent) {
+			valueHelpRequest(oEvent) {
 				_handleSelectDialog(oEvent);
 			},
 			value: "{/iconname}",
@@ -282,7 +283,7 @@ function(
 				cancel: {}
 			}
 		},
-		init: function() {
+		init() {
 			Dialog.prototype.init.apply(this);
 
 			// initialize dialog and create member variables.
@@ -312,12 +313,12 @@ function(
 			this._createButtons();
 			this.addStyleClass(RtaUtils.getRtaStyleClassName());
 		},
-		onAfterRendering: function() {
+		onAfterRendering() {
 			document.getElementById("title1").style.height = "0px";
 			document.getElementById("title2").style.height = "0px";
 			document.getElementById("tile").style.float = "left";
 		},
-		_onCreate: function() {
+		_onCreate() {
 			var sTitle = oTitleInput.getValue() || " ";
 			var sSubTitle = oSubTitleInput.getValue() || " ";
 			var sDescription = oDescriptionText.getValue() || " ";
@@ -334,7 +335,7 @@ function(
 			this.close();
 			this.destroy();
 		},
-		_createButtons: function() {
+		_createButtons() {
 			this.addButton(new Button("saveButton", {
 				text: oResources.getText("APP_VARIANT_DIALOG_SAVE"),
 				tooltip: oResources.getText("TOOLTIP_APP_VARIANT_DIALOG_SAVE"),
@@ -354,11 +355,11 @@ function(
 				}.bind(this)
 			}));
 		},
-		destroy: function() {
+		destroy(...aArgs) {
 			if (oCustomTileModel) {
 				oCustomTileModel.destroy();
 			}
-			Dialog.prototype.destroy.apply(this, arguments);
+			Dialog.prototype.destroy.apply(this, aArgs);
 		},
 		renderer: DialogRenderer
 	});

@@ -3,20 +3,24 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/events/KeyCodes",
 	"sap/base/util/restricted/_intersection",
-	"sap/m/InstanceManager"
+	"sap/m/InstanceManager",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/OverlayUtil",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils"
 ],
 function(
-	Plugin,
-	Utils,
-	OverlayRegistry,
-	KeyCodes,
 	_intersection,
-	InstanceManager
+	InstanceManager,
+	DOMUtil,
+	OverlayRegistry,
+	OverlayUtil,
+	KeyCodes,
+	Plugin,
+	Utils
 ) {
 	"use strict";
 
@@ -33,7 +37,6 @@ function(
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.rta.plugin.Selection
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Selection = Plugin.extend("sap.ui.rta.plugin.Selection", {
 		metadata: {
@@ -93,9 +96,9 @@ function(
 		});
 	}
 
-	Selection.prototype.init = function() {
+	Selection.prototype.init = function(...aArgs) {
 		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
-		Plugin.prototype.init.apply(this, arguments);
+		Plugin.prototype.init.apply(this, aArgs);
 	};
 
 	/**
@@ -323,6 +326,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
+			OverlayUtil.setFirstParentMovable(oOverlay, false);
 			if (oOverlay !== this._oHoverTarget) {
 				this._removePreviousHover();
 				this._oHoverTarget = oOverlay;
@@ -347,6 +351,7 @@ function(
 			return;
 		}
 		if (oOverlay.isSelectable()) {
+			OverlayUtil.setFirstParentMovable(oOverlay, true);
 			this._removePreviousHover();
 			preventEventDefaultAndPropagation(oEvent);
 		}
@@ -366,14 +371,14 @@ function(
 	/**
 	 * @override
 	 */
-	Selection.prototype.setDesignTime = function() {
+	Selection.prototype.setDesignTime = function(...aArgs) {
 		// detach from listener from old DesignTime instance
 		if (this.getDesignTime()) {
 			this.getDesignTime().getSelectionManager().removeValidator(this._multiSelectionValidator);
 		}
 
 		// set new DesignTime instance in parent class
-		Plugin.prototype.setDesignTime.apply(this, arguments);
+		Plugin.prototype.setDesignTime.apply(this, aArgs);
 
 		// attach listener back to the new DesignTime instance
 		if (this.getDesignTime()) {

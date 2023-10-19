@@ -55,22 +55,26 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with text set:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
 			new Label("lbl1", {
-				 required: "{/globalRequired}",
-				 text:'mobile standard label '
+				required: "{/globalRequired}",
+				text:'mobile standard label '
 			}),
 
 			new Label("lbl2", {
-				 required: true,
-				 text:'required label'
+				required: true,
+				text:'required label'
 			}),
 
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with design property set: ",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -83,6 +87,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with textDirection property set:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -110,6 +116,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with textAlign property set:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -151,6 +159,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with no text:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -162,6 +172,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with width property set:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -173,6 +185,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: "Label with fixed width and required and showColon properties set:",
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -185,6 +199,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: 'Label with displayOnly property set to "true":',
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -196,6 +212,8 @@ sap.ui.define([
 			new Label({
 				required: "{/globalRequired}",
 				text: 'Label with wrappingType property set to "Hyphenated":',
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 
@@ -218,6 +236,8 @@ sap.ui.define([
 				required: "{/globalRequired}",
 				text: "Default behavior:",
 				width: '100%',
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 			new Label({
@@ -229,6 +249,8 @@ sap.ui.define([
 				required: "{/globalRequired}",
 				text: 'LTR content direction, wrong default alignment:',
 				width: '100%',
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 			new Label({
@@ -241,6 +263,8 @@ sap.ui.define([
 				required: "{/globalRequired}",
 				text: 'LTR content direction, right alignment:',
 				width: '100%',
+				wrapping: true,
+				wrappingType: "Normal",
 				design: "Bold"
 			}),
 			new Label({
@@ -267,7 +291,7 @@ sap.ui.define([
 	var oVL3 = new VerticalLayout({
 		id: "oVL3",
 		content: [
-			new Label({text: "textDirection=Inherit", design: "Bold"}),
+			new Label({text: "textDirection=Inherit", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({
 				required: "{/globalRequired}",
 				text: "\u05DB\u05DE\u05D4 \u05E9\u05E4\u05D5\u05EA \u05D0\u05EA\u05D4 \u05DE\u05D3\u05D1\u05E8? English \u05D5\u05E2\u05D1\u05E8\u05D9\u05EA.",
@@ -279,7 +303,7 @@ sap.ui.define([
 				textDirection: "Inherit"
 			}),
 
-			new Label({text: "textDirection=LTR", design: "Bold"}),
+			new Label({text: "textDirection=LTR", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({
 				required: "{/globalRequired}",
 				text: "\u05DB\u05DE\u05D4 \u05E9\u05E4\u05D5\u05EA \u05D0\u05EA\u05D4 \u05DE\u05D3\u05D1\u05E8? English \u05D5\u05E2\u05D1\u05E8\u05D9\u05EA.",
@@ -291,7 +315,7 @@ sap.ui.define([
 				textDirection: "LTR"
 			}),
 
-			new Label({text: "textDirection=RTL", design: "Bold"}),
+			new Label({text: "textDirection=RTL", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({
 				required: "{/globalRequired}",
 				text: "\u05DB\u05DE\u05D4 \u05E9\u05E4\u05D5\u05EA \u05D0\u05EA\u05D4 \u05DE\u05D3\u05D1\u05E8? English \u05D5\u05E2\u05D1\u05E8\u05D9\u05EA.",
@@ -309,15 +333,15 @@ sap.ui.define([
 		id: "oVL4",
 		width: "100%",
 		content: [
-			new Label({text: "truncation + colon", design: "Bold"}),
+			new Label({text: "truncation + colon", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, width: "100px"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, width: "140px"}),
-			new Label({text: "truncation + colon (resizing)", design: "Bold"}),
+			new Label({text: "truncation + colon (resizing)", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({id: "labelToResize", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi velit orci, sollicitudin nec cursus quis, pellentesque id neque", showColon: true}),
 			new Button({id: "resizeBtn", text: "resize upper label to 260px", press: function () {
 				Core.byId("labelToResize").setWidth("260px");
 			}}),
-			new Label({text: "truncation + colon + asterisk", design: "Bold"}),
+			new Label({text: "truncation + colon + asterisk", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "100px"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "140px"})
 		]

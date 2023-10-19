@@ -26,7 +26,7 @@ sap.ui.define([
 				alt: ManagedObject.escapeSettingsValue(oHeader.getObjectImageAlt()),
 				decorative: false,
 				mode: "Background",
-				backgroundSize: "contain",
+				backgroundSize: "cover",
 				backgroundPosition: "center"
 			});
 

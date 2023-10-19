@@ -39,7 +39,7 @@ sap.ui.define([
 	var oMockUIComponent = new UIComponent("mockComponent");
 
 	QUnit.module("sap.ui.fl.changeHandler.StashControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = StashControlChangeHandler;
 			var oChangeJson = {
 				selector: {
@@ -79,13 +79,12 @@ sap.ui.define([
 			var oDOMParser = new DOMParser();
 			this.xmlDocument = oDOMParser.parseFromString(this.xmlString, "application/xml");
 			this.oXmlView = this.xmlDocument.documentElement;
-			this.oXmlLayout = this.oXmlView.childNodes[0];
-			this.oXmlNodeControl0 = this.oXmlLayout.childNodes[0].childNodes[0];
-			this.oXmlNodeToBeStashed = this.oXmlLayout.childNodes[0].childNodes[2];
+			[this.oXmlLayout] = this.oXmlView.childNodes;
+			[this.oXmlNodeControl0, , this.oXmlNodeToBeStashed] = this.oXmlLayout.childNodes[0].childNodes;
 
 			this.oSetStashedSpy = sandbox.spy(JsControlTreeModifier, "setStashed");
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange = null;
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
@@ -99,7 +98,7 @@ sap.ui.define([
 				layer: sLayer
 			};
 
-			var sMsg = "applyChange on a JsControlTreeModifier for a change in the Layer: " + sLayer;
+			var sMsg = `applyChange on a JsControlTreeModifier for a change in the Layer: ${sLayer}`;
 			QUnit.test(sMsg, function(assert) {
 				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControl2, {modifier: JsControlTreeModifier})
@@ -114,7 +113,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			sMsg = "revertChange on an initially visible control using JsControlTreeModifier in the Layer: " + sLayer;
+			sMsg = `revertChange on an initially visible control using JsControlTreeModifier in the Layer: ${sLayer}`;
 			QUnit.test(sMsg, function(assert) {
 				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControl1, {modifier: JsControlTreeModifier})
@@ -129,7 +128,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			sMsg = "revertChange on an initially invisible control using JsControlTreeModifier in the Layer: " + sLayer;
+			sMsg = `revertChange on an initially invisible control using JsControlTreeModifier in the Layer: ${sLayer}`;
 			QUnit.test(sMsg, function(assert) {
 				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oControlInvisible, {modifier: JsControlTreeModifier})
@@ -144,7 +143,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			sMsg = "applyChange on a XMLTreeModifier for a change in the Layer: " + sLayer;
+			sMsg = `applyChange on a XMLTreeModifier for a change in the Layer: ${sLayer}`;
 			QUnit.test(sMsg, function(assert) {
 				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oXmlNodeControl0, {modifier: XmlTreeModifier})
@@ -158,7 +157,7 @@ sap.ui.define([
 				}.bind(this));
 			});
 
-			sMsg = "revertChange on an XMLTreeModifier in the Layer: " + sLayer;
+			sMsg = `revertChange on an XMLTreeModifier in the Layer: ${sLayer}`;
 			QUnit.test(sMsg, function(assert) {
 				var oChange = new UIChange(oChangeDefinition);
 				return this.oChangeHandler.applyChange(oChange, this.oXmlNodeControl0, {modifier: XmlTreeModifier})
@@ -203,7 +202,7 @@ sap.ui.define([
 				// check reverted control
 				var oStashRevertedPanel = aContentAfterRevert[2];
 				assert.strictEqual(oStashRevertedPanel.getVisible(), true, "then the unstashed control has visible property set to true");
-				assert.strictEqual(oStashRevertedPanel.getId(), "__xmlview0--" + this.oXmlNodeToBeStashed.getAttribute("id"), "then the unstashed control was placed at the correct index");
+				assert.strictEqual(oStashRevertedPanel.getId(), `__xmlview0--${this.oXmlNodeToBeStashed.getAttribute("id")}`, "then the unstashed control was placed at the correct index");
 
 				var oButtonInUnstashedPanel = oStashRevertedPanel.getContent()[0];
 				assert.ok(oButtonInUnstashedPanel instanceof Button, "Nested Button in 'stash-reverted' Panel is present.");

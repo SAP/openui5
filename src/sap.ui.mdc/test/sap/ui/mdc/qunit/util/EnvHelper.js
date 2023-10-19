@@ -11,7 +11,7 @@
 sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	"use strict";
 
-	var isSapUI5 = false;
+	let isSapUI5 = false;
 
 	jQuery.ajax({
 		type: "HEAD",

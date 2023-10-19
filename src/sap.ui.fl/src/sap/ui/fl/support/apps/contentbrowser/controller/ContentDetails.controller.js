@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/m/library",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Element"
 ], function(
 	Controller,
 	Dialog,
@@ -25,12 +26,13 @@ sap.ui.define([
 	Layer,
 	mobileLibrary,
 	JSONModel,
-	UIComponent
+	UIComponent,
+	Element
 ) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
-	var ButtonType = mobileLibrary.ButtonType;
+	var {ButtonType} = mobileLibrary;
 
 	/**
 	 * Controller for displaying detail of content in Content Browser.
@@ -39,7 +41,8 @@ sap.ui.define([
 	 * @alias sap.ui.fl.support.apps.contentbrowser.controller.ContentDetails
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.45
+	 * @since 1.45
+	 * @private
 	 */
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.ContentDetails", {
 
@@ -51,7 +54,7 @@ sap.ui.define([
 		 * Handles data binding and route matching.
 		 * @public
 		 */
-		onInit: function() {
+		onInit() {
 			this._initAndBindSelectedContentModel();
 			var oRouter = UIComponent.getRouterFor(this);
 			oRouter.getRoute("ContentDetails").attachMatched(this._onRouteMatched, this);
@@ -62,7 +65,7 @@ sap.ui.define([
 		 * Creates and binds the model for the selected content.
 		 * @private
 		 */
-		_initAndBindSelectedContentModel: function() {
+		_initAndBindSelectedContentModel() {
 			this.oSelectedContentModel = new JSONModel();
 			this.getView().setModel(this.oSelectedContentModel, "selectedContent");
 		},
@@ -74,7 +77,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onRouteMatched: function(oRouteMatch) {
+		_onRouteMatched(oRouteMatch) {
 			var that = this;
 			var mRouteArguments = oRouteMatch.getParameter("arguments");
 
@@ -88,7 +91,7 @@ sap.ui.define([
 			if (oModelData.namespace[oModelData.namespace.length - 1] !== "/") {
 				oModelData.namespace += "/";
 			}
-			var sContentSuffix = oModelData.namespace + oModelData.fileName + "." + oModelData.fileType;
+			var sContentSuffix = `${oModelData.namespace + oModelData.fileName}.${oModelData.fileType}`;
 			var oPage = that.getView().getContent()[0];
 			oPage.setBusy(true);
 
@@ -110,7 +113,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentReceived: function(oModelData, oPage, sContentSuffix, oData) {
+		_onContentReceived(oModelData, oPage, sContentSuffix, oData) {
 			var that = this;
 			oModelData.data = DataUtils.formatData(oData, oModelData.fileType);
 
@@ -134,7 +137,7 @@ sap.ui.define([
 		 * @param {object} oMetadata - Metadata which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
-		_onContentMetadataReceived: function(oModelData, oPage, oMetadata) {
+		_onContentMetadataReceived(oModelData, oPage, oMetadata) {
 			oModelData.metadata = oMetadata;
 			this.oSelectedContentModel.setData(oModelData);
 			oModelData.metadata.some(function(oMetadata) {
@@ -147,9 +150,8 @@ sap.ui.define([
 					return true;
 				}
 			}.bind(this));
-			var oCore = sap.ui.getCore();
 			var sIconTabBarId = this.getView().createId("contentDetailsIconTabBar");
-			var oIconTabBar = oCore.byId(sIconTabBarId);
+			var oIconTabBar = Element.getElementById(sIconTabBarId);
 			if (oIconTabBar) {
 				var oFirstIconTabBarItem = oIconTabBar.getItems()[0];
 				if (oIconTabBar.getSelectedKey() !== oFirstIconTabBarItem.getId()) {
@@ -163,7 +165,7 @@ sap.ui.define([
 		 * Navigates to Edit mode of content.
 		 * @public
 		 */
-		onEditClicked: function() {
+		onEditClicked() {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
 			var oRouter = UIComponent.getRouterFor(this);
@@ -181,7 +183,7 @@ sap.ui.define([
 		 * The function displays a confirmation dialog. On confirmation, the deletion of the displayed content is triggered.
 		 * @public
 		 */
-		onDeleteClicked: function() {
+		onDeleteClicked() {
 			var that = this;
 
 			var oDialog = new Dialog({
@@ -191,18 +193,18 @@ sap.ui.define([
 				beginButton: new Button({
 					text: "{i18n>confirm}",
 					type: ButtonType.Reject,
-					press: function() {
+					press() {
 						oDialog.close();
 						that._selectTransportAndDeleteFile();
 					}
 				}),
 				endButton: new Button({
 					text: "{i18n>cancel}",
-					press: function() {
+					press() {
 						oDialog.close();
 					}
 				}),
-				afterClose: function() {
+				afterClose() {
 					oDialog.destroy();
 				}
 			});
@@ -216,7 +218,7 @@ sap.ui.define([
 		 * Select correct transport id (through a dialog if necessary) and trigger deletion of file.
 		 * @private
 		 */
-		_selectTransportAndDeleteFile: function() {
+		_selectTransportAndDeleteFile() {
 			var that = this;
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var bOnActivatedVersion = this.getView().byId("activeVersionCheckBox").getSelected();
@@ -272,7 +274,7 @@ sap.ui.define([
 					beginButton: new Button({
 						text: "{i18n>confirm}",
 						type: ButtonType.Accept,
-						press: function() {
+						press() {
 							sTransportId = oTransportInput.getValue();
 							oDialog.close();
 							that._deleteFile(sContentLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer);
@@ -280,11 +282,11 @@ sap.ui.define([
 					}),
 					endButton: new Button({
 						text: "{i18n>cancel}",
-						press: function() {
+						press() {
 							oDialog.close();
 						}
 					}),
-					afterClose: function() {
+					afterClose() {
 						oDialog.destroy();
 					}
 				});
@@ -298,7 +300,7 @@ sap.ui.define([
 		 * @returns {Promise} <code>LRepConnector</code> "deleteFile" promise
 		 * @private
 		 */
-		_deleteFile: function(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bSupport) {
+		_deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, sSelectedLayer, bSupport) {
 			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType, sTransportId, bSupport).then(function() {
 				var oRouter = UIComponent.getRouterFor(this);
 				oRouter.navTo("LayerContentMaster", {

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/model/odata/type/DateTimeWithTimezone",
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Double",
 	"sap/ui/model/odata/type/Single",
@@ -20,7 +21,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
+], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -64,8 +65,8 @@ sap.ui.define([
 		oThemeParametersStub = sinon.stub(ThemeParameters, "get");
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Helvetica");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcTypeWidth - Boolean", function(assert) {
@@ -84,8 +85,8 @@ sap.ui.define([
 
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("1rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcTypeWidth - String", function(assert) {
@@ -119,7 +120,14 @@ sap.ui.define([
 
 		assert.ok(Util.calcTypeWidth(new DateTime()) > Util.calcTypeWidth(new Time()) + Util.calcTypeWidth(new DateType(null, { displayFormat : "Date" })));
 
-		assert.equal(Util.calcTypeWidth(new TimeOfDay()), Util.measureText("10:47:58 PM"));
+		// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+		assert.equal(Util.calcTypeWidth(new TimeOfDay()), Util.measureText("10:47:58\u202fPM"));
+
+		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTime()), "Column with timezone has a higher width");
+		assert.ok(Util.calcTypeWidth(new DateTimeWithTimezone()) > Util.calcTypeWidth(new DateTimeWithTimezone({
+			showDate: false,
+			showTime: false
+		})), "Column with timezone has a higher width");
 	});
 
 	QUnit.test("calcTypeWidth - Numeric", function(assert) {
@@ -179,8 +187,8 @@ sap.ui.define([
 		oThemeParametersStub.withArgs({ name: "sapMFontMediumSize" }).returns("0.875rem");
 		oThemeParametersStub.withArgs({ name: "sapUiFontFamily" }).returns("Arial");
 		oThemeParametersStub.withArgs({ name: "sapUiColumnHeaderFontWeight" }).returns("bold");
-		Theming.attachApplied(fnNewThemeApplied);
 		Theming.notifyContentDensityChanged();
+		Theming.attachApplied(fnNewThemeApplied);
 	});
 
 	QUnit.test("calcColumnWidth", function(assert) {

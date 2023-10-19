@@ -2,19 +2,16 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"../model/formatter"
-], function (Controller, JSONModel, formatter) {
+], (Controller, JSONModel, formatter) => {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.walkthrough.controller.InvoiceList", {
-
+	return Controller.extend("ui5.walkthrough.controller.InvoiceList", {
 		formatter: formatter,
-
-		onInit: function () {
-			var oViewModel = new JSONModel({
+		onInit() {
+			const oViewModel = new JSONModel({
 				currency: "EUR"
 			});
 			this.getView().setModel(oViewModel, "view");
 		}
-
 	});
 });

@@ -2,14 +2,24 @@
 sap.ui.define([
 	"sap/ui/codeeditor/CodeEditor",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-], function (CodeEditor, Button, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function (CodeEditor, Button, Core, Library, nextUIUpdate, createAndAppendDiv) {
 	"use strict";
 
-	var DOM_RENDER_LOCATION = "qunit-fixture";
+	var DOM_RENDER_LOCATION = "content";
+	createAndAppendDiv(DOM_RENDER_LOCATION);
+
+	function nextAceEditorRendering(oCodeEditor) {
+		return new Promise((res) => {
+			oCodeEditor._oEditor.renderer.once("afterRender", res);
+		});
+	}
 
 	QUnit.module("Init", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor({
 				type: "html",
 				height: "300px",
@@ -22,7 +32,7 @@ sap.ui.define([
 
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
 			this.oButton.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -34,18 +44,18 @@ sap.ui.define([
 		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker initially.");
 	});
 
-	QUnit.test("On focus", function (assert) {
+	QUnit.test("On focus", async function (assert) {
 		this.oCodeEditor.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oCodeEditor.focus();
 
 		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === true, "should use worker when focused.");
 	});
 
-	QUnit.test("On blur", function (assert) {
+	QUnit.test("On blur", async function (assert) {
 		this.oCodeEditor.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oCodeEditor.focus();
 		this.oButton.focus();
@@ -53,23 +63,23 @@ sap.ui.define([
 		assert.ok(this.oCodeEditor._oEditor.getSession().getUseWorker() === false, "should not use worker after blur.");
 	});
 
-	QUnit.test("change value when on focus", function (assert) {
+	QUnit.test("change value when on focus", async function (assert) {
 		this.oCodeEditor.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		this.oCodeEditor.focus();
 		this.oCodeEditor.setValue("text");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oCodeEditor.getValue(), "text", "value is not reset");
 	});
 
-	QUnit.test("Focused elements in code editor editable:false", function (assert) {
+	QUnit.test("Focused elements in code editor editable:false", async function (assert) {
 		var oBlurSpy = sinon.spy(document.activeElement, "blur");
 
 		this.oCodeEditor.setEditable(false);
 		this.oCodeEditor.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//ACT
 		this.oCodeEditor.focus();
@@ -83,11 +93,11 @@ sap.ui.define([
 		this.oButton.focus();
 	});
 
-	QUnit.test("Focused elements in code editor editable:true", function (assert) {
+	QUnit.test("Focused elements in code editor editable:true", async function (assert) {
 
 		//Arrange
 		this.oCodeEditor.setVisible(true);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//ACT
 		this.oCodeEditor.focus();
@@ -96,12 +106,12 @@ sap.ui.define([
 		assert.strictEqual(document.activeElement.classList.contains("ace_text-input"), true, "When code editor is editable focus should be on the code editor");
 	});
 
-	QUnit.test("ACE Editor is read only when editable is false", function (assert) {
+	QUnit.test("ACE Editor is read only when editable is false", async function (assert) {
 		//Arrange
 		this.oCodeEditor.setVisible(true);
 
 		this.oCodeEditor.setEditable(false);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		//ACT
 		this.oCodeEditor.focus();
@@ -110,47 +120,52 @@ sap.ui.define([
 		assert.strictEqual(this.oCodeEditor._oEditor.getReadOnly(), true, "When code editor is not editable the ACE editor is read-only");
 	});
 
-	QUnit.test("Readonly change event", function (assert) {
+	QUnit.test("Readonly change event", async function (assert) {
 		// Arrange
 		var oSpy = sinon.spy();
 		var oSpy2 = sinon.spy();
 		this.oCodeEditor.setEditable(false);
 		this.oCodeEditor.attachLiveChange(oSpy);
 		this.oCodeEditor.attachChange(oSpy2);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		this.oCodeEditor.setValue("somevalue");
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oSpy.notCalled, "Should not fire liveChange event when readonly.");
 		assert.ok(oSpy2.notCalled, "Should not fire change event when readonly.");
 	});
 
-	QUnit.test("Scrollbar positions are maintained after rerendering", function (assert) {
+	QUnit.test("Scrollbar positions are maintained after rerendering", async function (assert) {
 		// Arrange
 		var sText = "ui5 \n".repeat(100); // lots of text to show the scrollbar
 		this.oCodeEditor.setValue(sText);
 		this.oCodeEditor.setVisible(true);
 		this.oCodeEditor.setWidth("300px");
-
-		Core.applyChanges();
-
+		await nextAceEditorRendering(this.oCodeEditor);
 		var fInitialScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.strictEqual(fInitialScrollbarPos, 0, "Initial scroll position should be 0");
+
+		// Act
 		this.oCodeEditor._oEditor.gotoLine(Infinity, Infinity, false); // go to last line, last char, do not animate
+		await nextAceEditorRendering(this.oCodeEditor);
 
 		// Assert
 		var fNewScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+		assert.ok(fNewScrollbarPos > fInitialScrollbarPos, "Scroll position should be larger than initial");
 		assert.notStrictEqual(fInitialScrollbarPos, fNewScrollbarPos, "scrollbar position changed after calling gotoLine");
 
 		// Act
 		this.oCodeEditor.invalidate();
-		Core.applyChanges();
+		await nextAceEditorRendering(this.oCodeEditor);
 
 		// Assert
-		var fUnchangedScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
-		assert.strictEqual(fNewScrollbarPos, fUnchangedScrollbarPos, "scrollbar position remains the same after rerendering");
+		var fPrevScrollbarPos = fNewScrollbarPos;
+		fNewScrollbarPos = this.oCodeEditor._oEditor.getSession().getScrollTop();
+
+		assert.strictEqual(fNewScrollbarPos, fPrevScrollbarPos, "scrollbar position remains the same after rerendering");
 	});
 
 	QUnit.test("Method getInternalEditorInstance", function (assert) {
@@ -159,13 +174,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Properties", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor({
 				tooltip: "Code editor control"
 			});
 
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -178,11 +193,11 @@ sap.ui.define([
 
 	QUnit.module("Destroy");
 
-	QUnit.test("ACE Editor should be destroyed on exit", function (assert) {
+	QUnit.test("ACE Editor should be destroyed on exit", async function (assert) {
 		// Arrange
 		var oCodeEditor = new CodeEditor({});
 		oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Act
 		oCodeEditor.destroy();
@@ -193,10 +208,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor();
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -205,7 +220,7 @@ sap.ui.define([
 
 	QUnit.test("Aria role and roledescription", function(assert) {
 		// Arrange
-		var sExpectedRoleDescriptionText = Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
+		var sExpectedRoleDescriptionText = Library.getResourceBundleFor("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION");
 
 		// Assert
 		assert.strictEqual(this.oCodeEditor.$().attr("role"), "application", "aria-role is 'application'");
@@ -222,11 +237,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Theming", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor();
 
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -262,10 +277,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Worker", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor();
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();
@@ -280,12 +295,12 @@ sap.ui.define([
 		assert.ok(document.querySelector("iframe[src$='aceWorkerProxy.html']"), "Iframe should be added to the DOM");
 	});
 
-	QUnit.test("Iframe is removed when all editors are destroyed", function(assert) {
+	QUnit.test("Iframe is removed when all editors are destroyed", async function(assert) {
 		// Arrange
 		this.oCodeEditor.focus();
 		var oAnotherCodeEditor = new CodeEditor();
 		oAnotherCodeEditor.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
+		await nextUIUpdate();
 		oAnotherCodeEditor.focus();
 
 		// Act
@@ -302,10 +317,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Code validation", {
-		beforeEach: function () {
+		beforeEach: async function () {
 			this.oCodeEditor = new CodeEditor();
 			this.oCodeEditor.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach: function () {
 			this.oCodeEditor.destroy();

@@ -51,7 +51,7 @@ sap.ui.define([
 	 * @param {sap.ui.integration.widgets.Card} oParentCard The opener card.
 	 */
 	ShowCardAction.prototype._openDialog = function (oChildCard, oParentCard) {
-		var oDialog = new Dialog({
+		const oDialog = new Dialog({
 				content: [
 					oChildCard
 				],
@@ -60,28 +60,38 @@ sap.ui.define([
 				escapeHandler: function (oPromise) {
 					oChildCard.hide();
 					oPromise.resolve();
-				}
+				},
+				resizable: this.getParameters().resizable
 			});
 
+		const oDelegate = {
+			onmousedown: (e) => {
+				if (e.target.classList.contains("sapMDialogResizeHandler")) {
+					oChildCard.setHeight("100%");
+					oDialog.setContentHeight(oDialog.getDomRef("cont").offsetHeight + "px");
+					oDialog.setVerticalScrolling(false);
+					oDialog.removeEventDelegate(oDelegate);
+				}
+			}
+		};
+
 		oDialog.addStyleClass("sapUiIntCardDialog");
+		oDialog.addEventDelegate(oDelegate);
+		oDialog.attachAfterClose(() => {
+			oDialog.destroy();
+		});
 
 		oParentCard.addDependent(oDialog);
 
 		oChildCard.startManifestProcessing();
-
 		oChildCard.attachManifestApplied(function () {
 			oDialog.open();
 		});
-
 		oChildCard.attachEvent("_ready", function () {
 			setTimeout(function () {
 				this._setFocus(oChildCard, oDialog);
 			}.bind(this), 0); // wait for loading animation to stop
 		}.bind(this));
-
-		oDialog.attachAfterClose(function () {
-			oDialog.destroy();
-		});
 	};
 
 	ShowCardAction.prototype._setFocus = function (oCard, oDialog) {

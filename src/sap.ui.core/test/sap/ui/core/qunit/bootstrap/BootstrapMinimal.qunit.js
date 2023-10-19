@@ -11,7 +11,7 @@
 	QUnit.test("When sap/ui/core/Core has been required...", function(assert) {
 		var coreInitFired = false;
 		var done = assert.async();
-		sap.ui.require(['sap/ui/core/Core'], function() {
+		sap.ui.require(['sap/ui/core/Core'], function(Core) {
 			// TODO clarify how to handle jQuery gloabls
 			assert.strictEqual(typeof jQuery, "function", "...function jQuery should exist");
 			assert.strictEqual(typeof jQuery.prototype.position, "function", "...function jQuery.fn.position should exist");
@@ -19,14 +19,14 @@
 					"...loader should know module 'sap/ui/thirdparty/jquery' and its export");
 			assert.strictEqual(sap.ui.require('sap/ui/thirdparty/jqueryui/jquery-ui-position'), jQuery,
 					"...loader should know module 'sap/ui/thirdparty/jqueryui/jquery-ui-position' and its export");
-			sap.ui.getCore().attachInit(function() {
+			Core.ready().then(function() {
 				coreInitFired = true;
 				assert.ok(coreInitFired, "...init event should be fired after boot");
 				done();
 			});
 			setTimeout(function() {
 				assert.notOk(coreInitFired, "...but Core should not have fired init event before boot");
-				sap.ui.getCore().boot();
+				Core.boot();
 			}, 500);
 		});
 	});

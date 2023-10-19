@@ -15,8 +15,8 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/Label",
 	"sap/m/Input",
-	"sap/m/TileContainer",
-	"sap/m/StandardTile",
+	"sap/f/GridContainer",
+	"sap/m/GenericTile",
 	"sap/m/SearchField",
 	"sap/m/Page",
 	"sap/m/App",
@@ -29,17 +29,17 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/thirdparty/hasher",
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/matchers/Ancestor",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ObjectIdentifier",
 	"sap/m/ObjectStatus",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/Slider",
-	"sap/m/RatingIndicator"
+	"sap/m/RatingIndicator",
+	"sap/ui/core/UIArea",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(Press,
 		 Button,
@@ -56,8 +56,8 @@ function(Press,
 		 Item,
 		 Label,
 		 Input,
-		 TileContainer,
-		 StandardTile,
+		 GridContainer,
+		 GenericTile,
 		 SearchField,
 		 Page,
 		 App,
@@ -70,17 +70,17 @@ function(Press,
 		 mobileLibrary,
 		 Opa5,
 		 opaTest,
-		 hasher,
 		 AggregationLengthEquals,
 		 PropertyStrictEquals,
-		 Ancestor,
 		 Log,
 		 $,
 		 ObjectIdentifier,
 		 ObjectStatus,
 		 ListHelpers,
 		 Slider,
-		 RatingIndicator
+		 RatingIndicator,
+		 UIArea,
+		 nextUIUpdate
 ){
 	"use strict";
 
@@ -140,7 +140,7 @@ function(Press,
 		}),
 		event: "ValueHelpRequest"
 	}].forEach(function (oTestCase) {
-		QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), function (assert) {
+		QUnit.test("Should press a " + oTestCase.control.getMetadata().getName(), async function (assert) {
 			var fnDone = assert.async();
 
 			// Arrange
@@ -148,7 +148,7 @@ function(Press,
 			aControlsToClean.push(oControl);
 			oControl.placeAt("qunit-fixture");
 			//Make sure that the control is rendered
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			// System under Test
 			var oPressAction = new Press();
@@ -179,7 +179,7 @@ function(Press,
 		});
 	});
 
-	QUnit.test("Should request focus and trigger a 'press' event on an StandardListItem of type 'active'", function(assert) {
+	QUnit.test("Should request focus and trigger a 'press' event on an StandardListItem of type 'active'", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -197,7 +197,7 @@ function(Press,
 		aControlsToClean.push(oList);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press();
@@ -213,7 +213,7 @@ function(Press,
 		oPressAction.executeOn(oFirstListItem);
 	});
 
-	QUnit.test("Should press a button using key modifiers", function(assert) {
+	QUnit.test("Should press a button using key modifiers", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -223,7 +223,7 @@ function(Press,
 		aControlsToClean.push(oButton);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press({altKey: true, ctrlKey: true, shiftKey: true});
@@ -244,7 +244,7 @@ function(Press,
 		oPressAction.executeOn(oButton);
 	});
 
-	QUnit.test("Should use X percent for selecting slider value", function(assert) {
+	QUnit.test("Should use X percent for selecting slider value", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -254,7 +254,7 @@ function(Press,
 		aControlsToClean.push(oSlider);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press({idSuffix: "inner", xPercentage: 80});
@@ -270,7 +270,7 @@ function(Press,
 		oPressAction.executeOn(oSlider);
 	});
 
-	QUnit.test("Should use X perecent value for RatingIndicator", function(assert) {
+	QUnit.test("Should use X perecent value for RatingIndicator", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -280,7 +280,7 @@ function(Press,
 		aControlsToClean.push(oRatingIndicator);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press({xPercentage: 15});
@@ -296,7 +296,7 @@ function(Press,
 		oPressAction.executeOn(oRatingIndicator);
 	});
 
-	QUnit.test("List should fire selection change event", function(assert) {
+	QUnit.test("List should fire selection change event", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -321,7 +321,7 @@ function(Press,
 		aControlsToClean.push(oList);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press();
@@ -338,7 +338,7 @@ function(Press,
 		oPressAction.executeOn(oSecondListItem);
 	});
 
-	QUnit.test("IconTabBar should fire selection change event", function(assert) {
+	QUnit.test("IconTabBar should fire selection change event", async function(assert) {
 		var done = assert.async();
 
 		// Arrange
@@ -359,7 +359,7 @@ function(Press,
 		aControlsToClean.push(oTabBar);
 
 		//Make sure that button is rendered
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press();
@@ -376,7 +376,7 @@ function(Press,
 		oPressAction.executeOn(oSecondTab);
 	});
 
-	QUnit.test("Should be able to press a row in the sap.ui.table.Table", function(assert) {
+	QUnit.test("Should be able to press a row in the sap.ui.table.Table", async function(assert) {
 		// Arrange
 		var oTable = new Table({
 				selectionBehavior: "Row"
@@ -400,7 +400,7 @@ function(Press,
 
 		aControlsToClean.push(oTable);
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press();
@@ -415,18 +415,18 @@ function(Press,
 		oPressAction.executeOn(oTable.getRows()[1].getCells()[0]);
 	});
 
-	QUnit.test("Should press a Tile in a Tile container", function (assert) {
+	QUnit.test("Should press a Tile in a Tile container", async function (assert) {
 		var done = assert.async(),
-				oTile = new StandardTile(),
-				oTileContainer = new TileContainer({
-					tiles: oTile
+				oTile = new GenericTile(),
+				oGridContainer = new GridContainer({
+					items: oTile
 				});
 
-		oTileContainer.placeAt("qunit-fixture");
+		oGridContainer.placeAt("qunit-fixture");
 
-		aControlsToClean.push(oTileContainer);
+		aControlsToClean.push(oGridContainer);
 
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		// System under Test
 		var oPressAction = new Press();
@@ -457,7 +457,7 @@ function(Press,
 					}
 				});
 				oList.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
+				return nextUIUpdate();
 
 			},
 			afterEach: function () {
@@ -538,18 +538,18 @@ function(Press,
 		beforeEach: function() {
 			this.oObjectIdentifier = new ObjectIdentifier();
 			this.oObjectIdentifier.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectIdentifier.destroy();
 		}
 	});
 
-	QUnit.test("Should press active ObjectIdentifier - press adapter", function (assert) {
+	QUnit.test("Should press active ObjectIdentifier - press adapter", async function (assert) {
 		var done = assert.async();
 		this.oObjectIdentifier.setTitle("sampleTitle");
 		this.oObjectIdentifier.setTitleActive(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oPressAction = new Press();
 
@@ -561,21 +561,21 @@ function(Press,
 		oPressAction.executeOn(this.oObjectIdentifier);
 	});
 
-	QUnit.test("Should press inactive ObjectIdentifier - press adapter", function (assert) {
+	QUnit.test("Should press inactive ObjectIdentifier - press adapter", async function (assert) {
 		var done = assert.async();
 		this.oObjectIdentifier.setTitle("sampleTitle");
 		this.oObjectIdentifier.setTitleActive(false);
 		this.oObjectIdentifier.setText("sampleText");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oPressAction = new Press();
 		var that = this;
 
-		$(".sapMObjectIdentifierTitle").on("click", function () {
+		$(".sapMObjectIdentifierTitle").on("click", async function () {
 			assert.ok(true, "Executed press action on title");
 
 			that.oObjectIdentifier.setTitle(null);
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			$(".sapMObjectIdentifierText").on("click", function () {
 				assert.ok(true, "Executed press action on text");
@@ -604,18 +604,18 @@ function(Press,
 		beforeEach: function() {
 			this.oObjectStatus = new ObjectStatus();
 			this.oObjectStatus.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oObjectStatus.destroy();
 		}
 	});
 
-	QUnit.test("Should press active ObjectStatus - press adapter", function (assert) {
+	QUnit.test("Should press active ObjectStatus - press adapter", async function (assert) {
 		var done = assert.async();
 		this.oObjectStatus.setActive(true);
 		this.oObjectStatus.setText("foo");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oPressAction = new Press();
 
@@ -627,10 +627,10 @@ function(Press,
 		oPressAction.executeOn(this.oObjectStatus);
 	});
 
-	QUnit.test("Should press ObjectStatus - missing press adapter", function (assert) {
+	QUnit.test("Should press ObjectStatus - missing press adapter", async function (assert) {
 		var done = assert.async();
 		this.oObjectStatus.setText("foo");
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oPressAction = new Press();
 
@@ -646,7 +646,7 @@ function(Press,
 		beforeEach: function() {
 			this.oSearchField = new SearchField();
 			this.oSearchField.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oSearchField.destroy();
@@ -666,12 +666,12 @@ function(Press,
 		oPressAction.executeOn(this.oSearchField);
 	});
 
-	QUnit.test("Should press SearchField - missing press adapter", function (assert) {
+	QUnit.test("Should press SearchField - missing press adapter", async function (assert) {
 		var done = assert.async();
 		var oPressAction = new Press();
 
 		this.oSearchField.setShowSearchButton(false);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		$("input[type='search']").on("mousedown", function () {
 			assert.ok(true, "Executed press action on search input field (focus DOM ref)");
@@ -681,11 +681,11 @@ function(Press,
 		oPressAction.executeOn(this.oSearchField);
 	});
 
-	QUnit.test("Should press SearchField - user provided ID suffix", function (assert) {
+	QUnit.test("Should press SearchField - user provided ID suffix", async function (assert) {
 		var done = assert.async();
 
 		this.oSearchField.setShowRefreshButton(true);
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 		var oPressAction = new Press({idSuffix: "reset"});
 
@@ -719,12 +719,12 @@ function(Press,
 			});
 			// arrange
 			this.oComboBox.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 		// cleanup
 		afterEach: function() {
-			this.oComboBox.destroy();
 			this.clock.restore();
+			this.oComboBox.destroy();
 		}
 	});
 
@@ -780,12 +780,12 @@ function(Press,
 		QUnit.module("OverflowToolbar");
 
 		opaTest("Should synchronize with overflow popup", function (oOpa) {
+			var done = Opa5.assert.async();
 			var oOverflowToolbar = new OverflowToolbar({
 				width: "140px"
 			});
 
 			oOverflowToolbar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
 			setTimeout(function () {
 				oOverflowToolbar.addContent(createButton("Button1"));
@@ -807,21 +807,23 @@ function(Press,
 				actions: new Press()
 			});
 
+			// should destroy the toolbar only after everything is settled
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.destroy();
+					done();
 				}
 			});
 		});
 
 		opaTest("Should synchronize with resizing overflow toolbar", function (oOpa) {
+			var done = Opa5.assert.async();
 			var oOverflowToolbar = new OverflowToolbar({
 				width: "400px"
 			});
 			oOverflowToolbar.addContent(createButton("Button1"));
 			oOverflowToolbar.addContent(createButton("Button2"));
 			oOverflowToolbar.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
 			oOpa.extendConfig({autoWait: true});
 
@@ -852,11 +854,13 @@ function(Press,
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.destroy();
+					done();
 				}
 			});
 		});
 
 		opaTest("Should synchronize with resizing overflow toolbar when resizing the app", function (oOpa) {
+			var done = Opa5.assert.async();
 			var toolbarContent1 = [
 				new Label({
 					text : "Priority Toolbar"
@@ -933,7 +937,6 @@ function(Press,
 
 			var oApp = new App();
 			oApp.addPage(oPage).placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
 			oOpa.extendConfig({
 				autoWait: true,
@@ -974,6 +977,7 @@ function(Press,
 				success: function() {
 					console.debug("Destroy the app"); // eslint-disable-line no-console
 					oApp.destroy();
+					done();
 				}
 			});
 		});

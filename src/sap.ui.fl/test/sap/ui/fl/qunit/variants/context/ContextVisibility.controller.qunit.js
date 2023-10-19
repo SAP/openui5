@@ -6,20 +6,18 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/StandardListItem",
 	"sap/m/List",
-	"sap/m/RadioButton",
 	"sap/m/RadioButtonGroup",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element"
 ], function(
 	ContextVisibility,
 	WriteStorage,
 	JSONModel,
 	StandardListItem,
 	List,
-	RadioButton,
 	RadioButtonGroup,
 	sinon,
-	oCore
+	Element
 ) {
 	"use strict";
 
@@ -40,7 +38,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a ContextVisiblility Controller", {
-		beforeEach: function() {
+		beforeEach() {
 			oController = new ContextVisibility();
 			this.oRoles = {
 				values: [
@@ -60,19 +58,19 @@ sap.ui.define([
 				lastHitReached: true
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when the controller is initialized", function(assert) {
 			var oConnectorCall = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescription);
 			sandbox.stub(oController, "getView").returns({
-				getModel: function(sId) {
+				getModel(sId) {
 					if (sId === "i18n") {
 						return {
-							getResourceBundle: function() {
+							getResourceBundle() {
 								return {
-									getText: function() {
+									getText() {
 										return "No roles selected.";
 									}
 								};
@@ -94,13 +92,13 @@ sap.ui.define([
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
 			sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedContexts: function() {
+				getSelectedContexts() {
 					return {role: ["TEST"]};
 				}
 			});
 			var sText = "No roles selected.";
 			oController.oI18n = {
-				getText: function() {
+				getText() {
 					return sText;
 				}
 			};
@@ -121,13 +119,13 @@ sap.ui.define([
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
 			sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedContexts: function() {
+				getSelectedContexts() {
 					return {role: []};
 				}
 			});
 			var sText = "No roles selected.";
 			oController.oI18n = {
-				getText: function() {
+				getText() {
 					return sText;
 				}
 			};
@@ -148,13 +146,13 @@ sap.ui.define([
 			oController.oContextsModel = new JSONModel({});
 			oController.oSelectedContextsModel = new JSONModel({selected: []});
 			sandbox.stub(oController, "getView").returns({
-				addDependent: function() {},
-				getId: function() {}
+				addDependent() {},
+				getId() {}
 			});
 
 			return oController.onAddContextsHandler().then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
-				var oSelectedRolesDialog = oCore.byId("selectContexts-dialog");
+				var oSelectedRolesDialog = Element.getElementById("selectContexts-dialog");
 				assert.strictEqual(oSelectedRolesDialog.isOpen(), true, "then the dialog is opened");
 				oSelectedRolesDialog.destroy();
 			});
@@ -165,7 +163,7 @@ sap.ui.define([
 			oController.oContextsModel = new JSONModel({ values: [{id: "1", description: "test"}], lastHitReached: false});
 
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return "Growing";
 				}
 			};
@@ -181,7 +179,7 @@ sap.ui.define([
 			oController.oContextsModel = new JSONModel({ values: [{id: "1", description: "test"}], lastHitReached: true});
 
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return "Growing";
 				}
 			};
@@ -197,12 +195,12 @@ sap.ui.define([
 			oController.oContextsModel = new JSONModel({});
 
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return "KPI";
 				},
-				getSource: function() {
+				getSource() {
 					return {
-						clearSelection: function() {}
+						clearSelection() {}
 					};
 				}
 			};
@@ -215,10 +213,10 @@ sap.ui.define([
 		QUnit.test("when deleting one context from selected contexts list", function(assert) {
 			oController.oSelectedContextsModel = new JSONModel({selected: this.oRoles.values});
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return new StandardListItem({title: "ADMIN"});
 				},
-				getSource: function() {
+				getSource() {
 					return new List();
 				}
 			};
@@ -241,7 +239,7 @@ sap.ui.define([
 			oController.oCurrentSelection = [{ id: "REMOTE", description: "Role for accessing remote system"}];
 
 			sandbox.stub(oController, "getView").returns({
-				getId: function() {}
+				getId() {}
 			});
 
 			oController.onSelectContexts();
@@ -252,7 +250,7 @@ sap.ui.define([
 			oController.oCurrentSelection = [];
 
 			var oEvent = {
-				getParameter: function(sId) {
+				getParameter(sId) {
 					return sId === "selected" ? true : new StandardListItem({title: "REMOTE", description: "TEST"});
 				}
 			};
@@ -266,7 +264,7 @@ sap.ui.define([
 			oController.oCurrentSelection = [{id: "REMOTE", description: "TEST"}, {id: "TEST", description: "TEST"}];
 
 			var oEvent = {
-				getParameter: function(sId) {
+				getParameter(sId) {
 					return sId === "selected" ? false : new StandardListItem({title: "REMOTE", description: "TEST"});
 				}
 			};

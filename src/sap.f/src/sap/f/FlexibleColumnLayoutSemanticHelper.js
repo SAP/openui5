@@ -83,7 +83,7 @@ sap.ui.define([
 	 *
 	 * <li>Value of <code>2</code> - A 2-column layout will be suggested for logical level 0.</li></ul>
 	 *
-	 * @param {string} oSettings.mode
+	 * @param {string} [oSettings.mode]
 	 * <b>Deprecated as of version 1.50</b>, use <code>maxColumnsCount</code> param
 	 * instead.
 	 *
@@ -213,7 +213,7 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Configures the target layouts of the navigation acion buttons in a column.
+	 * Configures the target layouts of the navigation action buttons in a column.
 	 *
 	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.NavigationActionsTargets
 	 *
@@ -269,7 +269,7 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.f.FlexibleColumnLayoutSemanticHelper.UIState
 	 *
-	 * @property {string} [layout]
+	 * @property {sap.f.LayoutType} [layout]
 	 *  The value of the {@link sap.f.FlexibleColumnLayout#getLayout layout} property.
 	 * @property {number} [maxColumnsCount]
 	 *  The maximum number of columns that can be displayed at once based on the control width. See {@link sap.f.FlexibleColumnLayout#getMaxColumnsCount}
@@ -396,8 +396,8 @@ sap.ui.define([
 	FlexibleColumnLayoutSemanticHelper.prototype._getUIStateForLayout = function (sLayout) {
 
 		var aSizes = this._oFCL._getColumnWidthDistributionForLayout(sLayout, true),
-			sColumnWidthDistribution = aSizes.join("/"),
-			iMaxColumnsCount = this._oFCL.getMaxColumnsCount();
+			iMaxColumnsCount = this._oFCL.getMaxColumnsCount(),
+			sDefaultColumnWidthDistribution = this._oFCL._getDefaultColumnWidthDistributionForLayout(sLayout, iMaxColumnsCount);
 
 		return {
 			layout: sLayout,
@@ -406,7 +406,7 @@ sap.ui.define([
 			columnsVisibility: this._getColumnsVisibility(aSizes),
 			isFullScreen: this._getIsFullScreen(aSizes),
 			isLogicallyFullScreen: this._getIsLogicallyFullScreen(sLayout),
-			actionButtonsInfo: this._getActionButtonsInfo(sColumnWidthDistribution, iMaxColumnsCount)
+			actionButtonsInfo: this._getActionButtonsInfo(sDefaultColumnWidthDistribution, iMaxColumnsCount)
 		};
 
 	};

@@ -1,4 +1,4 @@
-sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/util/clamp", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/debounce", "sap/ui/webc/common/thirdparty/base/util/FocusableElements", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/ResponsivePopover", "./types/WizardContentLayout", "./generated/i18n/i18n-defaults", "./WizardTab", "./WizardStep", "./generated/templates/WizardTemplate.lit", "./generated/templates/WizardPopoverTemplate.lit", "./generated/themes/Wizard.css", "./generated/themes/WizardPopover.css"], function (_exports, _UI5Element, _property, _slot, _event, _customElement, _LitRenderer, _i18nBundle, _ItemNavigation, _NavigationMode, _Float, _clamp, _ResizeHandler, _Device, _debounce, _FocusableElements, _Button, _ResponsivePopover, _WizardContentLayout, _i18nDefaults, _WizardTab, _WizardStep, _WizardTemplate, _WizardPopoverTemplate, _Wizard, _WizardPopover) {
+sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/ui/webc/common/thirdparty/base/decorators/property", "sap/ui/webc/common/thirdparty/base/decorators/slot", "sap/ui/webc/common/thirdparty/base/decorators/event", "sap/ui/webc/common/thirdparty/base/decorators/customElement", "sap/ui/webc/common/thirdparty/base/renderer/LitRenderer", "sap/ui/webc/common/thirdparty/base/i18nBundle", "sap/ui/webc/common/thirdparty/base/delegate/ItemNavigation", "sap/ui/webc/common/thirdparty/base/types/NavigationMode", "sap/ui/webc/common/thirdparty/base/types/Float", "sap/ui/webc/common/thirdparty/base/util/clamp", "sap/ui/webc/common/thirdparty/base/delegate/ResizeHandler", "sap/ui/webc/common/thirdparty/base/Device", "sap/ui/webc/common/thirdparty/base/util/debounce", "sap/ui/webc/common/thirdparty/base/util/FocusableElements", "sap/ui/webc/main/thirdparty/Button", "sap/ui/webc/main/thirdparty/ResponsivePopover", "sap/ui/webc/main/thirdparty/generated/themes/BrowserScrollbar.css", "./types/WizardContentLayout", "./generated/i18n/i18n-defaults", "./WizardTab", "./WizardStep", "./generated/templates/WizardTemplate.lit", "./generated/templates/WizardPopoverTemplate.lit", "./generated/themes/Wizard.css", "./generated/themes/WizardPopover.css"], function (_exports, _UI5Element, _property, _slot, _event, _customElement, _LitRenderer, _i18nBundle, _ItemNavigation, _NavigationMode, _Float, _clamp, _ResizeHandler, _Device, _debounce, _FocusableElements, _Button, _ResponsivePopover, _BrowserScrollbar, _WizardContentLayout, _i18nDefaults, _WizardTab, _WizardStep, _WizardTemplate, _WizardPopoverTemplate, _Wizard, _WizardPopover) {
   "use strict";
 
   Object.defineProperty(_exports, "__esModule", {
@@ -19,6 +19,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
   _debounce = _interopRequireDefault(_debounce);
   _Button = _interopRequireDefault(_Button);
   _ResponsivePopover = _interopRequireDefault(_ResponsivePopover);
+  _BrowserScrollbar = _interopRequireDefault(_BrowserScrollbar);
   _WizardContentLayout = _interopRequireDefault(_WizardContentLayout);
   _WizardTab = _interopRequireDefault(_WizardTab);
   _WizardStep = _interopRequireDefault(_WizardStep);
@@ -35,6 +36,13 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var Wizard_1;
+
+  // Texts
+
+  // Step in header and content
+
+  // Template and Styles
+
   const MIN_STEP_WIDTH_NO_TITLE = 64;
   const MIN_STEP_WIDTH_WITH_TITLE = 200;
   const EXPANDED_STEP = "data-ui5-wizard-expanded-tab";
@@ -785,7 +793,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     }
   };
   __decorate([(0, _property.default)({
-    validator: String,
+    type: _WizardContentLayout.default,
     defaultValue: _WizardContentLayout.default.MultipleSteps
   })], Wizard.prototype, "contentLayout", void 0);
   __decorate([(0, _property.default)({
@@ -814,7 +822,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     languageAware: true,
     fastNavigation: true,
     renderer: _LitRenderer.default,
-    styles: _Wizard.default,
+    styles: [_BrowserScrollbar.default, _Wizard.default],
     staticAreaStyles: _WizardPopover.default,
     template: _WizardTemplate.default,
     staticAreaTemplate: _WizardPopoverTemplate.default,

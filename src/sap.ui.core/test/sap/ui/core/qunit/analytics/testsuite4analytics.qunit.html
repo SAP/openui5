@@ -13,6 +13,7 @@
 
 		<script src="test-resources/sap/ui/core/shared-config.js"></script>
 		<script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
+			data-sap-ui-async="true"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.ui.table,sap.m"
@@ -27,12 +28,11 @@
 		<script src="resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script src="resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"
+		<script src="resources/sap/ui/test/ModuleTracking.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-coverage-istanbul.js"
 			data-sap-ui-cover-never="[/qunit/]"
 			data-sap-ui-cover-only="[/analytics/]">
 		</script>
-		<script src="resources/sap/ui/test/BranchTracking.js"></script>
 
 		<script src="test-resources/sap/ui/core/qunit/analytics/testsuite4analytics.qunit.js">
 		</script>

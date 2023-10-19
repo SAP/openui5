@@ -20,10 +20,11 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/m/table/Util",
 	"sap/ui/core/Lib",
+	"sap/base/Log",
     // jQuery custom selectors ":sapTabbable"
 	"sap/ui/dom/jquery/Selectors"
 ],
-	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library) {
+	function(KeyCodes, Core, ControlBehavior, library, ListBase, ListItemBase, CheckBox, TableRenderer, BaseObject, ResizeHandler, PasteHelper, jQuery, ListBaseRenderer, Icon, Util, Library, Log) {
 	"use strict";
 
 
@@ -46,7 +47,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The <code>sap.m.Table</code> control provides a set of sophisticated and convenience functions for responsive table design.
+	 * The <code>sap.m.Table</code> control provides a set of sophisticated and easy-to-use functions for responsive table design.
 	 *
 	 * To render the <code>sap.m.Table</code> control properly, the order of the <code>columns</code> aggregation should match with the order of the <code>cells</code> aggregation (<code>sap.m.ColumnListItem</code>).
 	 *
@@ -54,6 +55,8 @@ sap.ui.define([
 	 * If such a conflict is detected, then the table prevents one column from moving to the pop-in.
 	 *
 	 * For mobile devices, the recommended limit of table rows is 100 (based on 4 columns) to assure proper performance. To improve initial rendering of large tables, use the <code>growing</code> feature.
+	 *
+	 * <b>Note:</b> In the <code>items</code> aggregation only items which implements the <code>sap.m.ITableItem</code> interface must be used.
 	 *
 	 * See section "{@link topic:5eb6f63e0cc547d0bdc934d3652fdc9b Creating Tables}" and "{@link topic:38855e06486f4910bfa6f4485f7c2bac Configuring Responsive Behavior of a Table}"
 	 * in the documentation for an introduction to <code>sap.m.Table</code> control.
@@ -666,13 +669,11 @@ sap.ui.define([
 
 	Table.prototype.onmousedown = function(oEvent) {
 		this._bMouseDown = true;
-		var sOldTabIndex, oFocusableCell;
-		if (oEvent.target.closest("[draggable=true]")) {
-			oFocusableCell = oEvent.target.closest(".sapMTblCellFocusable");
-			if (oFocusableCell && !document.activeElement.classList.contains("sapMTblCellFocusable")) {
-				sOldTabIndex = oFocusableCell.getAttribute("tabindex");
-				oFocusableCell.removeAttribute("tabindex");
-			}
+		var sOldTabIndex;
+		var oFocusableCell = oEvent.target.closest(".sapMTblCellFocusable:not([aria-haspopup])");
+		if (oFocusableCell && !document.activeElement.classList.contains("sapMTblCellFocusable")) {
+			sOldTabIndex = oFocusableCell.getAttribute("tabindex");
+			oFocusableCell.removeAttribute("tabindex");
 		}
 		setTimeout(function() {
 			this._bMouseDown = false;
@@ -681,16 +682,17 @@ sap.ui.define([
 		ListBase.prototype.onmousedown.apply(this, arguments);
 	};
 
-	Table.prototype._onItemNavigationBeforeFocus = function(oEvent) {
-		if (this._bMouseDown && !oEvent.getParameter("event").target.hasAttribute("tabindex")) {
+	Table.prototype._onItemNavigationBeforeFocus = function(oUI5Event) {
+		var oEvent = oUI5Event.getParameter("event");
+		if (this._bMouseDown && !oEvent.target.hasAttribute("tabindex")) {
 			return;
 		}
 
 		var iFocusedIndex;
 		var iForwardIndex = -1;
-		var iIndex = oEvent.getParameter("index");
+		var iIndex = oUI5Event.getParameter("index");
 		var iColumnCount = this._colHeaderAriaOwns.length + 1;
-		var oItemNavigation = oEvent.getSource();
+		var oItemNavigation = oUI5Event.getSource();
 
 		if (this._bMouseDown) {
 			var iRowIndex = iIndex - iIndex % iColumnCount;
@@ -698,8 +700,27 @@ sap.ui.define([
 				iForwardIndex = iRowIndex;
 			}
 		} else {
-			var oTarget = oItemNavigation.getItemDomRefs()[iIndex];
-			if (oTarget.classList.contains("sapMGHLICell")) {
+			var aItemDomRefs = oItemNavigation.getItemDomRefs();
+			var oNavigationTarget = aItemDomRefs[iIndex];
+			if (oEvent.target.classList.contains("sapMTblCellFocusable")) {
+				var iTargetIndex = aItemDomRefs.indexOf(oEvent.target);
+				if (oEvent.type == "saphome" && iTargetIndex % iColumnCount != 1) {
+					iForwardIndex = iIndex - iIndex % iColumnCount + 1;
+				} else if (oEvent.type == "sapend" && iTargetIndex % iColumnCount == iColumnCount - 1) {
+					iForwardIndex = iTargetIndex - iColumnCount + 1;
+				} else if (oEvent.type.startsWith("sappage") && iTargetIndex % iColumnCount != iIndex % iColumnCount) {
+					iForwardIndex = iIndex - iIndex % iColumnCount + iTargetIndex % iColumnCount;
+				}
+			} else if (oEvent.target.classList.contains("sapMLIBFocusable")) {
+				if (oEvent.type.startsWith("sappage")) {
+					iForwardIndex = iIndex - iIndex % iColumnCount;
+				} else if (oEvent.type == "saphome") {
+					iForwardIndex = 0;
+				} else if (oEvent.type == "sapend") {
+					iForwardIndex = aItemDomRefs.length - iColumnCount;
+				}
+			}
+			if (iForwardIndex == -1 && oNavigationTarget.classList.contains("sapMGHLICell")) {
 				iForwardIndex = iIndex - 1;
 				iFocusedIndex = iForwardIndex + oItemNavigation.getFocusedIndex() % iColumnCount;
 			}
@@ -707,7 +728,7 @@ sap.ui.define([
 
 		if (iForwardIndex != -1) {
 			oEvent.preventDefault();
-			oEvent.getParameter("event").preventDefault();
+			oUI5Event.preventDefault();
 			oItemNavigation.setFocusedIndex(iForwardIndex);
 			oItemNavigation.getItemDomRefs()[iForwardIndex].focus();
 			iFocusedIndex && oItemNavigation.setFocusedIndex(iFocusedIndex);
@@ -731,6 +752,8 @@ sap.ui.define([
 
 		oItemNavigation.detachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
 		oItemNavigation.attachEvent("BeforeFocus", this._onItemNavigationBeforeFocus, this);
+		oItemNavigation.detachEvent("FocusAgain", this._onItemNavigationBeforeFocus, this);
+		oItemNavigation.attachEvent("FocusAgain", this._onItemNavigationBeforeFocus, this);
 
 		// header and footer are in the item navigation but
 		// initial focus should be at the first item row
@@ -1080,7 +1103,7 @@ sap.ui.define([
 	};
 
 	Table.prototype.getFocusDomRef = function() {
-		var bHasMessage = this._oFocusInfo && this._oFocusInfo.targetInfo && BaseObject.isA(this._oFocusInfo.targetInfo, "sap.ui.core.message.Message");
+		var bHasMessage = this._oFocusInfo && this._oFocusInfo.targetInfo && BaseObject.isObjectA(this._oFocusInfo.targetInfo, "sap.ui.core.message.Message");
 
 		if (bHasMessage) {
 			var $TblHeader = this.$("tblHeader");
@@ -1305,6 +1328,9 @@ sap.ui.define([
 	Table.prototype._fireUpdateFinished = function(oInfo) {
 		ListBase.prototype._fireUpdateFinished.apply(this, arguments);
 
+		// handle the select all checkbox state
+		this.updateSelectAllCheckbox();
+
 		// after binding update we need to update the aria-rowcount
 		var oNavigationRoot = this.getNavigationRoot();
 		if (oNavigationRoot) {
@@ -1361,6 +1387,34 @@ sap.ui.define([
 
 		var iAriaRowCount = this.getAccessbilityPosition().setsize;
 		oNavigationRoot.setAttribute("aria-rowcount", iAriaRowCount);
+	};
+
+	/**
+	 * Checks whether the given value is of the proper type for the given aggregation name.
+	 * Logs an error if the given type does not belong to ListItemBase
+	 *
+	 * @param {string} sAggregationName the name of the aggregation
+	 * @param {sap.ui.base.ManagedObject|any} oObject the aggregated object or a primitive value
+	 * @param {boolean} bMultiple whether the caller assumes the aggregation to have cardinality 0..n
+	 * @return {sap.ui.base.ManagedObject|any} the passed object
+	 *
+	 */
+	Table.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
+		var oResult = ListBase.prototype.validateAggregation.apply(this, arguments);
+
+		/*
+         * @deprecated as of version 1.120
+        */
+		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) {
+			Log.error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
+			return oResult;
+		}
+
+		if (sAggregationName === "items" && !BaseObject.isA(oObject, "sap.m.ITableItem")) { // UI5 2.0
+			throw Error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in ResponsiveTable control only supports ITableItem.");
+		}
+
+		return oResult;
 	};
 
 	// items and groupHeader mapping is not required for the table control

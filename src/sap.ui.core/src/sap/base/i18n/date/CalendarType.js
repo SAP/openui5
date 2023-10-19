@@ -11,8 +11,8 @@ sap.ui.define([], function() {
 	 *
 	 * @enum {string}
 	 * @alias module:sap/base/i18n/date/CalendarType
-	 * @private
-	 * @ui5-restricted sap.ui.core sap/base/i18n
+	 * @public
+	 * @since 1.120
 	 */
 	var CalendarType = {
 

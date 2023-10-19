@@ -11,7 +11,7 @@ sap.ui.define([
 	Opa5.createPageObjects({
 		onTheAddAdaptationDialogPage: {
 			actions: {
-				iEnterContextBasedAdaptationTitle: function(sAdaptationTitle) {
+				iEnterContextBasedAdaptationTitle(sAdaptationTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Input",
 						labelFor: {
@@ -24,11 +24,11 @@ sap.ui.define([
 						})
 					});
 				},
-				iClickAndSelectPriorityForAdaptation: function(iZeroBasedPriority) {
+				iClickAndSelectPriorityForAdaptation(iZeroBasedPriority) {
 					this.iClickOnPrioritySelection();
 					this.iSelectContextBasedAdaptationPriority(iZeroBasedPriority);
 				},
-				iClickOnPrioritySelection: function() {
+				iClickOnPrioritySelection() {
 					return this.waitFor({
 						controlType: "sap.m.Select",
 						labelFor: {
@@ -40,23 +40,23 @@ sap.ui.define([
 						})
 					});
 				},
-				iSelectContextBasedAdaptationPriority: function(iZeroBasedPriority) {
+				iSelectContextBasedAdaptationPriority(iZeroBasedPriority) {
 					return this.waitFor({
 						controlType: "sap.ui.core.Item",
 						bindingPath: {
-							path: "/priority/" + iZeroBasedPriority,
+							path: `/priority/${iZeroBasedPriority}`,
 							propertyPath: "key",
 							modelName: "dialogModel"
 						},
 						searchOpenDialogs: true,
 						actions: new Press(),
-						success: function(vControl) {
+						success(vControl) {
 							Opa5.assert.ok(true, vControl, true);
 						},
 						errorMessage: "Did not find Select Item"
 					});
 				},
-				iClickOnSave: function() {
+				iClickOnSave() {
 					return this.waitFor({
 						i18NText: {
 							propertyName: "text",
@@ -66,7 +66,7 @@ sap.ui.define([
 						actions: new Press()
 					});
 				},
-				iClickOnCancel: function() {
+				iClickOnCancel() {
 					return this.waitFor({
 						i18NText: {
 							propertyName: "text",
@@ -78,69 +78,69 @@ sap.ui.define([
 				}
 			},
 			assertions: {
-				iShouldSeeDialogTitle: function(sTitle) {
+				iShouldSeeDialogTitle(sTitle) {
 					this.waitFor({
 						controlType: "sap.m.Title",
 						properties: {
 							text: sTitle
 						},
 						searchOpenDialogs: true,
-						success: function(vControls) {
+						success(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getText(), sTitle, "the correct dialog title is displayed: " + sTitle);
+							Opa5.assert.strictEqual(oControl.getText(), sTitle, `the correct dialog title is displayed: ${sTitle}`);
 						}
 					});
 				},
-				iShouldSeeContextBasedAdaptationTitle: function(sContextBasedTitle) {
+				iShouldSeeContextBasedAdaptationTitle(sContextBasedTitle) {
 					return this.waitFor({
 						controlType: "sap.m.Input",
 						labelFor: {
 							text: "Title"
 						},
 						searchOpenDialogs: true,
-						success: function(vControls) {
+						success(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValue(), sContextBasedTitle, "I see entered adaptation title: " + sContextBasedTitle);
+							Opa5.assert.strictEqual(oControl.getValue(), sContextBasedTitle, `I see entered adaptation title: ${sContextBasedTitle}`);
 						}
 					});
 				},
-				iShouldSeeContextBasedAdaptationTitleValueState: function(valueState, valueStateText) {
+				iShouldSeeContextBasedAdaptationTitleValueState(valueState, valueStateText) {
 					return this.waitFor({
 						controlType: "sap.m.Input",
 						labelFor: {
 							text: "Title"
 						},
 						searchOpenDialogs: true,
-						success: function(vControls) {
+						success(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getValueState(), valueState, "I see input value state " + valueState);
-							Opa5.assert.strictEqual(oControl.getValueStateText(), valueStateText, "I see value state text " + valueStateText);
+							Opa5.assert.strictEqual(oControl.getValueState(), valueState, `I see input value state ${valueState}`);
+							Opa5.assert.strictEqual(oControl.getValueStateText(), valueStateText, `I see value state text ${valueStateText}`);
 						}
 					});
 				},
-				iShouldSeeSelectedContextBasedAdaptationPriority: function(sRoleText) {
+				iShouldSeeSelectedContextBasedAdaptationPriority(sRoleText) {
 					return this.waitFor({
 						controlType: "sap.m.Select",
 						labelFor: {
 							text: "Priority"
 						},
 						searchOpenDialogs: true,
-						success: function(vControl) {
+						success(vControl) {
 							var oControl = vControl[0] || vControl;
-							Opa5.assert.strictEqual(oControl.getSelectedItem().getText(), sRoleText, "I see entered adaptation title: " + sRoleText);
+							Opa5.assert.strictEqual(oControl.getSelectedItem().getText(), sRoleText, `I see entered adaptation title: ${sRoleText}`);
 						}
 					});
 				},
-				iShouldSeeContextSharingVisibilityContainer: function() {
+				iShouldSeeContextSharingVisibilityContainer() {
 					return this.waitFor({
 						id: "contextSharingContainer",
 						searchOpenDialogs: true,
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "I see context sharing container");
 						}
 					});
 				},
-				iShouldSeeSaveButtonEnabled: function(bIsEnabled) {
+				iShouldSeeSaveButtonEnabled(bIsEnabled) {
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						enabled: bIsEnabled,
@@ -149,13 +149,13 @@ sap.ui.define([
 							key: "APP_VARIANT_DIALOG_SAVE"
 						},
 						searchOpenDialogs: true,
-						success: function(vControls) {
+						success(vControls) {
 							var oControl = vControls[0] || vControls;
-							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, "I see save button with enabled status: " + bIsEnabled);
+							Opa5.assert.strictEqual(oControl.getProperty("enabled"), bIsEnabled, `I see save button with enabled status: ${bIsEnabled}`);
 						}
 					});
 				},
-				iShouldSeeAddAdaptationDialog: function() {
+				iShouldSeeAddAdaptationDialog() {
 					return this.waitFor({
 						controlType: "sap.m.Dialog",
 						i18NText: {
@@ -163,12 +163,12 @@ sap.ui.define([
 							key: "SAC_DIALOG_HEADER"
 						},
 						searchOpenDialogs: true,
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "I see save adaptation dialog");
 						}
 					});
 				},
-				iShouldSeeEditAdaptationDialog: function() {
+				iShouldSeeEditAdaptationDialog() {
 					return this.waitFor({
 						controlType: "sap.m.Dialog",
 						i18NText: {
@@ -176,12 +176,12 @@ sap.ui.define([
 							key: "EAC_DIALOG_HEADER"
 						},
 						searchOpenDialogs: true,
-						success: function() {
+						success() {
 							Opa5.assert.ok(true, "I see edit adaptation dialog");
 						}
 					});
 				},
-				iShouldSeePriorityItems: function(nPriorities) {
+				iShouldSeePriorityItems(nPriorities) {
 					return this.waitFor({
 						controlType: "sap.ui.core.Item",
 						bindingPath: {
@@ -189,8 +189,8 @@ sap.ui.define([
 							modelName: "dialogModel"
 						},
 						searchOpenDialogs: true,
-						success: function(vControls) {
-							Opa5.assert.strictEqual(vControls.length, nPriorities, "I see " + nPriorities + " priority etries.");
+						success(vControls) {
+							Opa5.assert.strictEqual(vControls.length, nPriorities, `I see ${nPriorities} priority etries.`);
 						}
 					});
 				}

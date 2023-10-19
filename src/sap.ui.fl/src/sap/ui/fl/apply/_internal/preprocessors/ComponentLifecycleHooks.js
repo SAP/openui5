@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/Applier",
@@ -14,9 +15,11 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement"
 ], function(
 	Log,
+	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
 	ChangesApplier,
@@ -27,13 +30,13 @@ sap.ui.define([
 	FlexControllerFactory,
 	Layer,
 	Utils,
+	JSONModel,
 	Measurement
 ) {
 	"use strict";
 
 	/**
 	 * @namespace sap.ui.fl.apply._internal.preprocessors.ComponentLifecycleHooks
-	 * @experimental Since 1.114
 	 * @since Since 1.114
 	 * @author SAP SE
 	 *
@@ -62,21 +65,20 @@ sap.ui.define([
 			return Promise.resolve(oResult);
 		}
 
-		var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + Layer.CUSTOMER);
+		var sRestartingComponent = window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 		if (sRestartingComponent) {
 			var sComponentId = ManifestUtils.getFlexReferenceForControl(oComponent);
 			if (sRestartingComponent !== sComponentId && sRestartingComponent !== "true") {
-				Log.error("an application component was started " +
-					"which does not match the component for which the restart was triggered:\n" +
-					"Triggering component: " + sRestartingComponent + "\n" +
-					"Started component: " + sComponentId);
+				Log.error(`an application component was started which does not match the component for which the restart was triggered:
+					Triggering component: ${sRestartingComponent}
+					Started component: ${sComponentId}`);
 
 				return Promise.resolve(oResult);
 			}
 
 			return new Promise(function(resolve, reject) {
 				Promise.all([
-					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true}),
+					Lib.load({name: "sap.ui.rta"}),
 					oComponent.rootControlLoaded()
 				])
 				.then(function() {
@@ -96,13 +98,37 @@ sap.ui.define([
 		return Promise.resolve(oResult);
 	}
 
+	/**
+	 * Binds a json model to the component if a vendor change is loaded. This will enable the translation for those changes.
+	 * Used on the NEO stack
+	 * @param {sap.ui.core.Component} oAppComponent - Component instance
+	 */
+	function createVendorTranslationModelIfNecessary(oAppComponent) {
+		const sReference = ManifestUtils.getFlexReferenceForControl(oAppComponent);
+		const oStorageResponse = FlexState.getStorageResponse(sReference);
+		if (
+			oStorageResponse.messagebundle
+			&& !oAppComponent.getModel("i18nFlexVendor")
+			&& oStorageResponse.changes?.changes?.some((oChange) => {
+				return oChange.layer === Layer.VENDOR;
+			})
+		) {
+			oAppComponent.setModel(new JSONModel(oStorageResponse.messagebundle), "i18nFlexVendor");
+		}
+	}
+
 	function propagateChangesForAppComponent(oAppComponent) {
 		// only manifest with type = "application" will fetch changes
 		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		var oVariantModel;
 		return oFlexController._oChangePersistence.loadChangesMapForComponent(oAppComponent)
 		.then(function(fnGetChangesMap) {
-			var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(ChangesApplier, fnGetChangesMap, oAppComponent, oFlexController);
+			var fnPropagationListener = ChangesApplier.applyAllChangesForControl.bind(
+				ChangesApplier,
+				fnGetChangesMap,
+				oAppComponent,
+				oFlexController
+			);
 			fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 			oAppComponent.addPropagationListener(fnPropagationListener);
 			oVariantModel = ComponentLifecycleHooks._createVariantModel(oFlexController, oAppComponent);
@@ -119,17 +145,16 @@ sap.ui.define([
 
 	function getChangesAndPropagate(oComponent, vConfig) {
 		// if component's manifest is of type 'application' then only a flex controller and change persistence instances are created.
-		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
+		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created.
+		// The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
 			var sComponentId = oComponent.getId();
-			// TODO: remove this line when the maps and filtered response are always up to data
-			// Currently with the variants the maps are out of sync when the app gets loaded again without complete reload
-			FlexState.rebuildFilteredResponse(ManifestUtils.getFlexReferenceForControl(oComponent));
 			var oReturnPromise = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
 			})
 			.then(propagateChangesForAppComponent.bind(this, oComponent))
+			.then(createVendorTranslationModelIfNecessary.bind(this, oComponent))
 			.then(function() {
 				// update any potential embedded component waiting for this app component
 				if (oEmbeddedComponentsPromises[sComponentId]) {
@@ -173,7 +198,8 @@ sap.ui.define([
 		});
 
 		// manifest descriptor changes for ABAP mixed mode can only be applied in this hook,
-		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook), but the manifest is still adaptable
+		// because at this point all libs have been loaded (in contrast to the first Component._fnPreprocessManifest hook),
+		// but the manifest is still adaptable
 		return AppDescriptorApplier.applyChangesIncludedInManifest(oManifest, ApplyStrategyFactory.getRuntimeStrategy());
 	}
 
@@ -192,8 +218,8 @@ sap.ui.define([
 	 * @param {object} vConfig - Configuration of loaded component
 	 * @returns {Promise} Promise which resolves when all relevant tasks for changes propagation have been processed
 	 */
-	ComponentLifecycleHooks.instanceCreatedHook = function() {
-		return getChangesAndPropagate.apply(undefined, arguments);
+	ComponentLifecycleHooks.instanceCreatedHook = function(...aArgs) {
+		return getChangesAndPropagate(...aArgs);
 	};
 
 	/**
@@ -206,8 +232,8 @@ sap.ui.define([
 	 * @param {object} oManifest - Copy of the manifest of loaded component
 	 * @returns {Promise} Resolves after all Manifest changes are applied
 	 */
-	ComponentLifecycleHooks.componentLoadedHook = function() {
-		return onLoadComponent.apply(undefined, arguments);
+	ComponentLifecycleHooks.componentLoadedHook = function(...aArgs) {
+		return onLoadComponent(...aArgs);
 	};
 
 	return ComponentLifecycleHooks;

@@ -1,31 +1,33 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Plugin",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	Plugin,
 	Button,
 	VerticalLayout,
 	sinon,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Busy Handling", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPlugin = new Plugin();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -67,7 +69,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a Plugin is initialized with register methods", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			this.oButton = new Button();
@@ -76,7 +78,7 @@ sap.ui.define([
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout]
@@ -98,7 +100,7 @@ sap.ui.define([
 			this.oPlugin.registerAggregationOverlay = function() { this.iRegisterAggregationOverlayCalls++; }.bind(this);
 			this.oPlugin.deregisterAggregationOverlay = function() { this.iRegisterAggregationOverlayCalls--; }.bind(this);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout.destroy();
 			this.oPlugin.destroy();
 			this.oDesignTime.destroy();
@@ -114,7 +116,7 @@ sap.ui.define([
 				"register was called for all aggregation overlays"
 			);
 		});
-		QUnit.test("when the plugin is added to designTime and new controls are added to designTime as root control and inside the controls", function(assert) {
+		QUnit.test("when the plugin is added to designTime and new controls are added to designTime as root control and inside the controls", async function(assert) {
 			var fnDone = assert.async();
 
 			var oButton = new Button();
@@ -123,7 +125,7 @@ sap.ui.define([
 				content: oButton
 			});
 			oLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime.addPlugin(this.oPlugin);
 			this.iRegisterElementOverlayCalls = 0;
@@ -168,13 +170,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a Plugin is initialized", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPlugin = new Plugin();
 			this.fnGetResponsibleElement = function() {};
 			this.fnGetAction = function() {};
 			this.fnGetData = function() {};
 			this.oOverlay = {
-				getElement: function() {
+				getElement() {
 					return "dummyElement";
 				},
 				getDesignTimeMetadata: function() {
@@ -186,7 +188,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPlugin.destroy();
 			sandbox.restore();
 		}
@@ -207,9 +209,9 @@ sap.ui.define([
 			assert.equal(this.oPlugin.isBusy(), false, "by default the plugin returns false");
 
 			sandbox.stub(this.oPlugin, "getDesignTime").returns({
-				getSelectionManager: function() {
+				getSelectionManager() {
 					return {
-						get: function() {
+						get() {
 							assert.ok(true, "the function was called");
 						}
 					};
@@ -235,8 +237,9 @@ sap.ui.define([
 			};
 			this.oOverlay.getDesignTimeMetadata = function() {
 				return {
-					isResponsibleActionAvailable: function() {
-						assert.strictEqual(arguments[0], sActionName, "then the default action name was passed to designTimeMetadata.isResponsibleActionAvailable()");
+					isResponsibleActionAvailable(...aArgs) {
+						assert.strictEqual(aArgs[0], sActionName,
+							"then the default action name was passed to designTimeMetadata.isResponsibleActionAvailable()");
 						return true;
 					}
 				};
@@ -250,8 +253,9 @@ sap.ui.define([
 
 			this.oOverlay.getDesignTimeMetadata = function() {
 				return {
-					isResponsibleActionAvailable: function() {
-						assert.strictEqual(arguments[0], sActionName, "then the custom action name was passed to designTimeMetadata.isResponsibleActionAvailable()");
+					isResponsibleActionAvailable(...aArgs) {
+						assert.strictEqual(aArgs[0], sActionName,
+							"then the custom action name was passed to designTimeMetadata.isResponsibleActionAvailable()");
 						return true;
 					}
 				};
@@ -308,7 +312,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that _getMenuItems is called for an overlay", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oPlugin = new Plugin();
 			this.oPlugin.handler = function() {
 				return true;
@@ -332,7 +336,7 @@ sap.ui.define([
 			this.fnIsResponsibleActionAvailable = function() {};
 			this.fnGetLibraryText = function() {};
 			this.oOverlay = {
-				getElement: function() {
+				getElement() {
 					return "dummyElement";
 				},
 				getDesignTimeMetadata: function() {
@@ -346,7 +350,7 @@ sap.ui.define([
 				}.bind(this)
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oPlugin.destroy();
 			sandbox.restore();
 		}
@@ -385,7 +389,7 @@ sap.ui.define([
 
 			assert.equal(
 				this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"})[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then default text is returned in the menu item"
 			);
 		});
@@ -393,8 +397,8 @@ sap.ui.define([
 		QUnit.test("when there is action name defined as a function", function(assert) {
 			this.fnGetAction = function() {
 				return {
-					name: function(oElement) {
-						return oElement + "name";
+					name(oElement) {
+						return `${oElement}name`;
 					}
 				};
 			};
@@ -425,12 +429,12 @@ sap.ui.define([
 			this.oPlugin.isAvailable = sandbox.stub();
 			var oResponsibleElement = new Button("responsibleElement");
 			var oResponsibleElementOverlay = {
-				getElement: function() {
+				getElement() {
 					return oResponsibleElement;
 				},
-				getDesignTimeMetadata: function() {
+				getDesignTimeMetadata() {
 					return {
-						getAction: function() {
+						getAction() {
 							return {};
 						}
 					};
@@ -442,8 +446,9 @@ sap.ui.define([
 				assert.equal(oElement, "dummyElement", "then getResponsibleElement() called to retrieve the responsible element");
 				return oResponsibleElement;
 			};
-			this.fnIsResponsibleActionAvailable = function() {
-				assert.equal(arguments[0], "dummyActionName", "then designTimeMetadata.isResponsibleActionAvailable() called with the plugin action name");
+			this.fnIsResponsibleActionAvailable = function(...aArgs) {
+				assert.equal(aArgs[0], "dummyActionName",
+					"then designTimeMetadata.isResponsibleActionAvailable() called with the plugin action name");
 				return true;
 			};
 
@@ -456,11 +461,12 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();
-			assert.deepEqual(aMenuItems[0].responsible[0], oResponsibleElementOverlay, "then the responsible element overlay was attached to the menu item");
+			assert.deepEqual(aMenuItems[0].responsible[0], oResponsibleElementOverlay,
+				"then the responsible element overlay was attached to the menu item");
 		});
 
 		QUnit.test("when an action is enabled on a responsible element's overlay, but disabled on the source overlay and _getMenuItems() is called", function(assert) {
@@ -468,7 +474,7 @@ sap.ui.define([
 			this.oPlugin.isAvailable = sandbox.stub();
 			var oResponsibleElement = new Button("responsibleElement");
 			var oResponsibleElementOverlay = {
-				getElement: function() {
+				getElement() {
 					return oResponsibleElement;
 				}
 			};
@@ -481,8 +487,9 @@ sap.ui.define([
 				assert.equal(oElement, "dummyElement", "then getResponsibleElement() called to retrieve the responsible element");
 				return oResponsibleElement;
 			};
-			this.fnIsResponsibleActionAvailable = function() {
-				assert.equal(arguments[0], "dummyActionName", "then designTimeMetadata.isResponsibleActionAvailable() called with the plugin action name");
+			this.fnIsResponsibleActionAvailable = function(...aArgs) {
+				assert.equal(aArgs[0], "dummyActionName",
+					"then designTimeMetadata.isResponsibleActionAvailable() called with the plugin action name");
 				return false;
 			};
 
@@ -495,7 +502,7 @@ sap.ui.define([
 			var aMenuItems = this.oPlugin._getMenuItems([this.oOverlay], {pluginId: "CTX_RENAME"});
 			assert.equal(
 				aMenuItems[0].text,
-				oCore.getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
+				Lib.getResourceBundleFor("sap.ui.rta").getText("CTX_RENAME"),
 				"then the menu item from the responsible element is returned"
 			);
 			oResponsibleElement.destroy();

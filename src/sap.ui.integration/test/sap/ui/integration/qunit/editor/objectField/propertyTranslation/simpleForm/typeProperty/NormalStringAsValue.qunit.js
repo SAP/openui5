@@ -226,36 +226,38 @@ sap.ui.define([
 									}
 								}
 							}
-							assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
-							assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
-							oSaveButton3.firePress();
 							wait().then(function () {
-								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
-								for (var i = 0; i < oLanguageItems3.length; i++) {
-									var oCustomData = oLanguageItems3[i].getCustomData();
-									if (oCustomData && oCustomData.length > 0) {
-										var sLanguage = oCustomData[0].getKey();
-										var sExpectedValue = "text value 1";
-										if (sLanguage === "en") {
-											sExpectedValue = "text value 1 en";
-										}
-										var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-									}
-								}
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value");
-								var sUUID = oField._getCurrentProperty("value")._dt._uuid;
-								var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-								assert.equal(sTranslationTextOfEN, "text value 1 en", "Texts: Translation text of EN correct");
-
-								oDeleteButton.firePress();
+								assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
+								assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
+								oSaveButton3.firePress();
 								wait().then(function () {
-									assert.ok(!oDeleteButton.getEnabled(), "SimpleForm: Delete button is not enabled");
-									assert.ok(!oField._getCurrentProperty("value"), "Field 1: no Value");
-									sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-									assert.ok(!sTranslationTextOfEN, "Texts: no value");
-									resolve();
+									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									for (var i = 0; i < oLanguageItems3.length; i++) {
+										var oCustomData = oLanguageItems3[i].getCustomData();
+										if (oCustomData && oCustomData.length > 0) {
+											var sLanguage = oCustomData[0].getKey();
+											var sExpectedValue = "text value 1";
+											if (sLanguage === "en") {
+												sExpectedValue = "text value 1 en";
+											}
+											var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										}
+									}
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value");
+									var sUUID = oField._getCurrentProperty("value")._dt._uuid;
+									var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+									assert.equal(sTranslationTextOfEN, "text value 1 en", "Texts: Translation text of EN correct");
+
+									oDeleteButton.firePress();
+									wait().then(function () {
+										assert.ok(!oDeleteButton.getEnabled(), "SimpleForm: Delete button is not enabled");
+										assert.ok(!oField._getCurrentProperty("value"), "Field 1: no Value");
+										sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+										assert.ok(!sTranslationTextOfEN, "Texts: no value");
+										resolve();
+									});
 								});
 							});
 						});
@@ -337,28 +339,30 @@ sap.ui.define([
 									}
 								}
 							}
-							assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
-							assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
-							oResetButton3.firePress();
 							wait().then(function () {
-								assert.ok(!oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button disabled");
-								assert.ok(!oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button disabled");
-								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
-								for (var i = 0; i < oLanguageItems3.length; i++) {
-									var oCustomData = oLanguageItems3[i].getCustomData();
-									if (oCustomData && oCustomData.length > 0) {
-										var sLanguage = oCustomData[0].getKey();
-										var sExpectedValue = "text value 1";
-										var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+								assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
+								assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
+								oResetButton3.firePress();
+								wait().then(function () {
+									assert.ok(!oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button disabled");
+									assert.ok(!oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button disabled");
+									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+									assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+									for (var i = 0; i < oLanguageItems3.length; i++) {
+										var oCustomData = oLanguageItems3[i].getCustomData();
+										if (oCustomData && oCustomData.length > 0) {
+											var sLanguage = oCustomData[0].getKey();
+											var sExpectedValue = "text value 1";
+											var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+										}
 									}
-								}
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value");
-								var sUUID = oField._getCurrentProperty("value")._dt._uuid;
-								var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-								assert.ok(!sTranslationTextOfEN, "Texts: no value");
-								resolve();
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value");
+									var sUUID = oField._getCurrentProperty("value")._dt._uuid;
+									var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+									assert.ok(!sTranslationTextOfEN, "Texts: no value");
+									resolve();
+								});
 							});
 						});
 					});
@@ -439,57 +443,59 @@ sap.ui.define([
 									}
 								}
 							}
-							assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
-							assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
-							oSaveButton3.firePress();
 							wait().then(function () {
-								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
-								for (var i = 0; i < oLanguageItems3.length; i++) {
-									var oCustomData = oLanguageItems3[i].getCustomData();
-									if (oCustomData && oCustomData.length > 0) {
-										var sLanguage = oCustomData[0].getKey();
-										var sExpectedValue = "string value 1";
-										if (sLanguage === "en") {
-											sExpectedValue = "string1 en";
-										}
-										var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-									}
-								}
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 1"}), "Field 1: DT Value");
-								var sUUID = oField._getCurrentProperty("value")._dt._uuid;
-								var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-								assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-
-								oFormField3.setValue("string value 2");
-								oFormField3.fireChange({ value: "string value 2"});
+								assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
+								assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
+								oSaveButton3.firePress();
 								wait().then(function () {
-									assert.equal(oFormField3.getValue(), "string value 2", "SimpleForm field 3: Has new value");
-									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 2"}), "Field 1: DT Value updated");
-									assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
-									oValueHelpIcon3 = oFormField3._oValueHelpIcon;
-									assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
-									assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm field 3: Value help icon visible");
-									sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-									assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-									oValueHelpIcon3.firePress();
-									wait(1500).then(function () {
-										oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-										assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
-										for (var i = 0; i < oLanguageItems3.length; i++) {
-											var oCustomData = oLanguageItems3[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = "string value 2";
-												if (sLanguage === "en"){
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									for (var i = 0; i < oLanguageItems3.length; i++) {
+										var oCustomData = oLanguageItems3[i].getCustomData();
+										if (oCustomData && oCustomData.length > 0) {
+											var sLanguage = oCustomData[0].getKey();
+											var sExpectedValue = "string value 1";
+											if (sLanguage === "en") {
+												sExpectedValue = "string1 en";
 											}
+											var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 										}
-										resolve();
+									}
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 1"}), "Field 1: DT Value");
+									var sUUID = oField._getCurrentProperty("value")._dt._uuid;
+									var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+									assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+
+									oFormField3.setValue("string value 2");
+									oFormField3.fireChange({ value: "string value 2"});
+									wait().then(function () {
+										assert.equal(oFormField3.getValue(), "string value 2", "SimpleForm field 3: Has new value");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 2"}), "Field 1: DT Value updated");
+										assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
+										oValueHelpIcon3 = oFormField3._oValueHelpIcon;
+										assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
+										assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm field 3: Value help icon visible");
+										sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+										oValueHelpIcon3.firePress();
+										wait(1500).then(function () {
+											oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+											assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+											for (var i = 0; i < oLanguageItems3.length; i++) {
+												var oCustomData = oLanguageItems3[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = "string value 2";
+													if (sLanguage === "en"){
+														sExpectedValue = "string1 en";
+													}
+													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											resolve();
+										});
 									});
 								});
 							});
@@ -572,57 +578,59 @@ sap.ui.define([
 									}
 								}
 							}
-							assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
-							assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
-							oSaveButton3.firePress();
 							wait().then(function () {
-								var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-								assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
-								for (var i = 0; i < oLanguageItems3.length; i++) {
-									var oCustomData = oLanguageItems3[i].getCustomData();
-									if (oCustomData && oCustomData.length > 0) {
-										var sLanguage = oCustomData[0].getKey();
-										var sExpectedValue = "string value 1";
-										if (sLanguage === "en") {
-											sExpectedValue = "string1 en";
-										}
-										var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-										assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
-									}
-								}
-								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 1"}), "Field 1: DT Value");
-								var sUUID = oField._getCurrentProperty("value")._dt._uuid;
-								var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-								assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-
-								oFormField3.setValue("{i18n>string1}");
-								oFormField3.fireChange({ value: "{i18n>string1}"});
+								assert.ok(oSaveButton3.getEnabled(), "oTranslationPopover3 footer: save button enabled");
+								assert.ok(oResetButton3.getEnabled(), "oTranslationPopover3 footer: reset button enabled");
+								oSaveButton3.firePress();
 								wait().then(function () {
-									assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 3: Has new value");
-									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
-									assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
-									oValueHelpIcon3 = oFormField3._oValueHelpIcon;
-									assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
-									assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm field 3: Value help icon visible");
-									sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
-									assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
-									oValueHelpIcon3.firePress();
-									wait(1500).then(function () {
-										oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
-										assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
-										for (var i = 0; i < oLanguageItems3.length; i++) {
-											var oCustomData = oLanguageItems3[i].getCustomData();
-											if (oCustomData && oCustomData.length > 0) {
-												var sLanguage = oCustomData[0].getKey();
-												var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
-												if (sLanguage === "en"){
-													sExpectedValue = "string1 en";
-												}
-												var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
-												assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+									var oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+									assert.equal(oLanguageItems3.length, 51, "oTranslationPopover3 Content: length");
+									for (var i = 0; i < oLanguageItems3.length; i++) {
+										var oCustomData = oLanguageItems3[i].getCustomData();
+										if (oCustomData && oCustomData.length > 0) {
+											var sLanguage = oCustomData[0].getKey();
+											var sExpectedValue = "string value 1";
+											if (sLanguage === "en") {
+												sExpectedValue = "string1 en";
 											}
+											var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+											assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
 										}
-										resolve();
+									}
+									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string value 1"}), "Field 1: DT Value");
+									var sUUID = oField._getCurrentProperty("value")._dt._uuid;
+									var sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+									assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+
+									oFormField3.setValue("{i18n>string1}");
+									oFormField3.fireChange({ value: "{i18n>string1}"});
+									wait().then(function () {
+										assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 3: Has new value");
+										assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
+										assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
+										oValueHelpIcon3 = oFormField3._oValueHelpIcon;
+										assert.ok(oValueHelpIcon3, "SimpleForm field 3: Value help icon exist");
+										assert.ok(oValueHelpIcon3.getVisible(), "SimpleForm field 3: Value help icon visible");
+										sTranslationTextOfEN = oField.getTranslationValueInTexts("en", sUUID, "text");
+										assert.equal(sTranslationTextOfEN, "string1 en", "Texts: Translation text of EN correct");
+										oValueHelpIcon3.firePress();
+										wait(1500).then(function () {
+											oLanguageItems3 = oTranslationPopover3.getContent()[0].getItems();
+											assert.equal(oLanguageItems3.length, 50, "oTranslationPopover3 Content: length");
+											for (var i = 0; i < oLanguageItems3.length; i++) {
+												var oCustomData = oLanguageItems3[i].getCustomData();
+												if (oCustomData && oCustomData.length > 0) {
+													var sLanguage = oCustomData[0].getKey();
+													var sExpectedValue = _oOriginExpectedValues["string1"][sLanguage] || _oOriginExpectedValues["string1"]["default"];
+													if (sLanguage === "en"){
+														sExpectedValue = "string1 en";
+													}
+													var sCurrentValue = oLanguageItems3[i].getContent()[0].getItems()[1].getValue();
+													assert.equal(sCurrentValue, sExpectedValue, "oTranslationPopover3 Content: item " + i + " " + sLanguage + ", current: " + sCurrentValue + ", expected: " + sExpectedValue);
+												}
+											}
+											resolve();
+										});
 									});
 								});
 							});

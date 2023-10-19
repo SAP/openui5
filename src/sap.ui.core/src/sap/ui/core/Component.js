@@ -8,6 +8,7 @@ sap.ui.define([
 	'./ComponentMetadata',
 	'./Element',
 	'sap/base/config',
+	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
 	'sap/base/util/deepExtend',
 	'sap/base/util/merge',
@@ -19,8 +20,8 @@ sap.ui.define([
 	'sap/ui/performance/trace/Interaction',
 	'sap/base/assert',
 	'sap/base/Log',
+	'sap/base/util/Deferred',
 	'sap/base/util/ObjectPath',
-	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/strings/camelize',
@@ -33,6 +34,7 @@ sap.ui.define([
 	ComponentMetadata,
 	Element,
 	BaseConfig,
+	Localization,
 	extend,
 	deepExtend,
 	merge,
@@ -44,8 +46,8 @@ sap.ui.define([
 	Interaction,
 	assert,
 	Log,
+	Deferred,
 	ObjectPath,
-	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
 	camelize,
@@ -319,7 +321,7 @@ sap.ui.define([
 				componentData: 'any'
 			},
 			version : "0.0",
-			/*enable/disable type validation by MessageManager
+			/*enable/disable type validation by Messaging
 			handleValidation: 'boolean'*/
 			includes : [],    // css, javascript files that should be used in the component
 			dependencies : {  // external dependencies
@@ -453,25 +455,30 @@ sap.ui.define([
 	function getCustomizingComponent(vObject) {
 		var oComponent, sComponentId;
 
-		if (!Configuration.getDisableCustomizing()) {
-			if (typeof vObject === "string") {
-				sComponentId = vObject;
-			} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
-				sComponentId = Component.getOwnerIdFor(vObject);
-			} else {
-				oComponent = vObject;
-			}
+		/**
+		 * deprecated as of Version 1.120
+		 */
+		if (BaseConfig.get({name: "sapUiXxDisableCustomizing", type: BaseConfig.Type.Boolean})) {
+			return oComponent;
+		}
 
-			if (sComponentId) {
-				oComponent = Component.get(sComponentId);
-			}
+		if (typeof vObject === "string") {
+			sComponentId = vObject;
+		} else if (vObject && typeof vObject.isA === "function" && !vObject.isA("sap.ui.core.Component")) {
+			sComponentId = Component.getOwnerIdFor(vObject);
+		} else {
+			oComponent = vObject;
+		}
 
-			if (oComponent) {
-				if (oComponent.getExtensionComponent) {
-					oComponent = oComponent.getExtensionComponent();
-					if (!oComponent) {
-						throw new Error("getExtensionComponent() must return an instance.");
-					}
+		if (sComponentId) {
+			oComponent = Component.get(sComponentId);
+		}
+
+		if (oComponent) {
+			if (oComponent.getExtensionComponent) {
+				oComponent = oComponent.getExtensionComponent();
+				if (!oComponent) {
+					throw new Error("getExtensionComponent() must return an instance.");
 				}
 			}
 		}
@@ -501,6 +508,23 @@ sap.ui.define([
 
 		var oComponent = getCustomizingComponent(vObject);
 		return oComponent ? oComponent._getManifestEntry(sPath, true) : undefined;
+	};
+
+	/**
+	 * Currently active preload mode for components or falsy value.
+	 *
+	 * @returns {string} component preload mode
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ui.fl
+	 * @experimental Might change completely.
+	 * @since 1.120.0
+	 */
+	Component.getComponentPreloadMode = function() {
+		return BaseConfig.get({
+			name: "sapUiXxComponentPreload",
+			type: BaseConfig.Type.String,
+			external: true
+		}) || Library.getPreloadMode();
 	};
 
 	/**
@@ -783,36 +807,41 @@ sap.ui.define([
 		// init the component models
 		this.initComponentModels();
 
-		// error handler (if exists)
-		if (this.onWindowError) {
-			this._fnWindowErrorHandler = function(oEvent) {
-				var oError = oEvent.originalEvent;
-				this.onWindowError(oError.message, oError.filename, oError.lineno);
+		/**
+		 * @deprecated Since 1.119
+		 */
+		(() => {
+			// error handler (if exists)
+			if (this.onWindowError) {
+				this._fnWindowErrorHandler = function(oEvent) {
+					var oError = oEvent.originalEvent;
+					this.onWindowError(oError.message, oError.filename, oError.lineno);
 
-			}.bind(this);
-			window.addEventListener("error", this._fnWindowErrorHandler);
-		}
+				}.bind(this);
+				window.addEventListener("error", this._fnWindowErrorHandler);
+			}
 
-		// before unload handler (if exists)
-		if (this.onWindowBeforeUnload) {
-			this._fnWindowBeforeUnloadHandler = function(oEvent) {
-				var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
-				// set returnValue for Chrome
-				if (typeof (vReturnValue) === 'string') {
-					oEvent.returnValue = vReturnValue;
-					oEvent.preventDefault();
-					return vReturnValue;
-				}
-			}.bind(this);
-			window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-		}
+			// before unload handler (if exists)
+			if (this.onWindowBeforeUnload) {
+				this._fnWindowBeforeUnloadHandler = function(oEvent) {
+					var vReturnValue = this.onWindowBeforeUnload.apply(this, arguments);
+					// set returnValue for Chrome
+					if (typeof (vReturnValue) === 'string') {
+						oEvent.returnValue = vReturnValue;
+						oEvent.preventDefault();
+						return vReturnValue;
+					}
+				}.bind(this);
+				window.addEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
+			}
 
-		// unload handler (if exists)
-		if (this.onWindowUnload) {
+			// unload handler (if exists)
+			if (this.onWindowUnload) {
 
-			this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
-			window.addEventListener("unload", this._fnWindowUnloadHandler);
-		}
+				this._fnWindowUnloadHandler = this.onWindowUnload.bind(this);
+				window.addEventListener("unload", this._fnWindowUnloadHandler);
+			}
+		})();
 
 	};
 
@@ -856,19 +885,24 @@ sap.ui.define([
 		}
 		delete this._mManifestModels;
 
-		// remove the event handlers
-		if (this._fnWindowErrorHandler) {
-			window.removeEventListener("error", this._fnWindowErrorHandler);
-			delete this._fnWindowErrorHandler;
-		}
-		if (this._fnWindowBeforeUnloadHandler) {
-			window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
-			delete this._fnWindowBeforeUnloadHandler;
-		}
-		if (this._fnWindowUnloadHandler) {
-			window.removeEventListener("unload", this._fnWindowUnloadHandler);
-			delete this._fnWindowUnloadHandler;
-		}
+		/**
+		 * @deprecated Since 1.119
+		 */
+		(() => {
+			// remove the event handlers
+			if (this._fnWindowErrorHandler) {
+				window.removeEventListener("error", this._fnWindowErrorHandler);
+				delete this._fnWindowErrorHandler;
+			}
+			if (this._fnWindowBeforeUnloadHandler) {
+				window.removeEventListener("beforeunload", this._fnWindowBeforeUnloadHandler);
+				delete this._fnWindowBeforeUnloadHandler;
+			}
+			if (this._fnWindowUnloadHandler) {
+				window.removeEventListener("unload", this._fnWindowUnloadHandler);
+				delete this._fnWindowUnloadHandler;
+			}
+		})();
 
 		// destroy event bus
 		if (this._oEventBus) {
@@ -909,11 +943,9 @@ sap.ui.define([
 		// destroy the object
 		ManagedObject.prototype.destroy.apply(this, arguments);
 
-		// unregister for messaging (on MessageManager)
-		var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-		if (MessageManager) {
-			MessageManager.unregisterObject(this);
-		}
+		// unregister for messaging (on Messaging)
+		const Messaging = sap.ui.require("sap/ui/core/Messaging");
+		Messaging?.unregisterObject(this);
 
 		// manifest exit (unload includes, ... / unregister customzing)
 		//   => either call exit on the instance specific manifest or the static one on the ComponentMetadata
@@ -1394,6 +1426,8 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowBeforeUnload
 	 * @function
+	 * @deprecated Since version 1.119, recommended to use the browser-native page lifecycle API,
+	 * providing events such as 'pageshow' and 'pagehide'
 	 */
 	//onWindowBeforeUnload : function() {},
 
@@ -1407,6 +1441,9 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowUnload
 	 * @function
+	 * @deprecated Since 1.119. Newer browser versions deprecate the browser-native 'unload' event.
+	 * Therefore, the former API won't reliably work anymore. Please have a look at the
+	 * browser-native page lifecycle API, e.g. its events 'pageshow' and 'pagehide'.
 	 */
 	//onWindowUnload : function() {},
 
@@ -1422,6 +1459,8 @@ sap.ui.define([
 	 * @since 1.15.1
 	 * @name sap.ui.core.Component.prototype.onWindowError
 	 * @function
+	 * @deprecated Since version 1.119, recommended to use the browser-native API
+	 * to listen for errors: window.addEventListener("error", function() { ... })
 	 */
 	//onWindowError : null, // function(sMessage, sFile, iLine) - function not added directly as it might result in bad stack traces in older browsers
 
@@ -2102,7 +2141,7 @@ sap.ui.define([
 		//   sap-ui-xx-preload-component-models-<componentName>=, => preload default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo, => preload "foo" + default model (empty string key)
 		//   sap-ui-xx-preload-component-models-<componentName>=foo,bar => preload "foo" + "bar" models
-		var sPreloadModels = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
+		var sPreloadModels = new URLSearchParams(window.location.search).get("sap-ui-xx-preload-component-models-" + oManifest.getComponentName());
 		var aPreloadModels = sPreloadModels && sPreloadModels.split(",");
 
 		for (var sModelName in mAllModelConfigurations) {
@@ -2358,7 +2397,7 @@ sap.ui.define([
 	 * @param {string} [mOptions.altManifestUrl] @since 1.61.0 Alternative URL for the manifest.json. If <code>mOptions.manifest</code>
 	 *     is set to an object value, this URL specifies the location to which the manifest object should resolve the relative
 	 *     URLs to.
-	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
+	 * @param {string} [mOptions.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
 	 * @param {object} [mOptions.asyncHints] Hints for asynchronous loading.
 	 *     <b>Beware:</b> This parameter is only used internally by the UI5 framework and compatibility cannot be guaranteed.
 	 *     The parameter must not be used in productive code, except in code delivered by the UI5 teams.
@@ -2462,7 +2501,7 @@ sap.ui.define([
 	 *              Component controller. Defaults to <code>sap.ui.getCore().getConfiguration().getManifestFirst()</code>
 	 *              <br/><b>DEPRECATED since 1.49.0, use <code>vConfig.manifest=true|false</code> instead!</b>
 	 *              Note that this property is ignored when <code>vConfig.manifest</code> has a value other than <code>undefined</code>.
-	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>MessageManager</code>
+	 * @param {string} [vConfig.handleValidation=false] If set to <code>true</code> validation of the component is handled by the <code>Messaging</code>
 	 * @returns {sap.ui.core.Component|Promise} the Component instance or a Promise in case of asynchronous loading
 	 *
 	 * @deprecated Since 1.56, use {@link sap.ui.core.Component.get Component.get} or {@link sap.ui.core.Component.create Component.create} instead.
@@ -2504,6 +2543,81 @@ sap.ui.define([
 		return componentFactory(vConfig, /*bLegacy=*/true);
 	};
 
+	/**
+	 * Collects the module names of the routing related classes from the given manifest:
+	 *   - Router (e.g. sap.m.routing.Router)
+	 *   - Targets (e.g. sap.ui.core.routing.Targets)
+	 *   - sap.ui.core.routing.Views
+	 *   - The base class of the root view (e.g. sap.ui.core.mvc.XMLView)
+	 * @param {sap.ui.core.Manifest} oManifest the manifest from which the routing config is read
+	 * @returns {string[]} an array containing the module names of all relevant routing classes
+	 */
+	function collectRoutingClasses(oManifest) {
+		const aModuleNames = [];
+
+		// lookup rootView class
+		let sRootViewType;
+		const oRootView = oManifest.getEntry("/sap.ui5/rootView");
+		if (typeof oRootView === "string") {
+			// String as rootView defaults to ViewType XML
+			// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
+			sRootViewType = "XML";
+		} else if (oRootView && typeof oRootView === "object" && oRootView.type) {
+			sRootViewType = oRootView.type;
+		}
+		if (sRootViewType && ViewType[sRootViewType]) {
+			const sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
+			aModuleNames.push(sViewClass);
+		}
+
+		// lookup of the router / targets and views class
+		// ASYNC Only: prevents lazy synchronous loading in UIComponent#init (regardless of manifirst or manilast)
+		const oRouting = oManifest.getEntry("/sap.ui5/routing");
+		if (oRouting) {
+			if (oRouting.routes) {
+				// the "sap.ui5/routing/config/routerClass" entry can also contain a Router constructor
+				// See the typedef "sap.ui.core.UIComponent.RoutingMetadata" in sap/ui/core/UIComponent.js
+				const vRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
+				if (typeof vRouterClass === "string") {
+					const sRouterClassModule = vRouterClass.replace(/\./g, "/");
+					aModuleNames.push(sRouterClassModule);
+				}
+			} else if (oRouting.targets) {
+				// Same as with "routes", see comment above.
+				const vTargetClass = oManifest.getEntry("/sap.ui5/routing/config/targetsClass") || "sap.ui.core.routing.Targets";
+				if (typeof vTargetClass === "string") {
+					const sTargetClassModule = vTargetClass.replace(/\./g, "/");
+					aModuleNames.push(sTargetClassModule);
+				}
+				aModuleNames.push("sap/ui/core/routing/Views");
+			}
+		}
+
+		return aModuleNames;
+	}
+
+	/**
+	 * Loads a module and logs a potential loading error as a warning.
+	 *
+	 * @param {string} sModuleName the module to be loaded
+	 * @param {string} sComponentName the component-name for which the module is loaded
+	 * @returns {Promise} the loading promise of the module
+	 */
+	function loadModuleAndLog(sModuleName, sComponentName) {
+		const def = new Deferred();
+
+		sap.ui.require([sModuleName], def.resolve, (err) => {
+			Log.warning(`Cannot load module '${sModuleName}'. ` +
+				"This will most probably cause an error once the module is used later on.",
+				sComponentName, "sap.ui.core.Component");
+			Log.warning(err);
+
+			def.resolve();
+		});
+
+		return def.promise;
+	}
+
 	/*
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
@@ -2511,15 +2625,15 @@ sap.ui.define([
 		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
 
 		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
-			Array.isArray(Configuration.getActiveTerminologies()) && Configuration.getActiveTerminologies().length) {
-			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Configuration.getActiveTerminologies())) {
+			Array.isArray(Localization.getActiveTerminologies()) && Localization.getActiveTerminologies().length) {
+			if (JSON.stringify(vConfig.activeTerminologies) !== JSON.stringify(Localization.getActiveTerminologies())) {
 				Log.warning(bLegacy ? "sap.ui.component: " : "Component.create: " +
-					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap.ui.core.Configuration#getActiveTerminologies';" +
+					"The 'activeTerminolgies' passed to the component factory differ from the ones defined on the global 'sap/base/i18n/Localization.getActiveTerminologies';" +
 					"This might lead to inconsistencies; ResourceModels that are not defined in the manifest and created by the component will use the globally configured terminologies.");
 			}
 		}
 		// get terminologies information: API -> Owner Component -> Configuration
-		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Configuration.getActiveTerminologies();
+		var aActiveTerminologies = vConfig.activeTerminologies || (oOwnerComponent && oOwnerComponent.getActiveTerminologies()) || Localization.getActiveTerminologies();
 
 		// Inherit cacheTokens from owner component if not defined in asyncHints
 		if (!vConfig.asyncHints || !vConfig.asyncHints.cacheTokens) {
@@ -2583,13 +2697,13 @@ sap.ui.define([
 			 */
 			var bHandleValidation = oInstance.getMetadata()._getManifestEntry("/sap.ui5/handleValidation");
 			if (bHandleValidation !== undefined || vConfig.handleValidation) {
-				var MessageManager = sap.ui.require("sap/ui/core/message/MessageManager");
-				if (MessageManager) {
-					MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+				const Messaging = sap.ui.require("sap/ui/core/Messaging");
+				if (Messaging) {
+					Messaging.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 				} else {
-					sap.ui.require(["sap/ui/core/message/MessageManager"], function(MessageManager) {
+					sap.ui.require(["sap/ui/core/Messaging"], function(Messaging) {
 						if (!oInstance.isDestroyed()) {
-							MessageManager.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
+							Messaging.registerObject(oInstance, bHandleValidation === undefined ? vConfig.handleValidation : bHandleValidation);
 						}
 					});
 				}
@@ -2638,7 +2752,18 @@ sap.ui.define([
 						return oMetadata.getManifestObject().loadDependenciesAndIncludes(true);
 					});
 				};
-				return loadDependenciesAndIncludes(oClass.getMetadata()).then(function () {
+				return loadDependenciesAndIncludes(oClass.getMetadata()).then(async function () {
+					const oManifest = oClass.getMetadata().getManifestObject();
+					const sComponentName = oManifest.getComponentName();
+
+					// after evaluating the manifest & loading the necessary dependencies,
+					// we make sure the routing related classes are required before instantiating the Component
+					const aRoutingClassNames = collectRoutingClasses(oManifest);
+					const aModuleLoadingPromises = aRoutingClassNames.map((sClassName) => {
+						return loadModuleAndLog(sClassName, sComponentName);
+					});
+					await Promise.all(aModuleLoadingPromises);
+
 					return ManagedObject.runWithOwner(function() {
 						return createInstance(oClass);
 					}, sCurrentOwnerId);
@@ -2830,8 +2955,7 @@ sap.ui.define([
 		var aActiveTerminologies = mOptions.activeTerminologies,
 			sName = oConfig.name,
 			sUrl = oConfig.url,
-			oConfiguration = Configuration,
-			bComponentPreload = /^(sync|async)$/.test(oConfiguration.getComponentPreload()),
+			bComponentPreload = /^(sync|async)$/.test(Component.getComponentPreloadMode()),
 			vManifest = oConfig.manifest,
 			bManifestFirst,
 			sManifestUrl,
@@ -2884,12 +3008,18 @@ sap.ui.define([
 		// which is not true - this component causes the load
 		Interaction.setStepComponent(sName);
 
+		/**
+		 * With Component.create() the manifest option cannot be undefined (default is <true>, other options see API doc for Component.create)
+		 * @deprecated since 1.120
+		 */
 		if ( vManifest === undefined ) {
 			// no manifest property set, evaluate legacy properties
-			bManifestFirst = oConfig.manifestFirst === undefined ? oConfiguration.getManifestFirst() : !!oConfig.manifestFirst;
+			bManifestFirst = oConfig.manifestFirst === undefined ? BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true}) : !!oConfig.manifestFirst;
 			sManifestUrl = oConfig.manifestUrl;
 			// oManifest = undefined;
-		} else {
+		}
+
+		if (vManifest !== undefined) {
 			// in case of manifest property is set, by default we load async
 			if ( oConfig.async === undefined ) {
 				oConfig.async = true;
@@ -3043,7 +3173,7 @@ sap.ui.define([
 		function preload(sComponentName, bAsync) {
 
 			var sController = sComponentName + '.Component',
-				http2 = Configuration.getDepCache(),
+				http2 = Library.isDepCacheEnabled(),
 				sPreloadName,
 				oTransitiveDependencies,
 				aLibs,
@@ -3523,40 +3653,8 @@ sap.ui.define([
 					return oControllerClass;
 				}
 
-				// Load all modules derived from "/sap.ui5" manifest entries asynchronously (if underlying loader supports it)
-				// Note: this does not load modules declared / derived from parent manifests (e.g. extension scenario)
-				var aModuleNames = [];
-
-				// lookup rootView class
-				var sRootViewType;
-				var oRootView = oManifest.getEntry("/sap.ui5/rootView");
-				if (typeof oRootView === "string") {
-					// String as rootView defaults to ViewType XML
-					// See: UIComponent#createContent and UIComponentMetadata#_convertLegacyMetadata
-					sRootViewType = "XML";
-				} else if (oRootView && typeof oRootView === "object" && oRootView.type) {
-					sRootViewType = oRootView.type;
-				}
-				if (sRootViewType && ViewType[sRootViewType]) {
-					var sViewClass = "sap/ui/core/mvc/" + ViewType[sRootViewType] + "View";
-					aModuleNames.push(sViewClass);
-				}
-
-				// lookup and loading of the router / targets and views class
-				// prevents synchronous loading in UIComponent#init
-				var oRouting = oManifest.getEntry("/sap.ui5/routing");
-				if (oRouting) {
-					if (oRouting.routes) {
-						var sRouterClass = oManifest.getEntry("/sap.ui5/routing/config/routerClass") || "sap.ui.core.routing.Router";
-						var sRouterClassModule = sRouterClass.replace(/\./g, "/");
-						aModuleNames.push(sRouterClassModule);
-					} else if (oRouting.targets) {
-						var sTargetClass = oManifest.getEntry("/sap.ui5/routing/config/targetsClass") || "sap.ui.core.routing.Targets";
-						var sTargetClassModule = sTargetClass.replace(/\./g, "/");
-						aModuleNames.push(sTargetClassModule);
-						aModuleNames.push("sap/ui/core/routing/Views");
-					}
-				}
+				// collect routing related class names for async loading
+				const aModuleNames = collectRoutingClasses(oManifest);
 
 				// lookup model classes
 				var mManifestModels = merge({}, oManifest.getEntry("/sap.ui5/models"));
@@ -3581,27 +3679,13 @@ sap.ui.define([
 				}
 
 				if (aModuleNames.length > 0) {
+					const sComponentName = oManifest.getComponentName();
 					return Promise.all(aModuleNames.map(function(sModuleName) {
 						// All modules are required separately to have a better error logging.
-						// This "preloading" is done for optimization to enable async loading
-						// in case the underlying loader supports it. If loading fails, the component
-						// should still be created which might fail once the required module is actually used / loaded
-						return new Promise(function(resolve, reject) {
-							var bResolved = false;
-							function logErrorAndResolve(err) {
-								if (bResolved) {
-									return;
-								}
-								Log.warning("Can not preload module \"" + sModuleName + "\". " +
-									"This will most probably cause an error once the module is used later on.",
-									oManifest.getComponentName(), "sap.ui.core.Component");
-								Log.warning(err);
-
-								bResolved = true;
-								resolve();
-							}
-							sap.ui.require([sModuleName], resolve, logErrorAndResolve);
-						});
+						// Most of the classes collected here will be instantiated during the (UI)Component constructor.
+						// The upfront async loading is done to prevent synchronous loading during instantiation.
+						// If loading fails, the component should still be created which might fail once the required module is actually used / loaded.
+						return loadModuleAndLog(sModuleName, sComponentName);
 					})).then(function() {
 						return oControllerClass;
 					});
@@ -3639,6 +3723,9 @@ sap.ui.define([
 
 		}
 
+		/**
+		 * Sync creation path
+		 */
 		if (oManifest) {
 
 			// define resource roots, so they can be respected for "ui5://..." URL resolution

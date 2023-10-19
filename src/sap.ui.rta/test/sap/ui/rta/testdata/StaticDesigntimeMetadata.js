@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/core/Core"], function(oCore) {
+sap.ui.define(["sap/ui/core/Lib"], function(Lib) {
 	"use strict";
 
 	var StaticDesigntimeMatadata = {};
@@ -17,7 +17,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				}
 			},
 			actions: {
-				rename: function(oPage) {
+				rename(oPage) {
 					// When a custom header is added the title is not visualized and we do not need a rename action.
 					if (oPage.getCustomHeader()) {
 						return undefined;
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 
 					return {
 						changeType: "rename",
-						domRef: function(oControl) {
+						domRef(oControl) {
 							return oControl.getDomRef().querySelector("[id*='title-inner']");
 						}
 					};
@@ -86,7 +86,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				},
 				rename: {
 					changeType: "rename",
-					domRef: function(oControl) {
+					domRef(oControl) {
 						return oControl.getDomRef().querySelector(".sapMBtnContent");
 					}
 				},
@@ -142,7 +142,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 			actions: {
 				remove: {
 					changeType: "hideControl",
-					isEnabled: function(oElement) {
+					isEnabled(oElement) {
 						var oSection = oElement.getParent();
 						var aVisibleSubSections;
 
@@ -160,11 +160,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				reveal: {
 					changeType: "unhideControl"
 				},
-				rename: function() {
+				rename() {
 					return {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
-						isEnabled: function(oElement) {
+						isEnabled(oElement) {
 							return oElement.getDomRef().querySelector("[id*='headerTitle']") !== null;
 						}
 					};
@@ -186,11 +186,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	StaticDesigntimeMatadata.getObjectPageSectionDesigntimeMetadata = function() {
 		return {
 			name: {
-				singular: function() {
-					return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+				singular() {
+					return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME");
 				},
-				plural: function() {
-					return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+				plural() {
+					return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 				}
 			},
 			palette: {
@@ -206,11 +206,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				reveal: {
 					changeType: "unstashControl"
 				},
-				rename: function() {
+				rename() {
 					return {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSectionTitle",
-						isEnabled: function(oElement) {
+						isEnabled(oElement) {
 							return oElement._getInternalTitleVisible();
 						}
 					};
@@ -232,35 +232,35 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 	StaticDesigntimeMatadata.getObjectPageLayoutDesigntimeMetadata = function() {
 		return {
 			name: {
-				singular: function() {
-					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
+				singular() {
+					return Lib.getResourceBundleFor("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 				},
-				plural: function() {
-					return oCore.getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME_PLURAL");
+				plural() {
+					return Lib.getResourceBundleFor("sap.uxap").getText("LAYOUT_CONTROL_NAME_PLURAL");
 				}
 			},
 			aggregations: {
 				sections: {
-					domRef: function(oElement) {
+					domRef(oElement) {
 						return oElement.getDomRef().querySelector("[id*='sectionsContainer']");
 					},
 					childNames: {
-						singular: function() {
-							return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
+						singular() {
+							return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME");
 						},
-						plural: function() {
-							return oCore.getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
+						plural() {
+							return Lib.getResourceBundleFor("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 						}
 					},
 					actions: {
 						move: "moveControls"
 					},
-					beforeMove: function(ObjectPageLayout) {
+					beforeMove(ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout._suppressScroll();
 						}
 					},
-					afterMove: function(ObjectPageLayout) {
+					afterMove(ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 								ObjectPageLayout._resumeScroll(false);
@@ -269,11 +269,11 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 					}
 				},
 				headerContent: {
-					domRef: function(oElement) {
+					domRef(oElement) {
 						return oElement.getDomRef().querySelector("[id*='headerContent']");
 					},
 					actions: {
-						move: function(oElement) {
+						move(oElement) {
 							if (!oElement || oElement.getMetadata().getName() !== "sap.uxap.ObjectPageSection") {
 								return "moveControls";
 							}
@@ -285,7 +285,7 @@ sap.ui.define(["sap/ui/core/Core"], function(oCore) {
 				domRef: "> .sapUxAPObjectPageWrapper",
 				aggregations: ["sections", "headerContent"]
 			}, {
-				domRef: function(oElement) {
+				domRef(oElement) {
 					return oElement.getDomRef().querySelector("[id*='vertSB-sb']");
 				}
 			}],

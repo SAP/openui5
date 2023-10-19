@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/util/merge",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
@@ -16,10 +17,12 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/connectors/PersonalizationConnector",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/write/api/FeaturesAPI",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/Layer",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/VersionInfo"
 ], function(
+	merge,
 	StorageUtils,
 	InitialKeyUserConnector,
 	InitialLrepConnector,
@@ -35,16 +38,17 @@ sap.ui.define([
 	WritePersonalizationConnector,
 	Storage,
 	FeaturesAPI,
+	FlexConfiguration,
 	Layer,
-	oCore,
-	sinon
+	sinon,
+	VersionInfo
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("ApplyStorage.getWriteConnectors", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -57,12 +61,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when write is called", {
-		beforeEach: function() {
+		beforeEach() {
+			sandbox.stub(VersionInfo, "load").resolves({version: "1234"});
 			InitialLrepConnector.xsrfToken = "123";
 			InitialKeyUserConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialKeyUserConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
@@ -71,7 +76,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and no is layer provided", function(assert) {
 			var mPropertyBag = {
-				reference: "reference"
+				reference: "reference",
+				flexObjects: []
 			};
 
 			return Storage.write(mPropertyBag).catch(function(sErrorMessage) {
@@ -80,13 +86,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case no connector is available for the layer", function(assert) {
-			var oFlexObjects = [{}];
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.USER]}
 			]);
 
@@ -97,13 +103,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it fails in case multiple connectors are available for the layer", function(assert) {
-			var oFlexObjects = {};
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector"},
 				{connector: "JsObjectConnector"}
 			]);
@@ -116,14 +122,14 @@ sap.ui.define([
 		});
 
 		QUnit.test("then it calls write of the connector", function(assert) {
-			var oFlexObjects = {};
+			var aFlexObjects = [{}];
 
 			var mPropertyBag = {
 				layer: Layer.VENDOR,
-				flexObjects: oFlexObjects
+				flexObjects: aFlexObjects
 			};
 			var sUrl = "/some/url";
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 
@@ -133,7 +139,7 @@ sap.ui.define([
 				assert.strictEqual(oWriteStub.callCount, 1, "the write was triggered once");
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
-				assert.strictEqual(oWriteCallArgs.flexObjects, oFlexObjects, "the flexObjects were passed in the property bag");
+				assert.strictEqual(oWriteCallArgs.flexObjects, aFlexObjects, "the flexObjects were passed in the property bag");
 			});
 		});
 
@@ -144,11 +150,11 @@ sap.ui.define([
 			};
 			var sUrl = "/PersonalizationConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = `${sUrl}/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -166,7 +172,7 @@ sap.ui.define([
 				assert.ok(oStubSendRequest.calledOnce, "sendRequest is called once");
 				assert.strictEqual(oSendRequestCallArgs[0], sExpectedUrl, "with correct url");
 				assert.strictEqual(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
-				assert.strictEqual(oSendRequestCallArgs[2].payload, "[{}]", "with correct payload");
+				assert.strictEqual(oSendRequestCallArgs[2].payload, "[{\"support\":{\"sapui5Version\":\"1234\"}}]", "with correct payload");
 				assert.strictEqual(oSendRequestCallArgs[2].contentType, "application/json; charset=utf-8", "with correct contentType");
 				assert.strictEqual(oSendRequestCallArgs[2].dataType, "json", "with correct dataType");
 			});
@@ -179,11 +185,11 @@ sap.ui.define([
 			};
 			var sUrl = "/KeyUserConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
-			var sExpectedWriteUrl = sUrl + "/v2/changes/";
+			var sExpectedWriteUrl = `${sUrl}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -213,11 +219,11 @@ sap.ui.define([
 			};
 			var sUrl = "/KeyUserConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl}
 			]);
 
-			var sExpectedWriteUrl = sUrl + "/v2/changes/";
+			var sExpectedWriteUrl = `${sUrl}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -241,7 +247,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("with valid mPropertyBag and Connector: KeyUserConnector aiming for CUSTOMER layer when writing draft changes", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -258,7 +264,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating changes without a draft flag", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			var oIsDraftEnabledStub = sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
@@ -275,7 +281,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when creating changes for a draft but the layer does not support a draft", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(false);
@@ -300,12 +306,12 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/v2/changes/";
+			var sExpectedUrl = `${sUrl1}/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -333,12 +339,12 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
 
-			var sExpectedUrl = sUrl1 + "/flex/keyuser/v2/changes/";
+			var sExpectedUrl = `${sUrl1}/flex/keyuser/v2/changes/`;
 			var sExpectedMethod = "POST";
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({});
@@ -368,12 +374,12 @@ sap.ui.define([
 			aChanges[i] = FlexObjectFactory.createFromFileContent({
 				fileType: "change",
 				layer: Layer.CUSTOMER,
-				fileName: "c" + i.toString(),
+				fileName: `c${i.toString()}`,
 				namespace: "a.name.space",
 				changeType: "labelChange",
 				dependentSelector: aDependentSelectors && aDependentSelectors[i] || {},
 				content: {
-					prop: "some Content " + i
+					prop: `some Content ${i}`
 				}
 			});
 			if (sState === "update") {
@@ -387,10 +393,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Storage when condense is called", {
-		beforeEach: function() {
+		beforeEach() {
+			sandbox.stub(VersionInfo, "load").resolves({version: "123"});
 			this.sLayer = Layer.CUSTOMER;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -429,7 +436,7 @@ sap.ui.define([
 					change: ["c0"]
 				},
 				create: {
-					change: [{c2: oCreatedChange}]
+					change: [{c2: merge(oCreatedChange, {support: {sapui5Version: "123"}})}]
 				}
 			};
 			var mPropertyBag = {
@@ -438,7 +445,7 @@ sap.ui.define([
 				condensedChanges: [aAllChanges[2]]
 			};
 			var sUrl = "/some/url";
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({status: 205});
@@ -450,6 +457,7 @@ sap.ui.define([
 				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
 				assert.strictEqual(oWriteCallArgs.url, sUrl, "the url was added to the property bag");
 				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "the flexObject was passed in the property bag");
+				assert.strictEqual(oResult.response[0].support.sapui5Version, "123", "the version was added");
 			});
 		});
 
@@ -460,7 +468,7 @@ sap.ui.define([
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
-					change: [{c1: aAllChanges[1].convertToFileContent()}]
+					change: [{c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})}]
 				}
 			};
 			var mPropertyBag = {
@@ -485,10 +493,10 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -514,16 +522,19 @@ sap.ui.define([
 
 		QUnit.test("and create and update changes are created by condenser in a certain order", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "select", "update", "update", "select"]);
+			const oSupportInformation = aAllChanges[1].getSupportInformation();
+			oSupportInformation.sapui5Version = "oldVersion";
+			aAllChanges[1].setSupportInformation(oSupportInformation);
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				create: {
 					change: [
 						{
-							c4: aAllChanges[4].convertToFileContent()
+							c4: merge(aAllChanges[4].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "oldVersion"}})
 						}
 					]
 				},
@@ -573,10 +584,10 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						},
 						{
-							c1: aAllChanges[1].convertToFileContent()
+							c1: merge(aAllChanges[1].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				},
@@ -718,7 +729,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c3: aAllChanges[3].convertToFileContent()
+							c3: merge(aAllChanges[3].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -758,7 +769,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c2: aAllChanges[2].convertToFileContent()
+							c2: merge(aAllChanges[2].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -786,7 +797,7 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c0: aAllChanges[0].convertToFileContent()
+							c0: merge(aAllChanges[0].convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -877,22 +888,22 @@ sap.ui.define([
 				create: {
 					change: [
 						{
-							c0: oChange0.convertToFileContent()
+							c0: merge(oChange0.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant: [
 						{
-							newVariant: oVariant.convertToFileContent()
+							newVariant: merge(oVariant.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant_change: [
 						{
-							c1: oChange1.convertToFileContent()
+							c1: merge(oChange1.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					],
 					ctrl_variant_management_change: [
 						{
-							c2: oChange2.convertToFileContent()
+							c2: merge(oChange2.convertToFileContent(), {support: {sapui5Version: "123"}})
 						}
 					]
 				}
@@ -914,12 +925,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when loadFeatures is called", {
-		beforeEach: function() {
+		beforeEach() {
 			this.url = "/some/url";
 			InitialLrepConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
 			sandbox.restore();
@@ -930,7 +941,7 @@ sap.ui.define([
 			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled: false});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{
 					connector: "LrepConnector",
 					url: this.url,
@@ -981,7 +992,7 @@ sap.ui.define([
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").resolves({});
 			var sUrl = "/some/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl},
 				{connector: "JsObjectConnector"}
 			]);
@@ -997,7 +1008,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("then merges the response of the connectors", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: this.url},
 				{connector: "JsObjectConnector"}
 			]);
@@ -1016,7 +1027,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("then higher layer overrule the lower layer", function(assert) {
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: this.url},
 				{connector: "JsObjectConnector"}
 			]);
@@ -1054,7 +1065,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.create is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1064,7 +1075,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1097,7 +1108,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1115,7 +1126,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1130,7 +1141,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "NeoLrepConnector"}]);
 
 			return Storage.contextBasedAdaptation.create(mPropertyBag).catch(function(sRejectionMessage) {
@@ -1144,7 +1155,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 
@@ -1155,7 +1166,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.reorder is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1165,7 +1176,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1182,7 +1193,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1200,7 +1211,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "JsObjectConnector"}]);
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "JsObjectConnector"}]);
 
 			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
@@ -1213,7 +1224,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
 
 			return Storage.contextBasedAdaptation.reorder(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.reorder is not implemented", "then the rejection message is passed");
@@ -1226,7 +1237,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 
@@ -1237,7 +1248,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when contextBasedAdaptation.load is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1247,7 +1258,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1281,7 +1292,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1299,7 +1310,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1314,7 +1325,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "NeoLrepConnector"}]);
 
 			return Storage.contextBasedAdaptation.load(mPropertyBag).catch(function(sRejectionMessage) {
 				assert.strictEqual(sRejectionMessage, "contextBasedAdaptation.load is not implemented", "then the rejection message is passed");
@@ -1327,7 +1338,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector"}
 			]);
 
@@ -1338,7 +1349,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.load is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1348,7 +1359,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1367,7 +1378,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1378,7 +1389,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.activate is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1388,7 +1399,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1407,7 +1418,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1418,7 +1429,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.discardDraft is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1428,7 +1439,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1446,7 +1457,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1457,7 +1468,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when versions.publish is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1467,7 +1478,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 
@@ -1485,7 +1496,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "JsObjectConnector"}
 			]);
 
@@ -1496,12 +1507,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when reset is called", {
-		beforeEach: function() {
+		beforeEach() {
 			InitialLrepConnector.xsrfToken = "123";
 			InitialKeyUserConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
 		},
-		afterEach: function() {
+		afterEach() {
 			InitialLrepConnector.xsrfToken = undefined;
 			InitialKeyUserConnector.xsrfToken = undefined;
 			InitialPersonalizationConnector.xsrfToken = undefined;
@@ -1523,7 +1534,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				reference: "reference"
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", layers: [Layer.USER]}
 			]);
 
@@ -1538,7 +1549,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER,
 				reference: "reference"
 			};
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector"}
 			]);
 
@@ -1554,7 +1565,7 @@ sap.ui.define([
 				reference: "reference"
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector"},
 				{connector: "JsObjectConnector"}
 			]);
@@ -1585,11 +1596,11 @@ sap.ui.define([
 
 			var sUrl = "/LrepConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", url: sUrl}
 			]);
 
-			var sExpectedUrl = sUrl + "/changes/";
+			var sExpectedUrl = `${sUrl}/changes/`;
 			var sExpectedMethod = "DELETE";
 
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves([]);
@@ -1622,7 +1633,7 @@ sap.ui.define([
 
 			var sUrl = "/LrepConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl}
 			]);
 
@@ -1659,7 +1670,7 @@ sap.ui.define([
 			var sUrl = "/LrepConnector/url";
 			var sUrl2 = "/KeyUserConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "PersonalizationConnector", url: sUrl},
 				{connector: "KeyUserConnector", url: sUrl2}
 			]);
@@ -1697,7 +1708,7 @@ sap.ui.define([
 			var sUrl1 = "/KeyUserConnector/url";
 			var sUrl2 = "/PersonalizationConnector/url";
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", url: sUrl1},
 				{connector: "PersonalizationConnector", url: sUrl2}
 			]);
@@ -1726,7 +1737,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when variant management context sharing is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1771,7 +1782,7 @@ sap.ui.define([
 			};
 
 			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.loadContextDescriptions(mPropertyBag).catch(function() {
 				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
@@ -1785,7 +1796,7 @@ sap.ui.define([
 			};
 
 			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
 
 			return Storage.getContexts(mPropertyBag).catch(function() {
 				assert.strictEqual(oSpySendRequest.callCount, 0, "no request was send");
@@ -1794,7 +1805,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.getSourceLanguage is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1805,7 +1816,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1835,7 +1846,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.getTranslationTexts is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1848,7 +1859,7 @@ sap.ui.define([
 				layer: Layer.CUSTOMER
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 
@@ -1874,7 +1885,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when translation.postTranslationTexts is called", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -1885,7 +1896,7 @@ sap.ui.define([
 				payload: {}
 			};
 
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 

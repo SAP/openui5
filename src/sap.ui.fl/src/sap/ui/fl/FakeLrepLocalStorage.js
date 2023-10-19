@@ -31,7 +31,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		deleteChanges: function() {
+		deleteChanges() {
 			return FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
 		}
 	};

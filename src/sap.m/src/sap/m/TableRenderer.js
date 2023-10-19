@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/core/InvisibleText", "sap/ui/core/Core", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/ui/core/Lib"],
-	function(Localization, Renderer, InvisibleText, Core, library, ListBaseRenderer, ColumnListItemRenderer, Library) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/core/InvisibleText", "sap/ui/core/Core", "sap/ui/Device", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/ui/core/Lib"],
+	function(Localization, Renderer, InvisibleText, Core, Device, library, ListBaseRenderer, ColumnListItemRenderer, Library) {
 	"use strict";
 
 
@@ -125,9 +125,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 			rm.class("sapMListTblHeaderNone");
 			rm.attr("aria-hidden", "true");
 		} else {
-			rm.attr("tabindex", "-1");
 			rm.class("sapMListTblRow").class("sapMListTbl" + sType + "er");
-			rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
+			if (Device.system.desktop) {
+				rm.attr("tabindex", "-1");
+				rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
+			}
 			if (sType == "Head") {
 				rm.attr("aria-rowindex", "1");
 				if (oTable._bSelectionMode) {
@@ -363,9 +365,11 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 	 */
 	TableRenderer.renderNoData = function(rm, oControl) {
 		rm.openStart("tr", oControl.getId("nodata"));
-		rm.attr("tabindex", "-1");
 		rm.class("sapMLIB").class("sapMListTblRow").class("sapMLIBTypeInactive");
-		rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
+		if (Device.system.desktop) {
+			rm.attr("tabindex", "-1");
+			rm.class("sapMLIBFocusable").class("sapMTableRowCustomFocus");
+		}
 		if (!oControl._headerHidden || (!oControl.getHeaderText() && !oControl.getHeaderToolbar())) {
 			rm.class("sapMLIBShowSeparator");
 		}

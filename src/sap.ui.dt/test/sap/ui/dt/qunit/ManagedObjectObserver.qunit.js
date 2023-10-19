@@ -99,7 +99,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an ManagedObject is observed", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			this.oManagedObject = new TestObject();
 			this.oOtherObject = new TestObject();
 			this.oSmartManagedObject = new SmartTestObject();
@@ -114,7 +114,7 @@ sap.ui.define([
 				modified: fnObserverModifiedCalled.bind(null, assert)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oManagedObjectObserver.destroy();
 			this.oSmartManagedObjectObserver.destroy();
@@ -295,7 +295,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Aggregations filtering", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oManagedObject1 = new TestObject();
 			this.oManagedObject2 = new TestObject();
 			this.oSpy = sinon.spy();
@@ -305,7 +305,7 @@ sap.ui.define([
 				aggregations: ["myAggregation"]
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oManagedObjectObserver.destroy();
 			this.oManagedObject1.destroy();
 			this.oManagedObject2.destroy();

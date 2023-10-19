@@ -3,13 +3,15 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/UIArea",
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton",
+	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, oCore, HTML, UIArea, createAndAppendDiv, TestButton, jQuery) {
+], function(Log, Control, Element, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -44,10 +46,10 @@ sap.ui.define([
 	 * After rendering, the two controls should be visible in the UIArea
 	 * their order should match the order in which they have been added
 	 */
-	QUnit.test("basic rendering", function(assert) {
+	QUnit.test("basic rendering", async function(assert) {
 		this.oText1.placeAt("uiArea1");
 		this.oText2.placeAt("uiArea1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1 > button").length, 2, "two spans have been rendered");
 		assert.equal(jQuery(jQuery("#uiArea1 > button").get(0)).text(), "Text 1", "first span shows first text");
 		assert.equal(jQuery(jQuery("#uiArea1 > button").get(1)).text(), "Text 2", "second span shows second text");
@@ -57,12 +59,12 @@ sap.ui.define([
 	 * Removes the controls from the UIArea
 	 * UIArea must be empty after the rendering
 	 */
-	QUnit.test("removeAllContent", function(assert) {
+	QUnit.test("removeAllContent", async function(assert) {
 		UIArea.registry.get("uiArea1").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1").children().length, 0, "no more content");
-		assert.ok(oCore.byId("text1"), "remove must not destroy child 1");
-		assert.ok(oCore.byId("text2"), "remove must not destroy child 2");
+		assert.ok(Element.getElementById("text1"), "remove must not destroy child 1");
+		assert.ok(Element.getElementById("text2"), "remove must not destroy child 2");
 	});
 
 	/**
@@ -70,14 +72,14 @@ sap.ui.define([
 	 * Rendering after addiition or removal of controls must not destroy
 	 * the content nor modify its order
 	 */
-	QUnit.test("initial DOM content", function(assert) {
+	QUnit.test("initial DOM content", async function(assert) {
 		var $originalDom = jQuery("#uiArea2").children();
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 		assert.equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
 
 		this.oText1.placeAt("uiArea2");
 		this.oText2.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		var $currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "two more spans have been rendered");
 		assert.equal($currentDom.get(0), $originalDom.get(0), "initial DOM must still exist");
@@ -86,7 +88,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(2)).text(), "Text 2", "second span shows second text");
 
 		UIArea.registry.get("uiArea2").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 1, "initial DOM still exists in UIArea");
 		assert.equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");
@@ -96,22 +98,22 @@ sap.ui.define([
 	 * When additional pure DOM content is added to an UIArea,
 	 * that content must not be modified by the UIArea rerendering
 	 */
-	QUnit.test("additional DOM content", function(assert) {
+	QUnit.test("additional DOM content", async function(assert) {
 		// check preconditions
 		var $originalDom = jQuery("#uiArea2").children();
 		assert.equal($originalDom.length, 1, "precondition: one span exists already in UIArea");
 		assert.equal(jQuery($originalDom.get(0)).text(), "Before", "precondition: span contains correct text");
-		assert.ok(oCore.byId("text1"), "precondition: control 1 still exists");
-		assert.ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
-		assert.ok(oCore.byId("text2"), "precondition: control 2 still exists");
-		assert.ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+		assert.ok(Element.getElementById("text1"), "precondition: control 1 still exists");
+		assert.ok(!Element.getElementById("text1").getParent(), "precondition: control 1 not bound");
+		assert.ok(Element.getElementById("text2"), "precondition: control 2 still exists");
+		assert.ok(!Element.getElementById("text2").getParent(), "precondition: control 2 not bound");
 
 		// do some interleaved modifications: Control / DOM / Control / DOM
 		this.oText1.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		jQuery("#uiArea2").append("<span>In Between</span>");
 		this.oText2.placeAt("uiArea2");
-		oCore.applyChanges();
+		await nextUIUpdate();
 		jQuery("#uiArea2").append("<span>After</span>");
 
 		// check results. Note: controls are rendered in one, contiguous block
@@ -126,7 +128,7 @@ sap.ui.define([
 
 		// now remove controls, check that the remainigs are as expected
 		UIArea.registry.get("uiArea2").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "initial DOM still exists in UIArea");
 		assert.equal(jQuery($currentDom.get(0)).text(), "Before", "initial span still contains correct text");
@@ -138,11 +140,11 @@ sap.ui.define([
 	 * When the UIArea contains a control that preserves its DOM,
 	 * then rerendering of the UIArea must not delete such preserved DOM
 	 */
-	QUnit.test("preserved DOM content", function(assert) {
-		assert.ok(oCore.byId("text1"), "precondition: control 1 still exists");
-		assert.ok(!oCore.byId("text1").getParent(), "precondition: control 1 not bound");
-		assert.ok(oCore.byId("text2"), "precondition: control 2 still exists");
-		assert.ok(!oCore.byId("text2").getParent(), "precondition: control 2 not bound");
+	QUnit.test("preserved DOM content", async function(assert) {
+		assert.ok(Element.getElementById("text1"), "precondition: control 1 still exists");
+		assert.ok(!Element.getElementById("text1").getParent(), "precondition: control 1 not bound");
+		assert.ok(Element.getElementById("text2"), "precondition: control 2 still exists");
+		assert.ok(!Element.getElementById("text2").getParent(), "precondition: control 2 not bound");
 		var $originalDom = jQuery("#uiArea1").children();
 		assert.equal($originalDom.length, 0, "precondition: UIArea1 is empty");
 
@@ -150,7 +152,7 @@ sap.ui.define([
 		this.oText1.placeAt("uiArea1");
 		this.oText2.placeAt("uiArea1");
 		this.oHtml3.placeAt("uiArea1");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that the rendering had the expected result
 		var $currentDom = jQuery("#uiArea1").children();
@@ -166,7 +168,7 @@ sap.ui.define([
 
 		// rerender the whole UIArea
 		this.oText1.getUIArea().invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that the modified DOM is still there
 		assert.equal(jQuery($currentDom.get(0)).text(), "Text 1", "first control rendered");
@@ -179,7 +181,7 @@ sap.ui.define([
 
 		// remove content and rerender
 		UIArea.registry.get("uiArea1").removeAllContent();
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		// check that UIArea is empoty, but preserved content still exists
 		$currentDom = jQuery("#uiArea1").children();
@@ -195,7 +197,6 @@ sap.ui.define([
 	QUnit.module("Event Handling", {
 		beforeEach: function() {
 			this.oButton = new TestButton().placeAt("uiArea1");
-			sap.ui.getCore().applyChanges();
 			this.spy(Log, "debug");
 			this.fakeEvent = function fakeEvent(type) {
 				return new jQuery.Event(new jQuery.Event(type), { target: this.oButton.getDomRef() });
@@ -203,7 +204,8 @@ sap.ui.define([
 			this.hasBeenLogged = function hasBeenLogged(oEvent, oElement) {
 				return Log.debug.calledWith(
 					sinon.match(/Event fired:/).and(sinon.match(oEvent.type).and(sinon.match(oElement.toString()))));
-			};
+				};
+			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oButton.destroy();
@@ -266,6 +268,29 @@ sap.ui.define([
 		UIArea.configureEventLogging({mouseover: 1});
 	});
 
+	QUnit.test("Control Events should be blocked depending on UIArea lock", function(assert) {
+		let bPressed = false;
+		const oPress = new Press();
+		const fnPress = () => {
+			bPressed = true;
+		};
+
+		this.oButton.getUIArea().lock();
+		this.oButton.attachPress(fnPress);
+
+		assert.ok(!bPressed, "Button must not have fired 'press' yet");
+		oPress.executeOn(this.oButton);
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+
+		this.oButton.getUIArea().unlock();
+
+		assert.ok(!bPressed, "Button still must not have fired 'press'");
+		oPress.executeOn(this.oButton);
+		assert.ok(bPressed, "Button should have fired 'press'");
+
+		this.oButton.detachPress(fnPress);
+	});
+
 
 	QUnit.module("Dependents", {
 		beforeEach: function() {
@@ -318,4 +343,208 @@ sap.ui.define([
 		oOther.addDependent(this.uiArea.getDependents()[0]);
 	});
 
+
+	var TestControl = Control.extend("test.TestControl", {
+		metadata: {
+			properties: {
+				header: {type: "string"}
+			},
+			aggregations: {
+				items: {type: "test.TestControl", multiple: true}
+			}
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function (oRM, oControl) {
+				oRM.openStart("div", oControl).openEnd();
+				oRM.openStart("h1").openEnd().text(oControl.getHeader()).close("h1");
+				oControl.getItems().forEach(oRM.renderControl, oRM);
+				oRM.close("div");
+			}
+		}
+	});
+
+	QUnit.module("supressInvalidateFor", {
+		before: function() {
+			this.oRenderingSpy = sinon.spy(Control.prototype, "onBeforeRendering");
+		},
+		beforeEach: async function () {
+			this.oGrandChild1 = new TestControl({ header: "GrandChild1" });
+			this.oGrandChild2 = new TestControl({ header: "GrandChild2" });
+			this.oChild1 = new TestControl({ header: "Child1", items: this.oGrandChild1 });
+			this.oChild2 = new TestControl({ header: "Child2", items: this.oGrandChild2 });
+			this.oParent = new TestControl({
+				header: "Parent",
+				items: [this.oChild1, this.oChild2]
+			});
+			this.oParent.placeAt("uiArea1");
+			await nextUIUpdate();
+
+			this.oRenderingSpy.reset();
+			this.oUiArea = this.oParent.getUIArea();
+		},
+		afterEach: function () {
+			this.oParent.destroy();
+		},
+		after: function() {
+			this.oRenderingSpy.restore();
+		}
+	});
+
+	QUnit.test("Invalid calls", function(assert) {
+		[false, true, 5, "test", {}, jQuery, new Element(), this.oUiArea].forEach(function(vCallParam) {
+			assert.throws(function() {
+				this.oUiArea.suppressInvalidationFor(vCallParam);
+			}, "TypeError is thrown for the parameter: " + vCallParam);
+			assert.throws(function() {
+				this.oUiArea.resumeInvalidationFor(vCallParam);
+			}, "TypeError is thrown for the parameter: " + vCallParam);
+		});
+		assert.throws(function() {
+			this.oUiArea.resumeInvalidationFor(this.oParent);
+		}, "Error is thrown since the invalidation has not yet been suppressed");
+	});
+
+	QUnit.test("Return value of suppressInvalidationFor", function(assert) {
+		assert.strictEqual(this.oUiArea.suppressInvalidationFor(this.oParent), true, "Invalidation is correctly suppressed");
+		assert.strictEqual(this.oUiArea.suppressInvalidationFor(this.oParent), false, "Invalidation was already suppressed");
+	});
+
+	QUnit.test("Invalidate all children", async function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oParent.findElements(true, function(oElement) {
+			oElement.invalidate();
+		});
+		this.oParent.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 5);
+	});
+
+	QUnit.test("Invalidate a single leaf control", async function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oGrandChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 1);
+	});
+
+	QUnit.test("Suppress invalidation for different roots", async function(assert) {
+		var oCloneParent = this.oParent.clone();
+		oCloneParent.placeAt("uiArea1");
+		await nextUIUpdate();
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(oCloneParent);
+
+		this.oChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		oCloneParent.getItems()[0].invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 2);
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.resumeInvalidationFor(oCloneParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 2);
+		oCloneParent.destroy("uiArea1");
+	});
+
+	QUnit.test("parent rendering", async function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oChild1);
+		this.oGrandChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oParent.invalidate();
+		await nextUIUpdate();
+		this.oRenderingSpy.reset();
+		this.oUiArea.resumeInvalidationFor(this.oChild1);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+	});
+
+	QUnit.test("bookkeeping cleanup", async function(assert) {
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oParent.invalidate();
+		this.oGrandChild1.invalidate();
+		this.oUiArea.suppressInvalidationFor(this.oChild1);
+		this.oGrandChild1.invalidate();
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oGrandChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.ok(this.oRenderingSpy.called);
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.resumeInvalidationFor(this.oChild1);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+	});
+
+	QUnit.test("nested suppressed controls - the child resumes invalidation before the parent", async function(assert) {
+		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
+		this.oGrandChild1.addItem(this.oDeepestChild1);
+		await nextUIUpdate();
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oDeepestChild1.invalidate();
+		this.oChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 3);
+	});
+
+	QUnit.test("nested suppressed controls - the parent resumes invalidation before the child", async function(assert) {
+		this.oDeepestChild1 = new TestControl({ header: "DeepestChild1" });
+		this.oGrandChild1.addItem(this.oDeepestChild1);
+		await nextUIUpdate();
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.suppressInvalidationFor(this.oParent);
+		this.oUiArea.suppressInvalidationFor(this.oGrandChild1);
+		this.oDeepestChild1.invalidate();
+		this.oChild1.invalidate();
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+
+		this.oUiArea.resumeInvalidationFor(this.oParent);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 3);
+		this.oRenderingSpy.reset();
+
+		this.oUiArea.resumeInvalidationFor(this.oGrandChild1);
+		await nextUIUpdate();
+		assert.equal(this.oRenderingSpy.callCount, 0);
+	});
 });

@@ -417,7 +417,7 @@ sap.ui.define([
 
 	QUnit.test("to page 2", function(assert) {
 		var done = assert.async();
-		assert.expect(64); // including the "navigate" event
+		assert.expect(65); // including the "navigate" event
 
 		assert.equal(nc.currentPageIsTopPage(), true, "current page should be considered the top page");
 
@@ -494,6 +494,7 @@ sap.ui.define([
 				assert.equal(window.mPage3EventLog.afterHide, 0, "Lifecycle event invocation count page3 afterHide should be correct");
 
 				assert.equal(jQuery("#page1").css("display"), "none", "Page 1 should be hidden");
+				assert.equal(jQuery("#page1").attr("aria-hidden"), "true", "Page 1 should be aria hidden");
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 				assert.ok(!page1.$().hasClass("sapMNavItemSliding"), "Page 1 classes should be cleaned up");
@@ -505,7 +506,7 @@ sap.ui.define([
 
 	QUnit.test("to page 3", function(assert) {
 		var done = assert.async();
-		assert.expect(30); // including the "navigate" event
+		assert.expect(31); // including the "navigate" event
 
 		assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 
@@ -538,6 +539,8 @@ sap.ui.define([
 
 			setTimeout(function(){
 				assert.equal(jQuery("#page2").css("display"), "none", "Page 2 should be hidden");
+				assert.equal(jQuery("#page2").attr("aria-hidden"), "true", "Page 2 should be aria hidden");
+
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 
 				assert.ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
@@ -550,7 +553,7 @@ sap.ui.define([
 
 	QUnit.test("navigate back 2", function(assert) {
 		var done = assert.async();
-		assert.expect(62); // including the "navigate" event
+		assert.expect(63); // including the "navigate" event
 
 		resetEventLog(window.mPage1EventLog);
 		resetEventLog(window.mPage2EventLog);
@@ -621,6 +624,7 @@ sap.ui.define([
 				assert.equal(window.mPage3EventLog.afterHide, 1, "Lifecycle event invocation count page3 afterHide should be correct");
 
 				assert.equal(jQuery("#page3").css("display"), "none", "Page 3 should be hidden");
+				assert.equal(jQuery("#page3").attr("aria-hidden"), "true", "Page 3 should be aria hidden");
 				assert.equal(nc._aQueue.length, 0, "transition queue length should be 0");
 				assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 				assert.ok(!page3.$().hasClass("sapMNavItemFading"), "Page 3 classes should be cleaned up");
@@ -1863,7 +1867,7 @@ sap.ui.define([
 
 	QUnit.test("Base Slide transition", function(assert) {
 		// Assert
-		assert.expect(24);
+		assert.expect(27);
 		// Arrange
 		var done = assert.async(),
 			hiddenClass = "sapMNavItemHidden",
@@ -1908,6 +1912,7 @@ sap.ui.define([
 
 			// Assert
 			assert.equal(fromPage.hasClass(hiddenClass), true, "From page should have the  class: " + hiddenClass);
+			assert.equal(fromPage.attr("aria-hidden"), "true", "Page should be aria hidden");
 			assert.equal(fromPage.hasClass(fromPageExpectedClass), false, "From page should not have the class: " + fromPageExpectedClass);
 			assert.equal(toPage.hasClass(toPageExpectedClass), false, "To page should not have the class: " + toPageExpectedClass);
 			// here animation direction should always be "normal", because we restore default animation direction after navigate
@@ -1930,6 +1935,7 @@ sap.ui.define([
 			if (isBack) {
 				// Assert
 				assert.equal(toPage.css("display"), "none", "Page should not be rendered yet");
+				assert.equal(toPage.attr("aria-hidden"), "true", "Page should be aria hidden");
 			} else {
 				// Assert
 				assert.equal(toPage.length, 0, "Page should not be rendered yet");

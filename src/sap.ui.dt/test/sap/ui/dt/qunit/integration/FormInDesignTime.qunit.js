@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/Input",
 	"sap/m/Label",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
@@ -14,12 +13,12 @@ sap.ui.define([
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/ResponsiveGridLayout",
-	"sap/ui/layout/form/ColumnLayout"
+	"sap/ui/layout/form/ColumnLayout",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	CheckBox,
 	Input,
 	Label,
-	oCore,
 	coreLibrary,
 	Title,
 	DesignTime,
@@ -29,14 +28,15 @@ sap.ui.define([
 	FormLayout,
 	Form,
 	ResponsiveGridLayout,
-	ColumnLayout
+	ColumnLayout,
+	nextUIUpdate
 ) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
-	var TitleLevel = coreLibrary.TitleLevel;
+	var {TitleLevel} = coreLibrary;
 
-	var initFormWithGivenLayout = function(assert, oLayout) {
+	var initFormWithGivenLayout = async function(assert, oLayout) {
 		var fnDone = assert.async();
 
 		this.oElement1 = new FormElement({
@@ -95,14 +95,14 @@ sap.ui.define([
 				this.oFormContainer3
 			]
 		}).placeAt("qunit-fixture");
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		this.oFormDesignTime = new DesignTime({
 			rootElements: [this.oForm]
 		});
 
-		this.oFormDesignTime.attachEventOnce("synced", function() {
-			oCore.applyChanges();
+		this.oFormDesignTime.attachEventOnce("synced", async function() {
+			await nextUIUpdate();
 			fnDone();
 		});
 	};
@@ -154,11 +154,11 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given that overlays are created for a form with ColumnLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new ColumnLayout());
 		},
 
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -168,10 +168,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that overlays are created for a form with ResponsiveGridLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new ResponsiveGridLayout());
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -181,10 +181,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			initFormWithGivenLayout.call(this, assert, new FormLayout());
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup.call(this);
 		}
 	}, function() {

@@ -112,7 +112,7 @@
 															<mdc:Table id="FH1-Dialog-MDCTable--default"
 																autoBindOnInit="false"
 																width="100%"
-																selectionMode="Single"
+																selectionMode="SingleMaster"
 																p13nMode="Sort"
 																delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Authors"\}\}'
 																threshold="50"
@@ -143,7 +143,7 @@
 										<mdc:fieldInfo>
 											<mdc:Link
 												sourceControl="fTitle"
-												delegate='\{ "name": "sap/ui/mdc/flp/FlpLinkDelegate", "payload": \{
+												delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
 													"semanticObjects": ["FakeFlpSemanticObject"],
 													"mainSemanticObject": "FakeFlpSemanticObject"
 												\} \}'></mdc:Link>
@@ -187,7 +187,9 @@
 											"inParameters": [ \{"contentId":"container-v4demo---bookdetails--genreDialog", "source":"classification_code", "target":"classification_code"\},
 															\{"contentId":"container-v4demo---bookdetails--genreTypeAhead", "source":"classification_code", "target":"classification_code"\}
 															],
-											"outParameters": [\{"source": "classification_code", "target": "classification_code", "mode":"Always"\}
+											"outParameters": [\{"source": "classification_code", "target": "classification_code", "mode":"Always"\},
+															\{"targetFieldId": "container-v4demo---bookdetails--fSubGenre", "mode":"Clear"\},
+															\{"target": "detailgenre_code", "mode":"Clear"\}
 															],
 											"payloadInfos": [ \{"contentId":"container-v4demo---bookdetails--genreDialog", "path":["classification_code"]\},
 															\{"contentId":"container-v4demo---bookdetails--genreTypeAhead", "path":["classification_code"]\}
@@ -233,7 +235,7 @@
 													<mdc:Table id="FHGenre-MDCTable"
 														autoBindOnInit="false"
 														width="100%"
-														selectionMode="Single"
+														selectionMode="SingleMaster"
 														p13nMode="Sort"
 														delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "Genres", "$select": ["classification_code"]\}\}'
 														threshold="50"
@@ -265,7 +267,8 @@
 															\{"contentId":"container-v4demo---bookdetails--gsubGenreTypeAhead", "source":"classification_code", "target":"classification_code"\}
 															],
 											"outParameters": [\{"source": "genre_code", "targetFieldId": "container-v4demo---bookdetails--fGenre", "mode":"Always"\},
-															\{"source": "classification_code", "target": "classification_code", "mode":"Always"\}
+															\{"source": "classification_code", "target": "classification_code", "mode":"Always"\},
+															\{"target": "detailgenre_code", "mode":"Clear"\}
 															],
 											"payloadInfos": [ \{"contentId":"container-v4demo---bookdetails--subGenreDialog", "path":["classification_code", "genre_code"]\},
 															\{"contentId":"container-v4demo---bookdetails--subGenreTypeAhead", "path":["classification_code", "genre_code"]\}
@@ -337,7 +340,7 @@
 													<mdc:Table id="FHSubGenre-MDCTable"
 														autoBindOnInit="false"
 														width="100%"
-														selectionMode="Single"
+														selectionMode="SingleMaster"
 														p13nMode="Sort"
 														delegate='\{"name": "sap/ui/v4demo/delegate/GridTable.delegate", "payload": \{"collectionName": "SubGenres", "$select": ["classification_code", "genre_code"]\}\}'
 														threshold="50"

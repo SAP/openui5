@@ -22,6 +22,7 @@ sap.ui.define([
 	 * Use the shell service to get the current user information
 	 *
 	 * @return {Promise<object>} Resolving to dictionary listing current user properties or empty object if no user or error
+	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return function() {
@@ -52,7 +53,7 @@ sap.ui.define([
 				};
 			})
 			.catch(function(vError) {
-				Log.error("Unexpected exception when reading shell user info: " + vError.toString());
+				Log.error(`Unexpected exception when reading shell user info: ${vError.toString()}`);
 				return {};
 			});
 		}

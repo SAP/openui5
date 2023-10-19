@@ -15,13 +15,20 @@ sap.ui.define(function() {
 			Message: {
 				title: "Messaging: sap.ui.core.message.Message"
 			},
-			MessageManager: {
-				title: "Messaging: sap.ui.core.message.MessageManager"
+			Messaging: {
+				title: "Messaging: sap.ui.core.message.Messaging"
 			},
 			MessageMixin: {
 				title: "Messaging: sap.ui.core.message.MessageMixin"
 			},
 			messagesGeneral: {
+				title: "Messaging: General",
+				ui5: {
+					libs: "sap.m,sap.ui.layout",
+					language: "en"
+				}
+			},
+			messagesGeneral_legacyAPIs: {
 				title: "Messaging: General",
 				ui5: {
 					libs: "sap.m,sap.ui.layout",

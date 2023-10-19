@@ -5,9 +5,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Rendering",
+	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/message/Message",
-	"sap/ui/core/message/MessageManager",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/Binding",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
@@ -23,9 +25,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Configuration, CacheManager, Message, MessageManager, Binding,
-		BindingMode, BaseContext, Model, OperationMode, Context, ODataMetaModel, ODataModel,
-		SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor, library, TestUtils) {
+], function (Log, SyncPromise, Configuration, Rendering, Supportability, CacheManager, Message,
+		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
+		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
+		library, TestUtils) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",
@@ -110,7 +113,7 @@ sap.ui.define([
 
 		this.mock(ODataModel.prototype).expects("buildQueryOptions")
 			.withExactArgs({}, false, true).returns({"sap-client" : "279"});
-		this.mock(Configuration).expects("getStatisticsEnabled")
+		this.mock(Supportability).expects("isStatisticsEnabled")
 			.withExactArgs().returns(bStatistics);
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined, bStatistics
@@ -483,7 +486,7 @@ sap.ui.define([
 			},
 			fnSubmitAuto = function () {};
 
-		this.mock(Configuration).expects("getStatisticsEnabled")
+		this.mock(Supportability).expects("isStatisticsEnabled")
 			.withExactArgs().returns(bStatistics);
 		oExpectedCreate
 			.withExactArgs(sServiceUrl, {
@@ -567,7 +570,7 @@ sap.ui.define([
 		// code under test
 		oModel.setIgnoreETag("~bIgnoreETag~");
 
-		this.mock(MessageManager).expects("updateMessages")
+		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs("~oldMessages~", "~newMessages~");
 
 		// code under test
@@ -1119,7 +1122,7 @@ sap.ui.define([
 				.twice();
 			oModelMock.expects("reportStateMessages").never();
 			oModelMock.expects("reportTransitionMessages")
-				.once()// add each error only once to the MessageManager
+				.once()// add each error only once to the Messaging
 				.withExactArgs("~extractedMessages~", "resource/path");
 
 			// code under test
@@ -1795,7 +1798,7 @@ sap.ui.define([
 				return oMessage === aMessages[1] && oMessage.transition === true;
 			}), sResourcePath)
 			.returns("~UI5msg1~");
-		this.mock(MessageManager).expects("updateMessages")
+		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs(undefined, sinon.match(["~UI5msg0~", "~UI5msg1~"]));
 
 		// code under test
@@ -1812,7 +1815,7 @@ sap.ui.define([
 	QUnit.test("reportStateMessages", function () {
 		var aBarMessages = ["~rawMessage0~", "~rawMessage1~"],
 			aBazMessages = ["~rawMessage2~"],
-			oMessageManagerMock = this.mock(MessageManager),
+			oMessagingMock = this.mock(Messaging),
 			oModel = this.createModel(),
 			oModelMock = this.mock(oModel);
 
@@ -1822,14 +1825,14 @@ sap.ui.define([
 			.withExactArgs(aBarMessages[1], "Team('42')", "foo/bar").returns("~UI5msg1~");
 		oModelMock.expects("createUI5Message")
 			.withExactArgs(aBazMessages[0], "Team('42')", "foo/baz").returns("~UI5msg2~");
-		oMessageManagerMock.expects("updateMessages")
+		oMessagingMock.expects("updateMessages")
 			.withExactArgs([], ["~UI5msg0~", "~UI5msg1~", "~UI5msg2~"]);
 
 		// code under test
 		oModel.reportStateMessages("Team('42')",
 			{"foo/bar" : aBarMessages, "foo/baz" : aBazMessages});
 
-		oMessageManagerMock.expects("updateMessages").never();
+		oMessagingMock.expects("updateMessages").never();
 
 		// code under test
 		oModel.reportStateMessages("Team('42')", {});
@@ -1846,12 +1849,12 @@ sap.ui.define([
 				"/FOO('3')/NavSingle/Name" : [{}, {}],
 				"/FOO('3')/NavSingleBar/Name" : [{}]
 			},
-			oMessageManagerMock = this.mock(MessageManager),
+			oMessagingMock = this.mock(Messaging),
 			oModel = this.createModel();
 
 		oModel.mMessages = mMessages;
 
-		oMessageManagerMock.expects("updateMessages")
+		oMessagingMock.expects("updateMessages")
 			.withExactArgs(sinon.match.array, sinon.match.array)
 			.callsFake(function (aOldMessages, aNewMessages) {
 				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
@@ -1867,7 +1870,7 @@ sap.ui.define([
 		// code under test
 		oModel.reportStateMessages("FOO('1')", {});
 
-		oMessageManagerMock.expects("updateMessages")
+		oMessagingMock.expects("updateMessages")
 			.withExactArgs(sinon.match.array, sinon.match.array)
 			.callsFake(function (aOldMessages, aNewMessages) {
 				assert.ok(aOldMessages.indexOf(mMessages["/FOO('3')/NavSingle"][0]) >= 0);
@@ -1898,7 +1901,7 @@ sap.ui.define([
 		oModel.mMessages = mMessages;
 		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('1')").returns("/FOO('1')");
 		oHelperMock.expects("buildPath").withExactArgs("/FOO", "('2')").returns("/FOO('2')");
-		this.mock(MessageManager).expects("updateMessages")
+		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs(sinon.match.array, sinon.match.array)
 			.callsFake(function (aOldMessages, aNewMessages) {
 				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
@@ -1930,7 +1933,7 @@ sap.ui.define([
 			oModel = this.createModel();
 
 		oModel.mMessages = mMessages;
-		this.mock(MessageManager).expects("updateMessages")
+		this.mock(Messaging).expects("updateMessages")
 			.withExactArgs(sinon.match.array, sinon.match.array)
 			.callsFake(function (aOldMessages, aNewMessages) {
 				assert.ok(aOldMessages.indexOf(mMessages["/FOO('1')"][0]) >= 0);
@@ -2281,7 +2284,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("addPrerenderingTask: queue", function (assert) {
-		var oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		var oExpectation = this.mock(Rendering).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func),
 			fnFirstPrerenderingTask = "first",
 			fnPrerenderingTask0 = "0",
@@ -2323,7 +2326,7 @@ sap.ui.define([
 				oModel.addPrerenderingTask(fnLastTask);
 			});
 
-		oAddTaskMock = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		oAddTaskMock = this.mock(Rendering).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func);
 		this.mock(window).expects("setTimeout").withExactArgs(sinon.match.func, 0).returns(42);
 		oModel.addPrerenderingTask(fnPrerenderingTask0);
@@ -2363,7 +2366,7 @@ sap.ui.define([
 			fnTask = this.spy(),
 			oWindowMock = this.mock(window);
 
-		oAddTaskExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+		oAddTaskExpectation = this.mock(Rendering).expects("addPrerenderingTask")
 			.withExactArgs(sinon.match.func);
 		oSetTimeoutExpectation = oWindowMock.expects("setTimeout")
 			.withExactArgs(sinon.match.func, 0);
@@ -2395,7 +2398,7 @@ sap.ui.define([
 			fnTask1 = this.spy(),
 			fnTask2 = "~task~2~";
 
-		oAddTaskExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask").twice()
+		oAddTaskExpectation = this.mock(Rendering).expects("addPrerenderingTask").twice()
 			.withExactArgs(sinon.match.func);
 		oSetTimeoutExpectation = this.mock(window).expects("setTimeout").thrice()
 			.withExactArgs(sinon.match.func, 0);

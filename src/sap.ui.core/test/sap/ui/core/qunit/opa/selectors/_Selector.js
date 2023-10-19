@@ -1,11 +1,13 @@
 /*global QUnit, sinon*/
 sap.ui.define([
 	"sap/ui/test/selectors/_Selector",
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Button",
-	"sap/m/Dialog"
-], function (_Selector, View, XMLView, Button, Dialog) {
+	"sap/m/Dialog",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (_Selector, Element, View, XMLView, Button, Dialog, nextUIUpdate) {
 	"use strict";
 
 	var singleStub = sinon.stub();
@@ -21,8 +23,7 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition:
 					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -30,9 +31,8 @@ sap.ui.define([
 					'</mvc:View>'
 			}).then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
 				this.oInput = this.oView.byId("myInput");
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -169,10 +169,9 @@ sap.ui.define([
 		beforeEach: function (assert) {
 			// Note: This test is executed with QUnit 1 and QUnit 2.
 			//       We therefore cannot rely on the built-in promise handling of QUnit 2.
-			var done = assert.async();
 
 			// create 3 new numeric tiles.
-			XMLView.create({
+			return XMLView.create({
 				id: "myView",
 				definition:
 					'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
@@ -184,8 +183,7 @@ sap.ui.define([
 					'</mvc:View>'
 			}).then(function(oView) {
 				this.oView = oView.placeAt("qunit-fixture");
-				sap.ui.getCore().applyChanges();
-				done();
+				return nextUIUpdate();
 			}.bind(this), function(oErr) {
 				assert.strictEqual(oErr, undefined, "failed to load view");
 			});
@@ -196,7 +194,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should skip viewName when multiple views will match", function (assert) {
-		var oTile = sap.ui.getCore().byId("tile-0");
+		var oTile = Element.getElementById("tile-0");
 		singleStub.returns({
 			property: "value"
 		});

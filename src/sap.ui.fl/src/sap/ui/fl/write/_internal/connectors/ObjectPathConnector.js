@@ -28,11 +28,11 @@ sap.ui.define([
 	 */
 	return merge({}, BaseConnector, /** @lends sap.ui.fl.write._internal.connectors.ObjectPathConnector */ {
 		layers: [],
-		setJsonPath: function(sInitialJsonPath) {
+		setJsonPath(sInitialJsonPath) {
 			sJsonPath = sInitialJsonPath;
 		},
 
-		loadFlexData: function(mPropertyBag) {
+		loadFlexData(mPropertyBag) {
 			var sPath = sJsonPath || mPropertyBag.path;
 			if (sPath) {
 				return LoaderExtensions.loadResource({
@@ -46,7 +46,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		loadFeatures: function(mPropertyBag) {
+		loadFeatures(mPropertyBag) {
 			var sPath = sJsonPath || mPropertyBag.path;
 			if (sPath) {
 				return LoaderExtensions.loadResource({

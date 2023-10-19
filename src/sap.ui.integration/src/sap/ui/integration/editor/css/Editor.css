@@ -374,6 +374,7 @@
 
 .sapUiIntegrationFieldSettings .SettingsPAVTable {
 	margin-left: 1rem;
+	width: calc(100% - 2rem) !important;
 }
 
 .tableHdr .sapMListTblHeaderCell {
@@ -434,6 +435,12 @@
 
 .sapUiIntegrationFieldSettings .resetbutton {
 	margin: 0 0.3rem;
+}
+
+/* Image Select */
+.sapUiIntegrationImageSelect .image {
+	max-height: 30em;
+	max-width: 20em;
 }
 
 /* Icon Select */

@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils"
 ], function(
+	Lib,
 	Plugin,
 	FlexUtils,
 	RtaUtils
@@ -26,7 +28,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.75
 	 * @alias sap.ui.rta.plugin.BaseCreate
-	 * @experimental Since 1.75. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @abstract
 	 */
 	var BaseCreate = Plugin.extend("sap.ui.rta.plugin.BaseCreate", /** @lends sap.ui.rta.plugin.BaseCreate.prototype */ {
@@ -169,8 +170,8 @@ sap.ui.define([
 			return sText;
 		}
 		var sContainerTitle = oAggregationDescription.singular;
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		return oTextResources.getText(sText, sContainerTitle);
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+		return oTextResources.getText(sText, [sContainerTitle]);
 	};
 
 	/**

@@ -6,6 +6,8 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
+	"sap/ui/core/Element",
+	"sap/ui/core/EventBus",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/util/validateText",
 	"sap/ui/dt/Overlay",
@@ -18,6 +20,8 @@ sap.ui.define([
 ], function(
 	jQuery,
 	Device,
+	Element,
+	EventBus,
 	Plugin,
 	validateText,
 	Overlay,
@@ -43,9 +47,8 @@ sap.ui.define([
 	 * @private
 	 * @since 1.52
 	 * @alias sap.ui.rta.plugin.RenameHandler
-	 * @experimental Since 1.52. This class is experimental and provides only limited functionality. Also the API might be
-	 * changed in future.
 	 */
+
 	var RenameHandler = {
 
 		errorStyleClass: "sapUiRtaErrorBg",
@@ -53,7 +56,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_manageClickEvent: function(vEventOrElement) {
+		_manageClickEvent(vEventOrElement) {
 			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
 			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled([oOverlay])) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
@@ -62,7 +65,7 @@ sap.ui.define([
 			}
 		},
 
-		_setEditableFieldPosition: function() {
+		_setEditableFieldPosition() {
 			if (this._oEditableField) {
 				jQuery(this._oEditableField).offset({left: DOMUtil.getOffset(this._oEditableControlDomRef).left});
 				jQuery(this._oEditableField).offset({top: DOMUtil.getOffset(this._oEditableControlDomRef).top});
@@ -75,9 +78,14 @@ sap.ui.define([
 		 * @param {map} mPropertyBag - (required) contains required properties
 		 * @public
 		 */
-		startEdit: function(mPropertyBag) {
+		startEdit(mPropertyBag) {
 			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
+
+			this._bPreviouslyMovable = this._oEditedOverlay.getMovable();
+			// This prevents a bug in firefox where the element can be dragged during rename
+			this._oEditedOverlay.setMovable(false);
+			OverlayUtil.setFirstParentMovable(this._oEditedOverlay, false);
 
 			var oElement = mPropertyBag.overlay.getElement();
 
@@ -148,7 +156,7 @@ sap.ui.define([
 			_oWrapperDomRef.classList.add("sapUiRtaEditableField");
 			_oWrapperDomRef.style.whiteSpace = "nowrap";
 			_oWrapperDomRef.style.overflow = "hidden";
-			_oWrapperDomRef.style.width = "calc(100% - (" + iWidthDifference + "px))";
+			_oWrapperDomRef.style.width = `calc(100% - (${iWidthDifference}px))`;
 			oOverlayForWrapper.getDomRef().append(_oWrapperDomRef);
 			var _oEditableFieldDomRef = document.createElement("div");
 			_oEditableFieldDomRef.setAttribute("contentEditable", "true");
@@ -222,20 +230,21 @@ sap.ui.define([
 
 			// keep Overlay selected while renaming
 			mPropertyBag.overlay.setSelected(true);
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
+			EventBus.getInstance().publish("sap.ui.rta", mPropertyBag.pluginMethodName, {
 				overlay: mPropertyBag.overlay,
 				editableField: this._oEditableField
 			});
 		},
 
-		_setDesignTime: function(oDesignTime) {
+		_setDesignTime(...aArgs) {
+			const [oDesignTime] = aArgs;
 			this._aSelection = [];
 			var oOldDesignTime = this.getDesignTime();
 
 			if (oOldDesignTime) {
 				oOldDesignTime.getSelectionManager().detachChange(RenameHandler._onDesignTimeSelectionChange, this);
 			}
-			Plugin.prototype.setDesignTime.apply(this, arguments);
+			Plugin.prototype.setDesignTime.apply(this, aArgs);
 
 			if (oDesignTime) {
 				oDesignTime.getSelectionManager().attachChange(RenameHandler._onDesignTimeSelectionChange, this);
@@ -246,7 +255,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_onDesignTimeSelectionChange: function(oEvent) {
+		_onDesignTimeSelectionChange(oEvent) {
 			var aSelection = oEvent.getParameter("selection");
 
 			// detach events from previous selection
@@ -261,7 +270,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_stopPropagation: function(oEvent) {
+		_stopPropagation(oEvent) {
 			oEvent.stopPropagation();
 		},
 
@@ -269,7 +278,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_preventDefault: function(oEvent) {
+		_preventDefault(oEvent) {
 			oEvent.preventDefault();
 		},
 
@@ -277,7 +286,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldFocus: function(oEvent) {
+		_onEditableFieldFocus(oEvent) {
 			var el = oEvent.target;
 			var range = document.createRange();
 			range.selectNodeContents(el);
@@ -291,7 +300,7 @@ sap.ui.define([
 		 * @param {string} sPluginMethodName - method name of the plugin
 		 * @private
 		 */
-		_stopEdit: function(bRestoreFocus, sPluginMethodName) {
+		_stopEdit(bRestoreFocus, sPluginMethodName) {
 			var oOverlay;
 			this.setBusy(false);
 			this._oEditableField.removeEventListener("blur", this._oBlurHandler);
@@ -327,22 +336,24 @@ sap.ui.define([
 			if (oEditField) {
 				oEditField.remove();
 			}
+			this._oEditedOverlay.setMovable(this._bPreviouslyMovable);
+			OverlayUtil.setFirstParentMovable(this._oEditedOverlay, true);
 			delete this._oEditableControlDomRef;
 			delete this._oEditedOverlay;
 			delete this._bBlurOrKeyDownStarted;
 			delete this._fnGetControlText;
 			delete this._fnSetControlText;
 
-			sap.ui.getCore().getEventBus().publish("sap.ui.rta", sPluginMethodName, {
+			EventBus.getInstance().publish("sap.ui.rta", sPluginMethodName, {
 				overlay: oOverlay
 			});
 		},
 
-		_onEditableFieldBlur: function(oEvent) {
+		_onEditableFieldBlur(oEvent) {
 			return RenameHandler._handlePostRename.call(this, false, oEvent);
 		},
 
-		_handlePostRename: function(bRestoreFocus, oEvent) {
+		_handlePostRename(bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
@@ -373,7 +384,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		_handleInvalidRename: function(sErrorMessage, bRestoreFocus) {
+		_handleInvalidRename(sErrorMessage, bRestoreFocus) {
 			return Utils.showMessageBox("error", sErrorMessage, {
 				titleKey: "RENAME_ERROR_TITLE"
 			})
@@ -386,7 +397,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		_validateNewText: function() {
+		_validateNewText() {
 			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
 			var oRenameAction = this.getAction(oResponsibleOverlay);
 			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
@@ -394,7 +405,7 @@ sap.ui.define([
 			validateText(sNewText, this.getOldValue(), oRenameAction);
 		},
 
-		_onEditableFieldKeydown: function(oEvent) {
+		_onEditableFieldKeydown(oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
 					// to prevent context menu from opening when rename is finished
@@ -419,7 +430,7 @@ sap.ui.define([
 		 * @returns {string} current editable field text
 		 * @private
 		 */
-		_getCurrentEditableFieldText: function() {
+		_getCurrentEditableFieldText() {
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
 			var sText = this._oEditableField ? this._oEditableField.textContent.trim() : "";
@@ -430,15 +441,15 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onClick: function(oEvent) {
-			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		_onClick(oEvent) {
+			var oOverlay = Element.getElementById(oEvent.currentTarget.id);
 			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey && !oEvent.shiftKey) {
 				this.startEdit(oOverlay);
 				RenameHandler._preventDefault.call(this, oEvent);
 			}
 		},
 
-		_exit: function() {
+		_exit() {
 			if (this._oEditableControlDomRef) {
 				this.stopEdit(false);
 			}

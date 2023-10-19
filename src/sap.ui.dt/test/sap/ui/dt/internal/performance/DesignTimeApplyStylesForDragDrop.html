@@ -20,18 +20,22 @@
 				window.fnResolve = fnResolve;
 			});
 
-			sap.ui.getCore().attachInit(function() {
-				sap.ui.require([
-					"dt/performance/PerformanceTestUtil",
-					"sap/ui/dt/Util",
-					"sap/m/Panel",
-					"sap/ui/layout/VerticalLayout"
-				], function(
-					PerformanceTestUtil,
-					Util,
-					Panel,
-					VerticalLayout
-				){
+			sap.ui.require([
+				"dt/performance/PerformanceTestUtil",
+				"sap/m/Panel",
+				"sap/ui/core/Core",
+				"sap/ui/dt/Util",
+				"sap/ui/layout/VerticalLayout",
+				"sap/ui/qunit/utils/nextUIUpdate"
+			], function(
+				PerformanceTestUtil,
+				Panel,
+				Core,
+				Util,
+				VerticalLayout,
+				nextUIUpdate
+			) {
+				Core.ready().then(async () => {
 					var oSourcePanel = new Panel("SourcePanel");
 					var oTargetPanel = new Panel("TargetPanel");
 					var oLayout = new VerticalLayout("Layout", {
@@ -40,7 +44,7 @@
 					oLayout.placeAt("content");
 					PerformanceTestUtil.addButtons(oSourcePanel, "content", 51);
 					PerformanceTestUtil.addButtons(oTargetPanel, "content", 5);
-					sap.ui.getCore().applyChanges();
+					await nextUIUpdate();
 					window.onAppReady = PerformanceTestUtil.startDesignTime(oLayout, "SourcePanel");
 				});
 			});

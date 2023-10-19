@@ -7,13 +7,15 @@ sap.ui.define([
 	"./CalendarType",
 	"./Locale",
 	"sap/base/assert",
+	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/base/Object",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(CalendarType, Locale, assert, Localization, extend, LoaderExtensions, BaseObject, Configuration, CalendarWeekNumbering) {
+], function(CalendarType, Locale, assert, LanguageTag, Localization, extend, LoaderExtensions, BaseObject,
+		Configuration, CalendarWeekNumbering) {
 	"use strict";
 
 	var rCIgnoreCase = /c/i,
@@ -28,6 +30,7 @@ sap.ui.define([
 			"concentr-milligram-per-deciliter": "concentr-milligram-ofglucose-per-deciliter",
 			"concentr-part-per-million": "concentr-permillion",
 			"consumption-liter-per-100kilometers": "consumption-liter-per-100-kilometer",
+			"mass-metric-ton": "mass-tonne",
 			"pressure-millimeter-of-mercury": "pressure-millimeter-ofhg",
 			"pressure-pound-per-square-inch": "pressure-pound-force-per-square-inch",
 			"pressure-inch-hg": "pressure-inch-ofhg",
@@ -35,6 +38,7 @@ sap.ui.define([
 		},
 		rNumberInScientificNotation = /^([+-]?)((\d+)(?:\.(\d+))?)[eE]([+-]?\d+)$/,
 		rTrailingZeroes = /0+$/;
+	const rFallbackPatternTextParts = /(.*)?\{[0|1]}(.*)?\{[0|1]}(.*)?/;
 
 	/**
 	 * Creates an instance of LocaleData for the given locale.
@@ -52,8 +56,8 @@ sap.ui.define([
 	var LocaleData = BaseObject.extend("sap.ui.core.LocaleData", /** @lends sap.ui.core.LocaleData.prototype */ {
 
 		constructor: function(oLocale) {
-			this.oLocale = Locale._getCoreLocale(oLocale);
 			BaseObject.apply(this);
+			this.oLocale = Locale._getCoreLocale(oLocale);
 			var oDataLoaded = getData(this.oLocale);
 			this.mData = oDataLoaded.mData;
 			this.sCLDRLocaleId = oDataLoaded.sCLDRLocaleId;
@@ -112,48 +116,100 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ushell
 		 */
-		getCurrentLanguageName: function() {
-			var oLanguages = this.getLanguages();
-			var sCurrentLanguage;
-			var sLanguage = Localization.getModernLanguage(this.oLocale.language);
-			var sScript = this.oLocale.getScript();
+		getCurrentLanguageName: function () {
+			return this.getLanguageName(this.oLocale.toString());
+		},
+
+		/**
+		 * Gets the locale-specific language name for the given language tag.
+		 *
+		 * The languages returned by {@link #getLanguages} from the CLDR raw data do not contain the
+		 * language names if they can be derived from the language and the script or the territory.
+		 * If the map of languages contains no entry for the given language tag, derive the language
+		 * name from the used script or region.
+		 *
+		 * @param {string} sLanguageTag
+		 *   The language tag, for example "en", "en-US", "en_US", "zh-Hant", or "zh_Hant"
+		 * @returns {string|undefined}
+		 *   The language name, or <code>undefined</code> if the name cannot be determined
+		 * @throws {TypeError} When the given language tag isn't valid
+		 *
+		 * @public
+		 */
+		getLanguageName: function (sLanguageTag) {
+			const oLanguageTag = new LanguageTag(sLanguageTag);
+			let sLanguage = Localization.getModernLanguage(oLanguageTag.language);
+			let sScript = oLanguageTag.script;
 			// special case for "sr_Latn" language: "sh" should then be used
-			// the key used in the languages object for serbian latin is "sh"
 			if (sLanguage === "sr" && sScript === "Latn") {
 				sLanguage = "sh";
 				sScript = null;
 			}
-			if (this.oLocale.getRegion()) {
-				// fall back to language and region, e.g. "en_GB"
-				sCurrentLanguage = oLanguages[sLanguage + "_" + this.oLocale.getRegion()];
+			const sRegion = oLanguageTag.region;
+			const oLanguages = this._get("languages");
+			const sLanguageText = oLanguages[sLanguage];
+			if (!sScript && !sRegion || !sLanguageText) {
+				return sLanguageText;
 			}
 
-			if (!sCurrentLanguage && sScript) {
-				// fall back to language and script, e.g. "zh_Hant"
-				sCurrentLanguage = oLanguages[sLanguage + "_" + sScript];
+			const sResult = oLanguages[sLanguage + "_" + sRegion] || oLanguages[sLanguage + "_" + sScript];
+			if (sResult) {
+				return sResult;
 			}
 
-			if (!sCurrentLanguage) {
-				// fall back to language only, e.g. "en"
-				sCurrentLanguage = oLanguages[sLanguage];
+			if (sScript) {
+				const sScriptText = this._get("scripts")[sScript];
+				if (sScriptText) {
+					return sLanguageText + " (" + sScriptText + ")";
+				}
 			}
-			return sCurrentLanguage;
+			if (sRegion) {
+				const sRegionText = this._get("territories")[sRegion];
+				if (sRegionText) {
+					return sLanguageText + " (" + sRegionText + ")";
+				}
+			}
+
+			return sLanguageText;
 		},
 
 		/**
-		 * Get locale specific language names.
+		 * Gets locale-specific language names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object<string, string>} map of locale specific language names
+		 * To avoid redundancies, with CLDR version 43 only language names are contained which cannot be derived from
+		 * the language and the script or the territory. If a language tag is not contained in the map, use
+		 * {@link #getLanguageName} to get the derived locale-specific language name for that language tag.
+		 *
+		 * @returns {Object<string, string>} Maps a language tag to the locale-specific language name
+		 *
 		 * @public
 		 */
 		getLanguages: function() {
-			return this._get("languages");
+			const oLanguages = this._get("languages");
+			/** @deprecated As of version 1.120.0 */
+			[
+				"ar_001", "de_AT", "de_CH", "en_AU", "en_CA", "en_GB", "en_US", "es_419", "es_ES", "es_MX", "fa_AF",
+				"fr_CA", "fr_CH", "nds_NL", "nl_BE", "pt_BR", "pt_PT", "ro_MD", "sw_CD", "zh_Hans", "zh_Hant"
+			].forEach((sLanguageTag) => {
+				// for compatibility reasons, ensure that for these language tags the corresponding language names are
+				// available
+				if (!oLanguages[sLanguageTag]) {
+					oLanguages[sLanguageTag] = this.getLanguageName(sLanguageTag);
+				}
+			});
+
+			return oLanguages;
 		},
 
 		/**
-		 * Get locale specific script names.
+		 * Gets locale-specific script names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object.<string, string>} map of locale specific script names
+		 * To avoid redundancies, with CLDR version 43 only scripts are contained for which the language-specific name
+		 * is different from the script key. If a script key is not contained in the map, use the script key as script
+		 * name.
+		 *
+		 * @returns {Object<string, string>} Maps a script key to the locale-specific script name
+		 *
 		 * @public
 		 */
 		getScripts: function() {
@@ -161,9 +217,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Get locale specific territory names.
+		 * Gets locale-specific territory names, as available in the CLDR raw data.
 		 *
-		 * @returns {Object.<string, string>} map of locale specific territory names
+		 * To avoid redundancies, with CLDR version 43 only territories are contained for which the language-specific
+		 * name is different from the territory key.
+		 *
+		 * @returns {Object<string, string>} Maps a territory key to the locale-specific territory name
+		 *
 		 * @public
 		 */
 		getTerritories: function() {
@@ -602,10 +662,15 @@ sap.ui.define([
 		 * @since 1.46
 		 * @public
 		 */
-		getCombinedIntervalPattern : function(sPattern, sCalendarType) {
-			var oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats"),
-				sFallbackPattern = oIntervalFormats.intervalFormatFallback;
-			return sFallbackPattern.replace(/\{(0|1)\}/g, sPattern);
+		getCombinedIntervalPattern: function (sPattern, sCalendarType) {
+			const oIntervalFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats",
+				"intervalFormats");
+			const [/*sAll*/, sTextBefore, sTextBetween, sTextAfter] =
+				rFallbackPatternTextParts.exec(oIntervalFormats.intervalFormatFallback);
+
+			// text part of intervalFormatFallback is not escaped
+			return LocaleData._escapeIfNeeded(sTextBefore) + sPattern + LocaleData._escapeIfNeeded(sTextBetween)
+				+ sPattern + LocaleData._escapeIfNeeded(sTextAfter);
 		},
 
 		/**
@@ -1327,7 +1392,7 @@ sap.ui.define([
 		 * Returns the currency symbols available for this locale.
 		 * Currency symbols get accumulated by custom currency symbols.
 		 *
-		 * @returns {Object.<string, string>} the map of all currency symbols available in this locale, e.g.
+		 * @returns {Object<string, string>} the map of all currency symbols available in this locale, e.g.
 		 * {
 		 *     "AUD": "A$",
 		 *     "BRL": "R$",
@@ -1830,7 +1895,7 @@ sap.ui.define([
 			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", this.oLocale.toString()),
 				sKey = "date.week.calendarweek." + sStyle;
 
-			return oMessageBundle.getText(sKey, iWeekNumber);
+			return oMessageBundle.getText(sKey, iWeekNumber ? [iWeekNumber] : undefined);
 		},
 
 		/**
@@ -2604,6 +2669,27 @@ sap.ui.define([
 	// name
 	LocaleData._mTimezoneTranslations = {};
 
-	return LocaleData;
+	const rContainsSymbol = new RegExp("[" + Object.keys(mCLDRSymbols).join("") + "]");
+	const rTextWithOptionalSpacesAtStartAndEnd = /^(\s)?(.*?)(\s)?$/;
 
+	/**
+	 * Returns the escaped value if the given value contains CLDR symbols.
+	 *
+	 * @param {string} [sValue=""]
+	 *   The value to be checked and escaped if needed; the value must not contain '
+	 * @returns {string}
+	 *   The escaped value; only the string between one optional space at the beginning and at the
+	 *   end is escaped
+	 */
+	LocaleData._escapeIfNeeded = function (sValue) {
+		if (sValue === undefined) {
+			return "";
+		}
+		if (rContainsSymbol.test(sValue)) {
+			return sValue.replace(rTextWithOptionalSpacesAtStartAndEnd, "$1'$2'$3");
+		}
+		return sValue;
+	};
+
+	return LocaleData;
 });

@@ -916,6 +916,7 @@ sap.ui.define([
 		TestUtils.notDeepContains([{}, {}], [{foo : "bar"}]);
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	//*********************************************************************************************
 	QUnit.test("compatibility with synchronous ODataModel", function (assert) {
 		var oDataModel, oMetaModel;
@@ -949,6 +950,7 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	//*********************************************************************************************
 	QUnit.test("compatibility with asynchronous old ODataModel", function (assert) {
 		var oDataModel, oMetaModel;
@@ -982,6 +984,7 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	//*********************************************************************************************
 	QUnit.test("compatibility w/ asynchronous old ODataModel: use after load", function (assert) {
 		var iCount = 0,
@@ -1032,6 +1035,7 @@ sap.ui.define([
 		oDataModel.attachMetadataLoaded(loaded);
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	//*********************************************************************************************
 	QUnit.test("compatibility with old ODataModel: separate value list load", function (assert) {
 		var oContext, oDataModel, oEntityType, oMetaModel, oProperty;
@@ -2287,44 +2291,83 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
+	//*********************************************************************************************
+	// Note: http://www.html5rocks.com/en/tutorials/es6/promises/ says that
+	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
+	QUnit.test("Errors thrown inside load(), async = false", function (assert) {
+		var oDataModel, oError,
+			that = this;
+
+		this.oLogMock.expects("warning").exactly(1)
+			.withExactArgs(sIgnoreThisWarning);
+
+		oError = new Error("This call failed intentionally");
+		oError.$uncaughtInPromise = true;
+		oDataModel = new (ODataModel1)("/fake/service", {
+			annotationURI : "",
+			json : true,
+			loadMetadataAsync : false
+		});
+
+		// Note: this is just a placeholder for "anything which could go wrong inside load()"
+		this.mock(Model.prototype).expects("setDefaultBindingMode").throws(oError);
+
+		// code under test
+		return oDataModel.getMetaModel().loaded().then(function () {
+			throw new Error("Unexpected success");
+		}, function (ex) {
+			assert.strictEqual(ex, oError, ex.message);
+			// sync loaded promise also fails with the same error
+			return oDataModel.getMetaModel().oLoadedPromiseSync.then(function () {
+				throw new Error("Unexpected success");
+			}, function (ex0) {
+				assert.strictEqual(ex0, oError, ex0.message);
+
+				that.mock(oDataModel.oMetadata).expects("refresh").rejects(oError);
+				that.mock(Log).expects("fatal").withExactArgs(oError);
+
+				// code under test (failed refresh results in console error)
+				oDataModel.refreshMetadata();
+			});
+		});
+	});
+
 	//*********************************************************************************************
 	// Note: http://www.html5rocks.com/en/tutorials/es6/promises/ says that
 	// "Any errors thrown in the constructor callback will be implicitly passed to reject()."
 	// We make sure the same happens even with our asynchronous constructor.
-	[false, true].forEach(function (bAsync) {
-		QUnit.test("Errors thrown inside load(), async = " + bAsync, function (assert) {
-			var oDataModel, oError;
+	QUnit.test("Errors thrown inside load(), async = true", function (assert) {
+		var oDataModel, oError;
 
-			this.oLogMock.expects("warning").exactly(bAsync ? 0 : 1)
-				.withExactArgs(sIgnoreThisWarning);
+		this.oLogMock.expects("warning").exactly(0)
+			.withExactArgs(sIgnoreThisWarning);
 
-			oError = new Error("This call failed intentionally");
-			oError.$uncaughtInPromise = true;
-			oDataModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
-				annotationURI : "",
-				json : true,
-				loadMetadataAsync : bAsync
-			});
+		oError = new Error("This call failed intentionally");
+		oError.$uncaughtInPromise = true;
+		oDataModel = new (ODataModel)("/fake/service", {
+			annotationURI : "",
+			json : true,
+			loadMetadataAsync : true
+		});
 
-			if (bAsync) {
-				this.oLogMock.expects("error").withExactArgs(
-					"error in ODataMetaModel.loaded(): " + oError.message, undefined,
-					"sap.ui.model.odata.v2.ODataModel");
-			}
-			// Note: this is just a placeholder for "anything which could go wrong inside load()"
-			this.mock(Model.prototype).expects("setDefaultBindingMode").throws(oError);
+		this.oLogMock.expects("error").withExactArgs(
+			"error in ODataMetaModel.loaded(): " + oError.message, undefined,
+			"sap.ui.model.odata.v2.ODataModel");
 
-			// code under test
-			return oDataModel.getMetaModel().loaded().then(function () {
+		// Note: this is just a placeholder for "anything which could go wrong inside load()"
+		this.mock(Model.prototype).expects("setDefaultBindingMode").throws(oError);
+
+		// code under test
+		return oDataModel.getMetaModel().loaded().then(function () {
+			throw new Error("Unexpected success");
+		}, function (ex) {
+			assert.strictEqual(ex, oError, ex.message);
+			// sync loaded promise also fails with the same error
+			return oDataModel.getMetaModel().oLoadedPromiseSync.then(function () {
 				throw new Error("Unexpected success");
-			}, function (ex) {
-				assert.strictEqual(ex, oError, ex.message);
-				// sync loaded promise also fails with the same error
-				return oDataModel.getMetaModel().oLoadedPromiseSync.then(function () {
-					throw new Error("Unexpected success");
-				}, function (ex0) {
-					assert.strictEqual(ex0, oError, ex0.message);
-				});
+			}, function (ex0) {
+				assert.strictEqual(ex0, oError, ex0.message);
 			});
 		});
 	});
@@ -3289,6 +3332,7 @@ sap.ui.define([
 		});
 	});
 
+	/** @deprecated As of version 1.48.0, reason sap.ui.model.odata.ODataModel */
 	//*********************************************************************************************
 	QUnit.test("load: Performance measurement points", function (assert) {
 		var oAverageSpy, oDataModel, oEndSpy, oMetaModel;
@@ -4189,6 +4233,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("requestCurrencyCodes: no CurrencyCodes annotation", function (assert) {
+		const oDataModel = new ODataModel("/fake/emptySchema", {});
+		const oMetaModel = oDataModel.getMetaModel();
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("CurrencyCodes")
+			.returns(SyncPromise.resolve(null));
+		this.mock(_Helper).expects("merge").never();
+
+		// code under test
+		const oCurrencyCodesPromise = oMetaModel.requestCurrencyCodes();
+
+		assert.ok(oCurrencyCodesPromise instanceof Promise);
+		return oCurrencyCodesPromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, null);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestUnitsOfMeasure", function (assert) {
 		var oDataModel = new ODataModel("/fake/emptySchema", {}),
 			oMetaModel = oDataModel.getMetaModel(),
@@ -4207,6 +4268,24 @@ sap.ui.define([
 		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
 		return oUnitsOfMeasurePromise.then(function (oCodeList) {
 			assert.strictEqual(oCodeList, "~codeListCopy");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure: no UnitOfMeasure annotation", function (assert) {
+		const oDataModel = new ODataModel("/fake/emptySchema", {});
+		const oMetaModel = oDataModel.getMetaModel();
+
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("UnitsOfMeasure")
+			.returns(SyncPromise.resolve(null));
+		this.mock(_Helper).expects("merge").never();
+
+		// code under test
+		const oUnitsOfMeasurePromise = oMetaModel.requestUnitsOfMeasure();
+
+		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
+		return oUnitsOfMeasurePromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, null);
 		});
 	});
 

@@ -1417,6 +1417,7 @@ sap.ui.define([
 									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
+										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "0", "Message strip not visible");
 										resolve();
 									});
@@ -1854,6 +1855,7 @@ sap.ui.define([
 									oField1._settingsButton.focus();
 									wait(500).then(function () {
 										oMultiComboBox.focus();
+										Core.applyChanges();
 										assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 										assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 										assert.equal(oMsgStrip.getText(), "Please select items in key1,key3,key6", "Message text correct");

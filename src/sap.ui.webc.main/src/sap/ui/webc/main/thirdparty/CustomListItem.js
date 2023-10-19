@@ -18,6 +18,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
+
+  // Styles
+
   /**
    * @class
    *
@@ -25,6 +28,20 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/Keys", "sap/ui/web
    * the same way as the standard <code>ui5-li</code>.
    *
    * The component accepts arbitrary HTML content to allow full customization.
+   *
+   * <h3>CSS Shadow Parts</h3>
+   *
+   * <ui5-link target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/::part">CSS Shadow Parts</ui5-link> allow developers to style elements inside the Shadow DOM.
+   * <br>
+   * The <code>ui5-li-custom</code> exposes the following CSS Shadow Parts:
+   * <ul>
+   * <li>native-li - Used to style the main li tag of the list item</li>
+   * <li>content - Used to style the content area of the list item</li>
+   * <li>detail-button - Used to style the button rendered when the list item is of type detail</li>
+   * <li>delete-button - Used to style the button rendered when the list item is in delete mode</li>
+   * <li>radio - Used to style the radio button rendered when the list item is in single selection mode</li>
+   * <li>checkbox - Used to style the checkbox rendered when the list item is in multiple selection mode</li>
+   * </ul>
    *
    * @constructor
    * @author SAP SE

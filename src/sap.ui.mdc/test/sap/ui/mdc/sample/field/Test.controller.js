@@ -5,10 +5,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/FieldEditMode",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core"
-], function(Controller, Filter, FilterOperator, JSONModel, Condition, FieldEditMode, mobileLibrary, MessageToast, oCore) {
+], function(Controller, Filter, FilterOperator, JSONModel, Condition, FieldEditMode, OperatorName, mobileLibrary, MessageToast, oCore) {
 	"use strict";
 
 	var ButtonType = mobileLibrary.ButtonType;
@@ -208,7 +209,7 @@ sap.ui.define([
 			var oButton = oEvent.oSource;
 			var oValueHelp = oButton.getParent().getParent();
 			var vKey = oButton.getIcon().substr(11);
-			oValueHelp.fireSelectEvent([Condition.createCondition("EQ", [vKey])]);
+			oValueHelp.fireSelectEvent([Condition.createCondition(OperatorName.EQ, [vKey])]);
 		},
 
 		handleBeforeOpen: function(oEvent) {

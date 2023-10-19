@@ -5,19 +5,19 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/util/resolveBinding",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	sinon,
 	View,
 	JSONModel,
 	resolveBinding,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Base functionality", {
-		before: function() {
+		async before() {
 			this.oView = new View().placeAt("qunit-fixture");
 			this.oDefaultModel = new JSONModel({
 				foo: "foo value",
@@ -34,14 +34,14 @@ sap.ui.define([
 			this.oView.setBindingContext(this.oDefaultModel.getContext("/bar"), "context");
 			this.oView.setModel(this.oCustomModel, "custom");
 			this.oView.setBindingContext(this.oCustomModel.getContext("/"), "custom");
-			oCore.applyChanges();
+			await nextUIUpdate();
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 			this.oDefaultModel.destroy();
 			this.oCustomModel.destroy();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -133,7 +133,7 @@ sap.ui.define([
 
 		QUnit.test("when a string contains an expression binding with a formatter", function(assert) {
 			sandbox.stub(this.oView, "getController").returns({
-				formatter: function(value) {
+				formatter(value) {
 					return value && value.toUpperCase();
 				}
 			});

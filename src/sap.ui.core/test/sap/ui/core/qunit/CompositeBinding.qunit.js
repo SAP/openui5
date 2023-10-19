@@ -119,6 +119,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("sap.ui.model.CompositeBinding: Basic functionality", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.model = new JSONModel({
@@ -389,6 +392,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.model.CompositeBinding: With inner types/formatters", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.model = new JSONModel({
@@ -584,6 +590,9 @@ sap.ui.define([
 
 
 	QUnit.module("sap.ui.model.CompositeBinding: Unresolved inner bindings", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.model = new JSONModel({
@@ -617,6 +626,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.model.CompositeBinding: Use internal values", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.type = new TypeString();
@@ -746,6 +758,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.model.CompositeBinding: Use mixed binding modes", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach: function() {
 			Configuration.setLanguage("en-US");
 			this.model = new JSONModel({
@@ -828,6 +843,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.CompositeBinding", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();

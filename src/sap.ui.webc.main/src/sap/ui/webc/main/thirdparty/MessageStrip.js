@@ -25,6 +25,9 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/UI5Element", "sap/
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var MessageStrip_1;
+
+  // Styles
+
   var DesignClassesMapping;
   (function (DesignClassesMapping) {
     DesignClassesMapping["Information"] = "ui5-message-strip-root--info";

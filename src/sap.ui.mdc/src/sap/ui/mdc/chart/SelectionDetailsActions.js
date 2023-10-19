@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @since 1.88
 	 * @alias sap.ui.mdc.chart.SelectionDetailsActions
 	 */
-	var SelectionDetailsActions = Element.extend("sap.ui.mdc.chart.SelectionDetailsActions", {
+	const SelectionDetailsActions = Element.extend("sap.ui.mdc.chart.SelectionDetailsActions", {
 
 		metadata: {
 			library: "sap.ui.mdc",

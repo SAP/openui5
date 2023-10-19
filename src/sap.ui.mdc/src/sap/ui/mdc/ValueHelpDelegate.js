@@ -10,12 +10,14 @@ sap.ui.define([
 	"sap/ui/mdc/BaseDelegate",
 	"sap/ui/model/FilterType",
 	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterConverter'
 ], function(
 	BaseDelegate,
 	FilterType,
 	ConditionValidated,
+	OperatorName,
 	Condition,
 	FilterConverter
 ) {
@@ -32,7 +34,7 @@ sap.ui.define([
 	 * @extends module:sap/ui/mdc/BaseDelegate
 	 * @alias module:sap/ui/mdc/ValueHelpDelegate
 	 */
-	var ValueHelpDelegate = Object.assign({}, BaseDelegate);
+	const ValueHelpDelegate = Object.assign({}, BaseDelegate);
 
 	/**
 	 * Requests the content of the value help.
@@ -81,8 +83,8 @@ sap.ui.define([
 		if (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue
 			return false;
 		} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show
-			var oListBinding = oContent.getListBinding();
-			var iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
+			const oListBinding = oContent.getListBinding();
+			const iLength = oListBinding && oListBinding.getAllCurrentContexts().length;
 			return iLength > 0;
 		}
 		return true; // All other content should be shown by default
@@ -101,19 +103,19 @@ sap.ui.define([
 		oBindingInfo.parameters = {};
 		oBindingInfo.filters = [];
 
-		var sFilterFields = oContent.getFilterFields();
-		var sFieldSearch = oContent._getPriorityFilterValue();
-		var oFilterBar = oContent._getPriorityFilterBar();
-		var oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
+		const sFilterFields = oContent.getFilterFields();
+		const sFieldSearch = oContent._getPriorityFilterValue();
+		const oFilterBar = oContent._getPriorityFilterBar();
+		const oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
 
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
-			var oCondition = Condition.createCondition("Contains", [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
+			const oCondition = Condition.createCondition(OperatorName.Contains, [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
 			oConditions[sFilterFields] = [oCondition];
 		}
 
-		var oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
-		var oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
+		const oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
+		const oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
 
 		if (oFilter) {
 			oBindingInfo.filters = [oFilter];
@@ -224,7 +226,7 @@ sap.ui.define([
 	 */
 	ValueHelpDelegate.getInitialFilterConditions = function (oValueHelp, oContent, oControl) {
 
-		var oConditions = {};
+		const oConditions = {};
 		return oConditions;
 
 	};
@@ -235,25 +237,37 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
-	 * @param {sap.ui.core.Element} oItem Entry of a given list
+	 * @param {object} oItem - Entry of a given list
+ 	 * @param {method} oItem.getBindingContext - Get the binding context of this object for the given model name.
 	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
 	 * @returns {boolean} <code>true</code> if item is selected
 	 * @public
 	 * @since 1.101.0
+  	 * @deprecated (since 1.118.0) - replaced by {@link sap.ui.mdc.ValueHelpDelegate.findConditionsForContext}
+	 * @name sap.ui.mdc.ValueHelpDelegate#isFilterableListItemSelected
+	 * @function
 	 */
-	ValueHelpDelegate.isFilterableListItemSelected = function (oValueHelp, oContent, oItem, aConditions) {
-		var sModelName = oContent.getListBindingInfo().model;
-		var oContext = oItem && oItem.getBindingContext(sModelName);
-		var oItemData = oContent.getItemFromContext(oContext);
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			if (oCondition.validated === ConditionValidated.Validated && oItemData.key === oCondition.values[0]) { // TODO: check for specific EQ operator
-				return true;
-			}
-		}
-
-		return false;
+	/**
+	 * Find all conditions, which are represented by the given context for 'Select from list' scenarios.
+	 * By default, only condition keys are considered. This may be extended with payload dependent filters.
+	 *
+	 * Note: this method replaces the former <code>isFilterableListItemSelected</code>
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+ 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.model.Context} oContext Entry of a given list
+	 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions current conditions
+	 * @returns {sap.ui.mdc.condition.ConditionObject[]} Conditions represented by the given context
+	 * @private
+	 * @public
+	 * @since 1.118.0
+	 */
+	ValueHelpDelegate.findConditionsForContext = function (oValueHelp, oContent, oContext, aConditions) {
+		const vKey = oContext.getObject(oContent.getKeyPath());
+		return aConditions.filter(function (oCondition) {
+			return oCondition.validated === ConditionValidated.Validated && vKey === oCondition.values[0];
+		});
 	};
 
 	/**
@@ -302,8 +316,8 @@ sap.ui.define([
 	 * @since 1.101.0
 	 */
 	ValueHelpDelegate.getTypesForConditions = function (oValueHelp, oContent, oConditions) {	// TODO: MDC.Table add UI.Table support
-		var oConditionTypes = {};
-		var oListBindingInfo = oContent && oContent.getListBindingInfo();
+		const oConditionTypes = {};
+		const oListBindingInfo = oContent && oContent.getListBindingInfo();
 
 		if (oListBindingInfo && oListBindingInfo.template) {
 			oListBindingInfo.template.mAggregations.cells.forEach(function (oCell) {
@@ -347,6 +361,21 @@ sap.ui.define([
 			return this.getInitialFilterConditions(oValueHelp, oContent, (oConfig && oConfig.control) || (oContent && oContent.getControl()));
 		}
 		return {};
+	};
+
+	/**
+	 * Returns the content that is used for the autocomplete feature and for user input, if the entered text
+	 * leads to more than one filter result.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance
+	 * @param {sap.ui.mdc.valuehelp.base.ItemForValueConfiguration} oConfig Configuration
+	 * @returns {sap.ui.model.Context} Promise resolving in the <code>Context</code> that's relevant'
+	 * @public
+	 * @since 1.120.0
+	 */
+	ValueHelpDelegate.getFirstMatch = function(oValueHelp, oContent, oConfig) {
+		return oContent.getRelevantContexts(oConfig)[0];
 	};
 
 	return ValueHelpDelegate;

@@ -88,18 +88,19 @@ sap.ui.define([
 			assert.strictEqual(oErr.message, "Error: adding element with duplicate id 'xmlViewInsideFragment'", "Error message is correct");
 		};
 
-		Controller.extend("my.controller", {
-
-			onInit: function(){
-				this._pFragment = Fragment.load({
-					name: "testdata.fragments.XMLView",
-					type: "XML"
-				});
-			}
+		sap.ui.define("my/Controller01.controller", function() {
+			return Controller.extend("my.Controller01", {
+				onInit: function(){
+					this._pFragment = Fragment.load({
+						name: "testdata.fragments.XMLView",
+						type: "XML"
+					});
+				}
+			});
 		});
 
 		var pView1 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller01'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
@@ -107,7 +108,7 @@ sap.ui.define([
 		});
 
 		var pView2 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller01'>" +
 						"</mvc:View>"
 		}).then(function(oView){
 			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
@@ -122,7 +123,7 @@ sap.ui.define([
 				aViews[0].destroy();
 				aViews[1].destroy();
 				// dangling fragment content (not prefixed and not aggregated)
-				sap.ui.getCore().byId("xmlViewInsideFragment").destroy();
+				Element.getElementById("xmlViewInsideFragment").destroy();
 			});
 		}).then(function() {
 			checkForDanglingControls(assert, aViews[0]);
@@ -140,17 +141,19 @@ sap.ui.define([
 			assert.ok(false, "should not reject with duplicate ID error");
 		};
 
-		Controller.extend("my.controller", {
-			onInit: function(){
-				this._pFragment = this.loadFragment({
-					name: "testdata.fragments.XMLView",
-					type: "XML"
-				});
-			}
+		sap.ui.define("my/Controller02.controller", function() {
+			return Controller.extend("my.Controller02", {
+				onInit: function(){
+					this._pFragment = this.loadFragment({
+						name: "testdata.fragments.XMLView",
+						type: "XML"
+					});
+				}
+			});
 		});
 
 		var pView1 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller02'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
@@ -158,7 +161,7 @@ sap.ui.define([
 		});
 
 		var pView2 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller02'>" +
 						"</mvc:View>"
 		}).then(function(oView){
 			aFragmentPromises.push(oView.getController()._pFragment.catch(assertCatch));
@@ -192,19 +195,21 @@ sap.ui.define([
 	QUnit.test("Fragment.create - add to dependents after destruction of view", function(assert){
 		assert.expect(3);
 
-		Controller.extend("my.controller", {
-
-			onInit: function(){
-				this._pFragment = Fragment.load({
-					name: "testdata.fragments.XMLView",
-					type: "XML"
-				}).then(function(oControl) {
-					this.getView().addDependent(oControl);
-				}.bind(this));
-			}
+		sap.ui.define("my/Controller03.controller", function() {
+			return Controller.extend("my.Controller03", {
+				onInit: function(){
+					this._pFragment = Fragment.load({
+						name: "testdata.fragments.XMLView",
+						type: "XML"
+					}).then(function(oControl) {
+						this.getView().addDependent(oControl);
+					}.bind(this));
+				}
+			});
 		});
+
 		return XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller03'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			var pFragmentPromise = oView.getController()._pFragment;
@@ -222,18 +227,19 @@ sap.ui.define([
 	QUnit.test("Controller.loadFragment - dependents cleaned up correctly", function(assert){
 		assert.expect(5);
 
-		Controller.extend("my.controller", {
-
-			onInit: function(){
-				this._pFragment = this.loadFragment({
-					name: "testdata.fragments.XMLView",
-					type: "XML"
-				});
-			}
+		sap.ui.define("my/Controller04.controller", function() {
+			return Controller.extend("my.Controller04", {
+				onInit: function(){
+					this._pFragment = this.loadFragment({
+						name: "testdata.fragments.XMLView",
+						type: "XML"
+					});
+				}
+			});
 		});
 
 		var pView1 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller04'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			var pResult = oView.getController()._pFragment.then(function() {
@@ -248,7 +254,7 @@ sap.ui.define([
 		});
 
 		var pView2 = XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller04'>" +
 						"</mvc:View>"
 		}).then(function(oView){
 			return oView.getController()._pFragment.then(function() {
@@ -278,23 +284,25 @@ sap.ui.define([
 		var oComponent = new Component({id: "myComponent"});
 		var pFragmentReady;
 
-		Controller.extend("my.controller", {
-			onInit: function(){
-				pFragmentReady = new Promise(function(res, rej) {
-					this.loadFragment({
-						name: "testdata.fragments.XMLView",
-						type: "XML",
-						id: "horst"
-					}).then(function() {
-						res([]);
-					});
-				}.bind(this));
-			}
+		sap.ui.define("my/Controller05.controller", function() {
+			return Controller.extend("my.Controller05", {
+				onInit: function(){
+					pFragmentReady = new Promise(function(res, rej) {
+						this.loadFragment({
+							name: "testdata.fragments.XMLView",
+							type: "XML",
+							id: "horst"
+						}).then(function() {
+							res([]);
+						});
+					}.bind(this));
+				}
+			});
 		});
 
 		return oComponent.runAsOwner(function() {
 			return XMLView.create({
-				definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+				definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller05'>" +
 				"</mvc:View>"
 			}).then(function(oView){
 				return pFragmentReady.then(function() {
@@ -310,22 +318,24 @@ sap.ui.define([
 
 		var pFragmentReady;
 
-		Controller.extend("my.controller", {
-			onInit: function(){
-				pFragmentReady = new Promise(function(res, rej) {
-					this.loadFragment({
-						name: "testdata.fragments.XMLView",
-						type: "XML",
-						addToDependents: false
-					}).then(function() {
-						res([]);
-					});
-				}.bind(this));
-			}
+		sap.ui.define("my/Controller06.controller", function() {
+			return Controller.extend("my.Controller06", {
+				onInit: function(){
+					pFragmentReady = new Promise(function(res, rej) {
+						this.loadFragment({
+							name: "testdata.fragments.XMLView",
+							type: "XML",
+							addToDependents: false
+						}).then(function() {
+							res([]);
+						});
+					}.bind(this));
+				}
+			});
 		});
 
 		return XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller06'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			return pFragmentReady.then(function() {
@@ -340,26 +350,28 @@ sap.ui.define([
 
 		var pFragmentReady;
 
-		Controller.extend("my.controller", {
-			onInit: function(){
-				pFragmentReady = new Promise(function(res, rej) {
-					this.loadFragment({
-						name: "testdata.fragments.XMLView",
-						type: "XML",
-						autoPrefixId: false
-					}).then(function() {
-						res([]);
-					});
-				}.bind(this));
-			}
+		sap.ui.define("my/Controller07.controller", function() {
+			return Controller.extend("my.Controller07", {
+				onInit: function(){
+					pFragmentReady = new Promise(function(res, rej) {
+						this.loadFragment({
+							name: "testdata.fragments.XMLView",
+							type: "XML",
+							autoPrefixId: false
+						}).then(function() {
+							res([]);
+						});
+					}.bind(this));
+				}
+			});
 		});
 
 		return XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller07'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			return pFragmentReady.then(function() {
-				assert.ok(sap.ui.getCore().byId("xmlViewInsideFragment"), "Fragment content is not prefixed by any ID.");
+				assert.ok(Element.getElementById("xmlViewInsideFragment"), "Fragment content is not prefixed by any ID.");
 				assert.notOk(oView.byId("xmlViewInsideFragment"), "Fragment content is not prefixed by the view ID.");
 				oView.destroy();
 			});
@@ -371,27 +383,29 @@ sap.ui.define([
 
 		var pFragmentReady;
 
-		Controller.extend("my.controller", {
-			onInit: function(){
-				pFragmentReady = new Promise(function(res, rej) {
-					this.loadFragment({
-						name: "testdata.fragments.XMLView",
-						type: "XML",
-						id: "myFragment",
-						autoPrefixId: false
-					}).then(function() {
-						res([]);
-					});
-				}.bind(this));
-			}
+		sap.ui.define("my/Controller08.controller", function() {
+			return Controller.extend("my.Controller08", {
+				onInit: function(){
+					pFragmentReady = new Promise(function(res, rej) {
+						this.loadFragment({
+							name: "testdata.fragments.XMLView",
+							type: "XML",
+							id: "myFragment",
+							autoPrefixId: false
+						}).then(function() {
+							res([]);
+						});
+					}.bind(this));
+				}
+			});
 		});
 
 		return XMLView.create({
-			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.controller'>" +
+			definition: "<mvc:View xmlns:mvc='sap.ui.core.mvc' controllerName='my.Controller08'>" +
 			"</mvc:View>"
 		}).then(function(oView){
 			return pFragmentReady.then(function() {
-				assert.ok(sap.ui.getCore().byId("myFragment--xmlViewInsideFragment"), "Fragment content is prefixed by the given ID.");
+				assert.ok(Element.getElementById("myFragment--xmlViewInsideFragment"), "Fragment content is prefixed by the given ID.");
 				assert.notOk(oView.byId("myFragment--xmlViewInsideFragment"), "Fragment content is not prefixed by the view ID.");
 				oView.destroy();
 			});

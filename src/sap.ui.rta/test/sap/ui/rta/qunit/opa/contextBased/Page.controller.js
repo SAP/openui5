@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Control",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/Layer",
@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	Core,
+	Lib,
 	Control,
 	Controller,
 	Layer,
@@ -26,13 +26,13 @@ sap.ui.define([
 	"use strict";
 
 	var PageController = Controller.extend("sap.ui.rta.contextBased.Page", {
-		onInit: function() {
+		onInit() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			this.oRolesModel = new JSONModel();
 			this.oRolesModel.loadData("./model/roles.json", "", false);
 			this.sandbox = sinon.createSandbox();
 			this.oToolbar = new Adaptation({
-				textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+				textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 				rtaInformation: {
 					flexSettings: {
 						layer: Layer.CUSTOMER
@@ -47,27 +47,27 @@ sap.ui.define([
 			var aAdaptations = oTempAdaptationsModel.getProperty("/adaptations");
 			this.oModel = ContextBasedAdaptationsAPI.createModel(aAdaptations, aAdaptations[0], true);
 		},
-		onManageAdaptations: function() {
+		onManageAdaptations() {
 			setStubsWithData.call(this);
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithOnlyOneAdaptation: function() {
+		onManageAdaptationsWithOnlyOneAdaptation() {
 			setStubsWithData.call(this, "./model/onlyOneAdaptation.json");
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithTwoAdaptations: function() {
+		onManageAdaptationsWithTwoAdaptations() {
 			setStubsWithData.call(this, "./model/twoAdaptations.json");
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onManageAdaptationsWithBackendError: function() {
+		onManageAdaptationsWithBackendError() {
 			setStubWithError.call(this);
 			this.oManageAdaptationsDialog.openManageAdaptationDialog();
 		},
-		onAddAdaptation: function() {
+		onAddAdaptation() {
 			setStubsWithData.call(this);
 			this.oAddAdaptationsDialog.openAddAdaptationDialog();
 		},
-		onAddAdaptationWithBackendError: function() {
+		onAddAdaptationWithBackendError() {
 			setStubWithError.call(this);
 			this.oAddAdaptationsDialog.openAddAdaptationDialog();
 		}

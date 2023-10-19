@@ -8,6 +8,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/MessageBox",
 	"sap/ui/core/Control",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
@@ -21,7 +23,8 @@ sap.ui.define([
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	RtaQunitUtils,
 	_omit,
@@ -30,6 +33,8 @@ sap.ui.define([
 	Label,
 	MessageBox,
 	Control,
+	EventBus,
+	Lib,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
@@ -43,30 +48,31 @@ sap.ui.define([
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	oCore
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
-	var ObjectPageSubSectionLayout = uxapLibrary.ObjectPageSubSectionLayout;
+	var {ObjectPageSubSectionLayout} = uxapLibrary;
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a test app...", {
-		before: function() {
+		before() {
 			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
-			return this.oCompContPromise.then(function() {
-				this.oView = oCore.byId("Comp1---idMain1");
+			return this.oCompContPromise.then(async function() {
+				this.oView = Element.getElementById("Comp1---idMain1");
 				this.oView.getModel().refresh(true);
-				oCore.applyChanges();
+				await nextUIUpdate();
 				return this.oView.getModel().getMetaModel().loaded();
 			}.bind(this));
 		},
-		after: function() {
+		after() {
 			this.oView.destroy();
 			this.oCompContPromise = undefined;
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -96,7 +102,7 @@ sap.ui.define([
 			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
@@ -108,9 +114,9 @@ sap.ui.define([
 		QUnit.test("Given extensibility enabled and a bound control without serviceurl on model when 'isServiceUpToDate' is called", function(assert) {
 			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
 			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 			var oBoundModel = oBoundControl.getModel();
-			var sServiceUrl = oBoundModel.sServiceUrl;
+			var {sServiceUrl} = oBoundModel;
 			delete oBoundModel.sServiceUrl;
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
@@ -125,9 +131,9 @@ sap.ui.define([
 			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(true);
 			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
-			var oBoundControl = oCore.byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
+			var oBoundControl = Element.getElementById("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
-			oCore.getEventBus().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
+			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {
 				assert.ok(true, "then the UI refresh is requested");
 			});
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
@@ -138,7 +144,7 @@ sap.ui.define([
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			//	ObjectPageLayout
 			//		ObjectPageSection1
 			//			ObjectPageSubSection1
@@ -176,7 +182,7 @@ sap.ui.define([
 				sections: [this.oObjectPageSection1]
 			});
 			this.oObjectPageLayout.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -196,7 +202,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oObjectPageLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -263,7 +269,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			//		Layout0
@@ -303,7 +309,7 @@ sap.ui.define([
 			this.oLayout0 = new ObjectPageLayout("layout0", {
 				sections: [this.oSection0, this.oSection1]
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout0]
@@ -335,7 +341,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oLayout0.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -354,17 +360,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given some dom elements in and out of viewport...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oInsideDom = document.createElement("input");
 			document.getElementById("qunit-fixture").append(this.oInsideDom);
 			this.oOutsideDom = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oOutsideDom);
 
-			this.oInsideDom.style.marginBottom = document.getElementById("qunit-fixture").clientHeight + "px";
-			this.oInsideDom.style.marginRight = document.getElementById("qunit-fixture").clientWidth + "px";
+			this.oInsideDom.style.marginBottom = `${document.getElementById("qunit-fixture").clientHeight}px`;
+			this.oInsideDom.style.marginRight = `${document.getElementById("qunit-fixture").clientWidth}px`;
 			this.oInsideDom.style.marginTop = "10px";
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oInsideDom.remove();
 			this.oOutsideDom.remove();
 		}
@@ -398,7 +404,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("openRemoveConfirmationDialog", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -452,17 +458,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given two generic objects...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oObject1 = {
-				function11: function() {
+				function11() {
 					return "function11Object1";
 				},
-				function12: function() {}
+				function12() {}
 			};
 
 			this.oObject2 = {
-				function21: function() {},
-				function11: function() {
+				function21() {},
+				function11() {
 					return "function11Object2";
 				}
 			};
@@ -492,12 +498,12 @@ sap.ui.define([
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oSource = new Label({text: "Label1" });
 			this.oTarget = new Label({text: "Label2" });
 		},
 
-		afterEach: function() {
+		afterEach() {
 			this.oSource.destroy();
 			this.oTarget.destroy();
 			sandbox.restore();
@@ -581,11 +587,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed fiori renderer available", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRenderer = {
-				getRootControl: function() {
+				getRootControl() {
 					return {
-						getShellHeader: function() {
+						getShellHeader() {
 							return { id: "mockedRenderer" };
 						}
 					};
@@ -597,7 +603,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -611,7 +617,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given stubbed but invalid fiori renderer available", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRenderer = { id: "mockedInvalidRenderer" };
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getRenderer: function() {
@@ -619,7 +625,7 @@ sap.ui.define([
 				}.bind(this)
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -633,10 +639,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given fiori renderer is not available", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({ id: "mockedContainer" });
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -646,22 +652,19 @@ sap.ui.define([
 	});
 
 	QUnit.module("showMessageBox", {
-		beforeEach: function() {
+		beforeEach() {
 			sandbox.stub(Utils, "getRtaStyleClassName").returns("RtaStyleClass");
 			this.oWarningStub = sandbox.stub(MessageBox, "warning");
 			this.oErrorStub = sandbox.stub(MessageBox, "error");
-			return oCore.getLibraryResourceBundle("sap.ui.rta", true)
-			.then(function(oBundle) {
-				this.oRtaMessageBundle = oBundle;
-			}.bind(this));
+			this.oRtaMessageBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("called with 'warning' and some actions (with emphasizedAction and without cancel)", function(assert) {
 			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
-				return sKey + "_Text";
+				return `${sKey}_Text`;
 			});
 			this.oWarningStub.callsFake(function(sText, mOptions) {
 				mOptions.onClose("ACTIONKEY_Text");
@@ -710,7 +713,7 @@ sap.ui.define([
 
 		QUnit.test("called with 'error' and some actions (without emphasized action and with cancel)", function(assert) {
 			sandbox.stub(this.oRtaMessageBundle, "getText").callsFake(function(sKey) {
-				return sKey + "_Text";
+				return `${sKey}_Text`;
 			});
 			this.oErrorStub.callsFake(function(sText, mOptions) {
 				mOptions.onClose("ACTIONKEY_Text");

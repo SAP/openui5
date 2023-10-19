@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
 	"sap/ui/dom/includeStylesheet",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"require"
-], function (Log, ObjectPath, VersionInfo, Element, Library, includeStylesheet, require) {
+], function (Log, ObjectPath, VersionInfo, Element, Library, includeStylesheet, nextUIUpdate, require) {
 	"use strict";
 
 	/*global QUnit */
@@ -66,13 +67,31 @@ sap.ui.define([
 		"sap.ui.commons.Accordion",
 		"sap.ui.core.ComponentContainer",
 		"sap.ui.core.UIComponent",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.XMLComposite",
+		/**
+		 * @deprecated since 1.108
+		 */
 		"sap.ui.core.mvc.HTMLView",
+		/**
+		 * @deprecated since 1.120
+		 */
 		"sap.ui.core.mvc.JSONView",
+		/**
+		 * @deprecated since 1.90
+		 */
 		"sap.ui.core.mvc.JSView",
 		"sap.ui.core.mvc.XMLView",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.mvc.TemplateView",
 		"sap.ui.core.mvc.View",
+		/**
+		 * @deprecated since 1.56
+		 */
 		"sap.ui.core.tmpl.Template",
 		"sap.m.internal.NumericInput",
 		"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this
@@ -279,7 +298,7 @@ sap.ui.define([
 
 	// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
-	function checkControl(oControlClass, assert) {
+	async function checkControl(oControlClass, assert) {
 		var sControlName = oControlClass.getMetadata().getName();
 
 		var //mPrePreElements = Element.registry.all(),
@@ -304,13 +323,13 @@ sap.ui.define([
 
 		if (bCanRender) {
 			oControl1.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 		} else {
 			// reported below
 		}
 
 		oControl1.destroy();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 
 
 		// Render Control Instance 2 - any new controls leaked?
@@ -322,10 +341,10 @@ sap.ui.define([
 
 		if (bCanRender) {
 			oControl2.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
-			oControl2.rerender();  // just re-render again - this finds problems
-			sap.ui.getCore().applyChanges();
+			oControl2.invalidate();  // just re-render again - this finds problems
+			await nextUIUpdate();
 
 			iFullyTestedControls++;
 		} else {
@@ -337,7 +356,7 @@ sap.ui.define([
 		// check what's left after destruction
 
 		oControl2.destroy();
-		sap.ui.getCore().applyChanges();
+		await nextUIUpdate();
 		var mPostElements = Element.registry.all();
 
 		// controls left over by second instance are real leaks that will grow proportionally to instance count => ERROR
@@ -395,12 +414,14 @@ sap.ui.define([
 					assert.expect(0);
 				}
 
-				return Promise.all(
-					aControls.map(function(sControlName) {
-						if (sControlName) {
-							iAllControls++;
+				var pControlChain = Promise.resolve();
 
-							if (!shouldIgnoreControl(sControlName, assert)) {
+				aControls.forEach(function(sControlName) {
+					if (sControlName) {
+						iAllControls++;
+
+						if (!shouldIgnoreControl(sControlName, assert)) {
+							pControlChain = pControlChain.then(function() {
 								return loadClass(sControlName).then(function(oControlClass) {
 									if ( !oControlClass ) {
 										Log.error("Could not load control class " + sControlName);
@@ -408,11 +429,11 @@ sap.ui.define([
 									}
 									return checkControl(oControlClass, assert);
 								});
-							}
+							});
 						}
-						return;
-					}));
-
+					}
+				});
+				return pControlChain;
 			});
 		});
 

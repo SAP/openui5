@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
+	"sap/ui/Device",
 	"sap/base/Log",
 	"./library",
 	"./ListItemBaseRenderer"
 ],
-	function(Renderer, coreLibrary, Core, Log, library, ListItemBaseRenderer) {
+	function(Renderer, coreLibrary, Core, Device, Log, library, ListItemBaseRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.PopinDisplay
@@ -49,8 +50,10 @@ sap.ui.define([
 	};
 
 	ColumnListItemRenderer.makeFocusable = function(rm) {
-		rm.attr("tabindex", "-1");
-		rm.class("sapMTblCellFocusable");
+		if (Device.system.desktop) {
+			rm.attr("tabindex", "-1");
+			rm.class("sapMTblCellFocusable");
+		}
 	};
 
 	ColumnListItemRenderer.openStartGridCell = function(rm, oLI, sTag, sId, sClass) {
@@ -170,14 +173,15 @@ sap.ui.define([
 		oLI._destroyClonedHeaders();
 
 		aColumns.forEach(function(oColumn, iColumnIndex) {
-			var oCell = aCells[oColumn.getInitialOrder()];
-			if (!oCell || !oColumn.getVisible() || oColumn.isHidden()) {
+			if (!oColumn.getVisible() || oColumn.isHidden()) {
 				return;
 			}
 
 			var aStyleClass = oColumn.getStyleClass().split(" ").filter(Boolean),
 				sCellId = oLI.getId() + "-cell" + iColumnIndex,
-				vAlign = oColumn.getVAlign();
+				oCell = aCells[oColumn.getInitialOrder()],
+				vAlign = oColumn.getVAlign(),
+				bRenderCell = true;
 
 			this.openStartGridCell(rm, oLI, "td", sCellId, "sapMListTblCell");
 			rm.attr("data-sap-ui-column", oColumn.getId());
@@ -190,7 +194,7 @@ sap.ui.define([
 			}
 
 			// merge duplicate cells
-			if (!oTable.hasPopin() && oColumn.getMergeDuplicates()) {
+			if (oCell && !oTable.hasPopin() && oColumn.getMergeDuplicates()) {
 				var sFuncWithParam = oColumn.getMergeFunctionName(),
 					aFuncWithParam = sFuncWithParam.split("#"),
 					sFuncParam = aFuncWithParam[1],
@@ -203,6 +207,8 @@ sap.ui.define([
 						vCellValue = oCell[sFuncName](sFuncParam);
 
 					if (vLastColumnValue === vCellValue) {
+						// it is not necessary to render the cell content but screen readers need the content to announce it
+						bRenderCell = Core.getConfiguration().getAccessibility();
 						oCell.addStyleClass("sapMListTblCellDupCnt");
 						rm.class("sapMListTblCellDup");
 					} else {
@@ -215,8 +221,7 @@ sap.ui.define([
 
 			rm.openEnd();
 
-			// it is not necessary to render the cell content but screen readers need the content to announce it
-			if (Core.getConfiguration().getAccessibility()) {
+			if (oCell && bRenderCell) {
 				this.applyAriaLabelledBy(oColumn.getHeader(), oCell, true);
 				rm.renderControl(oCell);
 			}
@@ -259,6 +264,7 @@ sap.ui.define([
 		rm.openStart("tr", oLI.getPopin());
 		rm.class("sapMListTblSubRow");
 		rm.attr("role", "none");
+		rm.attr("tabindex", "-1");
 		rm.attr("data-sap-ui-related", oLI.getId());
 		rm.openEnd();
 

@@ -1,6 +1,12 @@
-sap.ui.getCore().attachInit(function () {
+sap.ui.require([
+	"sap/ui/core/Core",
+	"sap/m/Text"
+], function(
+	Core,
+	Text
+) {
 	"use strict";
-	sap.ui.require(["sap/m/Text"], function (Text) {
+	Core.ready().then(function() {
 		new Text({text: "A simple test page that is used to trigger the Technical Information Dialog"}).placeAt("content");
 	});
 });

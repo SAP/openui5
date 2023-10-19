@@ -21,8 +21,8 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	var aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
-	var sTableID = "IDTableOfInternalSampleApp_01";
+	const aAvailableFilters = ["artistUUID", "Breakout Year", "Changed By", "Changed On", "City of Origin", "Country", "Created By", "Created On", "Founding Year", "Name", "regionOfOrigin_code"];
+	const sTableID = "IDTableOfInternalSampleApp_01";
 
 	opaTest("Open TableOpaApp", function (Given, When, Then) {
 		//insert application

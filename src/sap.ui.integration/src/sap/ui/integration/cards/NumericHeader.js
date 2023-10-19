@@ -7,6 +7,9 @@ sap.ui.define([
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
+	"sap/m/library",
+	"sap/m/Text",
+	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider"
@@ -16,11 +19,17 @@ sap.ui.define([
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
+	mLibrary,
+	Text,
+	BindingHelper,
 	JSONModel,
 	BindingResolver,
 	LoadingProvider
 ) {
 	"use strict";
+
+	// shortcut for sap.m.AvatarColor
+	var AvatarColor = mLibrary.AvatarColor;
 
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
@@ -42,7 +51,7 @@ sap.ui.define([
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
 
-		constructor: function (sId, mConfiguration, oActionsToolbar) {
+		constructor: function (sId, mConfiguration, oActionsToolbar, oIconFormatter) {
 
 			mConfiguration = mConfiguration || {};
 
@@ -60,12 +69,36 @@ sap.ui.define([
 				mSettings.statusVisible = mConfiguration.status.visible;
 			}
 
+			// @todo move to common place with Header.js
+			if (mConfiguration.icon) {
+				var vInitials = mConfiguration.icon.initials || mConfiguration.icon.text;
+				var sBackgroundColor = mConfiguration.icon.backgroundColor || (vInitials ? AvatarColor.Accent6 : AvatarColor.Transparent);
+
+				mSettings.iconSrc = mConfiguration.icon.src;
+				mSettings.iconDisplayShape = mConfiguration.icon.shape;
+				mSettings.iconInitials = vInitials;
+				mSettings.iconAlt = mConfiguration.icon.alt;
+				mSettings.iconBackgroundColor = sBackgroundColor;
+				mSettings.iconVisible = mConfiguration.icon.visible;
+			}
+
+			if (mSettings.iconSrc) {
+				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
+					return oIconFormatter.formatSrc(sValue);
+				});
+			}
+
 			extend(mSettings, {
 				unitOfMeasurement: mConfiguration.unitOfMeasurement,
-				details: mConfiguration.details,
-				detailsMaxLines: mConfiguration.detailsMaxLines,
+				details: mConfiguration.details?.text || mConfiguration.details,
+				detailsMaxLines: mConfiguration.details?.maxLines || mConfiguration.detailsMaxLines,
 				sideIndicatorsAlignment: mConfiguration.sideIndicatorsAlignment
 			});
+
+
+			if (mConfiguration.details?.state) {
+				mSettings.detailsState = mConfiguration.details.state;
+			}
 
 			if (mConfiguration.mainIndicator) {
 				mSettings.number = mConfiguration.mainIndicator.number;
@@ -78,6 +111,21 @@ sap.ui.define([
 			if (mConfiguration.sideIndicators) {
 				mSettings.sideIndicators = mConfiguration.sideIndicators.map(function (mIndicator) { // TODO validate that it is an array and with no more than 2 elements
 					return new NumericSideIndicator(mIndicator);
+				});
+			}
+
+			if (mConfiguration.banner) {
+				mSettings.bannerLines = mConfiguration.banner.map(function (mBannerLine) { // TODO validate that it is an array and with no more than 2 elements
+					var oBannerLine = new Text({
+						text: mBannerLine.text,
+						visible: mBannerLine.visible
+					});
+
+					if (mBannerLine.diminished) {
+						oBannerLine.addStyleClass("sapFCardHeaderBannerLineDiminished");
+					}
+
+					return oBannerLine;
 				});
 			}
 

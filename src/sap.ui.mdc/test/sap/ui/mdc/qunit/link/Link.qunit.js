@@ -6,11 +6,12 @@ sap.ui.define([
 	"sap/ui/mdc/Link",
 	"sap/m/MessageToast",
 	"sap/ui/core/Core",
-	"sap/m/Text"
-], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text) {
+	"sap/m/Text",
+	"sap/ui/mdc/enums/LinkType"
+], function(QUnit, LinkItem, Button, Link, MessageToast, oCore, Text, LinkType) {
 	"use strict";
 
-	var aAdditionaLinkItems = [
+	const aAdditionaLinkItems = [
 		new LinkItem({
 			key: "item04",
 			text: "item 04",
@@ -46,9 +47,9 @@ sap.ui.define([
 		})
 	];
 
-	var fnHasVisibleLink = function(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.getAggregation("_content").$().find("a:visible");
-		var bFound = false;
+	const fnHasVisibleLink = function(assert, oPanel, sText, bVisible) {
+		const aElements = oPanel.getAggregation("_content").$().find("a:visible");
+		let bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].text === sText) {
 				bFound = true;
@@ -57,9 +58,9 @@ sap.ui.define([
 		assert.equal(bFound, bVisible);
 	};
 
-	var fnHasVisibleText = function(assert, oPanel, sText, bVisible) {
-		var aElements = oPanel.getAggregation("_content").$().find("span:visible");
-		var bFound = false;
+	const fnHasVisibleText = function(assert, oPanel, sText, bVisible) {
+		const aElements = oPanel.getAggregation("_content").$().find("span:visible");
+		let bFound = false;
 		aElements.each(function(iIndex) {
 			if (aElements[iIndex].textContent === sText) {
 				bFound = true;
@@ -68,12 +69,12 @@ sap.ui.define([
 		assert.equal(bFound, bVisible);
 	};
 
-	var fnHasVisibleMoreLinksButton = function(assert, oPanel, bVisible) {
+	const fnHasVisibleMoreLinksButton = function(assert, oPanel, bVisible) {
 		assert.equal(oPanel.getAggregation("_content").$().find("button:visible").length, bVisible ? 1 : 0);
 		// fnHasVisibleText(assert, oPanel, sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc", undefined, false).getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	};
 
-	var fnCheckAdditionalLinks = function(assert, oPanel) {
+	const fnCheckAdditionalLinks = function(assert, oPanel) {
 		aAdditionaLinkItems.forEach(function(oLinkItem) {
 			fnHasVisibleText(assert, oPanel, oLinkItem.getText(), false);
 			fnHasVisibleLink(assert, oPanel, oLinkItem.getText(), false);
@@ -102,8 +103,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instance", function(assert) {
-		var done = assert.async(2);
-		var oLink = new Link();
+		const done = assert.async(2);
+		const oLink = new Link();
 		assert.ok(oLink);
 		assert.equal(oLink.getEnablePersonalization(), true);
 		assert.equal(oLink.getSourceControl(), null);
@@ -118,8 +119,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveLinkItems should cache LinkItems", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -127,7 +128,7 @@ sap.ui.define([
 				}
 			}
 		});
-		var fnUseDelegateItems = sinon.spy(oLink, "_useDelegateItems");
+		const fnUseDelegateItems = sinon.spy(oLink, "_useDelegateItems");
 		oLink.retrieveLinkItems().then(function(aRetrievedLinkItems) {
 			assert.deepEqual(aRetrievedLinkItems, this.aLinkItems, "First retrievedLinkItems are correct");
 			assert.ok(oLink._bLinkItemsFetched, "LinkItems are chached");
@@ -140,8 +141,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveAdditionalContent should only be called once when calling open", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -151,12 +152,12 @@ sap.ui.define([
 				}
 			}
 		});
-		var fnUseDelegateAdditionalContent = sinon.spy(oLink, "_useDelegateAdditionalContent");
+		const fnUseDelegateAdditionalContent = sinon.spy(oLink, "_useDelegateAdditionalContent");
 		assert.ok(fnUseDelegateAdditionalContent.notCalled, "_useDelegateAdditionalContent not called yet");
 
 		oLink.open(oLink).then(function() {
 			assert.ok(fnUseDelegateAdditionalContent.calledOnce, "_useDelegateAdditionalContent called once");
-			var oPopover = oLink.getDependents().find(function(oDependent) {
+			const oPopover = oLink.getDependents().find(function(oDependent) {
 				return oDependent.isA("sap.m.ResponsivePopover");
 			});
 			assert.ok(oPopover, "Popover created");
@@ -165,8 +166,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveAllMetadata should return all LinkItems", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -176,12 +177,12 @@ sap.ui.define([
 		});
 
 		oLink.getContent().then(function(oPanel) {
-			var oModel = oLink._getInternalModel();
-			var aMLinkItems = oModel.getProperty("/linkItems/");
-			var i = 0;
-			var aMetadata = Link.retrieveAllMetadata(oPanel);
+			const oModel = oLink._getInternalModel();
+			const aMLinkItems = oModel.getProperty("/linkItems/");
+			let i = 0;
+			const aMetadata = Link.retrieveAllMetadata(oPanel);
 			aMetadata.forEach(function(oMetadataObject) {
-				var oLinkItem = aMLinkItems[i++];
+				const oLinkItem = aMLinkItems[i++];
 				assert.equal(oMetadataObject.id, oLinkItem.key, "key value is correct");
 				assert.equal(oMetadataObject.text, oLinkItem.text, "text value is correct");
 				assert.equal(oMetadataObject.href, oLinkItem.href, "href value is correct");
@@ -194,8 +195,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveAllMetadata should return an empty array if the Panel has no $sapuimdcLink model", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -213,8 +214,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveBaseline should return all baseline LinkItems", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -224,12 +225,12 @@ sap.ui.define([
 		});
 
 		oLink.getContent().then(function(oPanel) {
-			var oModel = oLink._getInternalModel();
-			var aMBaselineLinkItems = oModel.getProperty("/baselineLinkItems/");
-			var i = 0;
-			var aMBaseline = Link.retrieveBaseline(oPanel);
+			const oModel = oLink._getInternalModel();
+			const aMBaselineLinkItems = oModel.getProperty("/baselineLinkItems/");
+			let i = 0;
+			const aMBaseline = Link.retrieveBaseline(oPanel);
 			aMBaseline.forEach(function(oMetadataObject) {
-				var oLinkItem = aMBaselineLinkItems[i++];
+				const oLinkItem = aMBaselineLinkItems[i++];
 				assert.equal(oMetadataObject.id, oLinkItem.key, "key value is correct");
 				assert.equal(oMetadataObject.visible, true, "visible value is correct");
 			});
@@ -239,8 +240,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("retrieveBaseline should return an empty array if the Panel has no $sapuimdcLink model", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -296,8 +297,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalid 'item' and less items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -320,8 +321,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("invalid 'item' and many items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -389,8 +390,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("superior 'item' and less items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -413,8 +414,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("superior 'item' and many items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -481,8 +482,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("superior 'item', invalid 'item' and less items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -505,8 +506,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("superior 'item', invalid 'item' and many items", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -533,12 +534,12 @@ sap.ui.define([
 	QUnit.module("sap.ui.mdc.Link: LinkDelegate tests");
 
 	QUnit.test("modifyLinkItemsBeforePopoverOpens", function(assert) {
-		var done = assert.async(2);
-		var aModfiedLinkItemTexts = [];
+		const done = assert.async(2);
+		const aModfiedLinkItemTexts = [];
 		aModfiedLinkItemTexts["Link1"] = "New Text Link1";
 		aModfiedLinkItemTexts["Link2"] = "New Text Link2";
 
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -569,12 +570,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("beforeNavigationCallback - open MessageToast before navigation", function(assert) {
-		var done = assert.async(1);
+		const done = assert.async(1);
 
-		var fnMessageToastSpy = sinon.spy(MessageToast, "show");
-		var sBaseUrl = window.location.href;
+		const fnMessageToastSpy = sinon.spy(MessageToast, "show");
+		const sBaseUrl = window.location.href;
 
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -600,9 +601,9 @@ sap.ui.define([
 			}
 		});
 
-		var fnCheckURL = function() {
+		const fnCheckURL = function() {
 			window.removeEventListener('hashchange', fnCheckURL);
-			var oResultUrl = window.location.href;
+			const oResultUrl = window.location.href;
 			assert.equal(oResultUrl, sBaseUrl + "#Action01", "Navigation happened");
 			done();
 		};
@@ -614,27 +615,21 @@ sap.ui.define([
 
 			window.addEventListener('hashchange', fnCheckURL);
 
-			oPanel.getAggregation("_content") // VerticalLayout of panel
-				.getContent()[2] // VBox which includes the links
-				.getItems()[0] // First PanelListItem of the panel
-				.getContent()[0] // HBox
-				.getItems()[1] // VBox containing link, label and a text
-				.getItems()[0] // Actuall sap.m.Link on the Panel
-				.firePress();
+			oPanel._getLinkControls()[0].firePress();
 		});
 	});
 
 	QUnit.test("Updated isTriggerable", function(assert) {
-		var done = assert.async();
-		var oLink = new Link({
+		const done = assert.async();
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
 					fetchLinkType: function(oPayload, oLink) {
-						var oNewLinkPromise = new Promise(function(resolve) {
+						const oNewLinkPromise = new Promise(function(resolve) {
 							setTimeout(function() {
 								resolve({
-									type: 1,
+									type: LinkType.DirectLink,
 									directLink: new LinkItem({
 										text: "Link2",
 										href: "#Action02"
@@ -643,9 +638,9 @@ sap.ui.define([
 							}, 1000);
 						});
 
-						var oLinkTypeObject = {
+						const oLinkTypeObject = {
 							initialType: {
-								type: 0,
+								type: LinkType.Text,
 								directLink: null
 							},
 							runtimeType: oNewLinkPromise
@@ -656,7 +651,7 @@ sap.ui.define([
 			}
 		});
 
-		var fnDataUpdateSpy = sinon.spy(oLink, "fireDataUpdate");
+		const fnDataUpdateSpy = sinon.spy(oLink, "fireDataUpdate");
 
 		oLink.isTriggerable().then(function(bIsTriggerAble) {
 			assert.ok(bIsTriggerAble === false, "First isTriggerable call returns false");
@@ -677,25 +672,25 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.mdc.Link: FieldInfoBase functions");
 
-	var aLinkTypes = [
+	const aLinkTypes = [
 		{
-			type: 0,
+			type: LinkType.Text,
 			expectedHref: null
 		},
 		{
-			type: 1,
+			type: LinkType.DirectLink,
 			expectedHref: "#Action01"
 		},
 		{
-			type: 2,
+			type: LinkType.Popover,
 			expectedHref: null
 		}
 	];
 
 	aLinkTypes.forEach(function(oLinkType) {
 		QUnit.test("getTriggerHref type = " + oLinkType.type + " returns '" + oLinkType.expectedHref + "'", function(assert) {
-			var done = assert.async(1);
-			var oLink = new Link({
+			const done = assert.async(1);
+			const oLink = new Link({
 				delegate: {
 					name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 					payload: {
@@ -720,24 +715,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("getContent when there are no LinkItems and no additionalContent", function(assert) {
-		var done = assert.async(1);
-		var oLinkNoContent = new Link();
+		const done = assert.async(1);
+		const oLinkNoContent = new Link();
 
-		var oNoContentText = oLinkNoContent._getNoContent().getContent()[0].getText();
+		const oNoContentText = oLinkNoContent._getNoContent().getContent()[0].getText();
 
 		oLinkNoContent.getContent().then(function(oPanel) {
-			assert.deepEqual(oPanel.getAggregation("_content").getContent()[0].getItems()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
-			// AdditionalContent is now forwarded to a VBox
-			//assert.deepEqual(oPanel.getAdditionalContent()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
+			assert.equal(oPanel._getAdditionalContentArea().getItems()[0].getContent()[0].getText(), oNoContentText, "'No content available' SimpleForm displayed on Panel");
 			done();
 		});
 	});
 
 	QUnit.test("checkDirectNavigation when there is only one LinkItem and additionalContent should not navigate directly", function(assert) {
-		var done = assert.async(1);
-		var sBaseUrl = window.location.href;
+		const done = assert.async(1);
+		const sBaseUrl = window.location.href;
 
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -758,7 +751,7 @@ sap.ui.define([
 		});
 
 		oLink.checkDirectNavigation().then(function(bNavigate) {
-			var oResultUrl = window.location.href;
+			const oResultUrl = window.location.href;
 			assert.equal(oResultUrl, sBaseUrl, "Direct navigation did not happened");
 			assert.ok(!bNavigate, "Promise value is false");
 			done();
@@ -766,10 +759,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("checkDirectNavigation when there is only one LinkItem and no additionalContent should navigate directly", function(assert) {
-		var done = assert.async(1);
-		var sBaseUrl = window.location.href;
+		const done = assert.async(1);
+		const sBaseUrl = window.location.href;
 
-		var oLink = new Link({
+		const oLink = new Link({
 			delegate: {
 				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
 				payload: {
@@ -785,10 +778,145 @@ sap.ui.define([
 		});
 
 		oLink.checkDirectNavigation().then(function(bNavigate) {
-			var oResultUrl = window.location.href;
+			const oResultUrl = window.location.href;
 			assert.equal(oResultUrl, sBaseUrl + "#directNavigation", "Direct navigation happened");
 			assert.ok(bNavigate, "Promise value is true");
 			done();
 		});
 	});
+
+	QUnit.test("createPopover - without links, without additional content", function(assert) {
+		const done = assert.async();
+
+		const oLink = new Link();
+		const oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			const oPanel = oPopover.getContent()[0];
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oPanel._getAdditionalContentArea().getItems()[0].getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - with links, without additional content", function(assert) {
+		const done = assert.async();
+		const sBaseUrl = window.location.href;
+
+		const oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						}),
+						new LinkItem({
+							text: "Link2",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					]
+				}
+			}
+		});
+		const oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			const oPanel = oPopover.getContent()[0];
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oPanel._getLinkControls()[0].getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - with links and with additional content", function(assert) {
+		const done = assert.async();
+		const sBaseUrl = window.location.href;
+		const oAdditionalContentText = new Text({
+			text: "Additional Content Text"
+		});
+
+		const oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					items: [
+						new LinkItem({
+							text: "Link1",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						}),
+						new LinkItem({
+							text: "Link2",
+							href: sBaseUrl + "#directNavigation",
+							initiallyVisible: true
+						})
+					],
+					additionalContent: [ oAdditionalContentText ]
+				}
+			}
+		});
+		const oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oAdditionalContentText.getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
+	QUnit.test("createPopover - without links, with additional content", function(assert) {
+		const done = assert.async();
+		const oAdditionalContentText = new Text({
+			text: "Additional Content Text"
+		});
+
+		const oLink = new Link({
+			delegate: {
+				name: "test-resources/sap/ui/mdc/qunit/link/TestDelegate_Link",
+				payload: {
+					additionalContent: [ oAdditionalContentText ]
+				}
+			}
+		});
+		const oText = new Text({
+			text: "Dummy Text"
+		});
+		oText.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oLink.open(oText).then((oPopover) => {
+			oPopover = oLink.getDependents().find((oDependent) => {
+				return oDependent.isA("sap.m.ResponsivePopover");
+			});
+			assert.equal(oPopover.getDomRef().getAttribute("aria-labelledby"), oAdditionalContentText.getId(), "Correct 'aria-labelledby' set");
+			oPopover.close();
+			done();
+		});
+	});
+
 });

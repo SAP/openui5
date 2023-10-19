@@ -10,10 +10,10 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.fl.write._internal.transport.Transports", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oServer = sinon.fakeServer.create();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oServer.restore();
 		}
 	});

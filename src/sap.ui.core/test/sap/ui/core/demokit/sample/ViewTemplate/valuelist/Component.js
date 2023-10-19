@@ -8,7 +8,6 @@
  * @version @version@
  */
 sap.ui.define([
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/mvc/View", // sap.ui.view()
 	"sap/ui/core/mvc/XMLView", // type : ViewType.XML
@@ -17,7 +16,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, Log, _View, _XMLView, BaseComponent, MockServer, JSONModel,
+], function (Log, _View, _XMLView, BaseComponent, MockServer, JSONModel,
 		ODataModel, TestUtils) {
 	"use strict";
 
@@ -31,7 +30,7 @@ sap.ui.define([
 					= "test-resources/sap/ui/core/demokit/sample/ViewTemplate/valuelist/data/",
 				oModel,
 				sServiceUri = "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/",
-				oUriParameters = UriParameters.fromQuery(window.location.search),
+				oUriParameters = new URLSearchParams(window.location.search),
 				sClient = oUriParameters.get("sap-client"),
 				sValueList = oUriParameters.get("sap-value-list");
 

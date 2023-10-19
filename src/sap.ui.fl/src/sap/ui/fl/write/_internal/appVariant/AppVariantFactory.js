@@ -20,9 +20,7 @@ sap.ui.define([
 	"use strict";
 
 	function _getAppVariant(mPropertyBag) {
-		if (!mPropertyBag.url) {
-			mPropertyBag.url = "/sap/bc/lrep";
-		}
+		mPropertyBag.url ||= "/sap/bc/lrep";
 		// Since this method is only called internally for app variants on ABAP platform, the direct usage of write LrepConnector is triggered.
 		return LrepConnector.appVariant.load(mPropertyBag);
 	}
@@ -53,7 +51,7 @@ sap.ui.define([
 	 */
 	AppVariantFactory.load = function(mPropertyBag) {
 		if (mPropertyBag.id === undefined || typeof mPropertyBag.id !== "string") {
-			throw new Error("Parameter " + mPropertyBag.id + " must be provided of type string");
+			throw new Error(`Parameter ${mPropertyBag.id} must be provided of type string`);
 		}
 
 		return _getAppVariant({

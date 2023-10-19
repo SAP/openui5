@@ -128,7 +128,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an AddXMLAtExtensionPoint Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.sExtensionName = "extension";
 
@@ -137,7 +137,7 @@ sap.ui.define([
 				fragmentPath: "fragments/Fragment"
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange.destroy();
 		}
 	}, function() {
@@ -172,7 +172,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with XmlTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oChange1 = createAndCompleteAddXmlAtExtensionPointChange.call(
 				this,
@@ -196,9 +196,7 @@ sap.ui.define([
 			return createComponent().then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlView = createXMLViewWithExtensionPoints();
-				this.oHBox = this.oXmlView.childNodes[0];
-				this.oPanel = this.oXmlView.childNodes[1];
-				this.oPanelWithoutStableId = this.oXmlView.childNodes[2];
+				[this.oHBox, this.oPanel, this.oPanelWithoutStableId] = this.oXmlView.childNodes;
 				this.oPropertyBag = {
 					modifier: XmlTreeModifier,
 					view: this.oXmlView,
@@ -206,7 +204,7 @@ sap.ui.define([
 				};
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oChange1.destroy();
 			this.oChange2.destroy();
 			this.oChange3.destroy();
@@ -381,7 +379,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - create scenario", {
-		beforeEach: function(assert) {
+		beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			return createComponent()
@@ -397,15 +395,13 @@ sap.ui.define([
 					view: oXmlView,
 					appComponent: this.oComponent
 				};
-				this.oHBox = oXmlView.getContent()[0];
-				this.oPanel = oXmlView.getContent()[1];
-				this.oPanelWithoutStableId = oXmlView.getContent()[2];
+				[this.oHBox, this.oPanel, this.oPanelWithoutStableId] = oXmlView.getContent();
 				oXmlView.placeAt("qunit-fixture");
 				Core.applyChanges();
 				fnDone();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oXmlView.destroy();
 			sandbox.restore();
 			return this.oComponent.destroy();
@@ -560,17 +556,16 @@ sap.ui.define([
 			sandbox.stub(JsControlTreeModifier, "getExtensionPointInfo").returns(undefined);
 			return this.oChangeHandler.applyChange(oChange1, this.oHBox, this.oPropertyBag)
 			.catch(function(oError) {
-				var sErrorText = "AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' "
-						+ "or multiple Extension-Points available with the given name in the view (view.id='"
-						+ this.oXmlView.getId() + "'). "
-						+ "Multiple Extension-points with the same name in one view are not supported!";
+				var sErrorText = `AddXMLAtExtensionPoint-Error: Either no Extension-Point found by name 'ExtensionPoint1' `
+						+ `or multiple Extension-Points available with the given name in the view (view.id='${this.oXmlView.getId()}'). `
+						+ `Multiple Extension-points with the same name in one view are not supported!`;
 				assert.equal(oError.message, sErrorText, "then the changehandler throws an appropriate Error");
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - apply scenario", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			return createComponent()
 			.then(function(oComponent) {
@@ -585,10 +580,10 @@ sap.ui.define([
 					view: oXmlView,
 					appComponent: this.oComponent
 				};
-				this.oPanel = oXmlView.getContent()[1];
+				[, this.oPanel] = oXmlView.getContent();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oXmlView.destroy();
 			sandbox.restore();
 			return this.oComponent.destroy();

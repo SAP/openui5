@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"sap/base/util/isPlainObject",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/m/Button",
 	"sap/m/MessageBox",
@@ -10,7 +9,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/Event",
 	"sap/ui/base/ManagedObjectMetadata",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/Util",
@@ -31,7 +30,6 @@ sap.ui.define([
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
 	isPlainObject,
-	UriParameters,
 	Log,
 	Button,
 	MessageBox,
@@ -39,7 +37,7 @@ sap.ui.define([
 	EventProvider,
 	Event,
 	ManagedObjectMetadata,
-	oCore,
+	Lib,
 	DesignTime,
 	Overlay,
 	DtUtil,
@@ -62,7 +60,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oTextResources = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "fixture.application", {
 		"sap.app": {
@@ -71,13 +69,13 @@ sap.ui.define([
 	}, new Page("mockPage"));
 
 	QUnit.module("startService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -110,14 +108,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("startService() - RTA is pre-started", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
 			});
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -176,7 +174,7 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function() {
+				stub() {
 					throw new Error("some error");
 				}
 			}]);
@@ -203,7 +201,7 @@ sap.ui.define([
 			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, "/");
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function() {
+				stub() {
 					return {};
 				}
 			}]);
@@ -240,8 +238,8 @@ sap.ui.define([
 			var fnMockService = function() {
 				return {
 					exports: {
-						method1: function() { return "value1"; },
-						method2: function() { return "value2"; }
+						method1() { return "value1"; },
+						method2() { return "value2"; }
 					}
 				};
 			};
@@ -274,7 +272,7 @@ sap.ui.define([
 			var fnMockService = function() {
 				return {
 					exports: {
-						method1: function() { return "value1"; }
+						method1() { return "value1"; }
 					}
 				};
 			};
@@ -419,7 +417,7 @@ sap.ui.define([
 			var fnMockService = function() {
 				return Promise.resolve({
 					exports: {
-						serviceMethod: function() {
+						serviceMethod() {
 							return "value";
 						}
 					}
@@ -479,7 +477,7 @@ sap.ui.define([
 			var fnServicePublish;
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{
 				name: [sServiceLocation],
-				stub: function(oRta, fnPublish) {
+				stub(oRta, fnPublish) {
 					fnServicePublish = fnPublish;
 					return {
 						events: ["eventName"]
@@ -505,7 +503,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("stopService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
@@ -513,7 +511,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -548,7 +546,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("getService()", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				showToolbars: false,
 				rootControl: oComp
@@ -556,15 +554,15 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("check alias to startService()", function(assert) {
-			var oStartServiceStub = sandbox.stub(this.oRta, "startService").callsFake(function() {
+			var oStartServiceStub = sandbox.stub(this.oRta, "startService").callsFake(function(...aArgs) {
 				return Promise.resolve({
-					arguments: arguments
+					arguments: aArgs
 				});
 			});
 
@@ -576,7 +574,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Undo/Redo functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -620,7 +618,7 @@ sap.ui.define([
 
 			return this.oRta.start();
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
 			this.oRta.destroy();
@@ -702,14 +700,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("miscellaneous", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("when enabling restart", function(assert) {
 			var sLayer = "LAYER";
 			RuntimeAuthoring.enableRestart(sLayer, {});
-			var sRestartingComponent = window.sessionStorage.getItem("sap.ui.rta.restart." + sLayer);
+			var sRestartingComponent = window.sessionStorage.getItem(`sap.ui.rta.restart.${sLayer}`);
 			assert.ok(RuntimeAuthoring.needsRestart(sLayer), "then restart is needed");
 			assert.equal(sRestartingComponent, "fixture.application", "and the component ID is set");
 		});
@@ -731,12 +729,12 @@ sap.ui.define([
 			var oStartPromise = new Promise(function(resolve) {
 				fnResolve = resolve;
 			});
-			var fnStartRtaStub = sandbox.stub(RuntimeAuthoring.prototype, "start").callsFake(function() {
+			var fnStartRtaStub = sandbox.stub(RuntimeAuthoring.prototype, "start").callsFake(function(...aArgs) {
 				assert.ok(
 					RuntimeAuthoring.willRTAStartAfterReload(Layer.CUSTOMER),
 					"then the starting flag is still set while RTA is starting"
 				);
-				fnStartRtaStub.wrappedMethod.apply(this, arguments)
+				fnStartRtaStub.wrappedMethod.apply(this, aArgs)
 				.then(fnResolve)
 				.then(function() {
 					this.destroy();
@@ -809,7 +807,7 @@ sap.ui.define([
 			});
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 
 			oRuntimeAuthoring.setFlexSettings(oRuntimeAuthoring.getFlexSettings());
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");
@@ -822,7 +820,7 @@ sap.ui.define([
 			});
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.CUSTOMER, "then the layer is the default 'CUSTOMER'");
 
-			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
+			sandbox.stub(URLSearchParams.prototype, "get").withArgs("sap-ui-layer").returns("vendor");
 
 			oRuntimeAuthoring.setFlexSettings(oRuntimeAuthoring.getFlexSettings());
 			assert.equal(oRuntimeAuthoring.getLayer(), Layer.VENDOR, "then the function reacts to the URL parameter and sets the layer to VENDOR");
@@ -892,7 +890,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("restore functionality", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
 				showToolbars: false
@@ -902,7 +900,7 @@ sap.ui.define([
 			this.oReloadPageStub = sandbox.stub(ReloadManager, "triggerReload");
 			this.oRta._oVersionsModel = new JSONModel();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -965,8 +963,8 @@ sap.ui.define([
 		QUnit.test("when calling restore successfully", function(assert) {
 			assert.expect(4);
 			var oRemoveStub = sandbox.spy(this.oRta.getCommandStack(), "removeAllCommands");
-			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], {
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function(...aArgs) {
+				assert.deepEqual(aArgs[0], {
 					selector: oComp,
 					layer: Layer.CUSTOMER
 				}, "then the correct parameters were passed");
@@ -974,20 +972,20 @@ sap.ui.define([
 			});
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			window.sessionStorage.setItem("sap.ui.fl.info." + sFlexReference, JSON.stringify(oFlexInfoResponse));
+			window.sessionStorage.setItem(`sap.ui.fl.info.${sFlexReference}`, JSON.stringify(oFlexInfoResponse));
 
 			return this.oRta.restore().then(function() {
 				assert.strictEqual(oRemoveStub.callCount, 1, "the command stack was cleared");
 				assert.equal(this.oReloadPageStub.callCount, 1, "then page reload is triggered");
-				var sFlexInfoFromSession = window.sessionStorage.getItem("sap.ui.fl.info." + sFlexReference);
+				var sFlexInfoFromSession = window.sessionStorage.getItem(`sap.ui.fl.info.${sFlexReference}`);
 				assert.equal(sFlexInfoFromSession, null, "then flex info from session storage is null");
 			}.bind(this));
 		});
 
 		QUnit.test("when calling restore successfully in AppVariant", function(assert) {
 			assert.expect(2);
-			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function() {
-				assert.deepEqual(arguments[0], {
+			sandbox.stub(PersistenceWriteAPI, "reset").callsFake(function(...aArgs) {
+				assert.deepEqual(aArgs[0], {
 					selector: oComp,
 					layer: Layer.CUSTOMER
 				}, "then the correct generator and layer was passed");
@@ -1001,7 +999,7 @@ sap.ui.define([
 
 		QUnit.test("when calling restore and there is an error", function(assert) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var sInfoSessionName = `sap.ui.fl.info.${sFlexReference}`;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 
@@ -1018,7 +1016,7 @@ sap.ui.define([
 
 		QUnit.test("when calling restore and reset is cancelled", function(assert) {
 			var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
-			var sInfoSessionName = "sap.ui.fl.info." + sFlexReference;
+			var sInfoSessionName = `sap.ui.fl.info.${sFlexReference}`;
 			var oFlexInfoResponse = {allContextsProvided: true, isResetEnabled: false, isPublishEnabled: false};
 			window.sessionStorage.setItem(sInfoSessionName, JSON.stringify(oFlexInfoResponse));
 

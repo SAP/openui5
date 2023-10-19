@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/flp/FlpLinkDelegate",
+	"sap/ui/mdc/ushell/LinkDelegate",
 	"sap/m/Button",
 	"sap/m/Dialog",
 	"sap/m/Text",
@@ -10,13 +10,13 @@ sap.ui.define([
 ], function(LinkDelegate, Button, Dialog, Text, mobileLibrary) {
 	"use strict";
 
-	var ButtonType = mobileLibrary.ButtonType;
+	const ButtonType = mobileLibrary.ButtonType;
 
-	var SampleLinkDelegate = Object.assign({}, LinkDelegate);
+	const SampleLinkDelegate = Object.assign({}, LinkDelegate);
 
 	SampleLinkDelegate.beforeNavigationCallback = function(oPayload, oEvent) {
 		return new Promise(function(resolve) {
-			var oDialog = new Dialog({
+			const oDialog = new Dialog({
 				title: 'Confirm',
 				type: 'Message',
 				content: new Text({ text: 'Are you sure you want to Navigate?' }),

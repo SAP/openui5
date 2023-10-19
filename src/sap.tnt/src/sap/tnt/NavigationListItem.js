@@ -628,12 +628,13 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 			this._renderIcon(rm);
 
+			this._renderText(rm);
+
 			if (control.getExpanded()) {
 				var expandIconControl = this._getExpandIconControl();
 				expandIconControl.setVisible(expanderVisible);
 				expandIconControl.setSrc(this.getExpanded() ? NavigationListItem.collapseIcon : NavigationListItem.expandIcon);
 				expandIconControl.setTooltip(this._getExpandIconTooltip(!this.getExpanded()));
-				this._renderText(rm);
 				rm.icon(NavigationListItem.selectionIndicatorIcon, ["sapTntNavLISelectionIndicator"]);
 				rm.renderControl(expandIconControl);
 			}
@@ -910,13 +911,12 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 
 				$this.attr('aria-selected', true);
 			} else {
-
 				$this.attr('aria-checked', true);
 
 				$this = $this.find('.sapTntNavLIGroup');
 
 				if (this.getParent().isA("sap.tnt.NavigationListItem")) {
-					this.getParent().$().find('.sapTntNavLIGroup').addClass('sapTntNavLIItemSelected');
+					this.getParent().$().find('.sapTntNavLIGroup').addClass('sapTntNavLIItemSelected sapTntNavLIItemNoHoverEffect');
 				}
 				navList._closePopover();
 			}
@@ -977,6 +977,15 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 				event.preventDefault();
 			}
 		};
+
+		NavigationListItem.prototype.onfocusout = function() {
+			var groupItem = this.getDomRef() && this.getDomRef().querySelector(".sapTntNavLIGroup");
+			if (groupItem) {
+				groupItem.classList.remove("sapTntNavLIItemNoHoverEffect");
+			}
+		};
+
+		NavigationListItem.prototype.onmouseover = NavigationListItem.prototype.onfocusout;
 
 		NavigationListItem.prototype.onmousedown = function(event) {
 			// prevent focusin event to be fired on <a> element

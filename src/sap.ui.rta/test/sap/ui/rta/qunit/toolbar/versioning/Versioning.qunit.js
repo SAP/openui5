@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/write/api/Version",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
@@ -19,9 +20,10 @@ sap.ui.define([
 	Core,
 	Control,
 	Fragment,
+	Lib,
 	coreLibrary,
-	Layer,
 	Version,
+	Layer,
 	JSONModel,
 	Adaptation,
 	Utils,
@@ -30,7 +32,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var MessageType = coreLibrary.MessageType;
+	var {MessageType} = coreLibrary;
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
@@ -61,7 +63,7 @@ sap.ui.define([
 		var oToolbarControlsModel = RtaQunitUtils.createToolbarControlsModel();
 
 		var oToolbar = new Adaptation({
-			textResources: Core.getLibraryResourceBundle("sap.ui.rta"),
+			textResources: Lib.getResourceBundleFor("sap.ui.rta"),
 			rtaInformation: {
 				flexSettings: {
 					layer: Layer.CUSTOMER
@@ -79,7 +81,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("VersionHistory", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			this.oEvent = {
 				getSource: function() {
@@ -90,20 +92,20 @@ sap.ui.define([
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		[0, 1, 2].forEach(function(iVersionIndex) {
 			var sName = "when the VersionHistory is opened and a version is selected: ";
-			sName += iVersionIndex ? "Draft" : "active Version" + iVersionIndex;
+			sName += iVersionIndex ? "Draft" : `active Version${iVersionIndex}`;
 			QUnit.test(sName, function(assert) {
 				var done = assert.async();
 
 				// eslint-disable-next-line max-nested-callbacks
 				this.oToolbar.attachEventOnce("switchVersion", function(oEvent) {
-					assert.strictEqual(oEvent.getParameter("version"), "" + (iVersionIndex || Version.Number.Draft), "the event was fired with the correct parameter");
+					assert.strictEqual(oEvent.getParameter("version"), `${iVersionIndex || Version.Number.Draft}`, "the event was fired with the correct parameter");
 					done();
 				});
 				this.oToolbar.showVersionHistory(this.oEvent).then(function() {
@@ -186,13 +188,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("ActivateVersionDialog", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			return this.oToolbar.onFragmentLoaded().then(function() {
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}
@@ -275,14 +277,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Formatting of direct Toolbar content", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oToolbar = initializeToolbar();
 			this.oTextResources = this.oToolbar.getTextResources();
 			return this.oToolbar.onFragmentLoaded().then(function() {
 				return this.oToolbar.show();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oToolbar.destroy();
 			sandbox.restore();
 		}

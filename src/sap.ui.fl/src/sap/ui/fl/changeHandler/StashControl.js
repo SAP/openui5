@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @alias sap.ui.fl.changeHandler.StashControl
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.27.0
+	 * @since 1.27.0
 	 */
 	var StashControl = {};
 
@@ -32,39 +32,17 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when the change is applied.
 	 * @public
 	 */
-	StashControl.applyChange = function(oChange, oControl, mPropertyBag) {
-		var bStashed;
+	StashControl.applyChange = async function(oChange, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
 
-		return Promise.resolve()
-		.then(oModifier.getStashed.bind(oModifier, oControl))
-		.then(function(bRetrievedStashed) {
-			bStashed = bRetrievedStashed;
-			return oModifier.findIndexInParentAggregation(oControl);
-		})
-		.then(function(iOriginalIndex) {
-			this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
-			if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-				return oModifier.setStashed(oControl, true);
-			}
-			return oModifier.setVisible(oControl, false);
-		}.bind(this));
-	};
-
-	function fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier) {
-		var sAggregationName;
-		if (iUnstashedIndex !== mRevertData.originalIndex) {
-			var oParent = oModifier.getParent(oUnstashedControl);
-			return Promise.return()
-			.then(oModifier.getParentAggregationName.bind(oModifier, oUnstashedControl))
-			.then(function(sRetrievedAggregationName) {
-				sAggregationName = sRetrievedAggregationName;
-				return oModifier.removeAggregation(oParent, sAggregationName, oUnstashedControl);
-			})
-			.then(oModifier.insertAggregation.bind(oModifier, oParent, sAggregationName, oUnstashedControl, mRevertData.originalIndex));
+		const bStashed = await oModifier.getStashed(oControl);
+		const iOriginalIndex = await oModifier.findIndexInParentAggregation(oControl);
+		this.setChangeRevertData(oChange, bStashed, iOriginalIndex);
+		if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+			return oModifier.setStashed(oControl, true);
 		}
-		return Promise.resolve();
-	}
+		return oModifier.setVisible(oControl, false);
+	};
 
 	/**
 	 * Reverts previously applied change
@@ -76,28 +54,28 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving when change is reverted
 	 * @public
 	 */
-	StashControl.revertChange = function(oChange, oControl, mPropertyBag) {
-		var mRevertData = oChange.getRevertData();
-		var oModifier = mPropertyBag.modifier;
-
-		return Promise.resolve()
-		.then(function() {
-			if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
-				var oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
-				if (oUnstashedControl) {
-					return Promise.resolve()
-					.then(oModifier.findIndexInParentAggregation.bind(oModifier, oUnstashedControl))
-					.then(function(iUnstashedIndex) {
-						return fnHandleUnstashedControl(iUnstashedIndex, mRevertData, oUnstashedControl, oModifier);
-					});
+	StashControl.revertChange = async function(oChange, oControl, mPropertyBag) {
+		const mRevertData = oChange.getRevertData();
+		const oModifier = mPropertyBag.modifier;
+		if (LayerUtils.isDeveloperLayer(oChange.getLayer())) {
+			const oUnstashedControl = oModifier.setStashed(oControl, mRevertData.originalValue, mPropertyBag.appComponent);
+			if (oUnstashedControl) {
+				const iUnstashedIndex = await oModifier.findIndexInParentAggregation(oUnstashedControl);
+				if (iUnstashedIndex !== mRevertData.originalIndex) {
+					const oParent = oModifier.getParent(oUnstashedControl);
+					const sAggregationName = await oModifier.getParentAggregationName(oUnstashedControl);
+					await oModifier.moveAggregation(
+						oParent,
+						sAggregationName,
+						oParent,
+						sAggregationName,
+						oUnstashedControl,
+						mRevertData.originalIndex);
 				}
-				return Promise.resolve();
 			}
-			return oModifier.setVisible(oControl, !mRevertData.originalValue);
-		})
-		.then(function() {
-			oChange.resetRevertData();
-		});
+		}
+		oModifier.setVisible(oControl, !mRevertData.originalValue);
+		oChange.resetRevertData();
 	};
 
 	/**
@@ -132,8 +110,8 @@ sap.ui.define([
 	};
 
 	StashControl.getChangeVisualizationInfo = function(oChange, oAppComponent) {
-		var oSelector = oChange.getSelector();
-		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		const oSelector = oChange.getSelector();
+		const oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		return {
 			affectedControls: [oSelector],
 			displayControls: [oElement.getParent().getId()]

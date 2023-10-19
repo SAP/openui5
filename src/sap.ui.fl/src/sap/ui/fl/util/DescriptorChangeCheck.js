@@ -71,10 +71,10 @@ sap.ui.define([
 			}
 		}
 		if (!includes(aSupportedProperties, oChangeEntity.propertyPath) && !isGenericPropertyPathSupported(aSupportedProperties, oChangeEntity.propertyPath)) {
-			throw new Error("Changing " + oChangeEntity.propertyPath + " is not supported. The supported 'propertyPath' is: " + aSupportedProperties.join("|"));
+			throw new Error(`Changing ${oChangeEntity.propertyPath} is not supported. The supported 'propertyPath' is: ${aSupportedProperties.join("|")}`);
 		}
 		if (!includes(aSupportedOperations, oChangeEntity.operation)) {
-			throw new Error("Operation " + oChangeEntity.operation + " is not supported. The supported 'operation' is " + aSupportedOperations.join("|"));
+			throw new Error(`Operation ${oChangeEntity.operation} is not supported. The supported 'operation' is ${aSupportedOperations.join("|")}`);
 		}
 	}
 
@@ -85,6 +85,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - Changes to be merged
 	 * @param {Array} aSupportedProperties - Array of supported properties by change merger
 	 * @param {Array} aSupportedOperations - Array of supported operations by change merger
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkEntityPropertyChange(oChange, aSupportedProperties, aSupportedOperations) {
@@ -92,10 +93,10 @@ sap.ui.define([
 			return key.endsWith("Id");
 		}).shift();
 		if (!oChange[id]) {
-			throw new Error("Mandatory \"" + id + "\" parameter is not provided.");
+			throw new Error(`Mandatory "${id}" parameter is not provided.`);
 		}
 		if (!oChange.entityPropertyChange) {
-			throw new Error("Changes for \"" + oChange[id] + "\" are not provided.");
+			throw new Error(`Changes for "${oChange[id]}" are not provided.`);
 		}
 
 		checkChange(oChange.entityPropertyChange, aSupportedProperties, aSupportedOperations);
@@ -112,6 +113,7 @@ sap.ui.define([
 	 * The target layer is derived from the change.
 	 * @param {string} sId - The ID to check
 	 * @param {sap.ui.fl.apply._internal.flexObjects.FlexObject} oChange - The change from where to derive the layer
+	 * @private
 	 * @ui5-restricted sap.ui.fl, sap.suite.ui.generic.template
 	 */
 	function checkIdNamespaceCompliance(sId, oChange) {
@@ -124,11 +126,11 @@ sap.ui.define([
 		if (sPrefix === null) {
 			Object.keys(layer_prefixes).forEach(function(sKey) {
 				if (layer_prefixes[sKey] && sId.startsWith(layer_prefixes[sKey])) {
-					throw new Error("Id " + sId + " must not start with reserved " + layer_prefixes[sKey]);
+					throw new Error(`Id ${sId} must not start with reserved ${layer_prefixes[sKey]}`);
 				}
 			});
 		} else if (!sId.startsWith(sPrefix)) {
-			throw new Error("Id " + sId + " must start with " + sPrefix);
+			throw new Error(`Id ${sId} must start with ${sPrefix}`);
 		}
 	}
 
@@ -141,16 +143,16 @@ sap.ui.define([
 	function getNamespacePrefixForLayer(sLayer) {
 		var sPrefix = layer_prefixes[sLayer];
 		if (sPrefix === undefined) {
-			throw new Error("Layer " + sLayer + " not supported.");
+			throw new Error(`Layer ${sLayer} not supported.`);
 		}
 		return sPrefix;
 	}
 
 	return {
-		checkEntityPropertyChange: checkEntityPropertyChange,
-		checkIdNamespaceCompliance: checkIdNamespaceCompliance,
-		getNamespacePrefixForLayer: getNamespacePrefixForLayer,
-		getClearedGenericPath: getClearedGenericPath,
-		isGenericPropertyPathSupported: isGenericPropertyPathSupported
+		checkEntityPropertyChange,
+		checkIdNamespaceCompliance,
+		getNamespacePrefixForLayer,
+		getClearedGenericPath,
+		isGenericPropertyPathSupported
 	};
 });

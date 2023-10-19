@@ -1,7 +1,6 @@
-sap.ui.define(["sap/ui/model/type/Unit", "sap/ui/core/mvc/XMLView"], function (UnitType, XMLView) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/model/type/Unit", "sap/ui/core/mvc/XMLView"], function (Core, UnitType, XMLView) {
 	"use strict";
-
-	sap.ui.getCore().attachInit(function () {
+	Core.ready().then(function () {
 
 		UnitType.extend("sap.ui.core.samples.MeterType", {
 			constructor: function (oFormatOptions, oConstraints) {

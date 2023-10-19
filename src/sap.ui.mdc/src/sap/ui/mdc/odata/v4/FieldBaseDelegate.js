@@ -30,7 +30,7 @@ sap.ui.define([
 	 * @alias module:sap/ui/mdc/odata/v4/FieldBaseDelegate
 	 * @deprecated This module should not be used and will be removed in future versions!
 	 */
-	var ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
+	const ODataFieldBaseDelegate = Object.assign({}, FieldBaseDelegate);
 
 	ODataFieldBaseDelegate.getTypeMap = function (oPayload) {
 		return ODataV4TypeMap;

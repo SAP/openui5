@@ -4,11 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/core/Renderer',
-	'sap/ui/core/IconPool',
 	'sap/ui/mdc/enums/FieldEditMode'
 ], function(
 	Renderer,
-	IconPool,
 	FieldEditMode
 ) {
 	"use strict";
@@ -17,18 +15,18 @@ sap.ui.define([
 	 * FieldBase renderer.
 	 * @namespace
 	 */
-	var FieldBaseRenderer = Renderer.extend("sap.ui.mdc.field.FieldBaseRenderer");
+	let FieldBaseRenderer = Renderer.extend("sap.ui.mdc.field.FieldBaseRenderer");
 
 	FieldBaseRenderer = Object.assign(FieldBaseRenderer, {
 		apiVersion: 2
 	});
 
 	FieldBaseRenderer.render = function(oRm, oField) {
-		var aContent = oField.getCurrentContent();
-		var sWidth = oField.getWidth();
-		var aConditions = oField.getConditions();
-		var sEditMode = oField.getEditMode();
-		var bShowEmptyIndicator = oField.getShowEmptyIndicator() && aConditions.length === 0 && sEditMode === FieldEditMode.Display && !oField.getContent() && !oField.getContentDisplay();
+		const aContent = oField.getCurrentContent();
+		const sWidth = oField.getWidth();
+		const aConditions = oField.getConditions();
+		const sEditMode = oField.getEditMode();
+		const bShowEmptyIndicator = oField.getShowEmptyIndicator() && aConditions.length === 0 && sEditMode === FieldEditMode.Display && !oField.getContent() && !oField.getContentDisplay();
 
 		oRm.openStart("div", oField);
 		oRm.class("sapUiMdcFieldBase");
@@ -44,8 +42,8 @@ sap.ui.define([
 		oRm.style("width", sWidth);
 		oRm.openEnd();
 
-		for (var i = 0; i < aContent.length; i++) {
-			var oContent = aContent[i];
+		for (let i = 0; i < aContent.length; i++) {
+			const oContent = aContent[i];
 			oRm.renderControl(oContent);
 		}
 

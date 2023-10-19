@@ -22,6 +22,8 @@ sap.ui.define([], function () {
 		/**
 		 * JSON View
 		 * @public
+		 * @deprecated Since version 1.120, please consider using {@link sap.ui.core.mvc.XMLView XMLViews} or "typed views" (view classes
+		 *             written in JavaScript) instead.
 		 */
 		JSON: "JSON",
 

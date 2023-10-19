@@ -3,8 +3,10 @@
 /* Base theme                     */
 /* ============================== */
 
+@_sap_m_Toolbar_ShrinkItem_MinWidth: 2.5rem;
+
 //we want the first visible element on the row to have specific padding-left value
-.sapMIBar.sapMTB .sapMBarChild{
+.sapMIBar.sapMTB .sapMBarChild {
 	margin-left: 0.25rem;
 }
 
@@ -12,9 +14,8 @@
 	margin: 0 0 0 0.5rem;
 }
 
-.sapMIBar.sapMTB .sapMBarChild:first-child[style*="width: 100%"] {
+.sapMIBar.sapMTB .sapMBarChild.sapMBarChildFirstChild {
 	margin-left: 0;
-	padding-left: 0.25rem;
 }
 
 .sapMTB {
@@ -27,6 +28,7 @@
 	-webkit-text-size-adjust: none;
 	-moz-text-size-adjust: none;
 	height: 3rem;
+	padding-left: 0.25rem;
 	padding-right: 0.25rem;
 	background: @sapUiToolbarBackground;
 }
@@ -52,14 +54,9 @@
 	border-bottom: none;
 }
 
-/* Transparent Toolbar Context */
-.sapMTB-Transparent-CTX.sapMTB {
-	padding-left: 0.75rem;
-}
-
 /* Info Toolbar Context */
 .sapMIBar.sapMTB.sapMTB-Info-CTX {
-	padding: 0 1rem 0 0.75rem;
+	padding: 0 1rem;
 }
 
 .sapMIBar.sapMTB.sapMTB-Info-CTX > .sapUiIcon:first-child {
@@ -78,7 +75,7 @@
 }
 
 .sapMTBShrinkItem:not(.sapMSF) {
-	min-width: 2.5rem; /* default min-width value for the shrinkable items */
+	min-width: @_sap_m_Toolbar_ShrinkItem_MinWidth; /* default min-width value for the shrinkable items */
 }
 
 /* NewFlex */
@@ -103,11 +100,9 @@
 	padding: 0;
 }
 
-.sapUiGridHeader > .sapMTB > .sapMBarChild:first-child,
-.sapUiGridTitle > th > .sapMTB > .sapMBarChild:first-child,
-.sapUiFormResLayout.sapUiFormToolbar > .sapMTB > .sapMBarChild:first-child,
-.sapUiRLContainer > .sapMTB > .sapMBarChild:first-child {
-	margin-left: 0;
+.sapUiFormCLContainer .sapMIBar.sapMTB .sapMBarChild:first-child,
+.sapUiRespGrid .sapMIBar .sapMBarChild:first-child {
+	margin-left: 0.25rem;
 }
 
 /* Solid Toolbar Context */

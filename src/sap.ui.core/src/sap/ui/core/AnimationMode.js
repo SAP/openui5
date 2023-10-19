@@ -15,8 +15,8 @@ sap.ui.define([], function() {
 	 *
 	 * @enum {string}
 	 * @alias module:sap/ui/core/AnimationMode
-	 * @private
-	 * @ui5-restricted sap.ui.core.Configuration
+	 * @public
+	 * @since 1.120
 	 */
 	var AnimationMode = {
 		/**

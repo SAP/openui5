@@ -23,7 +23,7 @@ sap.ui.define([
 	'./ResponsivePopover',
 	'./Button',
 	'sap/ui/core/IconPool',
-	'sap/ui/qunit/utils/waitForThemeApplied',
+	"sap/ui/core/Theming",
 	'sap/ui/core/Configuration',
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
@@ -47,7 +47,7 @@ sap.ui.define([
 	ResponsivePopover,
 	Button,
 	IconPool,
-	waitForThemeApplied,
+	Theming,
 	Configuration,
 	UI5Date
 ) {
@@ -359,7 +359,7 @@ sap.ui.define([
 						new SegmentedButtonItem(this.getId() + "-Switch-Clk", {key: "Clk", text: sTimeText})
 					]
 				});
-				oSwitcher.attachSelect(this._handleSelect, this);
+				oSwitcher.attachSelectionChange(this._handleSelectionChange, this);
 
 				this.setAggregation("_switcher", oSwitcher);
 			}
@@ -388,9 +388,8 @@ sap.ui.define([
 			this.getCalendar().addDelegate(oOnAfterRenderingDelegate);
 		},
 
-		_handleSelect: function(oEvent) {
-
-			var sKey = oEvent.getParameter("key");
+		_handleSelectionChange: function(oEvent) {
+			var sKey = oEvent.getParameter("item").getKey();
 
 			this._switchVisibility(sKey);
 			if (sKey === "Clk") {
@@ -492,17 +491,7 @@ sap.ui.define([
 		DatePicker.prototype.onAfterRendering.apply(this, arguments);
 
 		if (this._getShowTimezone()) {
-			waitForThemeApplied().then(function() {
-				var oDummyContentDomRef = this.$().find(".sapMDummyContent"),
-					iDummyWidth;
-
-				if (!oDummyContentDomRef || !oDummyContentDomRef.length) {
-					return;
-				}
-
-				iDummyWidth = oDummyContentDomRef[0].getBoundingClientRect().width;
-				this.$("inner").css("max-width", (iDummyWidth + 2) + "px");
-			}.bind(this));
+			Theming.attachApplied(this._adjustInnerMaxWidth.bind(this));
 		}
 	};
 
@@ -576,6 +565,7 @@ sap.ui.define([
 
 		this._oTimezonePopup = undefined;
 		this._oPopupContent = undefined; // is destroyed via popup aggregation - just remove reference
+		Theming.detachApplied(this._adjustInnerMaxWidth);
 		Device.media.detachHandler(this._handleWindowResize, this);
 	};
 
@@ -657,6 +647,18 @@ sap.ui.define([
 		oClocks && oClocks.setShowCurrentTimeButton(bShow);
 
 		return this.setProperty("showCurrentTimeButton", bShow);
+	};
+
+	DateTimePicker.prototype._adjustInnerMaxWidth = function() {
+			var oDummyContentDomRef = this.$().find(".sapMDummyContent"),
+				iDummyWidth;
+
+			if (!oDummyContentDomRef || !oDummyContentDomRef.length) {
+				return;
+			}
+
+			iDummyWidth = oDummyContentDomRef[0].getBoundingClientRect().width;
+			this.$("inner").css("max-width", (iDummyWidth + 2) + "px");
 	};
 
 	DateTimePicker.prototype._getTimezoneNamePopup = function() {
@@ -1063,10 +1065,11 @@ sap.ui.define([
 				oDate = UI5Date.getInstance();
 				this._oCalendar.removeAllSelectedDates();
 			}
-			var iMaxTimeMillis = this._oMaxDate.getTime();
 
-			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
+			if (oDate.getTime() < this._oMinDate.getTime()) {
 				oDate = this._oMinDate;
+			} else if (oDate.getTime() > this._oMaxDate.getTime()) {
+				oDate = this._oMaxDate;
 			}
 			this._oOKButton.setEnabled(false);
 		}

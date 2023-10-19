@@ -2,9 +2,8 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
 	"sap/ui/core/Core"
-], function(UIComponent, ODataModel, MockServer, FakeLrepConnectorLocalStorage, oCore) {
+], function(UIComponent, ODataModel, MockServer, oCore) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.mdc.acc.link.Component", {
@@ -13,8 +12,6 @@ sap.ui.define([
 		},
 
 		init: function() {
-			FakeLrepConnectorLocalStorage.enableFakeConnector();
-
 			// initialization has to be done here because parent.init() calls createContent()
 			oCore.loadLibrary("sap.ui.mdc");
 
@@ -40,10 +37,6 @@ sap.ui.define([
 			}));
 
 			UIComponent.prototype.init.apply(this, arguments);
-		},
-
-		exit: function() {
-			FakeLrepConnectorLocalStorage.disableFakeConnector();
 		}
 	});
 });

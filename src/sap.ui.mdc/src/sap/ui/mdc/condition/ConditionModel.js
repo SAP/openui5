@@ -4,24 +4,20 @@
 sap.ui.define([
 		'sap/ui/mdc/condition/ConditionModelPropertyBinding',
 		'sap/ui/model/json/JSONModel',
-		'sap/ui/model/Filter',
 		'sap/ui/model/ChangeReason',
 		'sap/ui/mdc/condition/FilterOperatorUtil',
 		'sap/base/util/merge',
-		'sap/base/util/deepEqual',
 		'sap/base/Log',
 		'sap/ui/mdc/condition/Condition',
-		"sap/ui/mdc/condition/FilterConverter",
+		'sap/ui/mdc/condition/FilterConverter',
 		'sap/ui/core/date/UI5Date'
 	],
 	function (
 		ConditionModelPropertyBinding,
 		JSONModel,
-		Filter,
 		ChangeReason,
 		FilterOperatorUtil,
 		merge,
-		deepEqual,
 		Log,
 		Condition,
 		FilterConverter,
@@ -43,7 +39,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 * @experimental As of version 1.48
 		 */
-		var ConditionModel = JSONModel.extend("sap.ui.mdc.condition.ConditionModel", {
+		const ConditionModel = JSONModel.extend("sap.ui.mdc.condition.ConditionModel", {
 			constructor: function () {
 				JSONModel.apply(this, arguments);
 				this.setSizeLimit(1000);
@@ -59,16 +55,16 @@ sap.ui.define([
 
 		ConditionModel.prototype.bindProperty = function (sPath, oContext, mParameters) {
 
-			var sEscapedPath = sPath;
+			let sEscapedPath = sPath;
 
 			if (sPath.startsWith("/conditions/")) {
-				var sFieldPath = sPath.slice(12);
+				let sFieldPath = sPath.slice(12);
 				this._getFieldPathProperty(sFieldPath); // to initialize FieldPath
 				sFieldPath = _escapeFieldPath.call(this, sFieldPath);
 				sEscapedPath = "/conditions/" + sFieldPath;
 			}
 
-			var oBinding = new ConditionModelPropertyBinding(this, sEscapedPath, oContext, mParameters);
+			const oBinding = new ConditionModelPropertyBinding(this, sEscapedPath, oContext, mParameters);
 			oBinding._sOriginapPath = sPath;
 			return oBinding;
 
@@ -77,7 +73,7 @@ sap.ui.define([
 		ConditionModel.prototype.getContext = function (sPath) {
 
 			if (sPath.startsWith("/conditions/")) {
-				var sFieldPath = sPath.slice(12);
+				let sFieldPath = sPath.slice(12);
 				sFieldPath = _escapeFieldPath.call(this, sFieldPath);
 				sPath = "/conditions/" + sFieldPath;
 			}
@@ -87,7 +83,7 @@ sap.ui.define([
 		};
 
 		ConditionModel.prototype.bindList = function (sPath, oContext, aSorters, aFilters, mParameters) {
-			var oBinding = JSONModel.prototype.bindList.apply(this, arguments);
+			const oBinding = JSONModel.prototype.bindList.apply(this, arguments);
 			oBinding.enableExtendedChangeDetection(true); // to force deep compare of data
 			return oBinding;
 		};
@@ -106,16 +102,16 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.mdc
 		 */
 		ConditionModel.prototype.clone = function (sFieldPath) {
-			var oCM = new ConditionModel();
+			const oCM = new ConditionModel();
 
 			oCM._sName = this._sName + "_clone";
 
-			var oClonedConditions = {};
+			let oClonedConditions = {};
 			if (typeof sFieldPath === "string") {
-				var aConditions = this.getConditions(sFieldPath);
-				for (var i = 0; i < aConditions.length; i++) {
-					var oCondition = aConditions[i];
-					var sMyFieldPath = _escapeFieldPath.call(this, sFieldPath);
+				const aConditions = this.getConditions(sFieldPath);
+				for (let i = 0; i < aConditions.length; i++) {
+					const oCondition = aConditions[i];
+					const sMyFieldPath = _escapeFieldPath.call(this, sFieldPath);
 					if (!oClonedConditions[sMyFieldPath]) {
 						oClonedConditions[sMyFieldPath] = [];
 					}
@@ -139,12 +135,12 @@ sap.ui.define([
 		 */
 		ConditionModel.prototype.merge = function (sFieldPath, oSourceConditionModel, sSourceFieldPath) {
 			this.removeAllConditions(sFieldPath);
-			var oSourceConditions = merge({}, oSourceConditionModel.getAllConditions());
-			for (var sMyFieldPath in oSourceConditions) {
+			const oSourceConditions = merge({}, oSourceConditionModel.getAllConditions());
+			for (const sMyFieldPath in oSourceConditions) {
 				if (!(typeof sSourceFieldPath === "string") || sMyFieldPath === sSourceFieldPath) {
-					var aCleanedConditions = Condition._removeEmptyConditions(oSourceConditions[sMyFieldPath]);
-					for (var i = 0; i < aCleanedConditions.length; i++) {
-						var oCondition = aCleanedConditions[i];
+					const aCleanedConditions = Condition._removeEmptyConditions(oSourceConditions[sMyFieldPath]);
+					for (let i = 0; i < aCleanedConditions.length; i++) {
+						const oCondition = aCleanedConditions[i];
 						this.addCondition(sMyFieldPath, oCondition);
 					}
 				}
@@ -170,8 +166,8 @@ sap.ui.define([
 
 		function _getConditions(sFieldPath, bCreateIfEmpty) {
 
-			var oConditions = this.getProperty("/conditions");
-			var aConditions;
+			const oConditions = this.getProperty("/conditions");
+			let aConditions;
 
 			if (typeof sFieldPath == "string") { // to support empty string
 				sFieldPath = _escapeFieldPath.call(this, sFieldPath);
@@ -196,14 +192,14 @@ sap.ui.define([
 		 */
 		ConditionModel.prototype.getAllConditions = function (vFieldPath) {
 
-			var oConditions = this.getProperty("/conditions");
-			var oResult = {};
+			const oConditions = this.getProperty("/conditions");
+			const oResult = {};
 
 			// use unescaped fieldPath for outside
-			for (var sMyFieldPath in oConditions) {
-				var oFieldPath = this.getProperty("/fieldPath");
-				var oFildPathInfo = oFieldPath[sMyFieldPath]; // to get unescaped fieldPath
-				var sFieldPath = oFildPathInfo ? oFildPathInfo.fieldPath : sMyFieldPath;
+			for (const sMyFieldPath in oConditions) {
+				const oFieldPath = this.getProperty("/fieldPath");
+				const oFildPathInfo = oFieldPath[sMyFieldPath]; // to get unescaped fieldPath
+				const sFieldPath = oFildPathInfo ? oFildPathInfo.fieldPath : sMyFieldPath;
 
 				if (vFieldPath && [].concat(vFieldPath).indexOf(sFieldPath) === -1) {
 					continue;
@@ -231,9 +227,9 @@ sap.ui.define([
 				throw new Error("sFieldPath must be a string " + this);
 			}
 
-			var aConditions = this.getConditions(sFieldPath);
-			var aArgs = fnNormalizeCondition ? [fnNormalizeCondition(oCondition), aConditions.map(fnNormalizeCondition)] : [oCondition, aConditions];
-			var iIndex = FilterOperatorUtil.indexOfCondition.apply(FilterOperatorUtil, aArgs);
+			const aConditions = this.getConditions(sFieldPath);
+			const aArgs = fnNormalizeCondition ? [fnNormalizeCondition(oCondition), aConditions.map(fnNormalizeCondition)] : [oCondition, aConditions];
+			const iIndex = FilterOperatorUtil.indexOfCondition.apply(FilterOperatorUtil, aArgs);
 			return iIndex;
 
 		};
@@ -256,23 +252,23 @@ sap.ui.define([
 		 */
 		ConditionModel.prototype.setConditions = function (oConditions) {
 
-			var i = 0;
-			var oCondition;
+			let i = 0;
+			let oCondition;
 
 			if (Array.isArray(oConditions)) {
 				throw new Error("setConditions with an Array of condition is not supported! " + this);
 			} else {
 				this._bNoSingleEvent = true; // to fire event only once per FieldPath
-				var bUpdate = false;
-				var sExternalFieldPath; // used for FieldPath from outside
-				var sFieldPath; // used for escaped FieldPath
+				let bUpdate = false;
+				let sExternalFieldPath; // used for FieldPath from outside
+				let sFieldPath; // used for escaped FieldPath
 				// check old conditions to fire right propertyChange events
-				var oOldConditions = merge({}, this.getProperty("/conditions")); // in oOldConditions the escaped FieldPath is used
+				const oOldConditions = merge({}, this.getProperty("/conditions")); // in oOldConditions the escaped FieldPath is used
 				for (sExternalFieldPath in oConditions) { // in oConditions the external FieldPath is used
 					this._getFieldPathProperty(sExternalFieldPath); // to initialize FieldPath
 					sFieldPath = _escapeFieldPath.call(this, sExternalFieldPath);
-					var aOldConditions = oOldConditions[sFieldPath] || [];
-					var aConditions = oConditions[sExternalFieldPath] || [];
+					const aOldConditions = oOldConditions[sFieldPath] || [];
+					const aConditions = oConditions[sExternalFieldPath] || [];
 					if (!FilterOperatorUtil.compareConditionsArray(aOldConditions, aConditions)) {
 						bUpdate = true;
 						this.removeAllConditions(sExternalFieldPath);
@@ -285,7 +281,7 @@ sap.ui.define([
 					delete oOldConditions[sFieldPath]; // is processed
 				}
 
-				var oFieldPath = this.getProperty("/fieldPath");
+				const oFieldPath = this.getProperty("/fieldPath");
 				for (sFieldPath in oOldConditions) { // just entries without update left here
 					if (oOldConditions[sFieldPath].length > 0) { // there where conditions and no there are none -> update
 						bUpdate = true;
@@ -344,21 +340,19 @@ sap.ui.define([
 				return this;
 			}
 
-			var aConditions;
-
 			FilterOperatorUtil.checkConditionsEmpty(oCondition);
 			FilterOperatorUtil.updateConditionsValues(oCondition);
 			this._getFieldPathProperty(sFieldPath); // to create if not exist
 
 			if (!bForce) {
-				var i = this.indexOf(sFieldPath, oCondition);
+				const i = this.indexOf(sFieldPath, oCondition);
 				if (i >= 0) {
 					return this;
 				}
 			}
 
 			// add condition to model
-			aConditions = _getConditions.call(this, sFieldPath, true);
+			const aConditions = _getConditions.call(this, sFieldPath, true);
 			if (iIndex == -1) {
 				aConditions.push(oCondition);
 			} else {
@@ -420,7 +414,7 @@ sap.ui.define([
 				throw new Error("sFieldPath must be a string " + this);
 			}
 
-			var iIndex = -1;
+			let iIndex = -1;
 
 			if (typeof vCondition === "object") {
 				iIndex = this.indexOf(sFieldPath, vCondition);
@@ -429,7 +423,7 @@ sap.ui.define([
 			}
 
 			if (iIndex >= 0) {
-				var aConditions = this.getConditions(sFieldPath);
+				const aConditions = this.getConditions(sFieldPath);
 				if (aConditions.length > iIndex) {
 					aConditions.splice(iIndex, 1);
 					this.checkUpdate(false, true); // do not force, only fire real updates. But do async as not known if any other changes via api triggered.
@@ -452,10 +446,10 @@ sap.ui.define([
 		 */
 		ConditionModel.prototype.removeAllConditions = function (sFieldPath) {
 
-			var oConditions = this.getProperty("/conditions");
+			const oConditions = this.getProperty("/conditions");
 
 			if (typeof sFieldPath === "string") {
-				var sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
+				const sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
 				if (oConditions[sEscapedFieldPath] && oConditions[sEscapedFieldPath].length > 0) {
 					oConditions[sEscapedFieldPath] = [];
 					if (!this._bNoSingleEvent) {
@@ -463,12 +457,12 @@ sap.ui.define([
 					}
 				}
 			} else {
-				for (var sMyFieldPath in oConditions) {
+				for (const sMyFieldPath in oConditions) {
 					if (oConditions[sMyFieldPath] && oConditions[sMyFieldPath].length > 0) {
 						oConditions[sMyFieldPath] = [];
 						if (!this._bNoSingleEvent) {
-							var oFieldPath = this.getProperty("/fieldPath");
-							var sOriginalFieldPath = oFieldPath[sMyFieldPath].fieldPath;
+							const oFieldPath = this.getProperty("/fieldPath");
+							const sOriginalFieldPath = oFieldPath[sMyFieldPath].fieldPath;
 							this.firePropertyChange({ reason: ChangeReason.Binding, path: "/conditions/" + sOriginalFieldPath, context: undefined, value: oConditions[sMyFieldPath] });
 						}
 					}
@@ -484,8 +478,8 @@ sap.ui.define([
 		};
 
 		ConditionModel.prototype._getFieldPathProperty = function (sFieldPath) {
-			var sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
-			var oFieldPath = this.getProperty("/fieldPath");
+			const sEscapedFieldPath = _escapeFieldPath.call(this, sFieldPath);
+			const oFieldPath = this.getProperty("/fieldPath");
 			if (!oFieldPath[sEscapedFieldPath]) {
 				oFieldPath[sEscapedFieldPath] = {
 					fieldPath: sFieldPath // to store unescaped FieldPath (needed for Filter)
@@ -493,7 +487,7 @@ sap.ui.define([
 			}
 
 			// create initial conditions array (to have it always for binding)
-			var oConditions = this.getProperty("/conditions");
+			const oConditions = this.getProperty("/conditions");
 			if (!oConditions[sEscapedFieldPath]) {
 				oConditions[sEscapedFieldPath] = [];
 			}
@@ -507,10 +501,10 @@ sap.ui.define([
 		};
 
 		ConditionModel.prototype.serialize = function () {
-			var oConditions = merge({}, this.getAllConditions());
+			const oConditions = merge({}, this.getAllConditions());
 
-			for (var sMyFieldPath in oConditions) {
-				var aConditions = oConditions[sMyFieldPath];
+			for (const sMyFieldPath in oConditions) {
+				const aConditions = oConditions[sMyFieldPath];
 				aConditions.forEach(function (oCondition) {
 					delete oCondition.isEmpty;
 				}, this);
@@ -524,8 +518,8 @@ sap.ui.define([
 		};
 
 		ConditionModel.prototype.parse = function (sObjects) {
-			var dateTimeReviver = function (key, value) {
-				var a;
+			const dateTimeReviver = function (key, value) {
+				let a;
 				if (!isNaN(parseInt(key)) && (typeof value === 'string')) {
 					a = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}).(\d{3})Z$/.exec(value);
 					if (a) {
@@ -541,13 +535,13 @@ sap.ui.define([
 		function _escapeFieldPath(sFieldPath) {
 
 			if (sFieldPath) {
-				var aParts = sFieldPath.split("/");
+				const aParts = sFieldPath.split("/");
 
 				if (aParts.length > 1) {
 					sFieldPath = "";
 
-					for (var i = 0; i < aParts.length; i++) {
-						var sPart = aParts[i];
+					for (let i = 0; i < aParts.length; i++) {
+						const sPart = aParts[i];
 						if (i > 0) {
 							if (!isNaN(sPart) || !isNaN(aParts[i - 1])) {
 								sFieldPath = sFieldPath + "/";

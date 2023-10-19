@@ -12,7 +12,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @alias sap.ui.fl.support.apps.contentbrowser.lrepConnector.LRepConnector
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.45
+	 * @since 1.45
+	 * @private
 	 */
 	var LrepConnector = {};
 
@@ -66,14 +67,14 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 				fnReject();
 			}
 
-			var sContentSuffix = sNamespace + sFilename + "." + sFileType;
+			var sContentSuffix = `${sNamespace + sFilename}.${sFileType}`;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = this._getLayerSuffix(sLayer);
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sPackageSuffix = this._getPackageSuffix(sPackageName);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix + sPackageSuffix;
 			if (bSupport) {
-				sUrl = sUrl + "&support=true";
+				sUrl = `${sUrl}&support=true`;
 			}
 			this._getTokenAndSendPutRequest(sUrl, sContent, fnResolve, fnReject);
 		}.bind(this));
@@ -97,13 +98,13 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 				fnReject();
 			}
 
-			var sContentSuffix = sNamespace + sFileName + "." + sFileType;
+			var sContentSuffix = `${sNamespace + sFileName}.${sFileType}`;
 			sContentSuffix = encodeURI(sContentSuffix);
 			var sLayerSuffix = this._getLayerSuffix(sLayer);
 			var sChangeListSuffix = this._getChangeListSuffix(sTransportId);
 			var sUrl = LrepConnector.sContentPathPrefix + sContentSuffix + sLayerSuffix + sChangeListSuffix;
 			if (bSupport) {
-				sUrl = sUrl + "&support=true";
+				sUrl = `${sUrl}&support=true`;
 			}
 			this._getTokenAndSendDeletionRequest(sUrl, fnResolve, fnReject);
 		}.bind(this));
@@ -125,18 +126,18 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			jQuery.ajax({
 				url: LrepConnector.sGetXcsrfTokenUrl,
 				type: "HEAD",
-				beforeSend: function(oRequest) {
+				beforeSend(oRequest) {
 					oRequest.setRequestHeader("X-CSRF-Token", "fetch");
 					var client = Utils.getClient();
 					if (client) {
 						oRequest.setRequestHeader("sap-client", client);
 					}
 				},
-				success: function(sData, sMsg, oJqXHR) {
+				success(sData, sMsg, oJqXHR) {
 					that._sXcsrfToken = oJqXHR.getResponseHeader("x-csrf-token");
 					sResolve(that._sXcsrfToken);
 				},
-				error: function(jqXHR, sTextStatus, sErrorThrown) {
+				error(jqXHR, sTextStatus, sErrorThrown) {
 					LrepConnector._reportError(jqXHR, sTextStatus, sErrorThrown);
 					fnReject(sErrorThrown);
 				}
@@ -155,7 +156,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 		if (sLayer === "All") {
 			return "";
 		}
-		return "?layer=" + sLayer;
+		return `?layer=${sLayer}`;
 	};
 
 	/**
@@ -165,7 +166,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @private
 	 */
 	LrepConnector._getChangeListSuffix = function(sChangeList) {
-		return sChangeList ? "&changelist=" + sChangeList : "";
+		return sChangeList ? `&changelist=${sChangeList}` : "";
 	};
 
 	/**
@@ -175,7 +176,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 * @private
 	 */
 	LrepConnector._getPackageSuffix = function(sPackage) {
-		return sPackage ? "&package=" + sPackage : "";
+		return sPackage ? `&package=${sPackage}` : "";
 	};
 
 	/**
@@ -210,7 +211,7 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	 */
 	LrepConnector._reportError = function(oJqXHR, sTextStatus, oErrorThrown) {
 		sap.ui.require(["sap/ui/fl/support/apps/contentbrowser/utils/ErrorUtils"], function(ErrorUtils) {
-			ErrorUtils.displayError("Error", oJqXHR.status, sTextStatus + ": " + oErrorThrown);
+			ErrorUtils.displayError("Error", oJqXHR.status, `${sTextStatus}: ${oErrorThrown}`);
 		});
 	};
 
@@ -227,10 +228,10 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 		var oRequest = {
 			url: sUrl,
 			type: "GET",
-			success: function(oData) {
+			success(oData) {
 				fnResolve(oData);
 			},
-			error: function(oJqXHR, sTextStatus, oErrorThrown) {
+			error(oJqXHR, sTextStatus, oErrorThrown) {
 				LrepConnector._reportError(oJqXHR, sTextStatus, oErrorThrown);
 				fnReject(oErrorThrown);
 			}
@@ -274,14 +275,14 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 			contentType: "text/plain",
 			dataType: "text",
 			data: oData,
-			beforeSend: function(oRequest) {
+			beforeSend(oRequest) {
 				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);
 			},
 			type: "PUT",
-			success: function() {
+			success() {
 				fnResolve();
 			},
-			error: function(oJqXHR, sTextStatus, oErrorThrown) {
+			error(oJqXHR, sTextStatus, oErrorThrown) {
 				LrepConnector._reportError(oJqXHR, sTextStatus, oErrorThrown);
 				fnReject(oErrorThrown);
 			}
@@ -315,14 +316,14 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/thirdparty/jquery"], function(Utils, j
 	LrepConnector._sendDeletionRequest = function(oXcsrfToken, sUrl, fnResolve, fnReject) {
 		jQuery.ajax({
 			url: sUrl,
-			beforeSend: function(oRequest) {
+			beforeSend(oRequest) {
 				oRequest.setRequestHeader("X-CSRF-Token", oXcsrfToken);
 			},
 			type: "DELETE",
-			success: function(oData) {
+			success(oData) {
 				fnResolve(oData);
 			},
-			error: function(oJqXHR, sTextStatus, oErrorThrown) {
+			error(oJqXHR, sTextStatus, oErrorThrown) {
 				LrepConnector._reportError(oJqXHR, sTextStatus, oErrorThrown);
 				fnReject(oErrorThrown);
 			}

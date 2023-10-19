@@ -59,7 +59,7 @@ sap.ui.define([
 	function _flattenProperties(aProperties) {
 		var aFlattenedProperties = aProperties.reduce(function(aFlattened, oProperty) {
 			if (Array.isArray(oProperty.properties)) {
-				// currently only one level supported by our dialogs, etc. => TODO make deep types possible
+				// only one level supported by our dialogs
 				// Only take the leaves, but attach the parent property name/label to it
 				aFlattened = aFlattened.concat(oProperty.properties.map(function(mInnerProp) {
 					mInnerProp.parentPropertyName = oProperty.label || oProperty.name;
@@ -239,7 +239,7 @@ sap.ui.define([
 				// unsupported: check existence of the property also in the navigation target
 				return (
 					sBindingPath === oModelProperty.bindingPath
-						|| sBindingPath.startsWith(oModelProperty.bindingPath + "/")
+						|| sBindingPath.startsWith(`${oModelProperty.bindingPath}/`)
 				);
 			});
 		})
@@ -428,7 +428,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
-		enhanceInvisibleElements: function(oElement, mActions) {
+		enhanceInvisibleElements(oElement, mActions) {
 			var mRevealData = mActions.reveal;
 			var mAddViaDelegate = mActions.addViaDelegate;
 
@@ -476,7 +476,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of available to display delegate properties
 		 */
-		getUnrepresentedDelegateProperties: function(oElement, mAction) {
+		getUnrepresentedDelegateProperties(oElement, mAction) {
 			var sModelName = _getModelName(mAction);
 			var oDefaultAggregation = oElement.getMetadata().getAggregation();
 			var sAggregationName = oDefaultAggregation ? oDefaultAggregation.name : mAction.action.aggregation;

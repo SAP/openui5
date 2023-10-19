@@ -1,4 +1,4 @@
-/* global QUnit, sinon */
+/* global QUnit */
 sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
 	"sap/ui/mdc/DefaultTypeMap",
@@ -13,6 +13,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
+	"sap/ui/mdc/enums/ConditionValidated",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/core/Core"
 ], function(
 	createAppEnvironment,
@@ -28,21 +30,29 @@ sap.ui.define([
 	ComponentContainer,
 	TableDelegate,
 	Column,
+	ConditionValidated,
+	OperatorName,
 	oCore
 ) {
 	'use strict';
 
-	var aPropertyInfo = [
+	const aPropertyInfo = [
 		{
 			name: "column0",
-			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
+			label: "column0",
+			dataType: "String"
 		}, {
 			name: "column1",
-			typeConfig: DefaultTypeMap.getTypeConfig("sap.ui.model.type.String")
+			label: "column1",
+			dataType: "String"
 		}, {
-			name: "column2"
+			name: "column2",
+			label: "column2",
+			dataType: "String"
 		}, {
-			name: "SomePropertyName"
+			name: "SomePropertyName",
+			label: "SomePropertyName",
+			dataType: "String"
 		}
 	];
 
@@ -79,7 +89,7 @@ sap.ui.define([
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		before: function() {
 
-			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" propertyKey="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" propertyKey="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" propertyKey="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" propertyKey="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>';
 
 			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
@@ -91,7 +101,6 @@ sap.ui.define([
 				this.oColumn1 = this.oView.byId('myTable--column1');
 				// Implement required Delgate APIs
 				this._orgFn = TableDelegate.fetchProperties;
-				TableDelegate.apiVersion = 2;//CLEANUP_DELEGATE
 				TableDelegate.fetchProperties = fetchProperties;
 				TableDelegate.addItem = function(oTable, sName, mPropertyBag) {
 					return Promise.resolve(new Column(oTable.getId() + "--" + sName, {propertyKey : sName}));
@@ -118,14 +127,14 @@ sap.ui.define([
 	});
 
 	QUnit.test('RemoveColumn - applyChange & revertChange on a js control tree', function(assert) {
-		var done = assert.async();
-		var oContent = createRemoveChangeDefinition();
+		const done = assert.async();
+		const oContent = createRemoveChangeDefinition();
 		oContent.index = 0;
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
 			selector: this.oTable
 		}).then(function(oChange) {
-			var oChangeHandler = TableFlexHandler["removeColumn"].changeHandler;
+			const oChangeHandler = TableFlexHandler["removeColumn"].changeHandler;
 			assert.strictEqual(oChange.getContent().hasOwnProperty("index"), false, "remove changes do not require the index");
 			assert.strictEqual(this.oColumn1.getId(), this.oTable.getAggregation('columns')[1].getId(), "column has not been changed");
 			assert.strictEqual(this.oTable.getColumns().length, 3);
@@ -154,13 +163,13 @@ sap.ui.define([
 	});
 
 	QUnit.test('AddColumn - applyChange & revertChange on a js control tree', function(assert) {
-		var done = assert.async();
-		var sPropertyName = "SomePropertyName";
+		const done = assert.async();
+		const sPropertyName = "SomePropertyName";
 		return ChangesWriteAPI.create({
 			changeSpecificData: createAddChangeDefinition(sPropertyName),
 			selector: this.oTable
 		}).then(function(oChange) {
-			var oChangeHandler = TableFlexHandler["addColumn"].changeHandler;
+			const oChangeHandler = TableFlexHandler["addColumn"].changeHandler;
 			assert.strictEqual(this.oTable.getColumns().length, 3);
 			// Test apply
 			return oChangeHandler.applyChange(oChange, this.oTable, {
@@ -186,23 +195,23 @@ sap.ui.define([
 
 	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
 
-		var mNewConditions = {
+		const mNewConditions = {
 			column0: [
 				{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"Test"
 					],
-					validated: "NotValidated"
+					validated: ConditionValidated.NotValidated
 				}
 			],
 			column1: [
 				{
-					operator: "EQ",
+					operator: OperatorName.EQ,
 					values: [
 						"ABC"
 					],
-					validated: "NotValidated"
+					validated: ConditionValidated.NotValidated
 				}
 			]
 		};
@@ -244,49 +253,4 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Add and remove columns", function(assert) {
-		var oTableInvalidate = sinon.spy(this.oTable, "invalidate");
-		var oInnerTableInvalidate = sinon.spy(this.oTable._oTable, "invalidate");
-		var aRemovedInnerColumns = [this.oTable._oTable.getColumns()[1], this.oTable._oTable.getColumns()[2]];
-		var fnAddColumn = this.oTable.addColumn;
-		var fnRemoveColumn = this.oTable.removeColumn;
-
-		assert.expect(9);
-
-		this.oTable.addColumn = function() {
-			fnAddColumn.apply(this, arguments);
-			assert.equal(oTableInvalidate.callCount, 0, "Table is not invalidated when a column is added");
-			assert.equal(oInnerTableInvalidate.callCount, 0, "Inner table is not invalidated when a column is added");
-		};
-		this.oTable.removeColumn = function() {
-			fnRemoveColumn.apply(this, arguments);
-			assert.equal(oTableInvalidate.callCount, 0, "Table is not invalidated when a column is removed");
-			assert.equal(oInnerTableInvalidate.callCount, 0, "Inner table is not invalidated when a column is removed");
-		};
-
-		return StateUtil.applyExternalState(this.oTable, {
-			items: [
-				{name: "column1", visible: false},
-				{name: "column2", visible: false}
-			]
-		}).then(function(aChanges){
-			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
-			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
-			assert.ok(aRemovedInnerColumns.every(function(oInnerColumn) {
-				return oInnerColumn.isDestroyed();
-			}), "Inner columns are destroyed");
-
-			oTableInvalidate.reset();
-			oInnerTableInvalidate.reset();
-			return StateUtil.applyExternalState(this.oTable, {
-				items: [
-					{name: "column1", visible: true},
-					{name: "column2", visible: true}
-				]
-			});
-		}.bind(this)).then(function() {
-			assert.ok(oTableInvalidate.called, "Table is invalidated after all columns are removed");
-			assert.ok(oTableInvalidate.called, "Inner table is invalidated after all columns are removed");
-		});
-	});
 });

@@ -28,6 +28,7 @@
 					"ignorePattern": "@param|@returns|&lt;",
 					"ignoreUrls": true
 				}],
+				"no-inner-declarations": ["error", "both"],
 				"no-mixed-spaces-and-tabs": "error", // override "smart-tabs"
 				"no-unused-vars": ["error", {"argsIgnorePattern": "^_", "args": "all"}],
 
@@ -127,6 +128,14 @@
 			],
 			"rules": {
 				"max-len": "off"
+			}
+		},
+		{
+			"files": [
+				"test/sap/ui/core/demokit/tutorial/odatav4/**"
+			],
+			"rules": {
+				"no-inner-declarations": ["error", "functions"]
 			}
 		}
 	]

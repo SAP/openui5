@@ -32,6 +32,10 @@ sap.ui.define(function () {
 			autostart : true
 		},
 		tests : {
+			// SyncPromise coverage only via this testsuite:
+			// resources/sap/ui/test/starter/Test.qunit.html
+			// ?testsuite=test-resources/sap/ui/core/qunit/internal/testsuite.feature-odata-v4.qunit
+			// &test=SyncPromise&coverage
 			"SyncPromise" : {
 				module : ["sap/ui/core/qunit/util/SyncPromise.qunit"]
 			},
@@ -46,7 +50,8 @@ sap.ui.define(function () {
 			// the following tests must all be named "OPA.*" so that 1Ring ignores them
 			"OPA.ViewTemplate" : {
 				autostart : false,
-				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"]
+				module : ["sap/ui/core/sample/ViewTemplate/scenario/Opa.qunit"],
+				$app : "test-resources/sap/ui/core/demokit/sample/common/index.html?component=ViewTemplate.scenario"
 			}
 		}
 	};

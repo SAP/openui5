@@ -192,8 +192,9 @@ sap.ui.define([
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = UI5Date.getInstance(2019, 7, 5, 10),
 			oMockEndDate = UI5Date.getInstance(2019, 7, 5, 15),
-			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10:00:00 AM; " +
-				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00 PM";
+			// \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
+			sExpectedInfo = oGrid._oUnifiedRB.getText("CALENDAR_START_TIME") + ": Monday 05/08/2019 at 10:00:00\u202fAM; " +
+				oGrid._oUnifiedRB.getText("CALENDAR_END_TIME") + ": Monday 05/08/2019 at 3:00:00\u202fPM";
 
 		oGrid.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -420,6 +421,48 @@ sap.ui.define([
 
 		// assert
 		assert.ok(oGrid._isNonWorkingDay(CalendarDate.fromLocalJSDate(oDate)), "02.06.2018 is a non working day");
+	});
+
+	QUnit.test("CalendarAppointment's getDomRef() returns proper DOM element", function(assert) {
+		// Prepare
+		var aAppointments = [
+				new CalendarAppointment("SPC-app-111", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-11", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-10", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-1", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30)
+				}),
+				new CalendarAppointment("SPC-app-13", {
+					startDate: UI5Date.getInstance(2023, 9, 16, 9, 0),
+					endDate: UI5Date.getInstance(2023, 9, 16, 9, 30)
+				})
+			],
+			oStartDate = UI5Date.getInstance(2023, 9, 16),
+			oSPCGrid = new SinglePlanningCalendarGrid({
+				startDate: oStartDate,
+				appointments: aAppointments
+			});
+
+		// arrange
+		oSPCGrid.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(aAppointments[1].getDomRef().getAttribute("id"), "SPC-app-11-0_1", "The returned DOM reference of the appointment with index 1 is correct.");
+		assert.strictEqual(aAppointments[3].getDomRef().getAttribute("id"), "SPC-app-1-0_3", "The returned DOM reference of the appointment with index 3 is correct.");
+
+		// cleanup
+		oSPCGrid.destroy();
 	});
 
 	QUnit.module("Events");

@@ -1,45 +1,41 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/BindingMode",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/write/api/VersionsAPI",
-	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils",
+	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/initial/_internal/FlexConfiguration",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/connectors/KeyUserConnector",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/base/util/UriParameters",
-	"sap/ui/core/Control",
-	"sap/ui/core/Core"
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/BindingMode",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
-	sinon,
-	JSONModel,
-	BindingMode,
+	Control,
+	ManifestUtils,
 	Version,
-	VersionsAPI,
-	FeaturesAPI,
-	Layer,
-	Utils,
+	FlexConfiguration,
 	Settings,
-	Versions,
 	Storage,
+	Versions,
 	KeyUserConnector,
 	LrepConnector,
-	ManifestUtils,
-	FlexState,
+	VersionsAPI,
+	FeaturesAPI,
 	ChangePersistenceFactory,
-	UriParameters,
-	Control,
-	oCore
+	Layer,
+	Utils,
+	JSONModel,
+	BindingMode,
+	sinon
 ) {
 	"use strict";
 
@@ -47,7 +43,7 @@ sap.ui.define([
 
 	function setVersioningEnabled(oVersioning) {
 		sandbox.stub(Settings, "getInstance").resolves({
-			isVersioningEnabled: function(sLayer) {
+			isVersioningEnabled(sLayer) {
 				return oVersioning[sLayer];
 			}
 		});
@@ -60,20 +56,16 @@ sap.ui.define([
 		return sandbox.stub(oChangePersistence, sFunctionName).resolves();
 	}
 
-	function _prepareUriParametersFromQuery(sValue) {
-		sandbox.stub(UriParameters, "fromQuery").returns({
-			get: function() {
-				return sValue;
-			}
-		});
+	function _prepareURLSearchParam(sValue) {
+		sandbox.stub(URLSearchParams.prototype, "get").returns(sValue);
 	}
 
 	QUnit.module("Initialization", {
-		beforeEach: function() {
+		beforeEach() {
 			this.aReturnedVersions = [];
 			this.oStorageLoadVersionsStub = sandbox.stub(Storage.versions, "load").resolves(this.aReturnedVersions);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -218,21 +210,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -292,7 +284,7 @@ sap.ui.define([
 		QUnit.test("with setDirtyChange(false) and a connector is configured which returns a list of versions with entries while an older version is displayed", function(assert) {
 			var sActiveVersion = "2";
 			// set displayedVersion to draft
-			_prepareUriParametersFromQuery(Version.Number.Draft);
+			_prepareURLSearchParam(Version.Number.Draft);
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: "com.sap.app",
@@ -323,7 +315,6 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
-			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
@@ -404,23 +395,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.activate is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -428,7 +419,7 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft exists", function(assert) {
 			var sActiveVersion = 2;
 			// set displayedVersion to draft
-			_prepareUriParametersFromQuery(Version.Number.Draft);
+			_prepareURLSearchParam(Version.Number.Draft);
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
@@ -499,7 +490,7 @@ sap.ui.define([
 			var sReference = "com.sap.app";
 			var sActiveVersion = "3";
 			// set displayedVersion to 1
-			_prepareUriParametersFromQuery("1");
+			_prepareURLSearchParam("1");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
@@ -650,26 +641,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.discardDraft is called", {
-		before: function() {
+		before() {
 			this.reference = "com.sap.app";
-			this.nonNormalizedReference = this.reference + ".Component";
+			this.nonNormalizedReference = `${this.reference}.Component`;
 			this.sComponentId = "sComponentId";
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -928,23 +919,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.publish is called", {
-		before: function() {
+		before() {
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -952,7 +943,7 @@ sap.ui.define([
 		QUnit.test("to publish a version", function(assert) {
 			var sReference = "com.sap.app";
 			// set displayedVersion to 2
-			_prepareUriParametersFromQuery("2");
+			_prepareURLSearchParam("2");
 			var mPropertyBag = {
 				layer: Layer.CUSTOMER,
 				reference: sReference,
@@ -1013,24 +1004,24 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage: Given Versions.initialize is called", {
-		before: function() {
+		before() {
 			this.aReturnedVersions = [];
 			this.oAppComponent = {
-				getManifest: function() {
+				getManifest() {
 					return {};
 				},
-				getId: function() {
+				getId() {
 					return this.sComponentId;
 				}
 			};
 		},
-		beforeEach: function() {
+		beforeEach() {
 			setVersioningEnabled({CUSTOMER: true});
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -1125,16 +1116,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calling the Storage:", {
-		before: function() {
+		before() {
 			this.sReference = "com.sap.app";
 		},
-		beforeEach: function() {
-			sandbox.stub(Versions, "hasVersionsModel").returns(true);
-			sandbox.stub(oCore.getConfiguration(), "getFlexibilityServices").returns([
+		beforeEach() {
+			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
 				{connector: "LrepConnector", layers: ["ALL"], url: "/sap/bc/lrep"}
 			]);
+			this.oStorageLoadVersionsStub = sandbox.stub(Storage.versions, "load");
 		},
-		afterEach: function() {
+		afterEach() {
 			Versions.clearInstances();
 			sandbox.restore();
 		}
@@ -1155,7 +1146,7 @@ sap.ui.define([
 					activatedAt: "a while ago"
 				}
 			];
-			sandbox.stub(Versions, "getVersionsModel").returns(new JSONModel({
+			var oVersionsModel = new JSONModel({
 				publishVersionEnabled: false,
 				versioningEnabled: true,
 				versions: aOldVersions,
@@ -1167,7 +1158,9 @@ sap.ui.define([
 				persistedVersion: "1",
 				displayedVersion: "1",
 				draftFilenames: ["draftFilename"]
-			}));
+			});
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
 			var aNewVersions = [
 				{
 					version: "1",
@@ -1176,7 +1169,7 @@ sap.ui.define([
 					activatedAt: "a while ago"
 				}
 			];
-			sandbox.stub(Storage.versions, "load").resolves(aNewVersions);
+			this.oStorageLoadVersionsStub.resolves(aNewVersions);
 
 			return Versions.updateModelFromBackend(mPropertyBag).then(function(oVersionModel) {
 				var oData = oVersionModel.getData();
@@ -1191,6 +1184,22 @@ sap.ui.define([
 				assert.equal(oData.persistedVersion, "1", "persistedVersion is correct");
 				assert.equal(oData.displayedVersion, "1", "displayedVersion is correct");
 			});
+		});
+
+		QUnit.test("Versions.updateModelFromBackend is called without versions model available", function(assert) {
+			sandbox.stub(Versions, "hasVersionsModel").returns(false);
+			Versions.updateModelFromBackend({});
+			assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 0, "the update is not called");
+		});
+
+		QUnit.test("Versions.updateModelFromBackend is called with versions model available but versioning not active", function(assert) {
+			var oVersionsModel = new JSONModel({
+				versioningEnabled: false
+			});
+			sandbox.stub(Versions, "hasVersionsModel").returns(true);
+			sandbox.stub(Versions, "getVersionsModel").returns(oVersionsModel);
+			Versions.updateModelFromBackend({});
+			assert.strictEqual(this.oStorageLoadVersionsStub.callCount, 0, "the update is not called");
 		});
 	});
 

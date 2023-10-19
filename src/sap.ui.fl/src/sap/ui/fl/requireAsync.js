@@ -13,7 +13,6 @@ sap.ui.define([
 	 * @param {string} sModuleName Name of the required module
 	 * @returns {Promise} Returns a promise.
 	 *
-	 * @experimental since 1.78
 	 * @function
 	 * @since 1.78
 	 * @private

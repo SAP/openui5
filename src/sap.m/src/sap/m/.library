@@ -74,6 +74,7 @@
                 <module>sap/m/CustomAttribute</module>
                 <module>sap/m/SlideTile</module>
                 <module>sap/m/GenericTile</module>
+                <module>sap/m/LinkTileContent</module>
                 <module>sap/m/TileContent</module>
                 <module>sap/m/FeedContent</module>
                 <module>sap/m/NewsContent</module>
@@ -101,6 +102,12 @@
                 <module>sap/m/upload/UploadSet</module>
                 <module>sap/m/upload/UploadSetItem</module>
                 <module>sap/m/upload/UploadSetToolbarPlaceholder</module>
+                <module>sap/m/upload/UploadSetwithTable</module>
+                <module>sap/m/upload/UploadSetwithTableItem</module>
+                <module>sap/m/upload/UploaderTableItem</module>
+                <module>sap/m/upload/FilePreviewDialog</module>
+                <module>sap/m/upload/Column</module>
+                <module>sap/m/upload/ActionsPlaceholder</module>
             </modules>
         </component>
         <component>
@@ -149,6 +156,21 @@
                 <module>sap/m/plugins/DataStateIndicator</module>
                 <module>sap/m/plugins/ColumnResizer</module>
                 <module>sap/m/plugins/PasteProvider</module>
+                <module>sap/m/table/columnmenu/ActionItem</module>
+                <module>sap/m/table/columnmenu/Category</module>
+                <module>sap/m/table/columnmenu/Entry</module>
+                <module>sap/m/table/columnmenu/Item</module>
+                <module>sap/m/table/columnmenu/ItemBase</module>
+                <module>sap/m/table/columnmenu/Menu</module>
+                <module>sap/m/table/columnmenu/QuickAction</module>
+                <module>sap/m/table/columnmenu/QuickActionBase</module>
+                <module>sap/m/table/columnmenu/QuickActionItem</module>
+                <module>sap/m/table/columnmenu/QuickGroup</module>
+                <module>sap/m/table/columnmenu/QuickGroupItem</module>
+                <module>sap/m/table/columnmenu/QuickSort</module>
+                <module>sap/m/table/columnmenu/QuickSortItem</module>
+                <module>sap/m/table/columnmenu/QuickTotal</module>
+                <module>sap/m/table/columnmenu/QuickTotalItem</module>
             </modules>
         </component>
     </ownership>

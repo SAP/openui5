@@ -82,6 +82,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateInterval", {
+		before() {
+			this.__ignoreIsolatedCoverage__ = true;
+		},
 		beforeEach : function () {
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("error").never();
@@ -100,9 +103,9 @@ sap.ui.define([
 			oDateInterval = new DateInterval({format: "yMMMd"});
 
 		assert.strictEqual(oDateInterval.formatValue([oDate1, oDate2], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "dates can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "dates can be formatted as interval");
 		assert.strictEqual(oDateInterval.formatValue([UI5Date.getInstance(1970, 0, 1), oDate2], "string"),
-			"Jan 1, 1970 \u2013 Dec 6, 2003");
+			"Jan 1, 1970\u2009\u2013\u2009Dec 6, 2003");
 		checkFormatException(assert, oDateInterval, oDate1, "string",
 			"Cannot format date interval: " + oDate1 + " is expected as an Array but given the wrong format");
 		assert.strictEqual(oDateInterval.formatValue([oDate1], "string"), "", "format type with invalid parameter");
@@ -114,9 +117,9 @@ sap.ui.define([
 		oDateInterval = new DateInterval({format: "yMMMd", source: {pattern: "timestamp"}});
 
 		assert.strictEqual(oDateInterval.formatValue([oDate1.getTime(), oDate2.getTime()], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "timestamps can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "timestamps can be formatted as interval");
 		assert.strictEqual(oDateInterval.formatValue([String(oDate1.getTime()), oDate2.getTime()], "string"),
-			"Nov 6 \u2013 Dec 6, 2003", "timestamps can be formatted as interval");
+			"Nov 6\u2009\u2013\u2009Dec 6, 2003", "timestamps can be formatted as interval");
 		checkFormatException(assert, oDateInterval, ["a", "a"], "string",
 			"Cannot format date: a is not a valid Timestamp");
 
@@ -130,7 +133,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("parseValue", function (assert) {
 		var oDate1 = UI5Date.getInstance(2003, 10, 6),
-			oDate2 = UI5Date.getInstance(2003, 11, 6, 23, 59, 59, 999),
+			oDate2 = UI5Date.getInstance(2003, 11, 6, 23, 59, 59, 0),
 			oDateInterval = new DateInterval({format: "yMMMd"});
 
 		assert.deepEqual(oDateInterval.parseValue("", "string"), [null, null],
@@ -158,7 +161,7 @@ sap.ui.define([
 	QUnit.test("parseValue: UTC", function (assert) {
 		var oDateInterval = new DateInterval({UTC: true}),
 			oUTCDate1 = UI5Date.getInstance(Date.UTC(2003, 10, 6, 0, 0, 0, 0)),
-			oUTCDate2 = UI5Date.getInstance(Date.UTC(2003, 11, 6, 23, 59, 59, 999));
+			oUTCDate2 = UI5Date.getInstance(Date.UTC(2003, 11, 6, 23, 59, 59, 0));
 
 		// code under test
 		assert.deepEqual(oDateInterval.parseValue("Nov 6, 2003 - Dec 6, 2003", "string"), [oUTCDate1, oUTCDate2]);

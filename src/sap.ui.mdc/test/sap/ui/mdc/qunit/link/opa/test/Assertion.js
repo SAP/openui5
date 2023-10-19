@@ -11,7 +11,7 @@ sap.ui.define([
 	"./waitForPersonalizationDialog"
 ], function(Opa5, coreLibrary, TestUtil, PropertyStrictEquals, Ancestor, Descendant, waitForPersonalizationDialog) {
 	"use strict";
-	var Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
+	const Assertion = Opa5.extend("sap.ui.mdc.qunit.link.opa.test.Assertion", {
 		thePersonalizationDialogOpens: function() {
 			return waitForPersonalizationDialog.call(this, {
 				success: function(oSelectionDialog) {
@@ -20,11 +20,11 @@ sap.ui.define([
 			});
 		},
 		thePersonalizationDialogShouldBeClosed: function() {
-			var aDomDialogs;
+			let aDomDialogs;
 			return this.waitFor({
 				check: function() {
-					var frameJQuery = Opa5.getJQuery();
-					var fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.Dialog');
+					const frameJQuery = Opa5.getJQuery();
+					const fnDialog = Opa5.getPlugin().getControlConstructor('sap.m.Dialog');
 					aDomDialogs = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return !aDomDialogs.length;
 				},
@@ -35,19 +35,19 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeVisibleColumnsInOrder: function(sColumnType, aOrderedColumnNames) {
-			var aDomColumns;
+			let aDomColumns;
 			return this.waitFor({
 				controlType: sColumnType,
 				check: function() {
-					var frameJQuery = Opa5.getJQuery();
-					var fnDialog = Opa5.getPlugin().getControlConstructor(sColumnType);
+					const frameJQuery = Opa5.getJQuery();
+					const fnDialog = Opa5.getPlugin().getControlConstructor(sColumnType);
 					aDomColumns = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnDialog);
 					return aDomColumns.length === aOrderedColumnNames.length;
 				},
 				success: function() {
 					Opa5.assert.equal(aOrderedColumnNames.length, aDomColumns.length);
 					aDomColumns.forEach(function(oColumn, iIndex) {
-						var sLabel = oColumn.getMetadata().getName() === "sap.m.Column" ? oColumn.getHeader().getText() : oColumn.getLabel().getText();
+						const sLabel = oColumn.getMetadata().getName() === "sap.m.Column" ? oColumn.getHeader().getText() : oColumn.getLabel().getText();
 						Opa5.assert.equal(sLabel, aOrderedColumnNames[iIndex], "Column '" + aOrderedColumnNames[iIndex] + "' is visible on position " + (iIndex + 1));
 					});
 				}
@@ -59,7 +59,7 @@ sap.ui.define([
 				controlType: "sap.m.Table",
 				success: function(aTables) {
 					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
-					var oTable = aTables[0];
+					const oTable = aTables[0];
 					this.waitFor({
 						controlType: "sap.m.Link",
 						matchers: [
@@ -71,13 +71,13 @@ sap.ui.define([
 						],
 						success: function(aLinks) {
 							Opa5.assert.equal(aLinks.length, 1, "sap.m.Link with text '" + sItemText + "' found on Dialog.");
-							var oLink = aLinks[0];
+							const oLink = aLinks[0];
 							this.waitFor({
 								controlType: "sap.m.ColumnListItem",
 								matchers: new Descendant(oLink, false),
 								success: function(aColumnListItems) {
 									Opa5.assert.equal(aColumnListItems.length, 1, "sap.m.ColumnListItem with sap.m.Link found in Table");
-									var oColumnListItem = aColumnListItems[0];
+									const oColumnListItem = aColumnListItems[0];
 									this.waitFor({
 										controlType: "sap.m.CheckBox",
 										matchers: [
@@ -104,7 +104,7 @@ sap.ui.define([
 				controlType: "sap.m.Table",
 				success: function(aTables) {
 					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
-					var oTable = aTables[0];
+					const oTable = aTables[0];
 					this.waitFor({
 						controlType: "sap.m.Link",
 						matchers: [
@@ -131,7 +131,7 @@ sap.ui.define([
 				controlType: "sap.m.Table",
 				success: function(aTables) {
 					Opa5.assert.equal(aTables.length, 1, "sap.m.Table found on Dialog");
-					var oTable = aTables[0];
+					const oTable = aTables[0];
 					this.waitFor({
 						controlType: "sap.m.Link",
 						matchers: [
@@ -143,13 +143,13 @@ sap.ui.define([
 						],
 						success: function(aLinks) {
 							Opa5.assert.equal(aLinks.length, 1, "sap.m.Link with text '" + sItemText + "' found on Dialog.");
-							var oLink = aLinks[0];
+							const oLink = aLinks[0];
 							this.waitFor({
 								controlType: "sap.m.ColumnListItem",
 								matchers: new Descendant(oLink, false),
 								success: function(aColumnListItems) {
 									Opa5.assert.equal(aColumnListItems.length, 1, "sap.m.ColumnListItem with sap.m.Link found in Table");
-									var oColumnListItem = aColumnListItems[0];
+									const oColumnListItem = aColumnListItems[0];
 									Opa5.assert.equal(oTable.getItems().indexOf(oColumnListItem), iIndex, sItemText + " is on position " + iIndex);
 								}
 							});
@@ -185,7 +185,7 @@ sap.ui.define([
 			return this.waitFor({
 				controlType: "sap.m.Table",
 				success: function(aTables) {
-					var aColumn = aTables[0].getColumns().filter(function(oColumn) {
+					const aColumn = aTables[0].getColumns().filter(function(oColumn) {
 						return oColumn.getHeader().getText() === sColumnName;
 					});
 					Opa5.assert.equal(aColumn.length, 1, "Column '" + sColumnName + "' is visible");
@@ -233,14 +233,14 @@ sap.ui.define([
 			});
 		},
 		theRtaModeShouldBeClosed: function() {
-			var aDomOverlay;
+			let aDomOverlay;
 			return this.waitFor({
 				check: function() {
-					var frameJQuery = Opa5.getJQuery();
+					const frameJQuery = Opa5.getJQuery();
 					if (!frameJQuery) {
 						return false;
 					}
-					var fnOverlay = Opa5.getPlugin().getControlConstructor('sap.ui.dt.ElementOverlay');
+					const fnOverlay = Opa5.getPlugin().getControlConstructor('sap.ui.dt.ElementOverlay');
 					aDomOverlay = Opa5.getPlugin().getAllControlsInContainer(frameJQuery('body'), fnOverlay);
 					return !aDomOverlay.length;
 				},
@@ -250,7 +250,7 @@ sap.ui.define([
 			});
 		},
 		iShouldSeeTheRtaOverlayForTheViewId: function(sId) {
-			var oApp;
+			let oApp;
 			this.waitFor({
 				id: sId,
 				errorMessage: "The app is still busy..",
@@ -282,7 +282,7 @@ sap.ui.define([
 		theApplicationURLContains: function(sText) {
 			return this.waitFor({
 				check: function() {
-					var sUrl = Opa5.getWindow().location.href;
+					const sUrl = Opa5.getWindow().location.href;
 					return sUrl.includes(sText);
 				},
 				success: function() {
@@ -294,7 +294,7 @@ sap.ui.define([
 		theApplicationURLDoesNotContain: function(sText) {
 			return this.waitFor({
 				check: function() {
-					var sUrl = Opa5.getWindow().location.href;
+					const sUrl = Opa5.getWindow().location.href;
 					return !sUrl.includes(sText);
 				},
 				success: function() {

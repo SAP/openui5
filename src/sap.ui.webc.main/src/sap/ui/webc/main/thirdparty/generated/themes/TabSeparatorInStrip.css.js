@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/TabSeparatorInStrip.css",
-    content: ".ui5-tc__separator {\n\twidth: 0;\n\tborder-left: 0.0625rem solid var(--sapGroup_TitleBorderColor);\n\tmargin: 0.5rem 0.25rem;\n}\n"
+    content: ".ui5-tc__separator{border-left:.0625rem solid var(--sapGroup_TitleBorderColor);margin:.5rem .25rem;width:0}"
   };
   var _default = styleData;
   _exports.default = _default;

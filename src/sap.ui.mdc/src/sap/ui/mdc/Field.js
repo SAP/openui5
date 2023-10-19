@@ -6,21 +6,23 @@ sap.ui.define([
 	'sap/ui/mdc/field/FieldBaseRenderer',
 	'sap/ui/mdc/enums/FieldDisplay',
 	'sap/ui/mdc/enums/BaseType',
+	'sap/ui/mdc/enums/OperatorName',
+	'sap/ui/mdc/condition/Condition',
 	'sap/base/util/deepEqual',
 	'sap/base/util/merge',
 	'sap/ui/model/BindingMode',
-	'sap/ui/model/Context',
-	'sap/ui/mdc/condition/Condition'
+	'sap/ui/model/Context'
 ], function(
 	FieldBase,
 	FieldBaseRenderer,
 	FieldDisplay,
 	BaseType,
+	OperatorName,
+	Condition,
 	deepEqual,
 	merge,
 	BindingMode,
-	Context,
-	Condition
+	Context
 ) {
 	"use strict";
 
@@ -60,7 +62,7 @@ sap.ui.define([
 	 * @public
   	 * @experimental As of version 1.54.0
 	 */
-	var Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
+	const Field = FieldBase.extend("sap.ui.mdc.Field", /* @lends sap.ui.mdc.Field.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/field/Field.designtime",
@@ -137,7 +139,7 @@ sap.ui.define([
 		FieldBase.prototype.init.apply(this, arguments);
 
 		this.setMaxConditions(1);
-		this.setProperty("_operators", ["EQ"], true);
+		this.setProperty("_operators", [OperatorName.EQ], true);
 
 		this._oObserver.observe(this, {
 			properties: ["value", "additionalValue", "valueState"]
@@ -161,9 +163,9 @@ sap.ui.define([
 
 	Field.prototype.bindProperty = function(sName, oBindingInfo) {
 
-		var oDataType;
-		var aTypes;
-		var i = 0;
+		let oDataType;
+		let aTypes;
+		let i = 0;
 
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
@@ -216,9 +218,9 @@ sap.ui.define([
 
 		FieldBase.prototype.handleModelContextChange.apply(this, arguments);
 
-		var oBinding = this.getBinding("value");
+		const oBinding = this.getBinding("value");
 		if (oBinding) {
-			var oBindingContext = oBinding.isA("sap.ui.model.CompositeBinding") ? oBinding.getBindings()[0].getContext() : oBinding.getContext();
+			const oBindingContext = oBinding.isA("sap.ui.model.CompositeBinding") ? oBinding.getBindings()[0].getContext() : oBinding.getContext();
 
 			if (Context.hasChanged(this._oBindingContext, oBindingContext)) {
 				// BindingContextChanged -> if parsing error trigger update to remove valueState and wrong input
@@ -244,7 +246,7 @@ sap.ui.define([
 
 		FieldBase.prototype.initDataType.apply(this, arguments);
 
-		var oBinding = this.getBinding("value");
+		const oBinding = this.getBinding("value");
 		if (oBinding) {
 			this.getContentFactory().setDataType(oBinding.getType());
 		}
@@ -270,8 +272,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iMaxConditions Only 1 condition allowed in <code>Field</code>
 	 * @returns {this} <code>this</code> to allow method chaining.
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, this property is not supported for the <code>Field</code>.
 	 * @ui5-not-supported
 	 */
@@ -290,7 +291,7 @@ sap.ui.define([
 		FieldBase.prototype.observeChanges.apply(this, arguments);
 
 		if (oChanges.name === "value") {
-			var vValue = _adjustValue.call(this, oChanges.current, oChanges.old);
+			const vValue = _adjustValue.call(this, oChanges.current, oChanges.old);
 			if (this._vAdditionalValue !== null && _checkAdditionalValueOneWay.call(this) && !_compareValues.call(this, vValue, this._vValue, true)) {
 				// additionalValue is bound OneWay. Value is changed from outside, not from Field user input.
 				// -> use model value for additionalValue. (Only use internal additionalValue if set by user input.)
@@ -369,19 +370,19 @@ sap.ui.define([
 
 	function _updateCondition(vValue, vAdditionalValue) {
 
-		var aConditions = this.getConditions();
+		const aConditions = this.getConditions();
 		if (this.checkValueInitial(vValue) && !vAdditionalValue) {
 			// if empty -> no condition
 			if (aConditions.length > 0) {
 				this.setConditions([]);
 			}
 		} else {
-			var oCurrentCondition = aConditions[0];
-			var vOldValue = oCurrentCondition && oCurrentCondition.values[0];
-			var vOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
-			if (!oCurrentCondition || oCurrentCondition.operator !== "EQ" || !_compareValues.call(this, vOldValue, vValue) || !_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue)) {
-				var oDelegate = this.getControlDelegate();
-				var oNextCondition = oDelegate.createCondition(this, this, [vValue, vAdditionalValue], oCurrentCondition);
+			const oCurrentCondition = aConditions[0];
+			const vOldValue = oCurrentCondition && oCurrentCondition.values[0];
+			const vOldAdditionalValue = oCurrentCondition && oCurrentCondition.values[1] ? oCurrentCondition.values[1] : null; // to compare with default value
+			if (!oCurrentCondition || oCurrentCondition.operator !== OperatorName.EQ || !_compareValues.call(this, vOldValue, vValue) || !_compareAdditionalValues.call(this, vAdditionalValue, vOldAdditionalValue)) {
+				const oDelegate = this.getControlDelegate();
+				const oNextCondition = oDelegate.createCondition(this, this, [vValue, vAdditionalValue], oCurrentCondition);
 				if (!Condition.compareConditions(oCurrentCondition, oNextCondition)) { // We do a full comparison here as FilterOperatorUtils.compareConditions may ignore text changes
 					this.setConditions(oNextCondition ? [oNextCondition] : []);
 				}
@@ -395,7 +396,7 @@ sap.ui.define([
 
 	function _adjustValue(vValue, vOldValue) {
 
-		var sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
+		const sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency")
 			&& !vValue[2] && vOldValue[2] !== undefined) {
@@ -405,7 +406,7 @@ sap.ui.define([
 			vValue[2] = vOldValue[2];
 
 			if (this._bPendingChange) { //change is pending because navigated between number and unit
-				var oCondition = this.getConditions()[0];
+				const oCondition = this.getConditions()[0];
 				if (oCondition) {
 					// check what was updated
 					if (vValue[0] === vOldValue[0] && vValue[0] !== oCondition.values[0][0]) {
@@ -426,18 +427,18 @@ sap.ui.define([
 
 	function _compareValues(vValue1, vValue2, bUpdateCheck) {
 
-		var bEqual = vValue1 === vValue2;
-		var sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
+		let bEqual = vValue1 === vValue2;
+		const sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
 
 		if (!bEqual && this.getTypeMap().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue1) && Array.isArray(vValue2)) {
 			// in unit type the unit table is in there setting the value but not after parsing
 			// units must be set at least once. so if not set compare too
-			var vNumber1 = vValue1[0];
-			var vUnit1 = vValue1[1];
-			var vCustomUnit1 = vValue1.length >= 3 ? vValue1[2] : null; // if no custom units are given handle it like null
-			var vNumber2 = vValue2[0];
-			var vUnit2 = vValue2[1];
-			var vCustomUnit2 = vValue2.length >= 3 ? vValue2[2] : null; // if no custom units are given handle it like null
+			const vNumber1 = vValue1[0];
+			const vUnit1 = vValue1[1];
+			const vCustomUnit1 = vValue1.length >= 3 ? vValue1[2] : null; // if no custom units are given handle it like null
+			const vNumber2 = vValue2[0];
+			const vUnit2 = vValue2[1];
+			const vCustomUnit2 = vValue2.length >= 3 ? vValue2[2] : null; // if no custom units are given handle it like null
 			// null and undefined are handled different in Unit type, so don't handle it as equal
 			if (vNumber1 === vNumber2 && vUnit1 === vUnit2
 				&& (((this._bUnitSet || bUpdateCheck) && (!vCustomUnit1 || !vCustomUnit2)) || deepEqual(vCustomUnit1, vCustomUnit2))) {
@@ -454,7 +455,7 @@ sap.ui.define([
 
 	function _compareAdditionalValues(vValue1, vValue2, bUpdateCheck) {
 
-		var bEqual = vValue1 === vValue2;
+		let bEqual = vValue1 === vValue2;
 
 		if (!bEqual && (vValue1 === null || vValue1 === undefined || vValue1 === "") && (vValue2 === null || vValue2 === undefined || vValue2 === "")) {
 			// in the moment there is no real data type support for additionalValue, normally only String types are used.
@@ -481,8 +482,8 @@ sap.ui.define([
 				return;
 			}
 
-			var oBinding = this.getBinding("value");
-			var oDataType = oBinding ? oBinding.getType() : this.getContentFactory().getDataType(); // use type from binding, not internal (might be a different one)
+			const oBinding = this.getBinding("value");
+			const oDataType = oBinding ? oBinding.getType() : this.getContentFactory().getDataType(); // use type from binding, not internal (might be a different one)
 
 			if (oDataType) {
 				this._oTypeInitialization = this.getTypeMap().initializeTypeFromValue(oDataType, vValue);
@@ -497,7 +498,7 @@ sap.ui.define([
 
 	Field.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
 
-		var vValue;
+		let vValue;
 
 		if (aConditions) { // even if empty and error is returned, only in async case it is really empty
 			if (bValid) {
@@ -526,7 +527,7 @@ sap.ui.define([
 
 	Field.prototype.getResultForChangePromise = function(aConditions) {
 
-		var vValue;
+		let vValue;
 		if (aConditions.length === 0 && this.getContentFactory().getDataType()) {
 			// parse "" to get type specific initial value
 			vValue = this.getContentFactory().getDataType().parseValue("", "string", []); // we need the empty array when the type is Unit
@@ -550,10 +551,10 @@ sap.ui.define([
 			return;
 		}
 
-		var vValue = null; // use default of property for empty to avoid updates from null to undefined
-		var vAdditionalValue = null; // use default of property for empty to avoid updates from null to undefined
-		var vOldValue = this.getValue();
-		var vOldAdditionalValue = this.getAdditionalValue();
+		let vValue = null; // use default of property for empty to avoid updates from null to undefined
+		let vAdditionalValue = null; // use default of property for empty to avoid updates from null to undefined
+		const vOldValue = this.getValue();
+		const vOldAdditionalValue = this.getAdditionalValue();
 
 		if (aConditions.length === 0 && _isValueNull(vOldValue) && _isValueNull(vOldAdditionalValue)) {
 			// Field initialized from setter -> cannot have a condition -> no update needed
@@ -561,8 +562,15 @@ sap.ui.define([
 		}
 
 		vValue = this.getResultForChangePromise(aConditions);
-		if (aConditions.length === 0 && !vOldAdditionalValue) {
-			vAdditionalValue = vOldAdditionalValue; // to not update old initial value
+		if (aConditions.length === 0 || aConditions[0].values.length === 1) {
+			if (vOldAdditionalValue) {
+				const oDataType = this.getContentFactory().getAdditionalDataType();
+				if (oDataType) {
+					vAdditionalValue = oDataType.parseValue("", "string"); // we need the empty representation of the data type
+				}
+			} else {
+				vAdditionalValue = vOldAdditionalValue; // to not update old initial value
+			}
 		} else if (aConditions.length === 1 && aConditions[0].values.length > 1) {
 			vAdditionalValue = aConditions[0].values[1];
 		}
@@ -591,7 +599,7 @@ sap.ui.define([
 
 	function _checkAdditionalValueOneWay() {
 
-		var oBinding = this.getBinding("additionalValue");
+		const oBinding = this.getBinding("additionalValue");
 
 		if (oBinding && oBinding.getBindingMode() === BindingMode.OneWay) {
 			return true;
@@ -612,7 +620,7 @@ sap.ui.define([
 	};
 
 	Field.prototype.getOverflowToolbarConfig = function() {
-		var oConfig = FieldBase.prototype.getOverflowToolbarConfig.apply(this, arguments);
+		const oConfig = FieldBase.prototype.getOverflowToolbarConfig.apply(this, arguments);
 		oConfig.propsUnrelatedToSize.push("value");
 		oConfig.propsUnrelatedToSize.push("additionalValue");
 		return oConfig;
@@ -626,13 +634,13 @@ sap.ui.define([
 
 	function _isValueNull(vValue) {
 
-		var bNull = false;
+		let bNull = false;
 
 		if (vValue === null) {
 			bNull = true;
 		} else if (Array.isArray(vValue)) {
 			bNull = true;
-			for (var i = 0; i < vValue.length; i++) {
+			for (let i = 0; i < vValue.length; i++) {
 				if (vValue[i] !== null) {
 					bNull = false;
 					break;
@@ -646,7 +654,7 @@ sap.ui.define([
 
 	Field.prototype.getAdditionalDataTypeConfiguration = function() {
 
-		var oBinding = this.getBinding("additionalValue");
+		const oBinding = this.getBinding("additionalValue");
 		return oBinding && oBinding.getType();
 
 	};
@@ -659,8 +667,7 @@ sap.ui.define([
 	 *
 	 * @param {object[]} aConditions Conditions that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setConditions
@@ -674,8 +681,7 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {object[]} Conditions of the field
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getConditions
@@ -692,8 +698,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.ManagedObject.PropertyBindingInfo} oBindingInfo The binding information
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#bindConditions
@@ -707,8 +712,7 @@ sap.ui.define([
 	 * use the <code>value</code> and <code>additionalValue</code> properties instead.
 	 *
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, use the <code>value</code> property and <code>additionalValue</code> property to bind the control.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#unbindConditions
@@ -723,10 +727,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @param {string} sDataType DataType that is set
+	 * @param {string|undefined} sDataType DataType that is set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataType
@@ -741,9 +744,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the value of the <code>dataType</code> property is ignored.
 	 *
-	 * @returns {this} Value of property <code>dataType</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {string} Value of property <code>dataType</code>
+	 * @public
 	 * @deprecated Not supported, the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataType
@@ -758,10 +760,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeConstraints Constraints that are set
+	 * @param {object|undefined} oDataTypeConstraints Constraints that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeConstraints
@@ -776,9 +777,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeConstraints</code> property are ignored.
 	 *
-	 * @returns {this} Value of property <code>dataTypeConstraints</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {object} Value of property <code>dataTypeConstraints</code>
+	 * @public
 	 * @deprecated Not supported, the <code>Constraints</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeConstraints
@@ -793,10 +793,9 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @param {string} oDataTypeFormatOptions Format options that are set
+	 * @param {object|undefined} oDataTypeFormatOptions Format options that are set
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @public
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#setDataTypeFormatOptions
@@ -811,9 +810,8 @@ sap.ui.define([
 	 * <b>Note:</b> If the <code>value</code> property is bound to a model using a type, this type is used.
 	 * In this case the values of the <code>dataType</code> property and the <code>dataTypeFormatOptions</code> property are ignored.
 	 *
-	 * @returns {this} Value of property <code>dataTypeFormatOptions</code>
-	 * @private
-	 * @ui5-restricted sap.fe
+	 * @returns {object} Value of property <code>dataTypeFormatOptions</code>
+	 * @public
 	 * @deprecated Not supported, the <code>FormatOptions</code> of the type in the binding to the <code>value</code> property is used.
 	 * @ui5-not-supported
 	 * @name sap.ui.mdc.Field#getDataTypeFormatOptions

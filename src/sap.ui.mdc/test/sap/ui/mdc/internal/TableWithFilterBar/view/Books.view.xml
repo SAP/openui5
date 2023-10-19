@@ -732,6 +732,7 @@
 						\}'
 						chartType="column"
 						header="Books Chart"
+						headerStyle="H4"
 						height="400px"
 						width="100%"
 						propertyInfo='[
@@ -834,13 +835,22 @@
 								<SearchField id="mySearchAction" placeholder="Search" width="200px"/>
 							</mdcat:ActionToolbarAction> -->
 						</mdc:actions>
+
+						<!-- <mdc:variant>
+							<variants:VariantManagement id="IDVariantManagementOfChart" for="bookChart"/>
+						</mdc:variant> -->
+
 						<mdc:items>
-							<mdcc:Item id="dim1" type="groupable" name="language_code" role="category" label="Languages"/>
-							<mdcc:Item id="meas1" type="aggregatable" name="averagemetricsWords" role="axis1" label="Words (avg)"/>
+							<mdcc:Item id="dim1" type="groupable" propertyKey="language_code" role="category" label="Languages"/>
+							<mdcc:Item id="meas1" type="aggregatable" propertyKey="averagemetricsWords" role="axis1" label="Words (avg)"/>
 						</mdc:items>
 					</mdc:Chart>
 
 					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter', 'Group']}" delegate='\{"name": "sap/ui/v4demo/delegate/Books.Table.delegate", "payload": \{"collectionName": "Books"\}\}' showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" enableAutoColumnWidth="true">
+						<!-- <mdc:variant>
+							<variants:VariantManagement id="IDVariantManagementOfLocalTable" for="booksTable"/>
+						</mdc:variant> -->
+
 						<mdc:actions>
 							<mdcat:ActionToolbarAction id="tableAction1">
 								<Button type="Emphasized" text="Dummy Action" id="tableButton1" />
@@ -853,7 +863,7 @@
 							<mdc:table.Column id="id2" header="Title" propertyKey="title">
 								<mdc:Field id="F_title" delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' value="{path: 'title', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 1111}}" editMode="Display" multipleLines="true" width="100%">
 									<mdc:fieldInfo>
-										<mdc:Link sourceControl="fTitle" delegate='\{ "name": "sap/ui/mdc/flp/FlpLinkDelegate", "payload": \{
+										<mdc:Link sourceControl="fTitle" delegate='\{ "name": "sap/ui/mdc/ushell/LinkDelegate", "payload": \{
 												"semanticObjects": ["FakeFlpSemanticObject"],
 												"mainSemanticObject": "FakeFlpSemanticObject"
 											\} \}'></mdc:Link>

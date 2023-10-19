@@ -5,60 +5,58 @@ sap.ui.define([
 	"sap/m/OverflowToolbarButton",
 	"sap/m/ButtonRenderer",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
 	"sap/m/library",
-	"sap/base/util/merge",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary, mobileLibrary, IllustratedMessage, MLib, merge, Filter, JSONModel) {
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, MLib, Filter, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
+	const PlacementType = mobileLibrary.PlacementType;
 
-	var HasPopup = CoreLibrary.aria.HasPopup;
-	var ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
+	let ResponsivePopover, List, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
-	var ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
+	const ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
 		metadata: {
-			library: "sap.ui.mdc"
-		},
-		constructor: function(oChart, mSettings) {
-
-			if (!oChart) {
-				OverflowToolbarButton.apply(this);
-				return;
+			library: "sap.ui.mdc",
+			associations: {
+				/**
+				 * associated chart control.
+				 *
+				 * @since 1.120
+				 */
+				chart: {
+					type: "sap.ui.mdc.Chart",
+					multiple: false
+				}
 			}
+		},
+		renderer: ButtonRenderer
+	});
 
-			this.oChartModel = oChart.getManagedObjectModel();
-			mSettings = merge(mSettings, {
-				type: "Transparent",
-				press: function(oEvent) {
-					this.displayChartTypes(oEvent.getSource(), oChart);
-				}.bind(this),
-				id: oChart.getId() + "-btnChartType",
-				icon: '{$chart>/ChartTypeInfo/icon}',
-				tooltip: '{$chart>/ChartTypeInfo/text}',
-				text: '{$chart>/ChartTypeInfo/text}',
-				ariaHasPopup: HasPopup.ListBox
-			});
-			this.oChart = oChart;
-			OverflowToolbarButton.apply(this, [
-				mSettings
-			]);
+	ChartTypeButton.prototype.init = function() {
+		OverflowToolbarButton.prototype.init.apply(this, arguments);
 
-			var oModel = new JSONModel();
-			oModel.setProperty("/ChartTypeInfo", this.oChart.getChartTypeInfo());
+		this.bindProperty("icon", "$chart>/ChartTypeInfo/icon");
+		this.bindProperty("tooltip", '$chart>/ChartTypeInfo/text');
+		this.bindProperty("text", '$chart>/ChartTypeInfo/text');
+		this.attachPress(this.displayChartTypes.bind(this));
+	};
+
+	ChartTypeButton.prototype._updateChart = function (oChart) {
+		if (oChart) {
+			const oModel = new JSONModel();
+			oModel.setProperty("/ChartTypeInfo", oChart.getChartTypeInfo());
 			this.setModel(oModel, "$chart");
 
 			this._oObserver = new ManagedObjectObserver(function(oChange) {
 				if (oChange.name === "chartType") {
-					oModel.setProperty("/ChartTypeInfo", this.oChart.getChartTypeInfo());
+					oModel.setProperty("/ChartTypeInfo", oChart.getChartTypeInfo());
 				}
-			}.bind(this));
-			this._oObserver.observe(this.oChart, {
+			});
+			this._oObserver.observe(oChart, {
 				aggregations: [
 					"items"
 				],
@@ -66,10 +64,31 @@ sap.ui.define([
 					"chartType"
 				]
 			});
+		} else {
+			this.setModel(null, "$chart");
+			if (this._oObserver) {
+				this._oObserver.disconnect();
+				this._oObserver.destroy();
+				delete this._oObserver;
+			}
+		}
+	};
 
-		},
-		renderer: ButtonRenderer
-	});
+	ChartTypeButton.prototype.setChart = function(oChart) {
+		this.setAssociation("chart", oChart);
+		this._updateChart(oChart);
+		return this;
+	};
+
+	ChartTypeButton.prototype._getChart = function() {
+		let oChart;
+		const sId = this.getChart();
+		if (sId) {
+			oChart = sap.ui.getCore().byId(sId);
+		}
+
+		return oChart;
+	};
 
 	ChartTypeButton.mMatchingIcon = {
 		"bar": "sap-icon://horizontal-bar-chart",
@@ -106,15 +125,16 @@ sap.ui.define([
 	};
 
 	/**
-     * Shows popover to select chart type
-     * @param oButton button opening the popover
-     * @param oChart the chart
-     *
-     * @experimental
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     */
-	ChartTypeButton.prototype.displayChartTypes = function(oButton, oChart) {
+	 * Shows popover to select chart type
+	 * @param oButton button opening the popover
+	 * @param oChart the chart
+	 *
+	 * @private
+	 */
+	ChartTypeButton.prototype.displayChartTypes = function(oEvent) {
+		const oChart = this._getChart();
+		const oButton = oEvent.getSource();
+
 		if (!oChart || !oButton) {
 			return;
 		}
@@ -167,20 +187,20 @@ sap.ui.define([
 	/**
 	 * Creates the popover
 	 * @param {sap.ui.mdc.Chart} oChart chart
-     * @returns {sap.m.ResponsivePopover} the instance of the created popover
+	 * @returns {sap.m.ResponsivePopover} the instance of the created popover
 	 *
 	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
 	ChartTypeButton.prototype._createPopover = function(oChart) {
-		var oItemTemplate = new StandardListItem({
+		const oItemTemplate = new StandardListItem({
 			title: "{$chartTypes>text}",
 			icon: "{$chartTypes>icon}",
 			selected: "{$chartTypes>selected}"
 		});
 
-		var oList = new List({
+		const oList = new List({
 			mode: "SingleSelectMaster",
 			noData: new IllustratedMessage({title: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE"), description: oRb.getText("chart.NO_CHART_TYPES_AVAILABLE_ACTION"),  illustrationType: MLib.IllustratedMessageType.AddDimensions}),
 			items: {
@@ -190,11 +210,11 @@ sap.ui.define([
 			selectionChange: function(oEvent) {
 				//TODO: Implement Chart Type switch
 				if (oEvent && oEvent.mParameters && oEvent.mParameters.listItem) {
-					var oBinding = oEvent.mParameters.listItem.getBinding("title");
+					const oBinding = oEvent.mParameters.listItem.getBinding("title");
 					if (oBinding) {
-						var oCtx = oBinding.getContext();
+						const oCtx = oBinding.getContext();
 						if (oCtx) {
-							var oObj = oCtx.getObject();
+							const oObj = oCtx.getObject();
 							if (oObj && oObj.key) {
 								sap.ui.require([
 									"sap/ui/mdc/flexibility/Chart.flexibility"
@@ -222,7 +242,7 @@ sap.ui.define([
 			}
 		});
 
-		var oSearchField = new SearchField({
+		const oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH"),
 			liveChange: function(oEvent) {
 				if (oChart){
@@ -231,7 +251,7 @@ sap.ui.define([
 			}.bind(this)
 		});
 
-		var oPopover = new ResponsivePopover({
+		const oPopover = new ResponsivePopover({
 			id: oChart.getId() + "-btnChartTypePopover",
 			placement: PlacementType.VerticalPreferredBottom,
 			contentWidth: "25rem"
@@ -246,14 +266,14 @@ sap.ui.define([
 			oPopover.addContent(oSearchField);
 		}
 
-		var oModel = new JSONModel();
-		oModel.setProperty("/AvailableChartTypes", this.oChart.getAvailableChartTypes());
+		const oModel = new JSONModel();
+		oModel.setProperty("/AvailableChartTypes", this._getChart().getAvailableChartTypes());
 		oPopover.setModel(oModel, "$chartTypes");
 
 		//Show header only in mobile scenarios
 		//still support screen reader while on desktops.
 		if (Device.system.desktop) {
-			var oInvText = new InvisibleText({
+			const oInvText = new InvisibleText({
 				text: oRb.getText("chart.CHART_TYPELIST_TEXT")
 			});
 			oPopover.setShowHeader(false);
@@ -285,26 +305,25 @@ sap.ui.define([
 			return;
 		}
 
-		var sSearchValue = oEvent.getParameter("newValue");
-		var oSearchFilter = [];
+		const sSearchValue = oEvent.getParameter("newValue");
+		let oSearchFilter = [];
 		if (sSearchValue) {
 			oSearchFilter = new Filter("text", "Contains", sSearchValue);
 		}
 		oList.getBinding("items").filter(oSearchFilter);
 	};
 
-    /**
-     * Closes the popover to select chart type
-     *
-     * @experimental
-     * @private
-     * @ui5-restricted sap.fe, sap.ui.mdc
-     */
 	ChartTypeButton.prototype.exit = function() {
 		OverflowToolbarButton.prototype.exit.apply(this, arguments);
 		if (this.oPopover) {
 			this.oPopover.destroy();
 			this.oPopover = null;
+		}
+
+		if (this._oObserver) {
+			this._oObserver.disconnect();
+			this._oObserver.destroy();
+			delete this._oObserver;
 		}
 	};
 

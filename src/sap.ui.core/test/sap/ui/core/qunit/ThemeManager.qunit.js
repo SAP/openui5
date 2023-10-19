@@ -1,21 +1,12 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/qunit/utils/waitForThemeApplied",
 	"sap/ui/core/Configuration"
-], function(ThemeManager, themeApplied, Configuration) {
+], function(Theming, ThemeManager, themeApplied, Configuration) {
 	"use strict";
 
-	// Wait until the theme is changed
-	function themeChanged() {
-		return new Promise(function(resolve) {
-			function onChanged() {
-				sap.ui.getCore().detachThemeChanged(onChanged);
-				resolve();
-			}
-			sap.ui.getCore().attachThemeChanged(onChanged);
-		});
-	}
 
 	function getSheetHref(oLink) {
 		if (oLink.sheet) {
@@ -40,19 +31,19 @@ sap.ui.define([
 
 		// for the test we need to delay the theme changed event to avoid the cleanup
 		// of the old stylesheet which will be performed by the ThemeManager
-		var fncheckThemeChanged = ThemeManager.checkThemeChanged;
-		ThemeManager.checkThemeChanged = function(bOnlyOnInitFail) {
+		var fncheckApplied = ThemeManager.checkApplied;
+		ThemeManager.checkApplied = function(bOnlyOnInitFail) {
 			aLibraryCss.forEach(function(lib) {
 				assert.equal(lib.domRef.parentNode, document.head, "Old stylesheet for library " + lib.name + " still exits in the DOM.");
 				assert.equal(lib.domRef.getAttribute("data-sap-ui-foucmarker"), "sap-ui-theme-" + lib.name, "Attribute for ThemeManager has been added to old stylesheet.");
 			});
 
-			setTimeout(fncheckThemeChanged.bind(this, bOnlyOnInitFail), 0);
+			setTimeout(fncheckApplied.bind(this, bOnlyOnInitFail), 0);
 		};
 
-		sap.ui.getCore().applyTheme(sTheme);
+		Theming.setTheme(sTheme);
 
-		ThemeManager.checkThemeChanged = fncheckThemeChanged;
+		ThemeManager.checkApplied = fncheckApplied;
 
 	}
 
@@ -73,21 +64,17 @@ sap.ui.define([
 
 
 	QUnit.test("Initial theme check", function(assert) {
-		var done = assert.async();
-
-		themeApplied().then(function() {
+		return themeApplied().then(function() {
 
 			// Check if the declared library stylesheets have been fully loaded
 			testThemeLoaded(assert);
-
-			done();
 		});
 	});
 
 	QUnit.test("After theme change with legacy custom.css", function(assert) {
-		var done = assert.async();
+		testApplyTheme(assert, "legacy");
 
-			themeChanged().then(function() {
+		return themeApplied().then(function() {
 
 			// Check if the declared library stylesheets have been fully loaded
 			testThemeLoaded(assert);
@@ -104,16 +91,13 @@ sap.ui.define([
 				var sExpectedCustomCssPath = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/legacy/custom.css";
 				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 			}
-
-			done();
 		});
-		testApplyTheme(assert, "legacy");
 	});
 
 	QUnit.test("After theme change with custom.css", function(assert) {
-		var done = assert.async();
+		testApplyTheme(assert, "customcss");
 
-			themeChanged().then(function() {
+		return themeApplied().then(function() {
 
 			// Check if the declared library stylesheets have been fully loaded
 			testThemeLoaded(assert);
@@ -130,16 +114,13 @@ sap.ui.define([
 				var sExpectedCustomCssPath = "test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/customcss/custom.css";
 				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 			}
-
-			done();
 		});
-		testApplyTheme(assert, "customcss");
 	});
 
 	QUnit.test("After theme change without custom.css", function(assert) {
-		var done = assert.async();
+		testApplyTheme(assert, "sap_hcb");
 
-			themeChanged().then(function() {
+		return themeApplied().then(function() {
 
 			// Check if the declared library stylesheets have been fully loaded
 			testThemeLoaded(assert);
@@ -150,10 +131,7 @@ sap.ui.define([
 			// Check if the custom.css has been included
 			var oCustomCss = document.getElementById("sap-ui-core-customcss");
 			assert.strictEqual(oCustomCss, null, "Custom CSS file should not be included.");
-
-			done();
 		});
-		testApplyTheme(assert, "sap_hcb");
 	});
 
 	QUnit.test("Provide custom css using metadata of custom lib after core was booted and theme fully applied", function(assert) {
@@ -175,7 +153,7 @@ sap.ui.define([
 			assert.ok(aCustomCssLink[0].getAttribute("href")
 				.endsWith("/libraries/customCss/sap/ui/core/themes/customTheme/custom.css"), "URI of custom.css link tag is correct");
 		};
-		sap.ui.getCore().applyTheme("customTheme");
+		Theming.setTheme("customTheme");
 
 		return themeApplied().then(function () {
 			return sap.ui.getCore().loadLibrary("testlibs.customCss.lib1", true).then(function () {
@@ -198,11 +176,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check link tags modified by defineProperty (e.g. AppCacheBuster) are handled correctly", function (assert) {
-		assert.expect(2);
+		var done = assert.async();
+		assert.expect(4);
 
 		var oDescriptor = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, "href");
-		var oCheckThemeSpy = sinon.spy(ThemeManager, "checkThemeChanged");
-		var pThemeChanged;
+		var oCheckThemeSpy = sinon.spy(ThemeManager, "checkThemeApplied");
 
 		Object.defineProperty(HTMLLinkElement.prototype, "href", {
 			get: oDescriptor.get,
@@ -214,64 +192,53 @@ sap.ui.define([
 			}
 		});
 
-		pThemeChanged = themeChanged().then(function () {
-			ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
-
-			assert.ok(oCheckThemeSpy.notCalled, "checkThemeChanged was not called because no link tag changed.");
-
-			Object.defineProperty(HTMLLinkElement.prototype, "href", oDescriptor);
-			oCheckThemeSpy.restore();
-		});
 		// setTimeout is only relevant in single test execution
-		// Core is not attached to themeChanged event of ThemeManager in case the core did not call _getThemeManager yet
-		// but the ThemeManager was already loaded from somewhere else. Because attachEvent("themeChanged") by core is done within
+		// Core is not attached to Applied event of ThemeManager in case the core did not call _getThemeManager yet
+		// but the ThemeManager was already loaded from somewhere else. Because attachEvent("Applied") by core is done within
 		// an (immediately resolved) promise, the handler will be attached async within the next stack execution
-		// Because the library loaded by includeLibraryTheme does not exist the themeChanged event is fired sync
+		// Because the library loaded by includeLibraryTheme does not exist the Applied event is fired sync
 		setTimeout(function () {
+			assert.notOk(document.getElementById("sap-ui-theme-sap.ui.fakeLib"), "FakeLib should not be available because library theme was not included yet");
 			ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
 
-			assert.ok(oCheckThemeSpy.calledOnce, "checkThemeChanged was called once because a was modified by '-qunit' suffix.");
+			assert.ok(oCheckThemeSpy.calledOnce, "checkThemeApplied was called once because a link tag was modified by '-qunit' suffix.");
+			assert.ok(document.getElementById("sap-ui-theme-sap.ui.fakeLib").href.endsWith("-qunit"), "Library CSS for 'sap.ui.fakeLib' should be added and end with '-qunit'");
 			oCheckThemeSpy.reset();
-		});
 
-		return pThemeChanged;
+			themeApplied().then(function () {
+				ThemeManager.includeLibraryTheme("sap.ui.fakeLib");
+
+				assert.ok(oCheckThemeSpy.notCalled, "checkThemeApplied was not called because no link tag changed.");
+
+				Object.defineProperty(HTMLLinkElement.prototype, "href", oDescriptor);
+				oCheckThemeSpy.restore();
+				done();
+			});
+		});
 	});
 
 
 	QUnit.module("Library Loading");
 
 	QUnit.test("sap.ui.getCore().loadLibrary()", function(assert) {
-		var done = assert.async();
-
-		themeChanged().then(function() {
-			assert.ok(true, "ThemeChanged event has been fired");
-			done();
-		});
-
 		sap.ui.getCore().loadLibrary("sap.ui.customthemefallback.testlib", {async: true});
+
+		return themeApplied().then(function() {
+			assert.ok(true, "Applied event has been fired");
+		});
 	});
 
 	QUnit.test("sap.ui.getCore().loadLibraries()", function(assert) {
-		var done = assert.async();
-
-		themeChanged().then(function() {
-			assert.ok(true, "ThemeChanged event has been fired");
-			done();
-		});
-
 		sap.ui.getCore().loadLibraries(["sap.ui.failingcssimport.testlib"], {
 			async: true
+		});
+
+		return themeApplied().then(function() {
+			assert.ok(true, "Applied event has been fired");
 		});
 	});
 
 	QUnit.test("require without loadLibrary/loadLibraries", function(assert) {
-		var done = assert.async();
-
-		themeChanged().then(function() {
-			assert.ok(true, "ThemeChanged event has been fired");
-			done();
-		});
-
 		// Fake direct require to a library.js module by just calling initLibrary
 		sap.ui.getCore().initLibrary({
 			name : "sap.ui.fake.testlib",
@@ -280,6 +247,10 @@ sap.ui.define([
 			types: [],
 			controls: [],
 			elements: []
+		});
+
+		return themeApplied().then(function() {
+			assert.ok(true, "Applied event has been fired");
 		});
 	});
 
@@ -319,12 +290,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("Accessing HTMLLinkElement#sheet.cssRules throws exception", function(assert) {
-		var done = assert.async();
+		testApplyTheme(assert, "customcss");
 
 		var Log = sap.ui.require("sap/base/Log");
 		assert.ok(Log, "Log module should be available");
 
-		themeChanged().then(function() {
+		return themeApplied().then(function() {
 
 			// Check if the declared library stylesheets have been fully loaded
 			testThemeLoaded(assert);
@@ -333,9 +304,6 @@ sap.ui.define([
 			testThemeManagerCleanup(assert);
 
 			sinon.assert.neverCalledWithMatch(Log.error, sinon.match("Error during check styles"));
-
-			done();
 		});
-		testApplyTheme(assert, "customcss");
 	});
 });

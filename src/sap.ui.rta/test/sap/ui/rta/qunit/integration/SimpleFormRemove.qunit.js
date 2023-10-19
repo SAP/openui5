@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/layout/library",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element"
 ], function(
 	XMLView,
 	DesignTime,
@@ -23,11 +24,12 @@ sap.ui.define([
 	sinon,
 	layoutLibrary,
 	RtaQunitUtils,
-	oCore
+	nextUIUpdate,
+	Element
 ) {
 	"use strict";
 
-	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
+	var {SimpleFormLayout} = layoutLibrary.form;
 	var sandbox = sinon.createSandbox();
 
 	function fnParamerizedTest(oSimpleFormLayout) {
@@ -39,8 +41,8 @@ sap.ui.define([
 
 		var oCommandFactory = new CommandFactory();
 
-		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
-			beforeEach: function(assert) {
+		QUnit.module(`Given the SimpleForm in RTA using ${oSimpleFormLayout}`, {
+			beforeEach(assert) {
 				oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 				var done = assert.async();
@@ -51,12 +53,12 @@ sap.ui.define([
 				}).then(function(oCreatedView) {
 					oView = oCreatedView;
 					return oView.loaded();
-				}).then(function() {
-					oSimpleForm = oCore.byId(oView.createId("SimpleForm0"));
+				}).then(async function() {
+					oSimpleForm = Element.getElementById(oView.createId("SimpleForm0"));
 					oSimpleForm.setLayout(oSimpleFormLayout);
 					oView.placeAt("qunit-fixture");
 
-					oCore.applyChanges();
+					await nextUIUpdate();
 
 					var oTabHandlingPlugin = new TabHandlingPlugin();
 					var oSelectionPlugin = new MouseSelectionPlugin();
@@ -76,7 +78,7 @@ sap.ui.define([
 				});
 			},
 
-			afterEach: function() {
+			afterEach() {
 				sandbox.restore();
 				oComponent.destroy();
 				oView.destroy();
@@ -87,7 +89,7 @@ sap.ui.define([
 
 		QUnit.test("When removing Group1 and undoing the action", function(assert) {
 			var done = assert.async();
-			var oElementGroup1 = oCore.byId(oComponent.createId("qunit-fixture--Group1"));
+			var oElementGroup1 = Element.getElementById(oComponent.createId("qunit-fixture--Group1"));
 			var oElementOverlay = OverlayRegistry.getOverlay(oElementGroup1.getParent());
 
 			oRemove.attachElementModified(function(oEvent) {
@@ -96,7 +98,7 @@ sap.ui.define([
 				oCommand.execute()
 
 				.then(function() {
-					var oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					var oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPosition = aFormContainers.indexOf(oElementGroup1.getParent());
 					assert.equal(iPosition, -1, "and Group1 does not exist any more");
@@ -104,9 +106,9 @@ sap.ui.define([
 
 				.then(oCommand.undo.bind(oCommand))
 
-				.then(function() {
-					oCore.applyChanges();
-					var oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+				.then(async function() {
+					await nextUIUpdate();
+					var oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					var aFormContainers = oSimpleFormForm.getFormContainers();
 					var iPositionAfterUndo = aFormContainers.indexOf(oElementGroup1.getParent());
 					assert.equal(iPositionAfterUndo, 1, "and after the undo the Group1 is back");
@@ -127,16 +129,16 @@ sap.ui.define([
 			var aFormContainers = [];
 
 			for (var i = 0; i <= 3; i++) {
-				sID = "qunit-fixture--Group" + i;
-				oElementGroup = oCore.byId(oComponent.createId(sID));
+				sID = `qunit-fixture--Group${i}`;
+				oElementGroup = Element.getElementById(oComponent.createId(sID));
 				oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
 				aElements.push(oElementOverlay);
 			}
-			oElementGroup = oCore.byId(oComponent.createId("qunit-fixture--Group42"));
+			oElementGroup = Element.getElementById(oComponent.createId("qunit-fixture--Group42"));
 			oElementOverlay = OverlayRegistry.getOverlay(oElementGroup.getParent());
 			aElements.push(oElementOverlay);
 
-			oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+			oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 			aFormContainers = oSimpleFormForm.getFormContainers();
 			assert.equal(aFormContainers.length, 5, "There are 5 Groups before remove command");
 
@@ -146,16 +148,16 @@ sap.ui.define([
 				oCommand.execute()
 
 				.then(function() {
-					oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+					oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					aFormContainers = oSimpleFormForm.getFormContainers();
 					assert.equal(aFormContainers.length, 1, "and simpleform creates one group where the 5 groups were");
 				})
 
 				.then(oCommand.undo.bind(oCommand))
 
-				.then(function() {
-					oCore.applyChanges();
-					oSimpleFormForm = oCore.byId(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
+				.then(async function() {
+					await nextUIUpdate();
+					oSimpleFormForm = Element.getElementById(oComponent.createId("qunit-fixture--SimpleForm0--Form"));
 					aFormContainers = oSimpleFormForm.getFormContainers();
 					assert.equal(aFormContainers.length, 5, "and after the undo only the original 5 groups are back");
 					done();

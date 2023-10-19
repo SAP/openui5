@@ -1,0 +1,33 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.UploadSetwithTablePersonalization",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.m.sample.UploadSetwithTable.UploadSetwithTablePersonalization.Page",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.unified": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"Page.view.xml",
+					"Page.controller.js",
+					"manifest.json",
+					"test/items.json",
+					"test/mockserver.js",
+					"fragments/AddViaUrl.fragment.xml"
+				]
+			}
+		}
+	}
+}

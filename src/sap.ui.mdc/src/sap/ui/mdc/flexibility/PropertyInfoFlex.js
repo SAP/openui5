@@ -5,7 +5,7 @@ sap.ui.define([], function() {
 	"use strict";
 
 	//obsolete
-	var oPropertyInfoFlex = {};
+	const oPropertyInfoFlex = {};
 
 	oPropertyInfoFlex.addPropertyInfo = {
 		"changeHandler": {

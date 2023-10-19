@@ -40,7 +40,7 @@ sap.ui.define([
 		 * @param {object} oConfig.componentData - Component Data from the Component processing
 		 * @returns {Promise<object>} - Processed manifest
 		 */
-		preprocessManifest: function(oManifest, oConfig) {
+		preprocessManifest(oManifest, oConfig) {
 			// stop processing if the component is not of the type application or component ID is missing
 			if (!Utils.isApplication(oManifest, true) || !oConfig.id) {
 				return Promise.resolve(oManifest);

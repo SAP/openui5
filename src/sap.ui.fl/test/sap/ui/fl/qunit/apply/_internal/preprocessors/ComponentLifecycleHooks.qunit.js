@@ -3,7 +3,7 @@
 sap.ui.define([
 	"rta/qunit/RtaQunitUtils",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
@@ -18,7 +18,7 @@ sap.ui.define([
 ], function(
 	RtaQunitUtils,
 	Log,
-	Core,
+	Lib,
 	AppDescriptorApplier,
 	ApplyStrategyFactory,
 	FlexState,
@@ -35,7 +35,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("componentLoadedHook", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oConfig = {
 				id: "componentId",
 				componentData: {
@@ -59,7 +59,7 @@ sap.ui.define([
 				"sap.app": {
 					type: "application"
 				},
-				getEntry: function(key) {
+				getEntry(key) {
 					return this[key];
 				}
 			};
@@ -67,7 +67,7 @@ sap.ui.define([
 			this.oGetStrategyStub = sandbox.stub(ApplyStrategyFactory, "getRuntimeStrategy").returns("foobar");
 			this.oApplyManifestChangesStub = sandbox.stub(AppDescriptorApplier, "applyChangesIncludedInManifest");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -80,7 +80,7 @@ sap.ui.define([
 			config: this.oConfig,
 			manifest: {
 				"sap.app": {},
-				getEntry: function(key) {
+				getEntry(key) {
 					return this[key];
 				}
 			}
@@ -92,7 +92,7 @@ sap.ui.define([
 				"sap.app": {
 					type: "notAnApplication"
 				},
-				getEntry: function(key) {
+				getEntry(key) {
 					return this[key];
 				}
 			}
@@ -102,7 +102,7 @@ sap.ui.define([
 			config: {},
 			manifest: this.oManifest
 		}].forEach(function(oTestInput) {
-			var sName = "componentLoadedHook does nothing if " + oTestInput.text;
+			var sName = `componentLoadedHook does nothing if ${oTestInput.text}`;
 			QUnit.test(sName, function(assert) {
 				ComponentLifecycleHooks.componentLoadedHook(oTestInput.config, oTestInput.manifest);
 				assert.strictEqual(this.oInitializeStub.callCount, 0, "then flex state was not initialized");
@@ -141,7 +141,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("instanceCreatedHook", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, "componentId");
 			this.oAddPropagationListenerStub = sandbox.stub(this.oAppComponent, "addPropagationListener");
 			this.oVMInitStub = sandbox.stub().resolves();
@@ -156,7 +156,7 @@ sap.ui.define([
 				return oComponent.getId() === "componentId";
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			ComponentLifecycleHooks._componentInstantiationPromises.delete(this.oAppComponent);
 			this.oAppComponent._restoreGetAppComponentStub();
 			this.oAppComponent.destroy();
@@ -165,11 +165,9 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
 			sandbox.stub(ChangePersistence.prototype, "loadChangesMapForComponent").resolves({});
-			var oClearStub = sandbox.stub(FlexState, "rebuildFilteredResponse");
 
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {asyncHints: true, id: "differentComponentId"})
 			.then(function() {
-				assert.strictEqual(oClearStub.callCount, 1, "the prepared stuff in FlexState was cleared");
 				assert.strictEqual(this.oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 				assert.strictEqual(this.oInitializeStub.callCount, 1, "FlexState was initialized");
 				assert.ok(this.oInitializeStub.calledWith({
@@ -185,16 +183,16 @@ sap.ui.define([
 			var oExistingModel = {id: "existingVariantModel"};
 			var oEmbeddedComponent = {
 				name: "embeddedComponent",
-				setModel: function(oModelSet, sModelName) {
+				setModel(oModelSet, sModelName) {
 					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 					assert.deepEqual(oModelSet, oExistingModel, "then the correct model was set");
 				},
-				getManifestObject: function() {},
-				addPropagationListener: function() {
+				getManifestObject() {},
+				addPropagationListener() {
 					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
 				},
-				getId: function() {},
-				getComponentData: function() {}
+				getId() {},
+				getComponentData() {}
 			};
 			sandbox.stub(this.oAppComponent, "getModel").callsFake(function(sModelName) {
 				assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then variant model called on the app component");
@@ -209,14 +207,13 @@ sap.ui.define([
 			"outer",
 			"inner"
 		].forEach(function(sFirstComponent) {
-			var sName = "when an outer and an inner component are initialized at the same time, " + sFirstComponent + " component being first";
+			var sName = `when an outer and an inner component are initialized at the same time, ${sFirstComponent} component being first`;
 			QUnit.test(sName, function(assert) {
 				assert.expect(5);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl");
 				sandbox.stub(FlexControllerFactory, "createForControl").returns({
 					_oChangePersistence: {
-						loadChangesMapForComponent: sandbox.stub().resolves(),
-						getComponentName: function() {return "foo";}
+						loadChangesMapForComponent: sandbox.stub().resolves()
 					}
 				});
 				var oExistingModel;
@@ -234,16 +231,16 @@ sap.ui.define([
 
 				var oComponent = {
 					name: "embeddedComponent",
-					setModel: function(oModel, sModelName) {
+					setModel(oModel, sModelName) {
 						assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 						assert.deepEqual(oModel, oExistingModel, "then the correct model was set");
 					},
-					getManifestObject: function() {},
-					addPropagationListener: function() {
+					getManifestObject() {},
+					addPropagationListener() {
 						assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
 					},
-					getId: function() {return "embeddedComponent";},
-					getComponentData: function() {}
+					getId() {return "embeddedComponent";},
+					getComponentData() {}
 				};
 
 				var aPromises = sFirstComponent === "outer" ?
@@ -272,23 +269,23 @@ sap.ui.define([
 					assert.ok(this.oAddPropagationListenerStub.calledOnce, "then addPropagationListener was called for the app component");
 					assert.strictEqual(sModelName, ControlVariantApplyAPI.getVariantModelName(), "then VariantModel was set on the embedded component with the correct name");
 				}.bind(this),
-				getManifestObject: function() {},
-				addPropagationListener: function() {
+				getManifestObject() {},
+				addPropagationListener() {
 					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
 				},
-				getId: function() {},
-				getComponentData: function() {}
+				getId() {},
+				getComponentData() {}
 			};
 
 			var oComponent2SetModelStub = sandbox.stub();
 			var oComponent2 = {
 				setModel: oComponent2SetModelStub,
-				getManifestObject: function() {},
-				addPropagationListener: function() {
+				getManifestObject() {},
+				addPropagationListener() {
 					assert.notOk(true, "addPropagationListener shouldn't be called for an embedded component");
 				},
-				getId: function() {},
-				getComponentData: function() {}
+				getId() {},
+				getComponentData() {}
 			};
 
 			assert.notOk(this.oAppComponent.getModel(ControlVariantApplyAPI.getVariantModelName()), "then initially no variant model exists for the app component");
@@ -322,33 +319,29 @@ sap.ui.define([
 	});
 
 	QUnit.module("instanceCreatedHook: RTA Restart", {
-		beforeEach: function() {
+		beforeEach() {
 			var sMockComponentName = "MockCompName";
 			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sMockComponentName);
 			sandbox.stub(this.oAppComponent, "addPropagationListener");
 			sandbox.stub(this.oAppComponent, "setModel");
 			sandbox.stub(FlexState, "initialize").resolves();
-			sandbox.stub(Utils, "isApplicationComponent").returns(true);
 			this.oCreateVariantModelStub = sandbox.stub(ComponentLifecycleHooks, "_createVariantModel").returns({
 				initialize: sandbox.stub()
 			});
 			FlexControllerFactory._instanceCache[sMockComponentName] = {
 				_oChangePersistence: {
-					loadChangesMapForComponent: function() {
+					loadChangesMapForComponent() {
 						return Promise.resolve();
-					},
-					getComponentName: function() {
-						return sMockComponentName;
 					}
 				}
 			};
 
-			this.oLoadLibStub = sandbox.stub(Core, "loadLibrary").resolves();
+			this.oLoadLibStub = sandbox.stub(Lib, "load").resolves();
 		},
-		afterEach: function() {
+		afterEach() {
 			window.sessionStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
-			this.oAppComponent._restoreGetAppComponentStub();
 			this.oAppComponent.destroy();
+			FlexControllerFactory._instanceCache = {};
 			sandbox.restore();
 		}
 	}, function() {
@@ -372,13 +365,13 @@ sap.ui.define([
 			sandbox.stub(Utils, "getUrlParameter").returns(Layer.VENDOR);
 			window.sessionStorage.setItem("sap.ui.rta.restart.VENDOR", "MockCompName");
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					if (sServiceName === "ShellNavigation") {
 						return Promise.resolve({
-							toExternal: function() {
+							toExternal() {
 								return true;
 							},
-							registerNavigationFilter: function() {
+							registerNavigationFilter() {
 								return true;
 							}
 						});
@@ -424,13 +417,13 @@ sap.ui.define([
 				}
 			]);
 			sandbox.stub(Utils, "getUshellContainer").returns({
-				getServiceAsync: function(sServiceName) {
+				getServiceAsync(sServiceName) {
 					if (sServiceName === "ShellNavigation") {
 						return Promise.resolve({
-							toExternal: function() {
+							toExternal() {
 								return true;
 							},
-							registerNavigationFilter: function() {
+							registerNavigationFilter() {
 								return true;
 							}
 						});
@@ -502,6 +495,65 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oLoadLibStub.callCount, 0, "rta library is requested");
 			}.bind(this));
+		});
+	});
+
+	QUnit.module("instanceCreatedHook: i18nVendorModel", {
+		beforeEach() {
+			const sMockComponentName = "MockCompName";
+			this.oAppComponent = RtaQunitUtils.createAndStubAppComponent(sandbox, sMockComponentName);
+			sandbox.stub(FlexState, "initialize").resolves();
+		},
+		afterEach() {
+			this.oAppComponent.destroy();
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("with messagebundle and a vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.VENDOR
+						}
+					]
+				},
+				messagebundle: {i_123: "translatedKey"}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.ok(this.oAppComponent.getModel("i18nFlexVendor"), "the model is available");
+		});
+
+		QUnit.test("with messagebundle and no vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.CUSTOMER
+						}
+					]
+				},
+				messagebundle: {i_123: "translatedKey"}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.notOk(this.oAppComponent.getModel("i18nFlexVendor"), "the model is not available");
+		});
+
+		QUnit.test("with no messagebundle and a vendor change", async function(assert) {
+			sandbox.stub(FlexState, "getStorageResponse").returns({
+				changes: {
+					changes: [
+						{
+							layer: Layer.VENDOR
+						}
+					]
+				}
+			});
+
+			await ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {});
+			assert.notOk(this.oAppComponent.getModel("i18nFlexVendor"), "the model is not available");
 		});
 	});
 

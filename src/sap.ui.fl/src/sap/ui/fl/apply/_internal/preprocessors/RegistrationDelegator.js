@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/DelegateMediator",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
 	"sap/ui/fl/initial/_internal/changeHandlers/ChangeHandlerRegistration",
-	"sap/ui/core/Configuration",
+	"sap/ui/base/DesignTime",
 	// the lower 2 are set as a callback in the "register...Processors" which are not detected as dependencies from the preload-building
 	"sap/ui/fl/apply/_internal/preprocessors/ControllerExtension",
 	"sap/ui/fl/apply/_internal/preprocessors/XmlPreprocessor"
@@ -31,7 +31,7 @@ sap.ui.define([
 	DelegateMediator,
 	DelegateMediatorAPI,
 	ChangeHandlerRegistration,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -43,7 +43,8 @@ sap.ui.define([
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.43.0
+	 * @since 1.43.0
+	 * @private
 	 */
 	var RegistrationDelegator = {};
 
@@ -66,7 +67,7 @@ sap.ui.define([
 
 	function registerXMLPreprocessor() {
 		if (XMLView.registerPreprocessor) {
-			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor", true);
+			XMLView.registerPreprocessor("viewxml", "sap.ui.fl.apply._internal.preprocessors.XmlPreprocessor");
 		}
 	}
 
@@ -82,7 +83,7 @@ sap.ui.define([
 		if (ManifestUtils.isFlexExtensionPointHandlingEnabled(oView)) {
 			return "sap/ui/fl/apply/_internal/extensionPoint/Processor";
 		}
-		if (Configuration.getDesignMode()) {
+		if (DesignTime.isDesignModeEnabled()) {
 			return "sap/ui/fl/write/_internal/extensionPoint/Processor";
 		}
 		return undefined;

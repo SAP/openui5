@@ -59,7 +59,7 @@ sap.ui.define([
 	 * @public
    	 * @experimental As of version 1.48.0
 	 */
-	var FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
+	const FilterField = FieldBase.extend("sap.ui.mdc.FilterField", /* @lends sap.ui.mdc.FilterField.prototype */ {
 		metadata: {
 			library: "sap.ui.mdc",
 			designtime: "sap/ui/mdc/designtime/field/FilterField.designtime",
@@ -67,7 +67,7 @@ sap.ui.define([
 				/**
 				 * Supported operator names for conditions.
 				 *
-				 * If empty, default operators depending on used data type are taken.
+				 * If empty, default operators depending on used data type are taken. The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 				 *
 				 * @since 1.73.0
 				 */
@@ -100,10 +100,10 @@ sap.ui.define([
 					defaultValue: ""
 				},
 				/**
-				 * The type of data for the description part of a equal-condition
+				 * The type of data for the description part of an "equal to" condition.
 				 * This type is used to parse, format, and validate the value.
 				 *
-				 * Here a data type instance can be provided or an object containing <code>name</code>, <code>formatOptions</code> and <code>constraints</code>.
+				 * Here a data type instance can be provided or an object containing <code>name</code>, <code>formatOptions</code>, and <code>constraints</code>.
 				 *
 				 * @since 1.118.0
 				 */
@@ -176,7 +176,7 @@ sap.ui.define([
 
 	// TODO: remove fallback if propertyKey is used by stakeholders
 	FilterField.prototype.getPropertyKey = function() {
-		var sPropertyKey = this.getProperty("propertyKey");
+		let sPropertyKey = this.getProperty("propertyKey");
 		if (!sPropertyKey) {
 			sPropertyKey = this.getFieldPath();
 		}
@@ -221,7 +221,7 @@ sap.ui.define([
 
 	FilterField.prototype.fireChangeEvent = function(aConditions, bValid, vWrongValue, oPromise) {
 
-		var vValue;
+		let vValue;
 
 		if (aConditions) { // even if empty and error is returned, only in async case it is really empty
 			if (bValid) {
@@ -241,7 +241,7 @@ sap.ui.define([
 
 	FilterField.prototype.getSupportedOperators = function() {
 
-		var aOperators = this.getOperators();
+		let aOperators = this.getOperators();
 
 		if (aOperators.length === 0) {
 			// use default operators
@@ -255,7 +255,7 @@ sap.ui.define([
 	};
 
 	FilterField.prototype.setOperators = function(aOperators) {
-		var aOperatorNames = [];
+		const aOperatorNames = [];
 
 		if (!Array.isArray(aOperators)) {
 			// aOperators can be a comma separated string of operators.
@@ -279,6 +279,7 @@ sap.ui.define([
 	 * Adds an operator to the list of known operators.
 	 *
  	 * <b>Note</b>: If no operator is set, the used <code>datatType</code> of the <code>FilterField</code> defines the set of default operators.
+	 * The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -287,9 +288,9 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterField.prototype.addOperator = function(vOperator) {
-		var aOperators = this.getSupportedOperators();
+		const aOperators = this.getSupportedOperators();
 
-		var sOpName = vOperator;
+		let sOpName = vOperator;
 		if (typeof vOperator !== "string") {
 			sOpName = vOperator.name;
 		}
@@ -305,6 +306,7 @@ sap.ui.define([
 	 * Adds an array of operators to the list of known operators.
 	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 * The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 * @returns {this} Reference to <code>this</code> to allow method chaining
@@ -326,6 +328,7 @@ sap.ui.define([
 
 	/**
 	 * Removes an operator from the list of known operators.
+	 * The standard operators can are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator|string} vOperator The operator instance or operator name
 	 *
@@ -333,8 +336,8 @@ sap.ui.define([
 	 * @public
 	 */
 	FilterField.prototype.removeOperator = function(vOperator) {
-		var aOperators = this.getSupportedOperators();
-		var sOpName = vOperator;
+		const aOperators = this.getSupportedOperators();
+		let sOpName = vOperator;
 		if (typeof vOperator !== "string") {
 			sOpName = vOperator.name;
 		}
@@ -349,6 +352,7 @@ sap.ui.define([
 	 * Removes all given operators from the list of known operators.
 	 *
 	 * <b>Note</b>: <code>aOperators</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator}, the instance itself, or multiple operators inside an array.
+	 * The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 	 *
 	 * @param {sap.ui.mdc.condition.Operator[]} aOperators Array of operators
 	 *
@@ -378,7 +382,7 @@ sap.ui.define([
 
 
 	FilterField.prototype.setDefaultOperator = function(oOperator) {
-		var sName = oOperator;
+		let sName = oOperator;
 		if (oOperator && typeof oOperator !== "string") {
 			sName = oOperator.name;
 		}
@@ -395,17 +399,16 @@ sap.ui.define([
 			// MultipleLines is also not used for FilterFields in the moment.
 			// MaxConditions should also be set on applySettings
 
-			var sId = this._getValueHelp();
-			var oValueHelp = sap.ui.getCore().byId(sId);
-			var oBindingInfo = this.getBindingInfo("conditions");
-			var oBinding = this.getBinding("conditions");
+			const sId = this._getValueHelp();
+			const oValueHelp = sap.ui.getCore().byId(sId);
+			const oBindingInfo = this.getBindingInfo("conditions");
+			const oBinding = this.getBinding("conditions");
 			if (this.getDisplay() !== FieldDisplay.Value && sId && (!oValueHelp || (oBindingInfo && !oBinding))) {
 				// ValueHelp might need ConditionModel to determine value of InParameters to get the description.
 				// So if ValueHelp not exists right now or binding to ConditionModel not already created, wait.
 				return;
 			}
 
-			this.getContentFactory().retrieveDataType();
 			FieldBase.prototype.checkCreateInternalContent.apply(this, arguments);
 		}
 
@@ -427,8 +430,8 @@ sap.ui.define([
 		if (this.isPropertyInitial("propertyKey")) {
 			return FieldBase.prototype.isSearchField.apply(this, arguments); // fallback to old logic based on binding path
 		} else {
-			var sPropertyKey = this.getPropertyKey();
-			var regexp = new RegExp("^\\*(.*)\\*|\\$search$");
+			const sPropertyKey = this.getPropertyKey();
+			const regexp = new RegExp("^\\*(.*)\\*|\\$search$");
 			return regexp.test(sPropertyKey) && this.getMaxConditions() === 1;
 		}
 

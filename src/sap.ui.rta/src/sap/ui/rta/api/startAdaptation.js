@@ -25,7 +25,6 @@ sap.ui.define([
 	 * With this API you are also able to modify the UI adaptation plugins list and or add some event handler functions to be called on start, failed and stop events.
 	 *
 	 * @function
-	 * @experimental since 1.83
 	 * @since 1.83
 	 * @alias module:sap/ui/rta/api/startAdaptation
 	 *

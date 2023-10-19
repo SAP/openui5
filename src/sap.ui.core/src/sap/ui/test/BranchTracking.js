@@ -643,10 +643,9 @@
 		QUnit.module = module;
 		sap.ui.require([
 			"sap/base/Log",
-			"sap/base/util/UriParameters",
 			"sap/ui/base/SyncPromise"
-		], function (Log, UriParameters, SyncPromise) {
-			var oUriParameters = UriParameters.fromQuery(window.location.search);
+		], function (Log, SyncPromise) {
+			var oUriParameters = new URLSearchParams(window.location.search);
 
 			bInfo = Log.isLoggable(Log.Level.INFO, sClassName);
 			sFilter = oUriParameters.get("filter");

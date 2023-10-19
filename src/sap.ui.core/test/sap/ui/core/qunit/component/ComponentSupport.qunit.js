@@ -4,8 +4,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ComponentSupport',
+	"sap/ui/core/Element",
 	'sap/ui/core/library'
-], function(Log, hyphenate, UIComponent, ComponentContainer, ComponentSupport, library) {
+], function(Log, hyphenate, UIComponent, ComponentContainer, ComponentSupport, Element, library) {
 
 	"use strict";
 	/*global QUnit, sinon, Promise*/
@@ -197,10 +198,10 @@ sap.ui.define([
 			assert.ok(document.getElementById("container3"), "ComponentContainer element for third Component found!");
 			assert.ok(document.getElementById("container4"), "ComponentContainer element for fourth Component found!");
 
-			var oContainer1 = sap.ui.getCore().byId("container1");
-			var oContainer2 = sap.ui.getCore().byId("container2");
-			var oContainer3 = sap.ui.getCore().byId("container3");
-			var oContainer4 = sap.ui.getCore().byId("container4");
+			var oContainer1 = Element.getElementById("container1");
+			var oContainer2 = Element.getElementById("container2");
+			var oContainer3 = Element.getElementById("container3");
+			var oContainer4 = Element.getElementById("container4");
 			assert.ok(oContainer1 instanceof ComponentContainer, "ComponentContainer for first Component found!");
 			assert.ok(oContainer2 instanceof ComponentContainer, "ComponentContainer for second Component found!");
 			assert.ok(oContainer3 instanceof ComponentContainer, "ComponentContainer for third Component found!");

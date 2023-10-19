@@ -50,8 +50,8 @@ sap.ui.define([
     ) {
         "use strict";
 
-        var DrillStackHandler;
-        var TitleLevel = coreLibrary.TitleLevel;
+        let DrillStackHandler;
+        const TitleLevel = coreLibrary.TitleLevel;
 
         /**
          * Constructor for a new Chart.
@@ -72,7 +72,7 @@ sap.ui.define([
          * @alias sap.ui.mdc.Chart
          * @experimental As of version 1.88
          */
-        var Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
+        const Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
             metadata: {
                 library: "sap.ui.mdc",
                 designtime: "sap/ui/mdc/designtime/chart/Chart.designtime",
@@ -189,7 +189,7 @@ sap.ui.define([
 
                     /**
                      * Defines the sort conditions.<br>
-                     *
+                     * <b>Note:</b> This property must not be bound.<br>
                      * <b>Note:</b> This property is exclusively used for handling SAPUI5 flexibility changes. Do not use it for anything else.
                      *
                      * @since 1.88
@@ -276,6 +276,17 @@ sap.ui.define([
                     },
 
                     /**
+                     * Defines style of the header.
+                     * For more information, see {@link sap.m.Title#setTitleStyle}.
+                     * @since 1.120
+                     */
+                    headerStyle: {
+                        type: "sap.ui.core.TitleLevel",
+                        group: "Appearance"
+                        // defaultValue : TitleLevel.Auto
+                    },
+
+                    /**
                      * Determines whether the header text is shown in the chart. Regardless of its value, the given header text is used to label the chart
                      * correctly for accessibility purposes.
                      *
@@ -291,6 +302,10 @@ sap.ui.define([
                     /**
                      * This property describes the measures and dimensions visible in the chart.
                      * Changes in the personalization are also reflected here.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     items: {
                         type: "sap.ui.mdc.chart.Item",
@@ -299,6 +314,10 @@ sap.ui.define([
                     /**
                      * This aggregation describes actions that are added to the chart toolbar.<br>
                      * For more information, see {@link sap.ui.mdc.actiontoolbar.ActionToolbarAction}.
+                     * <b>Note:</b>
+				     * This aggregation is managed by the control, can only be populated during the definition in the XML view, and is not bindable.
+				     * Any changes of the initial aggregation content might result in undesired effects.
+				     * Changes of the aggregation have to be made with the {@link sap.ui.mdc.p13n.StateUtil StateUtil}.
                      */
                     actions: {
                         type: "sap.ui.core.Control",
@@ -406,8 +425,11 @@ sap.ui.define([
             renderer: ChartRenderer
         });
 
-        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+        const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 
+        /**
+         * @borrows sap.ui.mdc.mixin.FilterIntegrationMixin.rebind as #rebind
+         */
         FilterIntegrationMixin.call(Chart.prototype);
 
 	/**
@@ -473,10 +495,10 @@ sap.ui.define([
         };
 
         Chart.prototype.setP13nMode = function(aModes) {
-            var aSortedKeys = null;
+            let aSortedKeys = null;
             if (aModes && aModes.length >= 1){
                 aSortedKeys = [];
-                var mKeys = aModes.reduce(function(mMap, sKey, iIndex){
+                const mKeys = aModes.reduce(function(mMap, sKey, iIndex){
                     mMap[sKey] = true;
                     return mMap;
                 }, {});
@@ -509,11 +531,11 @@ sap.ui.define([
         };
 
         Chart.prototype._updateAdaptation = function(aMode) {
-            var oRegisterConfig = {
+            const oRegisterConfig = {
                 controller: {}
             };
 
-            var mRegistryOptions = {
+            const mRegistryOptions = {
                 Item: new ChartItemController({control: this}),
                 Sort: new SortController({control: this}),
                 Filter: new FilterController({control: this}),
@@ -522,8 +544,8 @@ sap.ui.define([
 
             if (aMode && aMode.length > 0) {
                 aMode.forEach(function(sMode){
-                    var sKey = sMode;
-                    var oController = mRegistryOptions[sMode];
+                    const sKey = sMode;
+                    const oController = mRegistryOptions[sMode];
                     if (oController) {
                         oRegisterConfig.controller[sKey] = oController;
                     }
@@ -537,7 +559,7 @@ sap.ui.define([
         Chart.prototype.setFilterConditions = function(mConditions) {
             this.setProperty("filterConditions", mConditions, true);
 
-            var oP13nFilter = this.getInbuiltFilter();
+            const oP13nFilter = this.getInbuiltFilter();
             if (oP13nFilter) {
                 oP13nFilter.setFilterConditions(mConditions);
             }
@@ -586,9 +608,9 @@ sap.ui.define([
                 this._fnRejectInnerChartBound = reject;
             }.bind(this));
 
-            var pLoadDelegate = this.initControlDelegate();
+            const pLoadDelegate = this.initControlDelegate();
 
-            var aInitPromises = [ pLoadDelegate ];
+            const aInitPromises = [ pLoadDelegate ];
 
             if (this.isFilteringEnabled()) {
                 aInitPromises.push(this.retrieveInbuiltFilter());
@@ -649,8 +671,8 @@ sap.ui.define([
 
                         oP13nDialog.attachEventOnce("afterClose", function() {
 
-                            var aConditions = this.getFilterConditions();
-                            var bNoConditions = !Object.keys(aConditions).find(function(oKey) {
+                            const aConditions = this.getFilterConditions();
+                            const bNoConditions = !Object.keys(aConditions).find(function(oKey) {
                                 return aConditions[oKey] && aConditions[oKey].length > 0;
                             });
 
@@ -687,9 +709,9 @@ sap.ui.define([
 
         Chart.prototype._getFilterInfoText = function() {
             if (this.getInbuiltFilter()) {
-                var sText;
-                var aFilterNames = this._getLabelsFromFilterConditions();
-                var oListFormat = ListFormat.getInstance();
+                let sText;
+                const aFilterNames = this._getLabelsFromFilterConditions();
+                const oListFormat = ListFormat.getInstance();
 
                 if (aFilterNames.length > 0) {
 
@@ -752,7 +774,7 @@ sap.ui.define([
         Chart.prototype._loadDelegate = function () {
 
             return new Promise(function (resolve) {
-                var aNotLoadedModulePaths = [this.getDelegate().name];
+                const aNotLoadedModulePaths = [this.getDelegate().name];
 
                 function onModulesLoadedSuccess(oDelegate) {
                     resolve(oDelegate);
@@ -797,10 +819,10 @@ sap.ui.define([
             }
 
             this.setBusy(true);
+            let iIndex;
             switch (oChange.mutation) {
 
                 case "insert":
-                    var iIndex;
 
                     if (oChange.child && oChange.child.getType()) {
                         iIndex = this.getItems().filter(function(oItem){return oItem.getType() === oChange.child.getType();}).indexOf(oChange.child);
@@ -853,8 +875,8 @@ sap.ui.define([
                 return;
             }
 
-            var oChartDelegate = this.getControlDelegate();
-            var oBindingInfo;
+            const oChartDelegate = this.getControlDelegate();
+            let oBindingInfo;
             if (oChartDelegate._getBindingInfo) {
                 oBindingInfo = oChartDelegate._getBindingInfo(this);
                 Log.warning("mdc Chart", "calling the private delegate._getBindingInfo. Please make the function public!");
@@ -874,7 +896,7 @@ sap.ui.define([
             if (this.getAggregation("_toolbar")) {
                 return this.getAggregation("_toolbar");
             } else if (!this._bIsDestroyed){
-                var oToolbar = new ChartToolbar(this.getId() + "--toolbar", {
+                const oToolbar = new ChartToolbar(this.getId() + "--toolbar", {
                     design: "Transparent"
                 });
 
@@ -1150,14 +1172,6 @@ sap.ui.define([
             return this;
         };
 
-        Chart.prototype.setHeaderVisible = function(bVisible) {
-            this.setProperty("headerVisible", bVisible, true);
-            if (this.getAggregation("_toolbar")) {
-                this.getAggregation("_toolbar").setHeaderVisible(bVisible);
-            }
-            return this;
-        };
-
         /**
          * Gets the managed object model.
          * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model
@@ -1184,7 +1198,8 @@ sap.ui.define([
         };
 
         Chart.prototype._checkStyleClassesForDimensions = function() {
-            var bHasDimension = this.getItems().some(function(oItem){ return oItem.getType() === "groupable"; });
+            const bHasDimension = this._oBreadcrumbs && this._oBreadcrumbs.getVisible() // breadcrump must be visible and dimension exist
+                                && this.getItems().some(function(oItem){ return oItem.getType() === "groupable"; });
 
             if (!bHasDimension && this.hasStyleClass("sapUiMDCChartGrid")) {
                 this.removeStyleClass("sapUiMDCChartGrid");
@@ -1204,8 +1219,8 @@ sap.ui.define([
          * @private
          */
         Chart.prototype.getCurrentState = function () {
-            var oState = {};
-            var aP13nMode = this.getP13nMode();
+            const oState = {};
+            const aP13nMode = this.getP13nMode();
 
             if (aP13nMode) {
                 if (aP13nMode.indexOf("Item") > -1) {
@@ -1236,7 +1251,7 @@ sap.ui.define([
          * @private
          */
         Chart.prototype._getVisibleProperties = function () {
-            var aProperties = [];
+            const aProperties = [];
             this.getItems().forEach(function (oItem) {
                 aProperties.push({
                     name: oItem.getPropertyKey(),
@@ -1294,8 +1309,8 @@ sap.ui.define([
 			}
 		};
 
-        var fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
-            var bRebindRequired = false;
+        const fCheckIfRebindIsRequired = function(aAffectedP13nControllers) {
+            let bRebindRequired = false;
             if (
                 aAffectedP13nControllers && (
                     aAffectedP13nControllers.indexOf("Sort") > -1 ||
@@ -1322,7 +1337,6 @@ sap.ui.define([
             if (this.getAggregation("_toolbar")){
                 this.getAggregation("_toolbar").addVariantManagement(oControl);
             }
-
 
             return this;
         };
@@ -1354,17 +1368,48 @@ sap.ui.define([
             return Control.prototype.addAggregation.apply(this, ["actions", oControl]);
         };
 
+        Chart.prototype.setHeader = function(sHeader) {
+            this.setProperty("header", sHeader);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeader(sHeader);
+            }
+
+            return this;
+        };
+
         Chart.prototype.setHeaderLevel = function(sHeaderLevel) {
+            this.setProperty("headerLevel", sHeaderLevel);
+
             if (this.getAggregation("_toolbar")) {
                 this.getAggregation("_toolbar")._setHeaderLevel(sHeaderLevel);
             }
 
-            this.setProperty("headerLevel", sHeaderLevel);
+            return this;
+        };
+
+        Chart.prototype.setHeaderStyle = function(sHeaderStyle) {
+            this.setProperty("headerStyle", sHeaderStyle);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderStyle(sHeaderStyle);
+            }
+
+            return this;
+        };
+
+        Chart.prototype.setHeaderVisible = function(bVisible) {
+            this.setProperty("headerVisible", bVisible, true);
+
+            if (this.getAggregation("_toolbar")) {
+                this.getAggregation("_toolbar")._setHeaderVisible(bVisible);
+            }
+
             return this;
         };
 
         Chart.prototype.getVariant = function() {
-            var oToolbar = this.getAggregation("_toolbar");
+            const oToolbar = this.getAggregation("_toolbar");
             return oToolbar  ? oToolbar._getVariantReference() : this.getAggregation("variant");
         };
 
@@ -1375,7 +1420,7 @@ sap.ui.define([
 
             if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
                 // CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
-                var oSettingsBtn = this._getToolbar()._oSettingsBtn;
+                const oSettingsBtn = this._getToolbar()._oSettingsBtn;
                 if (oSettingsBtn && oSettingsBtn.getVisible() && oSettingsBtn.getEnabled()) {
                     oSettingsBtn.firePress();
 
@@ -1387,6 +1432,102 @@ sap.ui.define([
             }
 
         };
+
+        /**
+         * @name sap.ui.mdc.Chart#addAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAction
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllActions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#addItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#destroyItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#insertItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeItem
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#removeAllItems
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getSortConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getFilterConditions
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#setPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
+
+        /**
+         * @name sap.ui.mdc.Chart#getPropertyInfo
+         * @private
+         * @ui5-restricted sap.ui.mdc, sap.ui.fl
+         */
 
         return Chart;
     });

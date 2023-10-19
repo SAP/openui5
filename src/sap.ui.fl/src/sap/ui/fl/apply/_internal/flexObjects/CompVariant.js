@@ -69,8 +69,10 @@ sap.ui.define([
 				}
 			}
 		},
-		constructor: function(mPropertyBag) {
-			Variant.apply(this, arguments);
+		// eslint-disable-next-line object-shorthand
+		constructor: function(...aArgs) {
+			const [mPropertyBag] = aArgs;
+			Variant.apply(this, aArgs);
 
 			// fileType "variant" is only for compVariant
 			this.setFileType("variant");
@@ -130,9 +132,7 @@ sap.ui.define([
 
 		if (LayerUtils.isSapUiLayerParameterProvided()) {
 			sActiveLayer = LayerUtils.getCurrentLayer();
-		} else if (!sActiveLayer) {
-			sActiveLayer = oSettings.isPublicLayerAvailable() ? Layer.PUBLIC : Layer.CUSTOMER;
-		}
+		} else {sActiveLayer ||= oSettings.isPublicLayerAvailable() ? Layer.PUBLIC : Layer.CUSTOMER;}
 		var bLayerWritable = sLayer === sActiveLayer;
 		var bUserAuthorized = oSettings.isKeyUser() || isUserAuthor(sUserId);
 
@@ -308,8 +308,8 @@ sap.ui.define([
 		this.setState(States.LifecycleState.DIRTY);
 	};
 
-	CompVariant.prototype.cloneFileContentWithNewId = function() {
-		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, arguments);
+	CompVariant.prototype.cloneFileContentWithNewId = function(...aArgs) {
+		var mFileContent = Variant.prototype.cloneFileContentWithNewId.apply(this, aArgs);
 		mFileContent.variantId = mFileContent.fileName;
 		return mFileContent;
 	};

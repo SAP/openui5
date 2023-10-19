@@ -6,58 +6,66 @@ sap.ui.define([
 	"sap/base/util/restricted/_union",
 	"sap/base/util/includes",
 	"sap/base/util/merge",
-	"sap/base/util/UriParameters",
 	"sap/base/Log",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/changes/Applier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
-	"sap/ui/fl/apply/_internal/flexObjects/FlexObject",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/_internal/flexObjects/States",
 	"sap/ui/fl/apply/_internal/flexState/changes/DependencyHandler",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/fl/apply/_internal/flexState/DataSelector",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/initial/_internal/StorageUtils",
+	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/write/api/Version",
-	"sap/ui/fl/Cache",
-	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/performance/Measurement"
 ], function(
 	union,
 	includes,
 	merge,
-	UriParameters,
 	Log,
 	JsControlTreeModifier,
 	Component,
 	Applier,
 	ChangesUtils,
-	FlexObject,
 	FlexObjectFactory,
 	States,
 	DependencyHandler,
 	VariantManagementState,
+	DataSelector,
 	FlexState,
-	StorageUtils,
+	Version,
 	Settings,
 	Condenser,
 	Storage,
-	Version,
-	Cache,
-	LayerUtils,
 	Layer,
+	LayerUtils,
 	Utils,
-	JSONModel,
 	Measurement
 ) {
 	"use strict";
+
+	const oVariantIndependentUIChangesDataSelector = new DataSelector({
+		id: "variantIndependentUIChanges",
+		parentDataSelector: FlexState.getFlexObjectsDataSelector(),
+		executeFunction(aFlexObjects) {
+			return aFlexObjects.filter(function(oFlexObject) {
+				const bIsUIChange = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.UIChange");
+				const bIsControllerExtension = oFlexObject.isA("sap.ui.fl.apply._internal.flexObjects.ControllerExtensionChange");
+				const bCorrectFileType = oFlexObject.getFileType() === "change" || oFlexObject.getFileType() === "codeExt";
+				return (bIsUIChange || bIsControllerExtension)
+					&& bCorrectFileType
+					&& !oFlexObject.getVariantReference()
+					&& !oFlexObject.getSelector().persistencyKey;
+			});
+		}
+	});
 
 	/**
 	 * Helper object to access a change from the back end. Access helper object for each change (and variant) which was fetched from the back end
@@ -65,7 +73,8 @@ sap.ui.define([
 	 * @constructor
 	 * @author SAP SE
 	 * @version ${version}
-	 * @experimental Since 1.25.0
+	 * @since 1.25.0
+	 * @private
 	 * @param {object} mComponent - Component data to initiate <code>ChangePersistence</code> instance
 	 * @param {string} mComponent.name - Name of the component this instance is responsible for
 	 */
@@ -86,89 +95,26 @@ sap.ui.define([
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
 		this._mChangesEntries = {};
-		this._bHasChangesOverMaxLayer = false;
-		this.HIGHER_LAYER_CHANGES_EXIST = "higher_layer_changes_exist";
+		oVariantIndependentUIChangesDataSelector.clearCachedResult({reference: this._mComponent.name});
 	};
 
-	function getChangeInstance(oFileContent, oChangeOrChangeContent) {
-		var oChange;
-		if (oChangeOrChangeContent instanceof FlexObject) {
-			oChange = oChangeOrChangeContent; // can have other states
-			this._mChangesEntries[oChange.getId()] = oChange;
-		} else {
-			if (!this._mChangesEntries[oChangeOrChangeContent.fileName]) {
-				this._mChangesEntries[oChangeOrChangeContent.fileName] = FlexObjectFactory.createFromFileContent(oChangeOrChangeContent);
+	async function getChangesFromFlexState(sReference, mPropertyBag, bInvalidateCache) {
+		// TODO the CompVariantState causes an exception in the save scenario
+		try {
+			if (bInvalidateCache) {
+				await FlexState.update(mPropertyBag);
 			}
-			oChange = this._mChangesEntries[oChangeOrChangeContent.fileName];
-			oChange.setState(States.LifecycleState.PERSISTED);
+
+			await FlexState.getStorageResponse(sReference);
+		} catch (oError) {
+			Log.error("Error during ChangePersistence.prototype.getChangesForComponent");
 		}
-		return oChange;
-	}
-
-	/**
-	 * Return the name of the SAPUI5 component. All changes are assigned to 1 SAPUI5 component. The SAPUI5 component also serves as authorization
-	 * object.
-	 *
-	 * @returns {string} component name
-	 * @public
-	 */
-	ChangePersistence.prototype.getComponentName = function() {
-		return this._mComponent.name;
-	};
-
-	/**
-	 * Returns an cache key for caching views.
-	 *
-	 * @param {object} oAppComponent - Application component
-	 * @returns {Promise} Returns a promise with an ETag for caching
-	 * @private
-	 * @ui5-restricted sap.ui.fl
-	 */
-	ChangePersistence.prototype.getCacheKey = function(oAppComponent) {
-		return Cache.getCacheKey(this._mComponent, oAppComponent);
-	};
-
-	/**
-	 * Verifies whether a change fulfils the preconditions.
-	 *
-	 * All changes need to have a fileType;
-	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
-	 *
-	 * @param {object} oChangeOrChangeContent Change instance or content of the change
-	 *
-	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
-	 */
-	function preconditionsFulfilled(oChangeOrChangeContent) {
-		var sFileType;
-		var sVariantManagementReference;
-		var sVariantReference;
-		var sSelectorId;
-
-		if (oChangeOrChangeContent instanceof FlexObject) {
-			var oChange = oChangeOrChangeContent;
-			sFileType = oChange.getFileType();
-			sVariantReference = oChange.getVariantReference();
-			sSelectorId = oChange.getSelector() && oChange.getSelector().id;
-		} else {
-			var oChangeContent = oChangeOrChangeContent;
-			sFileType = oChangeContent.fileType;
-			sVariantManagementReference = oChangeContent.variantManagementReference;
-			sVariantReference = oChangeContent.variantReference;
-			sSelectorId = oChangeContent.selector && oChangeContent.selector.id;
-		}
-
-		var bControlVariantChange = false;
-		if ((sFileType === "ctrl_variant") || (sFileType === "ctrl_variant_change") || (sFileType === "ctrl_variant_management_change")) {
-			bControlVariantChange = sVariantManagementReference || sVariantReference || sSelectorId;
-		}
-
-		return sFileType === "change" || bControlVariantChange;
 	}
 
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} [mPropertyBag] Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] Manifest that belongs to the current running component
 	 * @param {string} [mPropertyBag.siteId] ID of the site belonging to the current running component
 	 * @param {string} [mPropertyBag.currentLayer] Specifies a single layer for loading changes. If this parameter is set, the max layer filtering is not applied
@@ -181,104 +127,31 @@ sap.ui.define([
 	 * @returns {Promise} Promise resolving with an array of changes
 	 * @public
 	 */
-	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag, bInvalidateCache) {
-		return Utils.getUShellService("URLParsing")
-		.then(function(oURLParsingService) {
-			this._oUShellURLParsingService = oURLParsingService;
-			return Cache.getChangesFillingCache(this._mComponent, mPropertyBag, bInvalidateCache);
-		}.bind(this))
-		.then(function(mPropertyBag, oWrappedChangeFileContent) {
-			var oChangeFileContent = merge({}, oWrappedChangeFileContent);
-			var oAppComponent = mPropertyBag && mPropertyBag.component && Utils.getAppComponentForControl(mPropertyBag.component);
+	ChangePersistence.prototype.getChangesForComponent = async function(mPropertyBag, bInvalidateCache) {
+		mPropertyBag ||= {};
+		await getChangesFromFlexState(this._mComponent.name, mPropertyBag, bInvalidateCache);
 
-			var bHasFlexObjects = StorageUtils.isStorageResponseFilled(oChangeFileContent.changes);
-
-			if (!bHasFlexObjects) {
-				return [];
-			}
-
-			var aChanges = oChangeFileContent.changes.changes;
-
-			// Binds a json model of message bundle to the component the first time a change within the vendor layer was detected
-			// It enables the translation of changes
-			if (!this._oMessagebundle && oChangeFileContent.messagebundle && oAppComponent) {
-				if (!oAppComponent.getModel("i18nFlexVendor")) {
-					if (aChanges.some(function(oChange) {
-						return oChange.layer === Layer.VENDOR;
-					})) {
-						this._oMessagebundle = oChangeFileContent.messagebundle;
-						var oModel = new JSONModel(this._oMessagebundle);
-						oAppComponent.setModel(oModel, "i18nFlexVendor");
-					}
-				}
-			}
-
-			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
-			var bFilterMaxLayer = !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter);
-			var fnFilter = function() { return true; };
-			if (sCurrentLayer) {
-				aChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aChanges, sCurrentLayer);
-			} else if (LayerUtils.isLayerFilteringRequired(this._oUShellURLParsingService) && bFilterMaxLayer) {
-				fnFilter = filterChangeForMaxLayer.bind(this);
-				// If layer filtering required, excludes changes in higher layer than the max layer
-				aChanges = aChanges.filter(fnFilter);
-			} else if (this._bHasChangesOverMaxLayer && !bFilterMaxLayer) {
-				// ignoreMaxLayerParameter = true is set from flexController.hasHigherLayerChanges(),
-				// triggered by rta.stop(), to check if reload needs to be performed
-				// as ctrl variant changes are already gone and to improve performance, just return the constant
-				this._bHasChangesOverMaxLayer = false;
-				return this.HIGHER_LAYER_CHANGES_EXIST;
-			}
-
-			var bIncludeControlVariants = oChangeFileContent.changes && mPropertyBag && mPropertyBag.includeCtrlVariants;
-			var aFilteredVariantChanges = this._getAllCtrlVariantChanges(oChangeFileContent, bIncludeControlVariants, fnFilter);
-			aChanges = aChanges.concat(aFilteredVariantChanges);
-
-			return this._checkAndGetChangeInstances(aChanges, oChangeFileContent);
-		}.bind(this, mPropertyBag));
-	};
-
-	ChangePersistence.prototype._checkAndGetChangeInstances = function(aChanges, oChangeFileContent) {
-		return aChanges
-		.filter(preconditionsFulfilled)
-		.map(getChangeInstance.bind(this, oChangeFileContent));
-	};
-
-	function filterChangeForMaxLayer(oChangeOrChangeContent) {
-		if (LayerUtils.isOverMaxLayer(getLayerFromChangeOrChangeContent(oChangeOrChangeContent), this._oUShellURLParsingService)) {
-			if (!this._bHasChangesOverMaxLayer) {
-				this._bHasChangesOverMaxLayer = true;
-			}
-			return false;
+		const aAllChanges = FlexState.getFlexObjectsDataSelector().get({reference: this._mComponent.name});
+		if (!aAllChanges.length) {
+			return [];
 		}
-		return true;
-	}
 
-	function getLayerFromChangeOrChangeContent(oChangeOrChangeContent) {
-		var sChangeLayer;
-		if (
-			typeof oChangeOrChangeContent.isA === "function"
-			&& (oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.FlVariant") || oChangeOrChangeContent.isA("sap.ui.fl.apply._internal.flexObjects.UIChange"))
-		) {
-			sChangeLayer = oChangeOrChangeContent.getLayer();
+		let aRelevantUIChanges = oVariantIndependentUIChangesDataSelector.get({reference: this._mComponent.name});
+
+		if (!mPropertyBag.includeCtrlVariants) {
+			aRelevantUIChanges = aRelevantUIChanges.concat(VariantManagementState.getInitialChanges({reference: this._mComponent.name}));
 		} else {
-			sChangeLayer = oChangeOrChangeContent.layer;
+			aRelevantUIChanges = aRelevantUIChanges.concat(VariantManagementState.getVariantDependentFlexObjects(this._mComponent.name));
 		}
-		return sChangeLayer;
-	}
 
-	ChangePersistence.prototype._getAllCtrlVariantChanges = function(oChangeFileContent, bIncludeCtrlVariants, fnFilter) {
-		if (!bIncludeCtrlVariants) {
-			return VariantManagementState.getInitialChanges({reference: this._mComponent.name});
+		if (mPropertyBag.currentLayer) {
+			aRelevantUIChanges = LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aRelevantUIChanges, mPropertyBag.currentLayer);
 		}
-		return ["variants", "variantChanges", "variantDependentControlChanges", "variantManagementChanges"]
-		.reduce(function(aResult, sVariantChangeType) {
-			if (oChangeFileContent.changes[sVariantChangeType]) {
-				return aResult.concat(oChangeFileContent.changes[sVariantChangeType]);
-			}
-			return aResult;
-		}, [])
-		.filter(fnFilter);
+
+		aRelevantUIChanges.forEach(function(oFlexObject) {
+			this._mChangesEntries[oFlexObject.getId()] = oFlexObject;
+		}.bind(this));
+		return aRelevantUIChanges;
 	};
 
 	/**
@@ -331,7 +204,7 @@ sap.ui.define([
 			if (!JsControlTreeModifier.bySelector(oDependentControlSelector, oAppComponent)) {
 				sControlId = JsControlTreeModifier.getControlIdBySelector(oDependentControlSelector, oAppComponent);
 				aNewValidControlDependencies.push(oDependentControlSelector);
-				this._mChanges.mControlsWithDependencies[sControlId] = this._mChanges.mControlsWithDependencies[sControlId] || [];
+				this._mChanges.mControlsWithDependencies[sControlId] ||= [];
 				if (!includes(this._mChanges.mControlsWithDependencies[sControlId], oChange.getId())) {
 					this._mChanges.mControlsWithDependencies[sControlId].push(oChange.getId());
 				}
@@ -361,7 +234,7 @@ sap.ui.define([
 			var aNewValidDependencies = [];
 			oInitialDependency.dependencies.forEach(function(sChangeId) {
 				if (fnDependencyValidation(sChangeId)) {
-					this._mChanges.mDependentChangesOnMe[sChangeId] = this._mChanges.mDependentChangesOnMe[sChangeId] || [];
+					this._mChanges.mDependentChangesOnMe[sChangeId] ||= [];
 					this._mChanges.mDependentChangesOnMe[sChangeId].push(oChange.getId());
 					aNewValidDependencies.push(sChangeId);
 				}
@@ -556,7 +429,7 @@ sap.ui.define([
 
 			if (bNoFlPropagationListenerAttached) {
 				var oFlexControllerFactory = sap.ui.require("sap/ui/fl/FlexControllerFactory");
-				var oFlexController = oFlexControllerFactory.create(this.getComponentName());
+				var oFlexController = oFlexControllerFactory.create(this._mComponent.name);
 				var fnPropagationListener = Applier.applyAllChangesForControl.bind(Applier, this.getChangesMapForComponent.bind(this), oAppComponent, oFlexController);
 				fnPropagationListener._bIsSapUiFlFlexControllerApplyChangesOnControl = true;
 				oAppComponent.addPropagationListener(fnPropagationListener);
@@ -607,7 +480,7 @@ sap.ui.define([
 			}
 		}
 
-		var oUriParameters = UriParameters.fromURL(window.location.href);
+		var oUriParameters = new URLSearchParams(window.location.search);
 		if (oUriParameters.has("sap-ui-xx-condense-changes")) {
 			bCondenserEnabled = oUriParameters.get("sap-ui-xx-condense-changes") === "true";
 		}
@@ -971,7 +844,7 @@ sap.ui.define([
 
 	function getAllCompVariantsEntities() {
 		var aCompVariantEntities = [];
-		var mCompVariantsMap = FlexState.getCompVariantsMap(this.getComponentName());
+		var mCompVariantsMap = FlexState.getCompVariantsMap(this._mComponent.name);
 		for (var sPersistencyKey in mCompVariantsMap) {
 			for (var sId in mCompVariantsMap[sPersistencyKey].byId) {
 				aCompVariantEntities.push(mCompVariantsMap[sPersistencyKey].byId[sId]);
@@ -997,11 +870,10 @@ sap.ui.define([
 
 			return Storage.publish({
 				transportDialogSettings: {
-					rootControl: oRootControl, // TODO not used value, should be removed.
 					styleClass: sStyleClass
 				},
 				layer: sLayer,
-				reference: this.getComponentName(),
+				reference: this._mComponent.name,
 				localChanges: aLocalChanges,
 				appVariantDescriptors: aAppVariantDescriptors
 			});
@@ -1053,7 +925,7 @@ sap.ui.define([
 			}
 
 			if (aChangeTypes) {
-				bChangeValid = bChangeValid && aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
+				bChangeValid &&= aChangeTypes.indexOf(oChange.getChangeType()) !== -1;
 			}
 
 			return bChangeValid;
@@ -1092,10 +964,10 @@ sap.ui.define([
 			getAllCompVariantsEntities.call(this).filter(isPersistedAndInLayer.bind(this, sLayer))
 			: [];
 
-		const aUiChanges = await this.getChangesForComponent({ currentLayer: sLayer, includeCtrlVariants: true});
+		const aUiChanges = await this.getChangesForComponent({currentLayer: sLayer, includeCtrlVariants: true});
 		const aFlexObjects = aUiChanges.concat(aCompVariantsEntries);
 		const mParams = {
-			reference: this.getComponentName(),
+			reference: this._mComponent.name,
 			layer: sLayer,
 			changes: aFlexObjects
 		};

@@ -15,16 +15,16 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
+	const EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new <code>TokenizerDisplay</code>.
 	 *
-	 * The <code>TokenizerDisplay</code> control enhances the {@link sap.m.Tokenizer Tokenizer} control to support diaply only tokens.
-	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class The <code>TokenizerDisplay</code> control is used to render a Tokenizer inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * @class
+	 * The <code>TokenizerDisplay</code> control is used to render a Tokenizer inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
+	 * It enhances the {@link sap.m.Tokenizer Tokenizer} control to support display only tokens.
 	 * @extends sap.m.Tokenizer
 	 * @version ${version}
 	 * @constructor
@@ -34,7 +34,7 @@ sap.ui.define([
 	 * @since 1.99.0
 	 * @alias sap.ui.mdc.field.TokenizerDisplay
 	 */
-	var TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */
+	const TokenizerDisplay = Tokenizer.extend("sap.ui.mdc.field.TokenizerDisplay", /** @lends sap.ui.mdc.field.TokenizerDisplay.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -73,9 +73,31 @@ sap.ui.define([
 
 	};
 
+	// ignore touch and tab events for displayed tokens to enable standard event handling if inside of Table
+	TokenizerDisplay.prototype.ontouchstart = function(oEvent) {
+
+		if (!this.hasOneTruncatedToken() && !oEvent.target.classList.contains("sapMTokenizerIndicator")) {
+			return; // if no truncated token, do nothing
+		}
+
+		Tokenizer.prototype.ontouchstart.apply(this, arguments);
+
+	};
+
+	TokenizerDisplay.prototype.ontap = function (oEvent) {
+		const oTargetToken = oEvent.getMark("tokenTap");
+
+		if (oTargetToken && !this.hasOneTruncatedToken()) {
+			return; // on click on token do nothing (on truncated token popover should open)
+		}
+
+		Tokenizer.prototype.ontap.apply(this, arguments);
+
+	};
+
 	TokenizerDisplay.prototype.getAccessibilityInfo = function () {
 		// just concatenate token texts and return it as description
-		var sText = this.getTokens().map(function (oToken) {
+		const sText = this.getTokens().map(function (oToken) {
 			return oToken.getText();
 		}).join(" ");
 

@@ -9,7 +9,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
+	const ValueHelpDelegate = Object.assign({}, BaseValueHelpDelegate);
 
 	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
 		//return true;

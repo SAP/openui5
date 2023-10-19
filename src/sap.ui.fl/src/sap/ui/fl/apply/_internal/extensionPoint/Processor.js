@@ -11,7 +11,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/base/SyncPromise",
 	"sap/base/util/merge",
-	"sap/ui/core/Configuration"
+	"sap/ui/base/DesignTime"
 ],
 function(
 	Applier,
@@ -21,7 +21,7 @@ function(
 	JsControlTreeModifier,
 	SyncPromise,
 	merge,
-	Configuration
+	DesignTime
 ) {
 	"use strict";
 
@@ -116,8 +116,8 @@ function(
 		oExtensionPointRegistry: undefined,
 		oRegistryPromise: Promise.resolve(),
 
-		registerExtensionPoint: function(mExtensionPointInfo) {
-			if (Configuration.getDesignMode()) {
+		registerExtensionPoint(mExtensionPointInfo) {
+			if (DesignTime.isDesignModeEnabled()) {
 				if (Processor.oExtensionPointRegistry) {
 					Processor.oExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
 					return SyncPromise.resolve();
@@ -139,7 +139,7 @@ function(
 			return SyncPromise.resolve();
 		},
 
-		createDefaultContent: function(oExtensionPoint, bSkipInsertContent, fnNestedCallback, aChanges) {
+		createDefaultContent(oExtensionPoint, bSkipInsertContent, fnNestedCallback, aChanges) {
 			if (aChanges.length === 0) {
 				return oExtensionPoint.createDefault()
 				.then(checkForExtensionPoint.bind(undefined, oExtensionPoint, fnNestedCallback))
@@ -162,7 +162,7 @@ function(
 			return SyncPromise.resolve([]);
 		},
 
-		addDefaultContentToExtensionPointInfo: function(mRegsteredExtensionPoint, bSkipInsertContent, aControls) {
+		addDefaultContentToExtensionPointInfo(mRegsteredExtensionPoint, bSkipInsertContent, aControls) {
 			if (!bSkipInsertContent) {
 				mRegsteredExtensionPoint.defaultContent = mRegsteredExtensionPoint.defaultContent.concat(aControls);
 			}
@@ -177,7 +177,7 @@ function(
 		 * @param {sap.ui.core.ExtensionPoint} oExtensionPoint - info object with extension point information
 		 * @returns {Promise} resolves when default content is created or related changes are prepared for application
 		 */
-		applyExtensionPoint: function(oExtensionPoint) {
+		applyExtensionPoint(oExtensionPoint) {
 			var oPromise = applyExtensionPoint(oExtensionPoint, false);
 			Applier.addPreConditionForInitialChangeApplying(oPromise);
 			return oPromise;

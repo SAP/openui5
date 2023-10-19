@@ -14,7 +14,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/m/MessageBox",
-	"sap/ui/core/Core"
+	"sap/ui/core/Lib"
 ], function(
 	DesignTimeMetadata,
 	ChangesWriteAPI,
@@ -29,14 +29,14 @@ sap.ui.define([
 	Panel,
 	RtaQunitUtils,
 	MessageBox,
-	Core
+	Lib
 ) {
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
 
@@ -65,7 +65,7 @@ sap.ui.define([
 				rootControl: this.oPanel
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCommandStack.destroy();
 			this.oSerializer.destroy();
 			this.oComponent.destroy();
@@ -101,15 +101,15 @@ sap.ui.define([
 				this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(false, "catch must never be called - Error: " + oError);
+				assert.ok(false, `catch must never be called - Error: ${oError}`);
 			});
 		});
 
 		QUnit.test("when execute is called and command.execute fails", function(assert) {
 			var fnDone = assert.async();
-			var oRtaResourceBundle = Core.getLibraryResourceBundle("sap.ui.rta");
+			var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 			sandbox.stub(MessageBox, "error").callsFake(function(sMessage, mOptions) {
-				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", "My Error"), "then the message text is correct");
+				assert.strictEqual(sMessage, oRtaResourceBundle.getText("MSG_GENERIC_ERROR_MESSAGE", ["My Error"]), "then the message text is correct");
 				assert.deepEqual(mOptions, {title: oRtaResourceBundle.getText("HEADER_ERROR")}, "then the message title is correct");
 				fnDone();
 			});
@@ -130,7 +130,7 @@ sap.ui.define([
 			var aInputs = [this.oInput1, this.oInput2];
 			this.oCommandStack.attachCommandExecuted(function(oEvent) {
 				var bFirstCommand = oEvent.getParameter("command").getElement() === aInputs[0];
-				assert.ok(bFirstCommand, "then command number " + (iCounter + 1) + " gets executed");
+				assert.ok(bFirstCommand, `then command number ${iCounter + 1} gets executed`);
 				iCounter++;
 
 				if (iCounter === 2) {
@@ -155,7 +155,7 @@ sap.ui.define([
 				return this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 			.catch(function(oError) {
-				assert.ok(true, "catch has be called during execution of second command - Error: " + oError);
+				assert.ok(true, `catch has be called during execution of second command - Error: ${oError}`);
 				assert.equal(this.oCommandStack._toBeExecuted, -1, "the Variable '_toBeExecuted' is not descreased a second time");
 				done();
 			}.bind(this));
@@ -197,7 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an array of dirty changes...", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 
 			this.oChangeDefinition1 = {
@@ -259,7 +259,7 @@ sap.ui.define([
 
 			this.oControl = {id: "a Control"};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 			sandbox.restore();
 		}
@@ -312,10 +312,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a command stack", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oCommandStack = new CommandStack();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oCommandStack.destroy();
 			sandbox.restore();
 		}

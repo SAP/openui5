@@ -1,8 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Button"
-], function (Log, Button) {
+], function (Log, nextUIUpdate, Button) {
 	"use strict";
 
 	// create content div
@@ -25,12 +26,12 @@ sap.ui.define([
 				text: "Press"
 			}).placeAt("content");
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach : function() {
 			this.oButton.destroy();
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 
@@ -70,11 +71,12 @@ sap.ui.define([
 
 	QUnit.module("Focus Handling");
 
-	QUnit.test("Return focus to the control when Block Layer has focus before it's removed", function (assert) {
+	QUnit.test("Return focus to the control when Block Layer has focus before it's removed", async function (assert) {
 		var oButton = new Button({
 			text: "Press"
 		}).placeAt("content");
-		sap.ui.getCore().applyChanges();
+
+		await nextUIUpdate();
 
 		oButton.setBusyIndicatorDelay(0);
 		oButton.setBusy(true);
@@ -134,13 +136,13 @@ sap.ui.define([
 			this.oButton = new Button({
 				text: "Press"
 			}).placeAt("content");
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		},
 
 		afterEach : function() {
 			this.oButton.destroy();
 
-			sap.ui.getCore().applyChanges();
+			return nextUIUpdate();
 		}
 	});
 

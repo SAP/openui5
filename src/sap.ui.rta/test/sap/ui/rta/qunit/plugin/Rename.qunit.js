@@ -4,7 +4,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Label",
 	"sap/m/ScrollContainer",
-	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Title",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormLayout",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
@@ -27,7 +29,8 @@ sap.ui.define([
 	Button,
 	Label,
 	ScrollContainer,
-	oCore,
+	EventBus,
+	Lib,
 	Title,
 	DesignTime,
 	OverlayRegistry,
@@ -38,6 +41,7 @@ sap.ui.define([
 	FormLayout,
 	Form,
 	VerticalLayout,
+	nextUIUpdate,
 	CommandFactory,
 	Plugin,
 	RenameHandler,
@@ -51,11 +55,11 @@ sap.ui.define([
 
 	var sandbox = sinon.createSandbox();
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.rta");
+	var oResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 
 	function triggerAndWaitForStartEdit(oPlugin, oOverlay) {
 		return new Promise(function(resolve) {
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function() {
 				resolve();
 			});
 			oPlugin.startEdit(oOverlay);
@@ -64,7 +68,7 @@ sap.ui.define([
 
 	function triggerAndWaitForStopEdit(oPlugin) {
 		return new Promise(function(resolve) {
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function() {
 				resolve();
 			});
 			triggerEventOnEditableField(oPlugin, KeyCodes.ENTER);
@@ -72,7 +76,7 @@ sap.ui.define([
 	}
 
 	function triggerEventOnEditableField(oPlugin, sKeyCode) {
-		sKeyCode = sKeyCode || KeyCodes.ENTER;
+		sKeyCode ||= KeyCodes.ENTER;
 		var oEvent = new Event("keydown");
 		oEvent.keyCode = sKeyCode;
 		oPlugin._oEditableField.dispatchEvent(oEvent);
@@ -80,7 +84,7 @@ sap.ui.define([
 
 	function addResponsibleElement(oDesignTimeMetadata, oTargetElement, oResponsibleElement) {
 		Object.assign(oDesignTimeMetadata.getData().actions, {
-			getResponsibleElement: function(oElement) {
+			getResponsibleElement(oElement) {
 				if (oElement === oTargetElement) {
 					return oResponsibleElement;
 				}
@@ -96,7 +100,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a form", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -118,7 +122,7 @@ sap.ui.define([
 				content: [this.oForm]
 			}).placeAt("qunit-fixture");
 
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oForm],
@@ -134,7 +138,7 @@ sap.ui.define([
 				done();
 			}, this);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
@@ -143,7 +147,7 @@ sap.ui.define([
 		QUnit.test("when _onDesignTimeSelectionChange is called", function(assert) {
 			var aSelection = [this.oFormContainerOverlay];
 			var oEvent = {
-				getParameter: function() {
+				getParameter() {
 					return aSelection;
 				}
 			};
@@ -159,7 +163,7 @@ sap.ui.define([
 				actions: {
 					rename: {
 						changeType: "renameGroup",
-						domRef: function(oFormContainer) {
+						domRef(oFormContainer) {
 							return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 						}
 					}
@@ -208,10 +212,10 @@ sap.ui.define([
 				actions: {
 					rename: {
 						changeType: "renameGroup",
-						isEnabled: function(oFormContainer) {
+						isEnabled(oFormContainer) {
 							return !(oFormContainer.getToolbar() || !oFormContainer.getTitle());
 						},
-						domRef: function(oFormContainer) {
+						domRef(oFormContainer) {
 							return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 						}
 					}
@@ -242,11 +246,11 @@ sap.ui.define([
 			var done = assert.async();
 			var oDesignTimeMetadata = {
 				actions: {
-					rename: function(oFormContainer) {
+					rename(oFormContainer) {
 						return {
 							changeType: "renameGroup",
 							isEnabled: !(oFormContainer.getToolbar() || !oFormContainer.getTitle()),
-							domRef: function(oFormContainer) {
+							domRef(oFormContainer) {
 								return oFormContainer.getRenderedDomRef().querySelector(".sapUiFormTitle");
 							}
 						};
@@ -335,7 +339,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and rename plugin are instantiated using a VerticalLayout", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			this.oRenamePlugin = new RenamePlugin({
@@ -362,7 +366,7 @@ sap.ui.define([
 				content: [this.oButton, this.oLabel, this.oScrollContainer],
 				width: "200px"
 			}).placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVerticalLayout],
@@ -381,7 +385,7 @@ sap.ui.define([
 				}
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			this.oDesignTime.attachEventOnce("synced", async function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
 				this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
 				this.oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
@@ -389,12 +393,12 @@ sap.ui.define([
 				this.oScrollContainerOverlay = OverlayRegistry.getOverlay(this.oScrollContainer);
 				this.oLayoutOverlay.setSelectable(true);
 
-				oCore.applyChanges();
+				await nextUIUpdate();
 
 				done();
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -421,12 +425,12 @@ sap.ui.define([
 			sandbox.stub(oDesignTimeMetadata, "getAction")
 			.callThrough()
 			.withArgs("rename")
-			.callsFake(function() {
+			.callsFake(function(...aArgs) {
 				return Object.assign(
 					{},
-					oDesignTimeMetadata.getAction.wrappedMethod.apply(this, arguments),
+					oDesignTimeMetadata.getAction.wrappedMethod.apply(this, aArgs),
 					{
-						getTextMutators: function() {
+						getTextMutators() {
 							return {
 								getText: oGetTextStub,
 								setText: oSetTextStub
@@ -537,7 +541,7 @@ sap.ui.define([
 		QUnit.test("when the title is not on the currently visible viewport and gets renamed", function(assert) {
 			var oButtonDom = this.oButton.getDomRef();
 			var oLabelDom = this.oLabel.getDomRef();
-			oButtonDom.style.marginBottom = document.documentElement.clientHeight + "px";
+			oButtonDom.style.marginBottom = `${document.documentElement.clientHeight}px`;
 			var oScrollSpy = sinon.spy(oLabelDom, "scrollIntoView");
 
 			return triggerAndWaitForStartEdit(this.oRenamePlugin, this.oLayoutOverlay).then(function() {
@@ -618,7 +622,7 @@ sap.ui.define([
 		QUnit.test("when the Label gets renamed and the new value is invalid and multiple validators are available", function(assert) {
 			addValidators(this.oLayoutOverlay.getDesignTimeMetadata(), [
 				{
-					validatorFunction: function() {
+					validatorFunction() {
 						return false;
 					},
 					errorMessage: "invalid"

@@ -11,7 +11,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oStorageResultMerger = {};
+	var StorageResultMerger = {};
 
 	/**
 	 * Concatenates all flex objects from a list of flex data request responses, into a passed result array and removes duplicates.
@@ -20,7 +20,6 @@ sap.ui.define([
 	 * @param {string} sPath Type of flex object signified by object property
 	 * @returns {object[]} Merged array of flex objects
 	 * @private
-	 * @ui5-restricted sap.ui.fl.Cache, sap.ui.fl.apply._internal.flexState.FlexState
 	 */
 	function concatFlexObjects(aResponses, sPath) {
 		var aFlexObjects = aResponses.reduce(function(aFlexObjects, oResponse) {
@@ -50,7 +49,6 @@ sap.ui.define([
 	 * @param {object[]} aResponses.ui2personalization List of the change definitions
 	 * @returns {object[]} Merged array of ui2personalization
 	 * @private
-	 * @ui5-restricted sap.ui.fl.Cache
 	 */
 	function concatUi2personalization(aResponses) {
 		return aResponses.reduce(function(oUi2Section, oResponse) {
@@ -65,7 +63,6 @@ sap.ui.define([
 	 * @param {string} [aResponses.etag] Etag value
 	 * @returns {string | null} Concatenated string of all etag values or null if no responses headers carry a etag value
 	 * @private
-	 * @ui5-restricted sap.ui.fl.Cache
 	 */
 	function _concatEtag(aResponses) {
 		return aResponses.reduce(function(sCacheKey, oResponse) {
@@ -83,7 +80,7 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted sap.ui.fl.initial._internal.Storage
 	 */
-	oStorageResultMerger.merge = function(aResponses) {
+	StorageResultMerger.merge = function(aResponses) {
 		var oResult = {
 			appDescriptorChanges: concatFlexObjects(aResponses, "appDescriptorChanges"),
 			changes: concatFlexObjects(aResponses, "changes"),
@@ -102,10 +99,10 @@ sap.ui.define([
 		};
 		var oInfoObject = concatFlexObjects(aResponses, "info");
 		if (oInfoObject.length > 0) {
-			oResult.info = oInfoObject[0];
+			[oResult.info] = oInfoObject;
 		}
 		return oResult;
 	};
 
-	return oStorageResultMerger;
+	return StorageResultMerger;
 });

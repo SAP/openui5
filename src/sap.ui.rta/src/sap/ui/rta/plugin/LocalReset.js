@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
@@ -12,6 +14,8 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
+	Element,
+	Lib,
 	Plugin,
 	DtUtil,
 	FlUtils,
@@ -40,7 +44,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.90
 	 * @alias sap.ui.rta.plugin.LocalReset
-	 * @experimental Since 1.90. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var LocalReset = Plugin.extend("sap.ui.rta.plugin.LocalReset", /** @lends sap.ui.rta.plugin.LocalReset.prototype */ {
 		metadata: {
@@ -129,7 +132,7 @@ sap.ui.define([
 		var sCurrentVariant = getCurrentVariant(oVariantModel, sVariantManagementReference);
 		var bHasVariant = !!sCurrentVariant;
 		var oVariantManagementControl = bHasVariant
-			? oAppComponent.byId(sVariantManagementReference) || sap.ui.getCore().byId(sVariantManagementReference)
+			? oAppComponent.byId(sVariantManagementReference) || Element.getElementById(sVariantManagementReference)
 			: undefined;
 		var oCommandFactory = this.getCommandFactory();
 
@@ -163,7 +166,7 @@ sap.ui.define([
 				command: oCompositeCommand
 			});
 			if (bHasVariant) {
-				var sMessage = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
+				var sMessage = Lib.getResourceBundleFor("sap.ui.rta").getText("MSG_LOCAL_RESET_VARIANT_SAVE");
 				MessageToast.show(sMessage, {
 					duration: 5000
 				});

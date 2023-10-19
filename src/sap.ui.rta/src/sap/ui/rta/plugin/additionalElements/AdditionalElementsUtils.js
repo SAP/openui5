@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dt/OverlayRegistry"
 ], function(
+	Lib,
 	OverlayRegistry
 ) {
 	"use strict";
@@ -16,7 +18,6 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.94
-	 * @experimental Since 1.94. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AdditionalElementsUtils = {};
 
@@ -97,10 +98,10 @@ sap.ui.define([
 			return _aNames;
 		}, []);
 
-		var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
+		var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
 
 		if (aNonDuplicateNames.length === 1) {
-			sControlType = aNonDuplicateNames[0];
+			[sControlType] = aNonDuplicateNames;
 		} else if (sControlName) {
 			sControlType = sControlName;
 		} else {

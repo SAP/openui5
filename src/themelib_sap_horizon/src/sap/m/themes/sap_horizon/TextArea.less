@@ -13,6 +13,10 @@
 @_sapMTextAreaValueStateInformationPadding_Compact: 0.1875rem 0.5rem 0.125rem;
 @_sapMTextAreaValueStateErrorWarningPadding: 0.5rem 0.625rem 0.4375rem;
 @_sapMTextAreaValueStateErrorWarningPadding_Compact: 0.1875rem 0.5rem 0.125rem;
+@_sapMTextAreaContentWrapperPadding: 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateSuccessPadding: 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateInformationPadding: 0.0625rem 0.0625rem 0.125rem 0.0625rem;
+@_sapMTextAreaContentWrapperValueStateErrorWarningPadding: 0.0625rem 0.0625rem 0.125rem 0.0625rem;
 
 .sapMInputBase.sapMTextArea {
 	min-height: 2.25rem;
@@ -42,4 +46,24 @@
 		right: 1px;
 		bottom: 1px;
 	}
+}
+
+.sapMTextArea.sapMInputBase.sapMInputBaseReadonly .sapMInputBaseContentWrapper {
+	padding: 0;
+}
+
+.sapMInputBaseContentWrapper ::-webkit-scrollbar:vertical {
+	border-top-right-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+}
+
+.sapMInputBaseContentWrapper ::-webkit-scrollbar:horizontal {
+	border-bottom-left-radius: 0.25rem;
+	border-bottom-right-radius: 0.25rem;
+}
+
+.sapMTextAreaInner.sapMTextAreaGrow {
+	border: 0.0625rem solid transparent;
+	border-radius: 0.25rem;
+	right: 0;
 }

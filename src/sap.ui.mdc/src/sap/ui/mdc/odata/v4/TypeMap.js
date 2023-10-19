@@ -9,9 +9,9 @@ sap.ui.define([
 "use strict";
 
 	/**
-	* @class ODataV4-specific <code>TypeMap</code> configuration
+	* @class ODataV4-specific {@link sap.ui.mdc.util.TypeMap TypeMap} configuration.
 	*
-	* <b>Note:</b> This <code>TypeMap</code> implementation contains the following types including ODataV4-specific configuration:
+	* <b>Note:</b> This {@link sap.ui.mdc.util.TypeMap TypeMap} implementation contains the following types including ODataV4-specific configuration:
 	*
 	* <ul>
 	* <li>{@link sap.ui.model.type.Boolean} (alias <code>Boolean</code></code>)</li>
@@ -52,7 +52,7 @@ sap.ui.define([
 	* @alias module:sap/ui/mdc/odata/v4/TypeMap
 	* @extends module:sap/ui/mdc/odata/TypeMap
 	*/
-	var ODataV4TypeMap = Object.assign({}, ODataTypeMap);
+	const ODataV4TypeMap = Object.assign({}, ODataTypeMap);
 
 	ODataV4TypeMap.addV4Constraint = function (oFormatOptions, oConstraints, oCustomOptions) {
 		return [oFormatOptions, Object.assign({}, oConstraints, {V4: true})];

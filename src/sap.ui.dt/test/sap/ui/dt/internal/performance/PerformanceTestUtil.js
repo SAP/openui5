@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/base/Log",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	DesignTime,
 	TabHandling,
@@ -33,34 +33,34 @@ sap.ui.define([
 	VBox,
 	Log,
 	_debounce,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	var Util = {
-		addButtons: function(oParentControl, sAggregation, iNumberOfButtons) {
+		addButtons(oParentControl, sAggregation, iNumberOfButtons) {
 			if (iNumberOfButtons > 0) {
 				oParentControl.addAggregation(sAggregation, new Button({
-					id: oParentControl.getId() + "button" + iNumberOfButtons,
-					text: oParentControl.getId() + "button" + iNumberOfButtons
+					id: `${oParentControl.getId()}button${iNumberOfButtons}`,
+					text: `${oParentControl.getId()}button${iNumberOfButtons}`
 				}));
 				Util.addButtons(oParentControl, sAggregation, iNumberOfButtons - 1);
 			}
 		},
 
-		createNestedPanels: function(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
+		createNestedPanels(oParentControl, sAggregation, iNumberOfControls, oLastElement) {
 			//  add element to the inner most panel
 			if (iNumberOfControls === 0) {
 				oParentControl.addAggregation(sAggregation, oLastElement);
 				return;
 			}
 
-			var oPanel = new Panel("Panel" + iNumberOfControls);
+			var oPanel = new Panel(`Panel${iNumberOfControls}`);
 			oParentControl.addAggregation(sAggregation, oPanel);
 			Util.createNestedPanels(oPanel, sAggregation, iNumberOfControls - 1, oLastElement);
 		},
 
-		addMixedControlsTo: function(oLayout, iFrom, iTo, bVisible) {
+		addMixedControlsTo(oLayout, iFrom, iTo, bVisible) {
 			var aControlTypes = [Button, Label, DatePicker, Slider, RatingIndicator];
 
 			var oControl = null;
@@ -69,36 +69,36 @@ sap.ui.define([
 			for (var i = iFrom; i <= iTo; i++) {
 				ControlType = aControlTypes[i % aControlTypes.length];
 
-				oControl = new ControlType("Control" + i, {
+				oControl = new ControlType(`Control${i}`, {
 					visible: bVisible
 				});
 				if (oControl.setText) {
-					oControl.setText("Control " + i);
+					oControl.setText(`Control ${i}`);
 				}
 
 				oLayout.addContent(oControl);
 			}
 		},
 
-		addBoxesWithMixedControls: function(oParent, iCount, iOffset) {
+		addBoxesWithMixedControls(oParent, iCount, iOffset) {
 			var i = iOffset || 0;
 			iCount = iOffset ? iOffset + iCount : iCount;
 			for (i; i < iCount; i++) {
 				oParent.addContent(
-					new VBox("box" + i, {
+					new VBox(`box${i}`, {
 						items: [
-							new Label("Label" + i, {text: "Control " + i}),
-							new DatePicker("DatePicker" + i),
-							new Slider("Slider" + i),
-							new RatingIndicator("RatingIndicator" + i),
-							new Button("Button" + i, {text: "Control " + i})
+							new Label(`Label${i}`, {text: `Control ${i}`}),
+							new DatePicker(`DatePicker${i}`),
+							new Slider(`Slider${i}`),
+							new RatingIndicator(`RatingIndicator${i}`),
+							new Button(`Button${i}`, {text: `Control ${i}`})
 						]
 					})
 				);
 			}
 		},
 
-		startDesignTime: function(oRootControl, sSelectedOverlayId) {
+		startDesignTime(oRootControl, sSelectedOverlayId) {
 			window.wpp = {
 				customMetrics: {}
 			};
@@ -135,7 +135,7 @@ sap.ui.define([
 					window.performance.mark("dt.synced");
 					window.performance.measure("Create DesignTime and Overlays", "dt.starts", "dt.synced");
 					window.wpp.customMetrics.creationTime = window.performance.getEntriesByName("Create DesignTime and Overlays")[0].duration;
-					Log.info("Create DesignTime and Overlays", window.wpp.customMetrics.creationTime + "ms");
+					Log.info("Create DesignTime and Overlays", `${window.wpp.customMetrics.creationTime}ms`);
 					// visual change at the end
 					var oOverlay = OverlayRegistry.getOverlay(sSelectedOverlayId || "Control2");
 					oOverlay.setSelected(true);
@@ -143,13 +143,13 @@ sap.ui.define([
 					resolve();
 				});
 				oDesignTime.addRootElement(oRootControl);
-			}).then(function() {
-				oCore.applyChanges();
+			}).then(async function() {
+				await nextUIUpdate();
 				document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded", "true");
 			});
 		},
 
-		measureApplyStylePerformance: function(sCustomMetricName, iWaitUntilDoneInMs) {
+		measureApplyStylePerformance(sCustomMetricName, iWaitUntilDoneInMs) {
 			window.wpp = {
 				customMetrics: {}
 			};
@@ -162,10 +162,10 @@ sap.ui.define([
 				if (!bMeasurementDone) {
 					bMeasurementDone = true;
 					window.wpp.customMetrics[sCustomMetricName] = aStack[aStack.length - 1] - aStack[0];
-					Log.info(sCustomMetricName + " = " + window.wpp.customMetrics[sCustomMetricName] + "ms");
-					Log.info("Count call = " + iCountCall);
+					Log.info(`${sCustomMetricName} = ${window.wpp.customMetrics[sCustomMetricName]}ms`);
+					Log.info(`Count call = ${iCountCall}`);
 				} else {
-					Log.error("Some applyStyles() calculation exceeded timeout of " + iWaitUntilDoneInMs + "ms");
+					Log.error(`Some applyStyles() calculation exceeded timeout of ${iWaitUntilDoneInMs}ms`);
 					window.wpp.customMetrics[sCustomMetricName] = 100000;
 				}
 			}, iWaitUntilDoneInMs);

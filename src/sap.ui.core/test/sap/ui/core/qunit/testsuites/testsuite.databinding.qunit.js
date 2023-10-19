@@ -51,6 +51,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			ClientPropertyBinding : {
+				title: "sap.ui.model.ClientPropertyBinding - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/ClientPropertyBinding.qunit"
+				]
+			},
 			ClientTreeBinding: {
 				title: "sap.ui.model.ClientTreeBinding - QUnit Tests",
 				module: ["test-resources/sap/ui/core/qunit/model/ClientTreeBinding.qunit"]
@@ -88,9 +94,12 @@ sap.ui.define(function() {
 			ListBinding: {
 				title: "sap.ui.model.ListBinding - QUnit Tests"
 			},
-			/** @deprecated As of version 1.11.1 */
+			/** @deprecated As of version 1.11.1 reason bindContext*/
 			MasterDetail: {
-				title: "QUnit tests: databinding MasterDetail"
+				title: "QUnit tests: databinding MasterDetail",
+				module: [
+					"test-resources/sap/ui/core/qunit/MasterDetail_legacyAPIs.qunit"
+				]
 			},
 			ODataAnnotations: {
 				title: "sap.ui.model.odata.ODataAnnotations - QUnit Tests",
@@ -105,7 +114,7 @@ sap.ui.define(function() {
 			ODataListBinding: {
 				title: "sap.ui.model.odata.ODataListBinding - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/ODataListBinding.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataListBinding_legacyAPIs.qunit"
 				]
 			},
 			ODataMessageParser: {
@@ -140,13 +149,14 @@ sap.ui.define(function() {
 			ODataModel: {
 				title: "sap.ui.model.odata.ODataModel - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/ODataModel.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataModel_legacyAPIs.qunit"
 				]
 			},
+			/** @deprecated As of version 1.48.0 reason sap.ui.model.odata.ODataModel */
 			ODataSharedMetadata: {
 				title: "sap.ui.model.odata.ODataModel - Shared Metadata QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata_legacyAPIs.qunit"
 				],
 				sinon: {
 					useFakeTimers: true
@@ -156,7 +166,7 @@ sap.ui.define(function() {
 			ODataTreeBinding: {
 				title: "sap.ui.model.odata.ODataTreeBinding - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/ODataTreeBinding.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataTreeBinding_legacyAPIs.qunit"
 				],
 				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},

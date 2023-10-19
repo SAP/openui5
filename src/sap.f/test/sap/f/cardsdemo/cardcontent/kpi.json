@@ -14,7 +14,9 @@
 				"number": 34.7,
 				"state": "Critical"
 			},
-			"details": "Q1, 2018"
+			"details": "Q1, 2018",
+			"appShortcut": "App Shortcut",
+			"systemInfo": "System Info"
 		}
 	}
 }

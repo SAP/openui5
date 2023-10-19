@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/FieldDisplay",
+	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
@@ -23,6 +24,7 @@ sap.ui.define([
 		Condition,
 		ConditionValidated,
 		FieldDisplay,
+		OperatorName,
 		ValueHelpSelectionType,
 		JSONModel,
 		StringType,
@@ -31,15 +33,15 @@ sap.ui.define([
 	) {
 	"use strict";
 
-	var oConditions;
-	var bIsTypeahead = false;
-	var bIsOpen = false;
-	var bIsOpening = false;
-	var oModel;
-	var oType;
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	let oConditions;
+	let bIsTypeahead = false;
+	let bIsOpen = false;
+	let bIsOpening = false;
+	let oModel;
+	let oType;
+	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
 
-	var oContainer = { //to fake Container
+	const oContainer = { //to fake Container
 		getScrollDelegate: function() {
 			return "X"; // just test return value
 		},
@@ -70,7 +72,7 @@ sap.ui.define([
 		invalidate: function () {}
 	};
 
-	var _teardown = function() {
+	const _teardown = function() {
 		oConditions.destroy();
 		oConditions = null;
 		bIsTypeahead = false;
@@ -90,7 +92,7 @@ sap.ui.define([
 		beforeEach: function() {
 			oType = new StringType();
 
-			var aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated)];
+			const aConditions = [Condition.createCondition(OperatorName.EQ, ["X"], undefined, undefined, ConditionValidated.NotValidated)];
 			oConditions = new Conditions("C1", {
 				label: "Test",
 				conditions: aConditions, // don't need to test the binding of Container here
@@ -100,8 +102,8 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				}
 			});
@@ -118,19 +120,19 @@ sap.ui.define([
 
 	QUnit.test("getContent with scrolling", function(assert) {
 
-		var iSelect = 0;
-		var aConditions;
-		var sType;
+		let iSelect = 0;
+		let aConditions;
+		let sType;
 		oConditions.attachEvent("select", function(oEvent) {
 			iSelect++;
 			aConditions = oEvent.getParameter("conditions");
 			sType = oEvent.getParameter("type");
 		});
 
-		var oContent = oConditions.getContent();
+		const oContent = oConditions.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.m.ScrollContainer"), "Container is sap.m.ScrollContainer");
@@ -139,27 +141,27 @@ sap.ui.define([
 				assert.ok(oContent.getVertical(), "ScrollContainer vertical");
 				assert.ok(oContent.getHorizontal(), "ScrollContainer horizontal");
 				assert.equal(oContent.getContent().length, 1, "ScrollContainer content length");
-				var oDefineConditionPanel = oContent.getContent()[0];
+				const oDefineConditionPanel = oContent.getContent()[0];
 				assert.ok(oDefineConditionPanel.isA("sap.ui.mdc.valuehelp.base.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oDefineConditionPanel.getLabel(), "Test", "title");
 				assert.deepEqual(oDefineConditionPanel.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oDefineConditionPanel.getInputOK(), "inputOK on DefineConditionPanel");
-				var oConfig = oDefineConditionPanel.getConfig();
-				var oTestConfig = {
+				const oConfig = oDefineConditionPanel.getConfig();
+				const oTestConfig = {
 					dataType: oType,
 					maxConditions: -1,
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
 
-				var aNewConditions = [
-					Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-					Condition.createCondition("EQ", ["Z"], undefined, undefined, ConditionValidated.NotValidated)
+				let aNewConditions = [
+					Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+					Condition.createCondition(OperatorName.EQ, ["Z"], undefined, undefined, ConditionValidated.NotValidated)
 				];
 				oDefineConditionPanel.setConditions(aNewConditions);
 				oDefineConditionPanel.fireConditionProcessed();
@@ -176,15 +178,15 @@ sap.ui.define([
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: {text: "X"},
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				});
 				aNewConditions = [
 					Condition.createItemCondition("X", "Text"),
-					Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated)
+					Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated)
 				];
-				var aCheckConditions = [Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated)];
+				const aCheckConditions = [Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated)];
 				oDefineConditionPanel.setConditions(aNewConditions);
 				oDefineConditionPanel.fireConditionProcessed();
 				assert.equal(iSelect, 1, "select event fired");
@@ -208,25 +210,25 @@ sap.ui.define([
 	QUnit.test("getContent without scrolling", function(assert) {
 
 		bIsTypeahead = true; // Popover would provide ScrollContainer
-		var oContent = oConditions.getContent();
+		const oContent = oConditions.getContent();
 
 		if (oContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oContent.then(function(oContent) {
 				assert.ok(oContent, "Content returned");
 				assert.ok(oContent.isA("sap.ui.mdc.valuehelp.base.DefineConditionPanel"), "DefineConditionPanel in ScrollContainer");
 				assert.equal(oContent.getLabel(), "Test", "title");
 				assert.deepEqual(oContent.getConditions(), oConditions.getConditions(), "Conditions on DefineConditionPanel");
 				assert.ok(oContent.getInputOK(), "inputOK on DefineConditionPanel");
-				var oConfig = oContent.getConfig();
-				var oTestConfig = {
+				const oConfig = oContent.getConfig();
+				const oTestConfig = {
 					dataType: oType,
 					maxConditions: -1,
 					delegate: FieldBaseDelegate,
 					delegateName: "sap/ui/mdc/field/FieldBaseDelegate",
 					payload: { text: "X" },
-					operators: ["EQ", "BT", "Contains"],
-					defaultOperatorName: "EQ",
+					operators: [OperatorName.EQ, OperatorName.BT, OperatorName.Contains],
+					defaultOperatorName: OperatorName.EQ,
 					display: FieldDisplay.Description
 				};
 				assert.deepEqual(oConfig, oTestConfig, "Config on DefineConditionPanel");
@@ -242,35 +244,35 @@ sap.ui.define([
 
 	QUnit.test("getContainerConfig", function(assert) {
 
-		var iConfirm = 0;
-		var bClose;
+		let iConfirm = 0;
+		let bClose;
 		oConditions.attachEvent("confirm", function(oEvent) {
 			iConfirm++;
 			bClose = oEvent.getParameter("close");
 		});
-		var iCancel = 0;
+		let iCancel = 0;
 		oConditions.attachEvent("cancel", function(oEvent) {
 			iCancel++;
 		});
 
-		var oContainerConfig = oConditions.getContainerConfig();
-		var oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
+		const oContainerConfig = oConditions.getContainerConfig();
+		const oPopupConfig = oContainerConfig && oContainerConfig['sap.ui.mdc.valuehelp.Popover'];
 
 		assert.ok(oContainerConfig, "Config returned");
 		assert.ok(oPopupConfig, "Config contains a section for 'sap.ui.mdc.valuehelp.Popover'");
 		assert.ok(oPopupConfig.showArrow, "Popup config contains truthy 'showArrow'");
 		assert.ok(oPopupConfig.showHeader, "Popup config contains truthy 'showHeader'");
 
-		var oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
+		const oFooterContent = oPopupConfig.getFooter && oPopupConfig.getFooter();
 
 		if (oFooterContent) {
-			var fnDone = assert.async();
+			const fnDone = assert.async();
 			oFooterContent.then(function(aFooterContent) {
 				assert.ok(aFooterContent, "Content returned");
 				assert.ok(Array.isArray(aFooterContent), "Array returned");
 				assert.equal(aFooterContent.length, 2, "content length");
-				var oButtonOK = aFooterContent[0];
-				var oButtonCancel = aFooterContent[1];
+				const oButtonOK = aFooterContent[0];
+				const oButtonCancel = aFooterContent[1];
 				oButtonOK.setModel(oModel, "$valueHelp"); // as Button is not in the control tree right now, will be added by Container
 				assert.ok(oButtonOK.isA("sap.m.Button"), "First content is sap.m.Button");
 				assert.ok(oButtonCancel.isA("sap.m.Button"), "Second content is sap.m.Button");
@@ -301,14 +303,14 @@ sap.ui.define([
 
 	QUnit.test("getCount", function(assert) {
 
-		var aConditions = [
+		const aConditions = [
 			Condition.createItemCondition("X", "Text"),
-			Condition.createCondition("EQ", ["Y"], undefined, undefined, ConditionValidated.NotValidated),
-			Condition.createCondition("Contains", [], undefined, undefined, ConditionValidated.NotValidated)
+			Condition.createCondition(OperatorName.EQ, ["Y"], undefined, undefined, ConditionValidated.NotValidated),
+			Condition.createCondition(OperatorName.Contains, [], undefined, undefined, ConditionValidated.NotValidated)
 		];
 		aConditions[2].isEmpty = true;
 
-		var iCount = oConditions.getCount(aConditions);
+		const iCount = oConditions.getCount(aConditions);
 		assert.equal(iCount, 1, "count");
 
 	});
@@ -367,12 +369,14 @@ sap.ui.define([
 
 	QUnit.test("getAriaAttributes", function(assert) {
 
-		var oCheckAttributes = {
+		const oCheckAttributes = {
 			contentId: "C1-DCP",
 			ariaHasPopup: "dialog",
-			roleDescription: null
+			roleDescription: null,
+			valueHelpEnabled: true,
+			autocomplete: "none"
 		};
-		var oAttributes = oConditions.getAriaAttributes();
+		const oAttributes = oConditions.getAriaAttributes();
 		assert.ok(oAttributes, "Aria attributes returned");
 		assert.deepEqual(oAttributes, oCheckAttributes, "returned attributes");
 
@@ -380,17 +384,17 @@ sap.ui.define([
 
 	QUnit.test("valueHelp", function(assert) {
 
-		var sValueHelp = oConditions.getValueHelp();
+		let sValueHelp = oConditions.getValueHelp();
 		assert.equal(sValueHelp, null, "valueHelp is empty");
 
 		oConditions.setValueHelp("myValueHelp");
 		sValueHelp = oConditions.getValueHelp();
 		assert.equal(sValueHelp, "myValueHelp", "ValueHelp is set");
 
-		var oContentPromise = oConditions.getContent();
-		var fnDone = assert.async();
+		const oContentPromise = oConditions.getContent();
+		const fnDone = assert.async();
 		oContentPromise.then(function(oContent) {
-			var oDefineConditionPanel = oContent.getContent()[0];
+			const oDefineConditionPanel = oContent.getContent()[0];
 
 			assert.equal(oDefineConditionPanel.getValueHelp(), "myValueHelp", "DefineConditionPanel valueHelp is set");
 			fnDone();
@@ -400,10 +404,10 @@ sap.ui.define([
 
 	QUnit.test("onContainerClose", function(assert) {
 
-		var oContentPromise = oConditions.getContent();
-		var fnDone = assert.async();
+		const oContentPromise = oConditions.getContent();
+		const fnDone = assert.async();
 		oContentPromise.then(function(oContent) {
-			var oDefineConditionPanel = oContent.getContent()[0];
+			const oDefineConditionPanel = oContent.getContent()[0];
 			sinon.spy(oDefineConditionPanel, "cleanUp");
 
 			oConditions.onContainerClose();

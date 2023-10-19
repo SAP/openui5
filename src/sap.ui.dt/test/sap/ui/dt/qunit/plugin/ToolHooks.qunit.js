@@ -4,23 +4,22 @@ sap.ui.define([
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
-	"sap/ui/core/Core"
-],
-function(
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(
 	ElementOverlay,
 	ToolHooks,
 	Button,
-	oCore
+	nextUIUpdate
 ) {
 	"use strict";
 
 	QUnit.module("Given an overlay and a ToolHooks plugin...", {
-		beforeEach: function(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
-			oCore.applyChanges();
+			await nextUIUpdate();
 
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,
@@ -30,7 +29,7 @@ function(
 			});
 			this.oToolHooksPlugin = new ToolHooks();
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oElementOverlay.destroy();
 			this.oButton.destroy();
 			this.oToolHooksPlugin.destroy();
@@ -41,10 +40,10 @@ function(
 			var sButtonId = this.oButton.getId();
 			this.oElementOverlay.setDesignTimeMetadata({
 				tool: {
-					start: function(oButton) {
+					start(oButton) {
 						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
 					},
-					stop: function(oButton) {
+					stop(oButton) {
 						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
 					}
 				}

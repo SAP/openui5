@@ -9,6 +9,7 @@
 				<items>
 					<IconTabFilter text="Info one">
 						<Text text="Info one content goes here..." />
+						<Text text="Select another sub tab to see its content..." />
 					</IconTabFilter>
 					<IconTabFilter text="Info two">
 						<Text text="Info two content goes here..." />
@@ -22,6 +23,7 @@
 				</items>
 
 				<Text text="Info own content goes here..." />
+				<Text text="Select a sub tab to see its content..." />
 			</IconTabFilter>
 
 			<IconTabFilter key="attachments" text="Attachments">

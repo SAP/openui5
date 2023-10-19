@@ -25,9 +25,6 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @experimental Since 1.80 This class is experimental and provides only limited functionality. Also the API might be
-	 *               changed in future.
-	 *
 	 */
 	var DelegateMediator = {};
 
@@ -50,6 +47,7 @@ sap.ui.define([
 			}
 			return oModel.getMetadata().getName();
 		}
+		return undefined;
 	}
 
 	function getDefaultDelegateInfo(oControl, sModelType) {
@@ -77,8 +75,8 @@ sap.ui.define([
 					return aLoadedDelegates;
 				})
 				.catch(function(oError) {
-					Log.error("Failed to load the delegate for the control " + oModifier.getId(oControl) +
-							"\n" + oError.message);
+					Log.error(`Failed to load the delegate for the control ${oModifier.getId(oControl)}
+					${oError.message}`);
 					return aLoadedDelegates;
 				});
 			});
@@ -114,7 +112,9 @@ sap.ui.define([
 	function assignCommonPart(mTargetDelegateInfo, mDelegateInfo) {
 		mTargetDelegateInfo.names.push(mDelegateInfo.name);
 		if (mDelegateInfo.requiredLibraries) {
-			mTargetDelegateInfo.requiredLibraries = Object.assign(mTargetDelegateInfo.requiredLibraries || {}, mDelegateInfo.requiredLibraries);
+			mTargetDelegateInfo.requiredLibraries =	Object.assign(
+				mTargetDelegateInfo.requiredLibraries || {}, mDelegateInfo.requiredLibraries
+			);
 		}
 		if (mDelegateInfo.payload && !mTargetDelegateInfo.payload) {
 			// is available maximum once for instancespecific delegate
@@ -128,12 +128,16 @@ sap.ui.define([
 
 	function assignReadPart(mTargetDelegateInfo, mDelegateInfo) {
 		mTargetDelegateInfo = assignCommonPart(mTargetDelegateInfo, mDelegateInfo);
-		return merge(mTargetDelegateInfo, { instance: _pick(mDelegateInfo.instance, ["getPropertyInfo", "getRepresentedProperties"]) });
+		return merge(mTargetDelegateInfo, { instance: _pick(
+			mDelegateInfo.instance, ["getPropertyInfo", "getRepresentedProperties"]
+		) });
 	}
 
 	function assignWritePart(mTargetDelegateInfo, mDelegateInfo) {
 		mTargetDelegateInfo = assignCommonPart(mTargetDelegateInfo, mDelegateInfo);
-		return merge(mTargetDelegateInfo, { instance: _pick(mDelegateInfo.instance, ["createLabel", "createControlForProperty", "createLayout"]) });
+		return merge(mTargetDelegateInfo, { instance: _pick(
+			mDelegateInfo.instance,	["createLabel", "createControlForProperty", "createLayout"]
+		) });
 	}
 
 	function assignCompleteDelegate(mTargetDelegateInfo, mDelegateInfo) {
@@ -255,17 +259,15 @@ sap.ui.define([
 		if (!(mPropertyBag.modelType && mPropertyBag.delegate)) {
 			throw new Error("'modelType' and 'delegate' properties are required for registration!");
 		}
-		mPropertyBag.delegateType = mPropertyBag.delegateType || DelegateMediator.types.COMPLETE;
+		mPropertyBag.delegateType ||= DelegateMediator.types.COMPLETE;
 		if (mPropertyBag.delegateType && !isValidType(mPropertyBag)) {
-			throw new Error("default 'delegateType': " + mPropertyBag.delegateType + " is invalid!");
+			throw new Error(`default 'delegateType': ${mPropertyBag.delegateType} is invalid!`);
 		}
 		// No overriding of compete delegates possible
 		if (isCompetingDelegateAlreadyRegistered(mPropertyBag)) {
-			throw new Error("modelType " + mPropertyBag.modelType + "is already defined!");
+			throw new Error(`modelType ${mPropertyBag.modelType}is already defined!`);
 		}
-		if (!DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType]) {
-			DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] = [];
-		}
+		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType] ||= [];
 		DelegateMediator._mDefaultDelegateItems[mPropertyBag.modelType].push({
 			name: mPropertyBag.delegate,
 			requiredLibraries: mPropertyBag.requiredLibraries,

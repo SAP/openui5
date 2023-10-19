@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/fl/write/api/Adaptations",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/_internal/FlexInfoSession",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/write/_internal/flexState/FlexObjectState",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/model/json/JSONModel"
 ], function(
+	Lib,
 	Adaptations,
 	FeaturesAPI,
 	FlexObjectFactory,
@@ -48,7 +50,6 @@ sap.ui.define([
 	 * Provides an API for creating and managing context-based adaptation.
 	 *
 	 * @namespace sap.ui.fl.write.api.ContextBasedAdaptationsAPI
-	 * @experimental Since 1.106
 	 * @since 1.106
 	 * @private
 	 * @ui5-restricted sap.ui.rta
@@ -99,9 +100,7 @@ sap.ui.define([
 	 * @returns {Promise<sap.ui.model.json.JSONModel>} Model of adaptations enhanced with additional properties
 	 */
 	ContextBasedAdaptationsAPI.initialize = function(mPropertyBag) {
-		if (!_oResourceBundle) {
-			_oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-		}
+		_oResourceBundle ||= Lib.getResourceBundleFor("sap.ui.fl");
 		if (!mPropertyBag.layer) {
 			return Promise.reject("No layer was provided");
 		}
@@ -136,8 +135,8 @@ sap.ui.define([
 			return ContextBasedAdaptationsAPI.createModel(oAdaptations.adaptations, oDisplayedAdaptation, bContextBasedAdaptationsEnabled);
 		})
 		.then(function(oModel) {
-			_mInstances[sReference] = _mInstances[sReference] || {};
-			_mInstances[sReference][sLayer] = _mInstances[sReference][sLayer] || {};
+			_mInstances[sReference] ||= {};
+			_mInstances[sReference][sLayer] ||= {};
 			_mInstances[sReference][sLayer] = oModel;
 			return _mInstances[sReference][sLayer];
 		});
@@ -261,7 +260,7 @@ sap.ui.define([
 		var sReference = mPropertyBag.reference;
 		var sLayer = mPropertyBag.layer;
 		if (!ContextBasedAdaptationsAPI.hasAdaptationsModel(mPropertyBag)) {
-			throw Error("Adaptations model for reference '" + sReference + "' and layer '" + sLayer + "' were not initialized.");
+			throw Error(`Adaptations model for reference '${sReference}' and layer '${sLayer}' were not initialized.`);
 		}
 		return _mInstances[sReference][sLayer];
 	};
@@ -959,9 +958,7 @@ sap.ui.define([
 			appId: mPropertyBag.appId,
 			version: getParentVersion(mPropertyBag)
 		}).then(function(oAdaptations) {
-			if (!oAdaptations) {
-				oAdaptations = { adaptations: [] };
-			}
+			oAdaptations ||= { adaptations: [] };
 			return oAdaptations;
 		});
 	};

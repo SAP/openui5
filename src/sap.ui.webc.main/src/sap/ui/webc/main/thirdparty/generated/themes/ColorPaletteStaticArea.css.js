@@ -13,7 +13,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/T
   const styleData = {
     packageName: "@ui5/webcomponents",
     fileName: "themes/ColorPaletteStaticArea.css",
-    content: ".ui5-cp-dialog-content {\n\tdisplay: flex;\n\tjustify-content: center;\n\talign-items: center;\n\tmargin: 1rem 0;\n}\n\n.ui5-cp-dialog-footer {\n\twidth: 100%;\n\tdisplay: flex;\n\tjustify-content: flex-end;\n\tmargin: 0.1875rem 1rem;\n}\n\n.ui5-cp-dialog-footer [ui5-button]:first-child{\n\tmargin-right: 1rem;\n}\n"
+    content: ".ui5-cp-dialog-content{align-items:center;display:flex;justify-content:center;margin:1rem 0}.ui5-cp-dialog-footer{display:flex;justify-content:flex-end;margin:.1875rem 1rem;width:100%}.ui5-cp-dialog-footer [ui5-button]:first-child{margin-right:1rem}"
   };
   var _default = styleData;
   _exports.default = _default;

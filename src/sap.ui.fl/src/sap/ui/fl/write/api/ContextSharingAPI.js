@@ -25,7 +25,6 @@ sap.ui.define([
 	 * Provides an API for creating and managing the component for variant management context sharing.
 	 *
 	 * @namespace sap.ui.fl.write.api.ContextSharingAPI
-	 * @experimental Since 1.88
 	 * @since 1.88
 	 * @private
 	 * @ui5-restricted sap.ui.comp, sap.ui.fl
@@ -44,7 +43,7 @@ sap.ui.define([
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.fl
 		 */
-		createComponent: function(mPropertyBag) {
+		createComponent(mPropertyBag) {
 			if (mPropertyBag.layer !== Layer.CUSTOMER) {
 				return Promise.resolve();
 			}

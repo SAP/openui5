@@ -36,10 +36,10 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		},
-		after: function() {
+		after() {
 			if (document.getElementById("sapUiBusyIndicator")) {
 				document.getElementById("sapUiBusyIndicator").style.display = "none";
 			}
@@ -52,13 +52,13 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp: function() {
+				getIdRunningApp() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser: function() {
+				getIsOverviewForKeyUser() {
 					return true;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			};
@@ -118,13 +118,13 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp: function() {
+				getIdRunningApp() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser: function() {
+				getIsOverviewForKeyUser() {
 					return true;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			};
@@ -154,13 +154,13 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp: function() {
+				getIdRunningApp() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser: function() {
+				getIsOverviewForKeyUser() {
 					return true;
 				},
-				getLayer: function() {
+				getLayer() {
 					return Layer.CUSTOMER;
 				}
 			};
@@ -193,7 +193,7 @@ sap.ui.define([
 			var fnMessageToastSpy = sandbox.spy(MessageToast, "show");
 
 			var oButton = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
 						sPath: "/appVariants/0"
 					};
@@ -218,7 +218,7 @@ sap.ui.define([
 			modelPropertySpy.onThirdCall().returns(undefined);
 
 			var oButton = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
 						sPath: "/appVariants/0"
 					};
@@ -304,9 +304,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a ManageApps controller is instantiated", {
-		beforeEach: function() {
+		beforeEach() {
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -322,7 +322,7 @@ sap.ui.define([
 			});
 
 			var oButton = {
-				getBindingContext: function() {
+				getBindingContext() {
 					return {
 						sPath: "/appVariants/0"
 					};

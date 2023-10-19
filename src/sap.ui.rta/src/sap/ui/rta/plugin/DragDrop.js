@@ -37,7 +37,6 @@ function(
 	 * @private
 	 * @since 1.30
 	 * @alias sap.ui.rta.plugin.DragDrop
-	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DragDrop = ControlDragDrop.extend("sap.ui.rta.plugin.DragDrop", /** @lends sap.ui.rta.plugin.DragDrop.prototype */ {
 		metadata: {
@@ -68,8 +67,8 @@ function(
 	/**
 	 * @override
 	 */
-	DragDrop.prototype.init = function() {
-		ControlDragDrop.prototype.init.apply(this, arguments);
+	DragDrop.prototype.init = function(...aArgs) {
+		ControlDragDrop.prototype.init.apply(this, aArgs);
 		this.setElementMover(new RTAElementMover({commandFactory: this.getCommandFactory()}));
 	};
 
@@ -90,9 +89,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	DragDrop.prototype.registerElementOverlay = function() {
-		ControlDragDrop.prototype.registerElementOverlay.apply(this, arguments);
-		Plugin.prototype.registerElementOverlay.apply(this, arguments);
+	DragDrop.prototype.registerElementOverlay = function(...aArgs) {
+		ControlDragDrop.prototype.registerElementOverlay.apply(this, aArgs);
+		Plugin.prototype.registerElementOverlay.apply(this, aArgs);
 	};
 
 	/**
@@ -100,9 +99,9 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	DragDrop.prototype.deregisterElementOverlay = function() {
-		ControlDragDrop.prototype.deregisterElementOverlay.apply(this, arguments);
-		Plugin.prototype.removeFromPluginsList.apply(this, arguments);
+	DragDrop.prototype.deregisterElementOverlay = function(...aArgs) {
+		ControlDragDrop.prototype.deregisterElementOverlay.apply(this, aArgs);
+		Plugin.prototype.removeFromPluginsList.apply(this, aArgs);
 	};
 
 	/**
@@ -110,10 +109,11 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	DragDrop.prototype.onDragStart = function(oOverlay) {
+	DragDrop.prototype.onDragStart = function(...aArgs) {
+		const [oOverlay] = aArgs;
 		this.fireDragStarted();
 
-		ControlDragDrop.prototype.onDragStart.apply(this, arguments);
+		ControlDragDrop.prototype.onDragStart.apply(this, aArgs);
 
 		this.getSelectedOverlays().forEach(function(oOverlay) {
 			oOverlay.setSelected(false);
@@ -131,7 +131,8 @@ function(
 	DragDrop.prototype.onDragEnd = function(oOverlay) {
 		this.getElementMover().buildMoveCommand()
 
-		.then(function(oCommand) {
+		.then(function(...aArgs) {
+			const [oCommand] = aArgs;
 			this.fireElementModified({
 				command: oCommand
 			});
@@ -140,7 +141,7 @@ function(
 			oOverlay.setSelected(true);
 			oOverlay.focus();
 
-			ControlDragDrop.prototype.onDragEnd.apply(this, arguments);
+			ControlDragDrop.prototype.onDragEnd.apply(this, aArgs);
 
 			this._updateRelevantOverlays();
 		}.bind(this))
@@ -159,8 +160,8 @@ function(
 	 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
 	 */
-	DragDrop.prototype.onMovableChange = function() {
-		ControlDragDrop.prototype.onMovableChange.apply(this, arguments);
+	DragDrop.prototype.onMovableChange = function(...aArgs) {
+		ControlDragDrop.prototype.onMovableChange.apply(this, aArgs);
 	};
 
 	/**

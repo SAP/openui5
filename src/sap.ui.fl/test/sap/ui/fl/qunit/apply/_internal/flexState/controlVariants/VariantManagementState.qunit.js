@@ -74,8 +74,8 @@ sap.ui.define([
 	function stubFlexObjectsSelector(aFlexObjects) {
 		var oFlexObjectsSelector = FlexState.getFlexObjectsDataSelector();
 		var oGetFlexObjectsStub = sandbox.stub(oFlexObjectsSelector, "get");
-		oGetFlexObjectsStub.callsFake(function() {
-			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, arguments));
+		oGetFlexObjectsStub.callsFake(function(...aArgs) {
+			return aFlexObjects.concat(oGetFlexObjectsStub.wrappedMethod.apply(this, aArgs));
 		});
 		oFlexObjectsSelector.checkUpdate();
 	}
@@ -85,17 +85,17 @@ sap.ui.define([
 		FlexState.clearRuntimeSteadyObjects(sReference, sComponentId);
 		// TODO: Check if this is an issue in prod
 		VariantManagementState.getVariantManagementMap().clearCachedResult();
-		VariantManagementState.resetCurrentVariantReferences();
+		VariantManagementState.resetCurrentVariantReference(sReference);
 		sandbox.restore();
 	}
 
 	QUnit.module("VariantsMapSelector", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant().then(function(oStandardVariant) {
 				this.oStandardVariant = oStandardVariant;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -156,18 +156,6 @@ sap.ui.define([
 					}
 				}),
 				FlexObjectFactory.createUIChange({
-					id: "setFavoriteChange",
-					layer: Layer.CUSTOMER,
-					changeType: "setFavorite",
-					fileType: "ctrl_variant_change",
-					selector: {
-						id: sStandardVariantReference
-					},
-					content: {
-						favorite: false
-					}
-				}),
-				FlexObjectFactory.createUIChange({
 					id: "setExecuteOnSelectChange",
 					layer: Layer.CUSTOMER,
 					changeType: "setExecuteOnSelect",
@@ -208,7 +196,7 @@ sap.ui.define([
 								contexts: { role: ["ADMIN"], country: ["DE"] },
 								controlChanges: [],
 								executeOnSelect: true,
-								favorite: false,
+								favorite: true,
 								instance: this.oStandardVariant,
 								isStandardVariant: true,
 								key: "vmReference",
@@ -221,6 +209,10 @@ sap.ui.define([
 					}
 				},
 				"then the variant changes are applied on the variant map"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 3,
+				"all changes are returned"
 			);
 		});
 
@@ -260,6 +252,10 @@ sap.ui.define([
 				oVMData.variantManagementChanges[0],
 				oVariantManagementChange,
 				"then the change is returned as part of the variant management map"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 2,
+				"all changes are returned"
 			);
 		});
 
@@ -387,8 +383,8 @@ sap.ui.define([
 		QUnit.test("when there are multiple variants with lower layer changes in the referenced variant", function(assert) {
 			var oUIChange = FlexObjectFactory.createUIChange({
 				id: "someUIChange",
-				layer: Layer.CUSTOMER,
-				variantReference: sStandardVariantReference
+				layer: Layer.VENDOR,
+				variantReference: "vendorVariant"
 			});
 			var oIndependentUIChange = FlexObjectFactory.createUIChange({
 				id: "someOtherUIChange",
@@ -399,16 +395,90 @@ sap.ui.define([
 				layer: Layer.USER,
 				variantReference: sStandardVariantReference
 			});
-			var oVariant = createVariant({
+			var oVendorVariant = createVariant({
 				variantReference: sVariantManagementReference,
-				fileName: "XYZ",
+				fileName: "vendorVariant",
+				layer: Layer.VENDOR
+			});
+			var oCustomerVariant = createVariant({
+				variantReference: "vendorVariant",
+				fileName: "customerVariant",
+				layer: Layer.CUSTOMER
+			});
+			var oUserVariant = createVariant({
+				variantReference: "customerVariant",
+				fileName: "userVariant",
 				layer: Layer.USER
 			});
-			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVariant]);
+			stubFlexObjectsSelector([oIndependentUIChange, oUIChange, oUIChange2, oVendorVariant, oCustomerVariant, oUserVariant]);
 			var aVariants = VariantManagementState.getVariantManagementMap()
 			.get({ reference: sReference })[sVariantManagementReference].variants;
-			assert.strictEqual(aVariants[0].controlChanges.length, 2, "there is one control change on standard");
-			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the referenced control change is also in the depending variant");
+			assert.strictEqual(aVariants[0].controlChanges.length, 1, "there is one control change on standard");
+			assert.strictEqual(aVariants[1].controlChanges.length, 1, "the vendor variant has one change");
+			assert.strictEqual(aVariants[2].controlChanges.length, 1, "the customer variant has one change");
+			assert.strictEqual(aVariants[3].controlChanges.length, 1, "the user variant has one change");
+		});
+
+		QUnit.test("when variants are set to favorite = false (default and non-default)", function(assert) {
+			var oVariantManagementChange = FlexObjectFactory.createUIChange({
+				id: "setDefaultVariantChange",
+				layer: Layer.USER,
+				changeType: "setDefault",
+				fileType: "ctrl_variant_management_change",
+				selector: {
+					id: sVariantManagementReference
+				},
+				content: {
+					defaultVariant: "variant2"
+				}
+			});
+			var oVariantSetFavoriteDefaultVariant = FlexObjectFactory.createUIChange({
+				id: "setFavoriteChangeOnDefaultVariant",
+				layer: Layer.CUSTOMER,
+				changeType: "setFavorite",
+				fileType: "ctrl_variant_change",
+				selector: {
+					id: "variant2"
+				},
+				content: {
+					favorite: false
+				}
+			});
+			var oVariantSetFavoriteNonDefaultVariant = FlexObjectFactory.createUIChange({
+				id: "setFavoriteChangeOnNonDefaultVariant",
+				layer: Layer.CUSTOMER,
+				changeType: "setFavorite",
+				fileType: "ctrl_variant_change",
+				selector: {
+					id: "variant1"
+				},
+				content: {
+					favorite: false
+				}
+			});
+			stubFlexObjectsSelector([
+				oVariantManagementChange,
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "variant1"
+				}),
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "variant2"
+				}),
+				oVariantSetFavoriteDefaultVariant,
+				oVariantSetFavoriteNonDefaultVariant
+			]);
+
+			var oVMData = VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference];
+			assert.notOk(
+				oVMData.variants[1].favorite,
+				"then the non-default variant is no longer a favorite"
+			);
+			assert.ok(
+				oVMData.variants[2].favorite,
+				"then the default variant is still a favorite"
+			);
 		});
 	});
 
@@ -419,7 +489,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Fake standard variant", {
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -559,13 +629,13 @@ sap.ui.define([
 			expectedVMReferences: [],
 			expectedVariantsCount: 0
 		}].forEach(function(oTestInput) {
-			var sName = "when the storageResponse contains " + oTestInput.testName;
+			var sName = `when the storageResponse contains ${oTestInput.testName}`;
 			QUnit.test(sName, function(assert) {
 				var oInitialPrepareSpy = sandbox.spy(InitialPrepareFunctions, "variants");
 
 				var oLoaderStub = sandbox.stub(Loader, "loadFlexData");
-				function fakeLoadFlexData() {
-					return oLoaderStub.wrappedMethod.apply(this, arguments)
+				function fakeLoadFlexData(...aArgs) {
+					return oLoaderStub.wrappedMethod.apply(this, aArgs)
 					// eslint-disable-next-line max-nested-callbacks
 					.then(function(oOriginalResponse) {
 						var oResponseAddition = { changes: {} };
@@ -709,12 +779,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initial current variant handling", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant().then(function(oStandardVariant) {
 				this.oStandardVariant = oStandardVariant;
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -860,7 +930,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("when the variant that was set as default was removed", function(assert) {
+		QUnit.test("when the variant that was set as default was removed and there is no key user default variant", function(assert) {
 			stubFlexObjectsSelector([
 				// Default variant was set via perso change but is no longer available, e.g. because of version switch
 				FlexObjectFactory.createUIChange({
@@ -889,13 +959,77 @@ sap.ui.define([
 				"then the default variant falls back to the standard variant"
 			);
 		});
+
+		QUnit.test("when the variant that was set as default is set to hidden (removed by Key User) but there is a key user default variant", function(assert) {
+			stubFlexObjectsSelector([
+				// Key user creates two new variants and sets one to default
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "KeyUserDefaultVariant"
+				}),
+				createVariant({
+					variantReference: sVariantManagementReference,
+					fileName: "EndUserDefaultVariant"
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "KeyUserDefaultVariant"
+					}
+				}),
+				// End user sets the other variant as default
+				FlexObjectFactory.createUIChange({
+					id: "setDefaultVariantChange",
+					layer: Layer.USER,
+					changeType: "setDefault",
+					fileType: "ctrl_variant_management_change",
+					selector: {
+						id: sVariantManagementReference
+					},
+					content: {
+						defaultVariant: "EndUserDefaultVariant"
+					}
+				}),
+				// Key user removes the key user default variant
+				FlexObjectFactory.createUIChange({
+					id: "setVisibleChange",
+					layer: Layer.CUSTOMER,
+					changeType: "setVisible",
+					fileType: "ctrl_variant_change",
+					selector: {
+						id: "EndUserDefaultVariant"
+					},
+					content: {
+						visible: false
+					}
+				})
+			]);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].currentVariant,
+				"KeyUserDefaultVariant",
+				"then the current variant falls back to the key user default variant"
+			);
+
+			assert.strictEqual(
+				VariantManagementState.getVariantManagementMap().get({ reference: sReference })[sVariantManagementReference].defaultVariant,
+				"KeyUserDefaultVariant",
+				"then the default variant falls back to the key user default variant"
+			);
+		});
 	});
 
 	QUnit.module("Variant-related selectors", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant();
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {
@@ -961,7 +1095,18 @@ sap.ui.define([
 					fileName: "customVariant"
 				}),
 				oPersistedUIChange,
-				oDirtyUIChange
+				oDirtyUIChange,
+				FlexObjectFactory.createUIChange({
+					id: "someNonVariantRelatedUIChange",
+					layer: Layer.CUSTOMER
+				}),
+				FlexObjectFactory.createUIChange({
+					id: "someCompChange",
+					layer: Layer.CUSTOMER,
+					selector: {
+						persistencyKey: "foo"
+					}
+				})
 			]);
 
 			assert.strictEqual(
@@ -988,6 +1133,10 @@ sap.ui.define([
 				aControlChanges[0].getId(),
 				"somePersistedUIChange",
 				"then the persisted UI change is still returned"
+			);
+			assert.strictEqual(
+				VariantManagementState.getVariantDependentFlexObjects({reference: sReference}).length, 3,
+				"all three changes are returned"
 			);
 		});
 
@@ -1050,6 +1199,16 @@ sap.ui.define([
 				"customVariant",
 				"then the current variant can be set and the new variant is returned"
 			);
+
+			VariantManagementState.resetCurrentVariantReference(sReference);
+			assert.strictEqual(
+				VariantManagementState.getCurrentVariantReference({
+					reference: sReference,
+					vmReference: sVariantManagementReference
+				}),
+				sStandardVariantReference,
+				"then the standard variant is returned by default"
+			);
 		});
 
 		QUnit.test("when setting the current variant to an invalid value", function(assert) {
@@ -1087,7 +1246,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initial changes handling", {
-		beforeEach: function() {
+		beforeEach() {
 			return initializeFlexStateWithStandardVariant()
 			.then(function() {
 				VariantManagementState.addRuntimeSteadyObject(
@@ -1130,7 +1289,7 @@ sap.ui.define([
 				stubFlexObjectsSelector(aUIChanges);
 			});
 		},
-		afterEach: function() {
+		afterEach() {
 			cleanup();
 		}
 	}, function() {

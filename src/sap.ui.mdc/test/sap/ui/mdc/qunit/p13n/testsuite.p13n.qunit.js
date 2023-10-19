@@ -1,8 +1,6 @@
 sap.ui.define(["sap/ui/Device"], function (Device) {
 	"use strict";
 
-	window['sap-ui-mdc-config'] = {disableStrictPropertyInfoValidation: true};
-
 	return {
 		name: "P13n related tests", /* Just for a nice title on the pages */
 		defaults: {
@@ -109,15 +107,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"ChartItemPanel": {
 				group: "UI Panels",
 				module: "./ChartItemPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"UIManager": {
-				group: "P13n logic",
-				module: "./UIManager.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"
@@ -285,6 +274,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"SortFlex": {
 				group: "changehandler tests",
 				module: "./flexibility/SortFlex.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
+			"Util": {
+				group: "changehandler tests",
+				module: "./flexibility/Util.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"

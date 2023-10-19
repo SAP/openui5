@@ -1,7 +1,8 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper"
-], function(ThemeHelper) {
+], function(Theming, ThemeHelper) {
 	"use strict";
 
 	QUnit.module("ThemeHelper");
@@ -11,7 +12,7 @@ sap.ui.define([
 		var oMetadata;
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib12", { async: true }).then(function () {
-			var fnAssertThemeChanged = function () {
+			var fnAssertApplied = function () {
 				oMetadata = ThemeHelper.getMetadata("sap-ui-theme-testlibs-themeParameters-lib12");
 				assert.deepEqual(oMetadata, {
 					"Path": "UI5.sample/path",
@@ -23,11 +24,11 @@ sap.ui.define([
 						"Engine": "1.0.0"
 					}
 				}, "Metadata correct");
-				sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+				Theming.detachApplied(fnAssertApplied);
 				done();
 			};
 
-			sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+			Theming.attachApplied(fnAssertApplied);
 		});
 
 		oMetadata = ThemeHelper.getMetadata("sap-ui-theme-testlibs-themeParameters-lib12");

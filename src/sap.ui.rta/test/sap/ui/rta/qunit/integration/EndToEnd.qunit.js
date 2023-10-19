@@ -9,7 +9,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/core/Element",
+	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
 ], function(
 	RuntimeAuthoring,
@@ -20,7 +22,9 @@ sap.ui.define([
 	KeyCodes,
 	FlexTestAPI,
 	sinon,
-	oCore,
+	nextUIUpdate,
+	Element,
+	EventBus,
 	LabelEnablement
 ) {
 	"use strict";
@@ -30,28 +34,28 @@ sap.ui.define([
 	var oView;
 
 	QUnit.module("Given RTA is started...", {
-		before: function() {
+		before() {
 			QUnit.config.fixture = null;
 			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
 			.then(function(oCompContainer) {
 				oCompCont = oCompContainer;
-				oView = oCore.byId("Comp1---idMain1");
+				oView = Element.getElementById("Comp1---idMain1");
 				return oView.getController().isDataReady();
 			});
 		},
-		after: function() {
+		after() {
 			QUnit.config.fixture = "";
 			oCompCont.destroy();
 			oView.destroy();
 		},
-		beforeEach: function() {
+		beforeEach() {
 			return RtaQunitUtils.clear(oView, true).then(function() {
-				this.oVictim = oCore.byId("Comp1---idMain1--Victim");
-				this.oCompanyCodeField = oCore.byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-				this.oBoundButton35Field = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
-				this.oDatesGroup = oCore.byId("Comp1---idMain1--Dates");
-				this.oGeneralGroup = oCore.byId("Comp1---idMain1--GeneralLedgerDocument");
-				this.oForm = oCore.byId("Comp1---idMain1--MainForm");
+				this.oVictim = Element.getElementById("Comp1---idMain1--Victim");
+				this.oCompanyCodeField = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+				this.oBoundButton35Field = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
+				this.oDatesGroup = Element.getElementById("Comp1---idMain1--Dates");
+				this.oGeneralGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
+				this.oForm = Element.getElementById("Comp1---idMain1--MainForm");
 
 				this.oRta = new RuntimeAuthoring({
 					rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
@@ -70,16 +74,11 @@ sap.ui.define([
 				]);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {
-		// FIXME: change as soon as a public method for this is available
-		function fnWaitForExecutionAndSerializationBeingDone() {
-			return this.oRta.getCommandStack()._oLastCommand;
-		}
-
 		function startVisualization(oRta) {
 			oRta.setMode("visualization");
 			return waitForMethodCall(oRta.getToolbar(), "setModel");
@@ -91,9 +90,9 @@ sap.ui.define([
 			// Doesn't work with event handlers
 			return new Promise(function(resolve) {
 				sandbox.stub(oObject, sMethodName)
-				.callsFake(function() {
+				.callsFake(function(...aArgs) {
 					if (oObject[sMethodName].wrappedMethod) {
-						var oResult = oObject[sMethodName].wrappedMethod.apply(this, arguments);
+						var oResult = oObject[sMethodName].wrappedMethod.apply(this, aArgs);
 						resolve(oResult);
 					}
 				});
@@ -112,7 +111,7 @@ sap.ui.define([
 			var oFieldOverlay = this.oCompanyCodeFieldOverlay.getDomRef();
 
 			return new Promise(function(fnResolve) {
-				oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
+				EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
 					if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
 						var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
@@ -124,24 +123,28 @@ sap.ui.define([
 								oCommandStack.attachModified(function() {
 									var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 									if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-										fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-											assert.strictEqual(this.oCompanyCodeField._getLabel().getText(), sText, "then label of the group element is " + sText);
-											var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
-											assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-											fnResolveOnCommandAdded();
-										}.bind(this));
+										assert.strictEqual(
+											this.oCompanyCodeField._getLabel().getText(),
+											sText,
+											`then label of the group element is ${sText}`
+										);
+										var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oControl}).length;
+										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+										fnResolveOnCommandAdded();
 									}
 								}.bind(this));
 							}.bind(this)),
 							new Promise(function(fnResolveWhenRenamed) {
-								oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
-									if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
-										assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(), " and focus is on field overlay");
-										var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
-										assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
-										fnResolveWhenRenamed();
-									}
-								}, this);
+								EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit",
+									function(sChannel, sEvent, mParams) {
+										if (mParams.overlay === this.oCompanyCodeFieldOverlay) {
+											assert.strictEqual(document.activeElement, this.oCompanyCodeFieldOverlay.getDomRef(),
+												" and focus is on field overlay");
+											var aEditableFields = Array.from(oFieldOverlay.querySelectorAll(".sapUiRtaEditableField"));
+											assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
+											fnResolveWhenRenamed();
+										}
+									}, this);
 							}.bind(this))
 						]).then(function() {
 							stubShowMessageBoxOnRtaClose(this.oRta);
@@ -172,46 +175,53 @@ sap.ui.define([
 
 					// open context menu dialog
 					this.oCompanyCodeFieldOverlay.setSelected(true);
-					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
+					RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(async function() {
 						var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 						QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-						oCore.applyChanges();
+						await nextUIUpdate();
 
-						oDialog.attachOpened(function() {
+						oDialog.attachOpened(async function() {
 							var oFieldToAdd = oDialog.getElements().filter(function(oField) {
 								return oField.type === "invisible";
 							})[0];
-							oCommandStack.attachModified(function() {
+							oCommandStack.attachModified(async function() {
 								var aCommands = oCommandStack.getAllExecutedCommands();
 								if (aCommands &&
 									aCommands.length === 3) {
-									oCore.applyChanges();
+									await nextUIUpdate();
 
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										var oGroupElements = this.oGeneralGroup.getGroupElements();
-										var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
-										assert.equal(oGroupElements[iIndex].getLabelText(), oFieldToAdd.label, "the added element is at the correct position");
-										assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
-										assert.equal(this.oBoundButton35Field.__label, oFieldToAdd.label, "the new field is the one that got deleted");
-										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-										assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
-										stubShowMessageBoxOnRtaClose(this.oRta);
-										return this.oRta.stop();
-									}.bind(this))
+									var oGroupElements = this.oGeneralGroup.getGroupElements();
+									var iIndex = oGroupElements.indexOf(this.oCompanyCodeField) + 1;
+									assert.equal(
+										oGroupElements[iIndex].getLabelText(),
+										oFieldToAdd.label,
+										"the added element is at the correct position"
+									);
+									assert.ok(oGroupElements[iIndex].getVisible(), "the new field is visible");
+									assert.equal(
+										this.oBoundButton35Field.__label,
+										oFieldToAdd.label,
+										"the new field is the one that got deleted"
+									);
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+									assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
+									stubShowMessageBoxOnRtaClose(this.oRta);
+									return this.oRta.stop()
 									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 									.then(function(iNumberOfChanges) {
 										// hide and unhide get condensed, so only the add is saved
 										assert.equal(iNumberOfChanges, 1);
-									})
-									.then(fnDone);
+										fnDone();
+									});
 								}
+								return undefined;
 							}.bind(this));
 
 							// select the field in the list and close the dialog with OK
 							oFieldToAdd.selected = true;
-							var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+							var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 							QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-							oCore.applyChanges();
+							await nextUIUpdate();
 						}.bind(this));
 					}.bind(this));
 				}.bind(this), 2000);
@@ -234,8 +244,8 @@ sap.ui.define([
 			this.oCompanyCodeFieldOverlay.setSelected(true);
 
 			// open context menu (context menu) and select add field
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(function() {
-				oDialog.attachOpened(function() {
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, this.oCompanyCodeFieldOverlay).then(async function() {
+				oDialog.attachOpened(async function() {
 					var oFieldToAdd = oDialog._oList.getItems()[1];
 					var sFieldToAddText = oFieldToAdd.getContent()[0].getItems()[0].getText();
 
@@ -273,16 +283,16 @@ sap.ui.define([
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.focus();
 					QUnitUtils.triggerKeydown(oFieldToAdd.getDomRef(), KeyCodes.ENTER, false, false, false);
-					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 
@@ -295,21 +305,18 @@ sap.ui.define([
 			oCommandStack.attachModified(function() {
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 				if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "remove") {
-					// TODO fix timing as modified is called before serializer is triggered...
-					fnWaitForExecutionAndSerializationBeingDone.call(this)
-					.then(function() {
-						assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
-						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-						stubShowMessageBoxOnRtaClose(this.oRta);
-						return this.oRta.stop();
-					}.bind(this))
+					assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+					stubShowMessageBoxOnRtaClose(this.oRta);
+					return this.oRta.stop()
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 					.then(function(iNumberOfChanges) {
 						assert.equal(iNumberOfChanges, 1);
-					})
-					.then(fnDone);
+						fnDone();
+					});
 				}
+				return undefined;
 			}.bind(this));
 
 			this.oVictimOverlay.focus();
@@ -328,20 +335,23 @@ sap.ui.define([
 				var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 				if (oFirstExecutedCommand &&
 					oFirstExecutedCommand.getName() === "move") {
-					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-						var iIndex = 0;
-						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-						stubShowMessageBoxOnRtaClose(this.oRta);
-						return this.oRta.stop();
-					}.bind(this))
+					var iIndex = 0;
+					assert.equal(
+						this.oDatesGroup.getGroupElements()[iIndex].getId(),
+						this.oCompanyCodeField.getId(),
+						" then the field is moved to first place"
+					);
+					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+					stubShowMessageBoxOnRtaClose(this.oRta);
+					return this.oRta.stop()
 					.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 					.then(function(iNumberOfChanges) {
 						assert.equal(iNumberOfChanges, 1);
-					})
-					.then(fnDone);
+						fnDone();
+					});
 				}
+				return undefined;
 			}.bind(this));
 
 			var oCutPastePlugin = this.oRta.getPlugins().cutPaste;
@@ -362,7 +372,7 @@ sap.ui.define([
 
 			var fnDone = assert.async();
 
-			oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
+			EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.startEdit", function(sChannel, sEvent, mParams) {
 				if (mParams.overlay === this.oDatesGroupOverlay) {
 					var aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
 
@@ -375,19 +385,21 @@ sap.ui.define([
 								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
 								if (oFirstExecutedCommand &&
 									oFirstExecutedCommand.getName() === "rename") {
-									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function() {
-										assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
-										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-										fnResolveOnCommandAdded();
-									}.bind(this));
+									assert.strictEqual(this.oDatesGroup.getTitle(), "Test", "then title of the group is Test");
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+									assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+									fnResolveOnCommandAdded();
 								}
 							}.bind(this));
 						}.bind(this)),
 						new Promise(function(fnResolveWhenRenamed) {
-							oCore.getEventBus().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
+							EventBus.getInstance().subscribeOnce("sap.ui.rta", "plugin.Rename.stopEdit", function(sChannel, sEvent, mParams) {
 								if (mParams.overlay === this.oDatesGroupOverlay) {
-									assert.strictEqual(this.oDatesGroupOverlay.getDomRef(), document.activeElement, " and focus is on group overlay");
+									assert.strictEqual(
+										this.oDatesGroupOverlay.getDomRef(),
+										document.activeElement,
+										" and focus is on group overlay"
+									);
 									aEditableFields = Array.from(oGroupOverlay.querySelectorAll(".sapUiRtaEditableField"));
 									assert.strictEqual(aEditableFields.length, 0, " and the editable field is removed from dom");
 									fnResolveWhenRenamed();
@@ -420,7 +432,7 @@ sap.ui.define([
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			var fnDone = assert.async();
-			var oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
+			var oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oCommandStack = this.oRta.getCommandStack();
 			var oDialog = this.oRta.getPlugins().additionalElements.getDialog();
@@ -428,50 +440,48 @@ sap.ui.define([
 			oFieldOverlay.focus();
 			oFieldOverlay.setSelected(true);
 			// open context menu (compact context menu)
-			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(function() {
+			RtaQunitUtils.openContextMenuWithKeyboard.call(this, oFieldOverlay).then(async function() {
 				// wait for opening additional Elements dialog
-				oDialog.attachOpened(function() {
+				oDialog.attachOpened(async function() {
 					var oFieldToAdd = oDialog.getElements().filter(function(oField) {
 						return oField.type === "invisible";
 					})[0];
-					oCommandStack.attachModified(function() {
+					oCommandStack.attachModified(async function() {
 						var aCommands = oCommandStack.getAllExecutedCommands();
 						if (aCommands && aCommands.length === 1) {
-							fnWaitForExecutionAndSerializationBeingDone.call(this)
-							.then(function() {
-								oCore.applyChanges();
+							await nextUIUpdate();
 
-								iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
-								assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
-								stubShowMessageBoxOnRtaClose(this.oRta);
-								return this.oRta.stop();
-							}.bind(this))
+							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
+							assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
+							stubShowMessageBoxOnRtaClose(this.oRta);
+							return this.oRta.stop()
 							.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 							.then(function(iNumberOfChanges) {
 								assert.equal(iNumberOfChanges, 1);
 								fnDone();
 							});
 						}
+						return undefined;
 					}.bind(this));
 
 					// select the field in the list and close the dialog with OK
 					oFieldToAdd.selected = true;
-					var oOkButton = oCore.byId(oDialog.getId() + "--" + "rta_addDialogOkButton");
+					var oOkButton = Element.getElementById(`${oDialog.getId()}--rta_addDialogOkButton`);
 					QUnitUtils.triggerEvent("tap", oOkButton.getDomRef());
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 
 				var oMenu = this.oRta.getPlugins().contextMenu.oContextMenuControl;
 				var oContextMenuItem = oMenu.getItems()[1];
 				assert.equal(oContextMenuItem.getText(), "Add: Field", "then the add field action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oMenu._getVisualParent().getItems()[1].getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			}.bind(this));
 		});
 
 		QUnit.test("when making two dirty changes of the same type on a simple form field and switching from visualization to adaptation mode between the changes,", function(assert) {
 			var fnDone = assert.async();
-			var oForm = oCore.byId("Comp1---idMain1--SimpleForm--Form");
+			var oForm = Element.getElementById("Comp1---idMain1--SimpleForm--Form");
 			var oFormContainer = oForm.getFormContainers()[0];
 			var oFormField = oFormContainer.getFormElements()[0];
 			var oFormField2 = oFormContainer.getFormElements()[1];
@@ -491,18 +501,14 @@ sap.ui.define([
 					"move",
 					"then the move command is added to the stack"
 				);
-				fnWaitForExecutionAndSerializationBeingDone.call(this)
-				.then(function() {
-					this.oChangeVisualization = this.oRta.getChangeVisualization();
-					return startVisualization(this.oRta);
-				}.bind(this))
-				.then(function() {
+				this.oChangeVisualization = this.oRta.getChangeVisualization();
+				return startVisualization(this.oRta)
+				.then(async function() {
 					var aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 					assert.strictEqual(aVizModel[2].count, 1, "then one move change is registered");
 					// SimpleForm recreates all elements after cut&paste, thus we need to fetch them again
-					oFormContainer = oForm.getFormContainers()[0];
-					oFormField = oFormContainer.getFormElements()[0];
-					oFormField2 = oFormContainer.getFormElements()[1];
+					[oFormContainer] = oForm.getFormContainers();
+					[oFormField, oFormField2] = oFormContainer.getFormElements();
 					oFieldOverlay = OverlayRegistry.getOverlay(oFormField);
 					oFieldOverlay2 = OverlayRegistry.getOverlay(oFormField2);
 
@@ -512,10 +518,7 @@ sap.ui.define([
 							"move",
 							"then the second move command is added to the stack"
 						);
-						fnWaitForExecutionAndSerializationBeingDone.call(this)
-						.then(function() {
-							return startVisualization(this.oRta);
-						}.bind(this))
+						return startVisualization(this.oRta)
 						.then(function() {
 							aVizModel = this.oRta.getToolbar().getModel("visualizationModel").getData().changeCategories;
 							assert.strictEqual(aVizModel[2].count, 2, "then two move changes are registered");
@@ -535,7 +538,7 @@ sap.ui.define([
 					});
 
 					this.oRta.setMode("adaptation");
-					oCore.applyChanges();
+					await nextUIUpdate();
 				}.bind(this));
 			}.bind(this);
 
@@ -554,7 +557,7 @@ sap.ui.define([
 
 			this.oCompanyCodeFieldOverlay.focus();
 
-			var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
+			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
 			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "ContextMenu is open");
 				// press rename button
@@ -573,41 +576,38 @@ sap.ui.define([
 
 		QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
 			var fnDone = assert.async();
-			var oCombinedElement = oCore.byId("Comp1---idMain1--Dates.BoundButton35");
+			var oCombinedElement = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
 			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no changes to publish in the flex persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
-			oCommandStack.attachCommandExecuted(function() {
-				fnWaitForExecutionAndSerializationBeingDone.call(this)
-				.then(function() {
-					oCore.applyChanges();
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
-					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
-					stubShowMessageBoxOnRtaClose(this.oRta);
-					return this.oRta.stop();
-				}.bind(this))
+			oCommandStack.attachCommandExecuted(async function() {
+				await nextUIUpdate();
+				iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
+				assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+				stubShowMessageBoxOnRtaClose(this.oRta);
+				return this.oRta.stop()
 				.then(RtaQunitUtils.getNumberOfChangesForTestApp)
 				.then(function(iNumberOfChanges) {
 					assert.equal(iNumberOfChanges, 1);
-				})
-				.then(fnDone);
+					fnDone();
+				});
 			}, this);
 
 			// open context menu (expanded context menu) on fucused overlay
 			oCombinedElementOverlay.focus();
 			oCombinedElementOverlay.setSelected(true);
 
-			var oContextMenuControl = this.oRta.getPlugins().contextMenu.oContextMenuControl;
-			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", function() {
+			var {oContextMenuControl} = this.oRta.getPlugins().contextMenu;
+			this.oRta.getPlugins().contextMenu.attachEventOnce("openedContextMenu", async function() {
 				var oContextMenuItem = oContextMenuControl._getVisualParent().getItems().filter(function(oItem) {
 					return oItem.getText() === "Split";
 				})[0];
 				assert.ok(oContextMenuItem, "the the split action button is available in the menu");
 				QUnitUtils.triggerEvent("click", oContextMenuItem.getDomRef());
-				oCore.applyChanges();
+				await nextUIUpdate();
 			});
 			QUnitUtils.triggerKeyup(oCombinedElementOverlay.getDomRef(), KeyCodes.F10, true, false, false);
 		});

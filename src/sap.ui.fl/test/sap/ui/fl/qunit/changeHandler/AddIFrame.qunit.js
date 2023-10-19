@@ -28,9 +28,9 @@ sap.ui.define([
 	var sUrl = "testURL";
 
 	QUnit.module("Given a AddIFrame Change Handler", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMockedAppComponent = {
-				getLocalId: function() {
+				getLocalId() {
 					return undefined;
 				}
 			};
@@ -79,28 +79,28 @@ sap.ui.define([
 				appComponent: this.oMockedAppComponent
 			};
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
 		["targetAggregation", "baseId", "url"].forEach(function(sRequiredProperty) {
-			QUnit.test("When calling 'completeChangeContent' without '" + sRequiredProperty + "'", function(assert) {
+			QUnit.test(`When calling 'completeChangeContent' without '${sRequiredProperty}'`, function(assert) {
 				delete this.mChangeSpecificContent[sRequiredProperty];
 				assert.throws(
 					function() {
 						this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 					},
-					Error("Attribute missing from the change specific content '" + sRequiredProperty + "'"),
-					"without " + sRequiredProperty + " 'completeChangeContent' throws an error"
+					Error(`Attribute missing from the change specific content '${sRequiredProperty}'`),
+					`without ${sRequiredProperty} 'completeChangeContent' throws an error`
 				);
 			});
 		});
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with JSTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oMockedAppComponent = {
-				getLocalId: function() {
+				getLocalId() {
 					return undefined;
 				}
 			};
@@ -149,43 +149,35 @@ sap.ui.define([
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
 				view: {
-					getController: function() {},
-					getId: function() {},
-					createId: function(sId) { return sId; }
+					getController() {},
+					getId() {},
+					createId(sId) { return sId; }
 				},
 				appComponent: this.oMockedAppComponent
 			};
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oHBox.destroy();
 		}
 	}, function() {
-		QUnit.test("When applying the change on a js control tree", function(assert) {
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
-			.then(function() {
-				assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-				var oCreatedControl = this.oHBox.getItems()[1];
-				assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-				return oCreatedControl._oSetUrlPromise.then(function() {
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
-				});
-			}.bind(this));
+		QUnit.test("When applying the change on a js control tree", async function(assert) {
+			await this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
+			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+			const oCreatedControl = this.oHBox.getItems()[1];
+			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
 		});
 
-		QUnit.test("When applying the change on a js control tree (index = 0)", function(assert) {
+		QUnit.test("When applying the change on a js control tree (index = 0)", async function(assert) {
 			this.mChangeSpecificContent.index = 0;
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
-			return this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag)
-			.then(function() {
-				assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
-				var oCreatedControl = this.oHBox.getItems()[0];
-				assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
-				return oCreatedControl._oSetUrlPromise.then(function() {
-					assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
-				});
-			}.bind(this));
+			await this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.mPropertyBag);
+			assert.strictEqual(this.oHBox.getItems().length, 2, "after the change there are 2 items in the horizontal box");
+			const oCreatedControl = this.oHBox.getItems()[0];
+			assert.ok(oCreatedControl.getId().match(/test$/), "the created IFrame ends with the expected baseId");
+			assert.strictEqual(oCreatedControl.getUrl(), sUrl, "the created IFrame has the correct URL");
 		});
 
 		QUnit.test("When applying the change on a js control tree with an invalid targetAggregation", function(assert) {
@@ -195,7 +187,7 @@ sap.ui.define([
 			.catch(function(vError) {
 				assert.equal(
 					vError.message,
-					"The given Aggregation is not available in the given control: " + this.oHBox.getId(),
+					`The given Aggregation is not available in the given control: ${this.oHBox.getId()}`,
 					"then apply change throws an error");
 			}.bind(this));
 		});
@@ -211,7 +203,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChangeHandler = AddIFrame;
 			this.sHBoxId = "hbx";
 			var mExpectedSelector = {
@@ -246,15 +238,15 @@ sap.ui.define([
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
 				this.oXmlString =
-					'<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
-					'<HBox id="' + this.sHBoxId + '">' +
-					"<items>" +
-					"<Button />" +
-					"</items>" +
-					"</HBox>" +
-					"</mvc:View>";
+					`<mvc:View id="testComponentAsync---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">` +
+					`<HBox id="${this.sHBoxId}">` +
+					`<items>` +
+					`<Button />` +
+					`</items>` +
+					`</HBox>` +
+					`</mvc:View>`;
 				this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
-				this.oHBox = this.oXmlView.childNodes[0];
+				[this.oHBox] = this.oXmlView.childNodes;
 
 				this.mPropertyBag = {
 					modifier: XmlTreeModifier,
@@ -265,7 +257,7 @@ sap.ui.define([
 				this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 			}.bind(this));
 		},
-		afterEach: function() {
+		afterEach() {
 			this.oComponent.destroy();
 		}
 	}, function() {
@@ -300,7 +292,7 @@ sap.ui.define([
 			.catch(function(vError) {
 				assert.equal(
 					vError.message,
-					"The given Aggregation is not available in the given control: " + this.oHBox.id,
+					`The given Aggregation is not available in the given control: ${this.oHBox.id}`,
 					"then apply change throws an error");
 			}.bind(this));
 		});

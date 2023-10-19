@@ -10,21 +10,17 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/util/validateStableIds",
-	"sap/base/util/ObjectPath",
 	"sap/m/InstanceManager"
 ], function(
 	SupportLib,
 	Utils,
 	DesignTime,
 	validateStableIds,
-	ObjectPath,
 	InstanceManager
 ) {
 	"use strict";
 
-	var Categories = SupportLib.Categories;
-	var Audiences = SupportLib.Audiences;
-	var Severity = SupportLib.Severity;
+	const {Categories, Audiences, Severity} = SupportLib;
 
 	function findAppComponent(aElements) {
 		var oAppComponent;
@@ -51,14 +47,15 @@ sap.ui.define([
 		minversion: "1.28",
 		title: "Stable control IDs are required for SAPUI5 flexibility services",
 		description: "Checks whether the IDs of controls support SAPUI5 flexibility services",
-		resolution: "Replace the generated control ID with a stable ID. We strongly recommend that you use stable IDs for all controls in your app.",
+		resolution: "Replace the generated control ID with a stable ID. We strongly recommend "
+			+ "that you use stable IDs for all controls in your app.",
 		resolutionurls: [{
 			text: "Documentation: Stable IDs: All You Need to Know",
 			href: "https://sdk.openui5.org/topic/f51dbb78e7d5448e838cdc04bdf65403"
 		}],
 		async: true,
-		check: function(issueManager, oCoreFacade, oScope, resolve) {
-			var oUshellContainer = ObjectPath.get("sap.ushell.Container");
+		check(issueManager, oCoreFacade, oScope, resolve) {
+			var oUshellContainer = Utils.getUshellContainer();
 
 			Promise.resolve()
 			.then(function() {
@@ -73,7 +70,7 @@ sap.ui.define([
 						return undefined;
 					})
 					.catch(function(vError) {
-						throw new Error("Error getting current application from Unified Shell AppLifeCycle service: " + vError);
+						throw new Error(`Error getting current application from Unified Shell AppLifeCycle service: ${vError}`);
 					});
 				}
 				return findAppComponent(oScope.getElements());
@@ -102,8 +99,8 @@ sap.ui.define([
 						if (!bHasConcatenatedId) {
 							issueManager.addIssue({
 								severity: Severity.High,
-								details: "The ID '" + sElementId + "' for the control was generated and flexibility features " +
-									"cannot support controls with generated IDs.",
+								details: `The ID '${sElementId}' for the control was generated and flexibility features ` +
+									`cannot support controls with generated IDs.`,
 								context: {
 									id: sElementId
 								}
@@ -111,8 +108,9 @@ sap.ui.define([
 						} else {
 							issueManager.addIssue({
 								severity: Severity.Low,
-								details: "The ID '" + sElementId + "' for the control was concatenated and has a generated onset.\n" +
-									"To enable the control for flexibility features, you must specify an ID for the control providing the onset, which is marked as high issue.",
+								details: `The ID '${sElementId}' for the control was concatenated and has a generated onset.
+									To enable the control for flexibility features, you must specify an ID for the control providing ` +
+									`the onset, which is marked as high issue.`,
 								context: {
 									id: sElementId
 								}

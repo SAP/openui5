@@ -193,7 +193,6 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 .sapUiCalMonthView,
 .sapUiCalMonthPicker,
 .sapUiCalYearPicker {
-	width: 14em;
 	display: inline-block;
 	width: 19rem; /* +1rem padding left and right = 320 px*/
 }
@@ -459,6 +458,37 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 	}
 }
 
+.sapUiSizeCozy {
+	.sapUiCal:not(.sapUiCalDateInt) {
+		min-width: 19.9rem;
+		padding-top: 0.5rem;
+		.sapUiCalMonthView .sapUiCalWH,
+		.sapUiCalMonthView .sapUiCalItem,
+		.sapUiCalMonthView .sapUiCalWeekNum{
+			max-width: 2.25rem;
+		}
+
+		div[role=row] {
+			display: flex;
+			justify-content: space-between;
+		}
+		.sapUiCalHeadNext {
+			right: 0;
+		}
+		.sapUiCalHeadPrev {
+			left: 0;
+		}
+	}
+	.sapUiCal .sapUiCalMonthView,
+	.sapUiCal .sapUiCalRow {
+		padding-left: 0rem;
+		padding-right: 0rem;
+	}
+	.sapUiCal .sapUiCalMonthView {
+		padding-bottom: 0.5rem;
+	}
+}
+
 .sapUiSizeCompact .sapUiCalMonthPicker.sapUiCalMonthSecType,
 .sapUiSizeCompact .sapUiCalYearPicker.sapUiCalMonthSecType {
 	.sapUiCalItem {
@@ -483,7 +513,7 @@ html.sap-desktop .sapUiCalHead > button.sapUiCalDsbl:focus,
 
 .sapUiCal:not(.sapUiCalInt){
 	width: 20rem;
-	min-width: 20rem;
+	min-width: 19.9rem;
 }
 
 .sapUiCalMulti:not(.sapUiCalInt){

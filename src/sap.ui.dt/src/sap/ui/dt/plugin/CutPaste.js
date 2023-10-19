@@ -36,7 +36,6 @@ sap.ui.define([
 	 * @private
 	 * @since 1.34
 	 * @alias sap.ui.dt.plugin.CutPaste
-	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CutPaste = Plugin.extend("sap.ui.dt.plugin.CutPaste", /** @lends sap.ui.dt.plugin.CutPaste.prototype */ {
 		metadata: {
@@ -82,7 +81,7 @@ sap.ui.define([
 		.catch(function(oError) {
 			throw DtUtil.createError(
 				"CutPaste#registerElementOverlay",
-				"An error occurred during checkMovable: " + oError
+				`An error occurred during checkMovable: ${oError}`
 			);
 		});
 	};

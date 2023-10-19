@@ -17,7 +17,7 @@ sap.ui.define([
 		 * @param {object} oCondenserInfo - Condenser specific information
 		 * @returns {Promise} resolves when a create change is added to UI Reconstruction Map
 		 */
-		addToReconstructionMap: function(mUIReconstructions, oCondenserInfo) {
+		addToReconstructionMap(mUIReconstructions, oCondenserInfo) {
 			return Promise.all([
 				CondenserUtils.getContainerElementIds(
 					oCondenserInfo.sourceContainer, oCondenserInfo.sourceAggregation,
@@ -66,7 +66,7 @@ sap.ui.define([
 		 * @param {object} oCondenserInfo - Condenser specific information
 		 * @param {string[]} aInitialUIElementIds - Array with the Ids of the initial elements in the container
 		 */
-		simulate: function(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
+		simulate(aContainerElements, oCondenserInfo, aInitialUIElementIds) {
 			var sAffectedControlId = oCondenserInfo.affectedControl;
 			var iInitialSourceIndex = aInitialUIElementIds.indexOf(sAffectedControlId);
 			// the move itself should not extend the array, just replace the placeholder

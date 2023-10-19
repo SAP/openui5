@@ -67,6 +67,7 @@ sap.ui.define([
 				name : "sap.ui.core.sample.odata.v4.DataAggregation"
 			}
 		});
+		Then.onAnyPage.iTeardownMyUIComponentInTheEnd();
 
 		Then.onTheMainPage.checkTable(aInitialTableData);
 
@@ -208,6 +209,5 @@ sap.ui.define([
 
 		Then.onAnyPage.checkLog();
 		Then.onAnyPage.analyzeSupportAssistant();
-		Then.iTeardownMyUIComponent();
 	};
 });

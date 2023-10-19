@@ -1,8 +1,13 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/core/Core", "sap/ui/support/supportRules/report/DataCollector", "sap/ui/core/Component", "sap/ui/core/Configuration", "sap/ui/core/theming/ThemeManager"
-], function (Core, DataCollector, Component, Configuration, ThemeManager) {
+	"sap/ui/core/Core",
+	"sap/ui/support/supportRules/report/DataCollector",
+	"sap/ui/core/Component",
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/Configuration",
+	"sap/ui/core/theming/ThemeManager"
+], function (Core, DataCollector, Component, UIComponent, Configuration, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -43,69 +48,92 @@ sap.ui.define([
 		QUnit.test("Application Info 'sap.app'", function (assert) {
 			// Arrange
 			var ComponentRegistryInitial = Component.registry;
-			Component.registry = [
-				{
-					getMetadata: function(){
-						return {
-							getManifestEntry: function () {
-								return null;
-							}
-						};
-					}
-				},
-				{
-					getMetadata: function(){
-						return {
-							getManifestEntry: function (type) {
-								if (type === "sap.app") {
-									return "sap.app";
-								}
-								return null;
-							}
-						};
+			var DataCollectorTestComponent = UIComponent.extend("DataCollectorTestComponent", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							type: "application"
+						}
 					}
 				}
+			});
+			var oComponent1 = new DataCollectorTestComponent();
+			var oComponent2 = new DataCollectorTestComponent();
+
+			Component.registry = [
+				oComponent1,
+				oComponent2
 			];
 
-		// Assert
-		assert.deepEqual(this.DataCollector.getAppInfo() , ["sap.app"], "App info is OK");
+			// Assert
+			assert.deepEqual(
+				this.DataCollector.getAppInfo(),
+				[
+					{
+					type: "application"
+					},
+					{
+						type: "application"
+					}
+				],
+				"App info is OK"
+			);
 
-		// Clean up
-		Component.registry = ComponentRegistryInitial;
+			// Clean up
+			Component.registry = ComponentRegistryInitial;
+			oComponent1.destroy();
+			oComponent2.destroy();
 		});
 
 		QUnit.test("Application Info 'sap.fiori'", function (assert) {
 			// Arrange
 			var ComponentRegistryInitial = Component.registry;
-			Component.registry = [
-				{
-					getMetadata: function(){
-						return {
-							getManifestEntry: function () {
-								return null;
-							}
-						};
-					}
-				},
-				{
-					getMetadata: function(){
-						return {
-							getManifestEntry: function (type) {
-								if (type === "sap.fiori") {
-									return "sap.fiori";
-								}
-								return null;
-							}
-						};
+			var DataCollectorTestComponent1 = UIComponent.extend("DataCollectorTestComponentWithSapFiori", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							type: "application"
+						},
+						"sap.fiori": {}
 					}
 				}
+			});
+			var DataCollectorTestComponent2 = UIComponent.extend("DataCollectorTestComponentWithoutSapFiori", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							type: "application"
+						}
+					}
+				}
+			});
+			var oComponent1 = new DataCollectorTestComponent1();
+			var oComponent2 = new DataCollectorTestComponent2();
+
+			Component.registry = [
+				oComponent1,
+				oComponent2
 			];
 
-		// Assert
-		assert.deepEqual(this.DataCollector.getAppInfo() , ["sap.fiori"], "App info is OK");
+			// Assert
+			assert.deepEqual(
+				this.DataCollector.getAppInfo(),
+				[
+					{
+						type: "application"
+					},
+					{},
+					{
+						type: "application"
+					}
+				],
+				"App info is OK"
+			);
 
-		// Clean up
-		Component.registry = ComponentRegistryInitial;
+			// Clean up
+			Component.registry = ComponentRegistryInitial;
+			oComponent1.destroy();
+			oComponent2.destroy();
 		});
 
 		QUnit.test("Technical Info", function (assert) {

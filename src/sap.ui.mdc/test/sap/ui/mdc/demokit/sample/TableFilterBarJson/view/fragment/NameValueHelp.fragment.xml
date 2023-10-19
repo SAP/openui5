@@ -1,0 +1,73 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdct="sap.ui.mdc.table"
+	xmlns:vh="sap.ui.mdc.valuehelp"
+	xmlns:vhc="sap.ui.mdc.valuehelp.content"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh">
+
+	<mdc:ValueHelp id="name-vh" delegate="{name: 'sap/ui/mdc/ValueHelpDelegate', payload: {}}">
+		<mdc:typeahead>
+			<vh:Popover title="Name">
+				<vhc:MTable keyPath="name" filterFields="*name*">
+					<Table id="name-vht-table" items='{path : "mountains>/mountains", length: 10}'
+						width="30rem">
+						<columns>
+							<Column>
+								<header>
+									<Text text="Name" />
+								</header>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem type="Active">
+								<cells>
+									<Text text="{mountains>name}" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</vhc:MTable>
+			</vh:Popover>
+		</mdc:typeahead>
+		<mdc:dialog>
+			<vh:Dialog title="Name">
+				<vhc:MDCTable keyPath="name">
+					<vhc:filterBar>
+						<vhfb:FilterBar id="name-vhd-fb" delegate="{name: 'mdc/sample/delegate/JSONFilterBarDelegate'}">
+							<vhfb:basicSearchField>
+								<mdc:FilterField delegate="{name: 'sap/ui/mdc/field/FieldBaseDelegate'}"
+									dataType="sap.ui.model.type.String"
+									placeholder= "Search Mountains"
+									conditions="{$filters>/conditions/$search}"
+									maxConditions="1"/>
+							</vhfb:basicSearchField>
+						</vhfb:FilterBar>
+					</vhc:filterBar>
+					<mdc:Table id="name-vhd-table"
+						type="ResponsiveTable"
+						selectionMode="Multi"
+						delegate="{
+							name: 'mdc/sample/delegate/JSONTableDelegate',
+							payload: {
+								bindingPath: 'mountains>/mountains',
+								searchKeys: ['name']
+							}
+						}"
+						filter="name-vhd-fb">
+						<mdc:columns>
+							<mdct:Column
+								header="Name"
+								propertyKey="name">
+								<Text text="{mountains>name}"/>
+							</mdct:Column>
+						</mdc:columns>
+					</mdc:Table>
+				</vhc:MDCTable>
+				<vhc:Conditions label="Name"/>
+			</vh:Dialog>
+		</mdc:dialog>
+	</mdc:ValueHelp>
+
+</core:FragmentDefinition>

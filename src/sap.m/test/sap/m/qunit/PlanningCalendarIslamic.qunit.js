@@ -31,7 +31,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Locale",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	// load all required calendars in advance
+	"sap/ui/core/date/Islamic"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -1100,7 +1102,8 @@ sap.ui.define([
 	QUnit.test("keyboard navigation HOME & END for 1 Month view", function(assert) {
 		_switchToView(CalendarIntervalType.OneMonth, this.oPC2);
 		this.oPC2.setStartDate(this.o1Sep2016MidOfWeek);
-		this.oPC2.rerender();
+		this.oPC2.invalidate();
+		Core.applyChanges();
 		var sMonthIdPrefix = this.oPC2.getId() + "-OneMonthsRow-";
 
 		jQuery("#" +  sMonthIdPrefix + "20160901").trigger("focus");
@@ -1183,24 +1186,18 @@ sap.ui.define([
 		//Prepare
 		var oStartDate = this.oPC2.getStartDate();
 
-		//Arrange
+		//Arrange & Act
 		this.oPC2.setMinDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2.setStartDate(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(1999, 1, 1, 0, 0, 0));
 
-		//Act
-		this.oPC2._applyArrowsLogic(true);
-
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oPrevBtn.getEnabled(), false, "Back Arrow Is Disabled");
 
-		//Arrange
+		//Arrange & Act
 		this.oPC2.setMaxDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2.setStartDate(UI5Date.getInstance(2222,22,22,22,22,22));
 		this.oPC2._dateNav.setCurrent(UI5Date.getInstance(2222,22,22,22,22,22));
-
-		//Act
-		this.oPC2._applyArrowsLogic(false);
 
 		//Assert
 		assert.equal(this.oPC2._getHeader()._oNextBtn.getEnabled(), false, "Forward Arrow Is Disabled");
@@ -1336,7 +1333,8 @@ sap.ui.define([
 
 		Core.getConfiguration().setFormatLocale("en-GB");
 		this.oPC2.setStartDate(UI5Date.getInstance("2014", "10", "5", "08", "00"));
-		this.oPC2.rerender();
+		this.oPC2.invalidate();
+		Core.applyChanges();
 
 		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[0];
@@ -1674,7 +1672,9 @@ sap.ui.define([
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
-		this.oPC2.rerender(); //start date is 1st of September 2016
+
+		this.oPC2.invalidate(); //start date is 1st of September 2016
+		Core.applyChanges();
 
 		assert.equal(_getTodayButton.call(this, this.oPC2).getEnabled(), true, "Today button should be enabled as current day IS NOT visible");
 		//act
@@ -1753,7 +1753,9 @@ sap.ui.define([
 		//prepare
 		var oFakeNow = this.o10Sep2016,
 			clock = sinon.useFakeTimers(oFakeNow.getTime());
-		this.oPC2.rerender(); //start date is 1st of September 2016
+
+		this.oPC2.invalidate(); //start date is 1st of September 2016
+		Core.applyChanges();
 
 		//act
 		_clickTodayButton.call(this, this.oPC2);

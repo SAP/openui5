@@ -3,21 +3,21 @@
  */
 sap.ui.define([
 	"sap/m/MessageToast",
-	"sap/ui/core/Core",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/OperationMode"
-], function (MessageToast, Core, Controller, Filter, FilterOperator, FilterType, CountMode,
+], function (MessageToast, Messaging, Controller, Filter, FilterOperator, FilterType, CountMode,
 		OperationMode) {
 	"use strict";
 	return Controller.extend("sap.ui.core.internal.samples.odata.v2.TreeTable.Main", {
 		clearPersistentMessages : function (bUnboundOnly) {
 			var aMessages = this.getView().getModel("messages").getObject("/");
 
-			Core.getMessageManager().removeMessages(aMessages.filter(function (oMessage) {
+			Messaging.removeMessages(aMessages.filter(function (oMessage) {
 				return (oMessage.technical || oMessage.persistent)
 					&& (!bUnboundOnly || !oMessage.target);
 			}));

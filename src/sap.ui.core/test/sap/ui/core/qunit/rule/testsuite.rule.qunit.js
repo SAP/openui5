@@ -15,6 +15,9 @@ sap.ui.define(function () {
 			}
 		},
 		tests: {
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"config/asynchronousXMLViews": {
 				title: "QUnit Tests for 'async XML Views' rules",
 				loader: {
@@ -43,23 +46,38 @@ sap.ui.define(function () {
 			"app/globalApiUsage": {
 				title: "QUnit Tests for 'global api usage' rules"
 			},
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"app/jquerySapUsage": {
 				title: "QUnit Tests for 'jquery sap usage' rules"
 			},
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"app/syncFactoryLoading": {
 				title: "QUnit Tests for 'sync fragment loading' rules"
 			},
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"app/syncXHR": {
 				title: "QUnit Tests for 'sync XHR' rules",
 				qunit: {
 					reorder: false
 				}
 			},
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"app/syncXHRBootstrap": {
 				title: "QUnit Tests for 'sync XHR bootstrap' rules",
 				bootCore: false,
 				page: "test-resources/sap/ui/core/qunit/rule/app/syncXHRBootstrap.qunit.html?sap-language=en"
 			},
+			/**
+			 * @deprecated As of version 1.119
+			 */
 			"app/syncXHRBootstrapDebug": {
 				/*
 				 * Test never worked as expected as the debug mode could not be activated via window["sap-ui-config"].

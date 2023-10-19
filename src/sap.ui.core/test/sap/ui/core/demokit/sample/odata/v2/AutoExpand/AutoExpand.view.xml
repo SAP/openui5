@@ -1,6 +1,7 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns="sap.ui.table">
+	xmlns="sap.ui.table"
+	xmlns:rm="sap.ui.table.rowmodes">
 
 	<AnalyticalTable rows="{
 		filters : [{
@@ -16,7 +17,10 @@
 			provideGrandTotals : false,
 			provideTotalResultSize : false,
 			reloadSingleUnitMeasures : false
-		}}" threshold="5" title="Auto-Expanded Analytical Table" visibleRowCount="5" >
+		}}" threshold="5" title="Auto-Expanded Analytical Table" >
+		<rowMode>
+			<rm:Fixed rowCount="5" />
+		</rowMode>
 		<columns>
 			<AnalyticalColumn leadingProperty="CustomerName">
 				<m:Label text="Customer Name"/>

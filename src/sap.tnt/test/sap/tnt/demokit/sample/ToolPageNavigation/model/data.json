@@ -18,15 +18,15 @@
 			"items": [
 				{
 					"title": "User 1",
-					"key": "page31"
+					"key": "page3"
 				},
 				{
 					"title": "User 2",
-					"key": "page32"
+					"key": "page3"
 				},
 				{
 					"title": "User 3",
-					"key": "page33"
+					"key": "page3"
 				}
 			]
 		},
@@ -37,15 +37,15 @@
 			"items": [
 				{
 					"title": "Identity 1",
-					"key": "page41"
+					"key": "page4"
 				},
 				{
 					"title": "Identity 2",
-					"key": "page42"
+					"key": "page4"
 				},
 				{
 					"title": "Identity 3",
-					"key": "page43"
+					"key": "page4"
 				}
 			]
 		},
@@ -61,11 +61,11 @@
 			"items": [
 				{
 					"title": "Monitoring 1",
-					"key": "page61"
+					"key": "page6"
 				},
 				{
 					"title": "Monitoring 2",
-					"key": "page62"
+					"key": "page6"
 				}
 			]
 		},
@@ -76,15 +76,15 @@
 			"items": [
 				{
 					"title": "Resource 1",
-					"key": "page71"
+					"key": "page7"
 				},
 				{
 					"title": "Resource 2",
-					"key": "page72"
+					"key": "page7"
 				},
 				{
 					"title": "Resource 3",
-					"key": "page73"
+					"key": "page7"
 				}
 			]
 		}

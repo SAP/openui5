@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @param {object} mRequestData data used to generate selectors or snippets for a single control
 	 * @param {string} mRequestData.domElementId dom element ID
 	 * @param {string} mRequestData.action name of the action - used to generate a snippet
-	 * @param {object} mData.assertion assertion details - property name, type and expected value
+	 * @param {object} mRequestData.assertion assertion details - property name, type and expected value
 	 * @param {object} mSelector generated control selector
 	 * @param {string} sSnippet code snippet for a single control
 	 */

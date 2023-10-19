@@ -1,13 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log",
-	"sap/base/util/UriParameters"
+	"sap/base/Log"
 ], function (
 	MockServer,
 	JSONModel,
-	Log,
-	UriParameters) {
+	Log) {
 	"use strict";
 
 	var oMockServer,
@@ -32,7 +30,7 @@ sap.ui.define([
 					oManifestModel = new JSONModel(sManifestUrl);
 
 				oManifestModel.attachRequestCompleted(function ()  {
-					var oUriParameters = UriParameters.fromQuery(window.location.search),
+					var oUriParameters = new URLSearchParams(window.location.search),
 						// parse manifest for local metadata URI
 						sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesPath),
 						oMainDataSource = oManifestModel.getProperty("/sap.app/dataSources/mainService"),

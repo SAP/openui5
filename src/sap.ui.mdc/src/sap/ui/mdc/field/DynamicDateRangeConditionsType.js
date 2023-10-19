@@ -53,7 +53,7 @@ sap.ui.define([
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting, parsing and validating)
-	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the additionalValue (description) of the condition (used for formatting, parsing and validating)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalValueType] Type of the <code>additionalValue</code> (description) of the condition (used for formatting, parsing, and validating)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
 	 * @param {sap.ui.mdc.enums.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize a value
 	 * @param {string} [oFormatOptions.valueHelpID] ID of the value help to determine the key and description
@@ -61,9 +61,9 @@ sap.ui.define([
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
 	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] <code>BindingContext</code> of field. Used to get a key or description from the value help using in/out parameters. (In a table, the value help might be connected to a different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field, for example, for date types; a different type is used internally to have different <code>formatOptions</code>
-	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] additional type used on other part of a field. (For example, for unit fields.)
-	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] additional types used for parts of a <code>CompositeType</code> (if valueType is a <code>CompositeType</code>)
-	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] additional types used for parts of a <code>CompositeType</code> (if additionalValueType is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type} [oFormatOptions.additionalType] Additional type used for another part of a field (for example, for unit fields)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.compositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>valueType</code> is a <code>CompositeType</code>)
+	 * @param {sap.ui.model.Type[]} [oFormatOptions.additionalCompositeTypes] Additional types used for each part of a <code>CompositeType</code> (if <code>additionalValueType</code> is a <code>CompositeType</code>)
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field.
 	 * @param {function} [oFormatOptions.asyncParsing] Callback function to tell the <code>Field</code> the parsing is asynchronous.
 	 * @param {sap.ui.mdc.condition.ConditionObject} [oFormatOptions.navigateCondition] Condition of keyboard navigation. If this is filled, no real parsing is needed as the condition has already been determined and is just returned
@@ -73,12 +73,12 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
-	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput value-property case)
-	 * @param {string} [oFormatOptions.keepValue] If noFormatting is set, this value is used as output (To keep typed value during value help selection)
+	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
+	 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.DynamicDateRangeConditionsType
 	 */
-	var DynamicDateRangeConditionsType = ConditionsType.extend("sap.ui.mdc.field.DynamicDateRangeConditionsType", /** @lends sap.ui.mdc.field.DynamicDateRangeConditionsType.prototype */ {
+	const DynamicDateRangeConditionsType = ConditionsType.extend("sap.ui.mdc.field.DynamicDateRangeConditionsType", /** @lends sap.ui.mdc.field.DynamicDateRangeConditionsType.prototype */ {
 
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
@@ -107,32 +107,32 @@ sap.ui.define([
 			throw new FormatException("No valid conditions provided");
 		}
 
-		var iMaxConditions = _getMaxConditions.call(this);
-		var vResult;
+		const iMaxConditions = _getMaxConditions.call(this);
+		let vResult;
 
 		if (iMaxConditions !== 1) {
 			throw new FormatException("MaxConditions must be 1");
 		}
 
 		if (aConditions.length === 1) {
-			var oCondition = aConditions[0];
+			const oCondition = aConditions[0];
 
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			if (!oCondition.operator || !oOperator) {
 				throw new FormatException("No valid condition provided, Operator wrong.");
 			}
 
-			var aValues = [];
-			var sBaseType = _getBaseType.call(this);
-			var sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, sBaseType);
+			const aValues = [];
+			const sBaseType = _getBaseType.call(this);
+			let sOption = FilterOperatorUtil.getDynamicDateOptionForOperator(oOperator, mLibrary.StandardDynamicDateRangeKeys, sBaseType);
 
-			for (var i = 0; i < oOperator.valueTypes.length; i++) {
+			for (let i = 0; i < oOperator.valueTypes.length; i++) {
 				if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 					if (sOption) { // only for standard operators  (dates are needed as local dates)
 						if (oOperator.valueTypes[i] === OperatorValueType.Self) {
 							aValues.push(DateUtil.typeToDate(oCondition.values[i], _getValueType.call(this), sBaseType));
 						} else {
-							var sOperatorBaseType = _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
+							const sOperatorBaseType = _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
 							if (sOperatorBaseType === BaseType.Date || sOperatorBaseType === BaseType.DateTime) {
 								aValues.push(DateUtil.typeToDate(oCondition.values[i], _getOperatorType.call(this, oOperator, i), sOperatorBaseType));
 							} else {
@@ -166,27 +166,27 @@ sap.ui.define([
 			throw new ParseException("Only one condition supported for parsing");
 		}
 
-		var aOperators = _getOperators.call(this);
-		var aConditions = [];
+		const aOperators = _getOperators.call(this);
+		const aConditions = [];
 		if (oValue && oValue.operator) {
 			if (oValue.operator === "PARSEERROR") {
 				throw new ParseException(oValue.values[0]);
 			}
 
-			var sOption = oValue.operator; // sOperator is the Option name
-			var oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, _getBaseType.call(this)); // search via name and alias
+			const sOption = oValue.operator; // sOperator is the Option name
+			const oOperator = FilterOperatorUtil.getOperatorForDynamicDateOption(sOption, _getBaseType.call(this)); // search via name and alias
 
 			if (oOperator) {
-				var sBaseType = _getBaseType.call(this);
-				var aValues = [];
+				const sBaseType = _getBaseType.call(this);
+				const aValues = [];
 
-				for (var i = 0; i < oOperator.valueTypes.length; i++) {
+				for (let i = 0; i < oOperator.valueTypes.length; i++) {
 					if (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== OperatorValueType.Static) {
 						if (mLibrary.StandardDynamicDateRangeKeys[sOption]) { // only for standard operators (dates are returned as local dates)
 							if (oOperator.valueTypes[i] === OperatorValueType.Self) {
 								aValues.push(DateUtil.dateToType(oValue.values[i], _getValueType.call(this), sBaseType));
 							} else {
-								var sOperatorBaseType = oOperator.valueTypes[i] === OperatorValueType.Self ? sBaseType : _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
+								const sOperatorBaseType = oOperator.valueTypes[i] === OperatorValueType.Self ? sBaseType : _getBaseTypeForValueType.call(this, oOperator.valueTypes[i]);
 								if (sOperatorBaseType === BaseType.Date || sOperatorBaseType === BaseType.DateTime) {
 									aValues.push(DateUtil.dateToType(oValue.values[i], _getOperatorType.call(this, oOperator, i), sOperatorBaseType));
 								} else {
@@ -199,7 +199,7 @@ sap.ui.define([
 					}
 				}
 
-				var oCondition = Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.NotValidated);
+				const oCondition = Condition.createCondition(oOperator.name, aValues, undefined, undefined, ConditionValidated.NotValidated);
 				FilterOperatorUtil.updateConditionValues(oCondition);
 				FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
 				aConditions.push(oCondition);
@@ -220,17 +220,17 @@ sap.ui.define([
 			throw new ConditionValidateException("No valid conditions provided", undefined, undefined, aConditions);
 		}
 
-		var oType = _getValueType.call(this);
-		var aOperators = _getOperators.call(this);
+		const oType = _getValueType.call(this);
+		const aOperators = _getOperators.call(this);
 
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
+		for (let i = 0; i < aConditions.length; i++) {
+			const oCondition = aConditions[i];
 			if (typeof oCondition !== "object" || !oCondition.operator || !oCondition.values ||
 					!Array.isArray(oCondition.values)) {
 				throw new ConditionValidateException(this._oResourceBundle.getText("field.VALUE_NOT_VALID"), undefined, typeof oCondition === "object" ? merge({}, oCondition) : oCondition, aConditions);
 			}
 
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			const oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 
 			if (!oOperator || aOperators.indexOf(oOperator.name) === -1) {
 				throw new ConditionValidateException("No valid condition provided, Operator wrong.", undefined, merge({}, oCondition), aConditions);
@@ -251,7 +251,7 @@ sap.ui.define([
 
 	function _getMaxConditions() {
 
-		var iMaxConditions = 1;
+		let iMaxConditions = 1;
 
 		if (this.oFormatOptions.hasOwnProperty("maxConditions")) {
 			iMaxConditions = this.oFormatOptions.maxConditions;
@@ -263,7 +263,7 @@ sap.ui.define([
 
 	function _getValueType() {
 
-		var oType = this.oFormatOptions.valueType;
+		const oType = this.oFormatOptions.valueType;
 		if (!oType) {
 			throw new Error("Type missing");
 		}
@@ -274,7 +274,7 @@ sap.ui.define([
 
 	function _getOperators() {
 
-		var aOperators = this.oFormatOptions.operators;
+		let aOperators = this.oFormatOptions.operators;
 		if (!aOperators || aOperators.length === 0) {
 			aOperators = FilterOperatorUtil.getOperatorsForType(_getBaseType.call(this));
 		}
@@ -285,10 +285,10 @@ sap.ui.define([
 
 	function _getBaseType() {
 
-		var oType = _getValueType.call(this);
-		var sType = oType.getMetadata().getName();
-		var oFormatOptions = oType.getFormatOptions();
-		var oConstraints = oType.getConstraints();
+		const oType = _getValueType.call(this);
+		const sType = oType.getMetadata().getName();
+		const oFormatOptions = oType.getFormatOptions();
+		const oConstraints = oType.getConstraints();
 
 		return _getBaseTypeForValueType.call(this, {name: sType, formatOptions: oFormatOptions, constraints: oConstraints});
 
@@ -296,9 +296,9 @@ sap.ui.define([
 
 	function _getBaseTypeForValueType(oValueType) {
 
-		var oDelegate = this.oFormatOptions.delegate;
-		var oField = this.oFormatOptions.control;
-		var sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : BaseType.Date;
+		const oDelegate = this.oFormatOptions.delegate;
+		const oField = this.oFormatOptions.control;
+		const sBaseType = oDelegate ? oDelegate.getTypeMap(oField).getBaseType(oValueType.name, oValueType.formatOptions, oValueType.constraints) : BaseType.Date;
 
 		return sBaseType;
 

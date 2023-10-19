@@ -30,7 +30,7 @@ sap.ui.define([
 	var sControlId = "foo";
 
 	QUnit.module("revertChangeOnControl", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
@@ -56,7 +56,7 @@ sap.ui.define([
 			});
 			this.oLogStub = sandbox.stub(Log, "error");
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}
@@ -176,7 +176,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("revertMultipleChanges", {
-		beforeEach: function() {
+		beforeEach() {
 			this.oChange = new UIChange({
 				selector: {
 					id: sControlId,
@@ -222,7 +222,7 @@ sap.ui.define([
 			.onCall(1).resolves(true)
 			.onCall(2).resolves(this.oControl);
 		},
-		afterEach: function() {
+		afterEach() {
 			sandbox.restore();
 			this.oControl.destroy();
 		}

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/table/Table",
+	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -14,6 +15,7 @@ sap.ui.define([
 	TableQUnitUtils,
 	MultiSelectionPlugin,
 	Table,
+	FixedRowMode,
 	TableUtils,
 	library,
 	ODataModel,
@@ -89,11 +91,11 @@ sap.ui.define([
 	QUnit.test("Add to and remove from table", function(assert) {
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 		assert.notEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has an internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
 
-		this.oTable.removePlugin(oMultiSelectionPlugin);
+		this.oTable.removeDependent(oMultiSelectionPlugin);
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The MultiSelectionPlugin has no internal default selection plugin");
 		assert.notEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The MultiSelectionPlugin has an delete icon");
 	});
@@ -101,7 +103,7 @@ sap.ui.define([
 	QUnit.test("Destruction", function(assert) {
 		var oMultiSelectionPlugin = new MultiSelectionPlugin();
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		var oInternalPluginDestroySpy = sinon.spy(oMultiSelectionPlugin.oInnerSelectionPlugin, "destroy");
 		var oDeselectAllIconDestroySpy = sinon.spy(oMultiSelectionPlugin.oDeselectAllIcon, "destroy");
@@ -111,6 +113,10 @@ sap.ui.define([
 		assert.strictEqual(oMultiSelectionPlugin.oInnerSelectionPlugin, null, "The reference to the internal default selection plugin was cleared");
 		assert.ok(oDeselectAllIconDestroySpy.calledOnce, "The delete icon was destroyed");
 		assert.strictEqual(oMultiSelectionPlugin.oDeselectAllIcon, null, "The reference to the delete icon was cleared");
+
+		this.oTable.addDependent(new MultiSelectionPlugin());
+		this.oTable.destroyDependents();
+		assert.ok(this.oTable._getSelectionPlugin().isA("sap.ui.table.plugins.SelectionModelSelection"), "The table has a legacy selection plugin");
 	});
 
 	QUnit.test("#getRenderConfig", function(assert) {
@@ -123,7 +129,7 @@ sap.ui.define([
 			}
 		}, "Not assigned to a table");
 
-		this.oTable.addPlugin(oMultiSelectionPlugin);
+		this.oTable.addDependent(oMultiSelectionPlugin);
 
 		this.assertRenderConfig(assert, oMultiSelectionPlugin.getRenderConfig(), {
 			headerSelector: {
@@ -242,7 +248,7 @@ sap.ui.define([
 		oMultiSelectionPlugin.setSelected(this.oTable.getRows()[0], true);
 		assert.deepEqual(oMultiSelectionPlugin.getSelectedIndices(), [], "Select a row when not assigned to a table");
 
-		that.oTable.addPlugin(oMultiSelectionPlugin);
+		that.oTable.addDependent(oMultiSelectionPlugin);
 		oMultiSelectionPlugin.setSelected(that.oTable.getRows()[0], true);
 
 		return waitForSelectionChange().then(function() {
@@ -272,7 +278,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = TableQUnitUtils.createTable({
-				plugins: [
+				dependents: [
 					new MultiSelectionPlugin()
 				]
 			});
@@ -323,7 +329,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = TableQUnitUtils.createTable({
 			rows: {path: "/"},
-			plugins: [
+			dependents: [
 				oMultiSelectionPlugin
 			],
 			models: TableQUnitUtils.createJSONModelWithEmptyRows(10)
@@ -351,7 +357,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oMockServer = startMockServer();
 			this.oTable = TableQUnitUtils.createTable({
-				plugins: [
+				dependents: [
 					new MultiSelectionPlugin()
 				],
 				rows: {
@@ -359,7 +365,8 @@ sap.ui.define([
 				},
 				models: new ODataModel(sServiceURI, {
 					json: true
-				})
+				}),
+				rowMode: new FixedRowMode()
 			});
 
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
@@ -416,8 +423,8 @@ sap.ui.define([
 	QUnit.test("Change SelectionMode", function(assert) {
 		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.MultiToggle, "SelectionMode is correctly initialized");
 
-		this.oTable.removeAllPlugins();
-		this.oTable.addPlugin(new MultiSelectionPlugin({
+		this.oTable.removeAllDependents();
+		this.oTable.addDependent(new MultiSelectionPlugin({
 			selectionMode: "Single"
 		}));
 		assert.equal(this.oTable._getSelectionPlugin().getSelectionMode(), SelectionMode.Single, "SelectionMode is correctly initialized");
@@ -596,7 +603,7 @@ sap.ui.define([
 		var oFirstVisibleRowChangedSpy = sinon.spy();
 		var oRowsUpdatedSpy = sinon.spy();
 
-		oTable.setVisibleRowCount(3);
+		oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1175,8 +1182,7 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
-		this.oTable.setVisibleRowCount(3);
+		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1201,7 +1207,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.setVisibleRowCount(10);
+				that.oTable.getRowMode().setRowCount(10);
 				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(5, 10);
 				setTimeout(function() {
@@ -1218,8 +1224,7 @@ sap.ui.define([
 		var $Cell;
 		var that = this;
 
-		this.oTable.setVisibleRowCountMode(library.VisibleRowCountMode.Fixed);
-		this.oTable.setVisibleRowCount(3);
+		this.oTable.getRowMode().setRowCount(3);
 		oSelectionPlugin.setLimit(5);
 		oCore.applyChanges();
 
@@ -1246,7 +1251,7 @@ sap.ui.define([
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.setVisibleRowCount(10);
+				that.oTable.getRowMode().setRowCount(10);
 				var oScrollSpy = sinon.spy(that.oTable, "setFirstVisibleRow");
 				oSelectionPlugin.setSelectionInterval(10, 5);
 				setTimeout(function() {
@@ -1334,23 +1339,23 @@ sap.ui.define([
 			oPopoverCloseSpy.resetHistory();
 		}
 
-		assert.notOk(oSelectionPlugin._oNotificationPopover, "Notification popover does not exist");
+		assert.notOk(oTable._oNotificationPopover, "Notification popover does not exist");
 
 		oSelectionPlugin.setEnableNotification(true);
 
 		// Ensures that the Popover control is loaded and initialized
-		return this.oTable._oSelectionPlugin._showNotificationPopoverAtIndex(0).then(function() {
-			assert.ok(oSelectionPlugin._oNotificationPopover, "Notification popover was created");
+		return TableUtils.showNotificationPopoverAtIndex(oTable, 0, oSelectionPlugin.getLimit()).then(function() {
+			assert.ok(oTable._oNotificationPopover, "Notification popover was created");
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", function() {
+				oTable._oNotificationPopover.attachEventOnce("afterClose", function() {
 					resolve();
 				});
-				oSelectionPlugin._oNotificationPopover.close();
+				oTable._oNotificationPopover.close();
 			});
 		}).then(function() {
-			oPopoverOpenBySpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "openBy");
-			oPopoverCloseSpy = sinon.spy(oSelectionPlugin._oNotificationPopover, "close");
+			oPopoverOpenBySpy = sinon.spy(oTable._oNotificationPopover, "openBy");
+			oPopoverCloseSpy = sinon.spy(oTable._oNotificationPopover, "close");
 
 		}).then(function() {
 			oSelectionPlugin.setLimit(iLimit);
@@ -1369,11 +1374,11 @@ sap.ui.define([
 
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oSelectionPlugin._oNotificationPopover.attachEventOnce("afterOpen", resolve);
+				oTable._oNotificationPopover.attachEventOnce("afterOpen", resolve);
 				oSelectionPlugin.setSelectionInterval(0, iLimit);
 			}).then(function() {
 				return new Promise(function(resolve) {
-					oSelectionPlugin._oNotificationPopover.attachEventOnce("afterClose", resolve);
+					oTable._oNotificationPopover.attachEventOnce("afterClose", resolve);
 					oTable.setFirstVisibleRow(oTable.getFirstVisibleRow() + 1);
 				});
 			}).then(function() {
@@ -1384,5 +1389,52 @@ sap.ui.define([
 				resetSpies();
 			});
 		});
+	});
+
+	QUnit.test("#onKeyboardShortcut - Event Marking", function(assert) {
+		const sEventMarker = "sapUiTableClearAll";
+		const oEvent = {
+			setMarked: function() {}
+		};
+		var oSelectionPlugin = this.oTable._getSelectionPlugin();
+		const oClearSelectionSpy = sinon.spy(oSelectionPlugin, "clearSelection");
+		const oSelectAllSpy = sinon.spy(oSelectionPlugin, "selectAll");
+		const oSetMarkedSpy = sinon.spy(oEvent, "setMarked");
+		const done = assert.async();
+
+		oSelectionPlugin.setLimit(0);
+		oCore.applyChanges();
+
+		oSelectionPlugin.attachEventOnce("selectionChange", () => {
+			assert.ok(oSelectAllSpy.calledOnce, "select all called");
+			assert.ok(oSetMarkedSpy.notCalled, `Event has not been marked with ${sEventMarker}`);
+
+			oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
+			assert.ok(oClearSelectionSpy.calledOnce, "clear all called");
+			assert.ok(oSetMarkedSpy.calledOnceWithExactly(sEventMarker), `Event has been marked with ${sEventMarker}`);
+
+			oSelectionPlugin.onKeyboardShortcut("clear", oEvent);
+			assert.ok(oClearSelectionSpy.calledTwice, "Selection is cleared");
+			assert.ok(oSetMarkedSpy.calledTwice, `Event marked twice`);
+			assert.ok(oSetMarkedSpy.calledWithExactly(sEventMarker), `Event has been marked with ${sEventMarker}`);
+
+			oSetMarkedSpy.reset();
+			oSelectionPlugin.onKeyboardShortcut("toggle");
+			oSelectionPlugin.attachEventOnce("selectionChange", () => {
+				assert.ok(oSelectAllSpy.callCount, 2, "select all called");
+				assert.ok(oSetMarkedSpy.notCalled, "Event has not been marked");
+
+				oSelectionPlugin.onKeyboardShortcut("toggle");
+				assert.ok(oClearSelectionSpy.calledThrice, "clear all called");
+				assert.ok(oSetMarkedSpy.notCalled, `Event has not been marked, as there was no event passed`);
+
+				oSetMarkedSpy.reset();
+				oClearSelectionSpy.reset();
+				oSelectAllSpy.reset();
+
+				done();
+			});
+		});
+		oSelectionPlugin.onKeyboardShortcut("toggle", oEvent);
 	});
 });

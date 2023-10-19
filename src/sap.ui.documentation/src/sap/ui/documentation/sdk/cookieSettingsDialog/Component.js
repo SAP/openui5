@@ -6,9 +6,8 @@ sap.ui.define([
 		"sap/ui/core/Component",
 		"sap/ui/core/mvc/Controller",
 		"sap/ui/VersionInfo",
-		"sap/base/util/merge",
-		"sap/base/util/UriParameters"
-	], function(CoreComponent, Controller, VersionInfo, merge, UriParameters) {
+		"sap/base/util/merge"
+	], function(CoreComponent, Controller, VersionInfo, merge) {
 	"use strict";
 
 	var Component = CoreComponent.extend("sap.ui.documentation.sdk.cookieSettingsDialog.Component", {
@@ -23,7 +22,7 @@ sap.ui.define([
 		},
 
 		enable: function(oRootView) {
-			var oUriParameters = UriParameters.fromQuery(location.search),
+			var oUriParameters = new URLSearchParams(window.location.search),
 			sParameter = "cookie-settings-dialog",
 			bCookieSettingsParameter = oUriParameters.has(sParameter);
 

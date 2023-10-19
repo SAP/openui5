@@ -19,6 +19,11 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/decorators/propert
     return c > 3 && r && Object.defineProperty(target, key, r), r;
   };
   var GroupHeaderListItem_1;
+
+  // Template
+
+  // Styles
+
   /**
    * @class
    * The <code>ui5-li-groupheader</code> is a special list item, used only to separate other list items into logical groups.

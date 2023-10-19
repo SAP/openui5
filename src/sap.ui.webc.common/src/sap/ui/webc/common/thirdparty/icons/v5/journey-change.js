@@ -6,7 +6,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   });
   _exports.pathData = _exports.ltr = _exports.default = _exports.accData = void 0;
   const name = "journey-change";
-  const pathData = "M478.5 392q8 8 8 17 0 10-8 18l-77 77q-8 8-17 8-10 0-18-8t-8-18 8-18l30-30h-178q-36 0-57-24.5t-21-54.5q0-34 26-57l149-128q9-8 9-19 0-10-7-18.5t-20-8.5h-184l33 34q8 8 8 18 0 9-8 17-7 8-18 8t-18-8l-76-76q-8-7-8-18t8-18l76-77q7-7 18-7t18 7q8 8 8 18t-8 18l-33 33h184q35 0 56 24.5t21 54.5q0 15-6 30t-20 27l-148 128q-9 6-9 19 0 10 7 18.5t20 8.5h183l-35-36q-8-8-8-18t8-18 18-8q9 0 17 8z";
+  const pathData = "M505 391q7 9 7 19 0 9-7 18l-77 77q-7 7-18 7t-18.5-7.5T384 486q0-10 8-18l33-33H228q-32 0-54.5-22T151 359q0-17 6.5-32t20.5-26l148-128q10-9 10-20t-7.5-18-18.5-7H87l34 33q7 7 7 18t-7.5 18.5T102 205q-10 0-18-8L8 120q-8-6-8-18 0-10 8-18L84 7q7-7 18-7t18.5 7.5T128 26t-7 18L87 77h223q32 0 54.5 22t22.5 54q0 34-27 58L211 339q-9 9-9 20t7.5 18 18.5 7h197l-33-33q-8-8-8-18 0-11 7.5-18.5T410 307q10 0 18 8z";
   _exports.pathData = pathData;
   const ltr = false;
   _exports.ltr = ltr;

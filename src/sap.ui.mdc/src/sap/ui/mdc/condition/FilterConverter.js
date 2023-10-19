@@ -30,7 +30,7 @@ function(
 	 * @ui5-restricted sap.ui.mdc
 	 * @experimental As of version 1.78
 	 */
-	var FilterConverter = {
+	const FilterConverter = {
 
 			/**
 			 * creates a map with the types of the conditions.
@@ -43,19 +43,19 @@ function(
 			 * @ui5-restricted sap.ui.mdc
 			 */
 			createConditionTypesMapFromFilterBar: function (oConditions, oFilterBar) {
-				var oResult = {};
+				const oResult = {};
 
-				for (var sFieldPath in oConditions) {
+				for (const sFieldPath in oConditions) {
 					if (oFilterBar) {
-						var oPropertyInfo = oFilterBar._getPropertyByName(sFieldPath);
-						var oDataType;
+						const oPropertyInfo = oFilterBar._getPropertyByName(sFieldPath);
+						let oDataType;
 						if (oPropertyInfo && oPropertyInfo.typeConfig) {
 							oDataType = oPropertyInfo.typeConfig.typeInstance;
 						} else {
 							// try to find missing type from FilterField
-							var oFilterField = oFilterBar._getFilterField(sFieldPath); // TODO: use official API
+							const oFilterField = oFilterBar._getFilterField(sFieldPath); // TODO: use official API
 							if (oFilterField) {
-								var oFormatOptions = oFilterField.getFormatOptions();
+								const oFormatOptions = oFilterField.getFormatOptions();
 								if (oFormatOptions.originalDateType) {
 									oDataType = oFormatOptions.originalDateType;
 								} else {
@@ -83,14 +83,14 @@ function(
 			 * @ui5-restricted sap.ui.mdc
 			 */
 			createFilters: function (oConditions, oConditionTypes, fConvert2FilterCallback, bCaseSensitive) {
-				var i, aLocalIncludeFilters, aLocalExcludeFilters, aOverallFilters = [],
-					oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
+				let i, aLocalIncludeFilters, aLocalExcludeFilters, oOperator, oFilter, oNewFilter, oCondition,	oAnyOrAllFilterParam;
+				const aOverallFilters = [];
 
-				var convertAnyAllFilter = function(oFilter, sOperator, sPattern) {
+				const convertAnyAllFilter = function(oFilter, sOperator, sPattern) {
 					// var sOperator = FilterOperator.Any;
 					// var sPattern = "*/";
-					var sVariable = "L1";
-					var aSections, sNavPath, sPropertyPath;
+					const sVariable = "L1";
+					let aSections, sNavPath, sPropertyPath;
 
 					if (oFilter.sPath && oFilter.sPath.indexOf(sPattern) > -1) {
 						aSections = oFilter.sPath.split(sPattern);
@@ -112,9 +112,9 @@ function(
 					return false;
 				};
 
-				var convertToAnyOrAllFilter = function(oFilter) {
+				const convertToAnyOrAllFilter = function(oFilter) {
 					// ANY condition handling e.g. fieldPath "navPath*/propertyPath"
-					var oFilterParam = convertAnyAllFilter(oFilter, FilterOperator.Any, "*/");
+					const oFilterParam = convertAnyAllFilter(oFilter, FilterOperator.Any, "*/");
 					if (oFilterParam) {
 						return oFilterParam;
 					} else {
@@ -125,19 +125,19 @@ function(
 
 
 				// OR-combine filters for each property
-				for (var sFieldPath in oConditions) {
+				for (const sFieldPath in oConditions) {
 					aLocalIncludeFilters = [];
 					aLocalExcludeFilters = [];
 					oAnyOrAllFilterParam = null;
-					var aConditions = oConditions[sFieldPath];
+					const aConditions = oConditions[sFieldPath];
 
 					if (sFieldPath === "$search") {
 						continue;
 					}
 
-					var oDataType;
-					var bCaseSensitiveType = true;
-					var sBaseType;
+					let oDataType;
+					let bCaseSensitiveType = true;
+					let sBaseType;
 
 					if (oConditionTypes) {
 						if (oConditionTypes[sFieldPath]) {
@@ -182,11 +182,11 @@ function(
 							// basic search condition handling split the oFilter with sPath == "*xxx,yyy*" into multiple filter
 							// e.g. fieldPath "*title,year*" - such fieldPath only works with type string and an operation with a single value (e.g. contains)
 							//TODO this should be removed. Only $search will be supported as sPath. This mapping of a *fieldPath1,FieldPath2* is currently only used on the mockServer
-							var $searchfilters = /^\*(.+)\*$/.exec(oFilter.sPath);
+							const $searchfilters = /^\*(.+)\*$/.exec(oFilter.sPath);
 							if ($searchfilters) {
 								// $search mapping
-								var aFieldPath = $searchfilters[1].split(',');
-								for (var j = 0; j < aFieldPath.length; j++) {
+								const aFieldPath = $searchfilters[1].split(',');
+								for (let j = 0; j < aFieldPath.length; j++) {
 									aLocalIncludeFilters.push(new Filter({path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1, caseSensitive: bCaseSensitive}));
 								}
 								continue;
@@ -255,13 +255,13 @@ function(
 			},
 
 			prettyPrintFilters: function (oFilter) {
-				var sRes;
+				let sRes;
 				if (!oFilter) {
 					return "no filters set";
 				}
 				if (oFilter._bMultiFilter) {
 					sRes = "";
-					var bAnd = oFilter.bAnd;
+					const bAnd = oFilter.bAnd;
 					oFilter.aFilters.forEach(function (oFilter, index, aFilters) {
 						sRes += FilterConverter.prettyPrintFilters(oFilter);
 						if (aFilters.length - 1 != index) {

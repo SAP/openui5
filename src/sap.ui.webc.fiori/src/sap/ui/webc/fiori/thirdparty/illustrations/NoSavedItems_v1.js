@@ -28,6 +28,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
   function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
   const name = "NoSavedItems_v1";
   const set = "fiori";
+  const collection = "V4";
   const title = _i18nDefaults.IM_TITLE_NOSAVEDITEMS;
   const subtitle = _i18nDefaults.IM_SUBTITLE_NOSAVEDITEMS;
   (0, _Illustrations.registerIllustration)(name, {
@@ -36,6 +37,7 @@ sap.ui.define(["exports", "sap/ui/webc/common/thirdparty/base/asset-registries/I
     spotSvg: _sapIllusSpotNoSavedItems_v.default,
     title,
     subtitle,
-    set
+    set,
+    collection
   });
 });

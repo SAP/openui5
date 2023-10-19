@@ -748,7 +748,8 @@
 				{ "name" : "pixelate" },
 				{ "name" : "validate" },
 				{ "name" : "keyboard-and-mouse" },
-				{ "name" : "touch" }
+				{ "name" : "touch" },
+				{ "name" : "ai" }
 			]
 		},
 		{
@@ -1206,7 +1207,9 @@
 				{ "name" : "cloud-check" },
 				{ "name" : "enablement" },
 				{ "name" : "map-fill" },
-				{ "name" : "bell-2" }
+				{ "name" : "bell-2" },
+				{ "name" : "da" },
+				{ "name" : "da-2" }
 			]
 		},
 		{

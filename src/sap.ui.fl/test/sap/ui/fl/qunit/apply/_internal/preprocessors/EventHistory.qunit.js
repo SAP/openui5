@@ -1,32 +1,30 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/EventBus",
 	"sap/ui/fl/apply/_internal/preprocessors/EventHistory",
 	"sap/ui/thirdparty/sinon-4"
-], function(oCore, EventHistory, sinon) {
+], function(EventBus, EventHistory, sinon) {
 	"use strict";
 
-	var oSubscribeStub;
-	var oUnsubscribeStub;
+	var sandbox = sinon.createSandbox();
 
 	QUnit.module("EventHistory", {
-		beforeEach: function() {
-			oSubscribeStub = sinon.stub(oCore.getEventBus(), "subscribe");
-			oUnsubscribeStub = sinon.stub(oCore.getEventBus(), "unsubscribe");
+		beforeEach() {
+			this.oSubscribeStub = sandbox.stub(EventBus.getInstance(), "subscribe");
+			this.oUnsubscribeStub = sandbox.stub(EventBus.getInstance(), "unsubscribe");
 		},
-		afterEach: function() {
-			oCore.getEventBus().subscribe.restore();
-			oCore.getEventBus().unsubscribe.restore();
+		afterEach() {
 			EventHistory._oHistory = {};
 			EventHistory._aUnsubscribedEventIds = [];
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("start subscribes to all events in the array and initializes the history object", function(assert) {
 			EventHistory.start();
 
 			assert.equal(EventHistory._aEventIds.length, 1);
-			assert.ok(oSubscribeStub.calledOnce, "subscribe method was called once");
+			assert.ok(this.oSubscribeStub.calledOnce, "subscribe method was called once");
 
 			var sEventId = EventHistory._aEventIds[0];
 			var oHistory = EventHistory._oHistory[sEventId];
@@ -40,11 +38,8 @@ sap.ui.define([
 			EventHistory.start();
 
 			assert.equal(EventHistory._aEventIds.length, 1);
-			assert.equal(oSubscribeStub.callCount, 0, "subscribe method was not called");
+			assert.equal(this.oSubscribeStub.callCount, 0, "subscribe method was not called");
 
-			var oHistory = EventHistory._oHistory[sEventId];
-			assert.equal(oHistory, undefined);
-			assert.equal(Array.isArray(aItems), true);
 			assert.equal(aItems.length, 0);
 		});
 
@@ -54,14 +49,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -83,7 +78,7 @@ sap.ui.define([
 			EventHistory.saveEvent(sChannelId, "anotherEventId", mParameters1);
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-			sEventId = EventHistory._aEventIds[0];
+			[sEventId] = EventHistory._aEventIds;
 			var oHistory = EventHistory._oHistory[sEventId];
 			assert.equal(oHistory.length, 2);
 			assert.deepEqual(oHistory[0], oExpectedEvent1);
@@ -96,14 +91,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -132,7 +127,7 @@ sap.ui.define([
 			assert.deepEqual(aItems[1], oExpectedEvent2);
 			assert.equal(Array.isArray(aItemsAnother), true);
 			assert.equal(aItemsAnother.length, 0);
-			assert.equal(oUnsubscribeStub.callCount, 2);
+			assert.equal(this.oUnsubscribeStub.callCount, 2);
 		});
 
 		QUnit.test("saveEvent saves the event in the history object and ignores duplicates", function(assert) {
@@ -141,14 +136,14 @@ sap.ui.define([
 			var mParameters1 = {
 				param11: "value11",
 				param12: "value12",
-				getId: function() {
+				getId() {
 					return "id1";
 				}
 			};
 			var mParameters2 = {
 				param21: "value21",
 				param22: "value22",
-				getId: function() {
+				getId() {
 					return "id2";
 				}
 			};
@@ -176,7 +171,7 @@ sap.ui.define([
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 			EventHistory.saveEvent(sChannelId, sEventId, mParameters2);
 
-			sEventId = EventHistory._aEventIds[0];
+			[sEventId] = EventHistory._aEventIds;
 			var oHistory = EventHistory._oHistory[sEventId];
 			assert.equal(oHistory.length, 2);
 			assert.deepEqual(oHistory[0], oExpectedEvent1);
