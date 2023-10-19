@@ -26,7 +26,8 @@ function(
 	"use strict";
 
 	/**
-	 * Implements the <code>Extension Points</code> provider by SAPUI5 flexibility that can be hooked in the <code>sap.ui.core.ExtensionPoint</code> life cycle.
+	 * Implements the <code>Extension Points</code> provider by SAPUI5 flexibility that can be hooked
+	 * in the <code>sap.ui.core.ExtensionPoint</code> life cycle.
 	 *
 	 * @name sap.ui.fl.apply._internal.extensionPoint.Processor
 	 * @class
@@ -75,6 +76,7 @@ function(
 						iControlIndex,
 						iNestedEPAdditionalContentCounter,
 						fnNestedCallback
+					// eslint-disable-next-line max-nested-callbacks
 					).then(function(iNestedCounter) {
 						iNestedEPAdditionalContentCounter += iNestedCounter;
 					});

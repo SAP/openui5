@@ -91,8 +91,16 @@ sap.ui.define([
 
 		function checkChangesList(aChanges, assert) {
 			return aChanges.forEach(function(oChange) {
-				assert.strictEqual(oChange.getSelector().id, this.oPanel.getId(), "then change selector is the 'parent control id' of the extension point");
-				assert.deepEqual(oChange.getExtensionPointInfo(), this.mExtensionPointInfo, "then extension point info is attached to the changes");
+				assert.strictEqual(
+					oChange.getSelector().id,
+					this.oPanel.getId(),
+					"then change selector is the 'parent control id' of the extension point"
+				);
+				assert.deepEqual(
+					oChange.getExtensionPointInfo(),
+					this.mExtensionPointInfo,
+					"then extension point info is attached to the changes"
+				);
 			}.bind(this));
 		}
 
@@ -104,7 +112,11 @@ sap.ui.define([
 			.then(function(aEnhancedChanges) {
 				assert.strictEqual(aEnhancedChanges.length, 3, "then 3 changes are returned");
 				checkChangesList.call(this, aEnhancedChanges, assert);
-				assert.strictEqual(oAddChangeAndUpadateDependenciesStub.callCount, 3, "then all changes are updated accordingly into the flex");
+				assert.strictEqual(
+					oAddChangeAndUpadateDependenciesStub.callCount,
+					3,
+					"then all changes are updated accordingly into the flex"
+				);
 			}.bind(this));
 		});
 
