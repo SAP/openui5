@@ -2028,13 +2028,6 @@ function(
 		return this;
 	};
 
-	Input.prototype.updateSuggestionRows = function () {
-		this.updateAggregation("suggestionRows");
-		this._refreshItemsDelayed();
-
-		return this;
-	};
-
 	/**
 	 * Inserts suggestion item.
 	 *
