@@ -398,8 +398,8 @@ sap.ui.define([
 			if (oDelegate && oDelegate.getTypeUtil(oPayload).getBaseType(sName) === BaseType.Unit &&
 					!oCondition.values[0][1] && oType._aCurrentValue) {
 				// TODO: if no unit provided use last one
-				var sUnit = oType._aCurrentValue[1] ? oType._aCurrentValue[1] : null; // if no unit set null
-				oCondition.values[0][1] = oType._aCurrentValue[1] ? oType._aCurrentValue[1] : null; // if no unit set null
+				var sUnit = oType._aCurrentValue[1] === undefined ? null : oType._aCurrentValue[1]; // undefined in CompositeType means "not changed" -> if no current unit it needs to be null
+				oCondition.values[0][1] = sUnit;
 				if (oCondition.operator === "BT") {
 					oCondition.values[1][1] = sUnit;
 				}
