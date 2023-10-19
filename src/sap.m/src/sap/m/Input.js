@@ -2028,6 +2028,14 @@ function(
 		return this;
 	};
 
+	Input.prototype.updateSuggestionRows = function () {
+		this._bSuspendInvalidate = true;
+		this.updateAggregation("suggestionRows");
+		this._synchronizeSuggestions();
+		this._bSuspendInvalidate = false;
+		return this;
+	};
+
 	/**
 	 * Inserts suggestion item.
 	 *
