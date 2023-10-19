@@ -13,10 +13,9 @@ sap.ui.define([
 
 	ValueHelpDelegate.showTypeahead = function (oPayload, oContent, oConfig) {
 		const sShowTypeahead = oContent.getModel("settings").getData().showTypeahead;
-		let fnShowTypeahead;
 
-		// eslint-disable-next-line no-eval
-		eval("fnShowTypeahead = " + sShowTypeahead);
+		/*eslint-disable-next-line no-new-func*/
+		const fnShowTypeahead = new Function('oValueHelp', 'oContent',`return (${sShowTypeahead})(oValueHelp, oContent)`);
 
 		return fnShowTypeahead ? fnShowTypeahead.apply(this, arguments) : BaseValueHelpDelegate.showTypeahead.apply(this, arguments);
 	};
