@@ -4,8 +4,8 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/config",
-	"sap/base/Log",
 	"sap/base/Eventing",
+	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/base/i18n/LanguageTag",
 	"sap/base/i18n/date/CalendarType",
@@ -16,8 +16,8 @@ sap.ui.define([
 ], (
 	assert,
 	BaseConfig,
-	Log,
 	Eventing,
+	Log,
 	Localization,
 	LanguageTag,
 	CalendarType,
@@ -984,7 +984,7 @@ sap.ui.define([
 		/**
 		 * Returns the calendar type which is being used in locale dependent functionality.
 		 *
-		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
+		 * When it's explicitly set by calling <code>setCalendarType</code>, the set calendar type is returned.
 		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
 		 *
 		 * @returns {module:sap/base/i18n/date/CalendarType} the current calendar type, e.g. <code>Gregorian</code>

@@ -8,11 +8,10 @@ sap.ui.define([
 	'../Element',
 	'sap/base/Log',
 	'sap/base/util/extend',
-	'sap/base/util/syncFetch',
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
+	function(Library, Theming, URI, Element, Log, extend, ThemeManager, ThemeHelper) {
 		"use strict";
 
 		var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
@@ -222,7 +221,7 @@ sap.ui.define([
 		 */
 		function loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials) {
 			var oHeaders = {
-				Accept: syncFetch.ContentTypes.JSON
+				Accept: undefined/*syncFetch*/.ContentTypes.JSON
 			};
 
 			var bCurrentWithCredentials = aWithCredentials.shift();
@@ -255,7 +254,7 @@ sap.ui.define([
 
 			// load and evaluate parameter file
 			try {
-				var response = syncFetch(sUrl, {
+				var response = undefined/*syncFetch*/(sUrl, {
 					credentials: bCurrentWithCredentials ? "include" : "omit",
 					headers: oHeaders
 				});

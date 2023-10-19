@@ -15,10 +15,9 @@ sap.ui.define([
 	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
 	'sap/base/util/fetch',
-	'sap/base/util/mixedFetch',
 	'sap/base/strings/escapeRegExp',
 	'sap/ui/core/_IconRegistry'
-], function(ManagedObject, URI, BaseConfig, Log, Localization, extend, fetch, mixedFetch, escapeRegExp, _IconRegistry) {
+], function(ManagedObject, URI, BaseConfig, Log, Localization, extend, fetch, escapeRegExp, _IconRegistry) {
 	"use strict";
 
 	/*

@@ -14,11 +14,11 @@ sap.ui.define([
 	"sap/base/util/isPlainObject",
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/fetch',
-	'sap/base/util/mixedFetch',
 	"sap/base/util/ObjectPath",
 	'sap/base/util/Version',
 	'sap/base/util/array/uniqueSort',
-	'sap/ui/Global', /* sap.ui.lazyRequire */
+	'sap/ui/Global',
+	/* sap.ui.lazyRequire */
 	'sap/ui/VersionInfo',
 	'sap/ui/base/DataType',
 	'sap/ui/base/EventProvider',
@@ -26,7 +26,7 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/_UrlResolver'
-], function (
+], function(
 	assert,
 	BaseConfig,
 	Localization,
@@ -37,7 +37,6 @@ sap.ui.define([
 	isPlainObject,
 	LoaderExtensions,
 	fetch,
-	mixedFetch,
 	ObjectPath,
 	Version,
 	uniqueSort,

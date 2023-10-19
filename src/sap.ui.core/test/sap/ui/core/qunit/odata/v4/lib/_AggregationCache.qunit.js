@@ -4458,8 +4458,8 @@ sap.ui.define([
 				oRemoveExpectation = oParentCacheMock.expects("removeElement")
 					.withExactArgs("~index~", "~predicate~").returns("~iIndexInParentCache~");
 				oHelperMock.expects("getPrivateAnnotation")
-					.withExactArgs(sinon.match.same(oElement), "descendants")
-					.returns(oFixture.firstLevel ? 3 : undefined);
+					.withExactArgs(sinon.match.same(oElement), "descendants", 0)
+					.returns(oFixture.firstLevel ? 3 : 0);
 				oParentCacheMock.expects("removeElement").exactly(oFixture.firstLevel ? 3 : 0)
 					.withExactArgs("~iIndexInParentCache~");
 				this.mock(oCache).expects("adjustDescendantCount")

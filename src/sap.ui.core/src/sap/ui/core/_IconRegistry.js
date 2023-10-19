@@ -11,13 +11,12 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
 	"sap/base/util/fetch",
-	"sap/base/util/syncFetch",
 	"sap/base/util/isPlainObject",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper"
 ],
-	function(URI, ResourceBundle, Log, fetch, syncFetch, isPlainObject, Library, Theming, ThemeHelper) {
+	function(URI, ResourceBundle, Log, fetch, isPlainObject, Library, Theming, ThemeHelper) {
 		"use strict";
 
 		/**

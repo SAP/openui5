@@ -7,15 +7,13 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/assert',
 	'sap/base/util/extend',
-	'sap/base/util/fetch',
-	'sap/base/util/mixedFetch'
+	'sap/base/util/fetch'
 ], function(
 	XMLHelper,
 	Log,
 	assert,
 	extend,
-	fetch,
-	mixedFetch
+	fetch
 ) {
 	"use strict";
 

@@ -5756,8 +5756,8 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oParent), "postBody")
 				.returns(oPostBody);
 			oHelperMock.expects("getPrivateAnnotation")
-				.withExactArgs(sinon.match.same(oRoot), "select")
-				.returns(undefined);
+				.withExactArgs(sinon.match.same(oRoot), "select", {})
+				.returns({});
 			oCacheMock.expects("checkSharedRequest").withExactArgs();
 			oHelperMock.expects("getMetaPath").withExactArgs("to/collection").returns("meta/path");
 			oHelperMock.expects("setPrivateAnnotation")
