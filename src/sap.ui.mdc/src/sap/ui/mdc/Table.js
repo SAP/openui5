@@ -1928,6 +1928,10 @@ sap.ui.define([
 					this._getP13nButton()
 				]
 			});
+			// Enfore the action order according to the UI Guideline
+			this._oToolbar.setProperty("_endOrder", [
+				"copy", "paste", "showHideDetails", "collapseAll", "expandAll", "settings", "export"
+			].map((sSuffix) => this.getId() + "-" + sSuffix));
 		}
 
 		this._oToolbar.setStyle(this._isOfType(TableType.ResponsiveTable) ? ToolbarStyle.Standard : ToolbarStyle.Clear);
