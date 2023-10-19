@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/util/MockServer",
 	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
-	"./testLib/SharedExtension"
+	"./testLib/SharedExtension",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	Editor,
 	Designtime,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Core,
 	MockServer,
 	DataExtensionImpl,
-	SharedExtension
+	SharedExtension,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -394,33 +396,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Initalize", function (assert) {
@@ -430,7 +409,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -497,7 +476,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -569,7 +548,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -642,7 +621,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -720,7 +699,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -799,7 +778,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -885,33 +864,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check value items", function (assert) {
@@ -921,7 +877,7 @@ sap.ui.define([
 				manifest: oManifestForExtension
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -965,33 +921,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check value items from shared extension", function (assert) {
@@ -1001,7 +934,7 @@ sap.ui.define([
 				manifest: oManifestForSharedExtension
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1081,33 +1014,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check the Editable dependece parameters", function (assert) {
@@ -1119,7 +1029,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");
@@ -1178,7 +1088,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");

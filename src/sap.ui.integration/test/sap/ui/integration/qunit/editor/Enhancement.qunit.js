@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -36,42 +38,12 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	QUnit.module("Fields enhancement", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Visualization: no value", function (assert) {
@@ -90,7 +62,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -155,7 +127,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -228,7 +200,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -285,7 +257,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -342,7 +314,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -399,7 +371,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "visible", "Field: Value correct");
@@ -453,7 +425,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "0", "Field: Value correct");
@@ -510,7 +482,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.equal(oField.getAggregation("_field").getValue(), "4", "Field: Value correct");
@@ -541,38 +513,16 @@ sap.ui.define([
 
 	QUnit.module("Groups", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Default group", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1stringparameter.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -587,7 +537,7 @@ sap.ui.define([
 		QUnit.test("No default group", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "noDefaultGroup.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -601,7 +551,7 @@ sap.ui.define([
 		QUnit.test("Group collapsed by setting", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupCollapsed.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -615,8 +565,8 @@ sap.ui.define([
 		QUnit.test("Check the error message strip of sub group", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -631,22 +581,22 @@ sap.ui.define([
 						var oField1 = oSubPanel.getContent()[1].getAggregation("_field");
 						var oField2 = oSubPanel.getContent()[3].getAggregation("_field");
 						oSubPanel.setExpanded(false);
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							assert.ok(oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is visible since sub group is collapsed and has error");
 							assert.equal(oMessageStripOfSubPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
 							oSubPanel.setExpanded(true);
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								assert.ok(!oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is not visible since sub group is expanded again");
 								oField1.setValue("1234567890");
 								oField2.setValue("aa");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oSubPanel.setExpanded(false);
-									wait(500).then(function () {
+									EditorQunitUtils.wait(500).then(function () {
 										assert.ok(oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is visible since has warning");
 										assert.equal(oMessageStripOfSubPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
 										oSubPanel.setExpanded(true);
 										oField2.setValue("aaa");
-										wait(500).then(function () {
+										EditorQunitUtils.wait(500).then(function () {
 											oSubPanel.setExpanded(false);
 											assert.ok(!oMessageStripOfSubPanel.getVisible(), "Message strip of sub group is not visible since no error or warning");
 											resolve();
@@ -663,8 +613,8 @@ sap.ui.define([
 		QUnit.test("Check the error message strip of sub tab", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -676,7 +626,7 @@ sap.ui.define([
 						assert.ok(!oMessageStripOfSubTab.getVisible(), "Message strip of sub tab is not visible since sub tab is expanded");
 						var oSubTabFilter = oSubTab.getItems()[0];
 						oSubTab.setExpanded(false);
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var expandedBtn = oSubTabFilter._getExpandButton();
 							assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
 							resolve();
@@ -690,8 +640,8 @@ sap.ui.define([
 		QUnit.test("Check the error message strip of group", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -706,22 +656,22 @@ sap.ui.define([
 						var oField1 = oSubPanel.getContent()[1].getAggregation("_field");
 						var oField2 = oSubPanel.getContent()[3].getAggregation("_field");
 						oPanel.setExpanded(false);
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since group is collapsed and has error");
 							assert.equal(oMessageStripOfPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_ERRORS"), "Message strip error text correct");
 							oPanel.setExpanded(true);
-							wait(500).then(function () {
+							EditorQunitUtils.wait(500).then(function () {
 								assert.ok(!oMessageStripOfPanel.getVisible(), "Message strip of group is not visible since group is expanded again");
 								oField1.setValue("1234567890");
 								oField2.setValue("aa");
-								wait(500).then(function () {
+								EditorQunitUtils.wait(500).then(function () {
 									oPanel.setExpanded(false);
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.ok(oMessageStripOfPanel.getVisible(), "Message strip of group is visible since has warning");
 										assert.equal(oMessageStripOfPanel.getText(), oDefaultBundle.getText("EDITOR_GROUP_WARNINGS"), "Message strip warning text correct");
 										oPanel.setExpanded(true);
 										oField2.setValue("aaa");
-										wait(500).then(function () {
+										EditorQunitUtils.wait(500).then(function () {
 											oPanel.setExpanded(false);
 											assert.ok(!oMessageStripOfPanel.getVisible(), "Message strip of group is not visible since no error or warning");
 											resolve();
@@ -738,40 +688,18 @@ sap.ui.define([
 
 	QUnit.module("Sub groups (Panel)", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("2 Sub groups in default group with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subGroupsInDefaultGroup.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -797,9 +725,9 @@ sap.ui.define([
 		QUnit.test("Multi Sub groups in default group with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "multiSubGroupsInDefaultGroup.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -834,9 +762,9 @@ sap.ui.define([
 		QUnit.test("Multi Sub groups with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "multiSubGroups.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -874,40 +802,18 @@ sap.ui.define([
 
 	QUnit.module("Sub groups (Tab)", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("2 Sub Tabs in default group with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsInDefaultGroup.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -933,9 +839,9 @@ sap.ui.define([
 		QUnit.test("Multi Sub tabs in default group with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "multiSubTabsInDefaultGroup.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -968,9 +874,9 @@ sap.ui.define([
 		QUnit.test("Multi Sub tabs with one is empty", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "multiSubTabs.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
 						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
@@ -1011,32 +917,10 @@ sap.ui.define([
 					"sap/ui/integration/editor/test/customfield": "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/designtime"
 				}
 			});
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Extends VizBase", function (assert) {
@@ -1062,11 +946,11 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 						assert.equal(oLabel.getText(), "Date Range", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -1083,7 +967,7 @@ sap.ui.define([
 						assert.ok(oControl.getModel("context"), "DateRangeSelection: model context");
 						assert.ok(oControl.getModel("contextflat"), "DateRangeSelection: contextflat context");
 						oControl._getValueHelpIcon().firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.ok(oControl._oPopup.isOpen(), "DateRangeSelection: date popup open");
 							resolve();
 						});
@@ -1115,11 +999,11 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 						assert.equal(oLabel.getText(), "Card Title", "Label: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
@@ -1137,7 +1021,7 @@ sap.ui.define([
 						assert.ok(oControl.getModel("contextflat"), "Input: contextflat context");
 						assert.equal(oControl.getValue(), "Card Title Default", "Input: Value");
 						oControl.setValue("Card Title New");
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oControl.getValue(), "Card Title New", "Input: Value changed");
 							var oSettings = oControl.getModel("currentSettings");
 							assert.equal(oSettings.getProperty("/form/items/cardTitle/value"), "Card Title New", "Settings: Value changed");

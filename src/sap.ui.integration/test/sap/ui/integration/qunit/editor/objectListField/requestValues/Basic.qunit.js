@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	deepClone,
 	MockServer,
-	Core
+	Core,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -41,14 +43,6 @@ sap.ui.define([
 
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
 
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
@@ -95,32 +89,10 @@ sap.ui.define([
 			this.oMockServer.destroy();
 		},
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("no value", function (assert) {
@@ -153,7 +125,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -173,7 +145,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 							assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 							var oColumns = oTable.getColumns();
@@ -220,7 +192,7 @@ sap.ui.define([
 							assert.ok(!oSelectionCell5.getSelected(), "Row 5: cell1 selection checkbox not selected");
 
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -230,10 +202,10 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oRow6 = oTable.getRows()[2];
 										assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false}})), "Row 6: value");
 										var oSelectionCell6 = oRow6.getCells()[0];
@@ -306,7 +278,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -335,7 +307,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 							assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 							var oColumns = oTable.getColumns();
@@ -382,7 +354,7 @@ sap.ui.define([
 							assert.ok(oSelectionCell5.getSelected(), "Row 5: cell1 selection checkbox selected");
 
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -392,10 +364,10 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oRow6 = oTable.getRows()[2];
 										assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {"_dt": {"_editable": false, "_selected": true}})), "Row 6: value");
 										var oSelectionCell6 = oRow6.getCells()[0];
@@ -457,7 +429,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -477,7 +449,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 							assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 							var oColumns = oTable.getColumns();
@@ -535,7 +507,7 @@ sap.ui.define([
 							assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
 
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -545,10 +517,10 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oSelectionCell6 = oTable.getRows()[2].getCells()[0];
 										oSelectionCell6.setSelected(true);
 										oSelectionCell6.fireSelect({ selected: true });
@@ -644,7 +616,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -673,7 +645,7 @@ sap.ui.define([
 					var oClearFilterButton = oToolbar.getContent()[4];
 					assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 					oField.attachEventOnce("tableUpdated", function(oEvent) {
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
 							assert.equal(oTable.getBinding().getCount(), oResponseData.Objects.length, "Table: value length is " + oResponseData.Objects.length);
 							var oColumns = oTable.getColumns();
@@ -742,7 +714,7 @@ sap.ui.define([
 							]), "Field 1: Value after deselecting row5");
 
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 								assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 								var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -752,10 +724,10 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									// scroll to bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oSelectionCell6 = oTable.getRows()[2].getCells()[0];
 										oSelectionCell6.setSelected(false);
 										oSelectionCell6.fireSelect({ selected: false });

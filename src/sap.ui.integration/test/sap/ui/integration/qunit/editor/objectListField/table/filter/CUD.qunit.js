@@ -65,14 +65,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -102,32 +94,10 @@ sap.ui.define([
 
 	QUnit.module("CUD", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	});
 
@@ -161,7 +131,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
@@ -171,7 +141,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering https");
@@ -180,7 +150,7 @@ sap.ui.define([
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 			oAddButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 			assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -210,11 +180,11 @@ sap.ui.define([
 			}), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			// scroll to bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[5].getObject()), {
@@ -232,7 +202,7 @@ sap.ui.define([
 			}])), "Field 1: Value");
 			oTable.filter(oURLColumn, "");
 			assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing filter");
@@ -244,7 +214,7 @@ sap.ui.define([
 			}])), "Field 1: Value");
 			// scroll to bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[8].getObject()), {"icon": "sap-icon://add","text": "text","url": "https://","number": 0.5, "_dt": {"_selected": true}}), "Table: new row is added to the end");
 			return Promise.resolve();
@@ -281,7 +251,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
@@ -291,7 +261,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "https", "Table: URL Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering https");
@@ -300,7 +270,7 @@ sap.ui.define([
 			oAddButton = oToolbar.getContent()[1];
 			assert.ok(oAddButton.getVisible(), "Table toolbar: add button visible");
 			oAddButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 			assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -322,24 +292,24 @@ sap.ui.define([
 			assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), oDefaultNewObjectSelected), "SimpleForm field8: Has updated value");
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			// scroll to bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: value length is 5");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([oDefaultNewObject])), "Field 1: Value");
 			oTable.filter(oURLColumn, "");
 			assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing filter");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1.concat([oDefaultNewObject])), "Field 1: Value");
 			// scroll to bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 400;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[8].getObject()), {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5, "_dt": {"_selected": true}}), "Table: new row is added to the end");
 			return Promise.resolve();
@@ -376,7 +346,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "http:");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
@@ -386,7 +356,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
@@ -411,7 +381,7 @@ sap.ui.define([
 			});
 			assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -515,7 +485,7 @@ sap.ui.define([
 				"editable": true
 			}), "SimpleForm field textArea: Has changed value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after updating");
 			oNewValue = {
@@ -543,7 +513,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			oTable.filter(oURLColumn, "");
 			assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount after removing filter");
@@ -583,7 +553,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "http:");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function() {
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
@@ -593,7 +563,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue1), "Field 1: Value not changed after filtering");
@@ -618,7 +588,7 @@ sap.ui.define([
 			});
 			assert.ok(oEditButton.getEnabled(), "Table toolbar: edit button enabled");
 			oEditButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 			assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
@@ -722,7 +692,7 @@ sap.ui.define([
 			};
 			assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), Object.assign(deepClone(oNewValue), {"_dt": {"_selected": true}})), "SimpleForm field textArea: Has changed value");
 			oUpdateButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after updating");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oNewValue, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value updated");
@@ -730,7 +700,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			oTable.filter(oURLColumn, "");
 			assert.ok(!oURLColumn.getFiltered(), "Table: Column URL is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.equal(oTable.getBinding().getCount(), 8, "Table: RowCount after removing filter");
@@ -772,7 +742,7 @@ sap.ui.define([
 			assert.ok(oTable.getSelectedIndices().length === 0, "Table: no selected row");
 			oURLColumn = oTable.getColumns()[4];
 			oTable.filter(oURLColumn, "http:");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function(){
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
 		}).then(function() {
@@ -782,7 +752,7 @@ sap.ui.define([
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			assert.equal(oInput.getValue(), "http:", "Table: URL Column filter value OK");
 			oMenu.close();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering http:");
@@ -794,20 +764,20 @@ sap.ui.define([
 			});
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 			var oMessageBox = Core.byId(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value deleted");
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: value length is 2");
 			oTable.filter(oURLColumn, "");
 			assert.ok(!oURLColumn.getFiltered(), "Table: Column Key is not filtered anymore");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(!oClearFilterButton.getEnabled(), "Table toolbar: clear filter button disabled");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [oValue1, oValue3, oValue4, oValue5, oValue6, oValue7, oValue8]), "Field 1: Value deleted");

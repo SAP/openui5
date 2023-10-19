@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"./jsons/withDesigntime/temp/DataExtensionImpl",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/integration/formatters/IconFormatter"
+	"sap/ui/integration/formatters/IconFormatter",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -30,7 +31,8 @@ sap.ui.define([
 	MockServer,
 	DataExtensionImpl,
 	UI5Date,
-	IconFormatter
+	IconFormatter,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -300,29 +302,10 @@ sap.ui.define([
 
 	QUnit.module("Create an editor based on old manifest without dt", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("1 string parameter", function (assert) {
@@ -349,7 +332,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -367,36 +350,17 @@ sap.ui.define([
 
 	QUnit.module("Create an editor based on json with designtime module", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Empty Host Context", function (assert) {
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
 					assert.ok(oModel !== null, "Editor has a context model");
 					assert.deepEqual(oModel.getData(), getDefaultContextModel(this.oEditor._oResourceBundle), "Editor has a default context model");
@@ -410,7 +374,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "contexthost", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oModel = this.oEditor.getModel("context");
 					assert.ok(oModel !== null, "Editor has a context model");
 					assert.strictEqual(oModel.getProperty("/sap.workzone/currentUser/id/label"), "Id of the Work Zone user", "Editor host context contains the user id label 'Id of the Work Zone'");
@@ -429,7 +393,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -441,7 +405,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": {} } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -453,7 +417,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -465,7 +429,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -477,7 +441,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/noconfig", "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -508,7 +472,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -542,7 +506,7 @@ sap.ui.define([
 			}
 		});
 		return new Promise(function (resolve, reject) {
-			this.oEditor.attachReady(function () {
+			EditorQunitUtils.isReady(this.oEditor).then(function () {
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[1];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
@@ -573,7 +537,7 @@ sap.ui.define([
 			}
 		});
 		return new Promise(function (resolve, reject) {
-			this.oEditor.attachReady(function () {
+			EditorQunitUtils.isReady(this.oEditor).then(function () {
 				assert.ok(this.oEditor.isReady(), "Editor is ready");
 				var oHint = this.oEditor.getAggregation("_formContent")[4];
 				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
@@ -587,7 +551,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -633,7 +597,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -681,7 +645,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -719,7 +683,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -764,7 +728,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -803,7 +767,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -820,7 +784,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/icon", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -840,7 +804,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowFile", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -861,7 +825,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/iconWithNotAllowNone", "type": "List", "configuration": { "parameters": { "iconParameter": { "value": "sap-icon://cart" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -901,7 +865,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -937,7 +901,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -973,7 +937,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -990,7 +954,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integer", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1007,7 +971,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1integerlabel", "type": "List", "configuration": { "parameters": { "integerParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1024,7 +988,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1number", "type": "List", "configuration": { "parameters": { "numberParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1041,7 +1005,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1date", "type": "List", "configuration": { "parameters": { "dateParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1066,7 +1030,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1datetime", "type": "List", "configuration": { "parameters": { "datetimeParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1091,7 +1055,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1108,7 +1072,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1127,7 +1091,7 @@ sap.ui.define([
 			this.oEditor.setSection("temp");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} }, "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1151,7 +1115,7 @@ sap.ui.define([
 			this.oEditor.setMode("content");
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringlabel", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1174,7 +1138,7 @@ sap.ui.define([
 
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
@@ -1228,7 +1192,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
@@ -1256,7 +1220,7 @@ sap.ui.define([
 			var oJson = { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "temp": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } };
 			this.oEditor.setJson(oJson);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1372,33 +1336,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Initalize", function (assert) {
@@ -1409,7 +1350,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1477,7 +1418,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
@@ -1550,7 +1491,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1624,7 +1565,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1703,7 +1644,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1783,7 +1724,7 @@ sap.ui.define([
 				manifest: oManifestBasic
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1869,33 +1810,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check value items", function (assert) {
@@ -1906,7 +1824,7 @@ sap.ui.define([
 				manifest: oManifestForExtension
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -1986,33 +1904,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check the Editable dependece parameters", function (assert) {
@@ -2025,7 +1920,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");
@@ -2084,7 +1979,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oBooleanSwitch = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					assert.ok(oBooleanSwitch.getState() === false, "Label: Boolean switch value");

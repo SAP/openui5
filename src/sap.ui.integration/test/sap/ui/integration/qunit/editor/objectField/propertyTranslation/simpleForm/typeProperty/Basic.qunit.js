@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../../../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 	var sandbox = sinon.createSandbox();
@@ -90,14 +92,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -125,32 +119,10 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("check translation icon", function (assert) {
@@ -160,11 +132,11 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefinedWithTranslation
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
@@ -196,7 +168,7 @@ sap.ui.define([
 						assert.ok(oFormField3._oValueHelpIcon.getVisible(), "SimpleForm field 3: Value help icon visible");
 						oFormField3.setValue("{i18n>string1}");
 						oFormField3.fireChange({ value: "{i18n>string1}"});
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 3: Has new value");
 							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
 							assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
@@ -204,7 +176,7 @@ sap.ui.define([
 							assert.ok(oFormField3._oValueHelpIcon.getVisible(), "SimpleForm field 3: Value help icon visible");
 							oFormField3.setValue("string1");
 							oFormField3.fireChange({ value: "string1"});
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oFormField3.getValue(), "string1", "SimpleForm field 3: Has new value");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "string1"}), "Field 1: DT Value updated");
 								assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 3: ShowValueHelp true");
@@ -225,11 +197,11 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefinedWithTranslation
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 						assert.equal(oLabel.getText(), "Object properties defined", "Label 2: Has label text");
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
@@ -256,7 +228,7 @@ sap.ui.define([
 						assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm field 3: Input value help icon");
 						assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm field 3: Input value help icon src");
 						oValueHelpIcon3.firePress();
-						wait(1500).then(function () {
+						EditorQunitUtils.wait(1500).then(function () {
 							var oTranslationPopover3 = oField._oTranslationPopover;
 							var oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
 							assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
@@ -283,7 +255,7 @@ sap.ui.define([
 							oFormField3.fireChange({ value: "text value 1"});
 							assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "text value 1"}), "Field 1: DT Value updated");
 							oValueHelpIcon3.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oLanguageItems1 = oTranslationPopover3.getContent()[0].getItems();
 								assert.equal(oLanguageItems1.length, 50, "oTranslationPopover3 Content: length");
 								for (var i = 0; i < oLanguageItems1.length; i++) {
@@ -298,7 +270,7 @@ sap.ui.define([
 								oCancelButton3.firePress();
 								oFormField3.setValue("{i18n>string1}");
 								oFormField3.fireChange({ value: "{i18n>string1}"});
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oFormField3.getValue(), "{i18n>string1}", "SimpleForm field 1: Has new value");
 									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text": "{i18n>string1}"}), "Field 1: DT Value updated");
 									assert.ok(oFormField3.getShowValueHelp(), "SimpleForm field 1: ShowValueHelp true");
@@ -308,7 +280,7 @@ sap.ui.define([
 									assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm field 1: Input value help icon");
 									assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm field 1: Input value help icon src");
 									oValueHelpIcon1.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover1 = oField._oTranslationPopover;
 										var oLanguageItems1 = oTranslationPopover1.getContent()[0].getItems();
 										assert.equal(oLanguageItems1.length, 50, "oTranslationPopover1 Content: length");

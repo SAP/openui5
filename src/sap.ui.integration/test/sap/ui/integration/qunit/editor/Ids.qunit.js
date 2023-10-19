@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
-	"sap/base/i18n/ResourceBundle"
+	"sap/base/i18n/ResourceBundle",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -24,7 +25,8 @@ sap.ui.define([
 	Core,
 	QUnitUtils,
 	KeyCodes,
-	ResourceBundle
+	ResourceBundle,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -36,42 +38,12 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	QUnit.module("Basic", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Basic fields", function (assert) {
@@ -119,7 +91,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 
@@ -290,7 +262,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oHint1 = this.oEditor.getAggregation("_formContent")[1];
@@ -314,7 +286,7 @@ sap.ui.define([
 			var oJson = { baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringtrans", "type": "List", "configuration": { "parameters": { "stringParameter": {} } } } } };
 			this.oEditor.setJson(oJson);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -368,7 +340,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -383,8 +355,8 @@ sap.ui.define([
 		QUnit.test("Message strip of group and sub group", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var sEditorId = this.oEditor.getId();
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -407,8 +379,8 @@ sap.ui.define([
 		QUnit.test("Message strip of sub tab", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var sEditorId = this.oEditor.getId();
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -449,7 +421,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 
@@ -489,8 +461,8 @@ sap.ui.define([
 		QUnit.test("Sub tab", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "subTabsWithErrorMessageStrip.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
-					wait().then(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var sEditorId = this.oEditor.getId();
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
@@ -506,7 +478,7 @@ sap.ui.define([
 						var oSubTabFilter = oSubTab.getItems()[0];
 						assert.equal(oSubTabFilter.getId(), sEditorId + "_subGroup_control_icontabfilter", "Field: sub tab filter id");
 						oSubTab.setExpanded(false);
-						wait(500).then(function () {
+						EditorQunitUtils.wait(500).then(function () {
 							var expandedBtn = oSubTabFilter._getExpandButton();
 							assert.ok(expandedBtn.getVisible(), "Error icon appeared.");
 							resolve();
@@ -520,32 +492,10 @@ sap.ui.define([
 
 	QUnit.module("Object field", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Textarea - no value", function (assert) {
@@ -578,7 +528,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -628,7 +578,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -688,7 +638,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -756,7 +706,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -789,7 +739,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oField._oObjectDetailsPopover.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_objectdetails_popover", "Object Details popover: id");
 							var oObjectDetailsPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[0];
 							var oEditModeButton = oObjectDetailsPage.getHeaderContent()[0];
@@ -828,32 +778,10 @@ sap.ui.define([
 
 	QUnit.module("ObjectList field", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Textarea - no value", function (assert) {
@@ -886,7 +814,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -938,7 +866,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -971,7 +899,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oField._oObjectDetailsPopover.getId(), sEditorId + "_objects_control_objectdetails_popover", "Object Details popover: id");
 							var oObjectDetailsPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[0];
 							var oEditModeButton = oObjectDetailsPage.getHeaderContent()[0];
@@ -1041,7 +969,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1075,7 +1003,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oField._oObjectDetailsPopover.getId(), sEditorId + "_objectsWithPropertiesDefined_control_objectdetails_popover", "Object Details popover: id");
 							var oObjectDetailsPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[0];
 							var oEditModeButton = oObjectDetailsPage.getHeaderContent()[0];
@@ -1114,32 +1042,10 @@ sap.ui.define([
 
 	QUnit.module("Settings", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Basic", function (assert) {
@@ -1170,7 +1076,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1182,7 +1088,7 @@ sap.ui.define([
 					assert.equal(oSettingsButton.getId(), sEditorId + "_stringParameter_settings_btn", "Field 1: settings button id");
 					oSettingsButton.firePress();
 					oSettingsButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1249,7 +1155,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1261,7 +1167,7 @@ sap.ui.define([
 					assert.equal(oSettingsButton.getId(), sEditorId + "_stringWithStaticList_settings_btn", "Field 1: settings button id");
 					oSettingsButton.firePress();
 					oSettingsButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oSettingsButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1287,32 +1193,10 @@ sap.ui.define([
 
 	QUnit.module("Translation popover", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("String field", function (assert) {
@@ -1343,7 +1227,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1351,14 +1235,14 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 					assert.equal(oLabel.getText(), "Label 1 English", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field 1: String Field");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oValueHelpIcon = oField.getAggregation("_field")._oValueHelpIcon;
 						assert.equal(oValueHelpIcon.getId(), sEditorId + "_string1_control-vhi", "Field 1: value help icon id");
 						assert.ok(oValueHelpIcon.isA("sap.ui.core.Icon"), "oField1: Input value help icon");
 						assert.equal(oValueHelpIcon.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon.firePress();
 						oValueHelpIcon.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover = oField._oTranslationPopover;
 							assert.equal(oTranslationPopover.getId(), sEditorId + "_string1_translation_popover", "Field 1: translation popover id");
 							var aCurrentLanguageControls = oTranslationPopover.getCustomHeader().getItems()[2].getItems();
@@ -1411,11 +1295,11 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oField = this.oEditor.getAggregation("_formContent")[2];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectField"), "Field: Object Field");
 						var oSimpleForm = oField.getAggregation("_field");
 						assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Field: Control is SimpleForm");
@@ -1429,7 +1313,7 @@ sap.ui.define([
 						assert.equal(oFormField._oValueHelpIcon.getId(), sEditorId + "_objectWithPropertiesDefined_control_form_property_text_control-vhi", "SimpleForm field 3: value help icon id");
 						oFormField._oValueHelpIcon.firePress();
 						oFormField._oValueHelpIcon.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover = oField._oTranslationPopover;
 							assert.equal(oTranslationPopover.getId(), sEditorId + "_objectWithPropertiesDefined_control_translation_popover", "Field 1: translation popover id");
 							var oValueList = oTranslationPopover.getContent()[0];
@@ -1480,7 +1364,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1496,7 +1380,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oField._oObjectDetailsPopover.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_objectdetails_popover", "Object Details popover: id");
 							var oObjectDetailsPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[0];
 							var oEditModeButton = oObjectDetailsPage.getHeaderContent()[0];
@@ -1518,7 +1402,7 @@ sap.ui.define([
 							assert.equal(oFormField._oValueHelpIcon.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_objectdetails_popover_form_property_text_control-vhi", "SimpleForm field 3: value help icon id");
 							oFormField._oValueHelpIcon.firePress();
 							oFormField._oValueHelpIcon.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationListPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[1];
 								var oValueList = oTranslationListPage.getContent()[0];
 								assert.equal(oValueList.getId(), sEditorId + "_objectWithPropertiesDefinedAndValueFromJsonList_control_objectdetails_popover_translation_page_value_list", "Object Details popover: translation value list id");
@@ -1568,7 +1452,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var sEditorId = this.oEditor.getId();
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -1584,7 +1468,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oField._oObjectDetailsPopover.getId(), sEditorId + "_objectWithPropertiesDefined1_control_objectdetails_popover", "Object Details popover: id");
 							var oObjectDetailsPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[0];
 							var oEditModeButton = oObjectDetailsPage.getHeaderContent()[0];
@@ -1606,7 +1490,7 @@ sap.ui.define([
 							assert.equal(oFormField._oValueHelpIcon.getId(), sEditorId + "_objectWithPropertiesDefined1_control_objectdetails_popover_form_property_text_control-vhi", "SimpleForm field 3: value help icon id");
 							oFormField._oValueHelpIcon.firePress();
 							oFormField._oValueHelpIcon.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationListPage = oField._oObjectDetailsPopover.getContent()[0].getPages()[1];
 								var oValueList = oTranslationListPage.getContent()[0];
 								assert.equal(oValueList.getId(), sEditorId + "_objectWithPropertiesDefined1_control_objectdetails_popover_translation_page_value_list", "Object Details popover: translation value list id");

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	Core,
 	deepClone,
-	merge
+	merge,
+	EditorQunitUtils
 ) {
 	"use strict";
 	QUnit.config.reorder = false;
@@ -279,27 +281,6 @@ sap.ui.define([
 			"zh-TW": "String4 繁體 Content"
 		}
 	};
-
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
 		var oContent = document.getElementById("content");
@@ -311,14 +292,6 @@ sap.ui.define([
 
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
 
 	QUnit.module("content mode", {
 		beforeEach: function () {
@@ -336,7 +309,7 @@ sap.ui.define([
 			QUnit.test(sCaseTitle, function (assert) {
 				var that = this;
 				return new Promise(function (resolve, reject) {
-					that.oEditor = createEditor(sLanguageKey);
+					that.oEditor = EditorQunitUtils.createEditor(sLanguageKey);
 					that.oEditor.setMode("content");
 					that.oEditor.setAllowSettings(true);
 					that.oEditor.setAllowDynamicValues(true);
@@ -346,7 +319,7 @@ sap.ui.define([
 						manifest: oManifestForobjectFieldsWithTranslations,
 						manifestChanges: [_oAdminChangesOfObjectsWithWithTranslations, _oContentChangesOfObjectsWithWithTranslations]
 					});
-					that.oEditor.attachReady(function () {
+					EditorQunitUtils.isReady(that.oEditor).then(function () {
 						assert.ok(that.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 						var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -357,7 +330,7 @@ sap.ui.define([
 						var oSelectedValueOfField1 = merge(deepClone(oValueOfObject1InContentChange, 500), {"_dt": {"_selected": true}});
 						var oSelectedValueOfField2 = merge(deepClone(oValueOfObject2InContentChange, 500), {"_dt": {"_selected": true}});
 						var oSelectedValueOfField3 = merge(deepClone(oValueOfObject3InContentChange, 500), {"_dt": {"_selected": true}});
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.ok(oLabel1.isA("sap.m.Label"), "Label 1: Form content contains a Label");
 							assert.equal(oLabel1.getText(), "Object properties defined: value from Json list", "Label 1: Has label text");
 							assert.ok(oField1.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 1: Object Field");
@@ -383,7 +356,7 @@ sap.ui.define([
 							oEditButton1.onAfterRendering = function(oEvent) {
 								oEditButton1.onAfterRendering = function () {};
 								oEditButton1.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oAddButtonInPopover1 = oField1._oObjectDetailsPopover._oAddButton;
 									assert.ok(!oAddButtonInPopover1.getVisible(), "Popover 1: add button not visible");
 									var oUpdateButtonInPopover1 = oField1._oObjectDetailsPopover._oUpdateButton;
@@ -412,7 +385,7 @@ sap.ui.define([
 									assert.ok(oValueHelpIcon1.isA("sap.ui.core.Icon"), "SimpleForm 1 field 3: Input value help icon");
 									assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "SimpleForm 1 field 3: Input value help icon src");
 									oValueHelpIcon1.firePress();
-									wait(1500).then(function () {
+									EditorQunitUtils.wait(1500).then(function () {
 										var oTranslationListPage1 = oField1._oTranslationListPage;
 										var oSaveButton1 = oTranslationListPage1.getFooter().getContent()[1];
 										assert.ok(oSaveButton1.getVisible(), "oTranslationListPage 1 footer: save button visible");
@@ -435,7 +408,7 @@ sap.ui.define([
 										}
 										oTranslationListPage1._navBtn.firePress();
 										oCancelButtonInPopover1.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											assert.ok(oLabel2.isA("sap.m.Label"), "Label 2: Form content contains a Label");
 											assert.equal(oLabel2.getText(), "Object properties defined: value from Json list", "Label 2: Has label text");
 											assert.ok(oField2.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 2: Object Field");
@@ -459,7 +432,7 @@ sap.ui.define([
 											});
 											assert.ok(oEditButton2.getEnabled(), "Table toolbar 1: edit button enabled");
 											oEditButton2.firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												var oAddButtonInPopover2 = oField2._oObjectDetailsPopover._oAddButton;
 												assert.ok(!oAddButtonInPopover2.getVisible(), "Popover 2: add button not visible");
 												var oUpdateButtonInPopover2 = oField2._oObjectDetailsPopover._oUpdateButton;
@@ -488,7 +461,7 @@ sap.ui.define([
 												assert.ok(oValueHelpIcon2.isA("sap.ui.core.Icon"), "SimpleForm 2 field 3: Input value help icon");
 												assert.equal(oValueHelpIcon2.getSrc(), "sap-icon://translate", "SimpleForm 2 field 3: Input value help icon src");
 												oValueHelpIcon2.firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													var oTranslationListPage2 = oField2._oTranslationListPage;
 													var oSaveButton2 = oTranslationListPage2.getFooter().getContent()[1];
 													assert.ok(oSaveButton2.getVisible(), "oTranslationListPage 2 footer: save button visible");
@@ -511,7 +484,7 @@ sap.ui.define([
 													}
 													oTranslationListPage2._navBtn.firePress();
 													oCancelButtonInPopover2.firePress();
-													wait().then(function () {
+													EditorQunitUtils.wait().then(function () {
 														assert.ok(oLabel3.isA("sap.m.Label"), "Label 3: Form content contains a Label");
 														assert.equal(oLabel3.getText(), "Object properties defined: value from Json list", "Label 3: Has label text");
 														assert.ok(oField3.isA("sap.ui.integration.editor.fields.ObjectField"), "Field 3: Object Field");
@@ -535,7 +508,7 @@ sap.ui.define([
 														});
 														assert.ok(oEditButton3.getEnabled(), "Table toolbar 3: edit button enabled");
 														oEditButton3.firePress();
-														wait().then(function () {
+														EditorQunitUtils.wait().then(function () {
 															var oAddButtonInPopover3 = oField3._oObjectDetailsPopover._oAddButton;
 															assert.ok(!oAddButtonInPopover3.getVisible(), "Popover 3: add button not visible");
 															var oUpdateButtonInPopover3 = oField3._oObjectDetailsPopover._oUpdateButton;
@@ -564,7 +537,7 @@ sap.ui.define([
 															assert.ok(oValueHelpIcon3.isA("sap.ui.core.Icon"), "SimpleForm 3 field 3: Input value help icon");
 															assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "SimpleForm 3 field 3: Input value help icon src");
 															oValueHelpIcon3.firePress();
-															wait().then(function () {
+															EditorQunitUtils.wait().then(function () {
 																var oTranslationListPage3 = oField3._oTranslationListPage;
 																var oSaveButton3 = oTranslationListPage3.getFooter().getContent()[1];
 																assert.ok(oSaveButton3.getVisible(), "oTranslationListPage 3 footer: save button visible");

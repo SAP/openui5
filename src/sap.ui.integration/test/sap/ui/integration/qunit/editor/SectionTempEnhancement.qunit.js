@@ -296,33 +296,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check the setting button", function (assert) {
@@ -335,7 +312,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -391,7 +368,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomerNotEditableField = this.oEditor.getAggregation("_formContent")[6];
@@ -419,7 +396,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[2];
@@ -453,7 +430,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomerLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomerField = this.oEditor.getAggregation("_formContent")[4];
@@ -572,33 +549,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check the setting button", function (assert) {
@@ -612,7 +566,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -668,7 +622,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersNotEditableField = this.oEditor.getAggregation("_formContent")[6];
@@ -696,7 +650,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -730,7 +684,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiComboBox
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[4];
@@ -849,33 +803,10 @@ sap.ui.define([
 				}
 			]);
 			this.oMockServer.start();
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("Check the setting button", function (assert) {
@@ -889,7 +820,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -945,7 +876,7 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(true);
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersNotEditableLabel = this.oEditor.getAggregation("_formContent")[5];
 					var oCustomersNotEditableField = this.oEditor.getAggregation("_formContent")[6];
@@ -970,7 +901,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiInput
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[2];
@@ -1004,7 +935,7 @@ sap.ui.define([
 				manifest: oManifestForFilterBackendInMultiInput
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oCustomersLabel = this.oEditor.getAggregation("_formContent")[3];
 					var oCustomersField = this.oEditor.getAggregation("_formContent")[4];

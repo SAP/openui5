@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -66,14 +68,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -103,32 +97,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("no value, add, update, delete", function (assert) {
@@ -160,7 +132,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -227,7 +199,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -265,32 +237,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea->Table - basic", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("basic", function (assert) {
@@ -300,7 +250,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -344,32 +294,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea->Table - add", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("add with property fields in popover", function (assert) {
@@ -379,7 +307,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -399,7 +327,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							assert.ok(!oAddButtonInPopover.getEnabled(), "Popover: add button not enabled");
@@ -475,7 +403,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"a": "a1","b": "b1","d": 2,"c": "c1","e": true}), "SimpleForm field textArea: Has updated value");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 5, "Table: value length is 5");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[4].getObject()), {"a": "a1","b": "b1","c": "c1","d": 2,"e": true, "_dt": {"_selected": true}}), "Table: new row");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([{"a": "a1","b": "b1","c": "c1","d": 2,"e": true}])), "Field 1: updated DT Value");
@@ -494,7 +422,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -514,7 +442,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							assert.ok(!oAddButtonInPopover.getEnabled(), "Popover: add button not enabled");
@@ -590,7 +518,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"_dt": {"_selected": true},"a": "a1","b": "b1","d": 2,"c": "c1","e": true}), "SimpleForm field textArea: Has updated value");
 							oCancelButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
@@ -608,7 +536,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -628,7 +556,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							assert.ok(!oAddButtonInPopover.getEnabled(), "Popover: add button not enabled");
@@ -709,7 +637,7 @@ sap.ui.define([
 							oFormField.setValue(sNewValue);
 							oFormField.fireChange({ value: sNewValue});
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 5, "Table: value length is 5");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[4].getObject()), {"a": "a2","b": "b2","c": "c2","d": 3,"e": false, "_dt": {"_selected": true}}), "Table: new row");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue.concat([{"a": "a2","b": "b2","c": "c2","d": 3,"e": false}])), "Field 1: updated DT Value");
@@ -728,7 +656,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -748,7 +676,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(oAddButtonInPopover.getVisible(), "Popover: add button visible");
 							assert.ok(!oAddButtonInPopover.getEnabled(), "Popover: add button not enabled");
@@ -829,7 +757,7 @@ sap.ui.define([
 							oFormField.setValue(sNewValue);
 							oFormField.fireChange({ value: sNewValue});
 							oCancelButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
 								resolve();
@@ -843,32 +771,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea->Table - update", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("update with property fields in popover", function (assert) {
@@ -878,7 +784,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -907,7 +813,7 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -983,7 +889,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"c": "c1","d": 2,"a": "a1","e": true,"_dt": {"_selected": true},"b": "b1"}), "SimpleForm field textArea: Has updated value");
 							oUpdateButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[2].getObject()), {"a": "a1","b": "b1","c": "c1","d": 2,"e": true,"_dt": {"_selected": true}}), "Table: row updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
@@ -1007,7 +913,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1036,7 +942,7 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -1112,7 +1018,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							assert.ok(deepEqual(cleanUUIDAndPosition(oFormField.getValue()), {"c": "c1","d": 2,"a": "a1","e": true,"_dt": {"_selected": true},"b": "b1"}), "SimpleForm field textArea: Has updated value");
 							oCancelButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[2].getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Table: row not updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
@@ -1131,7 +1037,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1160,7 +1066,7 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -1244,7 +1150,7 @@ sap.ui.define([
 							oFormField.setValue(sNewValue);
 							oFormField.fireChange({ value: sNewValue});
 							oUpdateButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[2].getObject()), {"c": "c2", "d": 3, "a": "a2", "e": false, "b": "b2", "_dt": {"_selected": true}}), "Table: row updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
@@ -1268,7 +1174,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1297,7 +1203,7 @@ sap.ui.define([
 					oEditButton.onAfterRendering = function(oEvent) {
 						oEditButton.onAfterRendering = function () {};
 						oEditButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oAddButtonInPopover = oField._oObjectDetailsPopover._oAddButton;
 							assert.ok(!oAddButtonInPopover.getVisible(), "Popover: add button not visible");
 							var oUpdateButtonInPopover = oField._oObjectDetailsPopover._oUpdateButton;
@@ -1378,7 +1284,7 @@ sap.ui.define([
 							oFormField.setValue(sNewValue);
 							oFormField.fireChange({ value: sNewValue});
 							oCancelButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), aObjectsParameterValue.length, "Table: value length is " + aObjectsParameterValue.length);
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[2].getObject()), {"c": "cccc", "d": 1, "a": "aaaa", "e": false, "_dt": {"_selected": true}}), "Table: row not updated");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
@@ -1393,32 +1299,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea->Table - delete", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("delete", function (assert) {
@@ -1428,7 +1312,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFields
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1457,12 +1341,12 @@ sap.ui.define([
 					oDeleteButton.onAfterRendering = function(oEvent) {
 						oDeleteButton.onAfterRendering = function () {};
 						oDeleteButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 							var oMessageBox = Core.byId(sMessageBoxId);
 							var oOKButton = oMessageBox._getToolbar().getContent()[1];
 							oOKButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), (aObjectsParameterValue.length - 1), "Table: value length is " + (aObjectsParameterValue.length - 1));
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), [
 									{"b": "bbb", "c": "ccc", "d": 3},

@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	Editor,
 	Host,
-	sinon
+	sinon,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -20,31 +22,16 @@ sap.ui.define([
 
 	QUnit.module("Create an editor based on json without designtime module", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
-
 		QUnit.test("No configuration section (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "header": {} } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -55,7 +42,7 @@ sap.ui.define([
 		QUnit.test("No configuration section (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "noconfig.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -66,7 +53,7 @@ sap.ui.define([
 		QUnit.test("Empty configuration section (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": {} } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -77,7 +64,7 @@ sap.ui.define([
 		QUnit.test("Empty configuration section (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "emptyconfig.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -88,7 +75,7 @@ sap.ui.define([
 		QUnit.test("Empty parameters section (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -98,7 +85,7 @@ sap.ui.define([
 		QUnit.test("Empty parameters section (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "emptyparameters.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -109,7 +96,7 @@ sap.ui.define([
 		QUnit.test("Empty destination section (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destination": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -120,7 +107,7 @@ sap.ui.define([
 		QUnit.test("Empty destination section (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "emptydestinations.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -131,7 +118,7 @@ sap.ui.define([
 		QUnit.test("Empty destination and parameters section (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destination": {}, "parameters": {} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -142,7 +129,7 @@ sap.ui.define([
 		QUnit.test("Empty destination and parameters section (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "emptyparametersdestinations.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					assert.equal(this.oEditor.getAggregation("_formContent"), null, "No Content: Form content is empty");
 					resolve();
@@ -153,7 +140,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string", "label": "StaticLabel" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -168,7 +155,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter and label (as file)", function (assert) {
 			this.oEditor.setJson({ manifest: sBaseUrl + "1stringparameterlabel.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -183,7 +170,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter and translatable label (parameter syntax) (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "../i18n/i18n.properties" }, "sap.card": { "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string", "label": "{{STRINGLABEL}}" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -197,7 +184,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter and translatable label (parameter syntax) (as file)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1translatedstringparameterparam.json" });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -212,7 +199,7 @@ sap.ui.define([
 		QUnit.test("1 string parameter and translatable label (i18n binding syntax) (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties", "title": "{{STRINGLABEL}}" }, "sap.card": { "type": "List", "configuration": { "parameters": { "stringParameter": { "type": "string", "label": "{i18n>STRINGLABEL}" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -227,7 +214,7 @@ sap.ui.define([
 		QUnit.test("1 integer parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "integerParameter": { "type": "integer" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -242,7 +229,7 @@ sap.ui.define([
 		QUnit.test("1 number parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "numberParameter": { "type": "number" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -257,7 +244,7 @@ sap.ui.define([
 		QUnit.test("1 date parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "dateParameter": { "type": "date" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -272,7 +259,7 @@ sap.ui.define([
 		QUnit.test("1 datetime parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "datetimeParameter": { "type": "datetime" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -287,7 +274,7 @@ sap.ui.define([
 		QUnit.test("1 boolean parameter and label (as json)", function (assert) {
 			this.oEditor.setJson({ manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "parameters": { "booleanParameter": { "type": "boolean" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -302,7 +289,7 @@ sap.ui.define([
 		QUnit.test("1 destination (as json)", function (assert) {
 			this.oEditor.setJson({ host: "host", manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "type": "List", "configuration": { "destinations": { "dest1": { "name": "Sample" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
@@ -319,7 +306,7 @@ sap.ui.define([
 		QUnit.test("1 integer parameter with formatter (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/intPara", "type": "List", "configuration": { "parameters": { "integerParameter": { "value": 99 } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { minIntegerDigits: 3 }, "Formatter is correct");
@@ -332,7 +319,7 @@ sap.ui.define([
 		QUnit.test("1 number parameter with formatter (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/numPara", "type": "List", "configuration": { "parameters": { "floatParameter": { "value": 21.0028 } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { decimals: 3 }, "formatter is correct");
@@ -345,7 +332,7 @@ sap.ui.define([
 		QUnit.test("1 datetime parameter with formatter (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/datetimePara", "type": "List", "configuration": { "parameters": { "datetimeParameter": { "value": "2021/03/05 13:50:06" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { style: 'long' }, "formatter is correct");
@@ -358,7 +345,7 @@ sap.ui.define([
 		QUnit.test("1 date parameter with formatter (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/datePara", "type": "List", "configuration": { "parameters": { "dateParameter": { "value": "2021/03/05" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField = this.oEditor.getAggregation("_formContent")[2];
 					assert.deepEqual(oField.getConfiguration().formatter, { style: 'long' }, "formatter is correct");
@@ -371,7 +358,7 @@ sap.ui.define([
 		QUnit.test("format the values of string array data type (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/stringArray", "type": "List", "configuration": { "parameters": { "stringArray": { "value": ["key1", "key2"] } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var items = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
 					for (var i = 0; i < items.length; i++) {
@@ -387,7 +374,7 @@ sap.ui.define([
 		QUnit.test("format the array values (as json)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/string", "type": "List", "configuration": { "parameters": { "string": { "value": "" } } } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var items = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
 					for (var i = 0; i < items.length; i++) {
@@ -403,7 +390,7 @@ sap.ui.define([
 		QUnit.test("Editable value binding to expression (return value: false)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/editable", "type": "List", "configuration": { "parameters": { "editableValue": { "value": false },  "boolean": { "value": true }} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField1 = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					var oField2 = this.oEditor.getAggregation("_formContent")[4].getAggregation("_field");
@@ -432,7 +419,7 @@ sap.ui.define([
 		QUnit.test("Editable value binding to expression (return value: true)", function (assert) {
 			this.oEditor.setJson({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/editable", "type": "List", "configuration": { "parameters": { "editableValue": { "value": true },  "boolean": { "value": false }} } } } });
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oField1 = this.oEditor.getAggregation("_formContent")[2].getAggregation("_field");
 					var oField2 = this.oEditor.getAggregation("_formContent")[4].getAggregation("_field");

@@ -9,7 +9,8 @@ sap.ui.define([
 	"./ContextHost",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ContextHost,
 	Core,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -30,35 +32,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
-
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
 		var oContent = document.getElementById("content");
@@ -67,7 +40,6 @@ sap.ui.define([
 			document.body.style.zIndex = "unset";
 		}
 	}
-
 
 	QUnit.module("Check Translation Values for Admin, Content, Translation", {
 		beforeEach: function () {
@@ -106,7 +78,7 @@ sap.ui.define([
 
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("admin");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -115,7 +87,7 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
@@ -126,7 +98,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					var oIcon3 = oField3._descriptionIcon;
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "Field1: String 1 English");
@@ -162,7 +134,7 @@ sap.ui.define([
 				//en_US language
 				assert.ok(true, "Set language to en-US, which exists");
 				return new Promise(function (resolve, reject) {
-					this.oEditor = createEditor("en-US");
+					this.oEditor = EditorQunitUtils.createEditor("en-US");
 					this.oEditor.setMode("admin");
 					this.oEditor.setAllowSettings(true);
 					this.oEditor.setAllowDynamicValues(true);
@@ -171,7 +143,7 @@ sap.ui.define([
 						host: "contexthost",
 						manifest: oManifest
 					});
-					this.oEditor.attachReady(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
@@ -182,7 +154,7 @@ sap.ui.define([
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
 						var oIcon3 = oField3._descriptionIcon;
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oLabel1.getText(), "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.equal(oField1.getAggregation("_field").getValue(), "String 1 US English", "Field1: String 1 US English");
@@ -244,7 +216,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("content");
 				this.oEditor.setAllowSettings(true);
 				this.oEditor.setAllowDynamicValues(true);
@@ -253,7 +225,7 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 					var oField1 = this.oEditor.getAggregation("_formContent")[2];
@@ -264,7 +236,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 					var oField3 = this.oEditor.getAggregation("_formContent")[6];
 					var oIcon3 = oField3._descriptionIcon;
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "Field1: String 1 English");
@@ -300,7 +272,7 @@ sap.ui.define([
 				//en_US language
 				assert.ok(true, "Set language to en-US, which exists");
 				return new Promise(function (resolve, reject) {
-					this.oEditor = createEditor("en-US");
+					this.oEditor = EditorQunitUtils.createEditor("en-US");
 					this.oEditor.setMode("content");
 					this.oEditor.setAllowSettings(true);
 					this.oEditor.setAllowDynamicValues(true);
@@ -309,7 +281,7 @@ sap.ui.define([
 						host: "contexthost",
 						manifest: oManifest
 					});
-					this.oEditor.attachReady(function () {
+					EditorQunitUtils.isReady(this.oEditor).then(function () {
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oLabel1 = this.oEditor.getAggregation("_formContent")[1];
 						var oField1 = this.oEditor.getAggregation("_formContent")[2];
@@ -320,7 +292,7 @@ sap.ui.define([
 						var oLabel3 = this.oEditor.getAggregation("_formContent")[5];
 						var oField3 = this.oEditor.getAggregation("_formContent")[6];
 						var oIcon3 = oField3._descriptionIcon;
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oLabel1.getText(), "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.equal(oField1.getAggregation("_field").getValue(), "String 1 US English", "Field1: String 1 US English");
@@ -385,7 +357,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("en");
+				this.oEditor = EditorQunitUtils.createEditor("en");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -395,7 +367,7 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -411,7 +383,7 @@ sap.ui.define([
 					var oLabel4 = this.oEditor.getAggregation("_formContent")[11];
 					var oField4Ori = this.oEditor.getAggregation("_formContent")[12];
 					var oField4Trans = this.oEditor.getAggregation("_formContent")[13];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -469,7 +441,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -479,7 +451,7 @@ sap.ui.define([
 					host: "contexthost",
 					manifest: oManifest
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -492,7 +464,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -551,7 +523,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -562,7 +534,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [adminchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -575,7 +547,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -634,7 +606,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -645,7 +617,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [contentchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -658,7 +630,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -722,7 +694,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -733,7 +705,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [adminchanges, contentchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -746,7 +718,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -816,7 +788,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -827,7 +799,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [adminchanges, contentchanges, translationchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -840,7 +812,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -900,7 +872,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr");
 				this.oEditor.setAllowSettings(true);
@@ -911,7 +883,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [translationchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -924,7 +896,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -984,7 +956,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("fr-CA");
 				this.oEditor.setAllowSettings(true);
@@ -995,7 +967,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [translationchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -1008,7 +980,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -1070,7 +1042,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE");
+				this.oEditor = EditorQunitUtils.createEditor("de-DE");
 				this.oEditor.setMode("translation");
 				this.oEditor.setLanguage("es-MX");
 				this.oEditor.setAllowSettings(true);
@@ -1081,7 +1053,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [translationchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -1097,7 +1069,7 @@ sap.ui.define([
 					var oLabelForStringNoTrans = this.oEditor.getAggregation("_formContent")[14];
 					var oFieldOriForStringNoTrans = this.oEditor.getAggregation("_formContent")[15];
 					var oFieldTransForStringNoTrans = this.oEditor.getAggregation("_formContent")[16];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
@@ -1163,7 +1135,7 @@ sap.ui.define([
 			};
 			//Fallback language
 			return new Promise(function (resolve, reject) {
-				this.oEditor = createEditor("de-DE", {
+				this.oEditor = EditorQunitUtils.createEditor("de-DE", {
 					"form": {
 						"items": {
 							"string1": {
@@ -1198,7 +1170,7 @@ sap.ui.define([
 					manifest: oManifest,
 					manifestChanges: [adminchanges, translationchanges]
 				});
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel1 = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					var oPanel2 = this.oEditor.getAggregation("_formContent")[1].getAggregation("_field");
@@ -1211,7 +1183,7 @@ sap.ui.define([
 					var oLabel3 = this.oEditor.getAggregation("_formContent")[8];
 					var oField3Ori = this.oEditor.getAggregation("_formContent")[9];
 					var oField3Trans = this.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 						assert.equal(oPanel1.getHeaderText(), this.oEditor._oResourceBundle.getText("EDITOR_ORIGINALLANG") + ": " + Editor._oLanguages[this.oEditor.getLanguage()], "Panel1: has the correct text EDITOR_ORIGINALLANG");
 						assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
