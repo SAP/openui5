@@ -402,38 +402,66 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("groupFilters with Filter.NONE", function(assert) {
-		const aFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100}), Filter.NONE];
+	QUnit.test("groupFilters: early exit wíthout grouping, check Filter.NONE", function (assert) {
+		// code under test: early exit
+		assert.strictEqual(FilterProcessor.groupFilters(), undefined);
+		assert.strictEqual(FilterProcessor.groupFilters([]), undefined);
 
 		// code under test
-		assert.strictEqual(FilterProcessor.groupFilters(aFilters), Filter.NONE);
+		assert.strictEqual(FilterProcessor.groupFilters(["~oFilter"]), "~oFilter");
+
+		const aFilters = ["~oFilter", Filter.NONE];
+		const oError = new Error("~Filter.NONE error");
+		this.mock(Filter).expects("checkFilterNone").withExactArgs(sinon.match.same(aFilters)).throws(oError);
+
+		// code under test
+		assert.throws(() => {
+			FilterProcessor.groupFilters(aFilters);
+		}, oError);
+
 	});
 
 	//*********************************************************************************************
-	QUnit.test("combineFilters with application Filter.NONE", function(assert) {
-		const aApplicationFilters = [Filter.NONE];
-		const aControlFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100})];
-		const oFilterProcessorMock = this.mock(FilterProcessor);
-
-		oFilterProcessorMock.expects("groupFilters").withExactArgs(aControlFilters).returns("~oGroupedFilter");
-		oFilterProcessorMock.expects("groupFilters").withExactArgs(aApplicationFilters).returns(Filter.NONE);
-
+	QUnit.test("combineFilters: filter c'tor throws error", function (assert) {
 		// code under test
-		assert.strictEqual(FilterProcessor.combineFilters(aControlFilters, aApplicationFilters), Filter.NONE);
+		assert.throws(() => {
+			FilterProcessor.combineFilters([Filter.NONE], [Filter.NONE]);
+		}, new Error("Filter.NONE not allowed in multiple filter"));
 	});
 
 	//*********************************************************************************************
-	QUnit.test("combineFilters with control Filter.NONE", function(assert) {
-		const aApplicationFilters = [new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100})];
-		const aControlFilters = [Filter.NONE];
+	QUnit.test("combineFilters: groupFilter throws error", function (assert) {
+		const aApplicationFilters = "~ApplicationFilters";
+		const oError = new Error("~Filter.NONE error");
+		const aFilters = "~Filters";
 		const oFilterProcessorMock = this.mock(FilterProcessor);
 
-		oFilterProcessorMock.expects("groupFilters").withExactArgs(aControlFilters).returns(Filter.NONE);
-		oFilterProcessorMock.expects("groupFilters").withExactArgs(aApplicationFilters)
-			.returns("~oGroupedApplicationFilter");
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aFilters).throws(oError);
 
 		// code under test
-		assert.strictEqual(FilterProcessor.combineFilters(aControlFilters, aApplicationFilters), Filter.NONE);
+		assert.throws(() => {
+			FilterProcessor.combineFilters(aFilters, aApplicationFilters);
+		}, oError);
+
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aFilters).returns("~someGroupedFilter");
+		oFilterProcessorMock.expects("groupFilters").withExactArgs(aApplicationFilters).throws(oError);
+
+		// code under test
+		assert.throws(() => {
+			FilterProcessor.combineFilters(aFilters, aApplicationFilters);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("apply: propagates error from groupFilters", function (assert) {
+		const aFilters = ["~oFilter", Filter.NONE];
+		const oError = new Error("~Filter.NONE error");
+		this.mock(FilterProcessor).expects("groupFilters").withExactArgs(sinon.match.same(aFilters)).throws(oError);
+
+		// code under test
+		assert.throws(() => {
+			FilterProcessor.apply([/*aData*/], aFilters);
+		}, oError);
 	});
 
 	QUnit.test("apply: values contain 'toString' value", function (assert) {
