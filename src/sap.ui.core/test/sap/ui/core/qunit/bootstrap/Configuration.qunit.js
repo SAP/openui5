@@ -943,7 +943,7 @@ sap.ui.define([
 	QUnit.module("ThemeRoot Validation");
 
 	// determine the default port depending on the protocol of the current page
-	const defaultPort = window.location.protocol === "https" ? 443 : 80;
+	const defaultPort = window.location.protocol === "https:" ? 443 : 80;
 	const origin = window.location.origin;
 	const originWithoutProtocol = origin.replace(window.location.protocol, "");
 
