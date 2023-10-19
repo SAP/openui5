@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/commons/CheckBox",
 	"sap/ui/commons/TextArea",
 	"sap/ui/commons/layout/ResponsiveFlowLayoutData",
+	"sap/ui/layout/form/GridContainerData",
+	"sap/ui/layout/form/GridElementData",
 	"sap/ui/commons/library"
 ], function(
 	createAndAppendDiv,
@@ -22,6 +24,8 @@ sap.ui.define([
 	CheckBox,
 	TextArea,
 	ResponsiveFlowLayoutData,
+	GridContainerData,
+	GridElementData,
 	commonsLibrary
 ) {
 	"use strict";
