@@ -2130,6 +2130,12 @@ sap.ui.define([
 	 *   restrictions for using filters, see above
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters
+	 * @param {boolean} [mParameters.transitionMessagesOnly=false]
+	 *   Whether the tree binding only requests transition messages from the back end. If messages
+	 *   for entities of this collection need to be updated, use
+	 *   {@link sap.ui.model.odata.v2.ODataModel#read} on the parent entity corresponding to the
+	 *   tree binding's context, with the parameter <code>updateAggregatedMessages</code> set to
+	 *   <code>true</code>.
 	 * @param {object} [mParameters.treeAnnotationProperties]
 	 *   The mapping between data properties and the hierarchy used to visualize the tree, if not
 	 *   provided by the service's metadata. For the correct metadata annotations, check the
