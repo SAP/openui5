@@ -500,8 +500,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 
 
 	/**
-	 * CLDR 41 time zone keys as in timezoneNames.json, e.g:
-	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-modern/main/en/timeZoneNames.json
+	 * CLDR 43.0.0 time zone keys as in timeZoneNames.json, e.g:
+	 * https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-modern/main/de/timeZoneNames.json
 	 *
 	 * @type {string[]}
 	 */
@@ -591,6 +591,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Cayman",
 		"America/Chicago",
 		"America/Chihuahua",
+		"America/Ciudad_Juarez",
 		"America/Coral_Harbour",
 		"America/Cordoba",
 		"America/Costa_Rica",
@@ -681,6 +682,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		"America/Regina",
 		"America/Resolute",
 		"America/Rio_Branco",
+		"America/Santa_Isabel",
 		"America/Santarem",
 		"America/Santiago",
 		"America/Santo_Domingo",
