@@ -165,6 +165,7 @@
 
 		function createConfig() {
 			oConfig = Object.create(null);
+			globalThis["sap-ui-config"] ??= {};
 			var mOriginalGlobalParams = {};
 			var oGlobalConfig = globalThis["sap-ui-config"];
 			if (typeof oGlobalConfig === "object")  {
