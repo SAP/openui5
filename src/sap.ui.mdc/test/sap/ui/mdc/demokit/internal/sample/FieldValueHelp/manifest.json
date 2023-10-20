@@ -16,6 +16,7 @@
 	"dependencies": {
 	  "libs": {
 		"sap.m": {},
+		"sap.ui.core": {},
 		"sap.ui.mdc": {},
 		"sap.ui.table": {},
 		"sap.ui.fl" : {"lazy" : false}
