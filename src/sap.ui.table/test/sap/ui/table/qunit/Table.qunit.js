@@ -680,13 +680,16 @@ sap.ui.define([
 		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 
-		oTable.attachColumnSelect(function(oEvent) {
-			oEvent.preventDefault();
-		});
-		oTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
-		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
-		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+		/** @deprecated As of version 1.117 */
+		(function() {
+			oTable.attachColumnSelect(function(oEvent) {
+				oEvent.preventDefault();
+			});
+			oTable.setEnableColumnReordering(false);
+			oCore.applyChanges();
+			assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+			assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+		}());
 	});
 
 	/**
