@@ -364,6 +364,24 @@ sap.ui.define([
 		return this.setAggregation("detailBox", oLightBox);
 	};
 
+	/**
+	 * Destroys the <code>detailBox</code> aggregation.
+	 * @returns {this} <code>this</code> for chaining
+	 * @override
+	 * @public
+	 */
+	Avatar.prototype.destroyDetailBox = function () {
+		var oCurrentDetailBox = this.getDetailBox();
+
+		if (oCurrentDetailBox) {
+			this.detachPress(this._fnLightBoxOpen, oCurrentDetailBox);
+			this._fnLightBoxOpen = null;
+
+		}
+
+		return this.destroyAggregation("detailBox");
+	};
+
 	Avatar.prototype.setBadgeValueState = function(sValue) {
 
 		Object.keys(ValueState).forEach(function(val){
