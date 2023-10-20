@@ -45,14 +45,6 @@
 }
 
 /* ==========================================================================
-   Header
-   ========================================================================== */
-
-.sapTntToolPageHeaderWrapper {
-  z-index: 2; // bring header above content wrapper to draw drop shadow over the content
-}
-
-/* ==========================================================================
    Content wrapper
    ========================================================================== */
 .sapTntToolPageContentWrapper {
@@ -71,7 +63,6 @@
 
   will-change: transform;
   margin: @_sap_tnt_ToolPage_AsideMargins;
-  z-index: 2;
 }
 
 .sapTntToolPageAsideContent {
@@ -105,7 +96,7 @@ html.sap-phone {
     left: 0;
     bottom: 0;
     top: 0;
-    z-index: 4;
+    z-index: 3;
 
     margin: @_sap_tnt_ToolPage_AsideMarginsPhone;
   }
@@ -131,7 +122,6 @@ html.sap-phone {
   flex: 1;
   min-width: 0; // fixes flex chrome issue
   overflow: hidden;
-  z-index: 3;
 
   will-change: transform;
   margin: @_sap_tnt_ToolPage_ContentMargins;
@@ -176,4 +166,14 @@ html[dir=rtl] {
       }
     }
   }
+}
+
+/* ========================================================================== */
+
+.sapUiLocalBusy > .sapTntToolPage {
+  z-index: 0;
+}
+
+.sapTntToolPage.sapUiLocalBusy .sapUiLocalBusyIndicator {
+  z-index: 3;
 }
