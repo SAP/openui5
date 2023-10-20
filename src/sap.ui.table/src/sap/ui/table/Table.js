@@ -593,6 +593,7 @@ sap.ui.define([
 
 			/**
 			 * fired when a column of the table has been selected
+			 * @deprecated As of version 1.117
 			 */
 			columnSelect: {
 				allowPreventDefault: true,
