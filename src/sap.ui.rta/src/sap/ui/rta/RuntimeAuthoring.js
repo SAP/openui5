@@ -502,7 +502,6 @@ sap.ui.define([
 					// add root control is triggering overlay creation, so we need to wait for the scope to be set.
 					this._oDesignTime.addRootElement(this._oRootControl);
 
-					// TODO: remove when Overlay.getOverlayContainer() does not return jQuery any more
 					Overlay.getOverlayContainer().get(0).classList.add("sapUiRta");
 					if (this.getLayer() === Layer.USER) {
 						Overlay.getOverlayContainer().get(0).classList.add("sapUiRtaPersonalize");
