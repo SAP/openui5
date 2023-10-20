@@ -145,7 +145,22 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated
+	 */
+	function noSyncTest_beforeEach() {
+		this.oSyncSpy = this.spy(sap.ui, "requireSync");
+	}
 
+	/**
+	 * Tests whether a sync request was sent
+	 * @param {object} assert assert
+	 * @deprecated
+	 */
+	function noSyncTest_afterEach(assert) {
+		assert.equal(this.oSyncSpy.callCount, 0, "General Test: No sync request sent");
+		this.oSyncSpy.restore();
+	}
 
 	QUnit.module('default', {
 		before: function() {
@@ -172,12 +187,18 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.call(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.spyModels();
 			this.oLogSpy = this.spy(Log, "error");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.restoreGetUriParameters();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -1289,14 +1310,20 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.call(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.spyModels();
 			this.stubGetUriParameters();
 			this.oLogSpy = sinon.spy(Log, "error");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.restoreGetUriParameters();
 			this.oLogSpy.restore();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		},
 		assertAll: function(assert) {
 			/**
@@ -1523,6 +1550,9 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.spyModels();
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
@@ -1653,7 +1683,7 @@ sap.ui.define([
 				"Not found"
 			]);
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
@@ -1661,6 +1691,9 @@ sap.ui.define([
 			this.oServer.restore();
 			this.restoreGetUriParameters();
 			Component._fnLoadComponentCallback = null;
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -2088,13 +2121,19 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -2169,13 +2208,19 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -2427,15 +2472,21 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			this.stubGetUriParameters();
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 			this.restoreGetUriParameters();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -2648,13 +2699,20 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens)", {
 		beforeEach: function() {
 			bindHelper.apply(this);
+
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			BaseConfig._.invalidate();
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -2822,15 +2880,21 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.apply(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			this.stubGetUriParameters();
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 			this.restoreGetUriParameters();
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
@@ -3815,6 +3879,9 @@ sap.ui.define([
 		beforeEach: function() {
 			bindHelper.call(this);
 
+			/** @deprecated */
+			noSyncTest_beforeEach.call(this);
+
 			this.spyModels();
 			this.oLogSpy = sinon.spy(Log, "error");
 
@@ -3827,7 +3894,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.oLogSpy.restore();
 
@@ -3851,6 +3918,9 @@ sap.ui.define([
 					"this/is/a/resourceRoot": null
 				}
 			});
+
+			/** @deprecated */
+			noSyncTest_afterEach.call(this, assert);
 		}
 	});
 
