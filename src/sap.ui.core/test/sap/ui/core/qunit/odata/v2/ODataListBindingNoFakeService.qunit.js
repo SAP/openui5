@@ -1942,11 +1942,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("getDownloadUrl: fails for Filter.NONE", function (assert) {
-		assert.throws(() => {
-			// code under test
-			ODataListBinding.prototype.getDownloadUrl.call({oCombinedFilter : Filter.NONE});
-		}, new Error("Computation of download URL for binding with Filter.NONE not supported"));
+	QUnit.test("getDownloadUrl: return null for Filter.NONE", function (assert) {
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call({oCombinedFilter : Filter.NONE}), null);
 	});
 
 	//*********************************************************************************************
