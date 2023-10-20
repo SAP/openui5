@@ -453,7 +453,6 @@ sap.ui.define([
 	 * @returns{boolean} - Returns if <code>oDomElement</code> is currently visible on the screen.
 	 */
 	Utils.isElementInViewport = function(oDomElement) {
-		// TODO: remove when all calls are replaced
 		oDomElement = oDomElement.jquery ? oDomElement.get(0) : oDomElement;
 
 		var mRect = oDomElement.getBoundingClientRect();
