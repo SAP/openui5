@@ -3109,51 +3109,54 @@ sap.ui.define([
 	 * @see #getCurrentContexts
 	 */
 	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
-		var aCreatedContexts = this.aContexts.slice(0, this.iCreatedContexts),
-			aContexts = aCreatedContexts.concat(
-				this.getCurrentContexts().filter(function (oContext) {
-					// avoid duplicates for created contexts
-					// Note: avoid #created or #isTransient because there may be created contexts
-					// outside aContexts' area of "created contexts" (via "keep alive" or selection)
-					return oContext && !aCreatedContexts.includes(oContext);
-				})
-			),
-			that = this;
-
-		/**
-		 * Keeps and requests created contexts, destroys others.
-		 *
-		 * @param {sap.ui.model.odata.v4.Context} oContext0 - A context, maybe created
-		 */
-		function keepOrDestroy(oContext0) {
-			if (oContext0.created()) { // e.g. Recursive Hierarchy maintenance
-				aContexts.push(oContext0);
-			} else {
-				that.destroyLater(oContext0);
-			}
-		}
+		const aCreatedContexts = this.aContexts.slice(0, this.iCreatedContexts);
+		const aContexts = aCreatedContexts.concat(
+			this.getCurrentContexts().filter((oContext) => {
+				// avoid duplicates for created contexts
+				// Note: avoid #created or #isTransient because there may be created contexts
+				// outside aContexts' area of "created contexts" (via "keep alive" or selection)
+				return oContext && !aCreatedContexts.includes(oContext);
+			})
+		);
 
 		// add kept-alive contexts outside collection
-		Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
-			var oContext = that.mPreviousContextsByPath[sPath];
+		Object.keys(this.mPreviousContextsByPath).forEach((sPath) => {
+			var oContext = this.mPreviousContextsByPath[sPath];
 
 			if (oContext.isEffectivelyKeptAlive()) {
 				aContexts.push(oContext);
 			}
 		});
 
-		// remove and later destroy others
-		this.aContexts.slice(this.iCreatedContexts, this.iCurrentBegin)
-			.forEach(function (oContext0, i) {
-				delete that.aContexts[that.iCreatedContexts + i];
-				keepOrDestroy(oContext0);
-			});
-		if (this.aContexts.length > this.iCurrentEnd && this.iCurrentEnd >= this.iCreatedContexts) {
-			this.aContexts.slice(this.iCurrentEnd).forEach(keepOrDestroy);
-			this.aContexts.length = this.iCurrentEnd;
+		let iNewLength = 0;
+
+		/**
+		 * Keeps and requests created contexts, destroys others.
+		 *
+		 * @param {number} iBase - A base index
+		 * @param {sap.ui.model.odata.v4.Context} oContext0 - A context, maybe created
+		 * @param {number} iIndex - A relative index
+		 */
+		function keepOrDestroy(iBase, oContext0, iIndex) {
+			if (oContext0.created()) { // e.g. Recursive Hierarchy maintenance
+				aContexts.push(oContext0);
+				iNewLength = iBase + iIndex + 1;
+			} else {
+				delete this.aContexts[iBase + iIndex];
+				this.destroyLater(oContext0);
+			}
 		}
 
-		return aContexts.filter(function (oContext) {
+		// remove and later destroy others
+		this.aContexts.slice(this.iCreatedContexts, this.iCurrentBegin)
+			.forEach(keepOrDestroy.bind(this, this.iCreatedContexts));
+		if (this.aContexts.length > this.iCurrentEnd && this.iCurrentEnd >= this.iCreatedContexts) {
+			this.aContexts.slice(this.iCurrentEnd)
+				.forEach(keepOrDestroy.bind(this, this.iCurrentEnd));
+			this.aContexts.length = Math.max(iNewLength, this.iCurrentEnd);
+		}
+
+		return aContexts.filter((oContext) => {
 			// cannot request side effects for transient contexts
 			// Note: do not use #isTransient because #created() may not be resolved yet,
 			// although already persisted (timing issue, see caller)

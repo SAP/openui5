@@ -29315,9 +29315,10 @@ sap.ui.define([
 	// @odata.bind in POST relative to resource path (BCP: 2380119648)
 	//
 	// Move "Gamma" so that "Beta" becomes its parent, then move it back again. Collapse the root,
-	// request a side effect for all rows, and expand the root again. Start a move, but cancel it.
-	// Move "Beta" so that "Gamma" becomes its parent (no change to context's index, but a persisted
-	// node (again) becomes "created persisted"). Observe property change events for "@odata.etag".
+	// request a side effect for all rows (two times, JIRA: CPOUI5ODATAV4-2385), and expand the root
+	// again. Start a move, but cancel it. Move "Beta" so that "Gamma" becomes its parent (no change
+	// to context's index, but a persisted node (again) becomes "created persisted"). Observe
+	// property change events for "@odata.etag".
 	// JIRA: CPOUI5ODATAV4-2226
 	//
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
@@ -29874,10 +29875,12 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oListBinding.getHeaderContext().requestSideEffects(["Name"]),
-				that.waitForChanges(assert, "side effect again: Name for all rows")
+				// Note: no new request expected, it's merged with the 1st one
+				oListBinding.getHeaderContext().requestSideEffects(["Name"]),
+				that.waitForChanges(assert, "side effect again (2x): Name for all rows")
 			]);
 		}).then(function () {
-			checkTable("after side effect again: Name for all rows", assert, oTable, [
+			checkTable("after side effect again (2x): Name for all rows", assert, oTable, [
 				sFriend + "(ArtistID='9',IsActiveEntity=false)",
 				sFriend + "(ArtistID='0',IsActiveEntity=false)",
 				sFriend + "(ArtistID='2',IsActiveEntity=false)",
