@@ -3027,7 +3027,7 @@ sap.ui.define([
 			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
-			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies}) : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies, process: !oConfig.async}) : undefined;
 		}
 
 		// if we find a manifest URL in the configuration

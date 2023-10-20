@@ -1540,6 +1540,29 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Component.create with loaded manifest content", function(assert) {
+		var oProcessI18nSpy = this.spy(Manifest.prototype, "_processI18n");
+		// there's still one sync path where the i18n file is processed synchronously
+		// it's documented in BLI CPOUI5FRAMEWORK-286
+		var iExpectedSyncCallCount = 1;
+		return LoaderExtensions.loadResource(
+			"sap/ui/test/mixed/manifest.json",
+			{async: true}
+		).then(function(oManifest) {
+			return Component.create({
+				manifest: oManifest
+			});
+		}).then(function(oComponent) {
+			assert.ok(oComponent, "Component instance is created");
+			var iSyncCall = oProcessI18nSpy.getCalls().reduce(function(acc, oCall) {
+				if (oCall.args.length === 0 || !oCall.args[0]) {
+					acc++;
+				}
+				return acc;
+			}, 0);
+			assert.equal(iSyncCall, iExpectedSyncCallCount, "The number of sync loading of i18n file is the same as expectation");
+		});
+	});
 
 	QUnit.module("Models", {
 		beforeEach : function() {
