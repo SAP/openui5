@@ -120,7 +120,7 @@ sap.ui.define([
 				oMessage = this.mCreateActivateMessages[oContext.getPath()],
 				that = this;
 
-			if (!oContext.getProperty("ID")) {
+			if (oContext.getProperty("ID") === null) {
 				// do not activate context if no ID is given
 				oEvent.preventDefault();
 				if (!oMessage) {
