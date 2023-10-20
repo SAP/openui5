@@ -362,12 +362,20 @@ sap.ui.define([
 			return null;
 		}
 
+		let oCondition;
 		const oNavigateCondition = this.oFormatOptions.navigateCondition;
 		if (oNavigateCondition) {
 			// condition already known from navigation. Just check if it is really the same as the input.
-			const vOutput = this.formatValue(oNavigateCondition, sSourceType);
+			let vOutput;
+			if (oNavigateCondition.hasOwnProperty("output")) {
+				vOutput = oNavigateCondition.output;
+			} else {
+				vOutput = this.formatValue(oNavigateCondition, sSourceType);
+			}
 			if (vOutput === vValue) {
-				return merge({}, oNavigateCondition); // use copy
+				oCondition = merge({}, oNavigateCondition); // use copy
+				delete oCondition.output;
+				return oCondition;
 			}
 		}
 
@@ -430,7 +438,6 @@ sap.ui.define([
 					if (bIsUnit && oOperator !== FilterOperatorUtil.getEQOperator(aOperators)) {
 						throw new ParseException("unsupported operator");
 					}
-					let oCondition;
 					const bCompositeType = _isCompositeType.call(this, oType);
 					const aCompositeTypes = _getCompositeTypes.call(this);
 					const oAdditionalType = _getAdditionalValueType.call(this);

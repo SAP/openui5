@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/mdc/valuehelp/Popover",
 	"sap/ui/mdc/valuehelp/Dialog",
 	"sap/ui/mdc/valuehelp/base/Content",
+	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/valuehelp/content/Bool",
 	"sap/ui/mdc/valuehelp/content/Conditions",
 	"sap/ui/mdc/field/FieldInfoBase",
@@ -88,6 +89,7 @@ sap.ui.define([
 	Popover,
 	Dialog,
 	Content,
+	ListContent,
 	Bool,
 	Conditions,
 	FieldInfoBase,
@@ -5207,6 +5209,12 @@ sap.ui.define([
 	QUnit.test("Autocomplete", function(assert) {
 
 		const oValueHelp = Element.getElementById(oField.getValueHelp());
+		const oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
+		const oVHContent = new ListContent("C1", {caseSensitive: true});
+		sinon.stub(oVHContent, "getContent").returns(Promise.resolve(oIconContent));
+		sinon.stub(oVHContent, "isFocusInHelp").returns(true);
+		const oVHPopover = new Popover("P1", {content: oVHContent});
+		oValueHelp.setTypeahead(oVHPopover);
 
 		const fnDone = assert.async();
 		oField.focus(); // as ValueHelp is connected with focus
@@ -5217,7 +5225,7 @@ sap.ui.define([
 
 		setTimeout(function() { // to wait for Promises and opening
 			let oCondition = Condition.createItemCondition("I1", "Item1");
-			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+			oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: true});
 			assert.equal(oContent._$input.val(), "Item1", "Output text");
 			assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 			assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
@@ -5230,12 +5238,19 @@ sap.ui.define([
 			aContent = oField.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
 			oContent.focus();
-			oContent._$input.val("I");
-			oContent.fireLiveChange({ value: "I" });
+			oContent._$input.val("i");
+			oContent.fireLiveChange({ value: "i" });
 
 			setTimeout(function() { // to wait for Promises and opening
-				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
-				assert.equal(oContent._$input.val(), "I1", "Output text");
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", caseSensitive: true});
+				assert.equal(oContent._$input.val(), "i", "Output text");
+				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
+				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
+				assert.equal(oContent.getFocusDomRef().selectionEnd, 1, "Selection end");
+
+				oVHContent.setCaseSensitive(false);
+				oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "i", itemId: "myItem", caseSensitive: false});
+				assert.equal(oContent._$input.val(), "i1", "Output text");
 				assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 				assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 				assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
@@ -5249,14 +5264,14 @@ sap.ui.define([
 				oContent.fireLiveChange({ value: "I" });
 
 				setTimeout(function() { // to wait for Promises and opening
-					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
 					assert.equal(oContent._$input.val(), "Item1", "Output text");
 					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
 					assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
 
 					oCondition = Condition.createItemCondition("I1", "myItem1");
-					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+					oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
 					assert.equal(oContent._$input.val(), "I1", "Output text");
 					assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 					assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
@@ -5272,7 +5287,7 @@ sap.ui.define([
 
 					setTimeout(function() { // to wait for Promises and opening
 						oCondition = Condition.createItemCondition("I1", "Item1");
-						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"});
+						oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false});
 						assert.equal(oContent._$input.val(), "I1", "Output text");
 						assert.equal(oContent._$input.cursorPos(), 1, "CursorPosition");
 						assert.equal(oContent.getFocusDomRef().selectionStart, 1, "Selection start");
@@ -5282,13 +5297,13 @@ sap.ui.define([
 						oContent.fireLiveChange({ value: "It" });
 
 						setTimeout(function() { // to wait for Promises and opening
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem"}); // outdated FilterValue
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "I", itemId: "myItem", caseSensitive: false}); // outdated FilterValue
 							assert.equal(oContent._$input.val(), "It", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 2, "Selection end");
 
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // now description must be used
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", caseSensitive: false}); // now description must be used
 							assert.equal(oContent._$input.val(), "Item1", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
@@ -5296,13 +5311,14 @@ sap.ui.define([
 
 							oContent._$input.val("Ite");
 							oContent.fireLiveChange({ value: "Ite" }); // don't wait for debounce
-							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // outdated
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem", caseSensitive: false}); // outdated
 							assert.equal(oContent._$input.val(), "Ite", "Output text");
 							assert.equal(oContent._$input.cursorPos(), 3, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 3, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 3, "Selection end");
 
 							oValueHelp.close(); // to be sure
+							oIconContent.destroy();
 							fnDone();
 						}, 400);
 					}, 400);

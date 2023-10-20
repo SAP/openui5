@@ -276,7 +276,7 @@
 				<mdc:Field id="F6-4a" value="22134T" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="F6-4-H"/>
 
 				<m:Label text="Select-like usage"/>
-				<mdc:Field id="F6-Select" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="F6-Select-H">
+				<mdc:Field id="F6-Select" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="F6-Select-H" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate"\}'>
 					<mdc:dependents>
 						<mdc:ValueHelp id="F6-Select-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
@@ -291,12 +291,12 @@
 				</mdc:Field>
 
 				<m:Label text="Grouped List"/>
-				<mdc:Field id="F6-Group" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" valueHelp="F6-Group-H">
+				<mdc:Field id="F6-Group" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" valueHelp="F6-Group-H" delegate='\{"name": "sap/ui/mdc/sample/field/FieldBaseODataV2.delegate", "payload": \{"autoCompleteCaseSensitive": true\}\}'>
 					<mdc:dependents>
 						<mdc:ValueHelp id="F6-Group-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-Group-H-Pop">
-									<mdcValueHelpContent:FixedList id="F6-Group-H-FL" useFirstMatch="false" groupable="true" items="{path: '/ProductCollection'}" >
+									<mdcValueHelpContent:FixedList id="F6-Group-H-FL" filterList="true" useFirstMatch="true" groupable="true" items="{path: '/ProductCollection'}" >
 										<mdcValueHelpContent:FixedListItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}" groupKey="{Category}"/>
 									</mdcValueHelpContent:FixedList>
 								</mdcValueHelp:Popover>

@@ -261,11 +261,13 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let bTypeaheadCaseSensitive;
 		oFixedList.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
 		oFixedList.setUseFirstMatch(true);
@@ -297,7 +299,9 @@ sap.ui.define([
 				assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
 				assert.equal(sFilterValue, "i", "typeaheadSuggested event filterValue");
 				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+				assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 
+				oFixedList.setCaseSensitive(true);
 				iTypeaheadSuggested = 0;
 				oFixedList.setFilterValue("M");
 				assert.notOk(oItem.getSelected(), "Item0 not selected");
@@ -307,6 +311,7 @@ sap.ui.define([
 				assert.deepEqual(oCondition, Condition.createItemCondition("I2", "My Item   2"), "typeaheadSuggested event condition");
 				assert.equal(sFilterValue, "M", "typeaheadSuggested event filterValue");
 				assert.equal(sItemId, oItem.getId(), "typeaheadSuggested event itemId");
+				assert.equal(bTypeaheadCaseSensitive, true, "typeaheadSuggested event caseSensitive");
 
 				fnDone();
 			}).catch(function(oError) {

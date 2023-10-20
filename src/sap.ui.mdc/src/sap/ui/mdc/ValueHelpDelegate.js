@@ -387,5 +387,20 @@ sap.ui.define([
 		return oContent.getRelevantContexts(oConfig)[0];
 	};
 
+	/**
+	 * Determines is the filtering used for type-ahead is case sensitive.
+	 * <br/>By default the value of the {@link sap.ui.mdc.base.ListContent#getCaseSensitive CaseSensitive} property of the content instance is returned.
+	 * If <code>$search</code> or other methods are used this might depend on the backend logic.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance
+	 * @returns {boolean} If <code>true</code> the filtering is case sensitive
+	 * @public
+	 * @since 1.121.0
+	 */
+	ValueHelpDelegate.isFilteringCaseSensitive = function(oValueHelp, oContent) {
+		return oContent.getCaseSensitive();
+	};
+
 	return ValueHelpDelegate;
 });
