@@ -1702,6 +1702,66 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("FacetFilter allCheckboxBar - visibility after binding update", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oFacetFilter = new FacetFilter({
+				lists: [new FacetFilterList()]
+			}),
+			oTargetList = oFacetFilter.getLists()[0],
+			oButtonOpener = oFacetFilter._getButtonForList(oTargetList),
+			aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
+			oModel = new JSONModel({
+				values : aValues
+			}),
+			oPopover = oFacetFilter._getPopover(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			};
+
+		oFacetFilter.setModel(oModel);
+		oFacetFilter.placeAt("content");
+		oCore.applyChanges();
+
+		oTargetList.attachEventOnce("search", function(oEvent) {
+			var sSearchString = oEvent.getParameters()["term"];
+
+			this.bindItems({
+				path : "/values",
+				template : new FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				}),
+				filters: [new Filter("text", 'Contains', sSearchString.toLowerCase())]
+			});
+
+			oEvent.preventDefault();
+		});
+
+		// act
+		oFacetFilter._openPopover(oPopover, oButtonOpener);
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			// prepare
+			oTargetList.attachUpdateFinished(function() {
+				// assert
+				assert.strictEqual(oTargetList.getBinding("items").getLength(), 3, "There three items in the list");
+				assert.ok(oPopover.getSubHeader().getVisible(), "AllCheckBoxBar is visibile");
+
+				// clean
+				oFacetFilter.destroy();
+				done();
+			});
+
+			// act
+			oTargetList._handleSearchEvent(oFakeEvent);
+		});
+	});
+
 	QUnit.test("FacetFilterList.listItemsChange", function(assert) {
 		// arrange
 		var done = assert.async(),
