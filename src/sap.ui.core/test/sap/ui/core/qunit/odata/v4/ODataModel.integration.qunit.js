@@ -26657,14 +26657,22 @@ sap.ui.define([
 	// visible!
 	// JIRA: CPOUI5ODATAV4-1743
 	//
+	// Create new child and cancel immediately via deletion (JIRA: CPOUI5ODATAV4-2359)
+	//
 	// While the root node 0 (Alpha) is still collapsed, a new root (Beth) is created; a side effect
 	// for all rows turns spliced nodes into placeholders, then 0 (Alpha) is expanded again to check
 	// that placeholders still cause proper requests w.r.t. indices.
 	// JIRA: CPOUI5ODATAV4-2355
+	//
+	// A new child (Gimel) for 0 (Alpha) is created, then 0 (Alpha) is collapsed again to check
+	// that the internal "limited descendant count" has been updated correctly. Finally, 0 (Alpha)
+	// is expanded again to check that internal "index" handling is correct.
+	// JIRA: CPOUI5ODATAV4-2359
 	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
 		var oAlpha,
 			oBeta,
 			oModel = this.createTeaBusiModel({autoExpandSelect : true}),
+			oNewChild,
 			oNewRoot,
 			oTable,
 			sView = '\
@@ -26686,6 +26694,7 @@ sap.ui.define([
 
 		// B Beth (created later)
 		// 0 Alpha
+		//   C Gimel (created later)
 		//   1 Beta
 		//     1.1 Gamma
 		//     1.2 Zeta
@@ -26766,6 +26775,13 @@ sap.ui.define([
 				[undefined, 2, "2", "0", "Kappa", 56]
 			], 11);
 
+			// code under test (JIRA: CPOUI5ODATAV4-2359)
+			const oLostChild = oAlpha.getBinding().create({
+				"@$ui5.node.parent" : oAlpha,
+				Name : "n/a"
+			}, /*bSkipRefresh*/true);
+			const oDeletePromise = oLostChild.delete();
+
 			that.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
 						+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
 						+ ",NodeProperty='ID',Levels=3)"
@@ -26792,7 +26808,11 @@ sap.ui.define([
 
 			oBeta.collapse();
 
-			return that.waitForChanges(assert, "collapse 1 (Beta)");
+			return Promise.all([
+				checkCanceled(assert, oLostChild.created()),
+				oDeletePromise,
+				that.waitForChanges(assert, "collapse 1 (Beta)")
+			]);
 		}).then(function () {
 			checkTable("after collapse 1 (Beta) ", assert, oTable, [
 				"/EMPLOYEES('0')",
@@ -26885,13 +26905,13 @@ sap.ui.define([
 					+ "&$filter=ID eq 'B' or ID eq '0' or ID eq '9'&$top=3", {
 					value : [{
 						AGE : 170,
-						ID : "B"
+						ID : "B" // Beth
 					}, {
 						AGE : 160,
-						ID : "0"
+						ID : "0" // Alpha
 					}, {
 						AGE : 169,
-						ID : "9"
+						ID : "9" // Aleph
 					}]
 				});
 
@@ -26973,6 +26993,98 @@ sap.ui.define([
 				[undefined, 2, "2", "0", "Kappa", 156],
 				[undefined, 2, "3", "0", "Lambda", 157]
 			], 10);
+
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')",
+						Name : "gIMEL"
+					}
+				}, {
+					AGE : 180,
+					ID : "C",
+					MANAGER_ID : "0", // side effect
+					Name : "Gimel" // side effect
+				});
+
+			// code under test (JIRA: CPOUI5ODATAV4-2359)
+			oNewChild = oAlpha.getBinding().create({
+				"@$ui5.node.parent" : oAlpha,
+				Name : "gIMEL"
+			}, /*bSkipRefresh*/true);
+
+			assert.strictEqual(oNewChild.getIndex(), 2);
+			assert.strictEqual(oNewChild.getProperty("@$ui5.node.level"), 2);
+			assert.deepEqual(oNewChild.getObject(), {
+				"@$ui5.context.isTransient" : true,
+				"@$ui5.node.level" : 2,
+				// "@$ui5.node.parent" : oAlpha, // removed by #create
+				Name : "gIMEL"
+			});
+
+			return Promise.all([
+				oNewChild.created(),
+				that.waitForChanges(assert, "create new child beneath 0 (Alpha)")
+			]);
+		}).then(function () {
+			checkTable("after create new child beneath 0 (Alpha)", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('C')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 170],
+				[true, 1, "0", "", "Alpha", 160],
+				[undefined, 2, "C", "0", "Gimel", 180],
+				[false, 2, "1", "0", "Beta", 155],
+				[undefined, 2, "2", "0", "Kappa", 156]
+			], 11);
+			assert.strictEqual(oNewChild.isTransient(), false, "created persisted");
+
+			// code under test
+			oAlpha.collapse();
+
+			return that.waitForChanges(assert, "collapse 0 (Alpha) again");
+		}).then(function () {
+			checkTable("after collapse 0 (Alpha) again", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 170],
+				[false, 1, "0", "", "Alpha", 160],
+				[undefined, 1, "9", "", "Aleph", 169],
+				["", "", "", "", "", ""],
+				["", "", "", "", "", ""]
+			]);
+
+			// code under test
+			oAlpha.expand();
+
+			return that.waitForChanges(assert, "expand 0 (Alpha) again");
+		}).then(function () {
+			checkTable("after create new child beneath 0 (Alpha)", assert, oTable, [
+				"/EMPLOYEES('B')",
+				"/EMPLOYEES('0')",
+				"/EMPLOYEES('C')",
+				"/EMPLOYEES('1')",
+				"/EMPLOYEES('2')",
+				"/EMPLOYEES('3')",
+				"/EMPLOYEES('9')"
+			], [
+				[undefined, 1, "B", "", "Beth, not Beta", 170],
+				[true, 1, "0", "", "Alpha", 160],
+				[undefined, 2, "C", "0", "Gimel", 180],
+				[false, 2, "1", "0", "Beta", 155],
+				[undefined, 2, "2", "0", "Kappa", 156]
+			], 11);
+			assert.strictEqual(oNewChild.getBinding().getCurrentContexts()[2], oNewChild,
+				"still the same");
+			assert.strictEqual(oNewChild.isTransient(), false, "created persisted");
 		});
 	});
 

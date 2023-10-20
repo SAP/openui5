@@ -16,8 +16,7 @@ sap.ui.define([
 					"@$ui5.node.parent" : oParentContext
 				}, /*bSkipRefresh*/true);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
@@ -27,8 +26,7 @@ sap.ui.define([
 						// "@$ui5.node.parent" : null
 					}, /*bSkipRefresh*/true);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
@@ -38,8 +36,31 @@ sap.ui.define([
 						"@$ui5.node.parent" : null
 					}, /*bSkipRefresh*/true);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			}
+		},
+
+		onCut : function (oEvent) {
+			try {
+				const oNode = oEvent.getSource().getBindingContext();
+				oNode.delete("noSubmit");
+				MessageBox.confirm("Restore again (undo cut)", {
+					actions : MessageBox.Action.OK,
+					emphasizedAction : MessageBox.Action.OK,
+					onClose : function () {
+						oNode.resetChanges();
+					}
+				});
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			}
+		},
+
+		onDelete : async function (oEvent) {
+			try {
+				await oEvent.getSource().getBindingContext().delete();
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
@@ -109,8 +130,7 @@ sap.ui.define([
 					.find((oNode) => oNode.getProperty("ID") === sParentId);
 				await this.oNode.move({parent : oParent});
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
 				this.getView().setBusy(false);
 			}
