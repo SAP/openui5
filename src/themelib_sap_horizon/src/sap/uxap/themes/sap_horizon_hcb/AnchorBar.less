@@ -18,6 +18,39 @@ html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 	padding-left: 1rem;
 }
 
+.sapUxAPAnchorBar .sapMSlt,
+.sapUxAPAnchorBar .sapMSlt.sapMSltIconOnly.sapMSltHoverable:hover:not(.sapMSltState).sapMSltWithIcon,
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused:not(.sapMSltDisabled):not(.sapMSltState):not(.sapMSltExpanded) {
+	box-shadow: none;
+	border: none;
+}
+
+.sapUxAPAnchorBar .sapMBtnInner, .sapUxAPAnchorBar .sapMBtnInner:hover {
+	border: 0.0625rem solid @sapUiButtonHoverBorderColor;
+	border-radius: 0.25rem;
+}
+
+html.sap-desktop .sapUxAPAnchorBar .sapUxAPHierarchicalSelect.sapMSltPressed:not(:hover) > .sapMSltIcon {
+	background-color: inherit;
+}
+
+.sapUxAPAnchorBar .sapMSlt .sapMSltArrow {
+	height: 3rem;
+}
+
+.sapUxAPAnchorBar .sapMSlt.sapMSltFocused:not(.sapMSltExpanded) .sapMSltIcon:after {
+	content: "";
+	position: absolute;
+	box-sizing: border-box;
+	left: 0.06256rem;
+	top: 0.06256rem;
+	right: 0.06256rem;
+	bottom: 0.06256rem;
+	border: 0.125rem dotted @sapUiContentFocusColor;
+	pointer-events: none;
+	border-radius: 0.375rem;
+}
+
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner {
 	padding-top: 0;
