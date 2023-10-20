@@ -1745,6 +1745,27 @@ function (
 		oGrid.destroy();
 	});
 
+	QUnit.test("#focusItem should reset grid matrix position", function (assert) {
+		// Arrange
+		var oBtn1 = new Button({ text: "1" }),
+			oBtn2 = new Button({ text: "2" }),
+			oGrid = new GridContainer({
+				items: [ oBtn1, oBtn2 ]
+			});
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		oGrid.focusItem(1);
+
+		// Assert - check if the "before" element correctly forwarded the focus to grid element
+		assert.strictEqual(oGrid._oItemNavigation._mCurrentPosition, null, "Matrix position should be reset");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer({
@@ -1824,8 +1845,6 @@ function (
 		},
 		afterEach: function () {
 			this.oGrid.destroy();
-			this.oCard.destroy();
-			this.oTile.destroy();
 		}
 	});
 

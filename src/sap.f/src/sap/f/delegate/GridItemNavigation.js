@@ -56,10 +56,8 @@ sap.ui.define([
 	GridItemNavigation.prototype.onfocusin = function (oEvent) {
 		ItemNavigation.prototype.onfocusin.call(this, oEvent);
 
-		var aMatrix = this._getGridInstance().getNavigationMatrix();
-
-		if (aMatrix && oEvent.target === this.oDomRef) {
-			this._mCurrentPosition = this._findPositionInMatrix(aMatrix, this.getItemDomRefs().indexOf(this.iFocusedIndex));
+		if (oEvent.target === this.oDomRef) {
+			this.resetFocusPosition();
 		}
 	};
 
