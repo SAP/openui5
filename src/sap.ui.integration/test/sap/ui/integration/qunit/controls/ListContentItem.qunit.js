@@ -152,7 +152,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count for sample 1 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count are as expected.");
 	});
 
 	QUnit.test("Lines count for renderer attributes 2", function (assert) {
@@ -188,7 +188,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count for sample 2 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count are as expected.");
 	});
 
 	QUnit.test("Lines count for renderer - attributes 3", function (assert) {
@@ -210,7 +210,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count for sample 1 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count are as expected.");
 	});
 
 	QUnit.module("Accessibility", {
