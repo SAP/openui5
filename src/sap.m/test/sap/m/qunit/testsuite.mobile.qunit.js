@@ -219,14 +219,6 @@ sap.ui.define([
 				}
 			},
 
-			"opa/input/SuggestionRowsPopoverOPA": {
-				title: "OPA Test Page for sap.m.Input with tabular suggestions",
-				ui5: {
-					libs: "sap.m",
-					language: "en"
-				}
-			},
-
 			CustomTreeItem: {
 				title: "QUnit Page for sap.m.CustomTreeItem",
 				coverage: {

@@ -91,14 +91,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -144,32 +136,10 @@ sap.ui.define([
 			this.oMockServer.destroy();
 		},
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	});
 
@@ -189,7 +159,7 @@ sap.ui.define([
 			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -215,7 +185,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oClearFilterButton.getEnabled(), "Table toolbar: clear filter button enabled");
 			assert.equal(oTable.getBinding().getCount(), 5, "Table: RowCount after filtering column URL with 'https'");
@@ -289,7 +259,7 @@ sap.ui.define([
 			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -315,7 +285,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow1 = oTable.getRows()[0];
 			oValueOfRow1 = oRow1.getBindingContext().getObject();
@@ -335,7 +305,7 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 
 			oMoveDownButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -364,7 +334,7 @@ sap.ui.define([
 			assert.equal(oFieldSettings[4]._dt._position, 5, "Editor: Field 1 value 3 position");
 
 			oMoveUpButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -387,7 +357,7 @@ sap.ui.define([
 			assert.equal(oFieldSettings[4]._dt._position, 5, "Editor: Field 1 value 8 position");
 
 			oMoveUpButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -428,7 +398,7 @@ sap.ui.define([
 			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -454,7 +424,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow2 = oTable.getRows()[1];
 			oValueOfRow2 = oRow2.getBindingContext().getObject();
@@ -474,7 +444,7 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 
 			oMoveDownButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -495,7 +465,7 @@ sap.ui.define([
 			assert.equal(oFieldSettings[4]._dt._position, 5, "Editor: Field 1 value 8 position");
 
 			oMoveUpButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -535,7 +505,7 @@ sap.ui.define([
 			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -561,7 +531,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow2 = oTable.getRows()[1];
 			oValueOfRow2 = oRow2.getBindingContext().getObject();
@@ -581,7 +551,7 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 
 			oMoveUpButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -602,7 +572,7 @@ sap.ui.define([
 			assert.equal(oFieldSettings[4]._dt._position, 5, "Editor: Field 1 value 8 position");
 
 			oMoveDownButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -642,7 +612,7 @@ sap.ui.define([
 			assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 			assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oTable = oField.getAggregation("_field");
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
@@ -668,7 +638,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow3 = oTable.getRows()[2];
 			oValueOfRow3 = oRow3.getBindingContext().getObject();
@@ -688,7 +658,7 @@ sap.ui.define([
 			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 
 			oMoveDownButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 3, "Table toolbar: selected index is 3");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -707,7 +677,7 @@ sap.ui.define([
 			assert.equal(oValueOfRow4._dt._position, 7, "Table: row 4 position");
 
 			oMoveUpButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getSelectedIndices()[0], 2, "Table toolbar: selected index is 2");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
@@ -754,7 +724,7 @@ sap.ui.define([
 			assert.ok(oClearFilterButton.getVisible(), "Table toolbar: clear filter button visible");
 			oDeleteButton = oToolbar.getContent()[3];
 			assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oURLColumn = oTable.getColumns()[4];
 			return EditorQunitUtils.openColumnMenu(oURLColumn, assert);
@@ -763,7 +733,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 			assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -775,7 +745,7 @@ sap.ui.define([
 			var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 			assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column");
 			oAddButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 			assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
@@ -800,7 +770,7 @@ sap.ui.define([
 			var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 			assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 			oAddButtonInPopover.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: value length is 6");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[5].getObject()), oDefaultNewObjectSelected), "Table: new row data");
@@ -813,7 +783,7 @@ sap.ui.define([
 
 			// scroll to the bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var oNewRow = oTable.getRows()[4];
 			var oNewValue = oNewRow.getBindingContext().getObject();
@@ -828,13 +798,13 @@ sap.ui.define([
 			});
 			assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 			oDeleteButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 			var oMessageBox = Core.byId(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			var aFieldValue = oField._getCurrentProperty("value");
 			assert.ok(deepEqual(cleanUUIDAndPosition(aFieldValue), aObjectsParameterValue2), "Field 1: Value updated");

@@ -38,7 +38,7 @@
 				<copyright>SAP</copyright>
 				<pattern>sap/ui/webc/fiori/thirdparty/*.*</pattern>
 			</lib>
-			<lib name="ZXing" displayName="ZXing" version="0.17.1" npmName="@zxing/library" hash="04a591028fe34e77e20809744ac5af56" homepage="https://zxing-js.github.io/library/">
+			<lib name="ZXing" displayName="ZXing" version="0.17.1" npmName="@zxing/library" hash="388b252531769348d61a701c6a83db7a" homepage="https://zxing-js.github.io/library/">
 				<license url="https://github.com/zxing-js/library/blob/master/LICENSE" type="Apache-2.0"></license>
 				<copyright>2005 Sun Microsystems, Inc.; 2010-2014 University of Manchester; 2010-2015 Stian Soiland-Reyes; 2015 Peter Hull</copyright>
 				<pattern>sap/ui/webc/fiori/lib/zxing.js</pattern>

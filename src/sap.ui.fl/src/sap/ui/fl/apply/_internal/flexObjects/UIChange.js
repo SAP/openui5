@@ -237,7 +237,8 @@ sap.ui.define([
 	 * Adds and returns a promise that resolves as soon as
 	 * <code>resolveChangeProcessingPromise</code> or <code>resolveChangeProcessingPromiseWithError</code> is called.
 	 * The promise will always resolve, either without a parameter or with an object and an <code>error</code> parameter inside.
-	 * At any time, there is only one object for 'apply' or 'revert'. If this function is called multiple times for the same key, only the current promise will be returned.
+	 * At any time, there is only one object for 'apply' or 'revert'. If this function is called multiple times for the same key,
+	 * only the current promise will be returned.
 	 *
 	 * 	_oChangeProcessingPromises: {
 	 * 		States.Operations.APPLY: {

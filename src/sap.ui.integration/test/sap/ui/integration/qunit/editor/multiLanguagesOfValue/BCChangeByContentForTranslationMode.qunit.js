@@ -9,7 +9,8 @@ sap.ui.define([
 	"./../ContextHost",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ContextHost,
 	Core,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -29,35 +31,6 @@ sap.ui.define([
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
 
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
@@ -177,7 +150,7 @@ sap.ui.define([
 					var that = this;
 					//Fallback language
 					return new Promise(function (resolve, reject) {
-						that.oEditor = createEditor(sCoreLanguageKey);
+						that.oEditor = EditorQunitUtils.createEditor(sCoreLanguageKey);
 						that.oEditor.setMode("translation");
 						that.oEditor.setLanguage(sEditorLanguageKey);
 						that.oEditor.setAllowSettings(true);
@@ -188,7 +161,7 @@ sap.ui.define([
 							manifest: _oManifest,
 							manifestChanges: [_oContentChanges]
 						});
-						that.oEditor.attachReady(function () {
+						EditorQunitUtils.isReady(that.oEditor).then(function () {
 							assert.ok(that.oEditor.isReady(), "Editor is ready");
 							var oField1Ori = that.oEditor.getAggregation("_formContent")[3];
 							var oField1Trans = that.oEditor.getAggregation("_formContent")[4];
@@ -198,7 +171,7 @@ sap.ui.define([
 							var oField4Trans = that.oEditor.getAggregation("_formContent")[10];
 							var oField5Ori = that.oEditor.getAggregation("_formContent")[12];
 							var oField5Trans = that.oEditor.getAggregation("_formContent")[13];
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oField1Ori.getAggregation("_field").getText(), sString1OriValue, "Field1Ori: " + sString1OriValue);
 								assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
 								assert.equal(oField1Trans.getAggregation("_field").getValue(), sString1TransValue, "Field1Trans: " + sString1TransValue);

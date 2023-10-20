@@ -351,7 +351,12 @@ sap.ui.define([
 				 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
 				 * @since 1.36.0
 				 */
-				toolbar : {type : "sap.ui.core.Toolbar", multiple : false}
+				toolbar : {type : "sap.ui.core.Toolbar", multiple : false,
+					forwarding: {
+						idSuffix: "--Form",
+						aggregation: "toolbar"
+					}
+				}
 			},
 			associations: {
 
@@ -488,27 +493,16 @@ sap.ui.define([
 	SimpleForm.prototype.setToolbar = function(oToolbar) {
 
 		this._bChangedByMe = true;
-		var oForm = this.getAggregation("form");
-		oForm.setToolbar(oToolbar);
-
+		this.setAggregation("toolbar", oToolbar);
 		this._bChangedByMe = false;
 		return this;
-
-	};
-
-	SimpleForm.prototype.getToolbar = function() {
-
-		var oForm = this.getAggregation("form");
-		return oForm.getToolbar();
 
 	};
 
 	SimpleForm.prototype.destroyToolbar = function() {
 
 		this._bChangedByMe = true;
-		var oForm = this.getAggregation("form");
-		oForm.destroyToolbar();
-
+		this.destroyAggregation("toolbar");
 		this._bChangedByMe = false;
 		return this;
 
@@ -1807,7 +1801,7 @@ sap.ui.define([
 
 		if (!this._bChangedByMe) {
 			// check if content is still the same like in array
-			// maybe ca Control was destroyed or removed without using the SimpleForm API
+			// maybe a Control was destroyed or removed without using the SimpleForm API
 			// as invalidate is fired for every single object only one object can be changed
 			var aContent = _getFormContent(this.getAggregation("form"));
 			var i = 0;

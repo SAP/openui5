@@ -1,11 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/dt/ElementDesignTimeMetadata",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/plugin/ToolHooks",
 	"sap/m/Button",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	ElementDesignTimeMetadata,
 	ElementOverlay,
 	ToolHooks,
 	Button,
@@ -24,7 +26,9 @@ sap.ui.define([
 			this.oElementOverlay = new ElementOverlay({
 				isRoot: true,
 				element: this.oButton,
-				designTimeMetadata: {},
+				designTimeMetadata: new ElementDesignTimeMetadata({
+					data: {}
+				}),
 				init: assert.async()
 			});
 			this.oToolHooksPlugin = new ToolHooks();

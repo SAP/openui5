@@ -1,9 +1,17 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/ui/integration/editor/Editor",
+	"sap/ui/integration/Host",
+	"./../editor/ContextHost",
+	"sap/ui/core/Core"
 ], function(
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	Editor,
+	Host,
+	ContextHost,
+	Core
 ) {
 	"use strict";
 
@@ -59,14 +67,6 @@ sap.ui.define([
 		QUnitUtils.triggerKeydown(oControl.getDomRef(), KeyCodes.ENTER);
 	};
 
-	EditorQunitUtils.isReady = function(oEditor) {
-		return new Promise(function(resolve) {
-			oEditor.attachReady(function() {
-				resolve();
-			});
-		});
-	};
-
 	EditorQunitUtils.openColumnMenu = function(oColumn, assert) {
 		return new Promise(function(resolve) {
 			var oHeaderMenu = oColumn.getHeaderMenuInstance();
@@ -92,6 +92,91 @@ sap.ui.define([
 			oField.attachEventOnce("tableUpdated", function() {
 				resolve();
 			});
+		});
+	};
+
+	EditorQunitUtils.beforeEachTest = function(oHostConfig, oContextHostConfig) {
+		oHostConfig = Object.assign({
+			"id": "host",
+			"getDestinations": function () {
+				return new Promise(function (resolve) {
+					EditorQunitUtils.wait().then(function () {
+						resolve([
+							{
+								"name": "Products"
+							},
+							{
+								"name": "Orders"
+							},
+							{
+								"name": "Portal"
+							},
+							{
+								"name": "Northwind"
+							}
+						]);
+					});
+				});
+			}
+		}, oHostConfig);
+		oContextHostConfig = Object.assign({
+			"id":"contexthost"
+		}, oContextHostConfig);
+		this.oHost = new Host(oHostConfig.id);
+		this.oHost.getDestinations = oHostConfig.getDestinations;
+		this.oContextHost = new ContextHost(oContextHostConfig.id);
+
+		return this.createEditor();
+	};
+
+	EditorQunitUtils.afterEachTest = function(oEditor, sandbox, oMockServer) {
+		oEditor.destroy();
+		sandbox.restore();
+		oMockServer && oMockServer.destroy();
+		this.oHost && this.oHost.destroy();
+		this.oContextHost && this.oContextHost.destroy();
+		var oContent = document.getElementById("content");
+		if (oContent) {
+			oContent.innerHTML = "";
+			document.body.style.zIndex = "unset";
+		}
+	};
+
+	EditorQunitUtils.createEditor = function(sLanguage, oDesigntime) {
+		sLanguage = sLanguage || "en";
+		Core.getConfiguration().setLanguage(sLanguage);
+		var oEditor = new Editor({
+			designtime: oDesigntime
+		});
+		var oContent = document.getElementById("content");
+		if (!oContent) {
+			oContent = document.createElement("div");
+			oContent.style.position = "absolute";
+			oContent.style.top = "200px";
+			oContent.style.width = "800px";
+			oContent.style.background = "white";
+
+			oContent.setAttribute("id", "content");
+			document.body.appendChild(oContent);
+			document.body.style.zIndex = 1000;
+		}
+		oEditor.placeAt(oContent);
+		return oEditor;
+	};
+
+	EditorQunitUtils.isReady = function(oEditor) {
+		return new Promise(function(resolve) {
+			oEditor.attachReady(function() {
+				resolve();
+			});
+		});
+	};
+
+	EditorQunitUtils.wait = function(ms) {
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve();
+			}, ms || 1000);
 		});
 	};
 

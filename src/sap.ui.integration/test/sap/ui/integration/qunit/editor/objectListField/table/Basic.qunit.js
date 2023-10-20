@@ -7,7 +7,8 @@ sap.ui.define([
 	"./../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -16,7 +17,8 @@ sap.ui.define([
 	ContextHost,
 	deepEqual,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -30,14 +32,6 @@ sap.ui.define([
 
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
 
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
@@ -68,32 +62,10 @@ sap.ui.define([
 
 	QUnit.module("no value or [] as value", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("no value, add with default property values in popover", function (assert) {
@@ -123,7 +95,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -157,7 +129,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -235,7 +207,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObjectSelected), "Table: new row data");
 								var oRow1 = oTable.getRows()[0];
@@ -276,7 +248,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -310,7 +282,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -395,7 +367,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -439,7 +411,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
@@ -482,7 +454,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -516,7 +488,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -601,7 +573,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -648,7 +620,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
@@ -693,7 +665,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -727,7 +699,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -805,7 +777,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObjectSelected), "Table: new row data");
 								var oRow1 = oTable.getRows()[0];
@@ -848,7 +820,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -882,7 +854,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -967,7 +939,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -1011,7 +983,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 									var oDefaultNewObject = {"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55, "key": "key01", "editable": true, "int": 1, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
@@ -1056,7 +1028,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1090,7 +1062,7 @@ sap.ui.define([
 						assert.equal(oColumns[6].getLabel().getText(), "Integer", "Table: column 'Integer'");
 						assert.equal(oColumns[7].getLabel().getText(), "Number", "Table: column 'Number'");
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -1175,7 +1147,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -1222,7 +1194,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 1, "Table: value length is 1");
 									var oDefaultNewObject = {"text new": "textnew", "text": "text01 2", "key": "key01 2", "url": "https://sap.com/06 2", "icon": "sap-icon://accept 2", "int": 3, "editable": false, "number": 5.55, "_dt": {"_selected": true}};
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[0].getObject()), oDefaultNewObject), "Table: new row data");
@@ -1241,32 +1213,10 @@ sap.ui.define([
 
 	QUnit.module("backward compatability", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("get current settings with old values", function (assert) {
@@ -1310,7 +1260,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];

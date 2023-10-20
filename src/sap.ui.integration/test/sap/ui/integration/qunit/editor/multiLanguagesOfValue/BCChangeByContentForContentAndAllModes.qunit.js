@@ -9,7 +9,8 @@ sap.ui.define([
 	"./../ContextHost",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -20,7 +21,8 @@ sap.ui.define([
 	ContextHost,
 	Core,
 	QUnitUtils,
-	KeyCodes
+	KeyCodes,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -29,35 +31,6 @@ sap.ui.define([
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
-
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
-	function createEditor(sLanguage, oDesigntime) {
-		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
-		var oEditor = new Editor({
-			designtime: oDesigntime
-		});
-		var oContent = document.getElementById("content");
-		if (!oContent) {
-			oContent = document.createElement("div");
-			oContent.style.position = "absolute";
-			oContent.style.top = "200px";
-			oContent.style.background = "white";
-
-			oContent.setAttribute("id", "content");
-			document.body.appendChild(oContent);
-			document.body.style.zIndex = 1000;
-		}
-		oEditor.placeAt(oContent);
-		return oEditor;
-	}
 
 	function destroyEditor(oEditor) {
 		oEditor.destroy();
@@ -137,7 +110,7 @@ sap.ui.define([
 		QUnit.test("In en (English)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setMode("content");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -147,7 +120,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -159,7 +132,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -181,7 +154,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -211,7 +184,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -234,7 +207,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -257,7 +230,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -290,7 +263,7 @@ sap.ui.define([
 		QUnit.test("In en-GB (English UK)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en-GB");
+				that.oEditor = EditorQunitUtils.createEditor("en-GB");
 				that.oEditor.setMode("content");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -300,7 +273,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -312,7 +285,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -334,7 +307,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -364,7 +337,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -387,7 +360,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -410,7 +383,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en-GB"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -443,7 +416,7 @@ sap.ui.define([
 		QUnit.test("In fr (Français)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("fr");
+				that.oEditor = EditorQunitUtils.createEditor("fr");
 				that.oEditor.setMode("content");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -453,7 +426,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -465,7 +438,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 French", "Label1: Label 1 French");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -487,7 +460,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -517,7 +490,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -540,7 +513,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -563,7 +536,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["fr"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -596,7 +569,7 @@ sap.ui.define([
 		QUnit.test("In ru (Русский)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("ru");
+				that.oEditor = EditorQunitUtils.createEditor("ru");
 				that.oEditor.setMode("content");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -606,7 +579,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -618,7 +591,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -640,7 +613,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -670,7 +643,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -693,7 +666,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -716,7 +689,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -749,7 +722,7 @@ sap.ui.define([
 		QUnit.test("In de (Deutsch)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("de");
+				that.oEditor = EditorQunitUtils.createEditor("de");
 				that.oEditor.setMode("content");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -759,7 +732,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -771,7 +744,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -793,7 +766,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -823,7 +796,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -846,7 +819,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -869,7 +842,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -913,7 +886,7 @@ sap.ui.define([
 		QUnit.test("In en (English)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en");
+				that.oEditor = EditorQunitUtils.createEditor("en");
 				that.oEditor.setMode("all");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -923,7 +896,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -935,7 +908,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -957,7 +930,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -987,7 +960,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -1010,7 +983,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -1033,7 +1006,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -1066,7 +1039,7 @@ sap.ui.define([
 		QUnit.test("In en-GB (English UK)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("en-GB");
+				that.oEditor = EditorQunitUtils.createEditor("en-GB");
 				that.oEditor.setMode("all");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -1076,7 +1049,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1088,7 +1061,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -1110,7 +1083,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1140,7 +1113,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -1163,7 +1136,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -1186,7 +1159,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["en-GB"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -1219,7 +1192,7 @@ sap.ui.define([
 		QUnit.test("In fr (Français)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("fr");
+				that.oEditor = EditorQunitUtils.createEditor("fr");
 				that.oEditor.setMode("all");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -1229,7 +1202,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1241,7 +1214,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 French", "Label1: Label 1 French");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -1263,7 +1236,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1293,7 +1266,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -1316,7 +1289,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -1339,7 +1312,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["fr"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -1372,7 +1345,7 @@ sap.ui.define([
 		QUnit.test("In ru (Русский)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("ru");
+				that.oEditor = EditorQunitUtils.createEditor("ru");
 				that.oEditor.setMode("all");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -1382,7 +1355,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1394,7 +1367,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -1416,7 +1389,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1446,7 +1419,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -1469,7 +1442,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -1492,7 +1465,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");
@@ -1525,7 +1498,7 @@ sap.ui.define([
 		QUnit.test("In de (Deutsch)", function (assert) {
 			var that = this;
 			return new Promise(function (resolve, reject) {
-				that.oEditor = createEditor("de");
+				that.oEditor = EditorQunitUtils.createEditor("de");
 				that.oEditor.setMode("all");
 				that.oEditor.setAllowSettings(true);
 				that.oEditor.setAllowDynamicValues(true);
@@ -1535,7 +1508,7 @@ sap.ui.define([
 					manifest: _oManifest,
 					manifestChanges: [_oContentChanges]
 				});
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel1 = that.oEditor.getAggregation("_formContent")[1];
 					var oField1 = that.oEditor.getAggregation("_formContent")[2];
@@ -1547,7 +1520,7 @@ sap.ui.define([
 					var oField4 = that.oEditor.getAggregation("_formContent")[8];
 					var oLabel5 = that.oEditor.getAggregation("_formContent")[9];
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String1 Value Content", "oField1: String1 Value");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -1569,7 +1542,7 @@ sap.ui.define([
 						assert.equal(oValueHelpIcon1.getSrc(), "sap-icon://translate", "oField1: Input value help icon src");
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -1599,7 +1572,7 @@ sap.ui.define([
 							assert.equal(oValueHelpIcon3.getSrc(), "sap-icon://translate", "oField3: Input value help icon src");
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String3 Value");
@@ -1622,7 +1595,7 @@ sap.ui.define([
 								assert.equal(oValueHelpIcon4.getSrc(), "sap-icon://translate", "oField4: Input value help icon src");
 								oValueHelpIcon4.firePress();
 								oValueHelpIcon4.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oTranslationPopover4 = oField4._oTranslationPopover;
 									var aHeaderItems4 = oTranslationPopover4.getCustomHeader().getItems();
 									assert.equal(aHeaderItems4[2].getItems()[1].getValue(), "String4 Value Content", "oTranslationPopover4 Header: String4 Value");
@@ -1645,7 +1618,7 @@ sap.ui.define([
 									assert.equal(oValueHelpIcon5.getSrc(), "sap-icon://translate", "oField5: Input value help icon src");
 									oValueHelpIcon5.firePress();
 									oValueHelpIcon5.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oTranslationPopover5 = oField5._oTranslationPopover;
 										var aHeaderItems5 = oTranslationPopover5.getCustomHeader().getItems();
 										assert.equal(aHeaderItems5[2].getItems()[1].getValue(), _oExpectedValues["string5"]["ru"] || _oExpectedValues["string5"]["default_in_en"], "oTranslationPopover5 Header: String5 Value");

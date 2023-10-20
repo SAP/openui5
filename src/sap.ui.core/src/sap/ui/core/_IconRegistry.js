@@ -11,12 +11,13 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/Log",
 	"sap/base/util/fetch",
+	"sap/base/util/syncFetch",
 	"sap/base/util/isPlainObject",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper"
 ],
-	function(URI, ResourceBundle, Log, fetch, isPlainObject, Library, Theming, ThemeHelper) {
+	function(URI, ResourceBundle, Log, fetch, syncFetch, isPlainObject, Library, Theming, ThemeHelper) {
 		"use strict";
 
 		/**
@@ -1219,10 +1220,41 @@ sap.ui.define([
 						});
 					}
 					return mFontRegistry[collectionName].metadataLoaded;
-				}
+				} else if (oConfig.metadataURI) {
+					if (mFontRegistry[collectionName].abortController) { // there is an async request ongoing
+						// the async request is aborted before the sync request is sent
+						mFontRegistry[collectionName].abortController.abort("Replaced by sync request");
+						mFontRegistry[collectionName].abortController = null;
+					}
+					Log.warning("Synchronous loading of font meta data in IconPool, due to .getIconInfo() call" +
+						" for '" + collectionName + "'. Use loading mode 'async' to avoid this call.", "SyncXHR", null, function() {
+						return {
+							type: "SyncXHR",
+							name: "IconPool"
+						};
+					});
 
-				// pass on the configuration object
-				loadFont(oConfig.metadata);
+					try {
+						// load the metadata synchronously
+						var response = syncFetch(oConfig.metadataURI, {
+							headers: {
+								Accept: syncFetch.ContentTypes.JSON
+							}
+						});
+
+						if (response.ok) {
+							var oJSON = response.json();
+							loadFont(oJSON);
+						} else {
+							fnErrorCallback();
+						}
+					} catch (error) {
+						fnErrorCallback();
+					}
+				} else {
+					// pass on the configuration object
+					loadFont(oConfig.metadata);
+				}
 			}
 		};
 

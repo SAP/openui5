@@ -86,14 +86,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -205,7 +197,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -216,7 +208,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "4");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 1, "Table: RowCount after filtering column Integer with '4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -224,14 +216,14 @@ sap.ui.define([
 			return EditorQunitUtils.openColumnMenu(oIntColumn, assert);
 		}).then(function() {
 			EditorQunitUtils.setInputValueAndConfirm(oInput, ">4");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 2, "Table: RowCount after filtering column Integer with '>4'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
 
 			// clear all the filters
 			oClearFilterButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -282,7 +274,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -290,7 +282,7 @@ sap.ui.define([
 
 			// scroll to the bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow5 = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
@@ -298,7 +290,7 @@ sap.ui.define([
 			assert.ok(!oSelectionCell5.getSelected(), "Row 5: not selected");
 			oSelectionCell5.setSelected(true);
 			oSelectionCell5.fireSelect({selected: true});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {
 				"_dt": {
@@ -324,7 +316,7 @@ sap.ui.define([
 			assert.ok(!oSelectionCell6.getSelected(), "Row 6: not selected");
 			oSelectionCell6.setSelected(true);
 			oSelectionCell6.fireSelect({selected: true});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow6.getBindingContext().getObject()), Object.assign(deepClone(oValue6Ori), {
 				"_dt": {
@@ -347,7 +339,7 @@ sap.ui.define([
 
 			// clear all the filters
 			oClearFilterButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -402,7 +394,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "https");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 6, "Table: RowCount after filtering column URL with 'https'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -410,7 +402,7 @@ sap.ui.define([
 
 			// scroll to the bottom
 			oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			oRow5 = oTable.getRows()[3];
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {"_dt": {"_editable": false}})), "Table: row 5 value");
@@ -423,7 +415,7 @@ sap.ui.define([
 			// select all
 			oSelectOrUnSelectAllButton.setSelected(true);
 			oSelectOrUnSelectAllButton.fireSelect({selected: true});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column selected");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow5.getBindingContext().getObject()), Object.assign(deepClone(oValue4Ori), {
@@ -453,7 +445,7 @@ sap.ui.define([
 
 			// clear all the filters
 			oClearFilterButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -508,7 +500,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http://");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -538,7 +530,7 @@ sap.ui.define([
 			assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
 			oSelectionCell1.setSelected(false);
 			oSelectionCell1.fireSelect({selected: false});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
 				"_dt": {
@@ -558,7 +550,7 @@ sap.ui.define([
 
 			oSelectionCell2.setSelected(false);
 			oSelectionCell2.fireSelect({selected: false});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow2.getBindingContext().getObject()), Object.assign(deepClone(oValue7Ori), {
 				"_dt": {
@@ -577,7 +569,7 @@ sap.ui.define([
 
 			// clear all the filters
 			oClearFilterButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");
@@ -634,7 +626,7 @@ sap.ui.define([
 			assert.ok(oMenu, "Table column: header menu instance ok");
 			oInput = oMenu.getAggregation("_quickActions")[0].getQuickActions()[0].getContent()[0];
 			EditorQunitUtils.setInputValueAndConfirm(oInput, "http://");
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 3, "Table: RowCount after filtering column URL with 'http://'");
 			assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: Value not changed after filtering");
@@ -664,7 +656,7 @@ sap.ui.define([
 			assert.ok(!oSelectionCell3.getSelected(), "Row3: not selected");
 			oSelectionCell3.setSelected(true);
 			oSelectionCell3.fireSelect({selected: true});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow3.getBindingContext().getObject()), Object.assign(deepClone(oValue2Ori), {
 				"_dt": {
@@ -681,7 +673,7 @@ sap.ui.define([
 
 			oSelectOrUnSelectAllButton.setSelected(false);
 			oSelectOrUnSelectAllButton.fireSelect({selected: false});
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.ok(deepEqual(cleanUUIDAndPosition(oRow1.getBindingContext().getObject()), Object.assign(deepClone(oValue5Ori), {
 				"_dt": {
@@ -714,7 +706,7 @@ sap.ui.define([
 
 			// clear all the filters
 			oClearFilterButton.firePress();
-			return wait();
+			return EditorQunitUtils.wait();
 		}).then(function () {
 			assert.equal(oTable.getBinding().getCount(), 9, "Table: RowCount after removing all the filters");
 			assert.ok(!oSelectOrUnSelectAllButton.getSelected(), "Table: Select or Unselect All button in Selection column not selected");

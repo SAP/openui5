@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	MockServer,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -82,14 +84,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -132,32 +126,10 @@ sap.ui.define([
 
 	QUnit.module("TextArea", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("no value: add, update, delete", function (assert) {
@@ -190,7 +162,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -262,7 +234,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -293,7 +265,7 @@ sap.ui.define([
 				manifest: oManifestForObjectField
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -354,7 +326,7 @@ sap.ui.define([
 					assert.ok(oFormField.getEditable(), "SimpleForm Field5: Editable");
 					var oSwitchModeButton = oSimpleForm.getToolbar().getContent()[1];
 					oSwitchModeButton.firePress();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oContents = oSimpleForm.getContent();
 						oFormLabel = oContents[0];
 						oFormField = oContents[1];
@@ -381,7 +353,7 @@ sap.ui.define([
 						oFormField.setValue(sNewValue);
 						oFormField.fireChange({ value: sNewValue });
 						oSwitchModeButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							oContents = oSimpleForm.getContent();
 							oFormLabel = oContents[0];
 							oFormField = oContents[1];
@@ -453,7 +425,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -517,7 +489,7 @@ sap.ui.define([
 					oDeleteButton.firePress();
 					var oSwitchModeButton = oSimpleForm.getToolbar().getContent()[1];
 					oSwitchModeButton.firePress();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(!oDeleteButton.getEnabled(), "SimpleForm: Delete button is not enabled");
 						oContents = oSimpleForm.getContent();
 						oFormLabel = oContents[0];
@@ -550,7 +522,7 @@ sap.ui.define([
 						oFormField.fireChange({ value: sNewValue});
 						oSwitchModeButton = oSimpleForm.getToolbar().getContent()[1];
 						oSwitchModeButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							oContents = oSimpleForm.getContent();
 							oFormLabel = oContents[0];
 							oFormField = oContents[1];
@@ -593,32 +565,10 @@ sap.ui.define([
 
 	QUnit.module("SimpleForm", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("no value: add, update", function (assert) {
@@ -651,7 +601,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -799,7 +749,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -921,7 +871,7 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefined
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1015,7 +965,7 @@ sap.ui.define([
 					oDeleteButton.firePress();
 					var oSwitchModeButton = oSimpleForm.getToolbar().getContent()[1];
 					oSwitchModeButton.firePress();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.ok(!oDeleteButton.getEnabled(), "SimpleForm: Delete button is not enabled");
 						oContents = oSimpleForm.getContent();
 						oFormLabel = oContents[0];
@@ -1055,7 +1005,7 @@ sap.ui.define([
 						oFormField.setValue(sNewValue);
 						oFormField.fireChange({ value: sNewValue});
 						oSwitchModeButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							oContents = oSimpleForm.getContent();
 							oFormLabel = oContents[0];
 							oFormField = oContents[1];
@@ -1118,7 +1068,7 @@ sap.ui.define([
 				manifest: oManifestForObjectFieldWithPropertiesDefined
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1209,7 +1159,7 @@ sap.ui.define([
 					assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 					var oSwitchModeButton = oSimpleForm.getToolbar().getContent()[1];
 					oSwitchModeButton.firePress();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						oContents = oSimpleForm.getContent();
 						oFormLabel = oContents[0];
 						oFormField = oContents[1];
@@ -1248,7 +1198,7 @@ sap.ui.define([
 						oFormField.setValue(sNewValue);
 						oFormField.fireChange({ value: sNewValue});
 						oSwitchModeButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							oContents = oSimpleForm.getContent();
 							oFormLabel = oContents[0];
 							oFormField = oContents[1];

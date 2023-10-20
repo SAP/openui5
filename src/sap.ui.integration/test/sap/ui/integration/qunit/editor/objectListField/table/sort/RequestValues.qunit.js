@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -20,7 +21,8 @@ sap.ui.define([
 	Core,
 	deepClone,
 	MockServer,
-	merge
+	merge,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -133,14 +135,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUIDAndPosition(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -186,32 +180,10 @@ sap.ui.define([
 			this.oMockServer.destroy();
 		},
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("get current settings with old values", function (assert) {
@@ -221,7 +193,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithOldValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -229,7 +201,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oSettings = this.oEditor.getCurrentSettings();
 						assert.deepEqual(oSettings["/sap.card/configuration/parameters/objectListWithRequestValues/value"], aObjectsParameterValueInCurrentSettings, "Editor: field 1 setting value");
 						resolve();
@@ -245,7 +217,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -253,7 +225,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -293,7 +265,7 @@ sap.ui.define([
 						assert.equal(oValueOfRow5._dt._position, 5, "Table: row 5 position");
 						// scroll to bottom
 						oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oRow6 = oTable.getRows()[2];
 							var oValueOfRow6 = oRow6.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow6), oValue1InRequestValues), "Table: row 6");
@@ -349,7 +321,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -357,7 +329,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -375,7 +347,7 @@ sap.ui.define([
 						var oMoveDownButton = oToolbar.getContent()[8];
 						assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 						assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oRow1 = oTable.getRows()[0];
 							var oValueOfRow1 = oRow1.getBindingContext().getObject();
 							assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow1), oValue2SelectedInRequestValues), "Table: row 1");
@@ -394,7 +366,7 @@ sap.ui.define([
 							assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 
 							oMoveDownButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getSelectedIndices()[0], 1, "Table toolbar: selected index is 1");
 								assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 								var oSettings = that.oEditor.getCurrentSettings();
@@ -422,7 +394,7 @@ sap.ui.define([
 								assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 2 position");
 
 								oMoveUpButton.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 									oSettings = that.oEditor.getCurrentSettings();
@@ -444,7 +416,7 @@ sap.ui.define([
 									assert.equal(oFieldSettings[1]._dt._position, 2, "Editor: Field 1 value 2 position");
 
 									oMoveUpButton.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.equal(oTable.getSelectedIndices()[0], 0, "Table toolbar: selected index is 0");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 										oSettings = that.oEditor.getCurrentSettings();
@@ -482,7 +454,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -490,7 +462,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -508,10 +480,10 @@ sap.ui.define([
 						var oMoveDownButton = oToolbar.getContent()[8];
 						assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 						assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oRow5 = oTable.getRows()[1];
 								var oValueOfRow5 = oRow5.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow5), oValue8SelectedInRequestValues), "Table: row 5");
@@ -530,7 +502,7 @@ sap.ui.define([
 								assert.equal(oTable.getSelectedIndices()[0], 4, "Table toolbar: selected index is 4");
 
 								oMoveDownButton.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getSelectedIndices()[0], 5, "Table toolbar: selected index is 5");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 									var oSettings = that.oEditor.getCurrentSettings();
@@ -550,7 +522,7 @@ sap.ui.define([
 									assert.equal(oValueOfRow6._dt._position, 6, "Table: row 6 position");
 
 									oMoveUpButton.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.equal(oTable.getSelectedIndices()[0], 4, "Table toolbar: selected index is 4");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 										oSettings = that.oEditor.getCurrentSettings();
@@ -587,7 +559,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -595,7 +567,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -613,10 +585,10 @@ sap.ui.define([
 						var oMoveDownButton = oToolbar.getContent()[8];
 						assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 						assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oRow5 = oTable.getRows()[1];
 								var oValueOfRow5 = oRow5.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow5), oValue8SelectedInRequestValues), "Table: row 5");
@@ -635,7 +607,7 @@ sap.ui.define([
 								assert.equal(oTable.getSelectedIndices()[0], 5, "Table toolbar: selected index is 5");
 
 								oMoveUpButton.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getSelectedIndices()[0], 4, "Table toolbar: selected index is 5");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 									var oSettings = that.oEditor.getCurrentSettings();
@@ -655,7 +627,7 @@ sap.ui.define([
 									assert.equal(oValueOfRow6._dt._position, 6, "Table: row 6 position");
 
 									oMoveDownButton.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.equal(oTable.getSelectedIndices()[0], 5, "Table toolbar: selected index is 4");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 										oSettings = that.oEditor.getCurrentSettings();
@@ -692,7 +664,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -700,7 +672,7 @@ sap.ui.define([
 					assert.equal(oLabel.getText(), "Object properties defined: value from request", "Label 1: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.ObjectListField"), "Field 1: Object List Field");
 					assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: DT Value");
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						var oTable = oField.getAggregation("_field");
 						assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 						assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
@@ -718,10 +690,10 @@ sap.ui.define([
 						var oMoveDownButton = oToolbar.getContent()[8];
 						assert.ok(oMoveDownButton.getVisible(), "Table toolbar: move down button visible");
 						assert.ok(!oMoveDownButton.getEnabled(), "Table toolbar: move down button not enabled");
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							// scroll to bottom
 							oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oRow6 = oTable.getRows()[2];
 								var oValueOfRow6 = oRow6.getBindingContext().getObject();
 								assert.ok(deepEqual(cleanUUIDAndPosition(oValueOfRow6), oValue1InRequestValues), "Table: row 6");
@@ -740,7 +712,7 @@ sap.ui.define([
 								assert.equal(oTable.getSelectedIndices()[0], 6, "Table toolbar: selected index is 6");
 
 								oMoveUpButton.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getSelectedIndices()[0], 5, "Table toolbar: selected index is 5");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 									var oSettings = that.oEditor.getCurrentSettings();
@@ -758,7 +730,7 @@ sap.ui.define([
 									assert.equal(oValueOfRow7._dt._position, 7, "Table: row 7 position");
 
 									oMoveDownButton.firePress();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.equal(oTable.getSelectedIndices()[0], 6, "Table toolbar: selected index is 6");
 										assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2), "Field 1: Value");
 										var oSettings = that.oEditor.getCurrentSettings();
@@ -793,7 +765,7 @@ sap.ui.define([
 				manifest: oManifestForObjectListFieldsWithRequestValues
 			});
 			return new Promise(function (resolve, reject) {
-				that.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(that.oEditor).then(function () {
 					assert.ok(that.oEditor.isReady(), "Editor is ready");
 					var oLabel = that.oEditor.getAggregation("_formContent")[1];
 					var oField = that.oEditor.getAggregation("_formContent")[2];
@@ -812,7 +784,7 @@ sap.ui.define([
 					assert.ok(!oDeleteButton.getEnabled(), "Table toolbar: delete button disabled");
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.ok(oTable.isA("sap.ui.table.Table"), "Field 1: Control is Table");
 							assert.ok(oTable.getEnableSelectAll(), "Table: SelectAll enabled");
 							assert.equal(oTable.getRows().length, 5, "Table: line number is 5");
@@ -823,7 +795,7 @@ sap.ui.define([
 							var oSelectOrUnSelectAllButton = oSelectionColumn.getAggregation("multiLabels")[0];
 							assert.ok(oSelectOrUnSelectAllButton.getVisible(), "Table: Select or Unselect All button in Selection column");
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 								assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 								var oContents = oSimpleForm.getContent();
@@ -837,7 +809,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oTable.getBinding().getContexts()[8].getObject()), oDefaultNewObjectSelected), "Table: new row data");
 									assert.ok(deepEqual(cleanUUIDAndPosition(oField._getCurrentProperty("value")), aObjectsParameterValue2.concat([oDefaultNewObject])), "Field 1: Value changed");
@@ -849,7 +821,7 @@ sap.ui.define([
 
 									// scroll to the bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oNewRow = oTable.getRows()[4];
 										var oNewValue = oNewRow.getBindingContext().getObject();
 										assert.ok(deepEqual(cleanUUIDAndPosition(oNewValue), oDefaultNewObjectSelected), "Table: new row in the bottom");
@@ -863,12 +835,12 @@ sap.ui.define([
 										});
 										assert.ok(oDeleteButton.getEnabled(), "Table toolbar: delete button enabled");
 										oDeleteButton.firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
 											var oMessageBox = Core.byId(sMessageBoxId);
 											var oOKButton = oMessageBox._getToolbar().getContent()[1];
 											oOKButton.firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												var aFieldValue = oField._getCurrentProperty("value");
 												assert.ok(deepEqual(cleanUUIDAndPosition(aFieldValue), aObjectsParameterValue2), "Field 1: Value updated");
 												var oSettings = that.oEditor.getCurrentSettings();

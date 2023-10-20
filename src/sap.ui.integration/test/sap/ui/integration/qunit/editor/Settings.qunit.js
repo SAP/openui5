@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	merge,
 	x,
@@ -26,7 +27,8 @@ sap.ui.define([
 	QUnitUtils,
 	KeyCodes,
 	ResourceBundle,
-	deepEqual
+	deepEqual,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -38,42 +40,12 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	QUnit.module("Check settings UI for Admin", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-				oContent.style.width = "600px";
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Change a dynamic value and take over", function (assert) {
@@ -111,7 +83,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -125,7 +97,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -147,7 +119,7 @@ sap.ui.define([
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
 							resolve();
@@ -189,7 +161,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -203,7 +175,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -226,7 +198,7 @@ sap.ui.define([
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getFooter().getContent()[3].firePress();
 						testInterface.oSegmentedButton.getItems()[1].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
 							resolve();
@@ -268,7 +240,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -283,7 +255,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -291,7 +263,7 @@ sap.ui.define([
 						var testInterface = settingsClass._private();
 						var resetButton = testInterface.oResetToDefaultButton;
 						resetButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oField.getAggregation("_field").getValue(), "stringParameter Value", "Field: Value is reset");
 							resolve();
@@ -333,7 +305,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -348,7 +320,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -356,7 +328,7 @@ sap.ui.define([
 						var testInterface = settingsClass._private();
 						var resetButton = testInterface.oResetToDefaultButton;
 						resetButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							// assert.equal(oField.getAggregation("_field").getValue(), "StringParameter Value Trans in i18n", "Field: Value is reset");
 							assert.equal(oField.getAggregation("_field").getValue(), "{{STRINGPARAMETERVALUE}}", "Field: Value is reset");
@@ -402,7 +374,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -417,7 +389,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -438,7 +410,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -487,7 +459,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -502,7 +474,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -522,7 +494,7 @@ sap.ui.define([
 						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -563,7 +535,7 @@ sap.ui.define([
 				manifestChanges: []
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -578,7 +550,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -602,7 +574,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === true, "Settings: Allow editing option is enabled after setting editing enable to true");
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === true, "Settings: Allow editing option is selected by editableToUser");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -643,7 +615,7 @@ sap.ui.define([
 				manifestChanges: []
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					assert.equal(oEditor.getAggregation("_formContent"), null, "Parameter is not visible");
@@ -685,7 +657,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -732,7 +704,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -779,7 +751,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					assert.equal(oEditor.getAggregation("_formContent"), null, "Parameter is not visible");
@@ -815,7 +787,7 @@ sap.ui.define([
 				manifestChanges: []
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -830,7 +802,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -854,7 +826,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is enabled after setting visible enable to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getSelected() === false, "Settings: Allow editing option is unselected after setting editable to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -895,7 +867,7 @@ sap.ui.define([
 				manifestChanges: []
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -943,7 +915,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					assert.equal(oEditor.getAggregation("_formContent"), null, "Parameter is not visible");
@@ -984,7 +956,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					assert.equal(oEditor.getAggregation("_formContent"), null, "Parameter is not visible");
@@ -1025,7 +997,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1076,7 +1048,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1091,7 +1063,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1103,7 +1075,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel initially visible");
 						assert.ok(oTable.isA("sap.m.Table"), "Settings: page admin values table exists.");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							resolve();
 						});
@@ -1147,7 +1119,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1162,7 +1134,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1185,7 +1157,7 @@ sap.ui.define([
 						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
 						assert.equal(oTable.getSelectedItems().length, 6, "Settings: all 6 records are selected.");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							resolve();
 						});
@@ -1229,7 +1201,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1247,33 +1219,10 @@ sap.ui.define([
 
 	QUnit.module("Check getCurrentSettings for settings UI change", {
 		beforeEach: function () {
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-				oContent.style.width = "600px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Dynamic value - normal string parameter", function (assert) {
@@ -1311,7 +1260,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1325,7 +1274,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1347,7 +1296,7 @@ sap.ui.define([
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
 							var oCurrentSettings = this.oEditor.getCurrentSettings();
@@ -1394,7 +1343,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oLabel = this.oEditor.getAggregation("_formContent")[1];
 					var oField = this.oEditor.getAggregation("_formContent")[2];
@@ -1408,7 +1357,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1430,7 +1379,7 @@ sap.ui.define([
 						var oItem = testInterface.getMenuItems()[3].getItems()[2];
 						testInterface.getMenu().fireItemSelected({ item: oItem });
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://display-more", "Settings: Shows display-more Icon after dynamic value was selected");
 							var oCurrentSettings = this.oEditor.getCurrentSettings();
@@ -1477,7 +1426,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1492,7 +1441,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1513,7 +1462,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -1562,7 +1511,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1577,7 +1526,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1598,7 +1547,7 @@ sap.ui.define([
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].getEnabled() === false, "Settings: Allow editing option is not enabled after setting visible to false");
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting visible to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -1647,7 +1596,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1662,7 +1611,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1682,7 +1631,7 @@ sap.ui.define([
 						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -1731,7 +1680,7 @@ sap.ui.define([
 				manifestChanges: [adminchanges]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					var oEditor = this.oEditor;
 					assert.ok(oEditor.isReady(), "Editor is ready");
 					var oLabel = oEditor.getAggregation("_formContent")[1];
@@ -1746,7 +1695,7 @@ sap.ui.define([
 					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
 					oButton.firePress();
 					oButton.focus();
-					wait().then(function () {
+					EditorQunitUtils.wait().then(function () {
 						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 						//popup is opened
 						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -1766,7 +1715,7 @@ sap.ui.define([
 						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
 						assert.ok(testInterface.oSettingsPanel.getItems()[0].getItems()[3].getItems()[1].getEnabled() === false, "Settings: Allow dynamic value option is not enabled after setting editing enable to false");
 						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							//this is delayed not to give time to show the tokenizer
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
 							var oCurrentSettings = oEditor.getCurrentSettings();
@@ -1784,55 +1733,11 @@ sap.ui.define([
 	QUnit.module("Transform to a variant for Page Admin", {
 		beforeEach: function () {
 			Core.getConfiguration().setLanguage("en");
-			this.oHost = new Host("host");
-			this.oHost.getDestinations = function () {
-				return new Promise(function (resolve) {
-					wait().then(function () {
-						var items = [
-							{
-								"name": "Products"
-							},
-							{
-								"name": "Orders"
-							},
-							{
-								"name": "Portal"
-							},
-							{
-								"name": "Northwind"
-							}
-						];
-						resolve(items);
-					});
-				});
-			};
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor({
-				allowSettings: true
-			});
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-				oContent.style.width = "600px";
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
+			this.oEditor.setAllowSettings(true);
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox);
 		}
 	}, function () {
 		QUnit.test("Admin mode: No settings button", function (assert) {
@@ -1867,7 +1772,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -1915,7 +1820,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -1964,7 +1869,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -1973,7 +1878,7 @@ sap.ui.define([
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
 					var oComboBox = oField.getAggregation("_field");
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Content of Form contains: Destination Field that is ComboBox");
 						assert.ok(oComboBox.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
@@ -1989,7 +1894,7 @@ sap.ui.define([
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							assert.ok(!oButton.hasStyleClass("settings"), "Settings: settings style does not exist");
 							//popup is opened
@@ -2102,7 +2007,7 @@ sap.ui.define([
 							assert.ok(oResetToDefaultButton.getEnabled(), "Settings Footer: Reset Button enabled");
 
 							oFooterContents[2].firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 								var oCurrentSettings = this.oEditor.getCurrentSettings();
 								var sContext = oField.getBindingContext("currentSettings");
@@ -2137,13 +2042,13 @@ sap.ui.define([
 								}), "Field: pageAdminNewDestinationParameter value is set to designtime correct");
 								oButton.firePress();
 								oButton.focus();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 									testInterface = settingsClass._private();
 									oResetToDefaultButton = testInterface.oResetToDefaultButton;
 									oResetToDefaultButton.firePress();
 									oResetToDefaultButton.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.ok(!oButton.hasStyleClass("settings"), "Settings: settings style does not exist");
 										oCurrentSettings = this.oEditor.getCurrentSettings();
 										assert.ok(!oCurrentSettings[":designtime"], "Field: designtime deleted after reset");
@@ -2189,7 +2094,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -2197,12 +2102,12 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2252,7 +2157,7 @@ sap.ui.define([
 							assert.equal(oHeaderToolbarContents.length, 9, "Table header content: length ok");
 							var oAddButton = oHeaderToolbarContents[1];
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
 								oRows = oControlOfFormContent4.getRows();
 								oRow1 = oRows[0];
@@ -2301,7 +2206,7 @@ sap.ui.define([
 								assert.deepEqual(oObject2, {"label": "Northwind", "name": "Northwind"}, "Table: row 2 object");
 
 								testInterface.oPopover.getFooter().getContent()[2].firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 									var oCurrentSettings = this.oEditor.getCurrentSettings();
 									var sContext = oField.getBindingContext("currentSettings");
@@ -2376,7 +2281,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -2384,12 +2289,12 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2413,7 +2318,7 @@ sap.ui.define([
 							assert.equal(oHeaderToolbarContents.length, 9, "Table header content: length ok");
 							var oAddButton = oHeaderToolbarContents[1];
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
 								var oRows = oControlOfFormContent4.getRows();
 								var oRow1 = oRows[0];
@@ -2425,7 +2330,7 @@ sap.ui.define([
 								assert.deepEqual(oObject1, {}, "Table: row 1 object");
 								oCells[1].setSelectedItem(oCells[1].getItems()[0]);
 								oCells[1].fireChange({ selectedItem: oCells[1].getItems()[0] });
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oCells[1].getSelectedKey(), oCells[1].getItems()[0].getKey(), "Table Row 1 cell 2: ComboBox selectedKey updated");
 									assert.equal(oCells[1].getSelectedItem().getText(), oCells[1].getItems()[0].getText(), "Table Row 1 cell 2: ComboBox selectedItem updated");
 									assert.equal(oCells[0].getValue(), oCells[1].getItems()[0].getKey(), "Table Row 1 cell 1: Input value updated");
@@ -2441,7 +2346,7 @@ sap.ui.define([
 									assert.deepEqual(oObject2, {"label": "Northwind", "name": "Northwind"}, "Table: row 2 object");
 									oCells[1].setSelectedItem(oCells[1].getItems()[1]);
 									oCells[1].fireChange({ selectedItem: oCells[1].getItems()[1] });
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										assert.equal(oCells[1].getSelectedKey(), oCells[1].getItems()[1].getKey(), "Table Row 2 cell 2: ComboBox selectedKey updated");
 										assert.equal(oCells[1].getSelectedItem().getText(), oCells[1].getItems()[1].getText(), "Table Row 2 cell 2: ComboBox selectedItem updated");
 										assert.equal(oCells[0].getValue(), "Northwind", "Table Row 2 cell 1: Input value updated");
@@ -2449,7 +2354,7 @@ sap.ui.define([
 										delete oObject2._dt;
 										assert.deepEqual(oObject2, {"label": "Northwind", "name": oCells[1].getItems()[1].getText()}, "Table: row 2 object");
 										testInterface.oPopover.getFooter().getContent()[2].firePress();
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 											var oCurrentSettings = this.oEditor.getCurrentSettings();
 											var sContext = oField.getBindingContext("currentSettings");
@@ -2523,7 +2428,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -2531,12 +2436,12 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2552,9 +2457,9 @@ sap.ui.define([
 							var oHeaderToolbarContents = oControlOfFormContent4.getExtension()[0].getContent();
 							var oAddButton = oHeaderToolbarContents[1];
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								testInterface.oPopover.getFooter().getContent()[2].firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 									var oCurrentSettings = this.oEditor.getCurrentSettings();
 									var sContext = oField.getBindingContext("currentSettings");
@@ -2590,7 +2495,7 @@ sap.ui.define([
 									}), "Field: pageAdminNewDestinationParameter value is set to designtime correct");
 									oButton.firePress();
 									oButton.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 										testInterface = settingsClass._private();
 										oTransformPanelForm = testInterface.oTransformPanel.getItems()[0];
@@ -2598,7 +2503,7 @@ sap.ui.define([
 										oFormContent4 = oFormContents[3];
 										oControlOfFormContent4 = oFormContent4.getAggregation("_field");
 										assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oControlOfFormContent4.setSelectedIndex(0);
 											oControlOfFormContent4.fireRowSelectionChange({
 												rowIndex: 0,
@@ -2645,7 +2550,7 @@ sap.ui.define([
 											assert.ok(oHeaderToolbarContents[8].getEnabled(), "Table header content 9: navigationdown button enabled since row 1 selected");
 
 											oHeaderToolbarContents[3].firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												assert.equal(oControlOfFormContent4.getBinding().getCount(), 1, "Table: value length is 1");
 												var oRows = oControlOfFormContent4.getRows();
 												var oRow1 = oRows[0];
@@ -2653,7 +2558,7 @@ sap.ui.define([
 												delete oObject1._dt;
 												assert.deepEqual(oObject1, {"label": "Northwind", "name": "Northwind"}, "Table: row 1 object");
 												testInterface.oPopover.getFooter().getContent()[2].firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 													var oCurrentSettings = this.oEditor.getCurrentSettings();
 													var sContext = oField.getBindingContext("currentSettings");
@@ -2731,7 +2636,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -2739,12 +2644,12 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2760,9 +2665,9 @@ sap.ui.define([
 							var oHeaderToolbarContents = oControlOfFormContent4.getExtension()[0].getContent();
 							var oAddButton = oHeaderToolbarContents[1];
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								testInterface.oPopover.getFooter().getContent()[2].firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 									var oCurrentSettings = this.oEditor.getCurrentSettings();
 									var sContext = oField.getBindingContext("currentSettings");
@@ -2798,7 +2703,7 @@ sap.ui.define([
 									}), "Field: pageAdminNewDestinationParameter value is set to designtime correct");
 									oButton.firePress();
 									oButton.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 										testInterface = settingsClass._private();
 										oTransformPanelForm = testInterface.oTransformPanel.getItems()[0];
@@ -2806,7 +2711,7 @@ sap.ui.define([
 										oFormContent4 = oFormContents[3];
 										oControlOfFormContent4 = oFormContent4.getAggregation("_field");
 										assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oControlOfFormContent4.setSelectedIndex(1);
 											oControlOfFormContent4.fireRowSelectionChange({
 												rowIndex: 1,
@@ -2854,7 +2759,7 @@ sap.ui.define([
 											assert.ok(oHeaderToolbarContents[8].getEnabled(), "Table header content 9: navigationdown button enabled since row 1 selected");
 
 											oHeaderToolbarContents[7].firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
 												var oRows = oControlOfFormContent4.getRows();
 												var oRow1 = oRows[0];
@@ -2863,7 +2768,7 @@ sap.ui.define([
 												delete oObject1._dt;
 												assert.deepEqual(oObject1, {"label": "Northwind", "name": "Northwind"}, "Table: row 1 object");
 												testInterface.oPopover.getFooter().getContent()[2].firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 													var oCurrentSettings = this.oEditor.getCurrentSettings();
 													var sContext = oField.getBindingContext("currentSettings");
@@ -2942,7 +2847,7 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -2950,12 +2855,12 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
 							//popup is opened
 							assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
@@ -2971,9 +2876,9 @@ sap.ui.define([
 							var oHeaderToolbarContents = oControlOfFormContent4.getExtension()[0].getContent();
 							var oAddButton = oHeaderToolbarContents[1];
 							oAddButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								testInterface.oPopover.getFooter().getContent()[2].firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 									var oCurrentSettings = this.oEditor.getCurrentSettings();
 									var sContext = oField.getBindingContext("currentSettings");
@@ -3009,7 +2914,7 @@ sap.ui.define([
 									}), "Field: pageAdminNewDestinationParameter value is set to designtime correct");
 									oButton.firePress();
 									oButton.focus();
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 										testInterface = settingsClass._private();
 										oTransformPanelForm = testInterface.oTransformPanel.getItems()[0];
@@ -3017,7 +2922,7 @@ sap.ui.define([
 										oFormContent4 = oFormContents[3];
 										oControlOfFormContent4 = oFormContent4.getAggregation("_field");
 										assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
-										wait().then(function () {
+										EditorQunitUtils.wait().then(function () {
 											oControlOfFormContent4.setSelectedIndex(0);
 											oControlOfFormContent4.fireRowSelectionChange({
 												rowIndex: 0,
@@ -3065,7 +2970,7 @@ sap.ui.define([
 											assert.ok(oHeaderToolbarContents[8].getEnabled(), "Table header content 9: navigationdown button enabled since row 1 selected");
 
 											oHeaderToolbarContents[8].firePress();
-											wait().then(function () {
+											EditorQunitUtils.wait().then(function () {
 												assert.equal(oControlOfFormContent4.getBinding().getCount(), 2, "Table: value length is 2");
 												var oRows = oControlOfFormContent4.getRows();
 												var oRow1 = oRows[0];
@@ -3074,7 +2979,7 @@ sap.ui.define([
 												delete oObject1._dt;
 												assert.deepEqual(oObject1, {"label": "Northwind", "name": "Northwind"}, "Table: row 1 object");
 												testInterface.oPopover.getFooter().getContent()[2].firePress();
-												wait().then(function () {
+												EditorQunitUtils.wait().then(function () {
 													assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 													var oCurrentSettings = this.oEditor.getCurrentSettings();
 													var sContext = oField.getBindingContext("currentSettings");
@@ -3186,7 +3091,7 @@ sap.ui.define([
 				}]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 5, "Editor: has 2 destinations");
@@ -3194,13 +3099,13 @@ sap.ui.define([
 					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.equal(oPanel.getHeaderText(), "Destinations", "Panel: Header Text");
 					var oField = aFormContent[2];
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						var oButton = oField._settingsButton;
 						assert.ok(oButton.isA("sap.m.Button"), "Destination 1 Settings: Button available");
 						assert.ok(oButton.hasStyleClass("settings"), "Settings: settings style exists");
 						oButton.firePress();
 						oButton.focus();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
 							var testInterface = settingsClass._private();
 							var oTransformPanelForm = testInterface.oTransformPanel.getItems()[0];
@@ -3257,11 +3162,11 @@ sap.ui.define([
 				}
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.ok(!aFormContent, "Editor: has no destinations");
-					wait(1500).then(function () {
+					EditorQunitUtils.wait(1500).then(function () {
 						resolve();
 					});
 				}.bind(this));
@@ -3333,7 +3238,7 @@ sap.ui.define([
 				}]
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var aFormContent = this.oEditor.getAggregation("_formContent");
 					assert.equal(aFormContent.length, 3, "Editor: has 1 parameter");

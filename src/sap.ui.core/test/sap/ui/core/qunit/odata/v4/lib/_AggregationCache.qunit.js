@@ -3823,6 +3823,8 @@ sap.ui.define([
 				"@$ui5._" : {predicate : "('B')"}
 			}, {
 				"@$ui5._" : {predicate : "('C')"}
+			}, {
+				"@$ui5._" : {transientPredicate : "($uid=1-23)"} // must be ignored
 			}],
 			aResult;
 

@@ -14,10 +14,10 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/i18n/Localization',
 	'sap/base/util/extend',
-	'sap/base/util/fetch',
+	'sap/base/util/mixedFetch',
 	'sap/base/strings/escapeRegExp',
 	'sap/ui/core/_IconRegistry'
-], function(ManagedObject, URI, BaseConfig, Log, Localization, extend, fetch, escapeRegExp, _IconRegistry) {
+], function(ManagedObject, URI, BaseConfig, Log, Localization, extend, mixedFetch, escapeRegExp, _IconRegistry) {
 	"use strict";
 
 	/*
@@ -163,7 +163,7 @@ sap.ui.define([
 				oInit = {
 					body: sContent.join("\n"),
 					headers: {
-						"Accept": fetch.ContentTypes.JSON,
+						"Accept": mixedFetch.ContentTypes.JSON,
 						"Content-Type": "text/plain"
 					},
 					mode: "POST"
@@ -204,7 +204,7 @@ sap.ui.define([
 				// configure request; check how to execute the request (sync|async)
 				oInit = {
 					headers: {
-						Accept: fetch.ContentTypes.JSON
+						Accept: mixedFetch.ContentTypes.JSON
 					},
 					mode: "POST"
 				};
@@ -256,7 +256,7 @@ sap.ui.define([
 				// load it
 				Log.info("Loading AppCacheBuster index file from: \"" + sUrl + "\".");
 
-				fetch(sUrl, oInit, !bAsync)
+				mixedFetch(sUrl, oInit, !bAsync)
 					.then(function(oResponse) {
 						if (oResponse.ok) {
 							return oResponse.json();

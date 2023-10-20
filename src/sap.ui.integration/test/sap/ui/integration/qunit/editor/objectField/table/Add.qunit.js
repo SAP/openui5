@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
-	"sap/base/util/deepClone"
+	"sap/base/util/deepClone",
+	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
 	Editor,
@@ -18,7 +19,8 @@ sap.ui.define([
 	deepEqual,
 	MockServer,
 	Core,
-	deepClone
+	deepClone,
+	EditorQunitUtils
 ) {
 	"use strict";
 
@@ -76,14 +78,6 @@ sap.ui.define([
 	Core.getConfiguration().setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
-	function wait(ms) {
-		return new Promise(function (resolve) {
-			setTimeout(function () {
-				resolve();
-			}, ms || 1000);
-		});
-	}
-
 	function cleanUUID(oValue) {
 		var oClonedValue = deepClone(oValue, 500);
 		if (typeof oClonedValue === "string") {
@@ -123,33 +117,10 @@ sap.ui.define([
 			]);
 			this.oMockServer.start();
 
-			this.oHost = new Host("host");
-			this.oContextHost = new ContextHost("contexthost");
-
-			this.oEditor = new Editor();
-			var oContent = document.getElementById("content");
-			if (!oContent) {
-				oContent = document.createElement("div");
-				oContent.style.position = "absolute";
-				oContent.style.top = "200px";
-
-				oContent.setAttribute("id", "content");
-				document.body.appendChild(oContent);
-				document.body.style.zIndex = 1000;
-			}
-			this.oEditor.placeAt(oContent);
+			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
-			this.oEditor.destroy();
-			this.oMockServer.destroy();
-			this.oHost.destroy();
-			this.oContextHost.destroy();
-			sandbox.restore();
-			var oContent = document.getElementById("content");
-			if (oContent) {
-				oContent.innerHTML = "";
-				document.body.style.zIndex = "unset";
-			}
+			EditorQunitUtils.afterEachTest(this.oEditor, sandbox, this.oMockServer);
 		}
 	}, function () {
 		QUnit.test("add with default property values in popover", function (assert) {
@@ -159,7 +130,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -196,7 +167,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -274,14 +245,14 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oAddButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 								assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5, "_dt": {"_selected": true}}), "Table: new row data");
 								assert.ok(!oSelectionCell3.getSelected(), "Row 3: Cell 1 is not selected after new row added");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"icon": "sap-icon://add","text": "text","url": "http://","number": 0.5}), "Field 1: Value changed to added object");
 								// scroll to the bottom
 								oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									var oRow5 = oTable.getRows()[4];
 									var oSelectionCell5 = oRow5.getCells()[0];
 									assert.ok(oSelectionCell5.isA("sap.m.CheckBox"), "Row 9: Cell 1 is CheckBox");
@@ -303,7 +274,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -340,7 +311,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -418,7 +389,7 @@ sap.ui.define([
 							var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 							assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: close button not visible");
 							oCancelButtonInPopover.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 								assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is still selected");
 								assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} }), "Field 1: Value not change");
@@ -437,7 +408,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -474,7 +445,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -559,7 +530,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -603,7 +574,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: cancel button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), {"icon": "sap-icon://accept","text": "text01","url": "https://sap.com/06","number": 0.55,"key": "key01","editable": true,"int": 1, "_dt": {"_selected": true}}), "Table: new row");
 									assert.ok(!oSelectionCell3.getSelected(), "Row 3: Cell 1 is not selected after adding new object");
@@ -624,7 +595,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -661,7 +632,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -746,7 +717,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -790,7 +761,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: cancel button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 									assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is still selected");
 									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), oValue1), "Field 1: Value");
@@ -810,7 +781,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -847,7 +818,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -932,7 +903,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -979,14 +950,14 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: cancel button not visible");
 								oAddButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 9, "Table: value length is 9");
 									assert.ok(deepEqual(cleanUUID(oTable.getBinding().getContexts()[8].getObject()), {"text new": "textnew","text": "text01 2","key": "key01 2","url": "https://sap.com/06 2","icon": "sap-icon://accept 2","int": 3,"editable": false,"number": 5.55,"_dt": {"_selected": true}}), "Table: new row");
 									assert.ok(!oSelectionCell3.getSelected(), "Row 3: Cell 1 is not selected after adding new object");
 									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), {"text new": "textnew","text": "text01 2","key": "key01 2","url": "https://sap.com/06 2","icon": "sap-icon://accept 2","int": 3,"editable": false,"number": 5.55}), "Field 1: Value");
 									// scroll to the bottom
 									oTable._getScrollExtension().getVerticalScrollbar().scrollTop = 200;
-									wait().then(function () {
+									EditorQunitUtils.wait().then(function () {
 										var oRow5 = oTable.getRows()[4];
 										var oSelectionCell5 = oRow5.getCells()[0];
 										assert.ok(oSelectionCell5.isA("sap.m.CheckBox"), "Row 9: Cell 1 is CheckBox");
@@ -1009,7 +980,7 @@ sap.ui.define([
 				manifest:  oManifestForObjectFieldsWithValues
 			});
 			return new Promise(function (resolve, reject) {
-				this.oEditor.attachReady(function () {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oValue1 = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false} };
 					var oValue1InTable = { "text": "text03", "key": "key03", "url": "https://sap.com/04", "icon": "sap-icon://zoom-in", "iconcolor": "#E69A17", "int": 3, "_dt": {"_editable": false, "_selected": true} };
@@ -1046,7 +1017,7 @@ sap.ui.define([
 					oAddButton.onAfterRendering = function(oEvent) {
 						oAddButton.onAfterRendering = function () {};
 						oAddButton.firePress();
-						wait().then(function () {
+						EditorQunitUtils.wait().then(function () {
 							var oSimpleForm = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getContent()[0];
 							assert.ok(oSimpleForm.isA("sap.ui.layout.form.SimpleForm"), "Popover: Content is SimpleForm");
 							var oContents = oSimpleForm.getContent();
@@ -1131,7 +1102,7 @@ sap.ui.define([
 							assert.ok(oFormField.getEditable(), "SimpleForm Field8: Editable");
 							var oSwitchModeButton = oField._oObjectDetailsPopover.getContent()[0].getPages()[0].getHeaderContent()[0];
 							oSwitchModeButton.firePress();
-							wait().then(function () {
+							EditorQunitUtils.wait().then(function () {
 								oContents = oSimpleForm.getContent();
 								oFormLabel = oContents[0];
 								oFormField = oContents[1];
@@ -1178,7 +1149,7 @@ sap.ui.define([
 								var oCloseButtonInPopover = oField._oObjectDetailsPopover._oCloseButton;
 								assert.ok(!oCloseButtonInPopover.getVisible(), "Popover: cancel button not visible");
 								oCancelButtonInPopover.firePress();
-								wait().then(function () {
+								EditorQunitUtils.wait().then(function () {
 									assert.equal(oTable.getBinding().getCount(), 8, "Table: value length is 8");
 									assert.ok(oSelectionCell3.getSelected(), "Row 3: Cell 1 is still selected");
 									assert.ok(deepEqual(cleanUUID(oField._getCurrentProperty("value")), oValue1), "Field 1: Value not change");

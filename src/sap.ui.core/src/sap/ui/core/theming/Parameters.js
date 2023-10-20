@@ -8,10 +8,11 @@ sap.ui.define([
 	'../Element',
 	'sap/base/Log',
 	'sap/base/util/extend',
+	'sap/base/util/syncFetch',
 	'sap/ui/core/theming/ThemeManager',
 	'./ThemeHelper'
 ],
-	function(Library, Theming, URI, Element, Log, extend, ThemeManager, ThemeHelper) {
+	function(Library, Theming, URI, Element, Log, extend, syncFetch, ThemeManager, ThemeHelper) {
 		"use strict";
 
 		var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
@@ -221,7 +222,7 @@ sap.ui.define([
 		 */
 		function loadParametersJSON(sUrl, sThemeBaseUrl, aWithCredentials) {
 			var oHeaders = {
-				Accept: undefined/*syncFetch*/.ContentTypes.JSON
+				Accept: syncFetch.ContentTypes.JSON
 			};
 
 			var bCurrentWithCredentials = aWithCredentials.shift();
@@ -254,7 +255,7 @@ sap.ui.define([
 
 			// load and evaluate parameter file
 			try {
-				var response = undefined/*syncFetch*/(sUrl, {
+				var response = syncFetch(sUrl, {
 					credentials: bCurrentWithCredentials ? "include" : "omit",
 					headers: oHeaders
 				});
@@ -610,6 +611,26 @@ sap.ui.define([
 			if (!sTheme) {
 				sTheme = Theming.getTheme();
 			}
+			// Parameters.get() without arguments returns
+			// copy of complete default parameter set
+			if (arguments.length === 0) {
+				Log.warning(
+					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected. Do not use the Parameters.get() API to retrieve ALL theming parameters, " +
+					"as this will lead to unwanted synchronous requests. " +
+					"Use the asynchronous API variant instead and retrieve a fixed set of parameters.",
+					"LegacyParametersGet",
+					"sap.ui.support",
+					function() { return { type: "LegacyParametersGet" }; }
+				);
+
+				// first try to load all pending parameters
+				loadPendingLibraryParameters();
+
+				// retrieve parameters
+				// optionally might also trigger a sync JSON request, if a library was loaded but not parsed yet
+				var oParams = getParameters();
+				return Object.assign({}, oParams["default"]);
+			}
 
 			if (!vName) {
 				return undefined;
@@ -625,6 +646,21 @@ sap.ui.define([
 				fnAsyncCallback = vName.callback;
 				aNames = typeof vName.name === "string" ? [vName.name] : vName.name;
 				bAsync = true;
+			} else {
+				// legacy variant
+				if (typeof vName === "string") {
+					aNames = [vName];
+				} else { // vName is Array
+					aNames = vName;
+				}
+
+				Log.warning(
+					"Legacy variant usage of sap.ui.core.theming.Parameters.get API detected for parameter(s): '" + aNames.join(", ") +
+					"'. This could lead to bad performance and additional synchronous XHRs, as parameters might not be available yet. Use asynchronous variant instead.",
+					"LegacyParametersGet",
+					"sap.ui.support",
+					function() { return { type: "LegacyParametersGet" }; }
+				);
 			}
 
 			var resolveWithParameter, vResult;
