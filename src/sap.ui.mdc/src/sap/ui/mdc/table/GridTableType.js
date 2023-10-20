@@ -183,6 +183,7 @@ sap.ui.define([
 		const mSelectionBehaviorMap = {
 			SingleMaster: "RowOnly"
 		};
+		const mRowSettingsConfig = this.getRowSettingsConfig();
 
 		const mSettings = {
 			enableBusyIndicator: true,
@@ -191,7 +192,7 @@ sap.ui.define([
 			noData: oTable._getNoDataText(),
 			extension: [oTable._oToolbar],
 			ariaLabelledBy: [oTable._oTitle],
-			rowSettingsTemplate: this.getRowSettingsConfig(),
+			rowSettingsTemplate: mRowSettingsConfig ? new InnerRowSettings(mRowSettingsConfig) : null,
 			selectionMode: "None",
 			selectionBehavior: {
 				path: "$sap.ui.mdc.Table>/selectionMode",
