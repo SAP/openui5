@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Control,
+	FlexState,
 	ManifestUtils,
 	Version,
 	FlexConfiguration,
@@ -315,6 +317,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
+			sandbox.stub(FlexState, "clearAndInitialize").resolves([]);
 
 			return Versions.initialize(mPropertyBag)
 			.then(function(oModel) {
