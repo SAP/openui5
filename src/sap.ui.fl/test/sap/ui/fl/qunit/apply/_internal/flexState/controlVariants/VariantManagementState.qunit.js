@@ -83,7 +83,6 @@ sap.ui.define([
 	function cleanup() {
 		FlexState.clearState();
 		FlexState.clearRuntimeSteadyObjects(sReference, sComponentId);
-		// TODO: Check if this is an issue in prod
 		VariantManagementState.getVariantManagementMap().clearCachedResult();
 		VariantManagementState.resetCurrentVariantReference(sReference);
 		sandbox.restore();

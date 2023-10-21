@@ -7,9 +7,6 @@ sap.ui.define([
 ], function (MessageBox, Controller) {
 	"use strict";
 
-	// shortcut for sap.m.MessageBox.Action
-	var Action = MessageBox.Action;
-
 	return Controller.extend("sap.ui.core.sample.odata.v4.HierarchyBindAction.Main", {
 		onCreate : async function (oEvent) {
 			try {
@@ -18,8 +15,15 @@ sap.ui.define([
 					"@$ui5.node.parent" : oParentContext
 				}, /*bSkipRefresh*/true);
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			}
+		},
+
+		onCreateRoot : async function () {
+			try {
+				await this.byId("table").getBinding("rows").create({}, /*bSkipRefresh*/true);
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
@@ -28,15 +32,14 @@ sap.ui.define([
 				const oNode = oEvent.getSource().getBindingContext();
 				oNode.delete("noSubmit");
 				MessageBox.confirm("Restore again (undo cut)", {
-					actions : Action.OK,
-					emphasizedAction : Action.OK,
+					actions : MessageBox.Action.OK,
+					emphasizedAction : MessageBox.Action.OK,
 					onClose : function () {
 						oNode.resetChanges();
 					}
 				});
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
@@ -44,21 +47,34 @@ sap.ui.define([
 			try {
 				await oEvent.getSource().getBindingContext().delete();
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			}
 		},
 
+		onDescriptionChanged : function (oEvent) {
+			const oContext = oEvent.getSource().getBindingContext();
+			if (oContext.hasPendingChanges()) {
+				oContext.requestSideEffects(["SiblingOrder"]);
+			} // else: invalid value (has not reached model)
+		},
+
 		onInit : function () {
-			var oTable = this.byId("table"),
-				oRowsBinding = oTable.getBinding("rows"),
+			var oTreeTable = this.byId("table"),
+				oRowsBinding = oTreeTable.getBinding("rows"),
+				oUriParameters = new URLSearchParams(window.location.search),
 				oView = this.getView();
 
-			// enable V4 tree table flag
-			oTable._oProxy._bEnableV4 = true;
+			oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
+			const sVisibleRowCount = oUriParameters.get("visibleRowCount");
+			if (sVisibleRowCount) {
+				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+			}
 
+			const sExpandTo = oUriParameters.get("expandTo");
 			this._oAggregation = {
-				expandTo : 1,
+				expandTo : sExpandTo === "*"
+					? Number.MAX_SAFE_INTEGER
+					: parseInt(sExpandTo || "1"),
 				hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);
@@ -87,11 +103,14 @@ sap.ui.define([
 					.find((oNode) => oNode.getProperty("Id") === sParentId);
 				await this.oNode.move({parent : oParent});
 			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR,
-					title : "Error"});
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
 				this.getView().setBusy(false);
 			}
+		},
+
+		onSynchronize : function () {
+			this.byId("table").getBinding("rows").getHeaderContext().requestSideEffects(["*"]);
 		}
 	});
 });

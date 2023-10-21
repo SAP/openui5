@@ -5621,13 +5621,6 @@ sap.ui.define([
 			// code under test
 			oBinding.create({"@$ui5.node.parent" : oParentContext}, true);
 		}, new Error("Unsupported collapsed parent: ~toString~"));
-
-		oBinding.mParameters.$$aggregation = {expandTo : 2, hierarchyQualifier : "X"};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.create({"@$ui5.node.parent" : {/*oContext*/}}, /*bSkipRefresh*/true);
-		}, new Error("Unsupported $$aggregation.expandTo: 2"));
 	});
 
 	//*********************************************************************************************

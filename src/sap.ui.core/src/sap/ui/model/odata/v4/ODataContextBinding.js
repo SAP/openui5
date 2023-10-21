@@ -1267,7 +1267,7 @@ sap.ui.define([
 	 *   The result of the executed operation
 	 * @returns {string} The path for the return value context.
 	 *
-	 * @privat
+	 * @private
 	 */
 	ODataContextBinding.prototype.getReturnValueContextPath = function (oResponseEntity) {
 		if (this.oOperation.bAdditionalQueryOptionsForRVC === undefined) {

@@ -1383,26 +1383,19 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if an IconTabFilter is not selectable.
-	 * This instance of the IconTabHeader must be within an IconTabBar (with no content aggregation set) or must be within ToolHeader.
+	 * Checks if a IconTabFilter is unable to be selected.
+	 * This instance of the IconTabHeader must be within an IconTabBar and the IconTabBar must have no content aggregation set.
 	 * The passed IconTabFilter instance must not be nested, has to have its items aggregation set and not have content aggregation set.
 	 * @private
 	 * @param {sap.m.IconTabFilter} oIconTabFilter The instance to check
 	 * @returns {boolean}
 	 */
 	IconTabHeader.prototype._isUnselectable = function (oIconTabFilter) {
-		const oFilter = oIconTabFilter._getRealTab();
-		if (!oFilter.getEnabled() || oFilter._isOverflow()) {
-			return true;
-		}
+		var oFilter = oIconTabFilter._getRealTab();
 
-		const hasParentContext = this._isInsideIconTabBar() && !this.getParent().getContent().length || this._isInsideToolHeader();
-
-		if (hasParentContext) {
-			return oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length;
-		}
-
-		return false;
+		return !oFilter.getEnabled() || (this._isInsideIconTabBar() && !this.getParent().getContent().length &&
+			oFilter._getNestedLevel() === 1 && oFilter.getItems().length && !oFilter.getContent().length) ||
+			oFilter._isOverflow();
 	};
 
 	/**

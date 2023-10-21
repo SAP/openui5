@@ -260,6 +260,26 @@ sap.ui.define([
 				 */
 				theOpenManageViewsDialogDefaultShouldBe(sVariantName) {
 					return Assertions.theOpenManageViewsDialogDefaultShouldBe.call(this, sVariantName);
+				},
+
+				/**
+				 * Checks if the modified flag is set and visible on the variant.
+				 * @memberof onFlVariantManagement
+				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
+				 * @public
+				 */
+				theModifiedIndicatorShouldBeDisplayed() {
+					return Assertions.theModifiedIndicatorShouldBeDisplayed.call(this);
+				},
+
+				/**
+				 * Checks if the modified flag is not set.
+				 * @memberof onFlVariantManagement
+				 * @returns {Promise} The result of the {@link sap.ui.test.Opa5#waitFor} function, to be used for chained statements
+				 * @public
+				 */
+				theModifiedIndicatorShouldBeHidden() {
+					return Assertions.theModifiedIndicatorShouldBeHidden.call(this);
 				}
 			}
 		}

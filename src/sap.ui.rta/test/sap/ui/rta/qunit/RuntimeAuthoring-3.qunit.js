@@ -583,7 +583,6 @@ sap.ui.define([
 
 			this.oOverlayContainer = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oOverlayContainer);
-			// TODO: remove when Overlay.getOverlayContainer does not return jQuery any more
 			this.oOverlayContainer = jQuery(this.oOverlayContainer);
 			this.oAnyOtherDomRef = document.createElement("button");
 			document.getElementById("qunit-fixture").append(this.oAnyOtherDomRef);

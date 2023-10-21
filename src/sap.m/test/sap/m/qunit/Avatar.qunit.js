@@ -610,6 +610,44 @@ sap.ui.define([
 		oLightBoxB.destroy();
 	});
 
+	QUnit.test("detailBox destroy", function (oAssert) {
+		// Assert
+		oAssert.expect(9);
+
+		// Arrange
+		var oLightBox = new LightBox(),
+			oNewLightBox = new LightBox();
+
+		// Act
+		this.oAvatar.setDetailBox(oLightBox);
+		oCore.applyChanges();
+
+		// Assert
+		oAssert.strictEqual(this.oAvatar.getDetailBox(), oLightBox, "detailBox is set");
+		oAssert.ok(this.oAvatar._fnLightBoxOpen, "Internal method for opening the LightBox should be available");
+		oAssert.ok(this.oAvatar.hasListeners("press"), "There should be a press event attached to the control");
+
+		// Act
+		this.oAvatar.destroyDetailBox();
+		oCore.applyChanges();
+
+		// Assert
+		oAssert.notOk(this.oAvatar.getDetailBox(), "No LightBox is returned");
+		oAssert.notOk(this.oAvatar._fnLightBoxOpen, "No internal method for opening the LightBox should be assigned");
+		oAssert.notOk(this.oAvatar.hasListeners("press"), "There should no press listeners");
+
+		// Act
+		this.oAvatar.setDetailBox(oNewLightBox);
+		oCore.applyChanges();
+
+		oAssert.strictEqual(this.oAvatar.getDetailBox(), oNewLightBox, "detailBox is set again");
+		oAssert.ok(this.oAvatar._fnLightBoxOpen, "Internal method for opening the LightBox should be available again");
+		oAssert.ok(this.oAvatar.hasListeners("press"), "There should be a press event attached to the control again");
+
+		// Cleanup
+		oLightBox.destroy();
+	});
+
 	QUnit.test("cloning of press event handler", function (assert) {
 		// Arrange
 		var oLightBox = new LightBox(),

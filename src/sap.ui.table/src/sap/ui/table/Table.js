@@ -424,20 +424,6 @@ sap.ui.define([
 			},
 
 			/**
-			 * fired when a column of the table has been selected
-			 */
-			columnSelect: {
-				allowPreventDefault: true,
-				parameters: {
-
-					/**
-					 * reference to the selected column
-					 */
-					column: {type: "sap.ui.table.Column"}
-				}
-			},
-
-			/**
 			 * fired when a table column is resized.
 			 */
 			columnResize: {

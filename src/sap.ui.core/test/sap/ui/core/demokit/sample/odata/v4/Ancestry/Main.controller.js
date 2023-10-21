@@ -82,8 +82,9 @@ sap.ui.define([
 		},
 
 		onInit : function () {
-			var oTable = this.byId("table"),
-				oRowsBinding = oTable.getBinding("rows"),
+			var oTreeTable = this.byId("table"),
+				oRowsBinding = oTreeTable.getBinding("rows"),
+				oUriParameters = new URLSearchParams(window.location.search),
 				oView = this.getView();
 
 			oView.setModel(new JSONModel({
@@ -92,11 +93,17 @@ sap.ui.define([
 			}), "ui");
 			this.bDescending = undefined;
 
-			// enable V4 tree table flag
-			oTable._oProxy._bEnableV4 = true;
+			oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
+			const sVisibleRowCount = oUriParameters.get("visibleRowCount");
+			if (sVisibleRowCount) {
+				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+			}
 
+			const sExpandTo = oUriParameters.get("expandTo");
 			this._oAggregation = {
-				expandTo : 2,
+				expandTo : sExpandTo === "*"
+					? Number.MAX_SAFE_INTEGER
+					: parseInt(sExpandTo || "2"),
 				hierarchyQualifier : "SADL_V_RS_Ancestry_Hier"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);

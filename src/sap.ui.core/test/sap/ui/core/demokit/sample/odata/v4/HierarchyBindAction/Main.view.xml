@@ -13,6 +13,9 @@
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="{header>$count} Items"/>
+				<m:ToolbarSpacer/>
+				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
+				<m:Button icon="sap-icon://synchronize" press="onSynchronize" tooltip="Synchronize"/>
 			</m:Toolbar>
 		</extension>
 		<rowMode>
@@ -39,7 +42,7 @@
 		<Column>
 			<m:Label text="Description"/>
 			<template>
-				<m:Input value="{Description}"/>
+				<m:Input change="onDescriptionChanged" value="{Description}"/>
 			</template>
 		</Column>
 		<Column>

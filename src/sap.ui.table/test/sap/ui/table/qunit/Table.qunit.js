@@ -562,14 +562,6 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
-
-		oTable.attachColumnSelect(function(oEvent) {
-			oEvent.preventDefault();
-		});
-		oTable.setEnableColumnReordering(false);
-		oCore.applyChanges();
-		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
-		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
 	});
 
 	QUnit.test("Skip _updateTableSizes if table has no width", function(assert) {

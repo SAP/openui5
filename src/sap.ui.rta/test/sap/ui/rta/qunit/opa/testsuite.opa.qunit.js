@@ -31,6 +31,9 @@ sap.ui.define(function() {
 			},
 			"opa/contextBased/integration/SearchContextBasedAdaptationDialogJourney": {
 				title: "Search Bar Context-Based Adaptation"
+			},
+			"opa/variantManagement/integration/VariantManagementJourney": {
+				title: "Variant Management Opa Tests"
 			}
 		}
 	};

@@ -772,16 +772,14 @@ sap.ui.define([
 	 *
 	 * Creating a new child beneath an existing and visible parent node (which must either be a leaf
 	 * or expanded, but not collapsed) is supported (@experimental as of version 1.117.0) in case of
-	 * a recursive hierarchy (see {@link #setAggregation}). The parent node must be identified via a
-	 * {@link sap.ui.model.odata.v4.Context} instance given as
-	 * <code>oInitialData["@$ui5.node.parent"]</code>. <code>oAggregation.expandTo</code> (see
-	 * {@link #setAggregation}) must be one, <code>bSkipRefresh</code> must be set, but both
+	 * a recursive hierarchy (see {@link #setAggregation}). The parent node must be identified via
+	 * an {@link sap.ui.model.odata.v4.Context} instance given as
+	 * <code>oInitialData["@$ui5.node.parent"]</code> (which is immediately removed from the new
+	 * child's data). It can be <code>null</code> or absent when creating a new root node
+	 * (@experimental as of version 1.120.0). <code>bSkipRefresh</code> must be set, but both
 	 * <code>bAtEnd</code> and <code>bInactive</code> must not be set. No other creation or
 	 * {@link sap.ui.model.odata.v4.Context#move move} must be pending, and no other modification
 	 * (including collapse of some ancestor node) must happen while this creation is pending!
-	 * Creating a new root works the same way with <code>oInitialData["@$ui5.node.parent"]</code>
-	 * being <code>null</code> or absent; <code>oAggregation.expandTo</code> does not matter then
-	 * (@experimental as of version 1.120.0).
 	 *
 	 * @param {Object<any>} [oInitialData={}]
 	 *   The initial data for the created entity
@@ -903,9 +901,6 @@ sap.ui.define([
 			}
 			const oParentContext = oInitialData?.["@$ui5.node.parent"];
 			if (oParentContext) {
-				if (oAggregation.expandTo > 1) {
-					throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-				}
 				iChildIndex = this.aContexts.indexOf(oParentContext) + 1;
 				if (iChildIndex <= 0) {
 					throw new Error("Invalid parent context: " + oParentContext);
@@ -3314,7 +3309,7 @@ sap.ui.define([
 		if (!this.oModel.bAutoExpandSelect) {
 			// No deep create possible, but it must not create its own cache. It remains empty and
 			// silent until the parent binding created the entity. Then it creates a cache (in
-			// #adjustPredicate) and requests from the backend.
+			// #adjustPredicate) and requests from the back end.
 			return true;
 		}
 
