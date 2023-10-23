@@ -715,5 +715,32 @@
         ]
       }
     ]
+  },
+  "1.96.24": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "8f9be2646bc183b93cb0cadbd1373169cabef0f3",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "9bedacff86e009bc4733f2a5cf1cfbcc6c6665df",
+        "type": "FIX",
+        "text": " Stabilize Theming QUnit",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

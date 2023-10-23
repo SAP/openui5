@@ -217,5 +217,58 @@
         ]
       }
     ]
+  },
+  "1.96.24": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "4e21ae9b64df4016f166e69f1cf9c4e1b05037fb",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "893c89415e1189bdfb9e4db41624c617d99bff67",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: register events once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "6b142f3c3f6ee46e421e5361e429f5b9a73e8d9a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: stop drag and drop event propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          },
+          {
+            "type": "BCP",
+            "reference": "2370078629"
+          }
+        ]
+      },
+      {
+        "id": "4a82d25db35687fb28740e2a319dcdfad2a07680",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: enable drop over the browse button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006011772023"
+          }
+        ]
+      }
+    ]
   }
 }

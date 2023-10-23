@@ -1678,5 +1678,91 @@
         ]
       }
     ]
+  },
+  "1.96.24": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "4e21ae9b64df4016f166e69f1cf9c4e1b05037fb",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "f2fecfd7bef1720f97d3a3537293cd76a5827f8c",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Add ARIA label to the items list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007520392022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007944252023"
+          }
+        ]
+      },
+      {
+        "id": "d35d3c3c5751d0a2ea76c469398aae2467cec601",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value is now formatted even if matching with previous value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006449282023"
+          }
+        ]
+      },
+      {
+        "id": "87ec4e82867f21b3b0b3891db4152b1c65a7c9d0",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "416d68a4f97569b7350c77ac9e28f02dac5e0f86",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      },
+      {
+        "id": "5d7a61be0998f020c23d2d2585141472da9fe0ef",
+        "type": "FIX",
+        "text": " sap.m.Wizard: enable insert/remove step for designMode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006646292023"
+          }
+        ]
+      },
+      {
+        "id": "3a0975620587f3338b348aaea3e8620b05292ca2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Fix navigation skipping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005568382023"
+          }
+        ]
+      }
+    ]
   }
 }

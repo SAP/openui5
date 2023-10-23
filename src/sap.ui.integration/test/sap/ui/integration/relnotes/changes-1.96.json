@@ -148,5 +148,21 @@
         ]
       }
     ]
+  },
+  "1.96.24": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "aada4e93a0c44a5d075b7f0ba0a503c781461780",
+        "type": "FIX",
+        "text": " sap.ui.integration.cards.AdaptiveContent: Stabilize tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370087712"
+          }
+        ]
+      }
+    ]
   }
 }
