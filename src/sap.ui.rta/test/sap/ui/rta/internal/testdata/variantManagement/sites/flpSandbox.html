@@ -19,7 +19,19 @@
 			 The sandbox platform is restricted to development or demo use cases and must NOT be used
 			 for productive scenarios.
 		-->
+		<script src="/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"></script>;
 		<script src="flpSandboxConfig/flpSandboxConfig.js"></script>
+		<script
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_horizon"
+			data-sap-ui-language="en"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-async="true"
+			data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]'
+			src="/resources/sap-ui-core.js">
+		</script>
 		<script src="flpSandboxConfig/appStart.js"></script>
 		<link rel="stylesheet" href="flpSandboxConfig/style.css">
 	</head>
