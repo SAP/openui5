@@ -1,12 +1,12 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	'sap/ui/model/odata/ODataUtils',
 	'sap/ui/model/Filter',
 	'sap/ui/model/odata/Filter',
 	'sap/ui/model/FilterOperator'
-], function(CalendarType, Configuration, ODataUtils, Filter, ODataFilter, FilterOperator) {
+], function(Formatting, CalendarType, ODataUtils, Filter, ODataFilter, FilterOperator) {
 
 	"use strict";
 
@@ -67,10 +67,10 @@ sap.ui.define([
 	QUnit.test("formatValue with different CalendarType", function(assert) {
 		// no need to use UI5Date.getInstance as only the UTC timestamp is used
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
-			sOldCalendarType = Configuration.getCalendarType(),
+			sOldCalendarType = Formatting.getCalendarType(),
 			oTime = time(49646000);
 
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		[
 			// t: the tested type
 			// v: the value to format
@@ -86,7 +86,7 @@ sap.ui.define([
 		].forEach(function (oFixture) {
 			assert.equal(ODataUtils.formatValue(oFixture.v, oFixture.t), oFixture.r, oFixture.t + " format " + oFixture.d);
 		});
-		Configuration.setCalendarType(sOldCalendarType);
+		Formatting.setCalendarType(sOldCalendarType);
 	});
 
 	//*********************************************************************************************
@@ -160,10 +160,10 @@ sap.ui.define([
 		var oDateTime = new Date(Date.UTC(2015, 4, 30, 13, 47, 26)),
 			// no need to use UI5Date.getInstance as only the UTC timestamp is used
 			oDateTimeMs = new Date(Date.UTC(2015, 4, 30, 13, 47, 26, 253)),
-			sOldCalendarType = Configuration.getCalendarType(),
+			sOldCalendarType = Formatting.getCalendarType(),
 			oTime = time(49646000);
 
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 
 		// v: value to format; r: expected result; t: tested type; d: test description
 		[
@@ -182,7 +182,7 @@ sap.ui.define([
 			assert.deepEqual(ODataUtils.formatValue(ODataUtils.parseValue(oFixture.v), oFixture.t),
 				oFixture.v, oFixture.t + " " + (oFixture.d || ""));
 		});
-		Configuration.setCalendarType(sOldCalendarType);
+		Formatting.setCalendarType(sOldCalendarType);
 	});
 
 	QUnit.test("compare", function (assert) {

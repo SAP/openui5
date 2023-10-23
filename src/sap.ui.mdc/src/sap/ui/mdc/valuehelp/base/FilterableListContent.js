@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/valuehelp/base/ListContent',
 	'sap/ui/mdc/condition/Condition',
@@ -16,6 +17,7 @@ sap.ui.define([
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/base/Log'
 ], function(
+	Library,
 	loadModules,
 	ListContent,
 	Condition,
@@ -122,7 +124,7 @@ sap.ui.define([
 
 	FilterableListContent.prototype.init = function() {
 		ListContent.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		this._oObserver.observe(this, {
 			properties: ["filterFields"],
 			aggregations: ["_defaultFilterBar", "filterBar"]

@@ -7,9 +7,10 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"./TimePickerClockRenderer",
 	"sap/ui/Device",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Configuration, TimePickerClockRenderer, Device, jQuery) {
+	function(Control, Configuration, TimePickerClockRenderer, Device, ControlBehavior, jQuery) {
 		"use strict";
 
 		var ANIMATION_DURATION_MAX = 200,	// total animation duration, without the delay before firing the event
@@ -532,7 +533,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerClock.prototype._onTouchEnd = function(oEvent) {
-			var oAnimationMode = Configuration.getAnimationMode(),
+			var oAnimationMode = ControlBehavior.getAnimationMode(),
 				bSkipAnimation = oAnimationMode === Configuration.AnimationMode.none || oAnimationMode === Configuration.AnimationMode.minimal;
 
 			if (!this._mouseOrTouchDown) {

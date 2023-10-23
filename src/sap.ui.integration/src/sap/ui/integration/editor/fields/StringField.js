@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/integration/editor/fields/BaseField",
 	"sap/m/Input",
 	"sap/m/Text",
@@ -17,9 +18,9 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
-	"sap/ui/core/Core",
 	"sap/base/util/deepClone"
 ], function (
+	Localization,
 	BaseField,
 	Input,
 	Text,
@@ -34,7 +35,6 @@ sap.ui.define([
 	VBox,
 	each,
 	_debounce,
-	Core,
 	deepClone
 ) {
 	"use strict";
@@ -234,7 +234,7 @@ sap.ui.define([
 							//add current change into translation texts
 							var oControl = oEvent.getSource();
 							var sValue = oControl.getValue();
-							var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
+							var sLanguage =  Localization.getLanguage().replaceAll('_', '-');
 							oControl.getParent().setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
 						}
 					}

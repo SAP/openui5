@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/Analyzer",
 	"sap/ui/support/supportRules/CoreFacade",
@@ -22,12 +23,13 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSetLoader",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/library"
-], function (
+], function(
 	Log,
 	ManagedObject,
 	Core,
 	Element,
 	Component,
+	Library,
 	Supportability,
 	Analyzer,
 	CoreFacade,
@@ -120,7 +122,7 @@ sap.ui.define([
 		if (Core.isInitialized()) {
 			this._initPlugin();
 		} else {
-			Core.attachInit(this._initPlugin.bind(this));
+			Core.ready(this._initPlugin.bind(this));
 		}
 	};
 
@@ -142,7 +144,7 @@ sap.ui.define([
 		this._oCoreFacade = CoreFacade(Core);
 		this._oExecutionScope = null;
 		this._createElementSpies();
-		Core.attachLibraryChanged(RuleSetLoader._onLibraryChanged.bind(RuleSetLoader));
+		Library.attachLibraryChanged(RuleSetLoader._onLibraryChanged.bind(RuleSetLoader));
 
 		// Make sure that we load UI frame, when no parameter supplied
 		// but tools is required to load, or when parameter is there
@@ -250,7 +252,7 @@ sap.ui.define([
 		}, this);
 
 		CommunicationBus.subscribe(channelNames.HIGHLIGHT_ELEMENT, function (id) {
-			var $domElem = Core.byId(id).$();
+			var $domElem = Element.getElementById(id).$();
 			$domElem.css("background-color", "red");
 		}, this);
 
@@ -432,7 +434,7 @@ sap.ui.define([
 			}
 
 			for (i = 0; i < aSelectors.length; i++) {
-				if (Core.byId(aSelectors[i])) {
+				if (Element.getElementById(aSelectors[i])) {
 					bHasValidSelector = true;
 					break;
 				}

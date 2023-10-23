@@ -4,13 +4,14 @@
 
 // Provides class sap.ui.core.support.plugins.Trace (Trace support plugin)
 sap.ui.define([
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/support/Plugin',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/date/UI5Date',
 	"sap/base/Log",
 	"sap/base/security/encodeXML"
 ],
-	function(Plugin, DateFormat, UI5Date, Log, encodeXML) {
+	function(RenderManager, Plugin, DateFormat, UI5Date, Log, encodeXML) {
 	"use strict";
 
 		/**
@@ -66,7 +67,7 @@ sap.ui.define([
 
 			var that = this;
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 			rm.openStart("div")
 				.class("sapUiSupportToolbar")
 				.openEnd();

@@ -1,6 +1,8 @@
 /* global QUnit */
 sap.ui.define([
 	"sap-ui-integration-editor",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
@@ -8,10 +10,11 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepClone",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core",
 	"qunit/designtime/EditorQunitUtils"
-], function (
+], function(
 	x,
+	Localization,
+	Element,
 	Editor,
 	Host,
 	sinon,
@@ -19,7 +22,6 @@ sap.ui.define([
 	deepEqual,
 	deepClone,
 	MockServer,
-	Core,
 	EditorQunitUtils
 ) {
 	"use strict";
@@ -85,7 +87,7 @@ sap.ui.define([
 		"Objects": [oValue1Ori, oValue2Ori, oValue3Ori, oValue4Ori, oValue5Ori, oValue6Ori, oValue7Ori, oValue8Ori]
 	};
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function cleanUUIDAndPosition(oValue) {
@@ -1297,7 +1299,7 @@ sap.ui.define([
 			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-			var oMessageBox = Core.byId(sMessageBoxId);
+			var oMessageBox = Element.getElementById(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
 			return EditorQunitUtils.wait();
@@ -1390,7 +1392,7 @@ sap.ui.define([
 			return EditorQunitUtils.wait();
 		}).then(function () {
 			var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-			var oMessageBox = Core.byId(sMessageBoxId);
+			var oMessageBox = Element.getElementById(sMessageBoxId);
 			var oOKButton = oMessageBox._getToolbar().getContent()[1];
 			oOKButton.firePress();
 			return EditorQunitUtils.wait();

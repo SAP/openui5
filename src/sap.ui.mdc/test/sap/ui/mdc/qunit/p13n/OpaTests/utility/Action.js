@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties",
@@ -13,9 +14,8 @@ sap.ui.define([
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"test-resources/sap/ui/mdc/testutils/opa/p13n/waitForPanelInP13n",
 	"./actions/PressKey",
-	"sap/m/MessageBox",
-	"sap/ui/core/Core"
-], function (Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox, oCore) {
+	"sap/m/MessageBox"
+], function (Library, Opa5, Press, Properties, Ancestor, Descendant, EnterText, TestUtil, PropertyStrictEquals, waitForPanelInP13n, PressKey, MessageBox) {
 	"use strict";
 
 	function iPressResetInControl(sControl) {
@@ -24,7 +24,7 @@ sap.ui.define([
 			controlType: "sap.m.Button",
 			matchers: {
 				properties: {
-					text: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET")
+					text: Library.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.RESET")
 				},
 				ancestor: {
 					controlType: sControl
@@ -62,7 +62,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK")
+						text: Library.getResourceBundleFor("sap.m").getText("MSGBOX_OK")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -84,7 +84,7 @@ sap.ui.define([
 				controlType: "sap.m.Button",
 				matchers: {
 					properties: {
-						text: oCore.getLibraryResourceBundle("sap.m").getText("MSGBOX_CANCEL")
+						text: Library.getResourceBundleFor("sap.m").getText("MSGBOX_CANCEL")
 					},
 					ancestor: {
 						controlType: "sap.m.Dialog",
@@ -219,7 +219,7 @@ sap.ui.define([
 			const sKind = oSettings.kind;
 			const fSuccess = oSettings.success;
 
-			const MDCRb = oCore.getLibraryResourceBundle("sap.ui.mdc");
+			const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 			const sPlaceholderName = MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 			const aMatchers = [];
 

@@ -4,10 +4,12 @@
 
 sap.ui.define([
 	"./library",
+	"sap/base/i18n/Localization",
 	"sap/m/library",
 	"sap/m/MessageBox",
 	"sap/m/Dialog",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/Icon",
 	"sap/ui/core/IconPool",
 	"sap/m/Image",
@@ -17,6 +19,8 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/BusyIndicator",
 	"sap/m/StandardListItem",
+	"sap/ui/core/Lib",
+	"sap/ui/core/RenderManager",
 	"sap/ui/unified/FileUploaderParameter",
 	"sap/ui/unified/FileUploader",
 	"sap/ui/core/format/FileSizeFormat",
@@ -27,22 +31,24 @@ sap.ui.define([
 	"sap/m/UploadCollectionParameter",
 	"sap/m/UploadCollectionToolbarPlaceholder",
 	"sap/ui/core/HTML",
-    "sap/ui/core/InvisibleText",
-    "sap/m/CustomListItem",
+	"sap/ui/core/InvisibleText",
+	"sap/m/CustomListItem",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/Device",
 	"./UploadCollectionRenderer",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
-	"sap/ui/dom/jquery/selectText" // jQuery Plugin "selectText"
+	// jQuery Plugin "selectText"
+	"sap/ui/dom/jquery/selectText"
 ], function(
 	Library,
+	Localization,
 	MobileLibrary,
 	MessageBox,
 	Dialog,
 	Control,
+	Element,
 	Icon,
 	IconPool,
 	Image,
@@ -52,6 +58,8 @@ sap.ui.define([
 	List,
 	BusyIndicator,
 	StandardListItem,
+	Library1,
+	RenderManager,
 	FileUploaderParameter,
 	FileUploader,
 	FileSizeFormat,
@@ -69,8 +77,7 @@ sap.ui.define([
 	UploadCollectionRenderer,
 	jQuery,
 	KeyCodes,
-	Log,
-	Configuration
+	Log
 ) {
 	"use strict";
 
@@ -620,7 +627,7 @@ sap.ui.define([
 	}
 
 	UploadCollection.prototype.init = function() {
-		UploadCollection.prototype._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		UploadCollection.prototype._oRb = Library1.getResourceBundleFor("sap.m");
 		this._headerParamConst = {
 			requestIdName: "requestId" + jQuery.now(),
 			fileNameRequestIdName: "fileNameRequestId" + jQuery.now(),
@@ -1019,7 +1026,7 @@ sap.ui.define([
 	/* =========================================================== */
 
 	UploadCollection.prototype.onBeforeRendering = function() {
-		this._RenderManager = this._RenderManager || sap.ui.getCore().createRenderManager();
+		this._RenderManager = this._RenderManager || new RenderManager().getInterface();
 		var i, cAitems;
 		if (this._oListEventDelegate) {
 			this._oList.removeEventDelegate(this._oListEventDelegate);
@@ -1106,8 +1113,8 @@ sap.ui.define([
 						$oEditBox.trigger("focus");
 						//Create dummy InvisibleText to reset the ariaLabel value read out
 						this.oInvisibleText.setText("");
-						sap.ui.getCore().byId(this.editModeItem + "-cli").removeAllAriaLabelledBy();
-						sap.ui.getCore().byId(this.editModeItem + "-cli").addAriaLabelledBy(this.oInvisibleText.getId());
+						Element.getElementById(this.editModeItem + "-cli").removeAllAriaLabelledBy();
+						Element.getElementById(this.editModeItem + "-cli").addAriaLabelledBy(this.oInvisibleText.getId());
 						this._oListEventDelegate = {
 							onclick: function(event) {
 								this._handleClick(event, sId);
@@ -2406,7 +2413,7 @@ sap.ui.define([
 		var oSourceItem = UploadCollection._findById(itemId, this.aItems);
 		var sOrigFullFileName = oSourceItem.getProperty("fileName");
 		var oFile = UploadCollection._splitFilename(sOrigFullFileName);
-		var oInput = sap.ui.getCore().byId(itemId + "-ta_editFileName");
+		var oInput = Element.getElementById(itemId + "-ta_editFileName");
 		var sErrorStateBefore = oSourceItem.errorState;
 		var sChangedNameBefore = oSourceItem.changedFileName;
 
@@ -2948,7 +2955,7 @@ sap.ui.define([
 		// set application language to request headers
 		oLangRequestHeader = {
 			name: this._headerParamConst.acceptLanguage,
-			value: Configuration.getLanguage()
+			value: Localization.getLanguage()
 		};
 		event.getParameter("requestHeaders").push(oLangRequestHeader);
 
@@ -3166,7 +3173,7 @@ sap.ui.define([
 			case "cli":
 				//Display mode
 				sLinkId = event.target.id.split(sTarget)[0] + "ta_filenameHL";
-				oLink = sap.ui.getCore().byId(sLinkId);
+				oLink = Element.getElementById(sLinkId);
 				if (oLink.getEnabled()) {
 					iLine = event.target.id.split("-")[2];
 					MobileLibrary.URLHelper.redirect(this.aItems[iLine].getProperty("url"), true);
@@ -3186,7 +3193,7 @@ sap.ui.define([
 		if (!this.editModeItem) {
 			// removing the -cli suffix to get the id of the UploadCollectionItem
 			var sTarget = event.target.id.slice(0, -4),
-				oItem = sap.ui.getCore().byId(sTarget),
+				oItem = Element.getElementById(sTarget),
 				oDeleteButton = oItem && oItem._getDeleteButton && oItem._getDeleteButton();
 			if (oDeleteButton) {
 				oDeleteButton.firePress();
@@ -3214,14 +3221,14 @@ sap.ui.define([
 	 */
 	UploadCollection.prototype._handleF2 = function(event) {
 
-		var oObj = sap.ui.getCore().byId(event.target.id);
+		var oObj = Element.getElementById(event.target.id);
 
 		if (oObj !== undefined) {
 			if (oObj._status === UploadCollection._displayStatus) {
 				//focus at list line (status = "display") and F2 pressed --> status = "Edit"
 				var o$Obj = jQuery(document.getElementById(event.target.id));
 				var o$EditButton = o$Obj.find("[id$='-editButton']");
-				var oEditButton = sap.ui.getCore().byId(o$EditButton[0].id);
+				var oEditButton = Element.getElementById(o$EditButton[0].id);
 				if (oEditButton.getEnabled()) {
 					if (this.editModeItem) {
 						this._handleClick(event, this.editModeItem);

@@ -3,10 +3,12 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Core',
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Locale",
 	'sap/ui/core/date/UI5Date'
 ], function(
-	Core,
+	Localization,
+	Locale,
 	UI5Date
 ) {
 	"use strict";
@@ -52,7 +54,7 @@ sap.ui.define([
 	 */
 	function getLocale() {
 
-		return Core.getConfiguration().getLocale().toString();
+		return new Locale(Localization.getLanguageTag()).toString();
 	}
 
 	/**

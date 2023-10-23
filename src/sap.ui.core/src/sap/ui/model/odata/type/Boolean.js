@@ -4,12 +4,14 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType",
-	"sap/ui/core/Core" //  provides sap.ui.getCore()
-], function (Log, FormatException, ParseException, ValidateException, ODataType) {
+	//  provides sap.ui.getCore()
+	"sap/ui/core/Core"
+], function(Log, Library, FormatException, ParseException, ValidateException, ODataType) {
 	"use strict";
 
 	/**
@@ -34,7 +36,7 @@ sap.ui.define([
 	 *   the locale-dependent text for the key
 	 */
 	function getMessage(sKey, aParameters) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParameters);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParameters);
 	}
 
 	/**

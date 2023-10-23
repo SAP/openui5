@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/m/App",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/m/QuickViewGroupElement",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	JSONModel,
 	mobileLibrary,
 	App,
@@ -292,7 +294,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Testing if the QuickView is created", function (assert) {
-		assert.ok(oCore.byId(this.oQuickViewCard.getId()), "should render");
+		assert.ok(Element.getElementById(this.oQuickViewCard.getId()), "should render");
 	});
 
 	QUnit.test("Test binding", function (assert) {

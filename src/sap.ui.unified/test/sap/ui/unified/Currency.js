@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/m/App",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
@@ -7,12 +8,11 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/unified/Currency"
-], function(App, Column, ColumnListItem, Label, mobileLibrary, Page, Table, Text, oCore, VerticalLayout, JSONModel, TypeString, Currency) {
+], function(Formatting, App, Column, ColumnListItem, Label, mobileLibrary, Page, Table, Text, VerticalLayout, JSONModel, TypeString, Currency) {
 	"use strict";
 
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
@@ -47,7 +47,7 @@ sap.ui.define([
 		]
 	});
 
-	oCore.getConfiguration().getFormatSettings().setCustomCurrencies({ "BGN4":{"digits": 4}, "Coins":{"digits": 5}});
+	Formatting.setCustomCurrencies({ "BGN4":{"digits": 4}, "Coins":{"digits": 5}});
 
 	new VerticalLayout({
 		content: {

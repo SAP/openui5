@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/valuehelp/base/Container',
 	'sap/ui/mdc/valuehelp/base/DialogTab',
 	'sap/ui/mdc/util/loadModules',
@@ -16,6 +17,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleMessage'
 ], function(
+	Library,
 	Container,
 	DialogTab,
 	loadModules,
@@ -43,7 +45,7 @@ sap.ui.define([
 	 */
 
 	// translation utils
-	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});
@@ -233,7 +235,7 @@ sap.ui.define([
 					const ButtonType = MLibrary.ButtonType;
 
 					if (!this._oResourceBundle) {
-						this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+						this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 					}
 
 					this.oButtonOK = new Button(this.getId() + "-ok", {

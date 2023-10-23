@@ -1,9 +1,9 @@
 sap.ui.define([
-	"sap/ui/rta/enablement/elementActionTest",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element",
+	"sap/ui/rta/enablement/elementActionTest"
 ], function (
-	elementActionTest,
-	oCore
+	Element,
+	elementActionTest
 ) {
 	"use strict";
 
@@ -244,7 +244,7 @@ sap.ui.define([
 		assert.strictEqual( aActions[1].getId(), "btn2",
 			"then the second button has the correct id");
 
-		oCore.byId("comp---view--menubtn").destroy();
+		Element.getElementById("comp---view--menubtn").destroy();
 	};
 
 	var fnConfirmSplitActionElementsAreCombined = function (oUiComponent, oViewAfterAction, assert) {

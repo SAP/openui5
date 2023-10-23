@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -29,9 +30,11 @@ sap.ui.define([
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/dom/getFirstEditableInput",
 	"sap/uxap/HierarchicalSelect",
-	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.Event.prototype.isMarked
+	// side effect: provides jQuery.Event.prototype.isMarked
+	"sap/ui/events/jquery/EventExtension"
 ],
 	function(
+		Library,
 		jQuery,
 		qutils,
 		createAndAppendDiv,
@@ -10106,7 +10109,7 @@ sap.ui.define([
 			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 
 			assert.strictEqual(oInfo.role, "button", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 			assert.strictEqual(oInfo.description, "Tooltip", "Description");
 			assert.strictEqual(oInfo.focusable, true, "Focusable");
 			assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -10116,20 +10119,20 @@ sap.ui.define([
 			var oIconInfo = IconPool.getIconInfo(oSelect.getIcon());
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "button", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+			assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 			assert.strictEqual(oInfo.description, oIconInfo && oIconInfo.text ? oIconInfo.text : "", "Description");
 
 			oSelect.setType("Default");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
+			assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
 			assert.strictEqual(oInfo.description, "Item1", "Description");
 			assert.strictEqual(oInfo.readonly, false, "Editable");
 
 			oSelect.setSelectedKey("Item2");
 			oInfo = oSelect.getAccessibilityInfo();
 			assert.strictEqual(oInfo.role, "combobox", "AriaRole");
-			assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
+			assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("SELECT_ROLE_DESCRIPTION"), "Type");
 			assert.strictEqual(oInfo.description, "Item2", "Description");
 
 			oSelect.setEditable(false);

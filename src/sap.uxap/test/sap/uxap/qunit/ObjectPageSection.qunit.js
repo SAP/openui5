@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
@@ -10,8 +11,9 @@ sap.ui.define([
 	"sap/uxap/ObjectPageSectionBase",
 	"sap/m/Text",
 	"sap/m/MessageStrip",
-	"sap/m/Button"],
-function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
+	"sap/m/Button"
+],
+function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSection, ObjectPageSectionBase, Text, MessageStrip, Button) {
 	"use strict";
 	var Importance = library.Importance;
 
@@ -595,25 +597,25 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 				onAfterRendering: function () {
 					// assert
 					oLastSection.removeEventDelegate(oRenderingAfterTitleUpdate);
-					assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
+					assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
 						oLastSection._getTitle(), "aria-labelledby is updated properly");
 					done();
 				}
 			};
 
 		// assert
-		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle(), "aria-labelledby is set properly");
-		assert.strictEqual(Core.byId(sSectionWithoutTitleAriaLabel).getText(),
+		assert.strictEqual(Element.getElementById(sSectionWithoutTitleAriaLabel).getText(),
 			sSectionText, "sections without title are labelled by 'Section' texts");
-		assert.strictEqual(Core.byId(sLastSectionAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sLastSectionAriaLabelledBy).getText(),
 			oLastSection._getTitle(), "aria-labelledby is set properly");
 
 		// act
 		oFirstSection.setTitle("New title");
 
 		// assert
-		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
 			oFirstSection._getTitle(), "aria-labelledby is updated properly");
 
 		// act
@@ -623,7 +625,7 @@ function(jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSubSection,
 		sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby");
 
 		// assert
-		assert.strictEqual(Core.byId(sFirstSectionAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sFirstSectionAriaLabelledBy).getText(),
 			sSectionText, "sections without title are labelled by 'Section' texts");
 
 		// arrange

@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/core/IconPool"
-], function (Core, IconPool) {
+	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib"
+], function (IconPool, Library) {
 	"use strict";
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.layout");
 
 	/**
 	 * ResponsiveSplitter renderer.

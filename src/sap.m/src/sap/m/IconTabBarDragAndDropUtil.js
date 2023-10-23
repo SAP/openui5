@@ -6,13 +6,13 @@
  * Contains functionality that is used in sap.m.IconTabBar Drag&Drop
  */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/dnd/DragInfo',
 	'sap/ui/core/dnd/DropInfo',
 	"sap/ui/events/KeyCodes",
-	'sap/ui/core/library',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/library'
 ],
-	function(DragInfo, DropInfo, KeyCodes, coreLibrary, Configuration) {
+	function(Localization, DragInfo, DropInfo, KeyCodes, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.dnd.DropPosition
@@ -92,7 +92,7 @@ sap.ui.define([
 				var iBeginDragIndex = oContext.indexOfItem(oDraggedControl),
 					iDropIndex = oContext.indexOfItem(oDroppedControl),
 					iAggregationDropIndex = 0,
-					bRtl = Configuration.getRTL(),
+					bRtl = Localization.getRTL(),
 					bIsDropPositionBefore = sDropPosition === INSERT_POSITION_BEFORE,
 					//_getNestedLevel returns 1 there is no nesting
 					currentNestedLevel = oDroppedControl._getNestedLevel() - 1;
@@ -262,7 +262,7 @@ sap.ui.define([
 			moveItem: function (oDraggedControl, iKeyCode, iMaxIndex) {
 				var aItems = this.getItems(),
 					iBeginDragIndex = this.indexOfItem(oDraggedControl),
-					bRtl = Configuration.getRTL(),
+					bRtl = Localization.getRTL(),
 					iNewDropIndex,
 					bPrevent;
 

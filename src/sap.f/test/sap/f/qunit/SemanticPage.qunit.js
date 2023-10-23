@@ -2,6 +2,7 @@
 sap.ui.define([
 	"./SemanticUtil",
 	"sap/m/Button",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/core/Core",
@@ -17,9 +18,10 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/f/semantic/SemanticPage"
 ],
-function (
+function(
 	SemanticUtil,
 	Button,
+	Library,
 	$,
 	ResourceModel,
 	Core,
@@ -1282,7 +1284,7 @@ function (
 		// Arrange
 		var oSemanticPage = oFactory.getSemanticPage(),
 			oDynamicPage = oSemanticPage._getPage(),
-			sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
+			sExpectedRoleDescription = Library.getResourceBundleFor("sap.f")
 				.getText(oSemanticPage.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// Act

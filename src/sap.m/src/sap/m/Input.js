@@ -7,7 +7,6 @@ sap.ui.define([
 	'./InputBase',
 	'sap/ui/core/Element',
 	'sap/ui/core/Item',
-	'sap/ui/core/Core',
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/AccessKeysEnablement',
 	'./ColumnListItem',
@@ -38,13 +37,13 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Lib",
-	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
+	// provides jQuery.fn.selectText
+	"sap/ui/dom/jquery/selectText"
 ],
 function(
 	InputBase,
 	Element,
 	Item,
-	Core,
 	LabelEnablement,
 	AccessKeysEnablement,
 	ColumnListItem,
@@ -632,7 +631,7 @@ function(
 		var aRefLabels = LabelEnablement.getReferencingLabels(this);
 
 		aRefLabels.forEach(function(sLabelId) {
-			Core.byId(sLabelId).setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
+			Element.getElementById(sLabelId).setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
 		}, this);
 	};
 

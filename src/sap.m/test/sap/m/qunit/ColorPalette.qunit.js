@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/ColorPalette",
 	"sap/m/ColorPalettePopover",
+	"sap/ui/core/Lib",
 	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/m/Dialog",
 	"sap/m/ResponsivePopover",
@@ -17,6 +18,7 @@ sap.ui.define([
 	Button,
 	ColorPalette,
 	ColorPalettePopover,
+	Library,
 	ColorPickerDisplayMode,
 	Dialog,
 	ResponsivePopover,
@@ -1595,7 +1597,7 @@ sap.ui.define([
 						"#a811ff"
 					]/*black, white, non-named*/
 				}),
-				oBundle = oCore.getLibraryResourceBundle("sap.m"),
+				oBundle = Library.getResourceBundleFor("sap.m"),
 				sBlack = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_BLACK"),
 				sWhite = oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_WHITE"),
 				$SwatchContainer,

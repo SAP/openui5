@@ -1,11 +1,11 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/deepEqual",
 	"sap/base/util/deepExtend",
 	"sap/m/Button",
 	"sap/m/Input",
 	"sap/m/Text",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/ControlMessageProcessor",
@@ -17,7 +17,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/type/Float"
-], function(deepEqual, deepExtend, Button, Input, Text, Configuration, library, Messaging, ControlMessageProcessor,
+], function(Localization, deepEqual, deepExtend, Button, Input, Text, library, Messaging, ControlMessageProcessor,
 		Message, MockServer, VerticalLayout, DataState, JSONModel, ODataModel, Currency, Float) {
 	"use strict";
 
@@ -61,17 +61,17 @@ sap.ui.define([
 		ODataModel.mServiceData = {};
 	}
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("ODataModelV2DataState ", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -556,14 +556,14 @@ sap.ui.define([
 
 	QUnit.module("New DataState Tests", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();
@@ -818,14 +818,14 @@ sap.ui.define([
 
 	QUnit.module("Other Old DataState Tests", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 			initServer();
 			oModel = initModel({tokenHandling:false, defaultBindingMode:"TwoWay"});
 			oModel.setUseBatch(true);
 
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 			oModel.destroy();
 			oModel = undefined;
 			removeSharedMetadata();

@@ -4,8 +4,10 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/ActionSelect",
 	"sap/m/Button",
+	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -15,8 +17,10 @@ sap.ui.define([
 	Page,
 	ActionSelect,
 	Button,
+	Element,
 	Item,
 	Core,
+	Library,
 	KeyCodes,
 	qutils,
 	createAndAppendDiv,
@@ -287,7 +291,7 @@ sap.ui.define([
 
 		// assert
 		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.ok(Core.byId('firstEnabledButton').$().is(":focus"), 'The first enabled button should be focused');
+			assert.ok(Element.getElementById('firstEnabledButton').$().is(":focus"), 'The first enabled button should be focused');
 		}
 		assert.strictEqual(oActionSelect.getSelectedItem().getId(), "second_content_left", "The second item is the selected one");
 
@@ -348,7 +352,7 @@ sap.ui.define([
 
 		// assert
 		if (!Device.browser.safari) { // Safari has issues with the cursor when the page is not "manually" focused
-			assert.ok(Core.byId('lastEnabledButton').$().is(":focus"), 'The last enabled button should be focused');
+			assert.ok(Element.getElementById('lastEnabledButton').$().is(":focus"), 'The last enabled button should be focused');
 		} else {
 			assert.ok(true);
 		}
@@ -407,7 +411,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this._oRb = Core.getLibraryResourceBundle("sap.m");
+			this._oRb = Library.getResourceBundleFor("sap.m");
 			this.oActionSelect = new ActionSelect({
 				items: [
 					new Item()
@@ -427,7 +431,7 @@ sap.ui.define([
 			return this.oPicker.getAriaLabelledBy().indexOf(this.oActionSelect._getTutorMessageId());
 		},
 		getTutorMessageText: function(iTutorMessageIndex) {
-			return Core.byId(this.oPicker.getAriaLabelledBy()[iTutorMessageIndex]).getText();
+			return Element.getElementById(this.oPicker.getAriaLabelledBy()[iTutorMessageIndex]).getText();
 		},
 		assertTutorMessageIndexValue: function(assert, iTutorMessageIndex) {
 			assert.strictEqual(iTutorMessageIndex, this.oPicker.getAriaLabelledBy().length - 1, "Tutor message id should be at the end of ariaLabelledBy");

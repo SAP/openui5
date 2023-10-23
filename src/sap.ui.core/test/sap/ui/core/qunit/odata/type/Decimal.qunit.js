@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -13,12 +13,12 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/type/Float",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, Control, NumberFormat, FormatException, ParseException,
+], function (Log, Localization, Control, NumberFormat, FormatException, ParseException,
 		ValidateException, Decimal, ODataType, Float, TestUtils) {
 	/*global QUnit, sap, sinon */
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
@@ -26,10 +26,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -247,7 +247,7 @@ sap.ui.define([
 			oExpected = "<1";
 
 		// special: non-breaking space as grouping separator
-		Configuration.setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		assert.strictEqual(oType.formatValue("1234567890123456.789012", "string"),
 			"1\u00a0234\u00a0567\u00a0890\u00a0123\u00a0456,789012",
@@ -427,7 +427,7 @@ sap.ui.define([
 			oType = new Decimal();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-		Configuration.setLanguage("de-CH");
+		Localization.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/valuehelp/base/ListContent",
 	"sap/ui/mdc/util/loadModules",
 	"sap/ui/mdc/enums/ConditionValidated",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/ParseException",
 	"sap/base/util/deepEqual"
 ], function(
+	Library,
 	ListContent,
 	loadModules,
 	ConditionValidated,
@@ -94,7 +96,7 @@ sap.ui.define([
 
 		ListContent.prototype.init.apply(this, arguments);
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 

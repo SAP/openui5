@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/Breadcrumbs",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ],
-function(DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, jQuery, Device) {
+function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, library, oCore, jQuery, Device) {
 	"use strict";
 	var oFactory, helpers;
 
@@ -46,7 +47,7 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, Text, libr
 			});
 		},
 		getResourceBundle: function () {
-			return oCore.getLibraryResourceBundle("sap.m");
+			return Library.getResourceBundleFor("sap.m");
 		}
 	};
 

@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	"sap/ui/core/Core",
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/m/MenuItem",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText"
-], function (jQuery, BaseObject, Core, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
+], function(Element, jQuery, BaseObject, Core, CustomData, ManagedObjectObserver, AnchorBar, Button, MenuButton, Menu, MenuItem, IconPool, InvisibleText) {
 	"use strict";
 
 	var ABHelper = BaseObject.extend("sap.uxap._helpers.AB", {
@@ -248,7 +249,7 @@ sap.ui.define([
 	 */
 	ABHelper.prototype._moveFocusOnSection = function (oSourceControl) {
 		var oSourceData = oSourceControl.data(),
-			oSectionBase = sap.ui.getCore().byId(oSourceData.sectionId),
+			oSectionBase = Element.getElementById(oSourceData.sectionId),
 			oFocusParams = { preventScroll: true },
 			oDelegate;
 

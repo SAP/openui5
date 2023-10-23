@@ -2,17 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Component',
-	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Configuration"
-], function (Component, ComponentContainer, Configuration) {
+	"sap/ui/core/ComponentContainer"
+], function (Localization, Component, ComponentContainer) {
 	"use strict";
 
 	var oUriParameters = new URLSearchParams(window.location.search);
 
 	// set the default language to "de" if parameter is not present
 	if (!oUriParameters.get("sap-ui-language")) {
-		Configuration.setLanguage("de");
+		Localization.setLanguage("de");
 	}
 
 	// set the manifest used

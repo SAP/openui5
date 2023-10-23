@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
 	"sap/ui/model/json/JSONModel",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Library,
 	createAndAppendDiv,
 	IconPool,
 	JSONModel,
@@ -361,7 +363,7 @@ sap.ui.define([
 	QUnit.test("ARIA attributes", function(assert) {
 		// Arrange
 		var $oMessagePage = this.oMessagePage.$(),
-			sExpectedRoleDescription = oCore.getLibraryResourceBundle("sap.m")
+			sExpectedRoleDescription = Library.getResourceBundleFor("sap.m")
 				.getText(this.oMessagePage.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// Assert

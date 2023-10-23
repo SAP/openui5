@@ -1,16 +1,16 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/library",
-	"sap/ui/core/Core",
 	"sap/ui/unified/calendar/TimesRow",
 	"sap/ui/core/format/DateFormat"
-], function (qutils, unifiedLibrary, oCore, TimesRow, DateFormat) {
+], function (Localization, qutils, unifiedLibrary, TimesRow, DateFormat) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
-	oCore.getConfiguration().setLanguage("en_US");
+	Localization.setLanguage("en_US");
 
 	QUnit.module("Long format type", {});
 

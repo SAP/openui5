@@ -1,14 +1,15 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/FeedInput",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(qutils, FeedInput, TooltipBase, KeyCodes, oCore) {
+], function(Library, qutils, FeedInput, TooltipBase, KeyCodes, oCore) {
 	"use strict";
 
-	var oRb = oCore.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Properties", {
 		beforeEach: function () {
@@ -22,11 +23,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("Defaults", function (assert) {
-		assert.strictEqual(this.oFeedInput.getButtonTooltip(), oCore.getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
+		assert.strictEqual(this.oFeedInput.getButtonTooltip(), Library.getResourceBundleFor("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
 		assert.strictEqual(this.oFeedInput.getEnabled(), true, "enabled is 'true'");
 		assert.strictEqual(this.oFeedInput.getIcon(), "", "icon is ''");
 		assert.strictEqual(this.oFeedInput.getMaxLength(), 0, "maxLength is '0'");
-		assert.strictEqual(this.oFeedInput.getPlaceholder(), oCore.getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
+		assert.strictEqual(this.oFeedInput.getPlaceholder(), Library.getResourceBundleFor("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
 		assert.strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
 		assert.strictEqual(this.oFeedInput.getValue(), "", "value is ''");
 		assert.strictEqual(this.oFeedInput.getVisible(), true, "visible is 'true'");

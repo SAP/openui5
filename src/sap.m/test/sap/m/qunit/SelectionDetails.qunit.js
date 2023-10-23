@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/NavContainer",
 	"sap/m/ResponsivePopover",
@@ -22,8 +24,29 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core"
 ], function(
-	jQuery, NavContainer, ResponsivePopover, Page, Toolbar, OverflowToolbar, ToolbarSpacer, Button, List, ListBase, StandardListItem,
-	FixFlex, ScrollContainer, Title, SelectionDetails, Item, SelectionDetailsItem, Device, ManagedObject, Control, oCore
+	ControlBehavior,
+	Element,
+	jQuery,
+	NavContainer,
+	ResponsivePopover,
+	Page,
+	Toolbar,
+	OverflowToolbar,
+	ToolbarSpacer,
+	Button,
+	List,
+	ListBase,
+	StandardListItem,
+	FixFlex,
+	ScrollContainer,
+	Title,
+	SelectionDetails,
+	Item,
+	SelectionDetailsItem,
+	Device,
+	ManagedObject,
+	Control,
+	oCore
 ) {
 	"use strict";
 
@@ -633,7 +656,7 @@ sap.ui.define([
 		this.oSelectionDetails.setAggregation("_popover", this.oPopover, true);
 
 		this.oPopover.openBy(this.oSelectionDetails);
-		var oGetAnimationModeStub = sinon.stub(oCore.getConfiguration(), "getAnimationMode").returns("none");
+		var oGetAnimationModeStub = sinon.stub(ControlBehavior, "getAnimationMode").returns("none");
 
 		var oRegisterSpy = sinon.spy(this.oPopover._oControl, "_registerContentResizeHandler");
 		var oDeregisterSpy = sinon.spy(this.oPopover._oControl, "_deregisterContentResizeHandler");
@@ -757,7 +780,7 @@ sap.ui.define([
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oList = oCore.byId(this.oSelectionDetails.getId() + "-list");
+		var oList = Element.getElementById(this.oSelectionDetails.getId() + "-list");
 
 		//Assert
 		assert.equal(oList.getAggregation("items").length, 1, "One list item has been added to the list");
@@ -772,7 +795,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		//Assert
-		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = Element.getElementById(this.oSelectionDetails.getId() + "-action-0");
 		assert.equal(oButton.getText(), sText, "Button has correct text");
 		assert.equal(oButton.getEnabled(), true, "Button has correct text");
 	});
@@ -785,7 +808,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 		var oSpy = sinon.spy(this.oSelectionDetails, "_onActionPress");
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = oCore.byId(oSelectionDetailsItem.getId() + "-action-0");
+		var oButton = Element.getElementById(oSelectionDetailsItem.getId() + "-action-0");
 
 		// Act
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
@@ -813,7 +836,7 @@ sap.ui.define([
 		// Act
 		this.oSelectionDetails.removeItem(oSelectionDetailsItem1);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		oButton = oCore.byId(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
+		oButton = Element.getElementById(this.oSelectionDetails.getAggregation("items")[0].getId() + "-action-0");
 		oButton.firePress();
 
 		//Assert
@@ -830,7 +853,7 @@ sap.ui.define([
 		var oAction = new Item();
 		this.oSelectionDetails.addAction(oAction);
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oButton = oCore.byId(this.oSelectionDetails.getId() + "-action-0");
+		var oButton = Element.getElementById(this.oSelectionDetails.getId() + "-action-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act
@@ -865,7 +888,7 @@ sap.ui.define([
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
 
 		// Assert
-		assert.equal(oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
+		assert.equal(Element.getElementById(this.oSelectionDetails.getId() + "-actionGroup-0").getMetadata().getName(), "sap.m.StandardListItem", "The created item has the correct class.");
 	});
 
 	QUnit.test("Press on the StandardListItem triggers action press event", function(assert) {
@@ -876,7 +899,7 @@ sap.ui.define([
 		this.oSelectionDetails.addItem(oSelectionDetailsItem);
 
 		this.oSelectionDetails._handlePressLazy.apply(this.oSelectionDetails, aHandlePressLazyArgs);
-		var oStandardListItem = oCore.byId(this.oSelectionDetails.getId() + "-actionGroup-0");
+		var oStandardListItem = Element.getElementById(this.oSelectionDetails.getId() + "-actionGroup-0");
 		var oSpy = sinon.spy(this.oSelectionDetails, "fireActionPress");
 
 		// Act

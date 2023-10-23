@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
@@ -9,9 +10,9 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
-	"sap/ui/model/odata/type/String",
-	"sap/ui/core/Core"
+	"sap/ui/model/odata/type/String"
 ], function (
+		Library,
 		ConditionsType,
 		Condition,
 		FilterOperatorUtil,
@@ -20,12 +21,11 @@ sap.ui.define([
 		OperatorName,
 		IntegerType,
 		CurrencyType,
-		StringType,
-		oCore
+		StringType
 	) {
 	"use strict";
 
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	let oConditionsType;
 	let oValueType;
 	let bAsyncCalled;

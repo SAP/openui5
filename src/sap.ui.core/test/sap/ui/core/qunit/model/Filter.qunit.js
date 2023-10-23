@@ -1,23 +1,23 @@
 /* global  QUnit */
 sap.ui.define([
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function(Configuration, Filter, FilterOperator) {
+], function(Localization, Filter, FilterOperator) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
 		before() {
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function () {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -91,9 +91,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare with language tag", function (assert) {
-		var oConfigurationMock = this.mock(Configuration);
+		var oLocalizationMock = this.mock(Localization);
 
-		oConfigurationMock.expects("getLanguageTag").withExactArgs().returns("foo");
+		oLocalizationMock.expects("getLanguageTag").withExactArgs().returns("foo");
 		this.mock(String.prototype).expects("localeCompare")
 			.withExactArgs("~b", "foo")
 			.on("~a")
@@ -103,17 +103,17 @@ sap.ui.define([
 		assert.strictEqual(Filter.defaultComparator("~a", "~b"), "bar");
 
 		// Otherwise, the call in "afterEach" leads to an error.
-		oConfigurationMock.verify();
+		oLocalizationMock.verify();
 	});
 
 	//*********************************************************************************************
 	QUnit.test("defaultComparator: localeCompare for different locales", function (assert) {
-		Configuration.setLanguage("de");
+		Localization.setLanguage("de");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), -1);
 
-		Configuration.setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		// code under test
 		assert.strictEqual(Filter.defaultComparator("ä", "z"), 1);

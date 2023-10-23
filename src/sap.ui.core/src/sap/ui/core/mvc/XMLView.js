@@ -9,11 +9,11 @@ sap.ui.define([
 	"./XMLViewRenderer",
 	"sap/base/config",
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/strings/hash",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/util/merge",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/XMLTemplateProcessor",
@@ -31,11 +31,11 @@ sap.ui.define([
 		XMLViewRenderer,
 		BaseConfig,
 		Log,
+		Localization,
 		hash,
 		LoaderExtensions,
 		merge,
 		ManagedObject,
-		Configuration,
 		Control,
 		RenderManager,
 		XMLTemplateProcessor,
@@ -440,7 +440,7 @@ sap.ui.define([
 		return [
 			sComponentName || window.location.host + window.location.pathname,
 			oView.getId(),
-			Configuration.getLanguageTag()
+			Localization.getLanguageTag().toString()
 		].concat(oRootComponent && oRootComponent.getActiveTerminologies() || []);
 	}
 

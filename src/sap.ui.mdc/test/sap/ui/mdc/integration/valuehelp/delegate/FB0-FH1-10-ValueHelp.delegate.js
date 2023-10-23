@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
@@ -19,11 +20,11 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/condition/Condition"
 
 ], function(
 	ODataV4ValueHelpDelegate,
+	Element,
 	MTable,
 	MDCTable,
 	Conditions,
@@ -39,7 +40,6 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	Core,
 	Condition
 ) {
 	"use strict";
@@ -252,7 +252,7 @@ sap.ui.define([
 						});
 						let oConditions;
 						if (bHasCountryOfOrigin) {
-							const aCountryConditions = Core.byId("FB0-FF6").getConditions();
+							const aCountryConditions = Element.getElementById("FB0-FF6").getConditions();
 							oConditions = {
 								"countryOfOrigin_code": aCountryConditions
 							};

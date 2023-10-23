@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarLayoutData",
+	"sap/ui/core/Element",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/InvisibleText",
 	"sap/m/ActionSheet",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Toolbar,
 	OverflowToolbar,
 	OverflowToolbarLayoutData,
+	Element,
 	IconPool,
 	InvisibleText,
 	ActionSheet,
@@ -119,7 +121,7 @@ sap.ui.define([
 				icon: "sap-icon://accept",
 				text: "Close",
 				press: function () {
-					sap.ui.getCore().byId("otb0").closeOverflow();
+					Element.getElementById("otb0").closeOverflow();
 				}
 			}),
 			new Button({
@@ -140,7 +142,7 @@ sap.ui.define([
 						icon: "sap-icon://accept",
 						text: "Close",
 						press: function () {
-							sap.ui.getCore().byId("otb0").closeOverflow();
+							Element.getElementById("otb0").closeOverflow();
 						}
 					}),
 					new Button({
@@ -1168,8 +1170,8 @@ sap.ui.define([
 	});
 	*/
 
-	sap.ui.getCore().byId("sf1").attachSearch(function (oParams) {
-		sap.ui.getCore().byId("hotelsLabel").setText(oParams.getParameter("query"));
+	Element.getElementById("sf1").attachSearch(function (oParams) {
+		Element.getElementById("hotelsLabel").setText(oParams.getParameter("query"));
 	});
 
 	oApp.addPage(oPage).placeAt("content");

@@ -4,37 +4,44 @@
 
 // Provides control sap.m.SinglePlanningCalendarGrid.
 sap.ui.define([
-		'./SinglePlanningCalendarUtilities',
-		'./library',
-		'sap/ui/unified/DateRange',
-		'sap/ui/core/Control',
-		'sap/ui/core/LocaleData',
-		'sap/ui/core/Locale',
-		'sap/ui/core/InvisibleText',
-		'sap/ui/core/format/DateFormat',
-		'sap/ui/core/format/TimezoneUtil',
-		'sap/ui/core/Core',
-		'sap/ui/core/date/UniversalDate',
-		'sap/ui/core/dnd/DragDropInfo',
-		'sap/ui/unified/library',
-		'sap/ui/unified/calendar/DatesRow',
-		'sap/ui/unified/calendar/CalendarDate',
-		'sap/ui/unified/calendar/CalendarUtils',
-		'sap/ui/unified/DateTypeRange',
-		'sap/ui/events/KeyCodes',
-		'./SinglePlanningCalendarGridRenderer',
-		'sap/ui/core/delegate/ItemNavigation',
-		"sap/ui/thirdparty/jquery",
-		'./PlanningCalendarLegend',
-		'sap/ui/core/InvisibleMessage',
-		'sap/ui/core/library',
-		"sap/ui/core/date/CalendarUtils",
-		"sap/ui/core/Configuration",
-		"sap/ui/core/date/UI5Date"
-	],
-	function (
+	'./SinglePlanningCalendarUtilities',
+	'./library',
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	'sap/ui/unified/DateRange',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/Locale',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/format/TimezoneUtil',
+	'sap/ui/core/Core',
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/dnd/DragDropInfo',
+	'sap/ui/unified/library',
+	'sap/ui/unified/calendar/DatesRow',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/DateTypeRange',
+	'sap/ui/events/KeyCodes',
+	'./SinglePlanningCalendarGridRenderer',
+	'sap/ui/core/delegate/ItemNavigation',
+	"sap/ui/thirdparty/jquery",
+	'./PlanningCalendarLegend',
+	'sap/ui/core/InvisibleMessage',
+	'sap/ui/core/library',
+	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/date/UI5Date"
+],
+	function(
 		SinglePlanningCalendarUtilities,
 		library,
+		Formatting,
+		Localization,
+		Element,
+		Library,
 		DateRange,
 		Control,
 		LocaleData,
@@ -58,7 +65,6 @@ sap.ui.define([
 		InvisibleMessage,
 		coreLibrary,
 		CalendarDateUtils,
-		Configuration,
 		UI5Date
 	) {
 		"use strict";
@@ -390,7 +396,7 @@ sap.ui.define([
 			this._configureAppointmentsResize();
 			this._configureAppointmentsCreate();
 
-			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			this._oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified");
 			this._oFormatStartEndInfoAria = DateFormat.getDateTimeInstance({
 				pattern: "EEEE dd/MM/yyyy 'at' " + sTimePattern
 			});
@@ -795,7 +801,7 @@ sap.ui.define([
 					oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 
 					var oGrid = oEvent.getParameter("target"),
-						bIsRtl = Configuration.getRTL(),
+						bIsRtl = Localization.getRTL(),
 						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),
 						oFirstIntervalRectangle = aIntervalPlaceholders[0].getDomRef().getBoundingClientRect(),
 						iIntervalHeight = oFirstIntervalRectangle.height,
@@ -1013,7 +1019,7 @@ sap.ui.define([
 		 * @private
 		 */
 		SinglePlanningCalendarGrid.prototype._appFocusHandler = function(oEvent, iDirection) {
-			var oTarget = sap.ui.getCore().byId(oEvent.target.id) || this._findSrcControl(oEvent);
+			var oTarget = Element.getElementById(oEvent.target.id) || this._findSrcControl(oEvent);
 
 			if (oTarget && oTarget.isA("sap.ui.unified.CalendarAppointment")) {
 				this.fireAppointmentSelect({
@@ -2113,7 +2119,7 @@ sap.ui.define([
 		 */
 		SinglePlanningCalendarGrid.prototype._getCoreLocaleId = function () {
 			if (!this._sLocale) {
-				this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+				this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 			}
 
 			return this._sLocale;
@@ -2215,7 +2221,7 @@ sap.ui.define([
 				sFormattedEndDate = this._oFormatStartEndInfoAria.format(oAppointment.getEndDate()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
-			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(this._sLegendId), oAppointment);
+			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment);
 		};
 
 		/**
@@ -2302,7 +2308,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarGrid.prototype._createAppointmentsDndPlaceholders = function (oStartDate, iColumns) {
-			var bIsRtl = Configuration.getRTL(),
+			var bIsRtl = Localization.getRTL(),
 				i;
 
 			this._dndPlaceholdersMap = {};

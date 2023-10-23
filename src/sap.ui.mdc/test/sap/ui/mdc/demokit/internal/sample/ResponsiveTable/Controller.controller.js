@@ -1,11 +1,11 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/mdc/sample/controller/Controller.controller",
 	"sap/ui/core/message/Message",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/table/ResponsiveColumnSettings",
 	"sap/ui/core/library"
-], function(Controller, Message, Fragment, oCore, ResponsiveColumnSettings, coreLibrary) {
+], function(Messaging, Controller, Message, Fragment, ResponsiveColumnSettings, coreLibrary) {
 	"use strict";
 
 	const ValueState = coreLibrary.ValueState;
@@ -15,7 +15,7 @@ sap.ui.define([
 		onInit: function() {
 			Controller.prototype.onInit.apply(this, arguments);
 			this.oDataStatePlugin = this.byId("dataStatePlugin");
-			this.oMessageManager = oCore.getMessageManager();
+			this.oMessageManager = Messaging;
 			this.oMessageManager.registerObject(this.getView(), true);
 			this.getView().setModel(this.oMessageManager.getMessageModel(), "message");
 			this.getView().bindElement("/ProductList");

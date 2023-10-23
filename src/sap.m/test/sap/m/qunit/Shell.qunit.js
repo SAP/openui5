@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
@@ -9,7 +11,7 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
+], function(Element, Library, qutils, createAndAppendDiv, jQuery, coreLibrary, Shell, SplitApp, Page, Mobile, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -62,7 +64,7 @@ sap.ui.define([
 
 	// Shell features
 	QUnit.test("Shell features", function(assert) {
-		var sExpectedAltForLogoImage = oCore.getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO");
+		var sExpectedAltForLogoImage = Library.getResourceBundleFor("sap.m").getText("SHELL_ARIA_LOGO");
 		assert.equal(oShell.$("hdrTxt").text(), "Test Shell", "Title should be rendered");
 		assert.equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
 		assert.equal(oShell.$("logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
@@ -77,7 +79,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// act
-		assert.ok(!oCore.byId(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
+		assert.ok(!Element.getElementById(oShellNoTitle.getId() + "-hdrText"), "No title should be rendered if no title is passed");
 
 		// clean up
 		oShellNoTitle.destroy();

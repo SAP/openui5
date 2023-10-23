@@ -10,8 +10,8 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/IllustratedMessageType",
 	"sap/m/IllustratedMessageSize",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleMessage",
 	"sap/ui/core/library",
 	"sap/ui/integration/controls/BlockingMessage",
@@ -30,8 +30,8 @@ sap.ui.define([
 	mLibrary,
 	IllustratedMessageType,
 	IllustratedMessageSize,
-	Core,
 	Control,
+	Element,
 	InvisibleMessage,
 	coreLibrary,
 	BlockingMessage,
@@ -792,7 +792,7 @@ sap.ui.define([
 	BaseContent.prototype.validateControls = function (bShowValueState, bSkipFiringStateChangedEvent) { };
 
 	BaseContent.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.getElementById(this.getCard());
 	};
 
 	BaseContent.prototype.isSkeleton = function () {

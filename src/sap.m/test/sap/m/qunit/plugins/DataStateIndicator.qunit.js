@@ -2,6 +2,7 @@ sap.ui.define([
 	'sap/m/List',
 	'sap/m/StandardListItem',
 	'sap/ui/core/Core',
+	"sap/ui/core/Messaging",
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/message/Message',
 	'sap/m/plugins/DataStateIndicator',
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/m/Toolbar',
 	'sap/m/Link',
 	'sap/m/Text'
-], function(List, StandardListItem, Core, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter) {
+], function(List, StandardListItem, Core, Messaging, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter) {
 
 	"use strict";
 	/*global QUnit */
@@ -45,7 +46,7 @@ sap.ui.define([
 			}.bind(this));
 
 			this.addMessage = function(sType) {
-				Core.getMessageManager().addMessages(
+				Messaging.addMessages(
 					new Message({
 						message: sType + " Message Text",
 						type: sType,

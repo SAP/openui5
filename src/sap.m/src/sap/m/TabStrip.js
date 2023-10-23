@@ -3,9 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/delegate/ScrollEnablement',
@@ -27,12 +31,17 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Configuration",
 	"sap/ui/base/Object",
-	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
 function(
+	Localization,
 	Control,
+	ControlBehavior,
 	Element,
 	IconPool,
+	Library,
+	RenderManager,
 	ItemNavigation,
 	ManagedObject,
 	ScrollEnablement,
@@ -198,7 +207,7 @@ function(
 		 *
 		 * @type {module:sap/base/i18n/ResourceBundle}
 		 */
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 
 		/**
 		 * Icon buttons used in <code>TabStrip</code>.
@@ -239,7 +248,7 @@ function(
 		 * @type {number}
 		 */
 		TabStrip.SCROLL_ANIMATION_DURATION = (function(){
-			var sAnimationMode = Configuration.getAnimationMode();
+			var sAnimationMode = ControlBehavior.getAnimationMode();
 
 			return (sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal ? 500 : 0);
 		})();
@@ -253,7 +262,7 @@ function(
 		 */
 		TabStrip.prototype.init = function () {
 			this._bDoScroll = !Device.system.phone;
-			this._bRtl = Configuration.getRTL();
+			this._bRtl = Localization.getRTL();
 			this._iCurrentScrollLeft = 0;
 			this._iMaxOffsetLeft = null;
 			this._scrollable = null;
@@ -344,7 +353,7 @@ function(
 		 * @private
 		 */
 		TabStrip.prototype._handleInititalScrollToItem = function() {
-			var oItem = sap.ui.getCore().byId(this.getSelectedItem());
+			var oItem = Element.getElementById(this.getSelectedItem());
 			if (oItem && oItem.$().length > 0) { // check if the item is already in the DOM
 				this._scrollIntoView(oItem, 500);
 			}
@@ -359,7 +368,7 @@ function(
 		 * @override
 		 */
 		TabStrip.prototype.getFocusDomRef = function () {
-			var oTab = sap.ui.getCore().byId(this.getSelectedItem());
+			var oTab = Element.getElementById(this.getSelectedItem());
 
 			if (!oTab) {
 				return null;
@@ -455,7 +464,7 @@ function(
 			if (bScrollNeeded && !this.getAggregation("_rightArrowButton") && !this.getAggregation("_leftArrowButton")) {
 				this._getLeftArrowButton();
 				this._getRightArrowButton();
-				var oRm = sap.ui.getCore().createRenderManager();
+				var oRm = new RenderManager().getInterface();
 				this.getRenderer().renderRightOverflowButtons(oRm, this, true);
 				this.getRenderer().renderLeftOverflowButtons(oRm, this, true);
 				oRm.destroy();
@@ -1347,7 +1356,7 @@ function(
 
 
 			oPicker.setOffsetX(Math.round(
-				Configuration.getRTL() ?
+				Localization.getRTL() ?
 					this.getPicker().$().width() - this.$().width() :
 					this.$().width() - this.getPicker().$().width()
 			)); // LTR or RTL mode considered

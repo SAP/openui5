@@ -1,13 +1,14 @@
 /* global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/p13n/P13nBuilder",
 	"sap/m/p13n/BasePanel",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Element",
 	"sap/ui/core/Core",
-    "sap/ui/fl/write/api/FieldExtensibility",
-    "sap/ui/rta/Utils"
-], function(P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/rta/Utils"
+], function(Library, P13nBuilder, BasePanel, JSONModel, Element, oCore, FieldExtensibility, Utils) {
 	"use strict";
 
 	const aVisible = ["key1", "key2", "key3"];
@@ -241,7 +242,7 @@ sap.ui.define([
         // Arrange
         sinon.stub(FieldExtensibility, "isExtensibilityEnabled").returns(Promise.resolve(true));
         sinon.stub(Utils, "isServiceUpToDate").returns(Promise.resolve(false));
-        const oLibraryResourceBundleStub = sinon.stub(sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"), "getText");
+        const oLibraryResourceBundleStub = sinon.stub(Library.getResourceBundleFor("sap.ui.mdc"), "getText");
         oLibraryResourceBundleStub.withArgs("p13nDialog.rtaAddTooltip").returns("OK");
 
         const oP13nData = P13nBuilder.prepareAdaptationData(this.aMockInfo, this.fnEnhancer, true);

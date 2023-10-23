@@ -2,15 +2,17 @@
 /* eslint max-nested-callbacks: 0 */
 
 sap.ui.define([
-	"sap/ui/core/Core"
-], function (
-	Core
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(
+	Core,
+	Lib
 ) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	var oLibrary = Core.getLoadedLibraries()["sap.ui.integration"];
+	var oLibrary = Lib.all()["sap.ui.integration"];
 	var mCustomElements = oLibrary.extensions["sap.ui.integration"].customElements;
 	var sPrefix = "ui-integration";
 	var aCustomElements = Object.keys(mCustomElements).map(function (sCustomElementName) { return sPrefix + "-" + sCustomElementName; }); // prefix custom elements names

@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/message/Message",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/ODataUtils"
-], function (Log, coreLibrary, Messaging, Message, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils) {
+], function (Log, Library, coreLibrary, Messaging, Message, MessageScope, ODataMessageParser, ODataMetadata, ODataUtils) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
@@ -1430,8 +1431,8 @@ sap.ui.define([
 				getText : function () {}
 			};
 
-		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle")
-			.withExactArgs()
+		this.mock(Library).expects("getResourceBundleFor")
+			.withExactArgs("sap.ui.core")
 			.returns(oResourceBundle);
 		this.mock(oResourceBundle).expects("getText")
 			.withExactArgs("CommunicationError")

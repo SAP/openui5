@@ -4,6 +4,8 @@
 
 // Provides control sap.ui.unified.MenuTextFieldItem.
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	'sap/ui/core/ValueStateSupport',
 	'./MenuItemBase',
 	'./library',
@@ -12,12 +14,12 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/events/PseudoEvents',
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/Core',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/IconPool', // required by RenderManager#icon
 	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
 ],
 	function(
+		Localization,
+		Library,
 		ValueStateSupport,
 		MenuItemBase,
 		library,
@@ -25,9 +27,7 @@ sap.ui.define([
 		Device,
 		Log,
 		PseudoEvents,
-		InvisibleText,
-		Core,
-		Configuration
+		InvisibleText
 	) {
 	"use strict";
 
@@ -345,7 +345,7 @@ sap.ui.define([
 		var $lbl = this.$("lbl");
 		var offsetLeft = $lbl.length ? $lbl.get(0).offsetLeft : 0;
 
-		if (Core.getConfiguration().getRTL()) {
+		if (Localization.getRTL()) {
 			$tf.parent().css({"width": "auto", "right": (this.$().outerWidth(true) - offsetLeft + ($lbl.outerWidth(true) - $lbl.outerWidth())) + "px"});
 		} else {
 			$tf.parent().css({"width": "auto", "left": (offsetLeft + $lbl.outerWidth(true)) + "px"});
@@ -354,7 +354,7 @@ sap.ui.define([
 
 
 	MenuTextFieldItem.prototype._checkCursorPosForNav = function(bForward) {
-		var bRtl = Configuration.getRTL();
+		var bRtl = Localization.getRTL();
 		var bBack = bForward ? bRtl : !bRtl;
 		var $input = this.$("tf");
 		var iPos = $input.cursorPos();
@@ -372,7 +372,7 @@ sap.ui.define([
 		var sCountInfo, sTypeInfo, oUnifiedBundle;
 
 		if (!this._invisibleDescription) {
-			oUnifiedBundle = Core.getLibraryResourceBundle("sap.ui.unified");
+			oUnifiedBundle = Library.getResourceBundleFor("sap.ui.unified");
 			sCountInfo = oUnifiedBundle.getText("UNIFIED_MENU_ITEM_COUNT_TEXT", [oInfo.iItemNo, oInfo.iTotalItems]);
 			sTypeInfo = oUnifiedBundle.getText("UNIFIED_MENU_ITEM_HINT_TEXT");
 			this._invisibleDescription = new InvisibleText({

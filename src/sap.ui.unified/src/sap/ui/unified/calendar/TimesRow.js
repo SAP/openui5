@@ -4,7 +4,10 @@
 
 //Provides control sap.ui.unified.CalendarTimeInterval.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -17,10 +20,12 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Formatting,
 	Control,
+	Element,
+	Library,
 	LocaleData,
 	ItemNavigation,
 	CalendarUtils,
@@ -33,7 +38,6 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	DateRange,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -194,7 +198,7 @@ sap.ui.define([
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		this._rb = Library.getResourceBundleFor("sap.ui.unified");
 
 	};
 
@@ -216,7 +220,7 @@ sap.ui.define([
 
 	TimesRow.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.getElementById(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				_unbindMousemove.call(this, true);
 
@@ -388,7 +392,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;

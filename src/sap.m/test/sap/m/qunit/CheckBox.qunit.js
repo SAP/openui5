@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/CheckBox",
@@ -11,7 +13,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/message/Message",
 	"sap/base/Log"
-], function (
+], function(
+	Library,
+	Messaging,
 	QUtils,
 	createAndAppendDiv,
 	CheckBox,
@@ -1227,8 +1231,8 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
-		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_NOT_CHECKED"), "Description");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
+		assert.strictEqual(oInfo.description, "Text " + Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_NOT_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.strictEqual(oInfo.editable, true, "Editable");
@@ -1236,7 +1240,7 @@ sap.ui.define([
 		oControl.setEnabled(false);
 		oControl.setEditable(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
+		assert.strictEqual(oInfo.description, "Text " + Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_CHECKED"), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		assert.strictEqual(oInfo.editable, false, "Editable");
@@ -1262,13 +1266,13 @@ sap.ui.define([
 			oModel = new JSONModel({
 				selected: true
 			}),
-			oMessageManager = Core.getMessageManager(),
+			oMessageManager = Messaging,
 			oMessage = new Message({
 				type: MessageType.Error,
 				target: "/selected",
 				processor: oModel
 			}),
-			sExpectedTooltipText = Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+			sExpectedTooltipText = Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		// act
 		this.oCheckBox.setModel(oModel);
@@ -1289,7 +1293,7 @@ sap.ui.define([
 			oModel = new JSONModel({
 				selected: true
 			}),
-			oMessageManager = Core.getMessageManager(),
+			oMessageManager = Messaging,
 			sMessage = "This error message should be shown in the tooltip instead of the default message from the Resource Bundle",
 			oMessage = new Message({
 				type: MessageType.Error,

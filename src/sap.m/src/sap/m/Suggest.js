@@ -11,8 +11,8 @@ sap.ui.define([
 	"./SuggestionItem",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/ui/core/Core",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib"
 ], function (
 	Toolbar,
 	Button,
@@ -22,8 +22,8 @@ sap.ui.define([
 	SuggestionItem,
 	Device,
 	library,
-	Core,
-	InvisibleText
+	InvisibleText,
+	Library
 ) {
 	"use strict";
 
@@ -125,7 +125,7 @@ sap.ui.define([
 			});
 
 			okButton = new Button({
-				text : Core.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK"),
+				text : Library.getResourceBundleFor("sap.m").getText("MSGBOX_OK"),
 				press : function() {
 					dialog.close();
 				}

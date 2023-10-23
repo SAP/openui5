@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectAttribute",
@@ -16,6 +18,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes"
 ], function(
+	Localization,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	ObjectAttribute,
@@ -38,7 +42,7 @@ sap.ui.define([
 		TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("objectAttributes");
 	createAndAppendDiv("objectAttributesWrap");
@@ -153,11 +157,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("In french language there is an extra space before each colon", function(assert) {
-		var sOriginalLanguage = oCore.getConfiguration().getLanguage(),
+		var sOriginalLanguage = Localization.getLanguage(),
 			oObjectAttribute;
 
 		// Arrange
-		oCore.getConfiguration().setLanguage("fr");
+		Localization.setLanguage("fr");
 
 		// Act
 		oObjectAttribute = new ObjectAttribute({
@@ -172,7 +176,7 @@ sap.ui.define([
 		// Clean up
 		oObjectAttribute.destroy();
 
-		oCore.getConfiguration().setLanguage(sOriginalLanguage);
+		Localization.setLanguage(sOriginalLanguage);
 	});
 
 	QUnit.test("Text-only ObjectAttribute renders correctly", function(assert) {

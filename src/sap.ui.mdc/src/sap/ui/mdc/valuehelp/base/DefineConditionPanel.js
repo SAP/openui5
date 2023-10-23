@@ -6,6 +6,9 @@ sap.ui.define([
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/util/merge',
 	'sap/base/util/deepEqual',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/field/ConditionsType',
@@ -41,50 +44,53 @@ sap.ui.define([
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/thirdparty/jquery'
 ], function(
-		Control,
-		ManagedObjectObserver,
-		merge,
-		deepEqual,
-		Condition,
-		FilterOperatorUtil,
-		ConditionsType,
-		splitValue,
-		FieldEditMode,
-		FieldDisplay,
-		BaseType,
-		ConditionValidated,
-		OperatorValueType,
-		Field,
-		ValueHelp,
-		Popover,
-		FixedList,
-		FixedListItem,
-		ManagedObjectModel,
-		JSONModel,
-		ResourceModel,
-		StringType,
-		ParseException,
-		coreLibrary,
-		InvisibleText,
-		Grid,
-		GridData,
-		mLibrary,
-		Button,
-		Panel,
-		OverflowToolbar,
-		OverflowToolbarLayoutData,
-		ToolbarSpacer,
-		Text,
-		Title,
-		IconPool,
-		InvisibleMessage,
-		jQuery
-		) {
+	Control,
+	ManagedObjectObserver,
+	merge,
+	deepEqual,
+	Element,
+	Library,
+	Messaging,
+	Condition,
+	FilterOperatorUtil,
+	ConditionsType,
+	splitValue,
+	FieldEditMode,
+	FieldDisplay,
+	BaseType,
+	ConditionValidated,
+	OperatorValueType,
+	Field,
+	ValueHelp,
+	Popover,
+	FixedList,
+	FixedListItem,
+	ManagedObjectModel,
+	JSONModel,
+	ResourceModel,
+	StringType,
+	ParseException,
+	coreLibrary,
+	InvisibleText,
+	Grid,
+	GridData,
+	mLibrary,
+	Button,
+	Panel,
+	OverflowToolbar,
+	OverflowToolbarLayoutData,
+	ToolbarSpacer,
+	Text,
+	Title,
+	IconPool,
+	InvisibleMessage,
+	jQuery
+) {
 	"use strict";
 
 	// translation utils
-	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-	let oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
+	let oMessageBundleM = Library.getResourceBundleFor("sap.m");
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		oMessageBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -247,7 +253,7 @@ sap.ui.define([
 		},
 
 		init: function() {
-			sap.ui.getCore().getMessageManager().registerObject(this, true);
+			Messaging.registerObject(this, true);
 
 			Control.prototype.init.apply(this, arguments);
 
@@ -276,7 +282,7 @@ sap.ui.define([
 		},
 
 		exit: function() {
-			sap.ui.getCore().getMessageManager().unregisterObject(this, true);
+			Messaging.unregisterObject(this, true);
 			this._oObserver.disconnect();
 			this._oObserver = undefined;
 
@@ -295,7 +301,7 @@ sap.ui.define([
 		},
 
 		byId: function(sId) {
-			return sap.ui.getCore().byId(this.getId() + "--" + sId);
+			return Element.getElementById(this.getId() + "--" + sId);
 		},
 
 		onBeforeRendering: function() {
@@ -1035,7 +1041,7 @@ sap.ui.define([
 		const bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
 
 		const sFixedListId = this._sOperatorHelpId + "-pop-fl";
-		const oFixedList = sap.ui.getCore().byId(sFixedListId);
+		const oFixedList = Element.getElementById(sFixedListId);
 
 		let oTemplate;
 		if (bHasMultipleGroups) {

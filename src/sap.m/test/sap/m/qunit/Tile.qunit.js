@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Tile",
 	"sap/m/TileContainer",
@@ -7,7 +9,7 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(qutils, Tile, TileContainer, mobileLibrary, InvisibleText, KeyCodes, core) {
+], function(Element, Library, qutils, Tile, TileContainer, mobileLibrary, InvisibleText, KeyCodes, core) {
 	"use strict";
 
 	QUnit.module("Dimensions");
@@ -284,8 +286,8 @@ sap.ui.define([
 		sut.isEditable(true);
 		//Assert
 		assert.equal(sut.$().attr('aria-describedby'), InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY"), 'When tile is editable, aria-describedby should exist');
-		assert.equal(core.byId(InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY")).getText(),
-				core.getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
+		assert.equal(Element.getElementById(InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY")).getText(),
+				Library.getResourceBundleFor("sap.m").getText("TILE_REMOVE_BY_DEL_KEY"),
 				'When tile is editable, aria-describedby should point to a label with certain text');
 
 		cnt.destroy();

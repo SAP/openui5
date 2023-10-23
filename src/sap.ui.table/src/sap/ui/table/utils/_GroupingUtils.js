@@ -4,10 +4,11 @@
 
 // Provides helper sap.ui.table.utils._GroupingUtils.
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/model/Sorter",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function(Sorter, Device, jQuery) {
+], function(Element, Sorter, Device, jQuery) {
 	"use strict";
 
 	/**
@@ -433,7 +434,7 @@ sap.ui.define([
 			var oBinding = oTable.getBinding();
 
 			// check for grouping being supported or not (only for client ListBindings!!)
-			var oGroupBy = sap.ui.getCore().byId(oTable.getGroupBy());
+			var oGroupBy = Element.getElementById(oTable.getGroupBy());
 			var bIsSupported = oGroupBy && oGroupBy.getGrouped() && GroupingUtils.TableUtils.isA(oBinding, "sap.ui.model.ClientListBinding");
 
 			// only enhance the binding if it has not been done yet and supported!

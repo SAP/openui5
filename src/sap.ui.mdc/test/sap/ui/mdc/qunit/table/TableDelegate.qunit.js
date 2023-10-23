@@ -1,6 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"./QUnitUtils",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/GridTableType",
@@ -25,6 +26,7 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil"
 ], function(
 	TableQUnitUtils,
+	Library,
 	TableDelegate,
 	Table,
 	GridTableType,
@@ -357,7 +359,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("validateState", function(assert) {
-		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		const oState = {};
 		let oValidationState = this.oTable.validateState(oState, "Group");
 
@@ -440,7 +442,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("formatGroupHeader", function(assert) {
-		const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		const oContext = new Context();
 
 		sinon.stub(oContext, "getProperty").callsFake(function(sPath) {

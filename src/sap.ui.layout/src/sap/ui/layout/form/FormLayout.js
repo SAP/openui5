@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.layout.form.FormLayout.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/Element',
 	'sap/ui/layout/library',
@@ -11,10 +12,9 @@ sap.ui.define([
 	'./FormHelper',
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/thirdparty/jquery',
-	"sap/ui/core/Configuration",
 	// jQuery custom selectors ":sapFocusable"
 	'sap/ui/dom/jquery/Selectors'
-], function(Control, Element, library, FormLayoutRenderer, FormHelper, Parameters, jQuery, Configuration) {
+], function(Localization, Control, Element, library, FormLayoutRenderer, FormHelper, Parameters, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.BackgroundDesign
@@ -151,7 +151,7 @@ sap.ui.define([
 	FormLayout.prototype.onsapright = function(oEvent){
 
 		if (FormHelper.isArrowKeySupported()) { // no async call needed here
-			var bRtl = Configuration.getRTL();
+			var bRtl = Localization.getRTL();
 
 			if (!bRtl) {
 				this.navigateForward(oEvent);
@@ -165,7 +165,7 @@ sap.ui.define([
 	FormLayout.prototype.onsapleft = function(oEvent){
 
 		if (FormHelper.isArrowKeySupported()) { // no async call needed here
-			var bRtl = Configuration.getRTL();
+			var bRtl = Localization.getRTL();
 
 			if (!bRtl) {
 				this.navigateBack(oEvent);

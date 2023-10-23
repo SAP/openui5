@@ -5,8 +5,8 @@
 sap.ui.define([
 	"../library",
 	"sap/m/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/m/Button",
@@ -18,8 +18,8 @@ sap.ui.define([
 ], function (
 	library,
 	mLibrary,
-	Core,
 	Control,
+	Element,
 	CardActions,
 	BindingHelper,
 	Button,
@@ -116,7 +116,7 @@ sap.ui.define([
 		}
 
 		var oToolbar = this._getToolbar(),
-			oCard = Core.byId(this.getCard()),
+			oCard = Element.getElementById(this.getCard()),
 			oActions = new CardActions({
 				card: oCard
 			}),

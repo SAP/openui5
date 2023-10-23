@@ -1,13 +1,13 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/core/Component",
 	"sap/ui/core/UIComponent",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/theming/ThemeManager"
-], function (Core, DataCollector, Component, UIComponent, Configuration, ThemeManager) {
+], function (Lib, Theming, DataCollector, Component, UIComponent, ThemeManager) {
 		"use strict";
 
 		QUnit.module("Data collector", {
@@ -139,9 +139,9 @@ sap.ui.define([
 		QUnit.test("Technical Info", function (assert) {
 			var done = assert.async();
 			// Arrange
-			var oGetLoadedLibrariesMock = sinon.stub(Core, "getLoadedLibraries").returns(["sap.m"]);
+			var oGetLoadedLibrariesMock = sinon.stub(Lib, "all").returns(["sap.m"]);
 			var oGetThemePathMock = sinon.stub(ThemeManager, "_getThemePath").returns("http://www.example.com/");
-			var oGetThemeMock = sinon.stub(Configuration, "getTheme").returns("fiori_3");
+			var oGetThemeMock = sinon.stub(Theming, "getTheme").returns("fiori_3");
 
 			this.DataCollector.getTechInfoJSON().then(function (oTechData) {
 				// Assert

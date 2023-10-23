@@ -1,12 +1,13 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Fiori20Adapter",
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
-"sap/m/MessagePage",
+	"sap/m/MessagePage",
 	"sap/m/Bar",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -22,13 +23,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
+	Element,
 	createAndAppendDiv,
 	Fiori20Adapter,
 	Page,
 	jQuery,
 	Device,
 	JSONModel,
-MessagePage,
+	MessagePage,
 	Bar,
 	Text,
 	Button,
@@ -1109,7 +1111,7 @@ MessagePage,
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.getElementById("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.ok(sPageTitle === "Test", "page title is identified");
 		assert.ok(oBackButton instanceof Button, "back button is identified");
@@ -1155,7 +1157,7 @@ MessagePage,
 		oNestedNavContainer.addPage(new Page("page2", {title: "Test2", showNavButton: true}));
 
 		// Assert
-		assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.getElementById("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.ok(sPageTitle === "Test1", "page title is identified");
@@ -1195,7 +1197,7 @@ MessagePage,
 
 		function checkOnAfterNavigateToPage2 () {
 			// Assert
-			assert.ok(Core.byId("page2").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+			assert.ok(Element.getElementById("page2").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 			assert.ok(oSpy.calledOnce, "view change called once");
 			assert.equal(sViewId, "myBasePage", "view id is identified");
 			assert.ok(sPageTitle === "Test2", "page title is identified");
@@ -1209,7 +1211,7 @@ MessagePage,
 
 		function checkOnAfterReturnToPage1 () {
 			// Assert
-			assert.ok(Core.byId("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+			assert.ok(Element.getElementById("page1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 			assert.ok(oSpy.calledOnce, "view change called once");
 			assert.equal(sViewId, "myBasePage", "view id is identified");
 			assert.ok(sPageTitle === "Test1", "page title is identified");
@@ -1259,7 +1261,7 @@ MessagePage,
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.getElementById("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.equal(sPageTitle, "Test", "page title is identified");
@@ -1316,7 +1318,7 @@ MessagePage,
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.getElementById("myBasePage").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage", "view id is identified");
 		assert.equal(sPageTitle, "Test1", "page title is identified");
@@ -1381,7 +1383,7 @@ MessagePage,
 		Fiori20Adapter.traverse(this.oNavContainer, oAdaptOptions);
 
 		// Assert
-		assert.ok(Core.byId("myBasePage1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
+		assert.ok(Element.getElementById("myBasePage1").hasStyleClass("sapF2CollapsedHeader"), "page header is collapsed");
 		assert.ok(oSpy.calledOnce, "view change called once");
 		assert.equal(sViewId, "myBasePage1", "view id is identified");
 		assert.equal(sPageTitle, "Test1", "page title is identified");
@@ -1531,7 +1533,7 @@ MessagePage,
 				oSpy = this.spy(fnTitleListener);
 
 		//setup
-		Core.byId("detailPage1-navButton").setVisible(false); //only master page has back button
+		Element.getElementById("detailPage1-navButton").setVisible(false); //only master page has back button
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		//act
@@ -1559,7 +1561,7 @@ MessagePage,
 				oSpy = this.spy(fnTitleListener);
 
 		//setup
-		Core.byId("masterPage1-navButton").setVisible(false); //only detail page has back button
+		Element.getElementById("masterPage1-navButton").setVisible(false); //only detail page has back button
 		Fiori20Adapter.attachViewChange(oSpy);
 
 		//act

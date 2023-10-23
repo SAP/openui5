@@ -5,6 +5,7 @@ sap.ui.define([
 		'./library',
 		'./Button',
 		'./ScrollContainer',
+		"sap/base/i18n/Localization",
 		'sap/ui/core/Core',
 		'sap/ui/core/Control',
 		'sap/ui/core/Element',
@@ -19,7 +20,6 @@ sap.ui.define([
 		"sap/ui/events/KeyCodes",
 		"sap/ui/events/PseudoEvents",
 		"sap/ui/thirdparty/jquery",
-		"sap/ui/core/Configuration",
 		"sap/ui/core/Lib",
 		"sap/ui/dom/jquery/scrollLeftRTL", // jQuery Plugin "scrollLeftRTL"
 		"sap/ui/dom/jquery/scrollRightRTL", // jQuery Plugin "scrollRightRTL"
@@ -29,6 +29,7 @@ sap.ui.define([
 		library,
 		Button,
 		ScrollContainer,
+		Localization,
 		Core,
 		Control,
 		Element,
@@ -43,7 +44,6 @@ sap.ui.define([
 		KeyCodes,
 		PseudoEvents,
 		jQuery,
-		Configuration,
 		CoreLib
 	) {
 		"use strict";
@@ -276,7 +276,7 @@ sap.ui.define([
 
 		HeaderContainer.prototype.init = function () {
 			this._aItemEnd = [];
-			this._bRtl = Configuration.getRTL();
+			this._bRtl = Localization.getRTL();
 			this._oRb = CoreLib.getResourceBundleFor("sap.m");
 			this._oScrollCntr = new ScrollContainer(this.getId() + "-scrl-cntnr", {
 				width: "100%",
@@ -440,7 +440,7 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype.onAfterRendering = function () {
-			this._bRtl = Configuration.getRTL();
+			this._bRtl = Localization.getRTL();
 			this._checkOverflow();
 		};
 

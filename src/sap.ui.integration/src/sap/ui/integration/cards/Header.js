@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/base/util/merge",
 	"sap/f/cards/Header",
@@ -15,7 +15,7 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/formatters/IconFormatter"
 ], function (
-	Core,
+	Element,
 	JSONModel,
 	merge,
 	FHeader,
@@ -351,7 +351,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	Header.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.getElementById(this.getCard());
 	};
 
 	Header.prototype._isDataProviderJson = function () {

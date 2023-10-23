@@ -1,12 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/SearchFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils"
-], function (
+], function(
+	Element,
 	SearchFilter,
 	Card,
 	Core,
@@ -113,7 +115,7 @@ sap.ui.define([
 		var oSF = new SearchFilter({
 			config: oConfig
 		});
-		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Element.getElementById(oSF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

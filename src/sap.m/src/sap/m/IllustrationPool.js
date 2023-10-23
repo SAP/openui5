@@ -4,11 +4,11 @@
 sap.ui.define([
 	"sap/base/Log",
 	"./library",
-	'sap/ui/core/Core',
+	"sap/ui/core/EventBus",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/StaticArea"
 ],
-	function(Log, mLibrary, Core, jQuery, StaticArea) {
+	function(Log, mLibrary, EventBus, jQuery, StaticArea) {
 		"use strict";
 
 		/**
@@ -371,7 +371,7 @@ sap.ui.define([
 					error: function (jqXHR, sStatus) {
 						if (sStatus !== "abort") { // log an error if it isn't aborted
 							delete oAssetRegistry[sRegistryKey];
-							Core.getEventBus().publish("sapMIllusPool-assetLdgFailed");
+							EventBus.getInstance().publish("sapMIllusPool-assetLdgFailed");
 							Log.error(sId + " asset could not be loaded");
 							fnResolve();
 						}

@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	"sap/ui/core/theming/Parameters",
 	'sap/ui/core/Icon',
 	"./SideNavigationRenderer"
@@ -13,6 +14,7 @@ sap.ui.define([
 	function(
 		library,
 		Control,
+		Element,
 		Parameters,
 		Icon,
 		SideNavigationRenderer
@@ -219,7 +221,7 @@ sap.ui.define([
 			}
 
 			if (typeof selectedItem === 'string') {
-				listItemToSelect = sap.ui.getCore().byId(selectedItem);
+				listItemToSelect = Element.getElementById(selectedItem);
 			} else {
 				listItemToSelect = selectedItem;
 			}

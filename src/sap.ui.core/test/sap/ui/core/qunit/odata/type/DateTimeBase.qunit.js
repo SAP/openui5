@@ -3,9 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/base/util/ObjectPath",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
@@ -18,9 +19,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, ObjectPath, CalendarType, Configuration, Control, UI5Date, DateFormat, FormatException,
-	ParseException, ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset,
-	ODataType, TestUtils) {
+], function(Log, Formatting, Localization, ObjectPath, CalendarType, Control, UI5Date, DateFormat, FormatException, ParseException, ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -86,17 +85,17 @@ sap.ui.define([
 				}
 			},
 			beforeEach : function () {
-				this.sDefaultCalendarType = Configuration.getCalendarType();
-				this.sDefaultLanguage = Configuration.getLanguage();
+				this.sDefaultCalendarType = Formatting.getCalendarType();
+				this.sDefaultLanguage = Localization.getLanguage();
 				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				Configuration.setCalendarType(CalendarType.Gregorian);
-				Configuration.setLanguage("en-US");
+				Formatting.setCalendarType(CalendarType.Gregorian);
+				Localization.setLanguage("en-US");
 			},
 			afterEach : function () {
-				Configuration.setCalendarType(this.sDefaultCalendarType);
-				Configuration.setLanguage(this.sDefaultLanguage);
+				Formatting.setCalendarType(this.sDefaultCalendarType);
+				Localization.setLanguage(this.sDefaultLanguage);
 			}
 		});
 	}
@@ -279,7 +278,7 @@ sap.ui.define([
 				oType = createInstance(sTypeName);
 
 			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-			Configuration.setLanguage("de-DE");
+			Localization.setLanguage("de-DE");
 			assert.strictEqual(oType.formatValue(oDateTime, "string"),
 				DateFormat.getDateTimeInstance().format(oDateTime),
 				"adjusted to changed language");
@@ -1009,7 +1008,7 @@ sap.ui.define([
 			oParsedDate,
 			oType = new DateTimeOffset(undefined, {precision : 3}).setV4();
 
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		oType._resetModelFormatter();
 
 		// code under test

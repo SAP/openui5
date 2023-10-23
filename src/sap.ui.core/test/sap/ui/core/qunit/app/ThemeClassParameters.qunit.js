@@ -1,9 +1,9 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function (Parameters, jQuery, Configuration) {
+	"sap/ui/thirdparty/jquery"
+], function (Theming, Parameters, jQuery) {
 	"use strict";
 
 	/**
@@ -87,7 +87,7 @@ sap.ui.define([
 			+ "\" (" + Parameters.get(sExpectedLessParameter) + ") - normalized results: " + normalizeValue($domElement.css(sCSSProperty)) + " vs " + normalizeValue(sThemeParameterValue));
 	}
 
-	QUnit.module("Theme-Dependent CSS Classes for: " + Configuration.getTheme(), {
+	QUnit.module("Theme-Dependent CSS Classes for: " + Theming.getTheme(), {
 		beforeEach: function () {
 			jQuery("#qunit-fixture").append(jQuery("<div>I love theming!</div>"));
 		},

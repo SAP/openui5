@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.layout.DynamicSideContent
-sap.ui.define(["sap/ui/layout/library", "sap/ui/Device", "sap/ui/core/Configuration"],
-	function(library, Device, Configuration) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", "sap/ui/layout/library", "sap/ui/Device"],
+	function(Localization, Library, library, Device) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -36,7 +36,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device", "sap/ui/core/Configurat
 		DynamicSideContentRenderer.renderSubControls = function (oRm, oSideControl) {
 			var iSideContentId = oSideControl.getId(),
 				bShouldSetHeight = oSideControl._shouldSetHeight(),
-				bPageRTL = Configuration.getRTL(),
+				bPageRTL = Localization.getRTL(),
 				position = oSideControl.getSideContentPosition();
 
 			if ((position === SideContentPosition.Begin && !bPageRTL) || (bPageRTL && position === SideContentPosition.End)) {
@@ -87,7 +87,7 @@ sap.ui.define(["sap/ui/layout/library", "sap/ui/Device", "sap/ui/core/Configurat
 
 			oRm.class("sapUiDSCS");
 
-			var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+			var oMessageBundle = Library.getResourceBundleFor("sap.ui.layout");
 			oRm.attr("aria-label", oMessageBundle.getText(SIDE_CONTENT_LABEL));
 
 			oRm.accessibilityState(oSideControl, {

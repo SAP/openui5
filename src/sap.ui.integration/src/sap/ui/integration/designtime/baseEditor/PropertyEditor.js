@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/integration/designtime/baseEditor/util/findClosestInstance",
 	"sap/ui/integration/designtime/baseEditor/util/createPromise",
 	"sap/ui/integration/designtime/baseEditor/util/escapeParameter",
@@ -10,8 +11,9 @@ sap.ui.define([
 	"sap/base/util/restricted/_merge",
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/deepEqual"
-], function (
+], function(
 	Control,
+	Element,
 	findClosestInstance,
 	createPromise,
 	escapeParameter,
@@ -325,7 +327,7 @@ sap.ui.define([
 	};
 
 	PropertyEditor.prototype.getEditor = function () {
-		return sap.ui.getCore().byId(this.getAssociation("editor"));
+		return Element.getElementById(this.getAssociation("editor"));
 	};
 
 	PropertyEditor.prototype._prepareConfig = function(oConfig) {
@@ -370,7 +372,7 @@ sap.ui.define([
 
 	PropertyEditor.prototype.setEditor = function (vEditor) {
 		var oPreviousEditor = this.getEditor();
-		var oEditor = typeof vEditor === "string" ? sap.ui.getCore().byId(vEditor) : vEditor;
+		var oEditor = typeof vEditor === "string" ? Element.getElementById(vEditor) : vEditor;
 		if (oPreviousEditor !== oEditor) {
 			this.setAssociation("editor", vEditor);
 			var oEditor = this.getEditor();

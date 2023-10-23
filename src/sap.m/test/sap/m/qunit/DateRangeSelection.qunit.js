@@ -1,5 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
@@ -24,6 +28,10 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Formatting,
+	Localization,
+	Library,
+	Locale,
 	qutils,
 	createAndAppendDiv,
 	DateFormat,
@@ -364,7 +372,7 @@ sap.ui.define([
 		var oDRS = new DateRangeSelection({
 			dateValue: UI5Date.getInstance(2021, 1, 1)
 		}).placeAt("qunit-fixture");
-		oCore.getConfiguration().setLanguage("en-GB"); // ensure that there are 4 weeks
+		Localization.setLanguage("en-GB"); // ensure that there are 4 weeks
 		oCore.applyChanges();
 
 		//Act
@@ -381,7 +389,7 @@ sap.ui.define([
 
 		//Cleanup
 		oDRS.destroy();
-		oCore.getConfiguration().setLanguage("en-US");
+		Localization.setLanguage("en-US");
 	});
 
 	QUnit.test("focused element after picker close", function(assert) {
@@ -972,7 +980,7 @@ sap.ui.define([
 
 	QUnit.test("aria-roledescription", function (assert) {
 		var oDRS = new DateRangeSelection(),
-			sRoledescription = oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+			sRoledescription = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 
 		oDRS.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -994,7 +1002,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -1055,17 +1063,17 @@ sap.ui.define([
 			return DateFormat.getDateInstance({
 				style: "medium",
 				interval: true
-			}, oCore.getConfiguration().getFormatSettings().getFormatLocale());
+			}, new Locale(Formatting.getLanguageTag()));
 		},
 		getExpectedFormat: function (sFormat, bUTC) {
 			return DateFormat.getDateInstance({
 				format: sFormat,
 				interval: true,
 				UTC: bUTC
-			}, oCore.getConfiguration().getFormatSettings().getFormatLocale());
+			}, new Locale(Formatting.getLanguageTag()));
 		},
 		getDefaultLocaleData: function() {
-			var oLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
+			var oLocale = new Locale(Formatting.getLanguageTag());
 			return LocaleData.getInstance(oLocale);
 		}
 	});

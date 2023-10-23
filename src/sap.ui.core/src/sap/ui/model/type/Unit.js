@@ -4,19 +4,20 @@
 /*eslint-disable max-len */
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/base/strings/hash",
 	"sap/base/util/each",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function(hash, each, extend, isEmptyObject, Configuration, LocaleData, NumberFormat,
-		CompositeType, FormatException, ParseException, ValidateException) {
+], function(Formatting, hash, each, extend, isEmptyObject, Library, Locale, LocaleData, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 
@@ -113,7 +114,7 @@ sap.ui.define([
 		// might overwrite the given dynamic format options of the type.
 		if (sUnitToBeFormatted && !this.oFormatOptions.customUnits && !oFormatArgs.customUnits) {
 			// checks the global Configuration and CLDR for Units/UnitMappings
-			var oLocale = Configuration.getFormatSettings().getFormatLocale();
+			var oLocale = new Locale(Formatting.getLanguageTag());
 			var oLocaleData = LocaleData.getInstance(oLocale);
 			var sLookupMeasure = oLocaleData.getUnitFromMapping(sUnitToBeFormatted) || sUnitToBeFormatted;
 			var mUnitPatterns = oLocaleData.getUnitFormat(sLookupMeasure);
@@ -283,7 +284,7 @@ sap.ui.define([
 
 	Unit.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				aValues = vValue,
@@ -363,7 +364,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Unit.prototype.getParseException = function () {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+		var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 			sText;
 
 		if (!this.bShowNumber) {

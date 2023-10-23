@@ -4,8 +4,9 @@
 
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
 	"./ObjectPageSectionBase",
 	"./ObjectPageLazyLoader",
@@ -23,8 +24,9 @@ sap.ui.define([
 	// jQuery Plugin "firstFocusableDomRef"
 	"sap/ui/dom/jquery/Focusable"
 ], function(
+	Element,
+	Library,
 	jQuery,
-	Core,
 	ResizeHandler,
 	ObjectPageSectionBase,
 	ObjectPageLazyLoader,
@@ -201,7 +203,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageSubSection._getLibraryResourceBundle = function() {
-		return Core.getLibraryResourceBundle("sap.uxap");
+		return Library.getResourceBundleFor("sap.uxap");
 	};
 
 	/**
@@ -491,7 +493,7 @@ sap.ui.define([
 		var oUnstashedControl;
 		this._aStashedControls.forEach(function (oControlHandle) {
 			oControlHandle.control.unstash();
-			oUnstashedControl = Core.byId(oControlHandle.control.getId());
+			oUnstashedControl = Element.getElementById(oControlHandle.control.getId());
 			this.addAggregation(oControlHandle.aggregationName, oUnstashedControl, true);
 		}.bind(this));
 		this._aStashedControls = [];
@@ -776,7 +778,7 @@ sap.ui.define([
 		// Filter F7 key down
 		if (oEvent.keyCode === KeyCodes.F7) {
 			oEvent.stopPropagation();
-			var oTarget = Core.byId(oEvent.target.id);
+			var oTarget = Element.getElementById(oEvent.target.id);
 
 			//define if F7 is pressed from SubSection itself or active element inside SubSection
 			if (oTarget instanceof ObjectPageSubSection) {

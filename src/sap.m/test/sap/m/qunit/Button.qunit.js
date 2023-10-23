@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/library",
@@ -16,6 +18,8 @@ sap.ui.define([
 	"sap/m/BadgeCustomData",
 	"sap/ui/core/Core"
 ], function(
+	Element,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	mobileLibrary,
@@ -208,19 +212,19 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			b1 = oCore.byId("b1");
-			b2 = oCore.byId("b2");
-			b4 = oCore.byId("b4");
-			b5 = oCore.byId("b5");
-			b6 = oCore.byId("b6");
-			b7 = oCore.byId("b7");
-			b8 = oCore.byId("b8");
-			b9 = oCore.byId("b9");
-			b10 = oCore.byId("b10");
-			b11 = oCore.byId("b11");
-			b12 = oCore.byId("b12");
-			b13 = oCore.byId("b13");
-			b14 = oCore.byId("b14");
+			b1 = Element.getElementById("b1");
+			b2 = Element.getElementById("b2");
+			b4 = Element.getElementById("b4");
+			b5 = Element.getElementById("b5");
+			b6 = Element.getElementById("b6");
+			b7 = Element.getElementById("b7");
+			b8 = Element.getElementById("b8");
+			b9 = Element.getElementById("b9");
+			b10 = Element.getElementById("b10");
+			b11 = Element.getElementById("b11");
+			b12 = Element.getElementById("b12");
+			b13 = Element.getElementById("b13");
+			b14 = Element.getElementById("b14");
 		},
 		afterEach : function() {
 			b1 = null;
@@ -521,7 +525,7 @@ sap.ui.define([
 		var oInfo = oButton.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -1013,7 +1017,7 @@ sap.ui.define([
 
 	QUnit.module("Tap Event Checking", {
 		beforeEach : function() {
-			b15 = oCore.byId("b15");
+			b15 = Element.getElementById("b15");
 		},
 		afterEach : function() {
 			b15 = null;

@@ -5,6 +5,7 @@
 // Provides control sap.ui.layout.form.ResponsiveGridLayout.
 sap.ui.define([
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/layout/library',
 	'sap/ui/layout/Grid',
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Control,
+	Element,
 	ResizeHandler,
 	library,
 	Grid,
@@ -222,8 +224,8 @@ sap.ui.define([
 		getLayoutData :  function(){
 
 			// only GridData are interesting
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
-			var oLayout    = sap.ui.getCore().byId(this.getLayout());
+			var oContainer = Element.getElementById(this.getContainer());
+			var oLayout    = Element.getElementById(this.getLayout());
 			var oLD;
 			if (oLayout && oContainer) {
 				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
@@ -238,7 +240,7 @@ sap.ui.define([
 
 		getCustomData :  function(){
 
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
+			var oContainer = Element.getElementById(this.getContainer());
 			if (oContainer) {
 				return oContainer.getCustomData();
 			}
@@ -247,7 +249,7 @@ sap.ui.define([
 
 		refreshExpanded :  function(){
 
-			var oContainer = sap.ui.getCore().byId(this.getContainer());
+			var oContainer = Element.getElementById(this.getContainer());
 			if (oContainer) {
 				if (oContainer.getExpanded()) {
 					this.$().removeClass("sapUiRGLContainerColl");
@@ -261,8 +263,8 @@ sap.ui.define([
 			apiVersion: 2,
 			render: function(oRm, oPanel) {
 
-				var oContainer = sap.ui.getCore().byId(oPanel.getContainer());
-				var oLayout    = sap.ui.getCore().byId(oPanel.getLayout());
+				var oContainer = Element.getElementById(oPanel.getContainer());
+				var oLayout    = Element.getElementById(oPanel.getLayout());
 				var oContent   = oPanel.getContent();
 
 				var bExpandable = oContainer.getExpandable();
@@ -563,7 +565,7 @@ sap.ui.define([
 		oGrid.addStyleClass("sapUiFormResGridCont").addStyleClass("sapUiRespGridOverflowHidden");
 
 		oGrid.getContent = function(){
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			if (oContainer) {
 				var aContent = [];
 				var aElements = oContainer.getVisibleFormElements();
@@ -587,7 +589,7 @@ sap.ui.define([
 		};
 
 		oGrid.getAriaLabelledBy = function(){
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			if (oContainer && !oContainer.getToolbar() && !oContainer.getTitle() && !oContainer.getExpandable()) {
 				return oContainer.getAriaLabelledBy();
 			}
@@ -706,7 +708,7 @@ sap.ui.define([
 				return oLD;
 			} else {
 				// calculate Layout Data for control
-				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+				var oContainer = Element.getElementById(this.__myParentContainerId);
 				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				var oForm = oContainer.getParent();
 				var oSize;
@@ -972,7 +974,7 @@ sap.ui.define([
 
 		oGrid._getAccessibleRole = function() {
 
-			var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+			var oContainer = Element.getElementById(this.__myParentContainerId);
 			var oLayout = this.__myParentLayout;
 			if (oLayout._mainGrid && oLayout._mainGrid.__bIsUsed && !oContainer.getToolbar() &&
 					!oContainer.getTitle() && !oContainer.getExpandable() && oContainer.getAriaLabelledBy().length > 0) {
@@ -1028,7 +1030,7 @@ sap.ui.define([
 			oGrid.__originalGetLayoutData = oGrid.getLayoutData;
 			oGrid.getLayoutData = function(){
 				var oLayout = this.__myParentLayout;
-				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
+				var oContainer = Element.getElementById(this.__myParentContainerId);
 
 				var oLD;
 				if (oContainer) {
@@ -1051,7 +1053,7 @@ sap.ui.define([
 
 		var oLayout;
 		if (oControl instanceof Panel) {
-			oLayout = sap.ui.getCore().byId(oControl.getLayout());
+			oLayout = Element.getElementById(oControl.getLayout());
 		} else {
 			oLayout = oControl.__myParentLayout;
 		}
@@ -1249,10 +1251,10 @@ sap.ui.define([
 					oContainer = undefined;
 					if (oContentElement.getContainer) {
 						// it's a panel
-						oContainer = sap.ui.getCore().byId(oContentElement.getContainer());
+						oContainer = Element.getElementById(oContentElement.getContainer());
 					} else {
 						// it's a Grid
-						oContainer = sap.ui.getCore().byId(oContentElement.__myParentContainerId);
+						oContainer = Element.getElementById(oContentElement.__myParentContainerId);
 					}
 					if (oContainer && oContainer.isVisible()) {
 						var oVisibleContainer = aVisibleContainers[j];

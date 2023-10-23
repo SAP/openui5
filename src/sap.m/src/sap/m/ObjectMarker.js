@@ -5,6 +5,7 @@
 // Provides control sap.m.ObjectMarker.
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Renderer",
 	"sap/ui/Device",
 	"sap/m/library",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"./ObjectMarkerRenderer"
 ], function(
 	Control,
+	Library,
 	Renderer,
 	Device,
 	library,
@@ -450,7 +452,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectMarker.prototype._getMarkerText = function (oType, sType, sAdditionalInfo) {
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oRB = Library.getResourceBundleFor("sap.m");
 
 		switch (sType) {
 			case "LockedBy":

@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/util/FilterUtil",
 	"delegates/odata/v4/util/DelegateUtil",
 	"delegates/odata/v4/FilterBarDelegate",
@@ -17,7 +17,7 @@ sap.ui.define([
 
 ], function(
 	TableDelegate,
-	Core,
+	Element,
 	FilterUtil,
 	DelegateUtil,
 	FilterBarDelegate,
@@ -134,7 +134,7 @@ sap.ui.define([
 			oBindingInfo.model = oBindingInfo.model || oDelegatePayload.model;
 		}
 
-		const oFilterBar = Core.byId(oTable.getFilter());
+		const oFilterBar = Element.getElementById(oTable.getFilter());
 		// var bTableFilterEnabled = oTable.isFilteringEnabled();
 		let mConditions;
 		let oOuterFilterInfo;

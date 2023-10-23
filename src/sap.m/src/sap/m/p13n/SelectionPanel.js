@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/m/HBox",
 	"sap/m/VBox",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/base/util/merge",
 	"sap/ui/core/InvisibleText"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter, merge, InvisibleText) {
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, Library, coreLibrary, Icon, Text, Column, Table, mLibrary, ToolbarSpacer, Button, OverflowToolbar, Filter, merge, InvisibleText) {
 	"use strict";
 
 	// shortcut for sap.ui.core.IconColor
@@ -65,7 +66,7 @@ sap.ui.define([
 				 */
 				title: {
 					type: "string",
-					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_SELECTION")
+					defaultValue: Library.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_SELECTION")
 				},
 				/**
 				/**
@@ -88,7 +89,7 @@ sap.ui.define([
 				 */
 				fieldColumn: {
 					type: "string",
-					defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_DESCRIPTION")
+					defaultValue: Library.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_DESCRIPTION")
 				},
 				 /**
 				 * The second column in the panel showing the move buttons for reordering.

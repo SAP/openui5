@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/m/Shell",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/uxap/BlockBase",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView"],
-function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
+	"sap/ui/core/mvc/XMLView"
+],
+function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection, View, XMLView) {
 	"use strict";
 
 	QUnit.module("BlockBase");
@@ -31,7 +33,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		function fnOnComponentCreated() {
 			Core.applyChanges();
 
-			oComponentContainer = Core.byId("myComponentContainer");
+			oComponentContainer = Element.getElementById("myComponentContainer");
 			oComponent = oComponentContainer.getComponentInstance();
 
 			assert.ok(oComponent && oComponent.isA("blockbasetest.Component"), "The component was successfully created");
@@ -316,7 +318,7 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 			oBlock.attachEvent("viewInit", function(oEvent) {
 
 				// Act
-				Core.byId(sCollapsedViewId).destroy();
+				Element.getElementById(sCollapsedViewId).destroy();
 
 				// Check
 				assert.strictEqual(oBlock._oPromisedViews[sCollapsedViewId], undefined, "the view promise is cleaned up");

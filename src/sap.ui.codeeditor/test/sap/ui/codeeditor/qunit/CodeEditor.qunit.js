@@ -4,9 +4,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function (CodeEditor, Button, Core, Library, nextUIUpdate, createAndAppendDiv) {
+], function(CodeEditor, Button, Core, Library, Theming, nextUIUpdate, createAndAppendDiv) {
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "content";
@@ -249,7 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Initial rendering", function (assert) {
-		var oThemeStub = this.stub(Core.getConfiguration(), "getTheme").returns("sap_fiori_3");
+		var oThemeStub = this.stub(Theming, "getTheme").returns("sap_fiori_3");
 
 		var oCodeEditor = new CodeEditor();
 		assert.strictEqual(oCodeEditor._oEditor.getTheme(), "ace/theme/crimson_editor", "Initial theme is set correctly");

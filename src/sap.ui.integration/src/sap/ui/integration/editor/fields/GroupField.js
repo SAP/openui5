@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/integration/editor/fields/BaseField",
 	"sap/m/Panel",
 	"sap/m/IconTabBar",
 	"sap/m/IconTabFilter",
-	"sap/m/MessageStrip",
-	"sap/ui/core/Core"
+	"sap/m/MessageStrip"
 ], function (
+	Element,
 	BaseField,
 	Panel,
 	IconTabBar,
 	IconTabFilter,
-	MessageStrip,
-	Core
+	MessageStrip
 ) {
 	"use strict";
 
@@ -70,7 +70,7 @@ sap.ui.define([
 							}
 							var oMessageStrip = oControl._level === "1" && this.getParent().getParent() ? this.getParent().getParent().getAggregation("_messageStrip") : this.getParent().getAggregation("_messageStrip");
 							if (oMessageStrip === null) {
-								oMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
+								oMessageStrip = Element.getElementById(this.getAssociation("_messageStrip"));
 							}
 							oControl.addContent(oMessageStrip);
 							oControl.focus();
@@ -265,7 +265,7 @@ sap.ui.define([
 				//handle error message for fields
 				var tMessageStrip = this.getParent().getParent().getAggregation("_messageStrip");
 				if (tMessageStrip === null) {
-					tMessageStrip = Core.byId(this.getAssociation("_messageStrip"));
+					tMessageStrip = Element.getElementById(this.getAssociation("_messageStrip"));
 				}
 				aItems[n].addContent(tMessageStrip);
 			}
@@ -277,7 +277,7 @@ sap.ui.define([
 		var sErrorType = "None";
 		for (var i = 0; i < oControl._subItems.length; i++) {
 			var sSettingsPath = oControl._subItems[i].settingspath;
-			var oItem = Core.byId(oControl._subItems[i].itemId);
+			var oItem = Element.getElementById(oControl._subItems[i].itemId);
 			if (oModel.getProperty(sSettingsPath + "/hasError") === true && oItem.getVisible()) {
 				bHasError = true;
 				var sType = oModel.getProperty(sSettingsPath + "/errorType");
@@ -322,7 +322,7 @@ sap.ui.define([
 			});
 			expandBTN.setEnabled(false);
 			expandBTN.addStyleClass("errorBTN").addStyleClass("errorBTNDisabled");
-			var iMessageStrip = Core.byId(this.getParameterId() + "_strip");
+			var iMessageStrip = Element.getElementById(this.getParameterId() + "_strip");
 			expandBTN.addEventDelegate({
 				onmouseover: function() {
 					iMessageStrip.setVisible(true);

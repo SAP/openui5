@@ -9,13 +9,14 @@ sap.ui.define([
 	'sap/ui/base/DataType',
 	'sap/base/security/URLListValidator',
 	'./ImageRenderer',
+	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeCSS",
 	"sap/ui/Device",
 	"sap/ui/core/library"
 ],
-	function(library, Control, DataType, URLListValidator, ImageRenderer, KeyCodes, jQuery, encodeCSS, Device, coreLibrary) {
+	function(library, Control, DataType, URLListValidator, ImageRenderer, Library, KeyCodes, jQuery, encodeCSS, Device, coreLibrary) {
 	"use strict";
 
 
@@ -869,7 +870,7 @@ sap.ui.define([
 
 		return {
 			role: bHasPressListeners ? "button" : "img",
-			type: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
+			type: Library.getResourceBundleFor("sap.m").getText(bHasPressListeners ? "ACC_CTR_TYPE_BUTTON" : "ACC_CTR_TYPE_IMAGE"),
 			description: this.getAlt() || this.getTooltip_AsString() || "",
 			focusable: bHasPressListeners
 		};

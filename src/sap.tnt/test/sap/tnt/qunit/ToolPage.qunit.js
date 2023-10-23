@@ -2,6 +2,7 @@
 sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/Device',
+	"sap/ui/core/Element",
 	'sap/ui/model/json/JSONModel',
 	'sap/m/Text',
 	'sap/m/App',
@@ -18,9 +19,10 @@ sap.ui.define([
 	'sap/tnt/NavigationList',
 	'sap/tnt/NavigationListItem',
 	'sap/ui/qunit/utils/waitForThemeApplied'
-], function (
+], function(
 	Core,
 	Device,
+	Element,
 	JSONModel,
 	Text,
 	App,
@@ -524,7 +526,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Creation", function (assert) {
-		assert.ok(Core.byId(this.toolPage.getId()), "ToolPage is not created");
+		assert.ok(Element.getElementById(this.toolPage.getId()), "ToolPage is not created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {

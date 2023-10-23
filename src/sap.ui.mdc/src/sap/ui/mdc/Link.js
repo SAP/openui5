@@ -2,6 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/field/FieldInfoBase",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/BindingMode",
@@ -14,18 +16,7 @@ sap.ui.define([
 	"sap/ui/core/Title",
 	"sap/ui/layout/library",
 	"sap/ui/mdc/enums/LinkType"
-], function(FieldInfoBase,
-	jQuery,
-	BindingMode,
-	JSONModel,
-	Log,
-	SapBaseLog,
-	Panel,
-	PanelItem,
-	SimpleForm,
-	CoreTitle,
-	layoutLibrary,
-	LinkType) {
+], function(Element, Library, FieldInfoBase, jQuery, BindingMode, JSONModel, Log, SapBaseLog, Panel, PanelItem, SimpleForm, CoreTitle, layoutLibrary, LinkType) {
 	"use strict";
 
 	// shortcut for sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout
@@ -262,7 +253,7 @@ sap.ui.define([
 					const oPanelAdditionalContent = !aAdditionalContent.length && !aMLinkItems.length ? this._getNoContent() : aAdditionalContent;
 
 					const sPanelId = this._createPanelId(Utils, FlexRuntimeInfoAPI);
-					const oExistingPanel = sap.ui.getCore().byId(sPanelId);
+					const oExistingPanel = Element.getElementById(sPanelId);
 					if (oExistingPanel) {
 						// close Popover if existing
 						if (oExistingPanel.getParent() && oExistingPanel.getParent().close) {
@@ -368,7 +359,7 @@ sap.ui.define([
 			layout: ResponsiveGridLayout,
 			content: [
 				new CoreTitle({
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.POPOVER_MSG_NO_CONTENT")
+					text: Library.getResourceBundleFor("sap.ui.mdc").getText("info.POPOVER_MSG_NO_CONTENT")
 				})
 			]
 		});
@@ -648,7 +639,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} Associated sourceControl
 	 */
 	Link.prototype._getSourceControl = function() {
-		return typeof this.getSourceControl() === "string" ? sap.ui.getCore().byId(this.getSourceControl()) : this.getSourceControl();
+		return typeof this.getSourceControl() === "string" ? Element.getElementById(this.getSourceControl()) : this.getSourceControl();
 	};
 
 	return Link;

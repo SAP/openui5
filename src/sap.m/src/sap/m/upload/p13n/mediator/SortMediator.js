@@ -4,14 +4,15 @@
 
 sap.ui.define(
 	[
+		"sap/base/i18n/Localization",
 		"sap/m/upload/p13n/mediator/BaseMediator",
 		"sap/m/p13n/SortPanel",
 		"sap/m/upload/p13n/modules/CustomDataConfig",
-		"sap/ui/core/Configuration",
 		"sap/base/util/deepEqual",
+		"sap/ui/core/Locale",
 		"sap/ui/model/Sorter"
 	],
-	function (BaseMediator, SortPanel, CustomDataConfig, Configuration, deepEqual, Sorter) {
+	function(Localization, BaseMediator, SortPanel, CustomDataConfig, deepEqual, Locale, Sorter) {
 		"use strict";
 
 		 /**
@@ -67,7 +68,7 @@ sap.ui.define(
 			});
 
 			// Sort panel config
-			const sLocale = Configuration.getLocale().toString(),
+			const sLocale = new Locale(Localization.getLanguageTag()).toString(),
 				oCollator = window.Intl.Collator(sLocale, {});
 			aPanelState.sort((mItem1, mItem2) => {
 				if (mItem1.sorted && mItem2.sorted) {

@@ -1,12 +1,12 @@
 /* eslint-disable require-await */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/mdc/FilterBarDelegate",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
 	"sap/ui/mdc/FilterField",
-	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"mdc/sample/delegate/JSONBaseDelegate"
-], function (FilterBarDelegate, JSONPropertyInfo, FilterField, Core, Fragment,
+], function (Element, FilterBarDelegate, JSONPropertyInfo, FilterField, Fragment,
 	JSONBaseDelegate) {
 	"use strict";
 
@@ -47,7 +47,7 @@ sap.ui.define([
 	JSONFilterBarDelegate.addItem = async (oFilterBar, sPropertyName) => {
 		const oProperty = JSONPropertyInfo.find((oPI) => oPI.name === sPropertyName);
 		const sId = oFilterBar.getId() + "--filter--" + sPropertyName;
-		return Core.byId(sId) ?? await _createFilterField(sId, oProperty, oFilterBar);
+		return Element.getElementById(sId) ?? (await _createFilterField(sId, oProperty, oFilterBar));
 	};
 
 	JSONFilterBarDelegate.removeItem = async (oFilterBar, oFilterField) => {

@@ -4,6 +4,7 @@
 sap.ui.define([
     'sap/ui/core/Control',
     'sap/m/OverflowToolbar',
+    "sap/ui/core/Lib",
     "sap/ui/mdc/util/InfoBarRenderer",
     "sap/m/Text",
     "sap/ui/core/InvisibleText",
@@ -11,7 +12,7 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/library",
     "sap/m/ToolbarSpacer"
-], function (Control, Toolbar, InfoBarRenderer, Text, InvisibleText, Label, Button, mLibrary, ToolbarSpacer) {
+], function(Control, Toolbar, Library, InfoBarRenderer, Text, InvisibleText, Label, Button, mLibrary, ToolbarSpacer) {
     "use strict";
 
     /**
@@ -87,7 +88,7 @@ sap.ui.define([
                 // TODO this.oInvisibleMessage.announce(oMessageBundle.getText("valuehelp.REMOVEALLTOKEN_ANNOUNCE"), InvisibleMessageMode.Assertive);
             }.bind(this),
             icon: "sap-icon://decline",
-            tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("infobar.REMOVEALLFILTERS")
+            tooltip: Library.getResourceBundleFor("sap.ui.mdc").getText("infobar.REMOVEALLFILTERS")
         });
 
         const oToolbar = new Toolbar(this.getId() + "--bar", { design: "Info", active: true, content: [this.oText, new ToolbarSpacer(), this.oRemoveAllFiltersBtn] });

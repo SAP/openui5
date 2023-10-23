@@ -219,7 +219,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Core.createRenderManager", function(assert) {
-		assert.notStrictEqual(Core.createRenderManager(), Core.createRenderManager(), "Core.createRenderManager should always return a new RenderManager instance");
+		assert.notStrictEqual(new RenderManager().getInterface(), new RenderManager().getInterface(), "Core.createRenderManager should always return a new RenderManager instance");
 	});
 
 	/**

@@ -5,7 +5,7 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/base/Object',
-	'sap/ui/core/Core',
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/ValueStateSupport',
 	'sap/ui/core/Popup',
 	'sap/ui/core/library',
@@ -15,7 +15,7 @@ sap.ui.define([
 	function(
 		Device,
 		BaseObject,
-		Core,
+		RenderManager,
 		ValueStateSupport,
 		Popup,
 		coreLibrary,
@@ -283,7 +283,7 @@ sap.ui.define([
 				return;
 			}
 
-			Core.createRenderManager().render(vValueStateMessageText, oMessageDomRef);
+			new RenderManager().getInterface().render(vValueStateMessageText, oMessageDomRef);
 			oMessageDomRef.lastElementChild.setAttribute("id", this.getId() + "-text");
 		};
 

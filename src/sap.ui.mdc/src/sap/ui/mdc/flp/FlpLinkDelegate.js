@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/link/Factory",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/mdc/link/SemanticObjectMappingItem",
 	"sap/ui/mdc/link/SemanticObjectUnavailableAction",
 	"sap/ui/mdc/enums/LinkType"
-], function(LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
+], function(Element, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, SemanticObjectMapping, SemanticObjectMappingItem, SemanticObjectUnavailableAction, LinkType) {
 	"use strict";
 	/**
 	 * Extension of the Delegate for {@link sap.ui.mdc.Link}. This extension provides all historical featurs of the FlpLinkHandler.
@@ -249,7 +250,7 @@ sap.ui.define([
 						SapBaseLog.error("FlpLinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
 						return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 					}
-					const oControl = sap.ui.getCore().byId(sSourceControlId);
+					const oControl = Element.getElementById(sSourceControlId);
 					const oAppComponent = Utils.getAppComponentForControl(oControl);
 					const aParams = aSemanticObjects.map(function(sSemanticObject) {
 						return [

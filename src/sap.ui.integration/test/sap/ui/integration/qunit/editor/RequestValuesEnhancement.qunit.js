@@ -1,21 +1,21 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
-	"sap/ui/core/Core",
 	"sap/ui/core/util/MockServer",
 	"./jsons/withDesigntime/sap.card/DataExtensionImpl",
 	"qunit/designtime/EditorQunitUtils"
 ], function (
+	Localization,
 	Editor,
 	Designtime,
 	Host,
 	sinon,
 	ContextHost,
-	Core,
 	MockServer,
 	DataExtensionImpl,
 	EditorQunitUtils
@@ -191,7 +191,7 @@ sap.ui.define([
 		}
 	};
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Filter in Backend by input for string (ComboBox)", {

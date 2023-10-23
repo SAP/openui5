@@ -1,28 +1,30 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap-ui-integration-editor",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
-	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/base/i18n/ResourceBundle",
 	"qunit/designtime/EditorQunitUtils"
-], function (
+], function(
+	Localization,
 	merge,
 	x,
+	Library,
 	Editor,
 	CardEditor,
 	Designtime,
 	Host,
 	sinon,
 	ContextHost,
-	Core,
 	QUnitUtils,
 	KeyCodes,
 	ResourceBundle,
@@ -35,7 +37,7 @@ sap.ui.define([
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Fields enhancement", {
@@ -526,7 +528,7 @@ sap.ui.define([
 					assert.ok(this.oEditor.isReady(), "Editor is ready");
 					var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 					assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-					var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+					var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 					assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 					assert.ok(oPanel.getExpanded(), "Group expanded by default");
 					resolve();
@@ -567,7 +569,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					EditorQunitUtils.wait().then(function () {
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -642,7 +644,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				EditorQunitUtils.isReady(this.oEditor).then(function () {
 					EditorQunitUtils.wait().then(function () {
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.ok(this.oEditor.isReady(), "Editor is ready");
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
@@ -702,7 +704,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
@@ -730,7 +732,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 4, "Default Panel contains 4 items");
@@ -767,7 +769,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 6, "Default Panel contains 6 items");
@@ -816,7 +818,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 3 items");
@@ -844,7 +846,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 3, "Default Panel contains 4 items");
@@ -879,7 +881,7 @@ sap.ui.define([
 					EditorQunitUtils.wait().then(function () {
 						var oPanel = this.oEditor.getAggregation("_formContent")[0].getAggregation("_field");
 						assert.ok(oPanel.isA("sap.m.Panel"), "Field: Form content contains a Panel");
-						var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+						var oDefaultBundle = Library.getResourceBundleFor("sap.ui.integration");
 						assert.equal(oDefaultBundle.getText("EDITOR_PARAMETERS_GENERALSETTINGS"), oPanel.getHeaderText(), "Default group text");
 						assert.ok(oPanel.getExpanded(), "Group expanded by default");
 						assert.equal(oPanel.getContent().length, 5, "Default Panel contains 6 items");

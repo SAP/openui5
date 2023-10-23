@@ -4,6 +4,8 @@
 
 // Provides control sap.m.VariantManagement.
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/model/Filter",
@@ -44,6 +46,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library"
 ], function(
+	Element,
+	Library,
 	JSONModel,
 	ManagedObjectModel,
 	Filter,
@@ -529,7 +533,7 @@ sap.ui.define([
 	VariantManagement.prototype.init = function() {
 		Control.prototype.init.apply(this, arguments);
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 
         this._oManagedObjectModel = new ManagedObjectModel(this);
@@ -997,7 +1001,7 @@ sap.ui.define([
 			if (nPos > 0) {
 				sId = sId.substring(0, nPos);
 			}
-			return sap.ui.getCore().byId(sId);
+			return Element.getElementById(sId);
 		}
 
 		return null;

@@ -5,8 +5,10 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
+	"sap/ui/core/RenderManager",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"./WizardProgressNavigator",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
@@ -20,8 +22,10 @@ sap.ui.define([
 ], function(
 	library,
 	Control,
-	Core,
+	Element,
+	Library,
 	coreLibrary,
+	RenderManager,
 	ScrollEnablement,
 	WizardProgressNavigator,
 	ResponsivePaddingsEnablement,
@@ -252,7 +256,7 @@ sap.ui.define([
 			this._aStepPath = [];
 			this._bScrollLocked = false;
 			this._oScroller = this._initScrollEnablement();
-			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 			this._initProgressNavigator();
 			this._initResponsivePaddingsEnablement();
 			this._iNextButtonHeight = 0;
@@ -314,7 +318,7 @@ sap.ui.define([
 				oCurrentStep = this._aStepPath[iCurrentStepIndex - 1];
 			}
 
-			oRenderManager = Core.createRenderManager();
+			oRenderManager = new RenderManager().getInterface();
 			oRenderManager.renderControl(
 				this._updateStepTitleNumber(oCurrentStep, iCurrentStepIndex));
 			oRenderManager.flush(this.getDomRef("step-container"));
@@ -556,7 +560,7 @@ sap.ui.define([
 		 * @public
 		 */
 		Wizard.prototype.setCurrentStep = function (vStepId) {
-			var oStep = (typeof vStepId === "string") ? Core.byId(vStepId) : vStepId;
+			var oStep = (typeof vStepId === "string") ? Element.getElementById(vStepId) : vStepId;
 
 			if (!this.getEnableBranching()) {
 				this.setAssociation("currentStep", vStepId, true);
@@ -1234,7 +1238,7 @@ sap.ui.define([
 		 * @private
 		 */
 		Wizard.prototype._getCurrentStepInstance = function () {
-			return Core.byId(this.getCurrentStep());
+			return Element.getElementById(this.getCurrentStep());
 		};
 
 		/**

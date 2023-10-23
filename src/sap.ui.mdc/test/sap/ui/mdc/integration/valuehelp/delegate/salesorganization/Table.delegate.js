@@ -4,18 +4,18 @@
 
 sap.ui.define([
 	"./TableDelegateUtils",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/model/Filter",
-	"sap/ui/core/Core"
+	"sap/ui/model/Filter"
 ], function(
 	TableDelegateUtils,
+	Element,
 	TableDelegate,
 	Column,
 	FilterUtil,
-	Filter,
-	Core
+	Filter
 ) {
 	"use strict";
 
@@ -50,7 +50,7 @@ sap.ui.define([
 		oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
 		oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
 
-		const oFilter = Core.byId(oMDCTable.getFilter());
+		const oFilter = Element.getElementById(oMDCTable.getFilter());
 		const bFilterEnabled = oMDCTable.isFilteringEnabled();
 		const aFilters = [];
 		const oDataStateIndicator = oMDCTable.getDataStateIndicator();

@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define(
 	[
+		"sap/ui/core/Lib",
 		"sap/ui/test/Opa5",
 		"sap/ui/test/OpaBuilder",
 		"sap/ui/test/actions/Press",
@@ -10,6 +11,7 @@ sap.ui.define(
 		"./utils/sinon"
 	],
 	function(
+		Library,
 		Opa5,
 		OpaBuilder,
 		Press,
@@ -1010,7 +1012,7 @@ sap.ui.define(
 
 		QUnit.test("'resourceBundle' should return a matcher that validates the given property against a token text of a library message bundle", function(assert) {
 			var fnResourceBundle = OpaBuilder.Matchers.resourceBundle("text", "my.test.lib", "I_AM_A_TOKEN", "first", "second"),
-				fnBundleStub = sinonUtils.createStub(sap.ui.getCore(), "getLibraryResourceBundle",function () {
+				fnBundleStub = sinonUtils.createStub(Library, "getResourceBundleFor",function () {
 					return {
 						getText: function(sToken, aParams) {
 							return formatMessage(mDummyContextData[sToken], aParams);

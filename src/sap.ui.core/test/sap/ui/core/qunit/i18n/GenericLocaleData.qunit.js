@@ -1,14 +1,14 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData",
-	"sap/ui/core/Configuration"
-], function(CalendarType, Locale, LocaleData, Configuration) {
+	"sap/ui/core/LocaleData"
+], function(Localization, CalendarType, Locale, LocaleData) {
 	"use strict";
 	/* eslint-disable camelcase */
 	/*global QUnit */
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$\u00a0US", "$US", "$", "US$", "US$", "$",
 	//	"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
@@ -703,7 +703,7 @@ sap.ui.define([
 
 	QUnit.module("Generic LocaleData", {
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -716,8 +716,8 @@ sap.ui.define([
 	QUnit.test("Locale " + sLanguage, function(assert) {
 		var fnCustomTests, sLocale, oLocaleData;
 
-		Configuration.setLanguage(sLanguage);
-		sLocale = Configuration.getLanguage();
+		Localization.setLanguage(sLanguage);
+		sLocale = Localization.getLanguage();
 		oLocaleData = new LocaleData(new Locale(sLocale));
 		fnCustomTests = customTests[sLocale];
 

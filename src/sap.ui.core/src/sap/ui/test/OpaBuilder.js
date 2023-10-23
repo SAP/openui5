@@ -7,6 +7,7 @@ sap.ui.define(
         "sap/base/util/merge",
         "sap/base/strings/capitalize",
         "sap/base/Log",
+        "sap/ui/core/Lib",
         "sap/ui/test/Opa5",
         "sap/ui/test/actions/Action",
         "sap/ui/test/actions/Press",
@@ -20,6 +21,7 @@ sap.ui.define(
         mergeObjects,
         capitalize,
         Log,
+        Library,
         Opa5,
         Action,
         Press,
@@ -988,7 +990,7 @@ sap.ui.define(
                     aParameters = Array.prototype.slice.call(arguments, 3);
                 }
                 return function (oControl) {
-                    var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibrary),
+                    var oResourceBundle = Library.getResourceBundleFor(sLibrary),
                         sText = oResourceBundle.getText(sToken, aParameters),
                         oProperties = {};
 

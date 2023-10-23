@@ -1,10 +1,11 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/p13n/panels/FilterPanel",
-	"sap/ui/core/Core",
+    "sap/ui/core/Element",
+    "sap/ui/mdc/p13n/panels/FilterPanel",
+    "sap/ui/core/Core",
     "sap/m/VBox",
     "sap/m/Input"
-], function (FilterPanel, oCore, VBox, Input) {
+], function(Element, FilterPanel, oCore, VBox, Input) {
 	"use strict";
 
     const getTestData = function() {
@@ -166,7 +167,7 @@ sap.ui.define([
         const oFieldBox = this.oFilterPanel._createRowContainer("Field 2", sKey);
         const oFilterItem = this.oFilterPanel._createFactoryControl({name: sKey});
         this.oFilterPanel._setLabelForOnBox(oFilterItem, oFieldBox);
-        const sLabelFor = sap.ui.getCore().byId(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
+        const sLabelFor = Element.getElementById(oFieldBox.getItems()[0].getLabelFor()).getIdForLabel();
         assert.equal(sLabelFor, "testAccInput", "Correct 'labelFor' reference on label control");
     });
 });

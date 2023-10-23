@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
@@ -14,8 +15,10 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/scrollLeftRTL" // provides jQuery.fn.scrollLeftRTL
+	// provides jQuery.fn.scrollLeftRTL
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
+	Localization,
 	Table,
 	TreeTable,
 	AnalyticalTable,
@@ -591,7 +594,7 @@ sap.ui.define([
 		oTable.qunit.scrollHSbTo = function(iScrollPosition) {
 			var oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
 			var $HSb = jQuery(oHSb);
-			var bRTL = oCore.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			var iOldScrollLeft = bRTL ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 
 			if (bRTL) {

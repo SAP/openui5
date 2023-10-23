@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/m/ResponsivePopover",
 	"sap/m/List",
 	"sap/m/Bar",
@@ -13,10 +12,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/IllustratedMessage",
 	"sap/m/SearchField",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter"
 ], function(
-	Core,
 	ResponsivePopover,
 	List,
 	Bar,
@@ -27,6 +26,7 @@ sap.ui.define([
 	Log,
 	IllustratedMessage,
 	SearchField,
+	Library,
 	JSONModel,
 	Filter
 ) {
@@ -73,7 +73,7 @@ sap.ui.define([
 	 */
 	DrillStackHandler.createDrillDownPopover = function(oChart) {
 		let oList = null;
-		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 
 		const oSearchField = new SearchField({
 			placeholder: oRb.getText("chart.CHART_DRILLDOWN_SEARCH"),

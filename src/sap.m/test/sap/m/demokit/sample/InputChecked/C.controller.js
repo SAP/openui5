@@ -1,19 +1,19 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/ValidateException",
-	"sap/ui/core/Core",
 	"sap/m/MessageBox",
 	"sap/m/MessageToast"
-], function (Controller, JSONModel, SimpleType, ValidateException, Core, MessageBox, MessageToast) {
+], function (Messaging, Controller, JSONModel, SimpleType, ValidateException, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.InputChecked.C", {
 
 		onInit: function () {
 			var oView = this.getView(),
-				oMM = Core.getMessageManager();
+				oMM = Messaging;
 
 			oView.setModel(new JSONModel({ name: "", email: "" }));
 

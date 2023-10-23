@@ -6,7 +6,6 @@
 sap.ui.define([
 	"./utils/TableUtils",
 	"./menus/ColumnHeaderMenuAdapter",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/model/Filter",
@@ -15,13 +14,13 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Type",
 	"sap/ui/model/type/String",
-	"sap/base/util/ObjectPath", // TODO: Remove in UI5 2.0
+	// TODO: Remove in UI5 2.0
+	"sap/base/util/ObjectPath",
 	"sap/base/util/JSTokenizer",
 	"sap/base/Log"
 ], function(
 	TableUtils,
 	ColumnHeaderMenuAdapter,
-	Core,
 	Element,
 	CoreLibrary,
 	Filter,
@@ -30,7 +29,8 @@ sap.ui.define([
 	Sorter,
 	Type,
 	StringType,
-	ObjectPath, // TODO: Remove in UI5 2.0
+	// TODO: Remove in UI5 2.0
+	ObjectPath,
 	JSTokenizer,
 	Log
 ) {
@@ -1295,7 +1295,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Column.prototype.getHeaderMenuInstance = function() {
-		return Core.byId(this.getHeaderMenu());
+		return Element.getElementById(this.getHeaderMenu());
 	};
 
 	function validateCellContentVisibilitySettings(mSettings) {

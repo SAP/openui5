@@ -4,6 +4,7 @@
 
 // Provides control sap.m.PlanningCalendarHeader.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Element',
 	'sap/ui/core/Control',
 	'./library',
@@ -15,11 +16,11 @@ sap.ui.define([
 	'./Title',
 	'./ToolbarSpacer',
 	'./SegmentedButton',
+	"sap/ui/core/Lib",
 	'sap/ui/unified/Calendar',
 	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/unified/calendar/IndexPicker',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/core/IconPool',
@@ -29,6 +30,7 @@ sap.ui.define([
 	'sap/ui/core/date/UI5Date'
 ],
 function(
+	Localization,
 	Element,
 	Control,
 	library,
@@ -40,11 +42,11 @@ function(
 	Title,
 	ToolbarSpacer,
 	SegmentedButton,
+	Library,
 	Calendar,
 	CustomMonthPicker,
 	CustomYearPicker,
 	IndexPicker,
-	Configuration,
 	CalendarWeekNumbering,
 	CalendarDate,
 	IconPool,
@@ -278,7 +280,7 @@ function(
 
 		var sOPHId = this.getId(),
 			sNavToolbarId = sOPHId + "-NavToolbar",
-			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oRB = Library.getResourceBundleFor("sap.m"),
 			sCalendarType = this.getProperty("_primaryCalendarType"),
 			oPicker,
 			oCalendarPicker,
@@ -670,7 +672,7 @@ function(
 			var $Popover = this._oPopup.$();
 			var iOffsetX = Math.floor(($Popover.width() - this._oPickerBtn.$().width()) / 2);
 
-			this._oPopup.setOffsetX(Configuration.getRTL() ? iOffsetX : -iOffsetX);
+			this._oPopup.setOffsetX(Localization.getRTL() ? iOffsetX : -iOffsetX);
 
 			var iOffsetY = this._oPickerBtn.$().height();
 

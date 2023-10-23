@@ -2,12 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/ActionDefinition",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/QUnitUtils"
-], function (
+], function(
 	Core,
+	Library,
 	ActionDefinition,
 	Host,
 	Card,
@@ -415,7 +417,7 @@ sap.ui.define([
 
 			oToolbar.addEventDelegate({
 				"onAfterRendering": function () {
-					var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+					var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 					var sTooltipText = oResourceBundle.getText("CARD_ACTIONS_OVERFLOW_BUTTON_TOOLTIP");
 					var oButton = oToolbar.getDomRef("overflowButton");
 

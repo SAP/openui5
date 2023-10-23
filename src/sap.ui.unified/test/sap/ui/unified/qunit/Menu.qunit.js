@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
@@ -13,8 +15,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control) {
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
+], function(Localization, Element, qutils, Menu, MenuItem, MenuItemBase, MenuTextFieldItem, Button, Device, KeyCodes, Popup, Core, jQuery, Control) {
 	"use strict";
 
 	var Dock = Popup.Dock;
@@ -1124,7 +1127,7 @@ sap.ui.define([
 	QUnit.test("_fnInvisibleDescriptionFactory", function(assert) {
 		// arrange
 		// act
-		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage")
+		var oLanguageStub = this.stub(Localization, "getLanguage")
 			.callsFake(function() {
 				return "en-US";
 			}),
@@ -1224,7 +1227,7 @@ sap.ui.define([
 
 	QUnit.test("MenuTextFieldItem input field has count and type information referenced", function(assert) {
 		// arrange
-		var oLanguageStub = this.stub(Core.getConfiguration(), "getLanguage"),
+		var oLanguageStub = this.stub(Localization, "getLanguage"),
 			oInputFields, sCountDescriptionOne, sCountDescriptionTwo,
 			oMenu = new Menu({
 				items: [new MenuTextFieldItem(), new MenuTextFieldItem()]
@@ -1254,8 +1257,8 @@ sap.ui.define([
 		openRootMenu(true, assert);
 		var bHasPopup = !!oRootMenu.oPopup;
 		oRootMenu.destroy();
-		assert.ok(!Core.byId(sId), "No Menu registered in the Core anymore");
-		assert.ok(!Core.byId(sSubId), "No Submenu registered in the Core anymore");
+		assert.ok(!Element.getElementById(sId), "No Menu registered in the Core anymore");
+		assert.ok(!Element.getElementById(sSubId), "No Submenu registered in the Core anymore");
 		assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
 	});
 

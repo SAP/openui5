@@ -5,6 +5,7 @@
 // Provides class sap.ui.core.support.plugins.ViewInfo (ViewInfo support plugin)
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/RenderManager",
 	"sap/ui/core/support/Plugin",
 	"sap/ui/core/support/controls/TreeViewer",
 	"sap/ui/core/support/controls/ObjectViewer",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	Element,
+	RenderManager,
 	Plugin,
 	TreeViewer,
 	ObjectViewer,
@@ -201,7 +203,7 @@ sap.ui.define([
 		ViewInfo.prototype.renderContentAreas = function() {
 			this._propertyChangeDebugger = {};
 			this._methodDebugger = {};
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
 			if (!this.aTrees) {
 				this.aTrees = [];

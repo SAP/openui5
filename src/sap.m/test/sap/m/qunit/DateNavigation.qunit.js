@@ -1,20 +1,20 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/unified/library',
 	"sap/m/delegate/DateNavigation",
-	"sap/ui/core/Core",
 	'sap/ui/core/date/UI5Date'
 ], function(
+	Localization,
 	unifiedLibrary,
 	DateNavigation,
-	oCore,
 	UI5Date
 ) {
 		"use strict";
 
 		// first day of the week needs to be fixed (Monday)
-		oCore.getConfiguration().setLanguage("en_GB");
+		Localization.setLanguage("en_GB");
 
 		var Periods = unifiedLibrary.CalendarIntervalType;
 

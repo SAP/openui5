@@ -1,21 +1,23 @@
 /*global QUnit, sinon */
 
 sap.ui.define("sap/ui/core/qunit/Hyphenation.qunit", [
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Locale",
 	"sap/ui/core/hyphenation/Hyphenation",
 	"sap/ui/core/hyphenation/HyphenationTestingWords",
 	"sap/ui/dom/includeScript",
 	"sap/base/Log",
 	"sap/ui/Device",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Configuration"
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ], function(
+	Localization,
+	Locale,
 	Hyphenation,
 	HyphenationTestingWords,
 	includeScript,
 	Log,
 	Device,
-	createAndAppendDiv,
-	Configuration
+	createAndAppendDiv
 ) {
 	"use strict";
 
@@ -103,7 +105,7 @@ var sSingleLangTest = "de",
 	};
 
 	function getDefaultLang() {
-		var oLocale = Configuration.getLocale(),
+		var oLocale = new Locale(Localization.getLanguageTag()),
 			sLanguage = oLocale.getLanguage().toLowerCase();
 
 		return sLanguage;
@@ -124,7 +126,7 @@ var sSingleLangTest = "de",
 
 	function canUseNativeHyphenationRaw() {
 		var sLanguageOnThePage = document.documentElement.getAttribute("lang").toLowerCase();
-		var sMappedLanguage = Configuration.getLocale().getLanguage().toLowerCase();
+		var sMappedLanguage = new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase();
 
 		// adjustment of the language to correspond to Hyphenopoly pattern files (.hpb files)
 		switch (sMappedLanguage) {

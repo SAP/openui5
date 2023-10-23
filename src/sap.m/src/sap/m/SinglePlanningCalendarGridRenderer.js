@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/core/date/UniversalDate',
@@ -10,10 +12,11 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText',
 	'./PlanningCalendarLegend',
 	'sap/ui/unified/library',
-	'sap/ui/core/Configuration',
 	"sap/ui/core/date/UI5Date"
-	],
+],
 	function(
+		Localization,
+		Element,
 		CalendarDate,
 		CalendarUtils,
 		UniversalDate,
@@ -21,9 +24,8 @@ sap.ui.define([
 		InvisibleText,
 		PlanningCalendarLegend,
 		unifiedLibrary,
-		Configuration,
 		UI5Date
-		) {
+	) {
 		"use strict";
 
 		var iVerticalPaddingBetweenAppointments = 0.125;
@@ -91,7 +93,7 @@ sap.ui.define([
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
 					oRm.class("sapUiCalItem" + oType.type);
-					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(sap.ui.getCore().byId(oControl._sLegendId), oType);
+					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(oControl._sLegendId), oType);
 				}
 
 				oRm.class("sapMSpecialDaysInDayView");
@@ -215,7 +217,7 @@ sap.ui.define([
 				aAriaLabels = oControl.getAriaLabelledBy(),
 				iLeftPosition = iStartDayDiff * (100 / iColumns),
 				iRightPosition = (iColumns - iEndDayDiff - 1) * (100 / iColumns),
-				bIsRTL = Configuration.getRTL(),
+				bIsRTL = Localization.getRTL(),
 				aClasses;
 
 			if (aAriaLabels.length > 0) {
@@ -256,7 +258,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (Configuration.getRTL()) {
+				if (Localization.getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -576,7 +578,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (Configuration.getRTL()) {
+				if (Localization.getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -584,7 +586,7 @@ sap.ui.define([
 			}
 			oRm.style("top", iAppTop + "rem");
 			oRm.style("bottom", iAppBottom + "rem");
-			oRm.style(Configuration.getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
+			oRm.style(Localization.getRTL() ? "right" : "left", iAppChunkWidth * iAppointmentLevel + "%");
 			oRm.style("width", iAppChunkWidth * iAppointmentWidth + "%"); // TODO: take into account the levels
 			oRm.openEnd();
 

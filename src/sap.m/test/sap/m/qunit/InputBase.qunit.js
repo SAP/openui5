@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/InputBase",
@@ -19,8 +20,10 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	InputBase,
@@ -1152,7 +1155,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("it should update the value state message accordingly", function(assert) {
-		var oCoreRB = oCore.getLibraryResourceBundle("sap.ui.core"),
+		var oCoreRB = Library.getResourceBundleFor("sap.ui.core"),
 				oValueStateInput = new Input("vsinput", {
 					placeholder: "value state changes while you are typing",
 					liveChange: function() {
@@ -2119,7 +2122,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 		var oInput = new InputBase({value: "Value", tooltip: "Tooltip", placeholder: "Placeholder"});
 
 		assert.ok(!!oInput.getAccessibilityInfo, "InputBase has a getAccessibilityInfo function");

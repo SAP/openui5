@@ -13,11 +13,12 @@ sap.ui.define([
 	'./VBox',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/ElementMetadata',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/m/library',
 	"sap/ui/thirdparty/jquery"
-], function (
+], function(
 	Button,
 	Dialog,
 	Text,
@@ -27,6 +28,7 @@ sap.ui.define([
 	VBox,
 	IconPool,
 	ElementMetadata,
+	Library,
 	coreLibrary,
 	Control,
 	library,
@@ -213,8 +215,8 @@ sap.ui.define([
 		Icon = MessageBox.Icon;
 
 	function _verifyBundle() {
-		if (MessageBox._rb !== sap.ui.getCore().getLibraryResourceBundle("sap.m")) {
-			MessageBox._rb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		if (MessageBox._rb !== Library.getResourceBundleFor("sap.m")) {
+			MessageBox._rb = Library.getResourceBundleFor("sap.m");
 		}
 	}
 

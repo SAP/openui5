@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+    "sap/ui/core/Element",
+    "sap/ui/core/Lib",
     "sap/ui/mdc/odata/v4/ChartDelegate",
     "sap/ui/core/Core",
     "sap/m/Text",
@@ -21,7 +23,9 @@ sap.ui.define([
     "sap/ui/mdc/chart/PropertyHelper",
     "sap/ui/thirdparty/jquery",
     "sap/ui/mdc/enums/ChartItemRoleType"
-], function (
+], function(
+    Element,
+    Library,
     V4ChartDelegate,
     Core,
     Text,
@@ -406,7 +410,7 @@ sap.ui.define([
         const oPanel = new ChartItemPanel(oArguments);
 
         if (oChart.getChartType() === "heatmap"){
-            const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+            const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
             oPanel.setMessageStrip(new MessageStrip({text: MDCRb.getText("chart.PERSONALIZATION_DIALOG_MEASURE_WARNING"), type:"Warning"}));
         }
 
@@ -1101,7 +1105,7 @@ sap.ui.define([
      */
     ChartDelegate.getChartTypeInfo = function (oChart) {
           const sType = oChart.getChartType(),
-            oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc"),
+            oMDCResourceBundle = Library.getResourceBundleFor("sap.ui.mdc"),
             oChartResourceBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 
         const mInfo = {
@@ -1606,7 +1610,7 @@ sap.ui.define([
 	}
 
 	function createOuterFilters(oChart) {
-		const oFilter = Core.byId(oChart.getFilter());
+		const oFilter = Element.getElementById(oChart.getFilter());
 		const aFilters = [];
 
 		if (!oFilter) {
@@ -1629,7 +1633,7 @@ sap.ui.define([
 	}
 
 	function addSearchParameter(oChart, oBindingInfo) {
-		const oFilter = Core.byId(oChart.getFilter());
+		const oFilter = Element.getElementById(oChart.getFilter());
 		if (!oFilter) {
 			return;
 		}

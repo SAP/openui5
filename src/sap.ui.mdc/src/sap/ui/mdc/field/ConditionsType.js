@@ -4,6 +4,7 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/field/ConditionType',
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
@@ -17,6 +18,7 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise'
 ],
 	function(
+		Library,
 		ConditionType,
 		ConditionValidateException,
 		FilterOperatorUtil,
@@ -28,7 +30,7 @@ sap.ui.define([
 		ValidateException,
 		merge,
 		SyncPromise
-		) {
+	) {
 	"use strict";
 
 
@@ -82,7 +84,7 @@ sap.ui.define([
 			oFormatOptions = _createFormatOptionsForConditionType(oFormatOptions);
 //			var oConstraints = merge({}, this.oConstraints);
 			this._oConditionType = new ConditionType(oFormatOptions, this.oConstraints);
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		}
 
 	});

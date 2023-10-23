@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/valuehelp/content/Conditions",
@@ -18,7 +19,6 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
@@ -26,6 +26,7 @@ sap.ui.define([
 	'sap/base/util/deepEqual'
 ], function(
 	ODataV4ValueHelpDelegate,
+	Element,
 	MTable,
 	MDCTable,
 	Conditions,
@@ -40,7 +41,6 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	Core,
 	Condition,
 	ConditionValidated,
 	OperatorName,
@@ -201,7 +201,7 @@ sap.ui.define([
 			});
 
 			if (bHasCountryFilter) {
-				const oCountry = Core.byId("FB0-FF6");
+				const oCountry = Element.getElementById("FB0-FF6");
 				const aCountryConditions = oCountry && oCountry.getConditions();
 				if (aCountryConditions && aCountryConditions.length) {
 					oConditions["countryOfOrigin_code"] = aCountryConditions;
@@ -228,7 +228,7 @@ sap.ui.define([
 		}, []);
 
 		if (aAllConditionCountries && aAllConditionCountries.length) {
-			const oFilterBar = Core.byId("FB0");
+			const oFilterBar = Element.getElementById("FB0");
 			StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 				aAllConditionCountries.forEach(function(sCountry) {
 					const bExists = oState.filter && oState.filter['countryOfOrigin_code'] && oState.filter['countryOfOrigin_code'].find(function (oCondition) {

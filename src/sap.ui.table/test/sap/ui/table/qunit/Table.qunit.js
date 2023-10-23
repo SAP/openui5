@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/RenderManager",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
@@ -49,6 +51,8 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/m/IllustratedMessage"
 ], function(
+	Element,
+	RenderManager,
 	TableQUnitUtils,
 	qutils,
 	Table,
@@ -346,7 +350,7 @@ sap.ui.define([
 			// open and close the menu to let it generate its items
 			oMenu.close();
 
-			var oFilterField = oCore.byId(oMenu.getId() + "-filter");
+			var oFilterField = Element.getElementById(oMenu.getId() + "-filter");
 			if (oFilterField) {
 				assert.equal(oFilterField.getValue(), "M*", "Filter value is M* in column menu");
 				oTable.filter(oColFirstName, "D*");
@@ -2327,7 +2331,7 @@ sap.ui.define([
 		var $button = $table.find(".sapUiTableExt").find("#extensionButton");
 		assert.equal(oTable.getExtension().length, 1, "Table has 1 extension");
 		assert.equal($button.length, 1, "Button in extension is rendered");
-		assert.equal(oCore.byId($button.attr("id")).getText(), "Click me!", "The correct button is rendered");
+		assert.equal(Element.getElementById($button.attr("id")).getText(), "Click me!", "The correct button is rendered");
 	});
 
 	QUnit.module("Invisible table", {
@@ -4567,7 +4571,7 @@ sap.ui.define([
 
 	QUnit.test("renderVSbExternal", function(assert) {
 		var Div = document.createElement("div");
-		var oRM = oCore.createRenderManager();
+		var oRM = new RenderManager().getInterface();
 
 		oTable.getRenderer().renderVSbExternal(oRM, oTable);
 		oRM.flush(Div);
@@ -4577,7 +4581,7 @@ sap.ui.define([
 
 	QUnit.test("renderHSbExternal", function(assert) {
 		var Div = document.createElement("div");
-		var oRM = oCore.createRenderManager();
+		var oRM = new RenderManager().getInterface();
 
 		oTable.getRenderer().renderHSbExternal(oRM, oTable, "id", 100);
 		oRM.flush(Div);

@@ -112,6 +112,6 @@ sap.ui.define([
 
 	}
 
-	oCore.attachInit(createUI);
+	oCore.ready(createUI);
 
 });

@@ -1,12 +1,12 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/enums/FieldEditMode",
 	"sap/m/MessageToast"
 ], function(
+	Messaging,
 	Controller,
-	oCore,
 	JSONModel,
 	FieldEditMode,
 	MessageToast
@@ -18,7 +18,7 @@ sap.ui.define([
 		onInit: function() {
 			const oView = this.getView();
 			oView.bindElement("/Books(1)");
-			oCore.getMessageManager().registerObject(oView, true);
+			Messaging.registerObject(oView, true);
 
 			const oViewModel = new JSONModel({
 				editMode: FieldEditMode.Editable

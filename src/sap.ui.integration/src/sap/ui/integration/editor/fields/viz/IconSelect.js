@@ -2,6 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/fields/viz/VizBase",
 	"sap/m/Select",
 	"sap/ui/core/ListItem",
@@ -9,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/_IconRegistry",
 	"sap/base/util/merge",
-	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/ui/integration/formatters/IconFormatter",
@@ -21,7 +23,10 @@ sap.ui.define([
 	"sap/m/CheckBox",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem"
-], function (
+], function(
+	Localization,
+	Element,
+	Library,
 	VizBase,
 	Select,
 	ListItem,
@@ -29,7 +34,6 @@ sap.ui.define([
 	IconPool,
 	_IconRegistry,
 	merge,
-	Core,
 	deepClone,
 	deepEqual,
 	IconFormatter,
@@ -44,7 +48,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration"),
 		aDefaultIcons,
 		oLoadDefaultIconPromise,
 		// disable below flag to wait for WZ supporting TNT and Business Suite icons later
@@ -219,8 +223,8 @@ sap.ui.define([
 	};
 
 	IconSelect.prototype.onInit = function () {
-		if (oResourceBundle && oResourceBundle.sLocale !== Core.getConfiguration().getLanguage()) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		if (oResourceBundle && oResourceBundle.sLocale !== Localization.getLanguage()) {
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		}
 		if (!this._oIconModel) {
 			this._initIconModel();
@@ -526,7 +530,7 @@ sap.ui.define([
 		var oIconDomRef = this._oControl.getDomRef("labelIcon");
 		if (oIconDomRef) {
 			var sCustomImage = this._oControl._customImage;
-			var oIcon = Core.byId(oIconDomRef.id);
+			var oIcon = Element.getElementById(oIconDomRef.id);
 			if (sCustomImage) {
 				oIconDomRef.style.backgroundImage = "url('" + sCustomImage + "')";
 				oIconDomRef.classList.add("sapMSelectListItemIconCustom");

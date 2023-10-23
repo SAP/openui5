@@ -1,8 +1,9 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/Bar",
 	"sap/m/Button",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
@@ -16,10 +17,11 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Localization,
 	Bar,
 	Button,
-	Configuration,
 	oCore,
+	Element,
 	coreLibrary,
 	DateTypeRange,
 	unifiedLibrary,
@@ -62,7 +64,7 @@ sap.ui.define([
 
 		iEvent++;
 
-		var oText = oCore.byId("TextEvent");
+		var oText = Element.getElementById("TextEvent");
 		oText.setText("Event " + iEvent + "\nId: " + oEvent.getSource().getId() + "\nFrom: " + sFrom + "\nTo: " + sTo + "\nvalid: " + bValid);
 		if (bValid) {
 			oDRS.setValueState(ValueState.None);
@@ -75,7 +77,7 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed"),
-			oDRS = oCore.byId("DRS2");
+			oDRS = Element.getElementById("DRS2");
 
 		if (!DateTypeRange) {
 			oCore.loadLibrary("sap.ui.unified");
@@ -194,7 +196,7 @@ sap.ui.define([
 	app.placeAt("body");
 
 	function handleTimezoneButtonPress(e) {
-		Configuration.setTimezone(e.getSource().getText());
-		oCore.byId("DRS12").setValue("");
+		Localization.setTimezone(e.getSource().getText());
+		Element.getElementById("DRS12").setValue("");
 	}
 });

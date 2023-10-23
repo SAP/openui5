@@ -1,5 +1,8 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"./DynamicPageUtil",
 	"sap/f/DynamicPage",
@@ -23,7 +26,10 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes"
 ],
-function (
+function(
+	ControlBehavior,
+	Element,
+	Library,
 	$,
 	DynamicPageUtil,
 	DynamicPage,
@@ -928,10 +934,10 @@ function (
 
 	QUnit.test("DynamicPage Footer visibility when animations disabled", function (assert) {
 		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
-			sOriginalMode = Core.getConfiguration().getAnimationMode();
+			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -946,7 +952,7 @@ function (
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'none'");
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -961,16 +967,16 @@ function (
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden when the Animation mode is 'minimal'");
 
 		// Clean up
-		Core.getConfiguration().setAnimationMode(sOriginalMode);
+		ControlBehavior.setAnimationMode(sOriginalMode);
 	});
 
 	QUnit.test("DynamicPage Footer does not overlap content", function (assert) {
-		var sOriginalMode = Core.getConfiguration().getAnimationMode(),
+		var sOriginalMode = ControlBehavior.getAnimationMode(),
 			oFooterBoundingClientRect,
 			oContentBoundingClientRect;
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
@@ -983,7 +989,7 @@ function (
 		assert.ok(oFooterBoundingClientRect.y > oContentBoundingClientRect.y + oContentBoundingClientRect.height, "footer does not overlap content");
 
 		// Clean up
-		Core.getConfiguration().setAnimationMode(sOriginalMode);
+		ControlBehavior.setAnimationMode(sOriginalMode);
 	});
 
 	QUnit.test("Changing 'showFooter' property invalidates control", function (assert) {
@@ -3179,7 +3185,7 @@ function (
 	 */
 	QUnit.test("Test flex-basis styles when primaryArea=Middle", function(assert) {
 		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
+		var oTitle = Element.getElementById("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -3197,7 +3203,7 @@ function (
 
 	QUnit.test("Test flex-basis styles when areaShrinkRatio is set", function(assert) {
 		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
+		var oTitle = Element.getElementById("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -3218,7 +3224,7 @@ function (
 	 */
 	QUnit.test("Test flex-basis styles when primaryArea=Middle and areaShrinkRatio is set", function(assert) {
 		// arrange
-		var oTitle = Core.byId("comp---view--DynamicPageTitle"),
+		var oTitle = Element.getElementById("comp---view--DynamicPageTitle"),
 			oHeading = oTitle.$("left-inner"),
 			oContent = oTitle.$("content"),
 			oActions = oTitle.$("mainActions");
@@ -3355,7 +3361,7 @@ function (
 	QUnit.test("ARIA attributes", function(assert) {
 		// Arrange
 		var $oDynamicPage = this.oDynamicPage.$(),
-		    sExpectedRoleDescription = Core.getLibraryResourceBundle("sap.f")
+		    sExpectedRoleDescription = Library.getResourceBundleFor("sap.f")
 			    .getText(DynamicPage.ARIA_ROLE_DESCRIPTION);
 
 		// Assert

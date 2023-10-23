@@ -3,12 +3,9 @@
  */
 
 // Provides control sap.tnt.NavigationListItem.
-sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon',
-		'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library",
-		// jQuery Plugin "addAriaLabelledBy"
-		"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/dom/jquery/Aria"],
-	function(jQuery, library, Core, Item, Icon,
-			 InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Element", "sap/ui/core/Lib", "sap/ui/thirdparty/jquery", "./library", "sap/ui/core/Item", 'sap/ui/core/Icon', 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library", // jQuery Plugin "addAriaLabelledBy"
+"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/dom/jquery/Aria"],
+	function(Localization, Element, Library, jQuery, library, Item, Icon, InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
 		"use strict";
 
 
@@ -130,9 +127,9 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 		 * @override
 		 */
 		NavigationListItem.prototype.init = function () {
-			this._resourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
-			this._resourceBundleMLib = Core.getLibraryResourceBundle("sap.m");
-			this._resourceBundleTNTLib = Core.getLibraryResourceBundle("sap.tnt");
+			this._resourceBundle = Library.getResourceBundleFor("sap.ui.core");
+			this._resourceBundleMLib = Library.getResourceBundleFor("sap.m");
+			this._resourceBundleTNTLib = Library.getResourceBundleFor("sap.tnt");
 		};
 
 		/**
@@ -326,7 +323,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 			var item = event.getParameter('item');
 
 			// get the real group item from the cloned one
-			item = Core.byId(item.getKey());
+			item = Element.getElementById(item.getKey());
 
 			item._selectItem(event);
 		};
@@ -380,7 +377,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "./library", 'sap/ui/core/Core', "sap
 				return;
 			}
 
-			var isRtl = Core.getConfiguration().getRTL();
+			var isRtl = Localization.getRTL();
 
 			//  KeyCodes.MINUS is not returning 189
 			if ((event.shiftKey && event.which == 189) ||

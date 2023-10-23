@@ -3,6 +3,7 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
 	"sap/ui/mdc/MultiValueField",
@@ -14,8 +15,10 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/field/ConditionsType",
-	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
-	"sap/ui/mdc/field/MultiValueFieldDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	// async. loading of content control tested in FieldBase test
+	"sap/ui/mdc/field/FieldMultiInput",
+	// make sure delegate is loaded (test delegate loading in FieldBase test)
+	"sap/ui/mdc/field/MultiValueFieldDelegate",
 	"sap/ui/mdc/field/MultiValueFieldItem",
 	"sap/ui/mdc/field/TokenizerDisplay",
 	"sap/ui/mdc/field/TokenDisplay",
@@ -38,6 +41,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	qutils,
 	library,
 	MultiValueField,
@@ -332,7 +336,7 @@ sap.ui.define([
 
 		const fnDone = assert.async();
 		setTimeout(function() { // async set of condition
-			const oValueHelp = oCore.byId(oField.getValueHelp());
+			const oValueHelp = Element.getElementById(oField.getValueHelp());
 			const oCondition = Condition.createItemCondition(4, "Text 4");
 			oValueHelp.fireSelect({ conditions: [oCondition], add: false, close: true });
 

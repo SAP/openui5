@@ -5,12 +5,13 @@
 // Provides class sap.ui.core.format.DateFormat
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/base/strings/formatMessage",
 	"sap/base/util/deepEqual",
 	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Supportability",
@@ -19,8 +20,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/format/TimezoneUtil"
-], function(Log, formatMessage, deepEqual, extend, CalendarType, Configuration, Core, Locale,
-		LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
+], function(Log, Formatting, Localization, formatMessage, deepEqual, extend, CalendarType, Library, Locale, LocaleData, Supportability, CalendarUtils, CalendarWeekNumbering, UI5Date, UniversalDate, TimezoneUtil) {
 	"use strict";
 
 	/**
@@ -556,7 +556,7 @@ sap.ui.define([
 
 		// Get Locale and LocaleData to use
 		if (!oLocale) {
-			oLocale = Configuration.getFormatSettings().getFormatLocale();
+			oLocale = new Locale(Formatting.getLanguageTag());
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -580,7 +580,7 @@ sap.ui.define([
 		oFormat.type = oInfo.type;
 
 		if (!oFormat.oFormatOptions.calendarType) {
-			oFormat.oFormatOptions.calendarType = Configuration.getCalendarType();
+			oFormat.oFormatOptions.calendarType = Formatting.getCalendarType();
 		}
 
 		if (oFormat.oFormatOptions.firstDayOfWeek === undefined && oFormat.oFormatOptions.minimalDaysInFirstWeek !== undefined
@@ -2361,7 +2361,7 @@ sap.ui.define([
 		}
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || Configuration.getTimezone();
+		sTimezone = sTimezone || Localization.getTimezone();
 
 		if (Array.isArray(vJSDate)) {
 			if (!this.oFormatOptions.interval) {
@@ -2876,7 +2876,7 @@ sap.ui.define([
 		var sCalendarType = this.oFormatOptions.calendarType;
 
 		// default the timezone to the local timezone to always enforce the conversion
-		sTimezone = sTimezone || Configuration.getTimezone();
+		sTimezone = sTimezone || Localization.getTimezone();
 
 		if (bStrict === undefined) {
 			bStrict = this.oFormatOptions.strictParsing;
@@ -3439,7 +3439,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.m
 	 */
 	DateFormat.prototype.getPlaceholderText = function() {
-		var oResourceBundle = Core.getLibraryResourceBundle();
+		var oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 
 		return oResourceBundle.getText("date.placeholder", [this.format.apply(this, this.getSampleValue())]);
 	};
@@ -3466,7 +3466,7 @@ sap.ui.define([
 		oDate = getDate(iFullYear, 11, 31, 23, 59, 58, 123);
 
 		if (this.type === mDateFormatTypes.DATETIME_WITH_TIMEZONE) {
-			return [oDate, Configuration.getTimezone()];
+			return [oDate, Localization.getTimezone()];
 		}
 
 		if (this.oFormatOptions.interval) {

@@ -4,6 +4,7 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/field/ConditionsType',
 	'sap/ui/mdc/condition/ConditionValidateException',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
@@ -20,6 +21,7 @@ sap.ui.define([
 	'sap/base/util/merge'
 ],
 	function(
+		Library,
 		ConditionsType,
 		ConditionValidateException,
 		FilterOperatorUtil,
@@ -34,7 +36,7 @@ sap.ui.define([
 		ValidateException,
 		mLibrary,
 		merge
-		) {
+	) {
 	"use strict";
 
 	/**
@@ -83,7 +85,7 @@ sap.ui.define([
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
 			this.sName = "ConditionsDateRange";
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 			//TODO: specialConditionDataRangeType if used for tokens in MultiValue FilterField
 		}
 

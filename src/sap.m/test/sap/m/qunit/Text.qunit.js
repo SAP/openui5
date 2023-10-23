@@ -1,5 +1,7 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
 	"sap/m/library",
@@ -11,6 +13,8 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/TextRenderer"
 ], function(
+	Library,
+	Theming,
 	createAndAppendDiv,
 	coreLibrary,
 	mobileLibrary,
@@ -37,7 +41,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("content1");
 	createAndAppendDiv("content2");
@@ -455,7 +459,7 @@ sap.ui.define([
 		}
 
 		var done = assert.async();
-		var sCurrentTheme = Core.getConfiguration().getTheme();
+		var sCurrentTheme = Theming.getTheme();
 		var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 		this.stub(sap.ui.getCore(), "isThemeApplied").returns(false);
 

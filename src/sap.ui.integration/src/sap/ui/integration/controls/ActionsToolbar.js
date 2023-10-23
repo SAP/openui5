@@ -8,23 +8,24 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Control",
 	"sap/m/library",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/m/Button",
 	"sap/m/ActionSheet",
 	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions"
-
-], function (
+], function(
 	ActionsToolbarRenderer,
 	capitalize,
 	Control,
 	mLibrary,
+	Element,
+	Library,
 	coreLibrary,
 	Button,
 	ActionSheet,
 	ManagedObjectObserver,
-	Core,
 	CardActions
 ) {
 	"use strict";
@@ -188,7 +189,7 @@ sap.ui.define([
 	};
 
 	ActionsToolbar.prototype._getToolbar = function () {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		var oToolbar = this.getAggregation('_toolbar');
 		if (!oToolbar) {
 			oToolbar = new Button({
@@ -304,7 +305,7 @@ sap.ui.define([
 			this._mActionObservers.set(oActionDefinition.getId(), oActionObserver);
 			this._updateVisibility();
 		} else if (oChanges.mutation === "remove") {
-			Core.byId(oActionDefinition.getAssociation("_menuButton")).destroy();
+			Element.getElementById(oActionDefinition.getAssociation("_menuButton")).destroy();
 			this._mActionObservers.get(oActionDefinition.getId()).disconnect();
 			this._mActionObservers.delete(oActionDefinition.getId());
 		}
@@ -313,7 +314,7 @@ sap.ui.define([
 	ActionsToolbar.prototype._observeSingleAction = function (oChanges) {
 		var oActionDefinition = oChanges.object,
 			sName = oChanges.name,
-			oButton = Core.byId(oActionDefinition.getAssociation("_menuButton")),
+			oButton = Element.getElementById(oActionDefinition.getAssociation("_menuButton")),
 			vVal = oChanges.current;
 
 		if (["type", "parameters"].indexOf(sName) !== -1) {

@@ -7,9 +7,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Configuration"
+	"sap/base/i18n/Localization"
 ], function (
-	Configuration
+	Localization
 ) {
 	"use strict";
 
@@ -100,7 +100,7 @@ sap.ui.define([
 				fLeftOffsetInGrid,
 				fRightOffsetInGrid;
 
-			if (Configuration.getRTL()) {
+			if (Localization.getRTL()) {
 				iEndCol = -1;
 				iStartCol = oLayoutSizes.columns.length - 1;
 				fRightOffsetInGrid = oGridRect.right - oLayoutSizes.paddingRight - oItemRect.right;

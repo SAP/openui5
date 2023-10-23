@@ -2,12 +2,12 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/base/util/deepExtend",
 	"sap/ui/core/date/UI5Date"
-], function (RequestDataProvider, Log, Core, deepExtend, UI5Date) {
+], function (Element, RequestDataProvider, Log, deepExtend, UI5Date) {
 	"use strict";
 
 	/**
@@ -62,11 +62,11 @@ sap.ui.define([
 	};
 
 	CacheAndRequestDataProvider.prototype.getHostInstance = function () {
-		return Core.byId(this.getHost());
+		return Element.getElementById(this.getHost());
 	};
 
 	CacheAndRequestDataProvider.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.getElementById(this.getCard());
 	};
 
 	CacheAndRequestDataProvider.prototype.getCardInstanceHeader = function () {

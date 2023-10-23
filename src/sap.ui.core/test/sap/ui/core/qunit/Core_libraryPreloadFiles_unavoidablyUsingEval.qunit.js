@@ -8,12 +8,12 @@ sap.ui.define([
 
 	// custom assertion
 	QUnit.assert.isLibLoaded = function(libName) {
-		var isLoaded = ObjectPath.get(libName) && sap.ui.getCore().getLoadedLibraries()[libName];
+		var isLoaded = ObjectPath.get(libName) && Library.all()[libName];
 		this.ok(isLoaded, "library '" + libName + "' should have been loaded");
 		if ( !isLoaded ) {
 			// provide more details in QUnit report
 			this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
-			this.ok(sap.ui.getCore().getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
+			this.ok(Library.all()[libName], "Core should know and list " + libName + " as 'loaded'");
 		}
 	};
 

@@ -4,6 +4,7 @@
 
 // Provides control sap.m.PullToRefresh.
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/core/Control',
@@ -15,7 +16,7 @@ sap.ui.define([
 	"sap/m/BusyIndicator",
 	"sap/m/ImageHelper"
 ],
-	function(jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper) {
+	function(Library, jQuery, library, Control, Device, PullToRefreshRenderer, KeyCodes, encodeXML, InvisibleText, BusyIndicator, ImageHelper) {
 	"use strict";
 
 	/**
@@ -361,7 +362,7 @@ sap.ui.define([
 	};
 
 	PullToRefresh.prototype._getRB = function(){
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		return Library.getResourceBundleFor("sap.m");
 	};
 
 	return PullToRefresh;

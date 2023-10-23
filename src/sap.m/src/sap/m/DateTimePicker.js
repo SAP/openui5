@@ -4,6 +4,10 @@
 
 //Provides control sap.m.DateTimePicker.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/thirdparty/jquery",
 	'./InputBase',
 	'./DatePicker',
@@ -14,7 +18,6 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/Core',
 	'sap/ui/core/format/TimezoneUtil',
 	'./TimePickerClocks',
 	'./DateTimePickerRenderer',
@@ -24,10 +27,14 @@ sap.ui.define([
 	'./Button',
 	'sap/ui/core/IconPool',
 	"sap/ui/core/Theming",
-	'sap/ui/core/Configuration',
 	'sap/ui/core/date/UI5Date',
-	'sap/ui/dom/jquery/cursorPos' // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	'sap/ui/dom/jquery/cursorPos'
 ], function(
+	Formatting,
+	Localization,
+	Library,
+	Locale,
 	jQuery,
 	InputBase,
 	DatePicker,
@@ -38,7 +45,6 @@ sap.ui.define([
 	Device,
 	DateFormat,
 	LocaleData,
-	Core,
 	TimezoneUtil,
 	TimePickerClocks,
 	DateTimePickerRenderer,
@@ -48,7 +54,6 @@ sap.ui.define([
 	Button,
 	IconPool,
 	Theming,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -347,7 +352,7 @@ sap.ui.define([
 			var oSwitcher = this.getAggregation("_switcher");
 
 			if (!oSwitcher) {
-				var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+				var oResourceBundle = Library.getResourceBundleFor("sap.m");
 				var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
 				var sTimeText = oResourceBundle.getText("DATETIMEPICKER_TIME");
 
@@ -681,7 +686,7 @@ sap.ui.define([
 		this.addDependent(this._oTimezonePopup);
 
 		if (Device.system.phone) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 			this._oTimezonePopup.setEndButton(new Button({
 				text: oResourceBundle.getText("SUGGESTIONSPOPOVER_CLOSE_BUTTON"),
@@ -766,7 +771,7 @@ sap.ui.define([
 		if (oFormatOptions.calendarType === undefined) {
 			oFormatOptions.calendarType = bDisplayFormat
 				? this.getDisplayFormatType()
-				: Configuration.getCalendarType();
+				: Formatting.getCalendarType();
 		}
 
 		if (oFormatOptions.strictParsing === undefined) {
@@ -827,7 +832,7 @@ sap.ui.define([
 			return oBinding.aValues[1];
 		}
 
-		return this.getTimezone() || (bUseDefaultAsFallback && Core.getConfiguration().getTimezone());
+		return this.getTimezone() || (bUseDefaultAsFallback && Localization.getTimezone());
 	};
 
 
@@ -838,7 +843,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DateTimePicker.prototype._getTranslatedTimezone = function(bUseDefaultAsFallback) {
-		return LocaleData.getInstance(Core.getConfiguration().getFormatSettings().getFormatLocale()).getTimezoneTranslations()[this._getTimezone(bUseDefaultAsFallback)];
+		return LocaleData.getInstance(new Locale(Formatting.getLanguageTag())).getTimezoneTranslations()[this._getTimezone(bUseDefaultAsFallback)];
 	};
 
 	DateTimePicker.prototype._checkStyle = function(sPattern){
@@ -919,7 +924,7 @@ sap.ui.define([
 
 	DateTimePicker.prototype._getLocaleBasedPattern = function(sPlaceholder) {
 		var oLocaleData = LocaleData.getInstance(
-				Core.getConfiguration().getFormatSettings().getFormatLocale()
+				new Locale(Formatting.getLanguageTag())
 			),
 			iSlashIndex = sPlaceholder.indexOf("/");
 
@@ -936,7 +941,7 @@ sap.ui.define([
 		var sLabelId, sLabel, oResourceBundle, sOKButtonText, sCancelButtonText, oPopover;
 
 		if (!this._oPopup) {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Library.getResourceBundleFor("sap.m");
 			sOKButtonText = oResourceBundle.getText("TIMEPICKER_SET");
 			sCancelButtonText = oResourceBundle.getText("TIMEPICKER_CANCEL");
 
@@ -1138,7 +1143,7 @@ sap.ui.define([
 
 	DateTimePicker.prototype.getLocaleId = function(){
 
-		return Core.getConfiguration().getFormatSettings().getFormatLocale().toString();
+		return new Locale(Formatting.getLanguageTag()).toString();
 
 	};
 
@@ -1149,7 +1154,7 @@ sap.ui.define([
 	 */
 	DateTimePicker.prototype.getAccessibilityInfo = function() {
 		var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
+		oInfo.type = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT");
 		return oInfo;
 	};
 
@@ -1222,7 +1227,7 @@ sap.ui.define([
 		}
 
 		if (sDisplayFormat == DateTimeFormatStyles.Short || sDisplayFormat == DateTimeFormatStyles.Medium || sDisplayFormat == DateTimeFormatStyles.Long || sDisplayFormat == DateTimeFormatStyles.Full) {
-			var oLocale = Core.getConfiguration().getFormatSettings().getFormatLocale();
+			var oLocale = new Locale(Formatting.getLanguageTag());
 			var oLocaleData = LocaleData.getInstance(oLocale);
 			sTimePattern = oLocaleData.getTimePattern(sDisplayFormat);
 		} else {

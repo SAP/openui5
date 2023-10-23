@@ -4,15 +4,18 @@
 
 // Provides class sap.ui.core.support.plugins.Debugging
 sap.ui.define([
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/support/Plugin',
 	"sap/base/security/encodeXML",
 	"sap/base/util/each",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/cursorPos", // provides jQuery.fn.cursorPos
-	"sap/ui/dom/jquery/selectText" // provides jQuery.fn.selectText
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos",
+	// provides jQuery.fn.selectText
+	"sap/ui/dom/jquery/selectText"
 ],
-	function(Plugin, encodeXML, each, KeyCodes, jQuery) {
+	function(RenderManager, Plugin, encodeXML, each, KeyCodes, jQuery) {
 		"use strict";
 
 
@@ -62,7 +65,7 @@ sap.ui.define([
 
 		Debugging.prototype.renderContainer = function() {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
 			rm.openStart("div", this.getId() + "-RebootContainer").class("sapUiSupportContainer").openEnd();
 				rm.openStart("div").class("sapUISupportLabel").class("sapUISupportLabelBold").openEnd().text("Note: Designed to work with apps loaded with the standard UI5 loading bootstrap script tag:").close("div");
@@ -96,7 +99,7 @@ sap.ui.define([
 			var that = this;
 
 			var aClasses = this._aClasses;
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
 			rm.openStart("div").class("sapUISupportLabel").openEnd().text("Select Class:").close("div");
 
@@ -165,7 +168,7 @@ sap.ui.define([
 
 		Debugging.prototype.renderMethods = function(mMethods) {
 
-			var rm = sap.ui.getCore().createRenderManager();
+			var rm = new RenderManager().getInterface();
 
 			if (typeof (mMethods) === 'undefined') {
 				rm.openStart("p").openEnd().text("Select a class in the list on the left side to add breakpoint.").close("p");

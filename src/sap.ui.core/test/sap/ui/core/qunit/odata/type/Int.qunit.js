@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -16,12 +16,12 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/SByte",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, Control, NumberFormat, FormatException,
+], function (Log, Localization, Control, NumberFormat, FormatException,
 		ParseException, ValidateException, Byte, Int, Int16, Int32, ODataType, SByte, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	function anyInt(TypeClass, sName, iMin, iMax) {
 		var oType;
@@ -44,11 +44,11 @@ sap.ui.define([
 				this.oLogMock = this.mock(Log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
-				Configuration.setLanguage("en-US");
+				Localization.setLanguage("en-US");
 				oType = new TypeClass();
 			},
 			afterEach : function () {
-				Configuration.setLanguage(sDefaultLanguage);
+				Localization.setLanguage(sDefaultLanguage);
 			}
 		});
 
@@ -95,7 +95,7 @@ sap.ui.define([
 
 			oType.formatValue(1234, "string"); // ensure that there is a formatter to remove
 			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-			Configuration.setLanguage("de-CH");
+			Localization.setLanguage("de-CH");
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
 			assert.strictEqual(oType.oFormat, null, "no formatter for int");
@@ -149,7 +149,7 @@ sap.ui.define([
 
 			assert.strictEqual(oType.parseValue(null, "foo"), null, "null accepted for any type");
 
-			Configuration.setLanguage("de-DE");
+			Localization.setLanguage("de-DE");
 			oType = new TypeClass();
 			assert.strictEqual(oType.parseValue(1234.001, "float"), 1234,
 				"don't parse float as string");

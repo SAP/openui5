@@ -4,8 +4,11 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/Device',
+	"sap/ui/core/Lib",
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/core/format/TimezoneUtil',
@@ -22,11 +25,13 @@ sap.ui.define([
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/core/InvisibleMessage',
 	'sap/ui/core/library',
-	'sap/ui/core/Configuration',
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Formatting,
+	Localization,
 	Control,
 	Device,
+	Library,
 	LocaleData,
 	CalendarUtils,
 	TimezoneUtil,
@@ -43,7 +48,6 @@ sap.ui.define([
 	CalendarAppointment,
 	InvisibleMessage,
 	corelibrary,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -359,8 +363,8 @@ sap.ui.define([
 
 	CalendarRow.prototype.init = function(){
 
-		this._bRTL  = Configuration.getRTL();
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		this._bRTL  = Localization.getRTL();
+		this._oRb = Library.getResourceBundleFor("sap.ui.unified");
 
 		this._oFormatAria = DateFormat.getDateTimeInstance({
 			pattern: "EEEE dd/MM/YYYY 'at' " + _getLocaleData.call(this).getTimePattern("medium")
@@ -1021,7 +1025,7 @@ sap.ui.define([
 	function _getLocale(){
 
 		if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;

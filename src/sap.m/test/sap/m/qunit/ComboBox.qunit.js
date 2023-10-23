@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/CustomData",
 	"sap/m/ComboBox",
@@ -30,9 +32,13 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/getSelectedText", // provides jQuery.fn.getSelectedText
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
-], function (
+	// provides jQuery.fn.getSelectedText
+	"sap/ui/dom/jquery/getSelectedText",
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
+], function(
+	Element,
+	Library,
 	qutils,
 	CustomData,
 	ComboBox,
@@ -4732,7 +4738,7 @@ sap.ui.define([
 			assert.ok(oComboBox.getArrowIcon().getDomRef().classList.contains("sapUiIcon"), 'The arrow button has the CSS class sapUiIcon"');
 			assert.ok(oComboBox.getArrowIcon().hasStyleClass("sapMInputBaseIcon"), 'The arrow button has the CSS class sapMInputBaseIcon "');
 			assert.strictEqual(oComboBox.getArrowIcon().getNoTabStop(), true, "The arrow button is focusable, but it is not reachable via sequential keyboard navigation");
-			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_BUTTON"));
+			assert.strictEqual(oComboBox.getArrowIcon().getDomRef().getAttribute("aria-label"), Library.getResourceBundleFor("sap.m").getText("COMBOBOX_BUTTON"));
 
 			// cleanup
 			oComboBox.destroy();
@@ -4740,10 +4746,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("The sap.m library resource bundle is loaded", function (assert) {
-		var oCoreSpy = this.spy(sap.ui.getCore(), "getLibraryResourceBundle" );
+		var oCoreSpy = this.spy(Library, "getResourceBundleFor" );
 		var oComboBox = new ComboBox();
 
-		assert.strictEqual(oCoreSpy.called, true, "getLibraryResourceBundle");
+		assert.strictEqual(oCoreSpy.called, true, "getResourceBundleFor");
 		assert.strictEqual(oCoreSpy.firstCall.args[0], "sap.m", "sap.m Resource bundle loaded.");
 
 		oCoreSpy.restore();
@@ -4937,7 +4943,7 @@ sap.ui.define([
 			showClearIcon: true
 		});
 		var aEndIcons;
-		var sClearIconAltText = oCore.getLibraryResourceBundle("sap.m").getText("INPUT_CLEAR_ICON_ALT");
+		var sClearIconAltText = Library.getResourceBundleFor("sap.m").getText("INPUT_CLEAR_ICON_ALT");
 
 		// Arrange
 		oComboBox.placeAt("content");
@@ -9940,7 +9946,7 @@ sap.ui.define([
 	QUnit.module("getAccessibilityInfo");
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 		var oComboBox = new ComboBox({
 			value: "Value",
 			tooltip: "Tooltip",
@@ -10023,12 +10029,12 @@ sap.ui.define([
 			items: [
 				oItem
 			]
-		}), oResourceBundle = oCore.getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+		}), oResourceBundle = Library.getResourceBundleFor("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oComboBox.placeAt("content");
 		oCore.applyChanges();
 
-		assert.equal(oCore.byId(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		assert.equal(Element.getElementById(oComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
 
 		oComboBox.destroy();
 	});
@@ -11512,7 +11518,7 @@ sap.ui.define([
 		var oGroupHeaderListItem, oInvisibleText,
 			oFocusDomRef = this.oComboBox.getFocusDomRef(),
 			oSeparatorItem = this.oComboBox._getList().getItems()[0],
-			oExpectedLabel = oCore.getLibraryResourceBundle("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
+			oExpectedLabel = Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER") + " " + oSeparatorItem.getTitle(),
 			sExpectedActiveDescendantId;
 
 		// arrange
@@ -11527,7 +11533,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
 		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
-		oInvisibleText = oCore.byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
+		oInvisibleText = Element.getElementById(oGroupHeaderListItem.getAriaLabelledBy()[0]);
 		sExpectedActiveDescendantId = oGroupHeaderListItem.getId();
 
 		// assert

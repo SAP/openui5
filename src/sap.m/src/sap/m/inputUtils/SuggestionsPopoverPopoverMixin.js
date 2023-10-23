@@ -6,11 +6,11 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/library",
 	"sap/m/Popover",
-	"sap/m/ValueStateHeader",
-	"sap/ui/core/Configuration"
-], function (library, Popover, ValueStateHeader, Configuration) {
+	"sap/m/ValueStateHeader"
+], function (Localization, library, Popover, ValueStateHeader) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -25,7 +25,7 @@ sap.ui.define([
 		 * @returns {sap.m.Popover} The newly created picker.
 		 */
 		this.createPopover = function (oInput) {
-			var bRTL = Configuration.getRTL();
+			var bRTL = Localization.getRTL();
 			var that = this,
 				oPopover = new Popover(oInput.getId() + "-popup", {
 					showArrow: false,

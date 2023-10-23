@@ -1,5 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/LanguageTag",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
@@ -35,6 +40,11 @@ sap.ui.define([
 	// load all required calendars in advance
 	"sap/ui/core/date/Islamic"
 ], function(
+	Formatting,
+	LanguageTag,
+	Localization,
+	Element,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	JSONModel,
@@ -71,7 +81,7 @@ sap.ui.define([
 	"use strict";
 
 	// set language to en-GB, since we have specific language strings tested
-	Core.getConfiguration().setLanguage("en_GB");
+	Localization.setLanguage("en_GB");
 
 	// shortcut for sap.ui.core.CalendarType
 	var CalendarType = coreLibrary.CalendarType;
@@ -214,7 +224,7 @@ sap.ui.define([
 	};
 
 	var _switchToView = function(sViewName, oPC) {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			mIntervalStringsMap = {},
 			sIntervalTypeDropdownId,
 			oViewSwitch,
@@ -230,7 +240,7 @@ sap.ui.define([
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
 		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
-		oViewSwitch = Core.byId(sIntervalTypeDropdownId);
+		oViewSwitch = Element.getElementById(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
 			return item.getText().toLowerCase() === sViewI18Name.toLowerCase();
 		});
@@ -250,7 +260,7 @@ sap.ui.define([
 	};
 
 	var _getTodayButton = function(oPC) {
-		return Core.byId(oPC.getId() + "-Header-NavToolbar-TodayBtn");
+		return Element.getElementById(oPC.getId() + "-Header-NavToolbar-TodayBtn");
 	};
 
 	//Verifies that given Date is "displayed" in the Planning Calendar
@@ -759,8 +769,8 @@ sap.ui.define([
 	QUnit.module("ARIA", {
 		beforeEach: function(assert) {
 
-			this.sOldLanguage = Core.getConfiguration().getLanguage();
-			Core.getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+			this.sOldLanguage = Localization.getLanguage();
+			Localization.setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
 
 			this.oLegend = new PlanningCalendarLegend({
 				items: [
@@ -964,7 +974,7 @@ sap.ui.define([
 				this.oLegend.destroy();
 				this.oLegendWithItemsTypes01UpToTypes10.destroy();
 			}
-			Core.getConfiguration().setLanguage(this.sOldLanguage);
+			Localization.setLanguage(this.sOldLanguage);
 		}
 	});
 
@@ -1324,14 +1334,14 @@ sap.ui.define([
 
 	QUnit.test("Navigation backward via keyboard left arrow (outside the current visible area) at the border of the DST (Nov->Oct)", function(assert) {
 		//prepare
-		var oOriginalFormatLocale = Core.getConfiguration().getFormatSettings().getFormatLocale(),
+		var oOriginalFormatLocale = new Locale(Formatting.getLanguageTag()),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion(),
 			aDays,
 			oNextTarget,
 			oSelf = this,
 			fnDone = assert.async();
 
-		Core.getConfiguration().setFormatLocale("en-GB");
+		Formatting.setLanguageTag("en-GB");
 		this.oPC2.setStartDate(UI5Date.getInstance("2014", "10", "5", "08", "00"));
 		this.oPC2.invalidate();
 		Core.applyChanges();
@@ -1354,7 +1364,7 @@ sap.ui.define([
 				UI5Date.getInstance(2014, 10, 1),
 				UI5Date.getInstance(2014, 10, 2)
 			], oSelf.oPC2, "Navigated to the correct viewport");
-			Core.getConfiguration().setFormatLocale(sOriginalFormatLocale);
+			Formatting.setLanguageTag(sOriginalFormatLocale);
 			fnDone();
 		}.bind(this), 0);
 	});
@@ -1480,12 +1490,12 @@ sap.ui.define([
 	QUnit.test("Navigation forward in week view where next week starts at 1st January (locale en_US)", function(assert) {
 		var oSelf = this,
 			fnDone = assert.async(),
-			oOriginalFormatLocale = Core.getConfiguration().getFormatLocale();
+			sOriginalFormatLocale = Formatting.getLanguageTag().toString();
 
 		//arrange
-		Core.getConfiguration().setFormatLocale('en_US');
-		this.oStub3 = this.stub(Core.getConfiguration(), "getLocale").callsFake(function () {
-			return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+		Formatting.setLanguageTag('en_US');
+		this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
+			return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 		});
 		Core.applyChanges();
 		this.oPC2.setStartDate(UI5Date.getInstance(2017, 0, 1));
@@ -1506,7 +1516,7 @@ sap.ui.define([
 			], oSelf.oPC2, "Navigated to 1st of January");
 
 			//clear
-			Core.getConfiguration().setFormatLocale(oOriginalFormatLocale);
+			Formatting.setLanguageTag(sOriginalFormatLocale);
 			fnDone();
 		}.bind(this), 0);
 	});

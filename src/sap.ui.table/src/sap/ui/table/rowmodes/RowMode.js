@@ -4,11 +4,13 @@
 sap.ui.define([
 	"../utils/TableUtils",
 	"sap/ui/core/Element",
+	"sap/ui/core/RenderManager",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device"
 ], function(
 	TableUtils,
 	Element,
+	RenderManager,
 	jQuery,
 	Device
 ) {
@@ -652,7 +654,7 @@ sap.ui.define([
 		oBeforeRenderingEvent.srcControl = oTable;
 		oTable._handleEvent(oBeforeRenderingEvent);
 
-		var oRM = sap.ui.getCore().createRenderManager();
+		var oRM = new RenderManager().getInterface();
 		var oRenderer = oTable.getRenderer();
 		oRenderer.renderTableCCnt(oRM, oTable);
 		oRM.flush(oTBody, false, false);

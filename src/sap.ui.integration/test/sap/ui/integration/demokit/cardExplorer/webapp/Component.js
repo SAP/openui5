@@ -1,13 +1,13 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/IconPool",
-	"sap/ui/Device",
-	"sap/ui/core/Core"
+	"sap/ui/Device"
 ], function (
+	Localization,
 	UIComponent,
 	IconPool,
-	Device,
-	oCore
+	Device
 ) {
 	"use strict";
 
@@ -32,7 +32,7 @@ sap.ui.define([
 			UIComponent.prototype.init.apply(this, arguments);
 
 			// specify the only supported language
-			oCore.getConfiguration().setLanguage("en");
+			Localization.setLanguage("en");
 
 			// register TNT icon font
 			IconPool.registerFont({

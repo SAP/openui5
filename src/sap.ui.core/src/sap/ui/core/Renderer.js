@@ -5,12 +5,12 @@
 // Provides (optional) base class for all renderers
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/assert",
-	"sap/base/util/extend",
-	"sap/ui/core/Configuration"
-], function(Log, isPlainObject, ObjectPath, assert, extend, Configuration) {
+	"sap/base/util/extend"
+], function(Log, Localization, isPlainObject, ObjectPath, assert, extend) {
 	"use strict";
 
 	/**
@@ -236,7 +236,7 @@ sap.ui.define([
 		var TextDirection = sapUiCore.TextDirection;
 
 		var sTextAlign = "",
-			bRTL = Configuration.getRTL();
+			bRTL = Localization.getRTL();
 
 		switch (oTextAlign) {
 		case TextAlign.End:

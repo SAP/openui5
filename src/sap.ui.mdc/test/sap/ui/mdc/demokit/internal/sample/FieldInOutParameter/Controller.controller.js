@@ -1,14 +1,14 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core"
-], function(Controller, oCore) {
+	"sap/ui/core/Messaging",
+	"sap/ui/core/mvc/Controller"
+], function(Messaging, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.FieldInOutParameter.Controller", {
 
 		onInit: function() {
 			this.getView().bindElement("/Books(1)");
-			oCore.getMessageManager().registerObject(this.getView(), true);
+			Messaging.registerObject(this.getView(), true);
 		}
 
 	});

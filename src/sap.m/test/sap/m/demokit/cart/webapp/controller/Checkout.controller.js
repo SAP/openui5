@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/MessageItem",
 	"sap/m/MessagePopover",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
+	"sap/ui/core/Messaging",
 	"sap/ui/model/json/JSONModel"
 ], function (
 	BaseController,
@@ -20,7 +20,7 @@ sap.ui.define([
 	MessageItem,
 	MessagePopover,
 	Device,
-	oCore,
+	Messaging,
 	JSONModel
 ) {
 	"use strict";
@@ -77,7 +77,7 @@ sap.ui.define([
 			};
 
 			// Assign the model object to the SAPUI5 core
-			this.setModel(oCore.getMessageManager().getMessageModel(), "message");
+			this.setModel(Messaging.getMessageModel(), "message");
 
 			// switch to single column view for checout process
 			this.getRouter().getRoute("checkout").attachMatched(function () {
@@ -223,7 +223,7 @@ sap.ui.define([
 		 * Removes validation error messages from the previous step
 		 */
 		_clearMessages: function () {
-			oCore.getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		},
 
 		/**
@@ -308,7 +308,7 @@ sap.ui.define([
 			var oWizard = this.byId("shoppingCartWizard"),
 				oStep = this.byId(sStepName),
 				bEmptyInputs = this._checkInputFields(aInputIds),
-				bValidationError = !!oCore.getMessageManager().getMessageModel().getData().length;
+				bValidationError = !!Messaging.getMessageModel().getData().length;
 
 			if (!bValidationError && !bEmptyInputs) {
 				oWizard.validateStep(oStep);
@@ -322,7 +322,7 @@ sap.ui.define([
 		 * Navigates to the summary page in case there are no errors
 		 */
 		checkCompleted: function () {
-			if (oCore.getMessageManager().getMessageModel().getData().length > 0) {
+			if (Messaging.getMessageModel().getData().length > 0) {
 				MessageBox.error(this.getResourceBundle().getText("popOverMessageText"));
 			} else {
 				this.byId("wizardNavContainer").to(this.byId("summaryPage"));

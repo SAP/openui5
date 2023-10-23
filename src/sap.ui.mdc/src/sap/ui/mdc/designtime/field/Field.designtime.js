@@ -3,14 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/fl/Utils',
 	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI',
-	'sap/m/p13n/Engine',
-	'sap/ui/core/Core'
-], function(Utils, FlexRuntimeInfoAPI, Engine, oCore) {
+	'sap/m/p13n/Engine'
+], function(Element, Library, Utils, FlexRuntimeInfoAPI, Engine) {
 	"use strict";
 
-    const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+    const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	return {
         properties: {
@@ -27,7 +28,7 @@ sap.ui.define([
                 return [];
             }
             const oFieldInfo = oField.getFieldInfo();
-            let oControl = typeof oFieldInfo.getSourceControl() === "string" ? oCore.byId(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
+            let oControl = typeof oFieldInfo.getSourceControl() === "string" ? Element.getElementById(oFieldInfo.getSourceControl()) : oFieldInfo.getSourceControl();
             if (!oControl) {
                 oControl = oField;
             }

@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Theming",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TileContainer",
@@ -14,6 +16,8 @@ sap.ui.define([
 	"require",
 	"sap/ui/core/Core"
 ], function(
+	Element,
+	Theming,
 	qutils,
 	createAndAppendDiv,
 	TileContainer,
@@ -459,7 +463,7 @@ sap.ui.define([
 		this.sut.placeAt("qunit-fixture");
 
 		setTimeout(function() {
-			core.byId("third").focus();
+			Element.getElementById("third").focus();
 			assert.equal(this.sut._iCurrentFocusIndex, 1, "currentFocusIndex is correct");
 			this.sut.destroy();
 			done();
@@ -478,7 +482,7 @@ sap.ui.define([
 			this.clean();
 		},
 		prepare : function() {
-			this.sOriginalTheme = core.getConfiguration().getTheme();
+			this.sOriginalTheme = Theming.getTheme();
 			// SUT
 			this.sut = new TileContainer('testOrder', {
 				tiles: [
@@ -1122,7 +1126,7 @@ sap.ui.define([
 
 
 		//Act
-		this.oSut.deleteTile(core.byId('id5')); //delete the six tile, now we have only 4 left
+		this.oSut.deleteTile(Element.getElementById('id5')); //delete the six tile, now we have only 4 left
 		//Assert
 		assert.equal(this.oSut.$("cnt").children().length, 2, "Removing the last tile at the inactive page does not change the rendered tiles");
 		assert.equal(document.getElementById('id5'), null, "The last tile should not be part of the DOM");

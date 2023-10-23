@@ -1,5 +1,6 @@
 /* global QUnit, ResizeObserver */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/layout/AlignedFlowLayout",
@@ -7,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/IntervalTrigger",
 	"sap/ui/core/ResizeHandler"
 ], function(
+	Localization,
 	Core,
 	Control,
 	AlignedFlowLayout,
@@ -255,7 +257,7 @@ sap.ui.define([
 		var oItemDomRef = oButton.getDomRef().parentElement;
 
 		// assert
-		if (Core.getConfiguration().getRTL()) {
+		if (Localization.getRTL()) {
 			assert.strictEqual(oItemDomRef.offsetLeft, 0, "the end item should be left aligned");
 		} else {
 			assert.strictEqual(oItemDomRef.offsetLeft + oItemDomRef.offsetWidth, 400, "the end item should be right aligned");
@@ -913,7 +915,7 @@ sap.ui.define([
 					oPreviousItemDomRef = oInput4.getDomRef().parentElement,
 					bOverlapX;
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					bOverlapX = oPreviousItemDomRef.offsetLeft < (oEndItemDomRef.offsetLeft + oEndItemDomRef.offsetWidth);
 				} else {
 					bOverlapX = oEndItemDomRef.offsetLeft < (oPreviousItemDomRef.offsetLeft + oPreviousItemDomRef.offsetWidth);
@@ -988,7 +990,7 @@ sap.ui.define([
 					oEndContendItemDomRef = oAdaptFiltersButton.getDomRef().parentElement,
 					bOverlapX;
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					bOverlapX = oItemDomRef3.offsetLeft < (oEndContendItemDomRef.offsetLeft + oEndContendItemDomRef.offsetWidth);
 				} else {
 					bOverlapX = oEndContendItemDomRef.offsetLeft < (oItemDomRef3.offsetLeft + oItemDomRef3.offsetWidth);
@@ -1155,7 +1157,7 @@ sap.ui.define([
 				assert.strictEqual(oItemDomRef1.offsetWidth, 195, "the item should have a computed width of 195px");
 				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oItemDomRef1.offsetLeft, 195, "the item should be aligned to the upper right corner");
 				} else {
 					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
@@ -1164,7 +1166,7 @@ sap.ui.define([
 				assert.strictEqual(oItemDomRef2.offsetWidth, 195, "the item should have a computed width of 195px");
 				assert.strictEqual(oItemDomRef2.offsetTop, 0, "the item should be in the first line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oItemDomRef2.offsetLeft, 0, "the item should be aligned to the left of the first item");
 				} else {
 					assert.strictEqual(oItemDomRef2.offsetLeft, 195, "the item should be aligned to the right of the first item");
@@ -1173,7 +1175,7 @@ sap.ui.define([
 				assert.strictEqual(oItemDomRef3.offsetWidth, 195, "the item should have a computed width of 195px");
 				assert.strictEqual(oItemDomRef3.offsetTop, 20, "the item should be in the second line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oItemDomRef3.offsetLeft, 195, "the item should be aligned to the right corner");
 				} else {
 					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the left corner");
@@ -1182,7 +1184,7 @@ sap.ui.define([
 				assert.strictEqual(oEndContendItemDomRef.offsetWidth, 215, "the end content item should have the specified width");
 				assert.strictEqual(oEndContendItemDomRef.offsetTop, 40, "the end content item should be in the third line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 0, "the item should be aligned to the right");
 				} else {
 					assert.strictEqual(oEndContendItemDomRef.offsetLeft, 175, "the item should be aligned to the left");
@@ -1263,7 +1265,7 @@ sap.ui.define([
 				assert.strictEqual(oItemDomRef1.offsetWidth, 320, "the item should have a computed width of 320px");
 				assert.strictEqual(oItemDomRef1.offsetTop, 0, "the item should be in the first line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oItemDomRef1.offsetLeft, 640, "the item should be aligned to the upper right corner");
 				} else {
 					assert.strictEqual(oItemDomRef1.offsetLeft, 0, "the item should be aligned to the upper left corner");
@@ -1276,7 +1278,7 @@ sap.ui.define([
 				assert.strictEqual(oItemDomRef3.offsetWidth, 320, "the item should have a computed width of 320px");
 				assert.strictEqual(oItemDomRef3.offsetTop, 0, "the item should be in the first line");
 
-				if (Core.getConfiguration().getRTL()) {
+				if (Localization.getRTL()) {
 					assert.strictEqual(oItemDomRef3.offsetLeft, 0, "the item should be aligned to the upper left corner");
 				} else {
 					assert.strictEqual(oItemDomRef3.offsetLeft, 640, "the item should be aligned to the upper right corner");
@@ -1315,7 +1317,7 @@ sap.ui.define([
 			var oEndItemComputedStyle = window.getComputedStyle(oButton.getDomRef().parentElement, null);
 
 			// assert
-			if (Core.getConfiguration().getRTL()) {
+			if (Localization.getRTL()) {
 				assert.strictEqual(oEndItemComputedStyle.getPropertyValue("left"), "30px");
 			} else {
 				assert.strictEqual(oEndItemComputedStyle.getPropertyValue("right"), "30px");

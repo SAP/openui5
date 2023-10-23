@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SelectDialog.
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	'./Button',
 	'./Dialog',
@@ -25,6 +26,7 @@ sap.ui.define([
 	'sap/base/Log'
 ],
 function(
+	Library,
 	jQuery,
 	Button,
 	Dialog,
@@ -343,7 +345,7 @@ function(
 		this._bInitBusy = false;
 		this._bFirstRender = true;
 		this._bAfterCloseAttached = false;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 		// store a reference to the list for binding management
 		this._oList = new List(this.getId() + "-list", {

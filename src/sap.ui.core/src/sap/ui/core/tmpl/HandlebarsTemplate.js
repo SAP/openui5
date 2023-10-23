@@ -5,16 +5,19 @@
 sap.ui.define([
 	'./Template',
 	'./TemplateControl',
+	"sap/ui/core/RenderManager",
 	'sap/ui/thirdparty/handlebars',
 	'sap/ui/base/ManagedObject',
 	'sap/base/util/ObjectPath',
 	"sap/base/security/encodeXML",
 	"sap/base/util/isEmptyObject",
-	'sap/ui/core/Core' // provides sap.ui.getCore()
+	// provides sap.ui.getCore()
+	'sap/ui/core/Core'
 ],
 	function(
 		Template,
 		TemplateControl,
+		RenderManager,
 		Handlebars,
 		ManagedObject,
 		ObjectPath,
@@ -114,7 +117,7 @@ sap.ui.define([
 			fnWith = Handlebars.helpers["with"],
 			fnIf = Handlebars.helpers["if"],
 			fnUnless = Handlebars.helpers["unless"],
-			oRenderManager = sap.ui.getCore().createRenderManager();
+			oRenderManager = new RenderManager().getInterface();
 
 		// this special RenderManager is used to write the controlData, classes
 		// and styles into the buffer and extract it later on via getHTML!

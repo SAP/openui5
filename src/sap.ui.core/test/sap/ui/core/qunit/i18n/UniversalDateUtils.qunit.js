@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
@@ -11,10 +13,10 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function (CalendarType, Configuration, UI5Date, UniversalDate, UniversalDateUtils) {
+], function(Formatting, Localization, CalendarType, Configuration, UI5Date, UniversalDate, UniversalDateUtils) {
 	"use strict";
 
-	const sLanguage = Configuration.getLanguage();
+	const sLanguage = Localization.getLanguage();
 	var testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
 		assert.strictEqual(oDate.getFullYear(), iFullYear, "getRange " + iDuration +  " " + sUnit + ": year set correctly");
 		assert.strictEqual(oDate.getMonth(), iMonth, "getRange " + iDuration +  " " + sUnit + ": month set correctly");
@@ -30,10 +32,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function () {
-			Configuration.setLanguage("en_US");
+			Localization.setLanguage("en_US");
 		},
 		afterEach: function () {
-			Configuration.setLanguage(sLanguage);
+			Localization.setLanguage(sLanguage);
 		}
 	});
 
@@ -525,7 +527,7 @@ sap.ui.define([
 			//lastWeek
 			aRange = UniversalDateUtils.ranges.lastWeek(sCalendarWeekNumbering);
 
-		this.stub(Configuration, "getCalendarType").returns("Islamic");
+		this.stub(Formatting, "getCalendarType").returns("Islamic");
 
 		testDate(assert, aRange[0].getJSDate(), -1, "WEEK", 2023, 0, 1, 0,0,0,0);
 		testDate(assert, aRange[1].getJSDate(), -1, "WEEK", 2023, 0, 7, 23,59,59,999);
@@ -568,19 +570,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("_getDateFromWeekStartByDayOffset", function (assert) {
-		var oFormatSettings = {getFormatLocale: function () {}},
-			oResult = new UniversalDate(),
+		var oResult = new UniversalDate(),
 			oUniversalDate = {getWeek: function () {}};
 
-		this.mock(Configuration).expects("getCalendarType").withExactArgs().returns("~CalendarType");
-		this.mock(Configuration).expects("getFormatSettings").withExactArgs().returns(oFormatSettings);
-		this.mock(oFormatSettings).expects("getFormatLocale").withExactArgs().returns("~oLocale");
+		this.mock(Formatting).expects("getCalendarType").withExactArgs().returns("~CalendarType");
+		this.mock(Formatting).expects("getLanguageTag").withExactArgs().returns("~Locale");
 		this.mock(UniversalDateUtils).expects("createNewUniversalDate").withExactArgs().returns(oUniversalDate);
 		this.mock(oUniversalDate).expects("getWeek")
-			.withExactArgs("~oLocale", "~sCalendarWeekNumbering")
+			.withExactArgs("~Locale", "~sCalendarWeekNumbering")
 			.returns({week: "~week", year: "~year"});
 		this.mock(UniversalDate).expects("getFirstDateOfWeek")
-			.withExactArgs("~CalendarType", "~year", "~week", "~oLocale", "~sCalendarWeekNumbering")
+			.withExactArgs("~CalendarType", "~year", "~week", "~Locale", "~sCalendarWeekNumbering")
 			.returns({year: 2023, month: 0, day: 1});
 		// Mock implementation of constructor of UniversalDate
 		this.mock(UniversalDate).expects("getClass").withExactArgs().returns("~class");
@@ -602,13 +602,13 @@ sap.ui.define([
 	QUnit.skip("_getDateFromWeekStartByDayOffset with a configured first day of week", function(assert) {
 		var oFirstDateOfWeek,
 			sCalendarWeekNumbering = 'Default',
-			sDefaultLanguage = Configuration.getLanguage();
+			sDefaultLanguage = Localization.getLanguage();
 
 		this.mock(UniversalDateUtils).expects("createNewUniversalDate")
 			.withExactArgs()
 			.returns(new UniversalDate(2023, 0, 13));
 
-		Configuration.setLanguage('en-US');
+		Localization.setLanguage('en-US');
 		Configuration.getFormatSettings().setFirstDayOfWeek(1);
 
 		// code under test
@@ -617,7 +617,7 @@ sap.ui.define([
 		// but due to setting the firstDayOfWeek to 1 (Mon), the returned date should be the 9th of Jan
 		testDate(assert, oFirstDateOfWeek, 1, "WEEKS", 2023, 0, 9, 0, 0, 0, 0);
 
-		Configuration.setLanguage(sDefaultLanguage);
+		Localization.setLanguage(sDefaultLanguage);
 		//TODO: The parameter null is documented in the setFirstDayOfWeek method but is currently not supported
 		Configuration.getFormatSettings().setFirstDayOfWeek(null);
 	});

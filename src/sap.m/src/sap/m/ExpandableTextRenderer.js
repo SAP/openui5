@@ -4,13 +4,13 @@
 
 // Provides default renderer for control sap.m.ExpandableText
 sap.ui.define([
-	'sap/ui/core/Core',
+	"sap/ui/core/Lib",
 	'sap/ui/core/Renderer',
 	'sap/ui/core/library',
 	'sap/m/HyphenationSupport',
 	'./library'
 ], function(
-	Core,
+	Library,
 	Renderer,
 	coreLibrary,
 	HyphenationSupport,
@@ -28,7 +28,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	/**
 	 * Text renderer.

@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TablePersoController",
 	"sap/ui/model/json/JSONModel",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(createAndAppendDiv, TablePersoController, JSONModel, Table, Label, Toolbar, ToolbarSpacer, Button, Column, ColumnListItem, Page, App, jQuery, oCore) {
+], function(Element, createAndAppendDiv, TablePersoController, JSONModel, Table, Label, Toolbar, ToolbarSpacer, Button, Column, ColumnListItem, Page, App, jQuery, oCore) {
 	"use strict";
 
 
@@ -133,11 +134,11 @@ sap.ui.define([
 
 	oTPC.attachPersonalizationsDone(fnPersoDone);
 
-	oCore.byId("idPersonalizationButton").attachPress(function(oEvent) {
+	Element.getElementById("idPersonalizationButton").attachPress(function(oEvent) {
 		oTPC.openDialog();
 	});
 
-	oCore.byId("idPersonalizationResetButton").attachPress(function() {
+	Element.getElementById("idPersonalizationResetButton").attachPress(function() {
 		//		Log.debug("TablePersoController resetRadioButton");
 		oPersoService.resetPersData();
 		oTPC.refresh();
@@ -159,7 +160,7 @@ sap.ui.define([
 	QUnit.test("Original order and all visible", function(assert) {
 
 		// Open dialog
-		oCore.byId("idPersonalizationButton").firePress();
+		Element.getElementById("idPersonalizationButton").firePress();
 
 		// Get the privately aggregated TPD
 		var oTPD = oTPC.getAggregation("_tablePersoDialog");
@@ -179,14 +180,14 @@ sap.ui.define([
 		assert.strictEqual(oPersData.aColumns[2].visible, true, "2 Number ON");
 
 		// Close dialog with "Cancel"
-		oCore.byId(oTPD._oDialog.getRightButton()).firePress();
+		Element.getElementById(oTPD._oDialog.getRightButton()).firePress();
 
 	});
 
 	QUnit.test("Make personalizations (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
-		oCore.byId("idPersonalizationButton").firePress();
+		Element.getElementById("idPersonalizationButton").firePress();
 
 		// Get the privately aggregated TPD and the inner dialog
 		var oTPD = oTPC.getAggregation("_tablePersoDialog"),
@@ -206,7 +207,7 @@ sap.ui.define([
 		// Close dialog with "OK"
 		var bPersonalizationDoneTriggered = false;
 		try {
-			oCore.byId(oDialog.getLeftButton()).firePress();
+			Element.getElementById(oDialog.getLeftButton()).firePress();
 		} catch (e) {
 			assert.equal(e, sPersoDoneMsg, "'PersonalizationDone' event triggered the correct function");
 			oTPC.detachPersonalizationsDone(fnPersoDone);
@@ -234,7 +235,7 @@ sap.ui.define([
 	QUnit.test("More personalizations then reset (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
-		oCore.byId("idPersonalizationButton").firePress();
+		Element.getElementById("idPersonalizationButton").firePress();
 
 		// Get the privately aggregated TPD and the inner dialog
 		var oTPD = oTPC.getAggregation("_tablePersoDialog"),
@@ -270,7 +271,7 @@ sap.ui.define([
 		oTPD._resetAllButton.firePress();
 
 		// Close dialog with "OK"
-		oCore.byId(oDialog.getLeftButton()).firePress();
+		Element.getElementById(oDialog.getLeftButton()).firePress();
 
 		// Status at this point should be:
 		// Color  ON
@@ -290,7 +291,7 @@ sap.ui.define([
 	QUnit.test("More personalizations for real (1 invisible, 1 order change)", function(assert) {
 
 		// Open dialog
-		oCore.byId("idPersonalizationButton").firePress();
+		Element.getElementById("idPersonalizationButton").firePress();
 
 		// Get the privately aggregated TPD and the inner dialog
 		var oTPD = oTPC.getAggregation("_tablePersoDialog");
@@ -307,7 +308,7 @@ sap.ui.define([
 		oList.getItems()[0].setSelected(false);
 
 		// Close dialog with "OK"
-		oCore.byId(oDialog.getLeftButton()).firePress();
+		Element.getElementById(oDialog.getLeftButton()).firePress();
 
 		// Status at this point should be:
 		// Color  OFF
@@ -328,7 +329,7 @@ sap.ui.define([
 	QUnit.test("Reset to the initial Column order", function(assert) {
 
 		//reset personalization
-		oCore.byId("idPersonalizationResetButton").firePress();
+		Element.getElementById("idPersonalizationResetButton").firePress();
 		oCore.applyChanges();
 		var oColumns = oTable.getColumns();
 		oColumns.forEach(function(oColumn) {

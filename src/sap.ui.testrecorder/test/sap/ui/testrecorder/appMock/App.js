@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (Core, ComponentContainer, Shell) {
 	"use strict";
 
-	Core.attachInit(function () {
+	Core.ready(function () {
 		new Shell('Shell', {
 			title: 'Mocked Application for testing Test Recorder tool',
 			app: new ComponentContainer({

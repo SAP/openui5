@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nDimMeasurePanel",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	P13nDimMeasurePanel,
@@ -51,7 +53,7 @@ sap.ui.define([
 		});
 
 		// assertions
-		assert.strictEqual(oDimMeasurePanel.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("CHARTPANEL_TITLE"));
+		assert.strictEqual(oDimMeasurePanel.getTitle(), Library.getResourceBundleFor("sap.m").getText("CHARTPANEL_TITLE"));
 		assert.strictEqual(oDimMeasurePanel.getTitleLarge(), "");
 		assert.strictEqual(oDimMeasurePanel.getType(), P13nPanelType.dimeasure);
 		assert.strictEqual(oDimMeasurePanel.getChartTypeKey(), "");

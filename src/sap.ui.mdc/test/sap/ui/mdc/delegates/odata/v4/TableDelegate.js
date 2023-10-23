@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"../../TableDelegateUtils",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"delegates/odata/v4/FilterBarDelegate",
 	"delegates/odata/v4/ODataMetaModelUtil",
@@ -11,12 +12,12 @@ sap.ui.define([
 	"sap/ui/mdc/util/FilterUtil",
 	"sap/ui/unified/Currency",
 	"sap/ui/model/Filter",
-	"sap/ui/core/Core",
 	"sap/base/Log",
 	'sap/ui/mdc/odata/v4/TypeMap'
 
 ], function(
 	TableDelegateUtils,
+	Element,
 	TableDelegate,
 	FilterBarDelegate,
 	ODataMetaModelUtil,
@@ -24,7 +25,6 @@ sap.ui.define([
 	FilterUtil,
 	Currency,
 	Filter,
-	Core,
 	Log,
 	ODataV4TypeMap
 ) {
@@ -95,7 +95,7 @@ sap.ui.define([
 	}
 
 	function createOuterFilters(oTable) {
-		var oFilter = Core.byId(oTable.getFilter());
+		var oFilter = Element.getElementById(oTable.getFilter());
 		var aFilters = [];
 
 		if (!oFilter) {
@@ -118,7 +118,7 @@ sap.ui.define([
 	}
 
 	function addSearchParameter(oTable, oBindingInfo) {
-		var oFilter = Core.byId(oTable.getFilter());
+		var oFilter = Element.getElementById(oTable.getFilter());
 		if (!oFilter) {
 			return;
 		}

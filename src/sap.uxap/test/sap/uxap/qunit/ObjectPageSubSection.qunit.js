@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
@@ -19,8 +20,9 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Panel",
 	"sap/m/Text",
-	"sap/ui/core/HTML"],
-function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
+	"sap/ui/core/HTML"
+],
+function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHeaderTitle, ObjectPageSection, ObjectPageSectionBase, ObjectPageSubSectionClass, BlockBase, ObjectPageLayout, library, App, Button, Label, Panel, Text, HTML) {
 	"use strict";
 
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -1360,11 +1362,11 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 			sSubSectionControlName = ObjectPageSubSectionClass._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
 
 		// Assert
-		assert.strictEqual(Core.byId(sSubSectionWithoutTitleAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sSubSectionWithoutTitleAriaLabelledBy).getText(),
 			sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
 
 		// Assert
-		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sSubSectionWithTitleAriaLabelledBy).getText(),
 			oSubSectionWithTitle.getTitle(), "Subsection title is properly labelled");
 
 		// Act
@@ -1375,9 +1377,9 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 		sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby");
 
 		// Assert
-		assert.strictEqual(Core.byId(sSubSectionWithTitleAriaLabelledBy).getText(),
+		assert.strictEqual(Element.getElementById(sSubSectionWithTitleAriaLabelledBy).getText(),
 			sSubSectionControlName, "Subsection with hidden title should not not contain its title in aria-labelledby");
-		assert.strictEqual(Core.byId(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) === -1,
+		assert.strictEqual(Element.getElementById(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) === -1,
 			true, "Promoted Subsection title is properly labelled");
 
 		// Act
@@ -1385,7 +1387,7 @@ function($, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDynamicHead
 		Core.applyChanges();
 
 		// Assert
-		assert.strictEqual(Core.byId(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) > -1,
+		assert.strictEqual(Element.getElementById(sPromotedSubSectionAriaLabelledBy).getText().indexOf(oPromotedSubSection.getTitle()) > -1,
 			true, "Promoted Subsection title is properly labelled");
 	});
 

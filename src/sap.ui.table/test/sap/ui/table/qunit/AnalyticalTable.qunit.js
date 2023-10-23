@@ -1,6 +1,7 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/AnalyticalTable",
 	"sap/ui/table/rowmodes/Fixed",
@@ -17,9 +18,12 @@ sap.ui.define([
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/Core",
 	"sap/m/table/columnmenu/Menu",
-	"sap/ui/core/qunit/analytics/TBA_ServiceDocument", // provides mock data
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts" // provides mock data
+	// provides mock data
+	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
+	// provides mock data
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
 ], function(
+	Element,
 	TableQUnitUtils,
 	AnalyticalTable,
 	FixedRowMode,
@@ -1344,7 +1348,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.getElementById("table");
 		}
 	});
 

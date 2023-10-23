@@ -5,8 +5,8 @@
 // Provides control sap.m.ExpandableText
 sap.ui.define([
 	'./library',
-	'sap/ui/core/Core',
 	'sap/ui/core/Control',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
@@ -19,8 +19,8 @@ sap.ui.define([
 	"./ExpandableTextRenderer"
 ],
 function(library,
-		 Core,
 		 Control,
+		 Library,
 		 coreLibrary,
 		 InvisibleText,
 		 Device,
@@ -33,7 +33,7 @@ function(library,
 		 ExpandableTextRenderer) {
 	"use strict";
 
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	var TEXT_SHOW_MORE = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
 	var TEXT_SHOW_LESS = oRb.getText("EXPANDABLE_TEXT_SHOW_LESS");

@@ -5,6 +5,8 @@
 // Provides control sap.m.Breadcrumbs.
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/util/openWindow",
@@ -22,6 +24,8 @@ sap.ui.define([
 	'sap/ui/core/InvisibleText'
 ], function(
 	Control,
+	Element,
+	Library,
 	Rem,
 	Parameters,
 	openWindow,
@@ -47,7 +51,7 @@ sap.ui.define([
 		SeparatorStyle = library.BreadcrumbsSeparatorStyle,
 
 		// shortcut for texts resource bundle
-		oResource = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		oResource = Library.getResourceBundleFor("sap.m");
 
 	/**
 	 * Constructor for a new <code>Breadcrumbs</code>.
@@ -358,7 +362,7 @@ sap.ui.define([
 	Breadcrumbs.prototype._destroyInvisibleTexts = function () {
 		var oControl;
 		this._aCachedInvisibleTexts.forEach(function (oData) {
-			oControl = sap.ui.getCore().byId(oData.controlId);
+			oControl = Element.getElementById(oData.controlId);
 
 			// remove reference to the invisible text on the sap.m.Link control
 			// check for control existence as it might have been destroyed already
@@ -452,7 +456,7 @@ sap.ui.define([
 			return;
 		}
 
-		oLink = sap.ui.getCore().byId(oSelectedItem.getKey());
+		oLink = Element.getElementById(oSelectedItem.getKey());
 
 		/* if it's not a link, then it must be only the current location text, we shouldn't do anything */
 		if (!(oLink instanceof Link)) {

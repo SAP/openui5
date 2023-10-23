@@ -1,6 +1,7 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
@@ -14,8 +15,9 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Text",
 	"sap/base/i18n/Localization",
-	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
-], function (jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
+], function(Library, jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
 	"use strict";
 
 	var iRenderingDelay = 2000,
@@ -258,7 +260,7 @@ sap.ui.define([
 	QUnit.test("Arrow left nad arrow right buttons should have correct tooltips", function (assert) {
 		var oArrowLeft = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollLeft"),
 			oArrowRight = this.anchorBarView.byId("ObjectPageLayout-anchBar-arrowScrollRight"),
-			oRB = Core.getLibraryResourceBundle("sap.uxap"),
+			oRB = Library.getResourceBundleFor("sap.uxap"),
 			sArrowLeftTooltip = oRB.getText("TOOLTIP_OP_SCROLL_LEFT_ARROW"),
 			sArrowRightTooltip = oRB.getText("TOOLTIP_OP_SCROLL_RIGHT_ARROW");
 
@@ -613,7 +615,7 @@ sap.ui.define([
 	QUnit.test("Tooltip set on HierarchicalSelect", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
 			oSelect = oAnchorBar._getHierarchicalSelect(),
-			oRB = Core.getLibraryResourceBundle("sap.uxap"),
+			oRB = Library.getResourceBundleFor("sap.uxap"),
 			sExpectedTooltip = oRB.getText("ANCHOR_BAR_OVERFLOW");
 
 		assert.strictEqual(oSelect.getTooltip(), sExpectedTooltip, "Tooltip correctly set.");

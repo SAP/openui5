@@ -4,6 +4,8 @@
 
 // Provides control sap.m.DateTimeInput.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Locale",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/Control',
 	'./library',
@@ -17,10 +19,11 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	"./DateTimeInputRenderer",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ],
 function(
+	Formatting,
+	Locale,
 	jQuery,
 	Control,
 	library,
@@ -34,7 +37,6 @@ function(
 	coreLibrary,
 	Device,
 	DateTimeInputRenderer,
-	Configuration,
 	UI5Date
 ) {
 	"use strict";
@@ -293,7 +295,7 @@ function(
 
 			case DateTimeInputType.Time:
 				oPicker = new TimePicker(this.getId() + "-Picker",
-					{localeId: Configuration.getFormatSettings().getFormatLocale().toString()});
+					{localeId: new Locale(Formatting.getLanguageTag()).toString()});
 				break;
 
 			default: // default is date

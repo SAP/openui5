@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
@@ -13,8 +14,10 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Localization,
 	qutils,
 	createAndAppendDiv,
 	jQuery,
@@ -1495,7 +1498,7 @@ sap.ui.define([
 			iLength = sValue.length,
 			bModified = false,
 			bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
-			bRTLMode = oCore.getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+			bRTLMode = Localization.getRTL() || oControl.getTextDirection() === "RTL";
 
 
 		if (bRTLMode && !bOnlyHebrewContent) {
@@ -1547,7 +1550,7 @@ sap.ui.define([
 			oSelection = {iFrom: $oControl.selectionStart, iTo: $oControl.selectionEnd},
 			bModified = false,
 			bOnlyHebrewContent = new RegExp("[\u0591-\u05F4]").test(sValue),
-			bRTLMode = oCore.getConfiguration().getRTL() || oControl.getTextDirection() === "RTL";
+			bRTLMode = Localization.getRTL() || oControl.getTextDirection() === "RTL";
 
 		if (!bRTLMode || bOnlyHebrewContent) {
 			return oSelection;

@@ -1,9 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/m/DynamicDateRange",
 	"sap/m/DynamicDateOption",
 	"sap/m/StandardDynamicDateOption",
 	"sap/m/DynamicDateValueHelpUIType",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/unified/DateRange",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -13,13 +17,16 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/ui/Device",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/date/CalendarWeekNumbering",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/date/CalendarWeekNumbering"
 ], function(
+	Formatting,
+	Localization,
 	DynamicDateRange,
 	DynamicDateOption,
 	StandardDynamicDateOption,
 	DynamicDateValueHelpUIType,
+	Library,
+	Locale,
 	DateRange,
 	oCore,
 	Element,
@@ -29,13 +36,12 @@ sap.ui.define([
 	Label,
 	Device,
 	UI5Date,
-	CalendarWeekNumbering,
-	Configuration
+	CalendarWeekNumbering
 ) {
 	"use strict";
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m"),
+	var oRb = Library.getResourceBundleFor("sap.m"),
 		testDate = function(assert, oDate, iDuration, sUnit, iFullYear, iMonth, iDate, iHours, iMinutes, iSecond, iMilliseconds) {
 			assert.strictEqual(oDate.getFullYear(), iFullYear, "toDates " + iDuration +  " " + sUnit + ": year set correctly");
 			assert.strictEqual(oDate.getMonth(), iMonth, "toDates " + iDuration +  " " + sUnit + ": month set correctly");
@@ -868,7 +874,7 @@ sap.ui.define([
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTMINUTES");
 		oDDR.open();
-		oLastMinutesOption = oCore.byId('myDDRLast-option-LASTMINUTES');
+		oLastMinutesOption = Element.getElementById('myDDRLast-option-LASTMINUTES');
 
 		oLastMinutesOption.firePress();
 		oCore.applyChanges();
@@ -885,7 +891,7 @@ sap.ui.define([
 		oDDR.setStandardOptions([]);
 		oDDR.addStandardOption("LASTHOURS");
 		oDDR.open();
-		oLastHoursOption = oCore.byId('myDDRLast-option-LASTHOURS');
+		oLastHoursOption = Element.getElementById('myDDRLast-option-LASTHOURS');
 		oLastHoursOption.firePress();
 		oCore.applyChanges();
 
@@ -1262,7 +1268,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Week options respect calendarWeekNumbering", function(assert) {
-		var sOriginalLocale = oCore.getConfiguration().getFormatLocale();
+		var sOriginalLocale = Formatting.getLanguageTag().toString();
 
 		// test with "en" locale
 		testFirstDayOfWeek(this.ddr, "en", CalendarWeekNumbering.Default, 0);
@@ -1283,7 +1289,7 @@ sap.ui.define([
 		testFirstDayOfWeek(this.ddr, "bg_BG", CalendarWeekNumbering.MiddleEastern, 6);
 
 		// restore original locale
-		oCore.getConfiguration().setFormatLocale(sOriginalLocale);
+		Formatting.setLanguageTag(sOriginalLocale);
 
 		// Tests the DDR control 'First Day Of Week' and 'This Week' options return values first day of week by setting specific locale and calendarWeekNumbering
 		function testFirstDayOfWeek(oDDR, sLocale, sCalendarWeekNumbering, iFirstDayOfWeek) {
@@ -1292,12 +1298,12 @@ sap.ui.define([
 				aDates;
 
 			// arrange
-			oCore.getConfiguration().setFormatLocale(sLocale);
+			Formatting.setLanguageTag(sLocale);
 			oDDR.setCalendarWeekNumbering(sCalendarWeekNumbering);
 			oDDR.open();
 			oCore.applyChanges();
-			oFirstDayOfWeek = oCore.byId(oDDR.getId() + '-option-FIRSTDAYWEEK');
-			oThisWeek = oCore.byId(oDDR.getId() + '-option-THISWEEK');
+			oFirstDayOfWeek = Element.getElementById(oDDR.getId() + '-option-FIRSTDAYWEEK');
+			oThisWeek = Element.getElementById(oDDR.getId() + '-option-THISWEEK');
 
 			// act
 			oFirstDayOfWeek.firePress();
@@ -1371,13 +1377,13 @@ sap.ui.define([
 			oDRS.open();
 			oCore.applyChanges();
 
-			var oDateOptionDomRef = oCore.byId('myDDR-option-DATE');
+			var oDateOptionDomRef = Element.getElementById('myDDR-option-DATE');
 			oCore.applyChanges();
 
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
-			var oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			var oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			var aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 
 			//Assert
@@ -1389,7 +1395,7 @@ sap.ui.define([
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
-			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Mon", "Monday is the first weekday for ISO_8601");
@@ -1399,7 +1405,7 @@ sap.ui.define([
 			oDateOptionDomRef.firePress();
 			oCore.applyChanges();
 			sCalendarId = document.querySelector("#" + oDRS.getId() + "-RP-popover .sapUiCal").getAttribute("id");
-			oMonthDomRef = oCore.byId(sCalendarId).getAggregation("month")[0].getDomRef();
+			oMonthDomRef = Element.getElementById(sCalendarId).getAggregation("month")[0].getDomRef();
 			aWeekHeaders = oMonthDomRef.querySelectorAll("#" + sCalendarId + " .sapUiCalWH:not(.sapUiCalDummy)");
 			//Assert
 			assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
@@ -1446,9 +1452,9 @@ sap.ui.define([
 
 
 	QUnit.test("DynamicDateFormat doesn't cut ' in different language", function (assert) {
-		var sLanguage = oCore.getConfiguration().getLanguage();
+		var sLanguage = Localization.getLanguage();
 
-		oCore.getConfiguration().setLanguage("fr_FR");
+		Localization.setLanguage("fr_FR");
 
 		// act
 		this.ddr.setValue({values: Array(0), operator: 'TODAY'});
@@ -1456,7 +1462,7 @@ sap.ui.define([
 		// assert
 		assert.ok(this.ddr._oInput.getValue().indexOf("Aujourd'hui") !== -1, "The year is correct");
 
-		oCore.getConfiguration().setLanguage(sLanguage);
+		Localization.setLanguage(sLanguage);
 	});
 
 	QUnit.test("Open DynamicDateRange from Button", function(assert) {
@@ -1467,7 +1473,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					oCore.byId("HDDR").openBy(this.getDomRef());
+					Element.getElementById("HDDR").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -1479,7 +1485,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oDDR._oPopup, oDDR.getId() + ": popup object exists");
-		assert.ok(oCore.byId(oDDR.getId() + "-RP-popover"), oDDR.getId() + ": popover control exists");
+		assert.ok(Element.getElementById(oDDR.getId() + "-RP-popover"), oDDR.getId() + ": popover control exists");
 		assert.ok(document.body.querySelector("#" + oDDR.getId() + "-RP-popover"), "popover exists in DOM");
 
 		// Clean
@@ -1496,7 +1502,7 @@ sap.ui.define([
 		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
 		assert.ok(oIconOne.getDecorative(), "icon is decorative");
 		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
-		assert.strictEqual(oIconOne.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
+		assert.strictEqual(oIconOne.getAlt(), Library.getResourceBundleFor("sap.m").getText("INPUT_VALUEHELP_BUTTON") , "icon alt is present");
 
 		// arrange
 		var oTouchStub = this.stub(Device, "support").value({touch: true});
@@ -1512,7 +1518,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("DynamicDateRange.toDates method with timezones", function(assert) {
-		var oTimezoneStub = this.stub(Configuration, 'getTimezone').returns("Pacific/Chatham"),
+		var oTimezoneStub = this.stub(Localization, 'getTimezone').returns("Pacific/Chatham"),
 			myGetInstance = UI5Date.getInstance,
 			oCurrentDateStub = this.stub(UI5Date, 'getInstance'),
 			aDateRange;
@@ -1792,12 +1798,12 @@ sap.ui.define([
 		});
 
 		// open LASTDAYS option
-		oLastMinutes =  oCore.byId(this.ddr.getId() + '-option-LASTDAYS');
+		oLastMinutes =  Element.getElementById(this.ddr.getId() + '-option-LASTDAYS');
 		oLastMinutes.firePress();
 		oCore.applyChanges();
 
 		// simulate entering of 0
-		oInnerInput = oCore.byId(document.querySelector(".sapMStepInput").id);
+		oInnerInput = Element.getElementById(document.querySelector(".sapMStepInput").id);
 		oInnerInput.setValue(0);
 		oInnerInput._verifyValue();
 		oCore.applyChanges();

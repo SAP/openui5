@@ -1,4 +1,6 @@
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/m/MessageToast",
 	"sap/ui/model/json/JSONModel",
@@ -9,20 +11,18 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/MessagePopover",
 	"sap/m/MessageItem",
-	"sap/ui/core/Core",
-    "sap/ui/core/util/MockServer",
-    "sap/ui/model/Filter",
-    "sap/ui/table/TreeTable",
-    "sap/ui/table/Column",
-    "sap/ui/model/odata/v2/ODataModel",
-    "sap/ui/core/HTML",
-    "sap/ui/performance/Measurement",
-    "sap/base/util/uid",
-    "sap/base/security/encodeXML",
-    "sap/ui/core/syncStyleClass",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/Filter",
+	"sap/ui/table/TreeTable",
+	"sap/ui/table/Column",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/core/HTML",
+	"sap/ui/performance/Measurement",
+	"sap/base/util/uid",
+	"sap/base/security/encodeXML",
+	"sap/ui/core/syncStyleClass",
 	"sap/ui/core/Fragment"
-], function(Controller, MessageToast, JSONModel, Dialog, Text, Label, TextArea, Button, MessagePopover, MessageItem, oCore,
-			MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
+], function(Element, Messaging, Controller, MessageToast, JSONModel, Dialog, Text, Label, TextArea, Button, MessagePopover, MessageItem, MockServer, Filter, TreeTable, Column, ODataModel, HTML, Measurement, uid, encodeXML, syncStyleClass, Fragment) {
 	"use strict";
 
 	var oTable;
@@ -45,7 +45,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.table.mvc.TreeTableODataV2", {
 
 		onInit: function() {
-			this._oMessageManager = oCore.getMessageManager();
+			this._oMessageManager = Messaging;
 			var oMessageModel = this._oMessageManager.getMessageModel();
 
 			oMessagePopover.setModel(oMessageModel);
@@ -424,7 +424,7 @@ sap.ui.define([
 					text: 'OK',
 					enabled: false,
 					press: function() {
-						var sBusinessEntityKey = oCore.byId('businessEntityValueTextArea').getValue();
+						var sBusinessEntityKey = Element.getElementById('businessEntityValueTextArea').getValue();
 
 						// create entry
 						var oBinding = oTable.getBinding();

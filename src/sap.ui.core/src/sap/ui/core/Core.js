@@ -22,6 +22,8 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Event",
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
 	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
@@ -34,6 +36,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/Object",
 	"sap/ui/base/syncXHRFix",
+	"sap/ui/core/Locale",
 	"sap/ui/core/support/Hotkeys",
 	"sap/ui/dom/getComputedStyleFix",
 	"sap/ui/performance/Measurement",
@@ -43,10 +46,14 @@ sap.ui.define([
 	"sap/ui/test/RecorderHotkeyListener",
 	"sap/ui/thirdparty/jquery",
 	"jquery.sap.global",
-	"sap/ui/events/PasteEventFix", // side effect: activates paste event fix
-	"sap/ui/events/jquery/EventSimulation", // side effect: install event simulation
-	"sap/ui/thirdparty/URI", // side effect: make global URI available
-	"sap/ui/thirdparty/jqueryui/jquery-ui-position" // side effect: jQuery.fn.position
+	// side effect: activates paste event fix
+	"sap/ui/events/PasteEventFix",
+	// side effect: install event simulation
+	"sap/ui/events/jquery/EventSimulation",
+	// side effect: make global URI available
+	"sap/ui/thirdparty/URI",
+	// side effect: jQuery.fn.position
+	"sap/ui/thirdparty/jqueryui/jquery-ui-position"
 ],
 	function(
 		AnimationMode,
@@ -67,6 +74,8 @@ sap.ui.define([
 		BaseConfig,
 		BaseEvent,
 		Log,
+		Formatting,
+		Localization,
 		Deferred,
 		each,
 		isEmptyObject,
@@ -79,6 +88,7 @@ sap.ui.define([
 		ManagedObject,
 		BaseObject,
 		syncXHRFix,
+		Locale,
 		Hotkeys,
 		getComputedStyleFix,
 		Measurement,
@@ -859,7 +869,7 @@ sap.ui.define([
 	 */
 	Core.prototype._setupContentDirection = function() {
 		var METHOD = "sap.ui.core.Core",
-			sDir = Configuration.getRTL() ? "rtl" : "ltr";
+			sDir = Localization.getRTL() ? "rtl" : "ltr";
 
 		document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
 		Log.info("Content direction set to '" + sDir + "'",null,METHOD);
@@ -921,8 +931,8 @@ sap.ui.define([
 
 		// append the lang info to the document (required for ARIA support)
 		var fnUpdateLangAttr = function() {
-			var oLocale = Configuration.getLocale();
-			oLocale ? html.setAttribute("lang", oLocale.toString()) : html.removeAttribute("lang");
+			var oLanguageTag = Localization.getLanguageTag();
+			oLanguageTag ? html.setAttribute("lang", oLanguageTag.toString()) : html.removeAttribute("lang");
 		};
 		fnUpdateLangAttr.call(this);
 
@@ -984,7 +994,7 @@ sap.ui.define([
 	 */
 	Core.prototype._boot = function(bAsync, fnCallback) {
 		// add CalendarClass to list of modules
-		this.aModules.push("sap/ui/core/date/" + Configuration.getCalendarType());
+		this.aModules.push("sap/ui/core/date/" + Formatting.getCalendarType());
 
 		// load all modules now
 		if ( bAsync ) {

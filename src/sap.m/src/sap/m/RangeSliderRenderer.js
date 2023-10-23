@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/InvisibleText", "sap/ui/core/Configuration"], function (Renderer, SliderRenderer, InvisibleText, Configuration) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/InvisibleText"], function (Localization, Renderer, SliderRenderer, InvisibleText) {
 	"use strict";
 
 	/**
@@ -43,7 +43,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer", "sap/ui/core/Invisibl
 		var fValue,
 			aRange = oControl.getRange(),
 			bEnabled = oControl.getEnabled(),
-			bRTL = Configuration.getRTL();
+			bRTL = Localization.getRTL();
 
 		oRM.openStart("span", mOptions && mOptions.id);
 		if (mOptions && (mOptions.position !== undefined)) {

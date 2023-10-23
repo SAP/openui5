@@ -118,7 +118,7 @@ sap.ui.define([
 		oLibInfo._getDocuIndex(sLibraryName, function(oData) {
 
 			// wait with test creation until all libs are loaded
-			oCore.attachInit(function() {
+			oCore.ready(function() {
 				this._createTests(oData && oData.explored);
 			}.bind(this));
 

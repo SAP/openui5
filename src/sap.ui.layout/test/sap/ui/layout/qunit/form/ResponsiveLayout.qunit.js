@@ -4,6 +4,7 @@
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/each",
 	"sap/ui/layout/form/Form",
@@ -18,8 +19,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Link",
 	"sap/ui/core/Core"
-	],
+],
 	function(
+		Element,
 		jQuery,
 		each,
 		Form,
@@ -153,7 +155,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("one container specific things", function(assert) {
-		assert.notOk(oCore.byId("F1--RFLayout"), "no Main RF-Layout");
+		assert.notOk(Element.getElementById("F1--RFLayout"), "no Main RF-Layout");
 	});
 
 	QUnit.module("inner ResponsiveFlowLayouts", {
@@ -162,13 +164,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("content of Main Layout", function(assert) {
-		var oRFL = oCore.byId("F1--RFLayout");
+		var oRFL = Element.getElementById("F1--RFLayout");
 		assert.ok(oRFL, "Main RF-Layout exist");
 		assert.ok(oRFL.isA("sap.ui.layout.ResponsiveFlowLayout"), "Main Layout is ResponsiveFlowLayout");
 	});
 
 	QUnit.test("Representations of Containers", function(assert) {
-		var oRFL = oCore.byId("F1--RFLayout");
+		var oRFL = Element.getElementById("F1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Main RF-Layout content");
 		assert.ok(aContent[0].isA("sap.ui.layout.ResponsiveFlowLayout"), "Container1 is ResponsiveFlowLayout");
@@ -178,10 +180,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Panel", function(assert) {
-		var oPanel = oCore.byId("FC1--Panel");
+		var oPanel = Element.getElementById("FC1--Panel");
 		assert.notOk(oPanel, "no panel created for first container");
 
-		oPanel = oCore.byId("FC2--Panel");
+		oPanel = Element.getElementById("FC2--Panel");
 		assert.ok(oPanel, "panel created for second container");
 		assert.equal(oTitle.getParent().getId(), "FC2", "FormContainer is still parent of Title");
 		assert.equal(oPanel.getContent().getId(), "FC2--RFLayout", "RF-Layout is inside Panel");
@@ -196,9 +198,9 @@ sap.ui.define([
 		oFormContainer2.setExpandable(false);
 		oCore.applyChanges();
 
-		var oRFL = oCore.byId("F1--RFLayout");
+		var oRFL = Element.getElementById("F1--RFLayout");
 		var aContent = oRFL.getContent();
-		var oPanel = oCore.byId("FC2--Panel");
+		var oPanel = Element.getElementById("FC2--Panel");
 		assert.notOk(oPanel, "no panel created for container");
 		assert.equal(aContent.length, 2, "Main RF-Layout content");
 		assert.equal(aContent[1].getId(), "FC2--RFLayout", "Layout for Container1");
@@ -206,7 +208,7 @@ sap.ui.define([
 		oFormContainer2.setTitle("Test");
 		oCore.applyChanges();
 		aContent = oRFL.getContent();
-		oPanel = oCore.byId("FC2--Panel");
+		oPanel = Element.getElementById("FC2--Panel");
 		assert.ok(oPanel, "panel created for container");
 		assert.equal(aContent.length, 2, "Grid has 2 Elements");
 		assert.equal(aContent[1].getId(), "FC2--Panel", "Panel is 2. element");
@@ -239,7 +241,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content of Containers Layout", function(assert) {
-		var oRFL = oCore.byId("FC1--RFLayout");
+		var oRFL = Element.getElementById("FC1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Container1 RF-Layout content");
 		assert.ok(aContent[0].isA("sap.ui.layout.ResponsiveFlowLayout"), "ResponsiveFlowLayout for Element1");
@@ -249,7 +251,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Content of Elements Layout", function(assert) {
-		var oRFL = oCore.byId("FE1--RFLayout");
+		var oRFL = Element.getElementById("FE1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element1 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L1", "Element1 first content is Label1");
@@ -257,7 +259,7 @@ sap.ui.define([
 		assert.equal(oLabel1.getParent().getId(), "FE1", "FormElement still parent of Label1");
 		assert.equal(oField1.getParent().getId(), "FE1", "FormElement still parent of Field1");
 
-		oRFL = oCore.byId("FE2--RFLayout");
+		oRFL = Element.getElementById("FE2--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L2", "Element2 first content is Label1");
@@ -269,12 +271,12 @@ sap.ui.define([
 		assert.equal(aContent[1].getId(), "I3", "Element2 second content is Field3");
 		assert.equal(oField3.getParent().getId(), "FE2", "FormElement still parent of Field3");
 
-		oRFL = oCore.byId("FE3--RFLayout");
+		oRFL = Element.getElementById("FE3--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 1, "Element3 RF-Layout content");
 		assert.equal(aContent[0].getId(), "I4", "Element3 first content is Field4");
 
-		oRFL = oCore.byId("FE4--RFLayout");
+		oRFL = Element.getElementById("FE4--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element4 RF-Layout content");
 		assert.equal(aContent[0].getId(), "I5", "Element4 first content is Field5");
@@ -282,7 +284,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("add/remove fields", function(assert) {
-		var oRFL = oCore.byId("FE1--RFLayout");
+		var oRFL = Element.getElementById("FE1--RFLayout");
 		var oNewField = new Input("I7");
 		oFormElement1.insertField(oNewField, 0);
 		oCore.applyChanges();
@@ -302,8 +304,8 @@ sap.ui.define([
 		assert.equal(aContent.length, 2, "Element1 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L1", "Element1 first content is Label1");
 		assert.equal(aContent[1].getId(), "I1", "Element1 second content is Field1");
-		assert.notOk(oCore.byId("FE1--content--RFLayout"), "Element1 inner layout destroyed");
-		oRFL = oCore.byId("FE2--RFLayout");
+		assert.notOk(Element.getElementById("FE1--content--RFLayout"), "Element1 inner layout destroyed");
+		oRFL = Element.getElementById("FE2--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L2", "Element2 first content is Label1");
@@ -320,7 +322,7 @@ sap.ui.define([
 		assert.equal(aContent.length, 2, "Element2 inner Layout content");
 		assert.equal(aContent[0].getId(), "I2", "Element2 first content is Field2");
 		assert.equal(aContent[1].getId(), "I3", "Element2 second content is Field3");
-		oRFL = oCore.byId("FE3--RFLayout");
+		oRFL = Element.getElementById("FE3--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element3 RF-Layout content");
 		assert.equal(aContent[0].getId(), "I4", "Element3 first content is Field4");
@@ -340,24 +342,24 @@ sap.ui.define([
 		oFormElement4.setLabel(oLabel2);
 		oCore.applyChanges();
 
-		var oRFL = oCore.byId("FE1--RFLayout");
+		var oRFL = Element.getElementById("FE1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 1, "Element1 RF-Layout content");
 		assert.equal(aContent[0].getId(), "I1", "Element1 first content is Field1");
 
-		oRFL = oCore.byId("FE2--RFLayout");
+		oRFL = Element.getElementById("FE2--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "I2", "Element2 first content is Field2");
 		assert.equal(aContent[1].getId(), "I3", "Element2 second content is Field3");
 
-		oRFL = oCore.byId("FE3--RFLayout");
+		oRFL = Element.getElementById("FE3--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element3 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L1", "Element3 first content is Label1");
 		assert.equal(aContent[1].getId(), "I4", "Element3 second content is Field4");
 
-		oRFL = oCore.byId("FE4--RFLayout");
+		oRFL = Element.getElementById("FE4--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Element4 RF-Layout content");
 		assert.equal(aContent[0].getId(), "L2", "Element4 first content is Label2");
@@ -372,11 +374,11 @@ sap.ui.define([
 		oFormContainer2.insertFormElement(oFormElement2, 0);
 		oCore.applyChanges();
 
-		var oRFL = oCore.byId("FC1--RFLayout");
+		var oRFL = Element.getElementById("FC1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 1, "Container1 RF-Layout content");
 		assert.equal(aContent[0].getId(), "FE1--RFLayout", "Layout for Element1");
-		oRFL = oCore.byId("FC2--RFLayout");
+		oRFL = Element.getElementById("FC2--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 3, "Container2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "FE2--RFLayout", "Layout for Element2");
@@ -385,12 +387,12 @@ sap.ui.define([
 
 		oFormContainer1.insertFormElement(oFormElement2, 0);
 		oCore.applyChanges();
-		oRFL = oCore.byId("FC1--RFLayout");
+		oRFL = Element.getElementById("FC1--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Container1 RF-Layout content");
 		assert.equal(aContent[0].getId(), "FE2--RFLayout", "Layout for Element2");
 		assert.equal(aContent[1].getId(), "FE1--RFLayout", "Layout for Element1");
-		oRFL = oCore.byId("FC2--RFLayout");
+		oRFL = Element.getElementById("FC2--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Container2 RF-Layout content");
 		assert.equal(aContent[0].getId(), "FE3--RFLayout", "Layout for Element3");
@@ -398,10 +400,10 @@ sap.ui.define([
 
 		oFormContainer1.removeFormElement(oFormElement2);
 		oCore.applyChanges();
-		oRFL = oCore.byId("FC1--RFLayout");
+		oRFL = Element.getElementById("FC1--RFLayout");
 		aContent = oRFL.getContent();
 		assert.equal(aContent.length, 1, "Container1 RF-Layout content");
-		assert.notOk(oCore.byId("FE2--RFLayout"), "Element2 layout destroyed");
+		assert.notOk(Element.getElementById("FE2--RFLayout"), "Element2 layout destroyed");
 		oFormElement2.destroy();
 	});
 
@@ -410,11 +412,11 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.notOk(window.document.getElementById("F1--RFLayout"), "Main layout not rendered");
 		assert.ok(window.document.getElementById("FC2--Panel"), "container panel rendered");
-		assert.notOk(oCore.byId("FC1--RFLayout"), "Container1 layout destroyed");
+		assert.notOk(Element.getElementById("FC1--RFLayout"), "Container1 layout destroyed");
 
 		oForm.addFormContainer(oFormContainer1);
 		oCore.applyChanges();
-		var oRFL = oCore.byId("F1--RFLayout");
+		var oRFL = Element.getElementById("F1--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Main RF-Layout content");
 		assert.equal(aContent[0].getId(), "FC2--Panel", "Panel for Container1");
@@ -431,7 +433,7 @@ sap.ui.define([
 		});
 		oFormContainer2.insertFormElement(oNewFormElement, 1);
 		oCore.applyChanges();
-		var oRFL = oCore.byId("FC2--RFLayout");
+		var oRFL = Element.getElementById("FC2--RFLayout");
 		var aContent = oRFL.getContent();
 		assert.equal(aContent.length, 2, "Container1 RF-Layout content");
 
@@ -445,7 +447,7 @@ sap.ui.define([
 		var oNewFormContainer = new FormContainer("FC3",{ title: "Test", visible: false});
 		oForm.insertFormContainer(oNewFormContainer, 1);
 		oCore.applyChanges();
-		var oRFL = oCore.byId("F1--RFLayout");
+		var oRFL = Element.getElementById("F1--RFLayout");
 		var aContent = oRFL.getContent();
 
 		assert.equal(aContent.length, 2, "Main layout has 2 Elements, as invisible FormContainer is not rendered");
@@ -463,11 +465,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("default on FormContainer", function(assert) {
-		var oRFL = oCore.byId("FC1--RFLayout");
+		var oRFL = Element.getElementById("FC1--RFLayout");
 		var oLayoutData = oRFL.getLayoutData();
 		assert.notOk(oLayoutData, "Layout for Container1 has no LayoutData");
 
-		var oPanel = oCore.byId("FC2--Panel");
+		var oPanel = Element.getElementById("FC2--Panel");
 		oLayoutData = oPanel.getLayoutData();
 		assert.notOk(oLayoutData, "Panel for Container1 has no LayoutData");
 	});
@@ -476,14 +478,14 @@ sap.ui.define([
 		var oLayoutData = new ResponsiveFlowLayoutData("RFLD1", {linebreak: true});
 		oFormContainer2.setLayoutData(oLayoutData);
 		oCore.applyChanges();
-		var oPanel = oCore.byId("FC2--Panel");
+		var oPanel = Element.getElementById("FC2--Panel");
 
 		assert.equal(oPanel.getLayoutData().getId(), "RFLD1", "Original LayoutData returned");
 		assert.equal(oLayoutData.getParent().getId(), "FC2", "Parent of LayoutData is still FormContainer");
 	});
 
 	QUnit.test("default on FormElement", function(assert) {
-		var oRFL = oCore.byId("FE1--RFLayout");
+		var oRFL = Element.getElementById("FE1--RFLayout");
 		var oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "Layout for Element1 has LayoutData");
 		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
@@ -491,7 +493,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getLinebreak(), "No linebreak");
 		assert.equal(oLayoutData.getWeight(), 1, "weight");
 
-		oRFL = oCore.byId("FE3--RFLayout");
+		oRFL = Element.getElementById("FE3--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "Layout for Element3 has LayoutData");
 		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
@@ -499,7 +501,7 @@ sap.ui.define([
 		assert.notOk(oLayoutData.getLinebreak(), "No linebreak");
 		assert.equal(oLayoutData.getWeight(), 1, "weight");
 
-		oRFL = oCore.byId("FE2--content--RFLayout");
+		oRFL = Element.getElementById("FE2--content--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "inner Layout for Element2 has LayoutData");
 		assert.ok(oLayoutData instanceof ResponsiveFlowLayoutData, "LayoutData are ResponsiveFlowLayoutData");
@@ -513,7 +515,7 @@ sap.ui.define([
 		oFormElement2.setLayoutData(oLayoutData);
 		oCore.applyChanges();
 
-		var oRFL = oCore.byId("FE2--RFLayout");
+		var oRFL = Element.getElementById("FE2--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "Layout for Element2 has LayoutData");
 		assert.equal(oLayoutData.getId(), "RFLD1", "LayoutData are custom LayoutData");
@@ -544,7 +546,7 @@ sap.ui.define([
 		oLayoutData = oField3.getLayoutData();
 		assert.ok(!!oLayoutData, "Field has LayoutData");
 		assert.equal(oLayoutData.getId(), "RFLD2", "LayoutData are given custom LayoutData");
-		var oRFL = oCore.byId("FE2--content--RFLayout");
+		var oRFL = Element.getElementById("FE2--content--RFLayout");
 		oLayoutData = oRFL.getLayoutData();
 		assert.ok(!!oLayoutData, "inner Layout for Element2 has LayoutData");
 		assert.equal(oLayoutData.getWeight(), 3, "weight");
@@ -599,8 +601,8 @@ sap.ui.define([
 			iLength = Object.keys(oResponsiveLayout.mContainers).length;
 		}
 		assert.equal(iLength, 0, "Layout control data cleared");
-		assert.notOk(oCore.byId("FC1--RFLayout"), "Container Layout destroyed");
-		assert.notOk(oCore.byId("FC2--Panel"), "Panel destroyed");
+		assert.notOk(Element.getElementById("FC1--RFLayout"), "Container Layout destroyed");
+		assert.notOk(Element.getElementById("FC2--Panel"), "Panel destroyed");
 	});
 
 	QUnit.test("getContainerRenderedDomRef", function(assert) {

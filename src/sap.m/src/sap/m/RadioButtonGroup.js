@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/library',
 	'sap/ui/base/ManagedObjectObserver',
@@ -16,13 +17,14 @@ sap.ui.define([
 	function(
 		library,
 		Control,
+		Element,
 		ItemNavigation,
 		coreLibrary,
 		ManagedObjectObserver,
 		RadioButton,
 		RadioButtonGroupRenderer,
 		Log
-		) {
+	) {
 			"use strict";
 
 			// shortcut for sap.ui.core.TextDirection
@@ -482,7 +484,7 @@ sap.ui.define([
 
 				var iIndex = vElement;
 				if (typeof (vElement) == "string") { // ID of the element is given
-					vElement = sap.ui.getCore().byId(vElement);
+					vElement = Element.getElementById(vElement);
 				}
 				if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
 					iIndex = this.indexOfButton(vElement);

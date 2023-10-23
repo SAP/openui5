@@ -4,6 +4,10 @@
 
 // Provides control sap.f.FlexibleColumnLayout.
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
+	"sap/ui/core/RenderManager",
 	"sap/ui/thirdparty/jquery",
 	"./library",
 	"sap/ui/core/library",
@@ -21,8 +25,13 @@ sap.ui.define([
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/dom/jquery/Focusable" // provides jQuery.fn.firstFocusableDomRef
+	// provides jQuery.fn.firstFocusableDomRef
+	"sap/ui/dom/jquery/Focusable"
 ], function(
+	Localization,
+	ControlBehavior,
+	Library,
+	RenderManager,
 	jQuery,
 	library,
 	coreLibrary,
@@ -855,7 +864,7 @@ sap.ui.define([
 	 */
 	FlexibleColumnLayout.prototype._flushColumnContent = function (sColumn) {
 		var oControl = this.getAggregation("_" + sColumn + "ColumnNav"),
-			oRm = sap.ui.getCore().createRenderManager();
+			oRm = new RenderManager().getInterface();
 
 		oRm.renderControl(oControl);
 		oRm.flush(this._$columns[sColumn].find(".sapFFCLColumnContent")[0], undefined, true);
@@ -1429,7 +1438,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._getDefaultResizeOptions = function () {
-		var sAnimationMode = Configuration.getAnimationMode();
+		var sAnimationMode = ControlBehavior.getAnimationMode();
 		return {
 			layout: this.getLayout(),
 			previousLayout: this._getPreviousLayout(),
@@ -1447,7 +1456,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._addDetailedActiveClasses = function (sLayout) {
 		var aColumns = FlexibleColumnLayout.COLUMN_ORDER.slice(),
-			bRtl = Configuration.getRTL(),
+			bRtl = Localization.getRTL(),
 			aActiveColumns = aColumns.filter(function (sColumn) {
 				return this._getColumnSizeForLayout(sColumn, sLayout) > 0;
 			}, this);
@@ -1468,7 +1477,7 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._onColumnSeparatorMoveStart = function (oEvent, oSeparator, bTouch) {
 		// needed to position the separator presizely
-		var bRtl = Configuration.getRTL(),
+		var bRtl = Localization.getRTL(),
 			iStartOffset = this._getDraggedSeparatorStartOffset(oSeparator, bRtl);
 
 		this._oDragInfo = {
@@ -2957,7 +2966,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	FlexibleColumnLayout._getResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.f");
+		return Library.getResourceBundleFor("sap.f");
 	};
 
 

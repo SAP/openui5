@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/RenderManager",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/extensions/ExtensionBase",
 	"sap/ui/table/rowmodes/Type",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/Core"
 ], function(
+	RenderManager,
 	TableQUnitUtils,
 	ExtensionBase,
 	RowModeType,
@@ -658,7 +660,7 @@ sap.ui.define([
 		document.getElementById("qunit-fixture").appendChild(Div);
 
 		return oTable._enableSynchronization().then(function(oSyncInterface) {
-			var oRenderManager = oCore.createRenderManager();
+			var oRenderManager = new RenderManager().getInterface();
 			oSyncInterface.renderHorizontalScrollbar(oRenderManager, "hsbid", 100);
 			oRenderManager.flush(Div);
 

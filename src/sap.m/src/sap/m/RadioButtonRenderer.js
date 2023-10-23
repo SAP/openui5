@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/ValueStateSupport",
 	"sap/ui/core/library",
 	"sap/ui/Device"
-], function (Core, ValueStateSupport, coreLibrary, Device) {
+], function (ControlBehavior, ValueStateSupport, coreLibrary, Device) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -153,7 +153,7 @@ sap.ui.define([
 	RadioButtonRenderer.renderTooltip = function (oRM, oRadioButton) {
 		var sTooltipWithStateMessage = this.getTooltipText(oRadioButton);
 
-		if (sTooltipWithStateMessage && Core.getConfiguration().getAccessibility()) {
+		if (sTooltipWithStateMessage && ControlBehavior.isAccessibilityEnabled()) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRM.openStart("span", oRadioButton.getId() + "-Descr")

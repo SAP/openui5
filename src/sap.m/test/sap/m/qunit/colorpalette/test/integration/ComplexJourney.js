@@ -1,12 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"cp/opa/test/env/integration/actions/Setup",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core"
-], function (Opa5, opaTest, Setup, KeyCodes, oCore) {
+	"sap/ui/events/KeyCodes"
+], function (Element, Opa5, opaTest, Setup, KeyCodes) {
 	"use strict";
 
 	QUnit.module("Setup");
@@ -34,7 +34,7 @@ sap.ui.define([
 				//Assume opened ColorPalettePopover from previous test
 				opaTest("Cancel new color selection by clicking with [MOUSE_LEFT] button outside the popover area", function (Given, When, Then) {
 					//Click on the first table item
-					var sFirstTableItemId = oCore.byId(COMPONENT_VIEW_PREFFIX + TABLE_CONTAINER_ID).getAggregation("items")[0].getId();
+					var sFirstTableItemId = Element.getElementById(COMPONENT_VIEW_PREFFIX + TABLE_CONTAINER_ID).getAggregation("items")[0].getId();
 					When.iClickOnATargetId(sFirstTableItemId);
 					Then.complexControlDefaultsColorPalettePopoverShouldBeClosedAndFocusShouldBeOn(sFirstTableItemId);
 				});

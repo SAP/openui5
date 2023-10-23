@@ -5,12 +5,13 @@
 // Provides control sap.m.Link.
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/AccessKeysEnablement",
 	"sap/ui/core/LabelEnablement",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/Device",
 	"./LinkRenderer",
@@ -19,12 +20,13 @@ sap.ui.define([
 ],
 function(
 	library,
-	Core,
 	Control,
+	Element,
 	InvisibleText,
 	EnabledPropagator,
 	AccessKeysEnablement,
 	LabelEnablement,
+	Library,
 	coreLibrary,
 	Device,
 	LinkRenderer,
@@ -478,7 +480,7 @@ function(
 	 * @returns {sap.ui.core.AccessibilityInfo} The <code>sap.m.Link</code>  accessibility information
 	 */
 	Link.prototype.getAccessibilityInfo = function() {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			sEmphasizedInfo = this.getEmphasized() ? oResourceBundle.getText("LINK_EMPHASIZED") : "",
 			sSubtleInfo = this.getSubtle() ? oResourceBundle.getText("LINK_SUBTLE") : "",
 			sText = this.getText(),
@@ -555,7 +557,7 @@ function(
 		var aLabels = this.getAriaLabelledBy();
 
 		if (aLabels.length) {
-			var oLabel = Core.byId(aLabels[0]);
+			var oLabel = Element.getElementById(aLabels[0]);
 
 			oLabel.setProperty("highlightAccKeysRef", bHighlightAccKeysRef);
 

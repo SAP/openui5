@@ -3,12 +3,13 @@
  */
 
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/model/json/JSONModel",
-		"sap/ui/thirdparty/URI",
-		"sap/uxap/ThrottledTaskHelper",
-		"sap/ui/core/Core"
-	], function (BaseController, JSONModel, URI, ThrottledTask, Core) {
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Theming",
+	"sap/ui/documentation/sdk/controller/BaseController",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/thirdparty/URI",
+	"sap/uxap/ThrottledTaskHelper"
+], function(EventBus, Theming, BaseController, JSONModel, URI, ThrottledTask) {
 		"use strict";
 
 		var SRC_FILE_NAMES = {
@@ -75,7 +76,7 @@ sap.ui.define([
 				// throttle the output of src changes
 				this._oThrottledTask = null;
 
-				this.bus = Core.getEventBus();
+				this.bus = EventBus.getInstance();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 
@@ -166,7 +167,7 @@ sap.ui.define([
 				return {
 					src: oModulesToPost,
 					moduleNameToRequire: sInitModuleName,
-					activeTheme: Core.getConfiguration().getTheme().toLowerCase()
+					activeTheme: Theming.getTheme().toLowerCase()
 				};
 			},
 

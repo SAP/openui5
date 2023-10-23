@@ -1,10 +1,10 @@
 sap.ui.define([
+		"sap/ui/core/Element",
 		'sap/ui/core/mvc/Controller',
 		'sap/m/ColorPalettePopover',
-		'sap/m/MessageToast',
-		'sap/ui/core/Core'
+		'sap/m/MessageToast'
 	],
-	function (Controller, ColorPalettePopover, MessageToast, oCore) {
+	function (Element, Controller, ColorPalettePopover, MessageToast) {
 	"use strict";
 
 	return Controller.extend("cp.opa.test.app.controllers.Home", {
@@ -81,7 +81,7 @@ sap.ui.define([
 			this.updateColorSelectEventInput(oEventParams);
 			MessageToast.show("Color Selected: value - " + oEventParams.value +
 				", \n defaultAction - " + oEventParams.defaultAction);
-			oCore.byId(this.sLastColorPaletteOpenerId)._image.$().css("color", oEventParams.value);
+			Element.getElementById(this.sLastColorPaletteOpenerId)._image.$().css("color", oEventParams.value);
 		}
 	});
 });

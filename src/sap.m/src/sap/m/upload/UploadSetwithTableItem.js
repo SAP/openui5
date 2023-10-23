@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/m/upload/UploadSetwithTableItemRenderer",
 	"sap/base/Log",
-	"sap/ui/core/Core"
-], function (ColumnListItem, IconPool, UploadSetwithTableItemRenderer, Log, Core) {
+	"sap/ui/core/Lib"
+], function (ColumnListItem, IconPool, UploadSetwithTableItemRenderer, Log, Library) {
     "use strict";
 
 	/**
@@ -86,7 +86,7 @@ sap.ui.define([
 		this._bNameLengthRestricted = false;
 		this._bSizeRestricted = false;
 		this._bMediaTypeRestricted = false;
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 		this._oCloudFileInfo = null;
     };
 

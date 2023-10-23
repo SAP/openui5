@@ -3,19 +3,21 @@
  */
 sap.ui.define([
 	"./PropertyHelper",
+	"sap/base/i18n/Localization",
 	"sap/m/Button",
 	"sap/m/Bar",
 	"sap/m/Title",
 	"sap/base/util/merge",
 	"sap/m/MessageBox",
 	"sap/ui/Device",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/fl/write/api/FieldExtensibility",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device, FieldExtensibility, Configuration, coreLibrary) {
+], function(P13nPropertyHelper, Localization, Button, Bar, Title, merge, MessageBox, Device, Library, Locale, FieldExtensibility, coreLibrary) {
 	"use strict";
 
-	const oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	const oRB = Library.getResourceBundleFor("sap.ui.mdc");
 
 	//Shortcut to sap.ui.core.TitleLevel
 	const TitleLevel = coreLibrary.TitleLevel;
@@ -94,7 +96,7 @@ sap.ui.define([
 				const sId = mDialogSettings.id;
 
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button"], function(Dialog, Button){
-					const oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+					const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 					const oContainer = new Dialog(sId, {
 						title: mDialogSettings.title,
 						horizontalScrolling: mDialogSettings.hasOwnProperty("horizontalScrolling") ? mDialogSettings.horizontalScrolling : false,
@@ -173,13 +175,13 @@ sap.ui.define([
 			if (mSettings.reset) {
 				const sId = mSettings.idResetButton;
 				oBar.addContentRight(new Button( sId, {
-					text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("p13nDialog.RESET"),
+					text: Library.getResourceBundleFor("sap.ui.mdc").getText("p13nDialog.RESET"),
 					press: function(oEvt) {
 
 						const oDialog =  oEvt.getSource().getParent().getParent();
 						const oControl = oDialog.getParent();
 
-						const sResetText = mSettings.warningText ? mSettings.warningText : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
+						const sResetText = mSettings.warningText ? mSettings.warningText : Library.getResourceBundleFor("sap.ui.mdc").getText("filterbar.ADAPT_RESET_WARNING");
 						MessageBox.warning(sResetText, {
 							actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
 							emphasizedAction: MessageBox.Action.OK,
@@ -255,7 +257,7 @@ sap.ui.define([
 			const sPositionAttribute = mP13nTypeSorting.position;
 			const sSelectedAttribute = mP13nTypeSorting.visible;
 
-			const sLocale = Configuration.getLocale().toString();
+			const sLocale = new Locale(Localization.getLanguageTag()).toString();
 
 			const oCollator = window.Intl.Collator(sLocale, {});
 
@@ -352,7 +354,7 @@ sap.ui.define([
 							.then(function() {
 								let oCustomHeader = oDialog.getCustomHeader();
 								const 	sId = oDialogParent && oDialogParent.getId ? oDialogParent.getId() : undefined,
-										oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+										oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 								if (!oCustomHeader) {
 									const oBar = new Bar({

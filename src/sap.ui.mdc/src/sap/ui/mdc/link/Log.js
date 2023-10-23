@@ -3,10 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/base/Object',
 	'sap/base/util/isEmptyObject',
-	"sap/ui/core/Configuration"
-], function(BaseObject, isEmptyObject, Configuration) {
+	"sap/ui/core/Locale"
+], function(Localization, BaseObject, isEmptyObject, Locale) {
 	"use strict";
 
 	/**
@@ -154,7 +155,7 @@ sap.ui.define([
 		};
 		const fnSortByText = function(aArray) {
 			try {
-				const sLanguage = Configuration.getLocale().toString();
+				const sLanguage = new Locale(Localization.getLanguageTag()).toString();
 				if (typeof window.Intl !== 'undefined') {
 					const oCollator = window.Intl.Collator(sLanguage, {
 						numeric: true

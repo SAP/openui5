@@ -1,5 +1,6 @@
 sap.ui.define([
 	'sap/ui/core/library',
+	"sap/ui/core/Messaging",
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/message/ControlMessageProcessor',
 	'sap/ui/core/message/Message',
@@ -7,9 +8,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
-	'sap/m/MessageToast',
-	"sap/ui/core/Core"
-], function(coreLibrary, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessageItem, MessageToast, oCore) {
+	'sap/m/MessageToast'
+], function(coreLibrary, Messaging, Controller, ControlMessageProcessor, Message, JSONModel, Device, MessagePopover, MessageItem, MessageToast) {
 	"use strict";
 
 	var MessageType = coreLibrary.MessageType;
@@ -23,7 +23,7 @@ sap.ui.define([
 			this.oSemanticPage.setModel(this.oModel);
 
 			var oMessageProcessor = new ControlMessageProcessor();
-			var oMessageManager = oCore.getMessageManager();
+			var oMessageManager = Messaging;
 
 			oMessageManager.registerMessageProcessor(oMessageProcessor);
 

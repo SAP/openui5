@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core"
-], function(FragmentController, Core) {
+	"sap/base/i18n/Localization",
+	"sap/ui/core/mvc/Controller"
+], function(Localization, FragmentController) {
 	"use strict";
 
 	/**
@@ -28,7 +28,7 @@ sap.ui.define([
 	};
 
 	Controller.prototype.saveValue = function (sValue) {
-		var sLanguage =  Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		var sLanguage =  Localization.getLanguage().replaceAll('_', '-');
 		var oConfig = this._oField.getConfiguration();
 		if (oConfig.type === "string" && oConfig.translatable) {
 			this._oField.setTranslationValueInTexts(sLanguage, oConfig.manifestpath, sValue);
