@@ -65,7 +65,7 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
+			"title": "Orders by Shipper \"{filters>/shipper/selectedItem/title}\"",
 			"icon": {
 				"src": "sap-icon://product"
 			}
