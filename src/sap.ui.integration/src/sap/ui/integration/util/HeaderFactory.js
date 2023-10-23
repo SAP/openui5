@@ -114,6 +114,8 @@ sap.ui.define([
 		if (bIsInDialog) {
 			// if card is in dialog - header shouldn't be focusable
 			oHeader.setProperty("focusable", false);
+			//if card is in a dialog - aria-level of the header should be 1
+			oHeader.setProperty("headingLevel", "1");
 		}
 
 		return oHeader;
