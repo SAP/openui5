@@ -1444,8 +1444,8 @@ sap.ui.define([
 	 * sort/filter/custom parameters.
 	 *
 	 * @param {string} sFormat Value for the $format Parameter
-	 * @return {string} URL which can be used for downloading
- 	 * @throws {Error} If this binding uses {@link sap.ui.model.Filter.NONE}
+	 * @return {string|null} URL which can be used for downloading; <code>null</code> if this binding uses
+	 *   {@link sap.ui.model.Filter.NONE}
 	 *
 	 * @since 1.24
 	 * @public
@@ -1455,7 +1455,7 @@ sap.ui.define([
 			sPath;
 
 		if (this.oCombinedFilter === Filter.NONE) {
-			throw new Error("Computation of download URL for binding with Filter.NONE not supported");
+			return null;
 		}
 		if (sFormat) {
 			aParams.push("$format=" + encodeURIComponent(sFormat));
