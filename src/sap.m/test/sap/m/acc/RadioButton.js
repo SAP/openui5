@@ -58,11 +58,11 @@ sap.ui.define([
 			items:[
 				new VBox("regular-vbox", {
 					items: [
-						new Label({text: "Regular", labelFor: "v01"}),
+						new Label({text: "Commute by", labelFor: "v01"}),
 						new RadioButtonGroup("v01", {
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("regular-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("regular-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 
@@ -71,12 +71,12 @@ sap.ui.define([
 
 				new VBox("disabled-vbox", {
 					items: [
-						new Label({text: 'Disabled', labelFor: "v06"}),
+						new Label({text: 'Commute by', labelFor: "v06"}),
 						new RadioButtonGroup("v06", {
 							enabled: false,
 							buttons: [
-								new RadioButton({ selected: true, text: 'Selected'}),
-								new RadioButton("disabled-vbox-button-notselected",{ selected: false, text: 'Not Selected'})
+								new RadioButton({ selected: true, text: 'Car'}),
+								new RadioButton("disabled-vbox-button-notselected",{ selected: false, text: 'Train'})
 							]
 						})
 					]
@@ -84,12 +84,12 @@ sap.ui.define([
 
 				new VBox("readonly-vbox", {
 					items: [
-						new Label({text: 'Group 3', labelFor: "v03"}),
+						new Label({text: 'Commute by', labelFor: "v03"}),
 						new RadioButtonGroup("v03", {
 							editable: false,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("readonly-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("readonly-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 					]
@@ -97,13 +97,13 @@ sap.ui.define([
 
 				new VBox("readonly-disabled-vbox", {
 					items: [
-						new Label({text: 'Read Only Disabled', labelFor: "v08"}),
+						new Label({text: 'Commute by', labelFor: "v08"}),
 						new RadioButtonGroup("v08", {
 							enabled: false,
 							editable: false,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton({selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton({selected: false, text: 'Train'})
 							]
 						})
 					]
@@ -111,48 +111,48 @@ sap.ui.define([
 
 				new VBox("error-vbox", {
 					items: [
-						new Label({text: 'Invalid/Error', labelFor: "v04"}),
+						new Label({text: 'Commute by', labelFor: "v04"}),
 						new RadioButtonGroup("v04", {
 							valueState: ValueState.Error,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("error-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("error-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 					]
 				}),
 				new VBox("warning-vbox", {
 					items: [
-						new Label({text: 'Warning', labelFor: "v05"}),
+						new Label({text: 'Commute by', labelFor: "v05"}),
 						new RadioButtonGroup("v05", {
 							valueState: ValueState.Warning,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("warning-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("warning-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 					]
 				}),
 				new VBox("success-vbox", {
 					items: [
-						new Label({text: 'Success', labelFor: "successGroup"}),
+						new Label({text: 'Commute by', labelFor: "successGroup"}),
 						new RadioButtonGroup("successGroup", {
 							valueState: ValueState.Success,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("success-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("success-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 					]
 				}),
 				new VBox("information-vbox", {
 					items: [
-						new Label({text: 'Information', labelFor: "informationGroup"}),
+						new Label({text: 'Commute by', labelFor: "informationGroup"}),
 						new RadioButtonGroup("informationGroup", {
 							valueState: ValueState.Information,
 							buttons: [
-								new RadioButton({selected: true, text: 'Selected'}),
-								new RadioButton("information-vbox-button-notselected", {selected: false, text: 'Not Selected'})
+								new RadioButton({selected: true, text: 'Car'}),
+								new RadioButton("information-vbox-button-notselected", {selected: false, text: 'Train'})
 							]
 						})
 					]
