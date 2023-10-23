@@ -1176,7 +1176,6 @@ sap.ui.define([
 		}
 
 		oMenu.invalidate();
-		oMenu.rerender();
 	};
 
 	Menu.prototype.focus = function(){

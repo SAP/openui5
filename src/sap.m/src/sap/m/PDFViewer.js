@@ -266,7 +266,7 @@ sap.ui.define([
 				Log.error(error);
 				if (this._isError) {
 					this._isError = false;
-					this._objectsRegister.getPlaceholderIllustratedMessageControl().rerender();
+					this._objectsRegister.getPlaceholderIllustratedMessageControl().invalidate();
 				}
 				this.setBusy(false);
 			}

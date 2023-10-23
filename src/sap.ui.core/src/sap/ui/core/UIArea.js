@@ -763,7 +763,8 @@ sap.ui.define([
 				// CSN 0000834961 2011: control may have been destroyed since invalidation happened -> check whether it still exists
 				if ( oControl ) {
 					if ( !isRenderedTogetherWithAncestor(oControl) ) {
-						oControl.rerender();
+						oControl._bNeedsRendering = true;
+						UIArea.rerenderControl(oControl);
 						bUpdated = true;
 					} else {
 						aControlsRenderedTogetherWithAncestor.push(oControl);
@@ -794,7 +795,8 @@ sap.ui.define([
 				}
 				if (oControl.bOutput == true && oControl.getDomRef() ||
 					oControl.bOutput == "invisible" && document.getElementById(RenderManager.createInvisiblePlaceholderId(oControl))) {
-					oControl.rerender();
+					oControl._bNeedsRendering = true;
+					UIArea.rerenderControl(oControl);
 				}
 			});
 		}

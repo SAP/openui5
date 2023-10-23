@@ -740,7 +740,7 @@ sap.ui.define([
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {
-		this.rerender();
+		this.invalidate();
 	};
 
 	/**

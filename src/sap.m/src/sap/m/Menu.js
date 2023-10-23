@@ -756,7 +756,7 @@ sap.ui.define([
 						// now we need to update its parent list item - no to render its arrow and reset its visual child ref
 						if (oParentItem) {
 							oParentItem._setVisualChild(null);
-							Element.getElementById(oParentItem._getVisualControl()).rerender();
+							Element.getElementById(oParentItem._getVisualControl()).invalidate();
 						}
 					}
 

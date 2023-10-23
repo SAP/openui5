@@ -129,7 +129,7 @@ sap.ui.define([
 		sut2 = new Tile(),
 		container = new TileContainer({tiles: [sut, sut2]});
 
-		this.spy(container, "rerender");
+		this.spy(container, "invalidate");
 
 		container.placeAt("qunit-fixture");
 		core.applyChanges();
@@ -139,7 +139,7 @@ sap.ui.define([
 		core.applyChanges();
 
 		//Assert
-		assert.ok(container.rerender.calledOnce, "Tile container is rerendered when tile visibility is changed");
+		assert.ok(container.invalidate.calledOnce, "Tile container is invalidated when tile visibility is changed");
 		container.destroy();
 	});
 

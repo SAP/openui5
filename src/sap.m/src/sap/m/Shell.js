@@ -164,7 +164,6 @@ sap.ui.define([
 
 				if ($hdr.length && sImgSrc) {
 					this._getImage().setSrc(sImgSrc);
-					this._getImage().rerender();
 				}
 			}, this);
 
