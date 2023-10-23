@@ -225,25 +225,32 @@ sap.ui.define([
 
 	SelectionPanel.prototype.setShowHeader = function(bShowHeader) {
 		if (bShowHeader){
-			var sShowSelected = this._getResourceText("p13n.SHOW_SELECTED");
-			var sShowAll = this._getResourceText("p13n.SHOW_ALL");
+			this._oShowSelectedButton = new Button({
+				press: function(oEvt){
+					this._bShowSelected = !this._bShowSelected;
+					this._filterList(this._bShowSelected, this._sSearch);
+					this._updateShowSelectedButton();
+				}.bind(this)
+			});
+			this._updateShowSelectedButton();
+
 			this._oListControl.setHeaderToolbar(new OverflowToolbar({
 				content: [
 					this._getSearchField(),
 					new ToolbarSpacer(),
-					new Button({
-						press: function(oEvt){
-							this._bShowSelected = oEvt.getSource().getText() == sShowSelected;
-							this._filterList(this._bShowSelected, this._sSearch);
-							oEvt.getSource().setText(this._bShowSelected ? sShowAll : sShowSelected);
-						}.bind(this),
-						text: sShowSelected
-					})
+					this._oShowSelectedButton
 				]
 			}));
 		}
 		this.setProperty("showHeader", bShowHeader);
 		return this;
+	};
+
+	SelectionPanel.prototype._updateShowSelectedButton = function() {
+		var sShowSelected = this._getResourceText("p13n.SHOW_SELECTED");
+		var sShowAll = this._getResourceText("p13n.SHOW_ALL");
+
+		this._oShowSelectedButton?.setText(this._bShowSelected ? sShowAll : sShowSelected);
 	};
 
 	SelectionPanel.prototype.getSelectedFields = function() {
@@ -361,6 +368,13 @@ sap.ui.define([
 		this._oSelectedItem = null;
 
 		return this;
+	};
+
+	SelectionPanel.prototype.onReset = function() {
+		BasePanel.prototype.onReset.apply(this, arguments);
+		this._sSearch = "";
+		this._bShowSelected = false;
+		this._updateShowSelectedButton();
 	};
 
 	SelectionPanel.prototype._updateCount = function() {
