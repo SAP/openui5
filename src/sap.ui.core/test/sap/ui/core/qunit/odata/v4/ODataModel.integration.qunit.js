@@ -50101,6 +50101,8 @@ sap.ui.define([
 	// bindings share that cache and must follow, one binding while resumed and one binding while
 	// suspended.
 	// BCP: 002075129500004766202022
+	//
+	// The refresh request must not be obsoleted (BCP: 2370078660)
 [false, true].forEach(function (bSuspend) {
 	QUnit.test("refresh list with $$sharedRequest, suspend=" + bSuspend, function (assert) {
 		var oBinding1,
