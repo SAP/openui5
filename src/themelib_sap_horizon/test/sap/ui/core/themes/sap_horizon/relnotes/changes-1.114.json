@@ -246,5 +246,43 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "17c38b58a7e3988ffa65cbd1d0ff23c3648377a2",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: align styles",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370083332"
+          }
+        ]
+      },
+      {
+        "id": "28fd8909551d425afcbd87f6bcbc1961c10c5bdb",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      },
+      {
+        "id": "f42c7f8d31f31c94c7da721cb127f3f50af227ff",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

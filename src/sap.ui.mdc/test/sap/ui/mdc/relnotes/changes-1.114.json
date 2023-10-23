@@ -84,5 +84,21 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "e673c4037acfcfe15b18542904f6a57d85db7f19",
+        "type": "FIX",
+        "text": " MDC.Field: Prevent ValueHelp.shouldOpenOnFocus flow with programmatic focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380109591"
+          }
+        ]
+      }
+    ]
   }
 }

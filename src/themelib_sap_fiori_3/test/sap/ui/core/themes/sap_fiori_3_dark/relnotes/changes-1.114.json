@@ -158,5 +158,21 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "28fd8909551d425afcbd87f6bcbc1961c10c5bdb",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: adjust toggled state color",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      }
+    ]
   }
 }

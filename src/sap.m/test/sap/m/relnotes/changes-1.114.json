@@ -579,5 +579,43 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "a897ec9723d815aeee1db75d3a22be27481d582f",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "f42c7f8d31f31c94c7da721cb127f3f50af227ff",
+        "type": "FIX",
+        "text": " sap.m.Button: adjust to horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "b0d016f42ff603a7c275030004328232a0b2fa8b",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: validation errors from value help are not propagated outside",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370093417"
+          }
+        ]
+      }
+    ]
   }
 }

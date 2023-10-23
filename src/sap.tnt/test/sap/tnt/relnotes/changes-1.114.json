@@ -52,5 +52,21 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "21613b6871274d1506f03bd49d64d7bc0c54b355",
+        "type": "FIX",
+        "text": " sap.tnt.ToolPage: Parent busy indicator is now shown on ToolPage",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370091538"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -83,5 +83,21 @@
         ]
       }
     ]
+  },
+  "1.114.11": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "0bb07241d7536dddb2ca47d6f4d3c1306ef0e193",
+        "type": "FIX",
+        "text": " sap.f.GridList: Navigation matrix elements are included if they have DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007493952023"
+          }
+        ]
+      }
+    ]
   }
 }
