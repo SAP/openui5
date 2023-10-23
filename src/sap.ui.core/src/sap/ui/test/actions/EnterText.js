@@ -116,6 +116,10 @@ sap.ui.define([
 				this.oLogger.debug("Cannot enter text in control " + oControl + ": control is not enabled!");
 				return;
 			}
+			if (this.getText().length && oActionDomRef.selectionStart === undefined && oActionDomRef.selectionEnd === undefined) {
+				this.oLogger.debug("Cannot enter text in control " + oControl + ": The control's DOM element does not have the expected API of the html elements that accept text input: selectionStart and selectionEnd properties undefined.");
+				return;
+			}
 
 			var oUtils = this.getUtils();
 
