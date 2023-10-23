@@ -868,21 +868,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the parent node (in case of a recursive hierarchy, see {@link #setAggregation}, where
-	 * <code>oAggregation.expandTo</code> must be equal to one).
+	 * Returns the parent node (in case of a recursive hierarchy; see {@link #setAggregation}) or
+	 * <code>undefined</code> if the parent of this node hasn't been read yet; it can then be
+	 * requested via {@link #requestParent}.
 	 *
-	 * @returns {sap.ui.model.odata.v4.Context|null}
-	 *   The parent node, or <code>null</code> if this node is a root node and thus has no parent
+	 * @returns {sap.ui.model.odata.v4.Context|null|undefined}
+	 *   The parent node, or <code>null</code> if this node is a root node and thus has no parent,
+	 *   or <code>undefined</code> if the parent node hasn't been read yet
 	 * @throws {Error} If
 	 *   <ul>
 	 *     <li> this context is not a list binding's context,
-	 *     <li> this context is not part of a recursive hierarchy,
-	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
-	 *    </ul>
+	 *     <li> this context is not part of a recursive hierarchy.
+	 *   </ul>
 	 *
 	 * @experimental As of version 1.120.0
 	 * @public
-	 * @see #requestParent
 	 */
 	Context.prototype.getParent = function () {
 		if (!this.oBinding.getParent) {

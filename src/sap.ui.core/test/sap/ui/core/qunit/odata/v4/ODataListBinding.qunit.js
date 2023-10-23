@@ -8607,24 +8607,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getParent: throws error if expandTo > 1", function (assert) {
-		const oBinding = this.bindList("/EMPLOYEES");
-		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
-		// too far
-		oBinding.mParameters = {
-			$$aggregation : {
-				expandTo : 2,
-				hierarchyQualifier : "X"
-			}
-		};
-
-		assert.throws(function () {
-			// code under test
-			oBinding.getParent();
-		}, new Error("Unsupported $$aggregation.expandTo: 2"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("getParent: Missing recursive hierarchy", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 
@@ -8661,6 +8643,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[true, false].forEach(function (bParentFound) {
 	QUnit.test("getParent", function (assert) {
 		const oBinding = this.bindList("/EMPLOYEES");
 		const oNode = {iIndex : 42};
@@ -8680,11 +8663,12 @@ sap.ui.define([
 		};
 
 		this.mock(oBinding.oCache).expects("getParentIndex").withExactArgs(42)
-			.returns(23);
+			.returns(bParentFound ? 23 : undefined);
 
 		// code under test
-		assert.strictEqual(oBinding.getParent(oNode), oParentContext);
+		assert.strictEqual(oBinding.getParent(oNode), bParentFound ? oParentContext : undefined);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("requestParent: Missing recursive hierarchy", function (assert) {
