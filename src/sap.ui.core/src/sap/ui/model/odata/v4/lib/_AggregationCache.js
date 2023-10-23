@@ -121,35 +121,35 @@ sap.ui.define([
 	_AggregationCache.prototype.getAndRemoveCollection = null;
 
 	/**
-	 * Deletes an entity on the server and in the cached data.
+	 * Deletes a node on the server and in the cached data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID to be used for the DELETE request
 	 * @param {string} sEditUrl
-	 *   The entity's edit URL to be used for the DELETE request
-	 * @param {string} sIndex
-	 *   The entity's index
+	 *   The node's edit URL to be used for the DELETE request
+	 * @param {string} sIndexOrPredicate
+	 *   The node's index or its predicate if it is not in the collection
 	 * @param {object} [_oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. Not used and
 	 *   should always be undefined
 	 * @param {function(number,number):void} fnCallback
-	 *   A function which is called immediately when an entity has been deleted from the cache, or
-	 *   when it was re-inserted; the index of the entity and an offset (-1 for deletion, 1 for
-	 *   re-insertion) are passed as parameter
+	 *   A function which is called immediately with the node's index and offset -1 as parameter
+	 *   when the node has been deleted from the cache; reinsertion does not occur
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
-	 * @throws {Error} If the cache is shared, <code>sIndex</code> is not a number, or the node
-	 *   at the given index is expanded.
+	 * @throws {Error} If the cache is shared, the node is not in the collection (because a
+	 *   predicate was given), or the node at the given index is expanded.
 	 *
 	 * @public
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#_delete
-	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndex, _oETagEntity,
-			fnCallback) {
-		let iIndex = parseInt(sIndex);
-		if (isNaN(iIndex)) {
-			throw new Error(`Unsupported kept-alive entity: ${this.sResourcePath}${sIndex}`);
+	_AggregationCache.prototype._delete = function (oGroupLock, sEditUrl, sIndexOrPredicate,
+			_oETagEntity, fnCallback) {
+		let iIndex = parseInt(sIndexOrPredicate);
+		if (isNaN(iIndex)) { // it must be a predicate because the element is not in the collection
+			throw new Error(
+				`Unsupported kept-alive entity: ${this.sResourcePath}${sIndexOrPredicate}`);
 		}
 
 		const oElement = this.aElements[iIndex];
