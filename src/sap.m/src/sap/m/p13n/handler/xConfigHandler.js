@@ -63,20 +63,20 @@ sap.ui.define([
 
 	}
 
-	/**
-	 * Creates a changehandler specific to the provided aggregation and property name,
-	 * to enhance the xConfig object for a given mdc control instance.
-	 *
-	 * The enhanced object can be accesed using <code>Engine#readAggregationConfig</code>.
-	 *
-	 * @param {object} mMetaConfig A map describing the metadata structure that is affected by this changehandler
-	 * @param {boolean} mMetaConfig.aggregationBased Defines whether the aggregation space or the property space should be used in the xConfig object
-	 * @param {string} mMetaConfig.property The property name (such as <code>width</code> or <code>label</code>)
-	 * @param {string} mMetaConfig.operation The operation to be executed by the handler (add, remove, move, set)
-	 *
-	 * @returns {object} The created changehandler object
-	 */
-	xConfigHandler.createHandler = function(mMetaConfig) {
+    /**
+     * Creates a changehandler specific to the provided aggregation and property name,
+     * to enhance the xConfig object for a given mdc control instance.
+     *
+     * The enhanced object can be accessed using <code>Engine#readAggregationConfig</code>.
+     *
+     * @param {object} mMetaConfig A map describing the metadata structure that is affected by this changehandler
+     * @param {boolean} mMetaConfig.aggregationBased Defines whether the aggregation space or the property space should be used in the xConfig object
+     * @param {string} mMetaConfig.property The property name (such as <code>width</code> or <code>label</code>)
+     * @param {string} mMetaConfig.operation The operation to be executed by the handler (add, remove, move, set)
+     *
+     * @returns {object} The created changehandler object
+     */
+    xConfigHandler.createHandler = function(mMetaConfig) {
 
 		if (!mMetaConfig || !mMetaConfig.hasOwnProperty("property")) {
 			throw new Error("Please provide a map containing the affected aggregation and property name!");
@@ -85,9 +85,14 @@ sap.ui.define([
 		var sAffectedProperty = mMetaConfig.property;
 		var sAffectedAggregation;
 
-		return {
-			"changeHandler": {
-				applyChange: function (oChange, oControl, mPropertyBag) {
+        return {
+            "changeHandler": {
+                applyChange: function (oChange, oControl, mPropertyBag) {
+                    var sChangePersistenceIdentifier = oChange.getContent().persistenceIdentifier;
+                    var oController = Engine.getInstance().getController(oControl, oChange.getChangeType(), sChangePersistenceIdentifier);
+                    if (sChangePersistenceIdentifier && oController.getPersistenceIdentifier() !== sChangePersistenceIdentifier) {
+                        return Promise.resolve(false);
+                    }
 
 					return fnQueueChange(oControl, function(){
 						return Engine.getInstance().readXConfig(oControl, {
@@ -95,22 +100,25 @@ sap.ui.define([
 						})
 						.then(function(oPriorAggregationConfig) {
 
-							var sOperation = getOperationType(oChange.getChangeType());
-
-							sAffectedAggregation = oChange.getContent().targetAggregation;
+                            var sOperation = getOperationType(oChange.getChangeType());
+                            sAffectedAggregation = oChange.getContent().targetAggregation;
 
 							var oRevertData = {
 								key: oChange.getContent().key
 							};
 
-							if (sOperation !== "set") {
-								//In case there is a add/remove operation, flag the revert data as the opposite of the current action (add will be removed as revert and vice versa)
-								oRevertData.value = sOperation !== "add";
-							} else {
-								oRevertData.value = null;
-							}
+                            if (sChangePersistenceIdentifier) {
+                                oRevertData.persistenceIdentifier = sChangePersistenceIdentifier;
+                            }
 
-							var aCurrentState;
+                            if (sOperation !== "set") {
+                                //In case there is a add/remove operation, flag the revert data as the opposite of the current action (add will be removed as revert and vice versa)
+                                oRevertData.value = sOperation !== "add";
+                            } else {
+                                oRevertData.value = null;
+                            }
+
+                            var aCurrentState;
 
 							var oController = Engine.getInstance().getController(oControl, oChange.getChangeType());
 							aCurrentState = oController?.getCurrentState();
@@ -155,9 +163,12 @@ sap.ui.define([
 
 							return Engine.getInstance().enhanceXConfig(oControl, oConfig);
 						})
-						.then(function(){
-							fConfigModified(oControl, oChange);
-						});
+						.then(function(bConfigModified){
+                            if (!bConfigModified) {
+                                return;
+                            }
+                            fConfigModified(oControl, oChange);
+                        });
 					});
 
 				},
@@ -190,10 +201,13 @@ sap.ui.define([
 					}
 
 					return Engine.getInstance().enhanceXConfig(oControl, oConfig)
-					.then(function() {
-						oChange.resetRevertData();
-						fConfigModified(oControl, oChange);
-					});
+					.then(function(bConfigModified) {
+                        if (!bConfigModified) {
+                            return;
+                        }
+                        oChange.resetRevertData();
+                        fConfigModified(oControl, oChange);
+                    });
 				}
 			},
 			"layers": {

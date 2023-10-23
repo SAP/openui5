@@ -1300,7 +1300,8 @@
 			"samples": [
 				"sap.m.sample.p13n.Engine",
 				"sap.m.sample.p13n.EngineGridTable",
-				"sap.m.sample.p13n.EngineGridList"
+				"sap.m.sample.p13n.EngineGridList",
+				"sap.m.sample.p13n.EngineMultipleController"
 			]
 		},
 		{
@@ -1423,7 +1424,8 @@
 			"sap.m.sample.TableNavigated",
 			"sap.m.sample.TableAutoPopin",
 			"sap.m.sample.TableStrictLayout",
-			"sap.m.sample.p13n.Engine"
+			"sap.m.sample.p13n.Engine",
+			"sap.m.sample.p13n.EngineMultipleController"
 		  ]
 		},
 		{
@@ -2734,6 +2736,11 @@
 			"id": "sap.m.sample.p13n.EngineGridList",
 			"name": "Personalization for grid list",
 			"description": "GridList using the personalization Engine"
+		},
+		{
+			"id": "sap.m.sample.p13n.EngineMultipleController",
+			"name": "Personalization with multiple SelectionControllers",
+			"description": "Personalization for Reponsive Table using multiple SelectionControllers"
 		},
 		{
 		  "id": "sap.m.sample.P13nDialog",

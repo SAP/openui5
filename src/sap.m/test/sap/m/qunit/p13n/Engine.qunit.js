@@ -240,6 +240,7 @@ sap.ui.define([
 			var oAdaptationControl = new TestClass();
 			oAdaptationControl.addItem(new CoreControl("a"));
 
+			this.persistenceIdentifier = "controller-test3";
 			Engine.getInstance().register(oAdaptationControl, {
 
 				controller: {
@@ -249,6 +250,11 @@ sap.ui.define([
                     }),
 					Test2: new Controller({
                         control: oAdaptationControl,
+                        targetAggregation: "items"
+                    }),
+					Test3: new Controller({
+                        control: oAdaptationControl,
+						persistenceIdentifier: this.persistenceIdentifier,
                         targetAggregation: "items"
                     })
 				},
@@ -303,7 +309,14 @@ sap.ui.define([
 	QUnit.test("Check 'getController'", function(assert){
 		assert.ok(Engine.getInstance().getController(this.oControl, "Test"), "Controller 'Test' found in engine");
 		assert.ok(Engine.getInstance().getController(this.oControl.getId(), "Test"), "Controller 'Test' found in engine");
+
+		var oReturnedController1 = Engine.getInstance().getController(this.oControl, "Test3", "controller-test3");
+		var oReturnedController2 = Engine.getInstance().getController(this.oControl.getId(), "Test3", "controller-test3");
+
+		assert.equal(oReturnedController1.getPersistenceIdentifier(), this.persistenceIdentifier, "Controller 'Test3' with persistenceIdentifier 'controller-test3' found in engine");
+		assert.equal(oReturnedController2.getPersistenceIdentifier(), this.persistenceIdentifier, "Controller 'Test3' with persistenceIdentifier 'controller-test3' found in engine");
 	});
+
 
 	QUnit.test("Check 'deregister'", function(assert){
 		//Register control
@@ -333,6 +346,9 @@ sap.ui.define([
 				"abc": "def"
 			},
 			"Test2": {
+				"abc": "def"
+			},
+			"Test3": {
 				"abc": "def"
 			}
 		};
