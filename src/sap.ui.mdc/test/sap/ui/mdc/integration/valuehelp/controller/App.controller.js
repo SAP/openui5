@@ -115,7 +115,7 @@ sap.ui.define([
 
 
 				// Relevant for Typeahead Fragment BEG
-				showTypeahead: 'function (oPayload, oContent) {\n\tif (!oContent || (oContent.isA("sap.ui.mdc.valuehelp.base.FilterableListContent") && !oContent.getFilterValue())) { // Do not show non-existing content or suggestions without filterValue\n\t\treturn false;\n\t} else if (oContent.isA("sap.ui.mdc.valuehelp.base.ListContent")) { // All List-like contents should have some data to show\n\t\tvar oListBinding = oContent.getListBinding();\n\t\tvar iLength = oListBinding && oListBinding.getAllCurrentContexts().length;\n\t\treturn iLength > 0;\n\t}\n\treturn true; // All other content should be shown by default\n};',
+				showTypeahead: ValueHelpDelegate.showTypeahead.toString(),
 				opensOnClick: false
 				// Relevant for Typeahead Fragment END
 
