@@ -87,6 +87,9 @@
 		return oResult || {};
 	}
 
+	/**
+	 * @deprecated As of Version 1.120
+	 */
 	function _createGlobalConfig() {
 		var sCfgFile = "sap-ui-config.json",
 			url = globalThis["sap-ui-config"];
@@ -151,6 +154,9 @@
 		}
 	}
 
+	/**
+	 * @deprecated As of Version 1.120
+	 */
 	_createGlobalConfig();
 
 	define("sap/base/config/GlobalConfigurationProvider", [
@@ -230,6 +236,9 @@
 			set: set,
 			freeze: freeze,
 			setConfiguration: setConfiguration,
+			/**
+			 * @deprecated As of Version 1.120
+			 */
 			_: {
 				configLoaded() {
 					return !!globalThis["sap-ui-config"].__loaded;
@@ -991,15 +1000,20 @@
 		syncCallBehavior = 2;
 	}
 
-	const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
-	if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
-		const sMessage = "[nosync]: configuration loaded via sync XHR";
-		if (syncCallBehavior === 1) {
-			ui5loader._.logger.warning(sMessage);
-		} else {
-			ui5loader._.logger.error(sMessage);
+	/**
+	 * @deprectaed As of Version 1.120
+	 */
+	(() => {
+		const GlobalConfigurationProvider = sap.ui.require("sap/base/config/GlobalConfigurationProvider");
+		if ( syncCallBehavior && GlobalConfigurationProvider._.configLoaded()) {
+			const sMessage = "[nosync]: configuration loaded via sync XHR";
+			if (syncCallBehavior === 1) {
+				ui5loader._.logger.warning(sMessage);
+			} else {
+				ui5loader._.logger.error(sMessage);
+			}
 		}
-	}
+	})();
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
