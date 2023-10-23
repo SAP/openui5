@@ -1115,6 +1115,7 @@ sap.ui.define([
 	 * @public
 	 * @deprecated Since 1.120, as it relies on global names and potentially synchronous code loading. Please invoke the constructor of the intended ManagedObject subclass directly.
 	 * @static
+	 * @function
 	 * @ts-skip
 	 */
 	ManagedObject.create = makeObject;
