@@ -1,0 +1,62 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "bc876ac37dc32d2714e6ceea39320877e0903437",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.helper._timezones: Set CLDR version to 43 for aCLDRTimezoneIDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122403"
+          }
+        ]
+      },
+      {
+        "id": "19a82313a26a326b9938776617e1451bea69782f",
+        "type": "FIX",
+        "text": " sap/base/config: Harmonize logging and only log sap params",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118877"
+          }
+        ]
+      },
+      {
+        "id": "31398b6fa7d0ba50ed7ab91da0eed2915db870d0",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#bindTree: document transitionMessagesOnly parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122405"
+          }
+        ]
+      },
+      {
+        "id": "8fea65c79c29f88bac64620076e88d2fa819490f",
+        "type": "FIX",
+        "text": " core/support/plugins/Selector: Fix missing Element dependency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117058"
+          }
+        ]
+      },
+      {
+        "id": "d1bd65ae4dd1bf34489a54fae835f824fd6e17be",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      }
+    ]
+  }
+}

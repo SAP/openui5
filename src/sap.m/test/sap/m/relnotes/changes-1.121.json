@@ -1,0 +1,45 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "d7aced42b4e05df174d2c219586e91ddc8c463d3",
+        "type": "FIX",
+        "text": " sap.m.Avatar: Fix detailBox destroying",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380079125"
+          }
+        ]
+      },
+      {
+        "id": "921c161e2b84e868d69e9a9e9c034d53d3ffb9e5",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound reverted"
+      },
+      {
+        "id": "de7738c04658d1f2cd88a0f4db46cb1714b344c0",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107738"
+          }
+        ]
+      },
+      {
+        "id": "70ff8fe4234dd8505d625ef25c3000a7a8751ca2",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122595"
+          }
+        ]
+      }
+    ]
+  }
+}
