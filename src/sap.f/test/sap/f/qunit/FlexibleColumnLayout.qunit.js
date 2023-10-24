@@ -483,6 +483,58 @@ function(
 		assert.ok(oEventSpy.called, "Layout change event fired");
 	});
 
+	QUnit.test("_liveStateChange event is fired upon drag to a new layout", function (assert) {
+		var sInitLayout = LT.ThreeColumnsMidExpanded;
+		this.oFCL = oFactory.createFCL({
+			layout: sInitLayout
+		});
+		var oEventSpy = this.spy(this.oFCL, "fireEvent");
+
+		var oSeparator = this.oFCL._oColumnSeparators["begin"][0],
+			iStartX = oSeparator.getBoundingClientRect().x,
+			// end position corresponds to a new layout
+			iEndX = iStartX + 100;
+
+		// simulate user draggs the begin separator
+		// to a position that involves layout change
+		this.oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+		this.oFCL._onColumnSeparatorMove({pageX: iEndX});
+
+		// assert event fires BEFORE the user stops dragging
+		assert.ok(oEventSpy.calledWithMatch("_liveStateChange"), "Live layout change event fired while user is still dragging");
+
+		// simulate user stops dragging
+		this.oFCL._onColumnSeparatorMoveEnd({pageX: iEndX});
+		assert.notEqual(this.oFCL.getLayout(), sInitLayout, "Layout has changed");
+		assert.ok(oEventSpy.calledWithMatch("stateChange"), "Layout change event fired");
+	});
+
+	QUnit.test("_liveStateChange event is not fired upon drag within the same layout", function (assert) {
+		var sInitLayout = LT.ThreeColumnsMidExpanded;
+		this.oFCL = oFactory.createFCL({
+			layout: sInitLayout
+		});
+		var oEventSpy = this.spy(this.oFCL, "fireEvent");
+
+		var oSeparator = this.oFCL._oColumnSeparators["begin"][0],
+			iStartX = oSeparator.getBoundingClientRect().x,
+			// end position corresponds to the same layout
+			iEndX = iStartX + 2;
+
+		// simulate user draggs the begin separator
+		// to a position that does NOT involve layout change
+		this.oFCL._onColumnSeparatorMoveStart({pageX: iStartX}, oSeparator);
+		this.oFCL._onColumnSeparatorMove({pageX: iEndX});
+
+		// check state BEFORE the user stops dragging
+		assert.notOk(oEventSpy.called, "Live layout change event is not fired");
+
+		// simulate user stops dragging
+		this.oFCL._onColumnSeparatorMoveEnd({pageX: iEndX});
+		assert.equal(this.oFCL.getLayout(), sInitLayout, "Layout has not changed");
+		assert.notOk(oEventSpy.calledWithMatch("stateChange"), "Layout change event is not fired");
+	});
+
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
