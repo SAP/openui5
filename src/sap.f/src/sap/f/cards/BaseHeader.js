@@ -85,7 +85,17 @@ sap.ui.define([
 				 * If the header should be rendered as a tile.
 				 * @private
 				 */
-				useTileLayout: { type: "boolean", group: "Appearance", visibility: "hidden" }
+				useTileLayout: { type: "boolean", group: "Appearance", visibility: "hidden" },
+
+				/**
+				 * Defines aria-level of the header.
+				 *
+				 * When header is in a dialog aria-level is 1
+				 * When header is not in a dialog(standard scenario) aria-level is 3
+				 *
+				 * @private
+				 */
+				headingLevel: { type: "string", visibility: "hidden", defaultValue: "3"}
 			},
 			aggregations: {
 				/**
@@ -340,7 +350,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getAriaHeadingLevel = function () {
-		return "3";
+		return this.getProperty("headingLevel");
 	};
 
 	/**
