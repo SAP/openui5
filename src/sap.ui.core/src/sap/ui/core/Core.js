@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
-	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/Version",
@@ -36,8 +35,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/Object",
 	"sap/ui/base/syncXHRFix",
-	"sap/ui/core/Locale",
 	"sap/ui/core/support/Hotkeys",
+	"sap/ui/core/util/_LocalizationHelper",
 	"sap/ui/dom/getComputedStyleFix",
 	"sap/ui/performance/Measurement",
 	"sap/ui/performance/trace/initTraces",
@@ -77,7 +76,6 @@ sap.ui.define([
 		Formatting,
 		Localization,
 		Deferred,
-		each,
 		isEmptyObject,
 		ObjectPath,
 		Version,
@@ -88,8 +86,8 @@ sap.ui.define([
 		ManagedObject,
 		BaseObject,
 		syncXHRFix,
-		Locale,
 		Hotkeys,
+		_LocalizationHelper,
 		getComputedStyleFix,
 		Measurement,
 		initTraces,
@@ -628,7 +626,14 @@ sap.ui.define([
 
 			Log.info("Declared libraries: " + this.aLibs, METHOD);
 
-			this._setupContentDirection();
+			_LocalizationHelper.init();
+
+			/**
+			 * @deprecated As of Version 1.120
+			 */
+			_LocalizationHelper.registerForUpdate("Core", () => {
+				return {"Core": this};
+			});
 
 			this._setupBrowser();
 
@@ -637,6 +642,7 @@ sap.ui.define([
 			this._setupLang();
 
 			this._setupAnimation();
+
 
 			// create accessor to the Core API early so that initLibrary and others can use it
 			/**
@@ -925,18 +931,6 @@ sap.ui.define([
 		ElementMetadata.prototype.register = function(oMetadata) {
 			Library._registerElement(oMetadata);
 		};
-	};
-
-	/**
-	 * Set the document's dir property
-	 * @private
-	 */
-	Core.prototype._setupContentDirection = function() {
-		var METHOD = "sap.ui.core.Core",
-			sDir = Localization.getRTL() ? "rtl" : "ltr";
-
-		document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
-		Log.info("Content direction set to '" + sDir + "'",null,METHOD);
 	};
 
 	/**
@@ -2206,61 +2200,11 @@ sap.ui.define([
 
 	/**
 	 * @private
+	 * @deprecated As of Version 1.120
 	 */
 	Core.prototype.fireLocalizationChanged = function(mChanges) {
-		var sEventId = Core.M_EVENTS.LocalizationChanged,
-			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
-			fnAdapt = ManagedObject._handleLocalizationChange;
-
-		Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
-
-		/*
-		 * Notify models that are able to handle a localization change
-		 */
-		each(this.oModels, function (prop, oModel) {
-			if (oModel && oModel._handleLocalizationChange) {
-				oModel._handleLocalizationChange();
-			}
-		});
-
-		/*
-		 * Notify all UIAreas, Components, Elements to first update their models (phase 1)
-		 * and then to update their bindings and corresponding data types (phase 2)
-		 */
-		function notifyAll(iPhase) {
-			UIArea.registry.forEach(function(oUIArea) {
-				fnAdapt.call(oUIArea, iPhase);
-			});
-			Component.registry.forEach(function(oComponent) {
-				fnAdapt.call(oComponent, iPhase);
-			});
-			Element.registry.forEach(function(oElement) {
-				fnAdapt.call(oElement, iPhase);
-			});
-		}
-
-		notifyAll.call(this,1);
-		notifyAll.call(this,2);
-
-		// special handling for changes of the RTL mode
-		if ( mChanges.rtl != undefined ) {
-			// update the dir attribute of the document
-			document.documentElement.setAttribute("dir", mChanges.rtl ? "rtl" : "ltr");
-
-			// invalidate all UIAreas
-			UIArea.registry.forEach(function(oUIArea) {
-				oUIArea.invalidate();
-			});
-			Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
-		}
-
-		// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
-		Element.registry.forEach(function(oElement) {
-			oElement._handleEvent(oBrowserEvent);
-		});
-
 		// notify registered Core listeners
-		_oEventProvider.fireEvent(sEventId, {changes : mChanges});
+		_oEventProvider.fireEvent(Core.M_EVENTS.LocalizationChanged, {changes : mChanges});
 	};
 
 	/**
