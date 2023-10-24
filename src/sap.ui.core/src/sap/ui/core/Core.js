@@ -156,6 +156,70 @@ sap.ui.define([
 	var _oEventProvider;
 
 	/**
+	 * Execute configured init module
+	 */
+	var _executeInitModule = function() {
+		var sOnInit = BaseConfig.get({
+			name: "sapUiOnInit",
+			type: BaseConfig.Type.String
+		});
+		if (sOnInit) {
+			// determine onInit being a module name prefixed via module or a global name
+			var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(sOnInit);
+			if (aResult && aResult[1]) {
+				// ensure that the require is done async and the Core is finally booted!
+				setTimeout(sap.ui.require.bind(null, [aResult[1]]), 0);
+			} else {
+				throw Error("Invalid init module " + sOnInit + " provided via config option 'sapUiOnInit'");
+			}
+		}
+	};
+
+	/**
+	 * @deprecated As of Version 1.120
+	 */
+	function _executeOnInit() {
+		var vOnInit = BaseConfig.get({
+			name: "sapUiOnInit",
+			type: BaseConfig.Type.Code,
+			defaultValue: BaseConfig.get({
+				name: "sapUiEvtOninit",
+				type: BaseConfig.Type.Code
+			})
+		});
+
+		// execute a configured init hook
+		if ( vOnInit ) {
+			if ( typeof vOnInit === "function" ) {
+				vOnInit();
+			} else if (typeof vOnInit === "string") {
+				// determine onInit being a module name prefixed via module or a global name
+				var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
+				if (aResult && aResult[1]) {
+					// ensure that the require is done async and the Core is finally booted!
+					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
+				} else {
+					// lookup the name specified in onInit and try to call the function directly
+					var fn = ObjectPath.get(vOnInit);
+					if (typeof fn === "function") {
+						fn();
+					} else {
+						Log.warning("[Deprecated] Do not use inline JavaScript code with the oninit attribute."
+							+ " Use the module:... syntax or the name of a global function");
+						/*
+						 * In contrast to eval(), window.eval() executes the given string
+						 * in the global context, without closure variables.
+						 * See http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.2
+						 */
+						// eslint-disable-next-line no-eval
+						window.eval(vOnInit);  // csp-ignore-legacy-api
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Returns the waiting behavior for the initial theme loading.
 	 * Possible values are:
 	 * <ul>
@@ -1186,47 +1250,6 @@ sap.ui.define([
 		}
 	};
 
-	Core.prototype._executeOnInit = function() {
-		var vOnInit = BaseConfig.get({
-			name: "sapUiOnInit",
-			type: BaseConfig.Type.Code,
-			defaultValue: BaseConfig.get({
-				name: "sapUiEvtOninit",
-				type: BaseConfig.Type.Code
-			})
-		});
-
-		// execute a configured init hook
-		if ( vOnInit ) {
-			if ( typeof vOnInit === "function" ) {
-				vOnInit();
-			} else if (typeof vOnInit === "string") {
-				// determine onInit being a module name prefixed via module or a global name
-				var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
-				if (aResult && aResult[1]) {
-					// ensure that the require is done async and the Core is finally booted!
-					setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
-				} else {
-					// lookup the name specified in onInit and try to call the function directly
-					var fn = ObjectPath.get(vOnInit);
-					if (typeof fn === "function") {
-						fn();
-					} else {
-						Log.warning("[Deprecated] Do not use inline JavaScript code with the oninit attribute."
-							+ " Use the module:... syntax or the name of a global function");
-						/*
-						 * In contrast to eval(), window.eval() executes the given string
-						 * in the global context, without closure variables.
-						 * See http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.2
-						 */
-						// eslint-disable-next-line no-eval
-						window.eval(vOnInit);  // csp-ignore-legacy-api
-					}
-				}
-			}
-		}
-	};
-
 	/**
 	 * Creates a "rootComponent" or "sap.ui.app.Application".
 	 * Both concepts are deprecated.
@@ -1317,7 +1340,11 @@ sap.ui.define([
 		this.startPlugins();
 		Log.info("Plugins started",null,METHOD);
 
-		this._executeOnInit();
+		/**
+		 * @deprecated As ofVersion 1.120
+		 */
+		_executeInitModule = _executeOnInit;
+		_executeInitModule();
 		/**
 		 * @deprecated As of Version 1.120.
 		 */
