@@ -288,6 +288,12 @@ sap.ui.define([
 		assert.ok(oTree.getItems()[0].getItemNodeContext().nodeState.selected, "item context is selected");
 		assert.ok(oTree.getItems()[1].getSelected(),"tree item is selected.");
 		assert.ok(oTree.getItems()[1].getItemNodeContext().nodeState.selected, "item context is selected");
+
+		oTree.removeSelections(true);
+		assert.notOk(oTree.getItems()[0].getSelected(),"tree item is not selected.");
+		assert.notOk(oTree.getItems()[0].getItemNodeContext().nodeState.selected, "item context is not selected");
+		assert.notOk(oTree.getItems()[1].getSelected(),"tree item is not selected.");
+		assert.notOk(oTree.getItems()[1].getItemNodeContext().nodeState.selected, "item context is not selected");
 	});
 
 	QUnit.module("Accessibility", {
