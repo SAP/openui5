@@ -455,8 +455,12 @@ sap.ui.define([
 	 *
 	 * @typedef {object} sap.ui.fl.Version
 	 * @property {number} version - Number of the version. The highest version is the active while 0 is the draft
+	 * @property {string} title - Name of the version
 	 * @property {string} activatedBy - User ID who activated the version
 	 * @property {string} activatedAt - Stringified time stamp of the activation
+	 * @property {boolean} [isPublished=false] - Flag if an version is already published
+	 * @property {boolean} [importedAt] - Timestamp when a version was imported into the system or tenant
+	 * @property {boolean} [origianlTenantId] - ID of the source tenant where this version was introduced
 	 * @since 1.74
 	 * @private
 	 * @ui5-restricted

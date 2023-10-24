@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/write/api/VersionsAPI",
+	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
@@ -28,6 +30,8 @@ sap.ui.define([
 	FlexState,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	VersionsAPI,
+	SessionStorageConnector,
 	JSONModel,
 	nextUIUpdate,
 	QUnitUtils,
@@ -48,10 +52,17 @@ sap.ui.define([
 		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.getComponentById("Comp1");
 		var aCustomerChanges;
 
-		return FlexState.initialize({
-			componentId: oComponent.getId()
-		}).then(function() {
-			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER});
+		return VersionsAPI.initialize({
+			control: oComponent,
+			layer: Layer.CUSTOMER
+		})
+		.then(() => {
+			return FlexState.initialize({
+				componentId: oComponent.getId()
+			});
+		})
+		.then(function() {
+			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER, draft: true});
 		})
 		.then(function(aChanges) {
 			aCustomerChanges = aChanges;
@@ -74,16 +85,7 @@ sap.ui.define([
 			}
 			return undefined;
 		})
-		.then(PersistenceWriteAPI.reset.bind(undefined, {
-			selector: oComponent,
-			layer: Layer.CUSTOMER,
-			generator: "Change.createInitialFileContent"
-		}))
-		.then(PersistenceWriteAPI.reset.bind(undefined, {
-			selector: oComponent,
-			layer: Layer.USER,
-			generator: "Change.createInitialFileContent"
-		}));
+		.then(() => FlexTestAPI.clearStorage(SessionStorageConnector.storage));
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function() {

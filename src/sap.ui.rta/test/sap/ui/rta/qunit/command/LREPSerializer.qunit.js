@@ -59,66 +59,63 @@ sap.ui.define([
 	};
 
 	QUnit.module("Given a command serializer loaded with an RTA command stack", {
-		before() {
-			return FlexTestAPI.createVariantModel({
+		async before() {
+			await RtaQunitUtils.clear(oMockedAppComponent);
+			this.oModel = await FlexTestAPI.createVariantModel({
 				data: oData,
 				appComponent: oMockedAppComponent
-			}).then(function(oInitializedModel) {
-				this.oModel = oInitializedModel;
-			}.bind(this));
+			});
 		},
-		beforeEach() {
-			return RtaQunitUtils.clear(oMockedAppComponent)
-			.then(function() {
-				sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
-				this.oCommandStack = new CommandStack();
-				this.oInput1 = new Input("input1");
-				this.oInput2 = new Input("input2");
-				this.oPanel = new Panel({
-					id: "panel",
-					content: [this.oInput1, this.oInput2]
-				});
+		async beforeEach() {
+			await RtaQunitUtils.clear(oMockedAppComponent);
 
-				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-					data: {
-						actions: {
-							remove: {
-								changeType: "hideControl"
-							}
+			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
+			this.oCommandStack = new CommandStack();
+			this.oInput1 = new Input("input1");
+			this.oInput2 = new Input("input2");
+			this.oPanel = new Panel({
+				id: "panel",
+				content: [this.oInput1, this.oInput2]
+			});
+
+			this.oInputDesignTimeMetadata = new DesignTimeMetadata({
+				data: {
+					actions: {
+						remove: {
+							changeType: "hideControl"
 						}
 					}
-				});
+				}
+			});
 
-				this.oSerializer = new CommandSerializer({
-					commandStack: this.oCommandStack,
-					rootControl: this.oPanel
-				});
+			this.oSerializer = new CommandSerializer({
+				commandStack: this.oCommandStack,
+				rootControl: this.oPanel
+			});
 
-				sandbox.stub(Settings, "getInstanceOrUndef").returns({
-					isKeyUser() {
-						return true;
-					},
-					isCondensingEnabled() {
-						return false;
-					},
-					hasPersoConnector() {
-						return false;
-					},
-					getUserId() {}
-				});
-			}.bind(this));
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isKeyUser() {
+					return true;
+				},
+				isCondensingEnabled() {
+					return false;
+				},
+				hasPersoConnector() {
+					return false;
+				},
+				getUserId() {}
+			});
 		},
-		afterEach() {
-			return this.oSerializer.saveCommands({saveAsDraft: false}).then(function() {
-				this.oCommandStack.destroy();
-				this.oSerializer.destroy();
-				this.oPanel.destroy();
-				this.oInput1.destroy();
-				this.oInput2.destroy();
-				this.oInputDesignTimeMetadata.destroy();
-				sandbox.restore();
-				return RtaQunitUtils.clear(oMockedAppComponent);
-			}.bind(this));
+		async afterEach() {
+			await this.oSerializer.saveCommands({saveAsDraft: false});
+			this.oCommandStack.destroy();
+			this.oSerializer.destroy();
+			this.oPanel.destroy();
+			this.oInput1.destroy();
+			this.oInput2.destroy();
+			this.oInputDesignTimeMetadata.destroy();
+			sandbox.restore();
+			await RtaQunitUtils.clear(oMockedAppComponent);
 		},
 		after() {
 			this.oModel.destroy();
