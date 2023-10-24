@@ -57,6 +57,7 @@ sap.ui.define([
 
 	/**
 	 * Enables applications to control condition updates based on <code>value</code> / <code>additionalvalue</code> property changes.
+	 * <br/>By default, this method returns a condition with an <code>EQ</code> operator.
 	 *
 	 * <b>Note:</b> Custom implementations of this method may lead to intransparency as a field's condition may then differ from the state of the <code>value</code> / <code>additionalvalue</code> properties.
 	 * Avoid expensive operations, as this can delay the rendering of the output.
@@ -76,8 +77,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Defines if the input of the <code>Field</code> or <code>FilterField</code> control is
+	 * Defines if the input of the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control is
 	 * checked to determine the key and description.
+	 * <br/>By default, this method checks if the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} supports input validation.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
@@ -97,8 +99,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Defines if the input of the <code>Field</code> or <code>FilterField</code> control that
-	 * is not found in the field help or custom logic is accepted.
+	 * Defines if the input of the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control which
+	 * is not found in the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} or custom logic of {@link #getItemForValue}, is accepted.
+	 * <br/>By default, this method checks if the {@link sap.ui.mdc.ValueHelp#validateInput validateInput} property of the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} is set.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp Field help assigned to the <code>Field</code> or <code>FilterField</code> control
@@ -119,6 +122,7 @@ sap.ui.define([
 
 	/**
 	 * Determines the key, description, and payload of a user input.
+	 * <br/>By default, this method calls the {@link sap.ui.mdc.ValueHelp#getItemForValue getItemForValue} function of the assigned {@link sap.ui.mdc.ValueHelp ValueHelp}.
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
 	 *
@@ -142,8 +146,9 @@ sap.ui.define([
 
 	/**
 	 * Determines the description for a given key.
+	 * <br/>By default, this method calls the {@link sap.ui.mdc.ValueHelp#getItemForValue getItemForValue} function of the assigned {@link sap.ui.mdc.ValueHelp ValueHelp}.
 	 *
-	 * This function is called while formatting the output of a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control
+	 * This function is called while formatting the output of a {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
 	 * if a description should be displayed but only a key is given.
 	 *
 	 * If this needs to be determined asynchronously, a <code>Promise</code> is returned.
