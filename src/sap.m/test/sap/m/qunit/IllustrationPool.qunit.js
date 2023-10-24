@@ -232,6 +232,7 @@ function (
 
 		// Act
 		oRequireSVGPromise = IllustrationPool._requireSVG(SAP_ILLUSTRATION_SET_NAME, sDummyID);
+		fnErrorStub.resetHistory();
 		oRequireSVGPromise.then(function() {
 			// Assert
 			assert.ok(fnErrorStub.calledOnce, "error is logged once in the error of the oRequireSVGPromise");
