@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/SinglePlanningCalendar",
@@ -24,6 +25,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
 ], function(
+	Element,
 	qutils,
 	jQuery,
 	SinglePlanningCalendar,
@@ -404,7 +406,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.getElementById(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 
 		// Act
@@ -420,7 +422,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.getElementById(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 		oStartDate.setFullYear(2014, 11, 29);
 		oStartDate.setHours(0);
@@ -435,7 +437,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.getElementById(sCurrentPickerId);
 
 		// Assert
 		assert.strictEqual(oPicker.getFirstDayOfWeek(), 3, "firstDayOfWeek in Month view propagated to picker");
@@ -447,7 +449,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		sCurrentPickerId = oSPC._getHeader().getAssociation("currentPicker");
-		oPicker = Core.byId(sCurrentPickerId);
+		oPicker = Element.getElementById(sCurrentPickerId);
 		oRow = oSPC.getAggregation("_grid").getAggregation("_columnHeaders");
 		oStartDate.setFullYear(2014, 11, 31);
 		oStartDate.setHours(0);

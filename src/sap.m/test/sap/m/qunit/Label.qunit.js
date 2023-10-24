@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/library",
 	"sap/m/library",
@@ -13,6 +14,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	createAndAppendDiv,
 	coreLibrary,
 	mobileLibrary,
@@ -95,8 +97,8 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function(assert) {
-			l1 = oCore.byId("l1");
-			l2 = oCore.byId("l2");
+			l1 = Element.getElementById("l1");
+			l2 = Element.getElementById("l2");
 
 			l1.setDesign(oStandardDesign);
 			l1.setTextDirection(oTextDirectionDefault);

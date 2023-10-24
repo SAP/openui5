@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/Device",
-	"sap/m/table/columnmenu/Item"
+	"sap/m/table/columnmenu/Item",
+	"sap/ui/core/Element"
 ], function(
-	Core,
 	Device,
-	ItemBase
+	ItemBase,
+	Element
 ) {
 	"use strict";
 
@@ -23,7 +23,7 @@ sap.ui.define([
 
 	Item.prototype.initializeContent = function() {
 		const oTable = this.getTable();
-		const oColumn = Core.byId(this.getParent().getAssociation("column"));
+		const oColumn = Element.getElementById(this.getParent().getAssociation("column"));
 		const oEngine = oTable.getEngine();
 		const sKey = this.getKey();
 		const oController = oEngine.getController(oTable, sKey);

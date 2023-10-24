@@ -4,12 +4,12 @@
 
 // Provides reuse functionality for reading news from news RSS files
 sap.ui.define([
-		"sap/ui/core/Core",
+		"sap/ui/core/EventBus",
 		"sap/ui/thirdparty/jquery",
 		"sap/ui/documentation/sdk/util/Resources",
 		"sap/base/Log"
 	],
-	function(Core, jQuery, ResourcesUtil, Log) {
+	function(EventBus, jQuery, ResourcesUtil, Log) {
 		"use strict";
 
 		var _oNewsDataCache = {},
@@ -123,7 +123,7 @@ sap.ui.define([
 		}
 
 		function _publishNewsChangedEvent() {
-			Core.getEventBus().publish("newsChanged", "onDemoKitNewsChanged");
+			EventBus.getInstance().publish("newsChanged", "onDemoKitNewsChanged");
 		}
 
 		function _requireFeedXML(oJSON) {

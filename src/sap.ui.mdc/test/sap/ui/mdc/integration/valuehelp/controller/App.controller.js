@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/model/json/JSONModel",
@@ -12,9 +13,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Fragment",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/ValueHelpDelegate"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, URI, Fragment, oCore, ValueHelpDelegate) {
+], function (Messaging, Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Filter, URI, Fragment, ValueHelpDelegate) {
 	"use strict";
 
 	function _updateParams(mParams) {
@@ -44,7 +44,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 		onInit: function () {
 
-			oCore.getMessageManager().registerObject(this.getView(), true);
+			Messaging.registerObject(this.getView(), true);
 
 			this.oParams = new URLSearchParams(window.location.search);
 			const oParamSuspended = this.oParams.get("suspended");

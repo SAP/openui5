@@ -4,6 +4,7 @@
 
 // Provides control sap.m.StandardListItem.
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/theming/Parameters",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"./StandardListItemRenderer",
 	"sap/base/Log"
 ],
-	function(coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
+	function(Library, coreLibrary, IconPool, ThemeParameters, Device, library, ListItemBase, Image, StandardListItemRenderer, Log) {
 	"use strict";
 
 
@@ -425,7 +426,7 @@ sap.ui.define([
 			oThreeDots = this.getDomRef(sWrapArea + "ThreeDots"),
 			oButton = this.getDomRef(sWrapArea + "Button"),
 			sText = sWrapArea === "title" ? this.getTitle() : this.getDescription(),
-			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oRb = Library.getResourceBundleFor("sap.m");
 
 		if (!bTextExpanded) {
 			oText.textContent = sText;

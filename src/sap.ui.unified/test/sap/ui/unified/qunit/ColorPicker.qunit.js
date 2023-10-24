@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/unified/ColorPicker",
 	"sap/ui/unified/ColorPickerDisplayMode",
 	"sap/ui/unified/library",
@@ -17,6 +19,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/unified/ColorPickerHelper"
 ], function(
+	Localization,
+	Library,
 	ColorPicker,
 	ColorPickerDisplayMode,
 	library,
@@ -149,7 +153,7 @@ sap.ui.define([
 
 		QUnit.test("RTL flag", function (oAssert) {
 			// Arrange
-			var bFrameworkRtlMode = oCore.getConfiguration().getRTL();
+			var bFrameworkRtlMode = Localization.getRTL();
 
 			// Assert
 			oAssert.strictEqual(this.oCP.bRtl, bFrameworkRtlMode,
@@ -257,7 +261,7 @@ sap.ui.define([
 
 		QUnit.test("Root ARIA attributes", function (oAssert) {
 			var $colorPickerRef = this.oCP.$(),
-				sExpectedRoledescription = oCore.getLibraryResourceBundle("sap.ui.unified").getText("COLOR_PICKER_TITLE");
+				sExpectedRoledescription = Library.getResourceBundleFor("sap.ui.unified").getText("COLOR_PICKER_TITLE");
 
 			oAssert.strictEqual($colorPickerRef.attr("role"), "group", "Color Picker has a 'group' role");
 			oAssert.strictEqual($colorPickerRef.attr("aria-roledescription"), sExpectedRoledescription, "roledescription contains control's name");
@@ -330,7 +334,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("Radio buttons tooltips", function (oAssert) {
-			var oRB = oCore.getLibraryResourceBundle("sap.ui.unified");
+			var oRB = Library.getResourceBundleFor("sap.ui.unified");
 
 			// Assert
 			oAssert.strictEqual(this.oCP.oRbRGB.getTooltip(), oRB.getText("COLORPICKER_SELECT_RGB_TOOLTIP"),
@@ -443,7 +447,7 @@ sap.ui.define([
 			// Arrange
 			var oInput = new InputBase(),
 				sTooltipID = "COLORPICKER_HEX",
-				sTooltipResult = oCore.getLibraryResourceBundle("sap.ui.unified").getText(sTooltipID),
+				sTooltipResult = Library.getResourceBundleFor("sap.ui.unified").getText(sTooltipID),
 				oLabel,
 				oUnitLabel,
 				oHL;
@@ -686,7 +690,7 @@ sap.ui.define([
 
 		QUnit.test("Internal RTL flag", function (oAssert) {
 			// Arrange
-			var bFrameworkRtlMode = oCore.getConfiguration().getRTL();
+			var bFrameworkRtlMode = Localization.getRTL();
 
 			// Assert
 			oAssert.strictEqual(this.oCPBox.bRtl, bFrameworkRtlMode,

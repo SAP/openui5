@@ -7,8 +7,13 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/FilterBarDelegate", 'sap/base/util/merge', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/core/util/reflection/JsControlTreeModifier', 	"sap/ui/fl/Utils"
-	], function (FilterBarDelegate, merge, IdentifierUtil, JsControlTreeModifier, FlUtils) {
+	"sap/ui/core/Element",
+	"sap/ui/mdc/FilterBarDelegate",
+	'sap/base/util/merge',
+	'sap/ui/mdc/util/IdentifierUtil',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	"sap/ui/fl/Utils"
+], function(Element, FilterBarDelegate, merge, IdentifierUtil, JsControlTreeModifier, FlUtils) {
 	"use strict";
 
 	/**
@@ -41,7 +46,7 @@ sap.ui.define([
 		var sId = sSelectorId +  "--filter--" + IdentifierUtil.replace(sName);
 		var oFilterField;
 
-		var oExistingFilterField = sap.ui.getCore().byId(sId);
+		var oExistingFilterField = Element.getElementById(sId);
 
 		if (oExistingFilterField) {
 			return Promise.resolve(oExistingFilterField);

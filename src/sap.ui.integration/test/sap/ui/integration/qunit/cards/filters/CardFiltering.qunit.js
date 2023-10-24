@@ -1,6 +1,7 @@
 /* global QUnit sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
@@ -8,7 +9,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/date/UI5Date"
-], function (
+], function(
+	Library,
 	Card,
 	RequestDataProvider,
 	Host,
@@ -493,7 +495,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
 			var sErrorText = oFilterBar._getFilters()[0]._getErrorMessage().getItems()[1].getText();
-			var sExpectedErrorText = Core.getLibraryResourceBundle("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
+			var sExpectedErrorText = Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 
 			// Assert
 			assert.strictEqual(sErrorText, sExpectedErrorText, "Error message is correct");

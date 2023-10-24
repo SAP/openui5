@@ -1,5 +1,6 @@
 /*global QUnit,sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Sorter",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/test/TestUtils"
-], function(JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
+], function(Element, JSONModel, Icon, Sorter, Table, Column, Label, ColumnListItem, oCore, extend, jQuery, ODataV4Model, TestUtils) {
 	"use strict";
 
 
@@ -104,7 +105,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oTable = oCore.byId("MergeDuplicates");
+		var oTable = Element.getElementById("MergeDuplicates");
 		$MergedLabel = oTable.getItems()[3].getCells()[2].$();
 		$MergedIcon = oTable.getItems()[3].getCells()[0].$();
 
@@ -130,7 +131,7 @@ sap.ui.define([
 
 		sut._oGrowingDelegate.requestNewPage();
 		sut.done(function() {
-			var oTable = oCore.byId("MergeDuplicates");
+			var oTable = Element.getElementById("MergeDuplicates");
 			var $FirstLabelAfterGrowing = oTable.getItems()[5].getCells()[2].$();
 			var $FirstIconAfterGrowing =  oTable.getItems()[5].getCells()[0].$();
 
@@ -151,7 +152,7 @@ sap.ui.define([
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
-		var oTable = oCore.byId("MergeDuplicates");
+		var oTable = Element.getElementById("MergeDuplicates");
 		var labelBeforeHeader = "before";
 		var labelAfterHeader = "after";
 
@@ -187,7 +188,7 @@ sap.ui.define([
 		sut.setModel(new JSONModel(data));
 		oCore.applyChanges();
 
-		var oTable = oCore.byId("MergeDuplicates");
+		var oTable = Element.getElementById("MergeDuplicates");
 
 		//test for label value
 		var labelLastValue = oTable.getColumns()[2].getLastValue();
@@ -223,7 +224,7 @@ sap.ui.define([
 		sut.setModel(new JSONModel(data));
 		oCore.applyChanges();
 
-		var oTable = oCore.byId("MergeDuplicates"),
+		var oTable = Element.getElementById("MergeDuplicates"),
 			oFirstItem = oTable.getItems()[0],
 			oSecondItem = oTable.getItems()[1];
 

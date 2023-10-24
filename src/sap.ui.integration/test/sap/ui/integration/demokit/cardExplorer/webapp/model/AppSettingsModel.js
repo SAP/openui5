@@ -1,7 +1,9 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Theming",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core"
-], function (JSONModel, Core) {
+], function(Localization, Theming, JSONModel, Core) {
 	"use strict";
 
 	//key for local storage
@@ -15,7 +17,7 @@ sap.ui.define([
 	};
 
 	var oJSONModel = new JSONModel({
-		theme: Core.getConfiguration().getTheme(),
+		theme: Theming.getTheme(),
 		themes: [
 			{
 				key: "sap_horizon",
@@ -126,7 +128,7 @@ sap.ui.define([
 				oBody.classList.add("sapUiSizeCozy");
 		}
 		//apply rtl
-		Core.getConfiguration().setRTL(this.getProperty("/rtl"));
+		Localization.setRTL(this.getProperty("/rtl"));
 	};
 
 	// initially load and apply current settings

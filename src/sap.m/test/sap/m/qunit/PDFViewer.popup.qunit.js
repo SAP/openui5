@@ -3,10 +3,10 @@
 sap.ui.define([
 	"./PDFViewerTestUtils",
 	"sap/m/library",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
-	"sap/m/PDFViewerRenderer",
-	"sap/ui/core/Core"
-], function (TestUtils, library, $, PDFViewerRenderer, oCore) {
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, library, Element, $, PDFViewerRenderer) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -188,7 +188,7 @@ sap.ui.define([
 			"loaded": function () {
 				assert.ok(true, "'Load' event fired but should not.");
 
-				var oDownloadButton = oCore.byId(oPdfViewer.getId() + "-popupDownloadButton");
+				var oDownloadButton = Element.getElementById(oPdfViewer.getId() + "-popupDownloadButton");
 				assert.ok(oDownloadButton.getType() === ButtonType.Emphasized, "Button is of type 'Emphasized'");
 				done();
 			},

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/test/actions/Drop",
 	"sap/ui/mdc/enums/TableType"
 ], function(
-	/** @type sap.ui.core.Core */ Core,
+	Library,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.actions.Press */ Press,
 	/** @type sap.ui.test.matchers.PropertyStrictEquals */ PropertyStrictEquals,
@@ -342,7 +342,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportButtonInMenu: function() {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",
@@ -367,7 +367,7 @@ sap.ui.define([
 		 * @private
 		 */
 		iPressExportAsButtonInMenu: function() {
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 			return this.waitFor({
 				controlType: "sap.ui.unified.MenuItem",

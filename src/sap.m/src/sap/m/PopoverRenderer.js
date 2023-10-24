@@ -4,11 +4,11 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/m/library',
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/dom/getScrollbarSize",
-	"sap/ui/core/IconPool",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/IconPool"
 ],
-	function(Device, library, getScrollbarSize, IconPool, Configuration) {
+	function(Device, library, ControlBehavior, getScrollbarSize, IconPool) {
 		"use strict";
 
 		// shortcut for sap.m.PlacementType
@@ -150,7 +150,7 @@ sap.ui.define([
 
 			// Note: If this property should become public in the future, the property will have to be set on a level
 			// that will encapsulate the header and the footer of the popover as well.
-			if (Configuration.getAccessibility()
+			if (ControlBehavior.isAccessibilityEnabled()
 				&& oControl.getProperty("ariaRoleApplication")) {
 				oRm.attr("role", "application");
 			}

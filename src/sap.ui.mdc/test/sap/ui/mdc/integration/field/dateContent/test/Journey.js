@@ -5,6 +5,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/mdc/integration/field/Util",
@@ -12,9 +13,9 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/type/DateTime",
 	"sap/ui/model/type/Time",
-	"sap/ui/core/format/DateFormat",
-	"sap/ui/core/Core"
+	"sap/ui/core/format/DateFormat"
 ], function(
+	Library,
 	Opa5,
 	opaTest,
 	FieldTestUtil,
@@ -22,13 +23,12 @@ sap.ui.define([
 	DateType,
 	DateTimeType,
 	TimeType,
-	DateFormat,
-	Core
+	DateFormat
 ) {
 	"use strict";
 
 	// shortcut for sap.m resource bundle
-	const oRb = Core.getLibraryResourceBundle("sap.ui.core");
+	const oRb = Library.getResourceBundleFor("sap.ui.core");
 
 	Opa5.extendConfig({
 

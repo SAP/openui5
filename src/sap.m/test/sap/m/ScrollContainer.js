@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/m/Image",
@@ -6,11 +7,11 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Page",
 	"sap/m/ScrollContainer",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout"
-], function(App, Button, Image, Input, Label, Page, ScrollContainer, oCore, HTML, HorizontalLayout, VerticalLayout) {
+], function(Localization, App, Button, Image, Input, Label, Page, ScrollContainer, Element, HTML, HorizontalLayout, VerticalLayout) {
 	"use strict";
 
 	var oApp = new App("myApp", {initialPage: "oPage1"});
@@ -25,7 +26,7 @@ sap.ui.define([
 	});
 
 	var oBigContent2;
-	if (oCore.getConfiguration().getRTL()) {
+	if (Localization.getRTL()) {
 		oBigContent2 = new HTML({
 			content: "<div>למ<input type='text'><strong id='atTheBeginningOfALongLine'>atTheBeginningOfALongLine</strong>" +
 				"למחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקהלמחיקה" +
@@ -147,9 +148,9 @@ sap.ui.define([
 					new Button({
 						text: "Scroll to div number",
 						press: function () {
-							var sValue = oCore.byId("input").getValue();
+							var sValue = Element.getElementById("input").getValue();
 							var oElement = document.getElementById("div-" + sValue);
-							oCore.byId("oScrollContainer4").scrollToElement(oElement);
+							Element.getElementById("oScrollContainer4").scrollToElement(oElement);
 							oElement.style.backgroundColor = "white";
 							oElement.style.border = "skyblue";
 						}
@@ -222,9 +223,9 @@ sap.ui.define([
 			}),
 			new Button({
 				text: "Scroll", press: function () {
-					var x = parseInt(oCore.byId("xIn").getValue());
-					var t = parseInt(oCore.byId("tIn").getValue());
-					oCore.byId("oScrollContainer2").scrollTo(x, 0, t);
+					var x = parseInt(Element.getElementById("xIn").getValue());
+					var t = parseInt(Element.getElementById("tIn").getValue());
+					Element.getElementById("oScrollContainer2").scrollTo(x, 0, t);
 				}
 			}),
 			new Button({
@@ -237,9 +238,9 @@ sap.ui.define([
 		]
 	});
 
-	oCore.byId("oScrollContainer2").attachEvent("scrollEnd", function (evt) {
+	Element.getElementById("oScrollContainer2").attachEvent("scrollEnd", function (evt) {
 		var x = evt.getParameter("x");
-		var oPage1 = oCore.byId("oPage1");
+		var oPage1 = Element.getElementById("oPage1");
 		var oHtml = new HTML({content: "<div>" + new Date().getTime() + ": Rerender on scrollEnd at x=" + x + "</div>"});
 		setTimeout(function () {
 			oPage1.addContent(oHtml);

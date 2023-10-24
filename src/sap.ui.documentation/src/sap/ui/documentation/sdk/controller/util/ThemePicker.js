@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/EventBus"
 ], function(
-	Core
+	Core,
+	EventBus
 ) {
 	"use strict";
 
@@ -36,7 +38,7 @@ sap.ui.define([
 		this._oConfigUtil = oComponent.getOwnerComponent().getConfigUtil();
 		this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
 
-		this.bus = Core.getEventBus();
+		this.bus = EventBus.getInstance();
 
 		this._createConfigurationBasedOnURIInput();
 

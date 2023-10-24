@@ -5,6 +5,8 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/Dialog",
@@ -21,30 +23,32 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/m/library",
 	"sap/ui/core/Core"
-], function (
-		jQuery,
-		ValueHelpDelegate,
-		Dialog,
-		Content,
-		Condition,
-		ValueHelpSelectionType,
-		FieldDisplay,
-		OperatorName,
-		Icon,
-		JSONModel,
-		StringType,
-		Device,
-		formatMessage,
-		merge,
-		mLibrary,
-		oCore
-	) {
+], function(
+	ControlBehavior,
+	Library,
+	jQuery,
+	ValueHelpDelegate,
+	Dialog,
+	Content,
+	Condition,
+	ValueHelpSelectionType,
+	FieldDisplay,
+	OperatorName,
+	Icon,
+	JSONModel,
+	StringType,
+	Device,
+	formatMessage,
+	merge,
+	mLibrary,
+	oCore
+) {
 	"use strict";
 
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	let oDialog;
-	const iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	const iDialogDuration = ControlBehavior.getAnimationMode() === "none" ? 15 : 500;
 
 	const _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
 	let oField;

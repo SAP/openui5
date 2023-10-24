@@ -3,9 +3,12 @@
  */
 
 sap.ui.define([
-	"../util/PropertyHelper", "sap/ui/mdc/enums/ChartItemRoleType"
+	"../util/PropertyHelper",
+	"sap/ui/core/Lib",
+	"sap/ui/mdc/enums/ChartItemRoleType"
 ], function(
 	PropertyHelperBase,
+	Library,
 	ChartItemRoleType
 ) {
 	"use strict";
@@ -105,7 +108,7 @@ sap.ui.define([
 	 * @param {string} sType the type for which the layout options are requested
 	 */
 	PropertyHelper.prototype._getLayoutOptionsForType = function(sType){
-		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 		const oAvailableRoles = {
 			groupable: [
 				{

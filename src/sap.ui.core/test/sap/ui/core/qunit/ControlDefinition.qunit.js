@@ -6,9 +6,10 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/m/Button",
 	"sap/m/Input",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ObjectPath, BaseObject, Control, Element, Button, Input, createAndAppendDiv, nextUIUpdate) {
+], function(ObjectPath, BaseObject, Control, Element, Button, Input, Library, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -435,7 +436,7 @@ sap.ui.define([
 			assert.equal(params.metadata, oMetadata, "event should contain the right metadata");
 		}
 
-		sap.ui.getCore().attachLibraryChanged(onlibchange);
+		Library.attachLibraryChanged(onlibchange);
 
 		// create new class
 		oClass = Control.extend("my.lib.TestControl1", {});
@@ -448,8 +449,8 @@ sap.ui.define([
 
 		return sap.ui.getCore().loadLibrary("sap.ui.testlib", {async: true}).then(function() {
 			assert.equal(events.length, 3, "one event should have been received");
-			equalEvent(events[2], "sap.ui.testlib", "library", sap.ui.getCore().getLoadedLibraries()["sap.ui.testlib"]);
-			sap.ui.getCore().detachLibraryChanged(onlibchange);
+			equalEvent(events[2], "sap.ui.testlib", "library", Library.all()["sap.ui.testlib"]);
+			Library.detachLibraryChanged(onlibchange);
 
 			Control.extend("my.lib.TestControl1", {});
 			assert.equal(events.length, 3, "no more event should have been received after detach");

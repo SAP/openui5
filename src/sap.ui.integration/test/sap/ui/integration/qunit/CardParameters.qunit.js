@@ -2,12 +2,16 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
+	"sap/ui/core/Locale",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	Log,
+	Localization,
 	Core,
+	Locale,
 	Card,
 	UI5Date
 ) {
@@ -516,7 +520,7 @@ sap.ui.define([
 
 			// Assert
 			assert.ok(sSubtitle.indexOf(UI5Date.getInstance().toISOString().slice(0, 10)) > -1, "Card should have a subtitle with the now Date");
-			assert.ok(sSubtitle.indexOf(Core.getConfiguration().getLocale().toString()) > -1, "Card should have a subtitle with the locale");
+			assert.ok(sSubtitle.indexOf(new Locale(Localization.getLanguageTag()).toString()) > -1, "Card should have a subtitle with the locale");
 			done();
 		}.bind(this));
 

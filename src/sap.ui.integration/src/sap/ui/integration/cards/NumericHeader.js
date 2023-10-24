@@ -2,25 +2,25 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/base/util/extend",
 	"sap/f/cards/NumericHeader",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/f/cards/NumericSideIndicator",
 	"sap/m/library",
 	"sap/m/Text",
+	"sap/ui/core/Element",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
-	Core,
 	extend,
 	FNumericHeader,
 	FNumericHeaderRenderer,
 	NumericSideIndicator,
 	mLibrary,
 	Text,
+	Element,
 	BindingHelper,
 	JSONModel,
 	BindingResolver,
@@ -342,7 +342,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	NumericHeader.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.getElementById(this.getCard());
 	};
 
 	NumericHeader.prototype._isDataProviderJson = function () {

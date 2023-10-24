@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/core/Control",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/base/util/ObjectPath",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(qutils, containsOrEquals, Control, Shell, ShellHeadItem, ShellHeadUserItem, ObjectPath, jQuery, oCore) {
+], function(Element, qutils, containsOrEquals, Control, Shell, ShellHeadItem, ShellHeadUserItem, ObjectPath, jQuery, oCore) {
 	"use strict";
 
 	// Control initialization
@@ -244,7 +245,7 @@ sap.ui.define([
 		}
 
 		for (var i = 0; i < aItems.length; i++) {
-			var oItem = oCore.byId(aItems[i]);
+			var oItem = Element.getElementById(aItems[i]);
 			oItem.attachPress(onPress);
 			bEventFired = false;
 			qutils.triggerEvent("click", aItems[i]);
@@ -254,7 +255,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Item toggle state", function(assert) {
-		var oItem = oCore.byId("_itm");
+		var oItem = Element.getElementById("_itm");
 
 		function checkToggle(bSelected, bToggleEnabled, bExpectVisualSelection, sAriaPressed) {
 			oItem.setSelected(bSelected);

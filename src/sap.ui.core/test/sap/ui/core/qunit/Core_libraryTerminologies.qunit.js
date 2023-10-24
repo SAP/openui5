@@ -1,8 +1,9 @@
 /*global QUnit sinon*/
 sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
-	"sap/ui/core/Core"
-], function(ResourceBundle, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/core/Lib"
+], function(ResourceBundle, Core, Lib) {
 	"use strict";
 
 	QUnit.module("Core.loadLibrary", {
@@ -51,7 +52,7 @@ sap.ui.define([
 
 	QUnit.test("getLibraryResourceBundle() - (de) language parameter", function(assert) {
 		// If the test is single executed, the library might not be loaded yet.
-		var mLoadedLibraries = Core.getLoadedLibraries();
+		var mLoadedLibraries = Lib.all();
 		var iLoaded = mLoadedLibraries["testlibs.terminologies.simple"] ? 0 : 1;
 
 		return Core.loadLibrary("testlibs.terminologies.simple", {

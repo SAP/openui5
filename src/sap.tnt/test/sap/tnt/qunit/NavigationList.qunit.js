@@ -4,6 +4,7 @@ sap.ui.define([
 	'sap/base/Log',
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/qunit/QUnitUtils",
@@ -19,6 +20,7 @@ sap.ui.define([
 	Log,
 	Core,
 	Element,
+	Library,
 	coreLibrary,
 	Parameters,
 	QUnitUtils,
@@ -248,7 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("created", function (assert) {
-		assert.ok(Core.byId(this.navigationList.getId()), "created");
+		assert.ok(Element.getElementById(this.navigationList.getId()), "created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {
@@ -482,7 +484,7 @@ sap.ui.define([
 
 	QUnit.test('ARIA attributes', function (assert) {
 
-		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM");
 
 		// aria-level
@@ -816,7 +818,7 @@ sap.ui.define([
 
 	QUnit.test("Expand/collapse with keyboard", function (assert) {
 		// Arrange
-		var oItem = Core.byId("groupItem3"),
+		var oItem = Element.getElementById("groupItem3"),
 			$item = oItem.$(),
 			$focusableElement = $item.find(".sapTntNavLIGroup");
 
@@ -842,7 +844,7 @@ sap.ui.define([
 
 	QUnit.test("Expand/collapse with mouse", function (assert) {
 		// Arrange
-		var oItem = Core.byId("groupItem3"),
+		var oItem = Element.getElementById("groupItem3"),
 			$item = oItem.$(),
 			$icon = $item.find(".sapTntNavLIGroup .sapTntNavLIExpandIcon"),
 			$iconTitle = $item.find(".sapTntNavLIGroup .sapTntNavLIExpandIcon .sapUiIconTitle");
@@ -969,13 +971,13 @@ sap.ui.define([
 		var $groupItem = jQuery('.sapTntNavLI .sapTntNavLIGroupItem').first();
 		var popover = Element.closestTo($groupItem.closest('.sapMPopover')[0]);
 
-		var sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+		var sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE");
 
 		assert.strictEqual($list[0].getAttribute("role"), "tree", "Role of the popup ul should be menubar");
 		assert.strictEqual($list[0].getAttribute("aria-roledescription"), sExpectedAriaRoleDescription, "Role description of the popup is as expected");
 
-		sExpectedAriaRoleDescription = Core.getLibraryResourceBundle("sap.tnt")
+		sExpectedAriaRoleDescription = Library.getResourceBundleFor("sap.tnt")
 			.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM");
 
 		assert.strictEqual($InnerListItem.getAttribute("role"), "treeitem", "Role of the popup li should be treeitem");
@@ -1000,7 +1002,7 @@ sap.ui.define([
 
 	QUnit.test("Click on item with 'href' set", function (assert) {
 		// Arrange
-		var anchor = Core.byId("groupItem3").getDomRef().querySelector("a"),
+		var anchor = Element.getElementById("groupItem3").getDomRef().querySelector("a"),
 			sCurrHref = window.location.href;
 
 		// Act

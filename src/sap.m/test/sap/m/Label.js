@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/App",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -8,9 +9,8 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/Text",
 	"sap/m/Toolbar",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Element",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
 	"sap/ui/layout/library",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/form/SimpleForm",
@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/util/Mobile"
 ], function(
+	Localization,
 	App,
 	Input,
 	Label,
@@ -27,9 +28,8 @@ sap.ui.define([
 	Switch,
 	MText,
 	Toolbar,
-	Configuration,
+	Element,
 	Item,
-	Core,
 	layoutLibrary,
 	VerticalLayout,
 	SimpleForm,
@@ -339,7 +339,7 @@ sap.ui.define([
 			new Label({text: "truncation + colon (resizing)", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({id: "labelToResize", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi velit orci, sollicitudin nec cursus quis, pellentesque id neque", showColon: true}),
 			new Button({id: "resizeBtn", text: "resize upper label to 260px", press: function () {
-				Core.byId("labelToResize").setWidth("260px");
+				Element.getElementById("labelToResize").setWidth("260px");
 			}}),
 			new Label({text: "truncation + colon + asterisk", wrapping: true, wrappingType: "Normal", design: "Bold"}),
 			new Label({text: "{i18n>longLabel}", showColon: true, required: true, width: "100px"}),
@@ -399,7 +399,7 @@ sap.ui.define([
 					customTextOn: "RTL",
 					customTextOff: "LTR",
 					change: function (oEvent) {
-						Configuration.setRTL(oEvent.getParameter("state"));
+						Localization.setRTL(oEvent.getParameter("state"));
 					}
 				}),
 				new Switch("cozySwitch",{
@@ -448,7 +448,7 @@ sap.ui.define([
 					ariaLabelledBy: "localeSelectLbl",
 					change: function (oEvent) {
 						var sLanguage = oEvent.getParameter("selectedItem").getKey();
-						Configuration.setLanguage(sLanguage);
+						Localization.setLanguage(sLanguage);
 						oPage.invalidate();
 					}
 				})

@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/mdc/table/ResponsiveTableType',
 	'sap/ui/mdc/table/RowSettings',
@@ -6,11 +7,10 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast',
-	'sap/ui/core/Core',
 	"sap/ui/mdc/table/RowActionItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/enums/TableRowAction"
-], function(Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, oCore, RowActionItem, JSONModel, TableRowAction) {
+], function(Element, Controller, ResponsiveTableType, RowSettings, Fragment, StateUtil, MessageBox, MessageToast, RowActionItem, JSONModel, TableRowAction) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.controller.Controller", {
@@ -265,8 +265,8 @@ sap.ui.define([
 			const oTable = this.byId('mdcTable');
 			const vType = oTable.getType();
 			const bSelected = oEvent.getParameters().selected;
-			const oFEButtonSetting = oCore.byId("fe-detailsButtonSetting");
-			const oMCBButtonSetting = oCore.byId("mcb-detailsButtonSetting");
+			const oFEButtonSetting = Element.getElementById("fe-detailsButtonSetting");
+			const oMCBButtonSetting = Element.getElementById("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
 				oTable.setType(new ResponsiveTableType({

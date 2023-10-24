@@ -1,6 +1,9 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/LanguageTag",
+	"sap/base/i18n/Localization",
 	"sap/ui/unified/calendar/CalendarUtils",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/UniversalDate",
@@ -13,19 +16,16 @@ sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore, UI5Date) {
+], function(Formatting, LanguageTag, Localization, CalendarUtils, LocaleData, UniversalDate, Islamic, Persian, Japanese, Buddhist, CalendarDate, Locale, CalendarType, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("getFirstDateOfWeek/Month for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
-			this.oStub1 = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub1 = this.stub(Formatting, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
-			this.oStub2 = this.stub(oCore.getConfiguration(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
-			});
-			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
-				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -90,14 +90,11 @@ sap.ui.define([
 
 	QUnit.module("getFirstDateOfWeek for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
-			this.oStub1 = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			this.oStub1 = this.stub(Formatting, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
-			this.oStub2 = this.stub(oCore.getConfiguration(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
-			});
-			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
-				return new Locale("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -160,7 +157,7 @@ sap.ui.define([
 
 	QUnit.test("en-US locale", function (assert) {
 		//prepare
-		oCore.getConfiguration().setFormatLocale('en-US');
+		Formatting.setLanguageTag('en-US');
 		oCore.applyChanges();
 		//act
 		this._oBigYears["en-US"].forEach(function (iYear) {
@@ -173,7 +170,7 @@ sap.ui.define([
 
 	QUnit.test("en-GB locale", function (assert) {
 		//prepare
-		oCore.getConfiguration().setFormatLocale('en-GB');
+		Formatting.setLanguageTag('en-GB');
 		oCore.applyChanges();
 		//act
 		this._oBigYears["en-GB"].forEach(function (iYear) {
@@ -214,8 +211,9 @@ sap.ui.define([
 		var oLocale = new Locale('en');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
-		var formatLocaleObject = oCore.getConfiguration().getFormatSettings().getFormatLocale();
-		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("en");
+		this.stub(Formatting, "getLanguageTag").callsFake(function () {
+			return new LanguageTag("en-GB");
+		});
 
 		// act
 		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'en', oLocaleData);
@@ -224,9 +222,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is en");
 		assert.strictEqual(iWeekNumberFirstWeek, 53, "The week is 53 for 01.01.2021 when locale is en");
-
-		// Cleanup
-		getLanguageStub.restore();
 	});
 
 	QUnit.test("Week number for the turn of the year when locale is en_US", function(assert) {
@@ -236,8 +231,9 @@ sap.ui.define([
 		var oLocale = new Locale('en_US');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
-		var formatLocaleObject = oCore.getConfiguration().getFormatSettings().getFormatLocale();
-		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("en_US");
+		this.stub(Formatting, "getLanguageTag").callsFake(function () {
+			return new LanguageTag("en-US");
+		});
 
 		// act
 		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'en_US', oLocaleData);
@@ -246,9 +242,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is en_US");
 		assert.strictEqual(iWeekNumberFirstWeek, 1, "The week is 1 for 01.01.2021 when locale is en_US");
-
-		// Cleanup
-		getLanguageStub.restore();
 	});
 
 	QUnit.test("Week number for the turn of the year when locale is de", function(assert) {
@@ -258,8 +251,9 @@ sap.ui.define([
 		var oLocale = new Locale('de');
 		var oLocaleData = LocaleData.getInstance(oLocale);
 
-		var formatLocaleObject = oCore.getConfiguration().getFormatSettings().getFormatLocale();
-		var getLanguageStub = this.stub(formatLocaleObject, "getLanguage").returns("de");
+		this.stub(Formatting, "getLanguageTag").callsFake(function () {
+			return new LanguageTag("de");
+		});
 
 		// act
 		var iWeekNumberLastWeek = CalendarUtils.calculateWeekNumber(oDateLastWeek, 2020, 'de', oLocaleData);
@@ -268,9 +262,6 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(iWeekNumberLastWeek, 53, "The week is 53 for 31.12.2020 when locale is de");
 		assert.strictEqual(iWeekNumberFirstWeek, 53, "The week is 53 for 01.01.2021 when locale is de");
-
-		// Cleanup
-		getLanguageStub.restore();
 	});
 
 	QUnit.test("Week number when locale is en-GB", function(assert) {
@@ -312,11 +303,11 @@ sap.ui.define([
 
 	QUnit.module("_DATE_getFirstDateOfWeek for week Sunday-Saturday (en_US locale)", {
 		beforeEach: function () {
-			this.oStub = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub = this.stub(Formatting, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
-			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
-				return new Locale("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_US");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {
@@ -362,11 +353,11 @@ sap.ui.define([
 
 	QUnit.module("_getFirstDateOfWeek(CalendarDate) for week Monday-Sunday (en_GB locale)", {
 		beforeEach: function () {
-			this.oStub = this.stub(oCore.getConfiguration().getFormatSettings(), "getFormatLocale").callsFake(function () {
-				return new Locale("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
+			this.oStub = this.stub(Formatting, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_GB");//first date of week is Monday (JS Date.getDay() = 1)
 			});
-			this.oStub3 = this.stub(oCore.getConfiguration(), "getLocale").callsFake(function () {
-				return new Locale("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
+			this.oStub3 = this.stub(Localization, "getLanguageTag").callsFake(function () {
+				return new LanguageTag("en_GB");//first date of week is Sunday (JS Date.getDay() = 0)
 			});
 		},
 		afterEach: function () {

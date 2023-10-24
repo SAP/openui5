@@ -4,11 +4,12 @@
 
 // Provides control sap.f.shellBar.CoPilot.
 sap.ui.define([
-		"sap/ui/core/Control",
-		"sap/ui/core/Configuration",
-		"sap/f/shellBar/CoPilotRenderer"
-	],
-	function(Control, Configuration, CoPilotRenderer) {
+	"sap/ui/core/Control",
+	"sap/ui/core/Configuration",
+	"sap/f/shellBar/CoPilotRenderer",
+	"sap/ui/core/ControlBehavior"
+],
+	function(Control, Configuration, CoPilotRenderer, ControlBehavior) {
 	"use strict";
 
 	/**
@@ -50,7 +51,7 @@ sap.ui.define([
 	};
 
 	CoPilot.prototype.getAnimation = function () {
-		return Configuration.getAnimationMode() !== Configuration.AnimationMode.none;
+		return ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none;
 	};
 
 	return CoPilot;

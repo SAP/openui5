@@ -1,8 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/thirdparty/jquery",
-                "sap/ui/core/Core",
-                "sap/ui/core/mvc/XMLView"],
-function(jQuery, Core, XMLView) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/core/mvc/XMLView"],
+function(Element, jQuery, Core, XMLView) {
 	"use strict";
 
 
@@ -123,7 +121,7 @@ function(jQuery, Core, XMLView) {
 
 		oFormBlock = this.oObjectPageFormView.byId("personalSimpleFormBlock");
 		aGridCells = oFormBlock.$().find(".sapUiForm .sapUiFormCLContent>section");
-		oTestInput = Core.byId("__input0");
+		oTestInput = Element.getElementById("__input0");
 		iTestInputTop = parseInt(oTestInput.$().offset().top);
 		$GridCellsOuter = oFormBlock.$().find(".sapUiForm .sapUiFormCL>div").first();
 

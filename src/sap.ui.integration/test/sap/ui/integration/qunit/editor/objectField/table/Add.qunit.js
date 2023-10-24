@@ -1,24 +1,24 @@
 /* global QUnit */
 sap.ui.define([
 	"sap-ui-integration-editor",
+	"sap/base/i18n/Localization",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./../../ContextHost",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"qunit/designtime/EditorQunitUtils"
 ], function (
 	x,
+	Localization,
 	Editor,
 	Host,
 	sinon,
 	ContextHost,
 	deepEqual,
 	MockServer,
-	Core,
 	deepClone,
 	EditorQunitUtils
 ) {
@@ -75,7 +75,7 @@ sap.ui.define([
 		]
 	};
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function cleanUUID(oValue) {

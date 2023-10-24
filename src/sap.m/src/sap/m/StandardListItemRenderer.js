@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "./library", "./ListItemBaseRenderer"],
-	function(coreLibrary, Core, Renderer, IconPool, library, ListItemBaseRenderer ) {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library", "sap/ui/core/Renderer", "sap/ui/core/IconPool", "./library", "./ListItemBaseRenderer"],
+	function(Library, coreLibrary, Renderer, IconPool, library, ListItemBaseRenderer ) {
 	"use strict";
 
 
@@ -237,7 +237,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Core", "sap/ui/core/Renderer"
 		var sId = oLI.getId(),
 			bTitle = sWrapArea == "title" ? true : false,
 			bTextExpanded = bTitle ? oLI._bTitleTextExpanded : oLI._bDescriptionTextExpanded,
-			oRb = Core.getLibraryResourceBundle("sap.m");
+			oRb = Library.getResourceBundleFor("sap.m");
 
 		rm.openStart("span", sId + "-" + sWrapArea + "ThreeDots").openEnd();
 		rm.text(bTextExpanded ? " " : " ... ");

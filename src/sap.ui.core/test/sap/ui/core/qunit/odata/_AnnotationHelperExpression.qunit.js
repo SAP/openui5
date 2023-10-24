@@ -3,18 +3,18 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/util/deepEqual",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
 	"sap/ui/performance/Measurement"
-], function (Log, deepEqual, BindingParser, ManagedObject, CalendarType, Configuration, UI5Date,
+], function (Log, Formatting, deepEqual, BindingParser, ManagedObject, CalendarType, UI5Date,
 		DateFormat, JSONModel, Basics, Expression, Measurement
 ) {
 	/*global QUnit, sinon */
@@ -28,13 +28,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata._AnnotationHelperExpression", {
 		beforeEach : function () {
-			this.sDefaultCalendarType = Configuration.getCalendarType();
+			this.sDefaultCalendarType = Formatting.getCalendarType();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
-			Configuration.setCalendarType(this.sDefaultCalendarType);
+			Formatting.setCalendarType(this.sDefaultCalendarType);
 		},
 
 		/**
@@ -1592,7 +1592,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDate", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		Expression._setDateTimeFormatter();
 
 		assert.strictEqual(Expression.parseDate("2015-03-08").getTime(), Date.UTC(2015, 2, 8));
@@ -1601,7 +1601,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseDateTimeOffset", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		Expression._setDateTimeFormatter();
 
 		assert.strictEqual(
@@ -1613,7 +1613,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("parseTimeOfDay", function (assert) {
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		Expression._setDateTimeFormatter();
 
 		assert.strictEqual(Expression.parseTimeOfDay("23:59:59.123").getTime(),

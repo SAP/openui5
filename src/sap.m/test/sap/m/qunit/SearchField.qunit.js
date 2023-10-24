@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/thirdparty/jquery",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/m/SuggestionItem"
 ], function(
 	Core,
+	Library,
 	QunitUtils,
 	createAndAppendDiv,
 	jQuery,
@@ -109,10 +111,10 @@ sap.ui.define([
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			this.sf1 = Core.byId("sf1");
-			this.sf2 = Core.byId("sf2");
-			this.sf3 = Core.byId("sf3");
-			this.sf4 = Core.byId("sf4");
+			this.sf1 = Element.getElementById("sf1");
+			this.sf2 = Element.getElementById("sf2");
+			this.sf3 = Element.getElementById("sf3");
+			this.sf4 = Element.getElementById("sf4");
 			this.sf1Dom = this.sf1.getFocusDomRef();
 			this.sf2Dom = this.sf2.getFocusDomRef();
 			this.sf3Dom = this.sf3.getFocusDomRef();
@@ -156,7 +158,7 @@ sap.ui.define([
 		assert.strictEqual(oSF.getPlaceholder(), "", "Default value of placeholder property is empty string");
 		assert.strictEqual(
 			oSFDomRef.placeholder,
-			Core.getLibraryResourceBundle("sap.m").getText("FACETFILTER_SEARCH"),
+			Library.getResourceBundleFor("sap.m").getText("FACETFILTER_SEARCH"),
 			"Default placeholder is added to the DOM"
 		);
 
@@ -767,7 +769,7 @@ sap.ui.define([
 			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 			this.TRANSLATED_TEXT = "Translated text";
-			this.getTextStub = sinon.stub(Core.getLibraryResourceBundle("sap.m"), "getText")
+			this.getTextStub = sinon.stub(Library.getResourceBundleFor("sap.m"), "getText")
 				.returns(this.TRANSLATED_TEXT);
 		},
 		afterEach: function () {

@@ -1,6 +1,8 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/unified/calendar/Month",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/CalendarLegend",
@@ -19,6 +21,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Localization,
+	Library,
 	Month,
 	CalendarDate,
 	CalendarLegend,
@@ -545,8 +549,8 @@ sap.ui.define([
 		QUnit.module("Aria", {
 			beforeEach: function() {
 				//Prepare
-				this.sOldLanguage = oCore.getConfiguration().getLanguage();
-				oCore.getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+				this.sOldLanguage = Localization.getLanguage();
+				Localization.setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
 
 				this.oLegend = new CalendarLegend({
 					items: [
@@ -577,7 +581,7 @@ sap.ui.define([
 				//Clear
 				this.oSut.destroy();
 				this.oLegend.destroy();
-				oCore.getConfiguration().setLanguage(this.sOldLanguage);
+				Localization.setLanguage(this.sOldLanguage);
 			}
 		});
 
@@ -651,7 +655,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			assert.strictEqual(document.getElementsByClassName("sapUiCalDummy")[0].getAttribute("aria-label"),
-				oCore.getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_WEEK"),
+				Library.getResourceBundleFor("sap.ui.unified").getText("CALENDAR_WEEK"),
 				"Dummy cell's accessible name is provided in aria-label");
 		});
 

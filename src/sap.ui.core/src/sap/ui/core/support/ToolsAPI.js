@@ -3,24 +3,32 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/ui/Global",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Element",
 	"sap/ui/core/ElementMetadata",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/Theming",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
 ],
 	function(
+		Formatting,
+		Localization,
 		Global,
 		AnimationMode,
 		Configuration,
 		ControlBehavior,
 		Element,
 		ElementMetadata,
+		Lib,
+		Locale,
 		Supportability,
 		Theming,
 		LoaderExtensions,
@@ -56,10 +64,10 @@ sap.ui.define([
 		 * @private
 		 */
 		function _getLoadedLibraries() {
-			var libraries = sap.ui.getCore().getLoadedLibraries();
+			var libraries = Lib.all();
 			var formattedLibraries = Object.create(null);
 
-			Object.keys(sap.ui.getCore().getLoadedLibraries()).forEach(function (element, index, array) {
+			Object.keys(Lib.all()).forEach(function (element, index, array) {
 				formattedLibraries[element] = libraries[element].version;
 			});
 
@@ -100,12 +108,12 @@ sap.ui.define([
 				configurationBootstrap: window['sap-ui-config'] || Object.create(null),
 				configurationComputed: {
 					theme: Theming.getTheme(),
-					language: Configuration.getLanguage(),
-					formatLocale: Configuration.getFormatLocale(),
+					language: Localization.getLanguage(),
+					formatLocale: new Locale(Formatting.getLanguageTag()),
 					accessibility: ControlBehavior.isAccessibilityEnabled(),
 					animation: (ControlBehavior.getAnimationMode() !== AnimationMode.minimal &&
 								ControlBehavior.getAnimationMode() !== AnimationMode.none),
-					rtl: Configuration.getRTL(),
+					rtl: Localization.getRTL(),
 					debug: Supportability.isDebugModeEnabled(),
 					inspect: Supportability.isControlInspectorEnabled(),
 					originInfo: Supportability.collectOriginInfo(),

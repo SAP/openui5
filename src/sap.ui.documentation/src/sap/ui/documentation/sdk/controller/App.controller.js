@@ -3,6 +3,10 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/NewsInfo",
@@ -27,7 +31,11 @@ sap.ui.define([
 	"sap/ui/documentation/sdk/util/Resources",
 	'sap/base/util/LoaderExtensions',
 	"sap/ui/documentation/sdk/controller/util/ThemePicker"
-], function (
+], function(
+	Localization,
+	Element,
+	EventBus,
+	Library,
 	jQuery,
 	BaseController,
 	NewsInfo,
@@ -222,7 +230,7 @@ sap.ui.define([
 			this.setSurveyModelData();
 
 			// Subscribe to events
-			this.bus = Core.getEventBus();
+			this.bus = EventBus.getInstance();
 			this.bus.subscribe("newsChanged", "onDemoKitNewsChanged", this._syncNewsModelWithNewsInfo, this);
 			this.bus.subscribe("themeChanged", "onThemeChanged", this._onThemeChanged, this);
 
@@ -538,7 +546,7 @@ sap.ui.define([
 			});
 
 			okButton = new Button({
-				text: Core.getLibraryResourceBundle("sap.m").getText("MSGBOX_OK"),
+				text: Library.getResourceBundleFor("sap.m").getText("MSGBOX_OK"),
 				press: function () {
 					handleDialogButtonPress();
 				}
@@ -594,7 +602,7 @@ sap.ui.define([
 				controller: this
 			}).then(function (oContent) {
 
-				var oShortList = Core.byId("shortList"),
+				var oShortList = Element.getElementById("shortList"),
 					oController = this,
 					sSearchQuery;
 
@@ -726,13 +734,13 @@ sap.ui.define([
 		_applyDefaultConfiguration: function () {
 			this._aConfiguration.forEach(function (sConf) {
 				if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
-					Core.getConfiguration().setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
+					Localization.setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
 				} else if (sConf === DEMOKIT_CONFIGURATION_APPEARANCE) {
 					this._updateAppearance(ThemePicker._getTheme().auto);
 				}
 			}, this);
 
-			this._oSupportedLangModel.setProperty("/selectedLang", Core.getConfiguration().getLanguage());
+			this._oSupportedLangModel.setProperty("/selectedLang", Localization.getLanguage());
 		},
 
 		/**
@@ -773,7 +781,7 @@ sap.ui.define([
 		 * @returns {Object[]} Array of objects containg the needed data for the SupportedLangModel
 		 */
 		_prepareSupportedLangModelData: function () {
-			return Core.getConfiguration().getLanguagesDeliveredWithCore().reduce(function (result, sLangAbbreviation) {
+			return Localization.getLanguagesDeliveredWithCore().reduce(function (result, sLangAbbreviation) {
 				var langName,
 					sLang = sLangAbbreviation,
 					sLangRegion = sLangAbbreviation;
@@ -827,7 +835,7 @@ sap.ui.define([
 		 */
 		_setSelectedLanguage: function (sLanguage) {
 			this._oSupportedLangModel.setProperty("/selectedLang", sLanguage);
-			Core.getConfiguration().setLanguage(sLanguage);
+			Localization.setLanguage(sLanguage);
 			if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
 				this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_LANGUAGE, sLanguage);
 			}
@@ -863,7 +871,7 @@ sap.ui.define([
 					// connect dialog to the root view of this component (models, lifecycle)
 					this._oView.addDependent(oDialog);
 					this._oSettingsDialog = oDialog;
-					Core.byId("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
+					Element.getElementById("LanguageSelect").setSelectedKey(this._getSelectedLanguage());
 					this._oSettingsDialog.open();
 				}.bind(this));
 			} else {
@@ -895,7 +903,7 @@ sap.ui.define([
 		 * @public
 		 */
 		handleSaveAppSettings: function () {
-			var sLanguage = Core.byId('LanguageSelect').getSelectedKey();
+			var sLanguage = Element.getElementById('LanguageSelect').getSelectedKey();
 
 			this._oSettingsDialog.close();
 
@@ -1108,7 +1116,7 @@ sap.ui.define([
 		onChangeVersionDialogSearch: function (oEvent) {
 			var sSearchedValue = oEvent.getParameter("newValue"),
 				oFilter = new Filter("version", FilterOperator.Contains, sSearchedValue),
-				oTree = Core.byId("versionList"),
+				oTree = Element.getElementById("versionList"),
 				oBinding = oTree.getBinding("items");
 
 			oBinding.filter([oFilter]);
@@ -1142,7 +1150,7 @@ sap.ui.define([
 		},
 
 		onVersionItemPress: function (oEvent) {
-			var oSelectedItem = Core.byId("versionList").getSelectedItem(),
+			var oSelectedItem = Element.getElementById("versionList").getSelectedItem(),
 				oCustomData = oSelectedItem.getCustomData()[0];
 
 			if (oCustomData && oCustomData.getKey() === "path") {

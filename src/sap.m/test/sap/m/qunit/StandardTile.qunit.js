@@ -1,18 +1,18 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/StandardTile",
 	"sap/ui/core/IconPool",
-	"sap/m/TileContainer",
-	"sap/ui/core/Core"
+	"sap/m/TileContainer"
 ], function(
 	Log,
+	Element,
 	createAndAppendDiv,
 	StandardTile,
 	IconPool,
-	TileContainer,
-	oCore
+	TileContainer
 ) {
 	"use strict";
 
@@ -166,7 +166,7 @@ sap.ui.define([
 
 	QUnit.module("Events", {
 		beforeEach : function() {
-			tileBasic = oCore.byId(tileBasicId);
+			tileBasic = Element.getElementById(tileBasicId);
 		},
 		afterEach : function() {
 			tileBasic = null;

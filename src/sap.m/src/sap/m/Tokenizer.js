@@ -5,13 +5,16 @@
 // Provides control sap.m.Tokenizer.
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/m/Button',
 	'sap/m/List',
 	'sap/m/StandardListItem',
 	'sap/m/ResponsivePopover',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/Element',
+	"sap/ui/core/Lib",
 	'sap/ui/core/delegate/ScrollEnablement',
 	'sap/ui/Device',
 	'sap/ui/core/InvisibleText',
@@ -27,13 +30,16 @@ sap.ui.define([
 ],
 	function(
 		library,
+		Localization,
 		Button,
 		List,
 		StandardListItem,
 		ResponsivePopover,
+		ControlBehavior,
 		Core,
 		Control,
 		Element,
+		Library,
 		ScrollEnablement,
 		Device,
 		InvisibleText,
@@ -241,7 +247,7 @@ sap.ui.define([
 		renderer: TokenizerRenderer
 	});
 
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	EnabledPropagator.apply(Tokenizer.prototype, [true]);
 
@@ -264,7 +270,7 @@ sap.ui.define([
 		// n-more popover.
 		this._fFontSizeRatio = 1.0;
 
-		if (Core.getConfiguration().getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			var sAriaTokenizerContainToken = new InvisibleText({
 				text: oRb.getText("TOKENIZER_ARIA_NO_TOKENS")
 			});
@@ -528,9 +534,9 @@ sap.ui.define([
 	};
 
 	Tokenizer.prototype._getDialogTitle = function () {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 		var aLabeles = this.getAriaLabelledBy().map(function(sLabelID) {
-			return Core.byId(sLabelID);
+			return Element.getElementById(sLabelID);
 		});
 
 		return aLabeles.length ? aLabeles[0].getText() : oResourceBundle.getText("COMBOBOX_PICKER_TITLE");
@@ -780,7 +786,7 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
 		var domRef = this.getDomRef(),
-			bRTL = Core.getConfiguration().getRTL(),
+			bRTL = Localization.getRTL(),
 			iScrollWidth,
 			scrollDiv;
 
@@ -1186,7 +1192,7 @@ sap.ui.define([
 		var iTokenizerLeftOffset = this.$().offset().left,
 			iTokenizerWidth = this.$().width(),
 			iTokenLeftOffset = oToken.$().offset().left,
-			bRTL = Core.getConfiguration().getRTL(),
+			bRTL = Localization.getRTL(),
 			// Margins and borders are excluded from calculations therefore we need to add them explicitly.
 			iTokenMargin = bRTL ? parseInt(oToken.$().css("margin-left")) : parseInt(oToken.$().css("margin-right")),
 			iTokenBorder = parseInt(oToken.$().css("border-left-width")) + parseInt(oToken.$().css("border-right-width")),
@@ -1638,7 +1644,7 @@ sap.ui.define([
 			1: "TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"
 		};
 
-		if (Core.getConfiguration().getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			oInvisibleText = this.getAggregation("_tokensInfo");
 
 			sTranslation = oTranslationMapping[iTokenCount] ? oTranslationMapping[iTokenCount] : "TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS";

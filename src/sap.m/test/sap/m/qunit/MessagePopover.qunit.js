@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Messaging",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/MessagePopover",
 	"sap/m/Button",
@@ -16,6 +18,8 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Element,
+	Messaging,
 	qutils,
 	MessagePopover,
 	Button,
@@ -164,7 +168,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		assert.strictEqual(Core.byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
+		assert.strictEqual(Element.getElementById("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
 
 		// clean up
 		oMessagePopover.destroy();
@@ -621,7 +625,7 @@ sap.ui.define([
 			}
 		});
 
-		Core.getMessageManager().addMessages(
+		Messaging.addMessages(
 				new Message({
 					message: "Invalid order of characters in this name!",
 					type: MessageType.Warning,
@@ -636,13 +640,13 @@ sap.ui.define([
 		assert.equal(this.oMessagePopover._oMessageView.getItems().length, 1, "The message should be one");
 
 		// cleanup
-		Core.getMessageManager().removeAllMessages();
+		Messaging.removeAllMessages();
 	});
 
 	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
 		var oMessagePopover = new MessagePopover();
 		var fnAddMessage = function() {
-			Core.getMessageManager().addMessages(
+			Messaging.addMessages(
 				new Message({
 					message: "Something wrong happend!",
 					description: "Some Description",
@@ -652,7 +656,7 @@ sap.ui.define([
 			);
 		};
 		var fnClearMessages = function() {
-			Core.getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		};
 
 		var oBtn = new Button({
@@ -1322,7 +1326,7 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		Core.getMessageManager().addMessages(oMessage);
+		Messaging.addMessages(oMessage);
 		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
@@ -1336,7 +1340,7 @@ sap.ui.define([
 		oMessage.destroy();
 		oMessagePopover.destroy();
 		oButton.destroy();
-		Core.getMessageManager().removeAllMessages();
+		Messaging.removeAllMessages();
 	});
 
 	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
@@ -1358,7 +1362,7 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		Core.getMessageManager().addMessages(oMessage);
+		Messaging.addMessages(oMessage);
 		Core.applyChanges();
 
 		oMessagePopover.openBy(oButton);
@@ -1373,7 +1377,7 @@ sap.ui.define([
 		oMessage.destroy();
 		oMessagePopover.destroy();
 		oButton.destroy();
-		Core.getMessageManager().removeAllMessages();
+		Messaging.removeAllMessages();
 	});
 
 	QUnit.test("Update binding of single item should change its properties (integration test)", function (assert) {

@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TablePersoController",
 	"sap/ui/qunit/QUnitUtils",
@@ -9,7 +10,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, oCore) {
+], function(Element, TableQUnitUtils, TablePersoController, qutils, Table, Column, JSONModel, jQuery, oCore) {
 	"use strict";
 
 	var oController = null, oTable = null;
@@ -256,9 +257,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = oCore.byId("Number");
-		var oColorColumn = oCore.byId("Color");
-		var oNameColumn = oCore.byId("Name");
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -370,9 +371,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = oCore.byId("Number");
-		var oColorColumn = oCore.byId("Color");
-		var oNameColumn = oCore.byId("Name");
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -489,9 +490,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = oCore.byId("Number"),
-			oColorColumn = oCore.byId("Color"),
-			oNameColumn = oCore.byId("Name");
+		var oNumberColumn = Element.getElementById("Number"),
+			oColorColumn = Element.getElementById("Color"),
+			oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");
@@ -604,9 +605,9 @@ sap.ui.define([
 
 		assert.equal(getPersDataCalls, 1, "getPersData of service should be called 1 time.");
 
-		var oNumberColumn = oCore.byId("Number");
-		var oColorColumn = oCore.byId("Color");
-		var oNameColumn = oCore.byId("Name");
+		var oNumberColumn = Element.getElementById("Number");
+		var oColorColumn = Element.getElementById("Color");
+		var oNameColumn = Element.getElementById("Name");
 
 		assert.equal(oNameColumn.getVisible(), true, "Name column should be visible.");
 		assert.equal(oColorColumn.getVisible(), false, "Color column should be invisible.");

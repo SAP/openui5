@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/message/Message",
@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding"
-], function (Log, SyncPromise, Configuration, Messaging, UI5Date, Message, _Helper, BaseContext,
+], function (Log, Localization, SyncPromise, Messaging, UI5Date, Message, _Helper, BaseContext,
 		FilterProcessor, Model, _ODataMetaModelUtils, CountMode, MessageScope, ODataMessageParser,
 		ODataMetaModel, ODataPropertyBinding, ODataUtils, _CreatedContextsCache, Context,
 		ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding
@@ -131,7 +131,7 @@ sap.ui.define([
 		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(ODataAnnotations.prototype).expects("addSource")
 			.withExactArgs(["~annotationURI"]);
-		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 		if (oFixture.sExpectedRequestedWithHeader) {
 			oExpectedHeaders["X-Requested-With"] = oFixture.sExpectedRequestedWithHeader;
 		}
@@ -205,7 +205,7 @@ sap.ui.define([
 			.withExactArgs(oFixture.parameter
 				? "~annotationURI"
 				: [{type : "xml", data : sinon.match.instanceOf(Promise)}, "~annotationURI"]);
-		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 
 		// code under test
 		var oModel = new ODataModel(mParameters);
@@ -274,7 +274,7 @@ sap.ui.define([
 		this.mock(ODataModel.prototype).expects("_initializeMetadata").withExactArgs();
 		this.mock(ODataAnnotations.prototype).expects("addSource")
 			.withExactArgs([{type : "xml", data : sinon.match.instanceOf(Promise)}]);
-		this.mock(Configuration).expects("getLanguageTag").withExactArgs().returns("~languageTag");
+		this.mock(Localization).expects("getLanguageTag").withExactArgs().returns("~languageTag");
 
 		// code under test
 		const oModel = new ODataModel(mParameters);

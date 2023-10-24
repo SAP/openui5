@@ -3,6 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/ui/model/type/Date',
@@ -15,10 +18,12 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Locale',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	'sap/ui/core/date/UI5Date'
 ],
 	function(
+		Formatting,
+		Element,
+		Library,
 		coreLibrary,
 		Control,
 		SimpleDateType,
@@ -31,7 +36,6 @@ sap.ui.define([
 		Device,
 		Locale,
 		jQuery,
-		Configuration,
 		UI5Date
 	) {
 		"use strict";
@@ -160,7 +164,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype.init = function () {
-			var oLocale = Configuration.getFormatSettings().getFormatLocale(),
+			var oLocale = new Locale(Formatting.getLanguageTag()),
 				oLocaleData = LocaleData.getInstance(oLocale),
 				aPeriods = oLocaleData.getDayPeriods("abbreviated"),
 				sDefaultDisplayFormat = oLocaleData.getTimePattern("medium");
@@ -687,7 +691,7 @@ sap.ui.define([
 		 */
 		TimePickerSliders.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 			return LocaleData.getInstance(
-				Configuration.getFormatSettings().getFormatLocale()
+				new Locale(Formatting.getLanguageTag())
 			).getTimePattern(sPlaceholder);
 		};
 
@@ -709,7 +713,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._setupLists = function () {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			var oRb = Library.getResourceBundleFor("sap.m"),
 				sLabelHours = oRb.getText("TIMEPICKER_LBL_HOURS"),
 				sLabelMinutes = oRb.getText("TIMEPICKER_LBL_MINUTES"),
 				sLabelSeconds = oRb.getText("TIMEPICKER_LBL_SECONDS"),
@@ -826,7 +830,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getHoursSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listHours") || null;
+			return Element.getElementById(this.getId() + "-listHours") || null;
 		};
 
 		/**
@@ -835,7 +839,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getMinutesSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listMins") || null;
+			return Element.getElementById(this.getId() + "-listMins") || null;
 		};
 
 		/**
@@ -844,7 +848,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getSecondsSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listSecs") || null;
+			return Element.getElementById(this.getId() + "-listSecs") || null;
 		};
 
 		/**
@@ -853,7 +857,7 @@ sap.ui.define([
 		 * @private
 		 */
 		TimePickerSliders.prototype._getFormatSlider = function () {
-			return sap.ui.getCore().byId(this.getId() + "-listFormat") || null;
+			return Element.getElementById(this.getId() + "-listFormat") || null;
 		};
 
 		/**
@@ -911,7 +915,7 @@ sap.ui.define([
 			}
 
 			if (!sCalendarType) {
-				sCalendarType = Configuration.getCalendarType();
+				sCalendarType = Formatting.getCalendarType();
 			}
 
 			return this._getFormatterInstance(sPattern, bRelative, sCalendarType);

@@ -4,10 +4,11 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/m/Popover',
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	'sap/ui/core/Core',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
@@ -21,13 +22,13 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/unified/DateRange",
-	"sap/ui/core/Configuration"
+	"sap/ui/unified/DateRange"
 ], function(
+	Formatting,
+	Localization,
 	Popover,
 	Device,
 	Control,
-	Core,
 	Locale,
 	LocaleData,
 	DateFormat,
@@ -41,8 +42,7 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	DateRange,
-	Configuration
+	DateRange
 ) {
 		"use strict";
 
@@ -456,7 +456,7 @@ sap.ui.define([
 	CalendarMonthInterval.prototype.getLocale = function(){
 
 		if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;
@@ -1327,7 +1327,7 @@ sap.ui.define([
 			var $Popover = this._oPopup.$();
 			var iOffsetX = Math.floor(($Popover.width() - $Button.width()) / 2);
 
-			this._oPopup.setOffsetX(Core.getConfiguration().getRTL() ? iOffsetX : -iOffsetX);
+			this._oPopup.setOffsetX(Localization.getRTL() ? iOffsetX : -iOffsetX);
 
 			var iOffsetY = $Button.height();
 

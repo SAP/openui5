@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/m/App",
 	"sap/m/Label",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/Button",
 	"sap/m/Page"
-], function(InvisibleText, App, Label, ProgressIndicator, Input, coreLibrary, Button, Page) {
+], function(Element, InvisibleText, App, Label, ProgressIndicator, Input, coreLibrary, Button, Page) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -165,7 +166,7 @@ sap.ui.define([
 	var oButton = new Button("button", {
 		text:"ChangePI",
 		press: function(){
-			var sPercent = sap.ui.getCore().byId("input").getValue();
+			var sPercent = Element.getElementById("input").getValue();
 			oProgInd8.setDisplayValue(sPercent + "%");
 			oProgInd8.setPercentValue(parseFloat(sPercent));
 		}

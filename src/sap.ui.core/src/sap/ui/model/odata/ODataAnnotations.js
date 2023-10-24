@@ -7,12 +7,12 @@ sap.ui.define([
 	"./AnnotationParser",
 	"sap/base/assert",
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/base/EventProvider",
-	"sap/ui/core/Configuration",
 	"sap/ui/thirdparty/jquery"
-], function (AnnotationParser, assert, Log, extend, isEmptyObject, EventProvider, Configuration,
+], function (AnnotationParser, assert, Log, Localization, extend, isEmptyObject, EventProvider,
 		jQuery) {
 	"use strict";
 
@@ -501,7 +501,7 @@ sap.ui.define([
 				url: sUrl,
 				async: that.bAsync,
 				headers: extend({}, that.mCustomHeaders, {
-					"Accept-Language": Configuration.getLanguageTag() // Always overwrite
+					"Accept-Language": Localization.getLanguageTag().toString() // Always overwrite
 				})
 			};
 

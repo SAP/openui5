@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/m/TitlePropagationSupport",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/Control",
-	"sap/ui/core/RenderManager",
-	"sap/ui/core/Core"
-], function (TitlePropagationSupport, ManagedObject, Control, RenderManager, oCore) {
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/RenderManager"
+], function (TitlePropagationSupport, ManagedObject, Control, ControlBehavior, RenderManager) {
 	"use strict";
 
 	// Custom control used for this test
@@ -172,7 +172,7 @@ sap.ui.define([
 
 	QUnit.test("_propagateTitleIdToChildControl private method - ACC mode", function (assert) {
 		// Arrange
-		var oStub = this.stub(oCore.getConfiguration(), "getAccessibility").returns(true),
+		var oStub = this.stub(ControlBehavior, "isAccessibilityEnabled").returns(true),
 			oMockedControl = this.getMockedControl("sap.ui.layout.form.SimpleForm"),
 			bResult;
 
@@ -185,7 +185,7 @@ sap.ui.define([
 
 		// Arrange
 		oStub.restore();
-		oStub = this.stub(oCore.getConfiguration(), "getAccessibility").returns(false);
+		oStub = this.stub(ControlBehavior, "isAccessibilityEnabled").returns(false);
 
 		// Act - call method again
 		bResult = this.oTC._propagateTitleIdToChildControl();

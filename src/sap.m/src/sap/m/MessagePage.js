@@ -5,6 +5,7 @@
 // Provides control sap.m.MessagePage.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
@@ -19,6 +20,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery"
 ], function(
 	library,
+	Library,
 	coreLibrary,
 	Control,
 	IconPool,
@@ -219,7 +221,7 @@ sap.ui.define([
 		 * LIFECYCLE METHODS
 		 */
 		MessagePage.prototype.init = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oBundle = Library.getResourceBundleFor("sap.m");
 
 			this._oTitle = null;
 			this._oNavButton = new Button(this.getId() + "-navButton", {

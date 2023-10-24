@@ -1,13 +1,13 @@
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataAnnotations",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, Configuration, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper, nextUIUpdate) {
+], function(Log, Localization, fakeService, ODataAnnotations, V1ODataModel, V2ODataModel, XMLHelper, nextUIUpdate) {
 	"use strict";
 
 	/*global QUnit, sinon */
@@ -4935,7 +4935,7 @@ sap.ui.define([
 		var oModel2 = fnCreateModel(assert, iModelVersion, "fakeService://testdata/odata/northwind/");
 		var oModel3 = fnCreateModel(assert, iModelVersion, "fakeService://testdata/odata/northwind/");
 
-		Configuration.setLanguage("en-US");
+		Localization.setLanguage("en-US");
 		oModel.addAnnotationUrl("fakeService://replay-headers").then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
 			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en-US", "Accept-Language header set correctly");
@@ -4944,7 +4944,7 @@ sap.ui.define([
 			oModel.setHeaders({
 				"X-Unfug": "Rosinenbroetchen"
 			});
-			Configuration.setLanguage("de");
+			Localization.setLanguage("de");
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -4954,7 +4954,7 @@ sap.ui.define([
 			oModel.setHeaders({
 				"X-Unfug": "Quarkstrudel"
 			});
-			Configuration.setLanguage("de-DE");
+			Localization.setLanguage("de-DE");
 			return oModel.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel.getServiceAnnotations();
@@ -4966,7 +4966,7 @@ sap.ui.define([
 				"X-Unfug": "Quarkstrudel"
 			});
 			oModel2.setHeaders(null);
-			Configuration.setLanguage("fr");
+			Localization.setLanguage("fr");
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
@@ -4976,7 +4976,7 @@ sap.ui.define([
 			oModel2.setHeaders({
 				"X-Unfug": "Mohnschnecke"
 			});
-			Configuration.setLanguage("de-DE");
+			Localization.setLanguage("de-DE");
 			return oModel2.addAnnotationUrl("fakeService://replay-headers");
 		}).then(function() {
 			var oAnnotations = oModel2.getServiceAnnotations();
@@ -4988,14 +4988,14 @@ sap.ui.define([
 				"X-Unfug": "Mohnschnecke"
 			});
 			oModel3.setHeaders({});
-			Configuration.setLanguage("en");
+			Localization.setLanguage("en");
 			return oModel3.addAnnotationUrl("fakeService://replay-headers");
 		}).then(async function() {
 			var oAnnotations = oModel3.getServiceAnnotations();
 			assert.equal(oAnnotations["Replay.Headers"]["Accept-Language"]["String"], "en", "Accept-Language header set correctly");
 			assert.equal(oAnnotations["Replay.Headers"]["X-Unfug"], undefined, "Custom header removed correctly");
 
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 
 			oModel.destroy();
 			oModel2.destroy();

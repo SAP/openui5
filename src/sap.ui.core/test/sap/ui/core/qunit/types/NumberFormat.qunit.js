@@ -1,19 +1,20 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/base/Log",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Supportability"
-], function (NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
+], function(Localization, NumberFormat, Locale, LocaleData, Log, Configuration, Supportability) {
 	"use strict";
 
 	/*eslint no-floating-decimal:0 */
 
 	var oDefaultInteger = NumberFormat.getIntegerInstance(),
 		oDefaultFloat = NumberFormat.getFloatInstance(),
-		sDefaultLanguage = Configuration.getLanguage(),
+		sDefaultLanguage = Localization.getLanguage(),
 		oCustomInteger = NumberFormat.getIntegerInstance({
 			maxIntegerDigits: 4,
 			minIntegerDigits: 2,
@@ -1317,7 +1318,7 @@ sap.ui.define([
 
 	QUnit.module("Unit Format", {
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1712,14 +1713,14 @@ sap.ui.define([
 		assert.notStrictEqual("İ".toLocaleLowerCase("tr"), "İ".toLocaleLowerCase("en"));
 
 		// lower/upper case is locale dependent - language by configuration
-		Configuration.setLanguage("tr");
+		Localization.setLanguage("tr");
 		oFormat = NumberFormat.getUnitInstance();
 
 		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);
 		assert.deepEqual(oFormat.parse("42 FİT"), [42, "length-foot"]);
 
 		// lower/upper case is locale dependent - language by given locale, config is not used
-		Configuration.setLanguage("en");
+		Localization.setLanguage("en");
 		oFormat = NumberFormat.getUnitInstance({}, new Locale("tr"));
 
 		assert.deepEqual(oFormat.parse("42 fit"), [42, "length-foot"]);

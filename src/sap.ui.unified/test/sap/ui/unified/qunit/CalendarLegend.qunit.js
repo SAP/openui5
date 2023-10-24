@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
 	"sap/ui/unified/CalendarLegendItem",
@@ -15,8 +16,7 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(CalendarLegend, CalendarLegendRenderer, CalendarLegendItem,
-	unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, KeyCodes, XMLView, jQuery, oCore) {
+], function(Element, CalendarLegend, CalendarLegendRenderer, CalendarLegendItem, unifiedLibrary, DateRange, JSONModel, Calendar, DateTypeRange, Log, DateFormat, KeyCodes, XMLView, jQuery, oCore) {
 	"use strict";
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
@@ -47,7 +47,7 @@ sap.ui.define([
 		} else {
 			sType = "Type" + aSpecialDay[3];
 		}
-		oCore.byId("Cal").addSpecialDate(new DateTypeRange({
+		Element.getElementById("Cal").addSpecialDate(new DateTypeRange({
 			startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
 			endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
 			type: sType,

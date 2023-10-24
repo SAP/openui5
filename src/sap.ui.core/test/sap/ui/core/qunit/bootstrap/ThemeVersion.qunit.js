@@ -1,11 +1,12 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/URI",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
-	"sap/ui/qunit/utils/waitForThemeApplied",
-	"sap/ui/core/Configuration"
-], function(URI, Theming, Parameters, waitForThemeApplied, Configuration) {
+	"sap/ui/qunit/utils/waitForThemeApplied"
+], function(Localization, Lib, URI, Theming, Parameters, waitForThemeApplied) {
 	"use strict";
 
 	// use options and version info as determined by ThemeVersion.beforeBootstrap.qunit.js
@@ -36,7 +37,7 @@ sap.ui.define([
 	QUnit.test("library.css", function(assert) {
 		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.href;
-		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+		var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
 		var sExpectedHref;
 		if (mOptions.customcss) {
@@ -71,7 +72,7 @@ sap.ui.define([
 		}
 
 		var sHref = oLink.href;
-		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+		var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
 		var sExpectedHref = new URL("test-resources/sap/ui/core/qunit/testdata/customcss/sap/ui/core/themes/" + Theming.getTheme() + "/custom.css", document.baseURI);
 
@@ -112,7 +113,7 @@ sap.ui.define([
 		var oRequest = this.oServer.requests[0];
 		var oUri = new URI(oRequest.url);
 		var mParameters = oUri.query(true);
-		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+		var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
 		if (mOptions.versionedLibCss) {
 			assert.equal(mParameters["version"], sCoreVersion,
@@ -133,7 +134,7 @@ sap.ui.define([
 
 				var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 				var sHref = oLink.href;
-				var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+				var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
 				var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/sap_bluecrystal/library.css"), document.baseURI);
 
@@ -159,11 +160,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("RTL Change", function(assert) {
-		Configuration.setRTL(true);
+		Localization.setRTL(true);
 
 		var oLink = document.getElementById("sap-ui-theme-sap.ui.core");
 		var sHref = oLink.href;
-		var sCoreVersion = sap.ui.getCore().getLoadedLibraries()["sap.ui.core"].version;
+		var sCoreVersion = Lib.all()["sap.ui.core"].version;
 
 		var sExpectedHref = new URL(sap.ui.require.toUrl("sap/ui/core/themes/" + Theming.getTheme() + "/library-RTL.css"), document.baseURI);
 
@@ -181,7 +182,7 @@ sap.ui.define([
 			);
 		}
 
-		Configuration.setRTL(false);
+		Localization.setRTL(false);
 	});
 
 	return waitForThemeApplied();

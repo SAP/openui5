@@ -3,8 +3,11 @@
  */
 
 sap.ui.define([
-	"./SelectionController", "sap/ui/mdc/p13n/P13nBuilder", "sap/base/util/merge"
-], function (BaseController, P13nBuilder, merge) {
+    "./SelectionController",
+    "sap/ui/core/Lib",
+    "sap/ui/mdc/p13n/P13nBuilder",
+    "sap/base/util/merge"
+], function(BaseController, Library, P13nBuilder, merge) {
     "use strict";
 
     const AdaptFiltersController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.AdaptFiltersController", {
@@ -17,7 +20,7 @@ sap.ui.define([
     AdaptFiltersController.prototype.getUISettings = function() {
         return {
             verticalScrolling: false,
-            title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE"),
+            title: Library.getResourceBundleFor("sap.ui.mdc").getText("filterbar.ADAPT_TITLE"),
             afterClose: function(oEvt) {
                 const oDialog = oEvt.getSource();
                 if (oDialog) {
@@ -53,7 +56,7 @@ sap.ui.define([
             const oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 
             oAdaptationFilterBar.getTitle = function() {
-                return sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE");
+                return Library.getResourceBundleFor("sap.ui.mdc").getText("filterbar.ADAPT_TITLE");
             };
 
             this._oPanel = oAdaptationFilterBar;

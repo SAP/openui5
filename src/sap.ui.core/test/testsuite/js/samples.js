@@ -9,7 +9,7 @@ sap.ui.define([
 ], function(testfwk, jQuery, escapeRegExp, oCore, Storage, discovery, isEmptyObject) {
 	"use strict";
 
-	oCore.attachInit(function onLoadPage() {
+	oCore.ready(function onLoadPage() {
 		document.getElementById("filter").focus();
 		setTimeout(loadSamples, 10);
 	});

@@ -1,5 +1,6 @@
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/m/List",
 	"sap/m/table/Util",
@@ -21,7 +22,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Time",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/core/InvisibleMessage"
-], function(Core, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
+], function(Core, Library, Theming, List, Util, ThemeParameters, BooleanType, Byte, DateType, DateTime, DateTimeWithTimezone, Decimal, Double, Single, Guid, Int16, Int32, Int64, SByte, StringType, Time, TimeOfDay, InvisibleMessage) {
 	"use strict";
 	/* global QUnit,sinon */
 
@@ -256,7 +257,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("announceTableUpdate", function(assert) {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			sText = "Testing Text",
 			fnInvisibleMessageAnnounce = sinon.spy(InvisibleMessage.prototype, "announce");
 

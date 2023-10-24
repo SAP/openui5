@@ -10,11 +10,12 @@ sap.ui.define([
 	"./Text",
 	"./Link",
 	"./FormattedText",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"./MessageStripRenderer",
 	"sap/base/Log",
 	"sap/m/Button",
-	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText"
 ], function(
@@ -24,11 +25,12 @@ sap.ui.define([
 	Text,
 	Link,
 	FormattedText,
+	ControlBehavior,
+	Library,
 	coreLibrary,
 	MessageStripRenderer,
 	Log,
 	Button,
-	Core,
 	Configuration,
 	InvisibleText
 ) {
@@ -219,7 +221,7 @@ sap.ui.define([
 	 * @public
 	 */
 	MessageStrip.prototype.close = function () {
-		var sAnimationMode = Configuration.getAnimationMode(),
+		var sAnimationMode = ControlBehavior.getAnimationMode(),
 			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		var fnClosed = function () {
@@ -273,7 +275,7 @@ sap.ui.define([
 	MessageStripRenderer.getAccessibilityState = function () {
 		var mAccessibilityState = MSUtils.getAccessibilityState.call(this),
 			oLink = this.getLink(),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 
 		if (!oLink) {
@@ -305,7 +307,7 @@ sap.ui.define([
 	 * Initialize close button.
 	 */
 	MessageStrip.prototype._initCloseButton = function () {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			oCloseButton = this.getAggregation("_closeButton");
 
 			if (!oCloseButton) {
@@ -328,7 +330,7 @@ sap.ui.define([
 	 */
 	MessageStrip.prototype._setButtonAriaLabelledBy = function (sType) {
 		var oCloseButton = this.getAggregation("_closeButton"),
-			oRb = Core.getLibraryResourceBundle("sap.m"),
+			oRb = Library.getResourceBundleFor("sap.m"),
 			sText = oRb.getText("MESSAGE_STRIP_" + sType.toUpperCase() + "_CLOSE_BUTTON");
 
 		if (!this._oInvisibleText) {

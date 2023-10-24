@@ -1,10 +1,10 @@
 sap.ui.define([
 	"delegates/json/TableDelegate",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator"
-], function (TableDelegate, JSONPropertyInfo, Core, Filter, FilterOperator) {
+], function (TableDelegate, JSONPropertyInfo, Element, Filter, FilterOperator) {
 	"use strict";
 
 	const JSONTableDelegate = Object.assign({}, TableDelegate);
@@ -19,7 +19,7 @@ sap.ui.define([
 	};
 
 	JSONTableDelegate.getFilters = function(oTable) {
-		const aSearchFilters = _createSearchFilters(Core.byId(oTable.getFilter()).getSearch());
+		const aSearchFilters = _createSearchFilters(Element.getElementById(oTable.getFilter()).getSearch());
 		return TableDelegate.getFilters.apply(this, arguments).concat(aSearchFilters);
 	};
 

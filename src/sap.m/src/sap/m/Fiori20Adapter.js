@@ -7,12 +7,12 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/ManagedObjectObserver',
-	"sap/ui/core/Core",
 	'sap/ui/Device',
 	"sap/base/Log",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(BaseObject, EventProvider, ManagedObjectObserver, Core, Device, Log, jQuery) {
+	function(BaseObject, EventProvider, ManagedObjectObserver, Device, Log, Element, jQuery) {
 	"use strict";
 
 	var oEventProvider = new EventProvider(),
@@ -261,7 +261,7 @@ sap.ui.define([
 		}]);
 
 		var sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-		if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+		if (sCurrentViewId && Element.getElementById(sCurrentViewId)) {
 			this._fireViewChange(sCurrentViewId, oAdaptOptions);
 		}
 	};
@@ -410,7 +410,7 @@ sap.ui.define([
 				oAdaptOptions: oAdaptOptions
 			}]);
 			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+			if (sCurrentViewId && Element.getElementById(sCurrentViewId)) {
 				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
@@ -441,7 +441,7 @@ sap.ui.define([
 				oAdaptOptions: oAdaptOptions
 			}]);
 			sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-			if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+			if (sCurrentViewId && Element.getElementById(sCurrentViewId)) {
 				this._fireViewChange(sCurrentViewId, oAdaptOptions);
 			}
 		}.bind(this);
@@ -471,7 +471,7 @@ sap.ui.define([
 							oAdaptOptions: oAdaptOptions
 						}]);
 						sCurrentViewId = this._getCurrentlyAdaptedTopViewId();
-						if (sCurrentViewId && Core.byId(sCurrentViewId)) {
+						if (sCurrentViewId && Element.getElementById(sCurrentViewId)) {
 							this._fireViewChange(sCurrentViewId, oAdaptOptions);
 						}
 				}
@@ -581,7 +581,7 @@ sap.ui.define([
 	};
 
 	Fiori20Adapter._getTotalCachedInfoToMerge = function(sViewId) {
-		var oView = sap.ui.getCore().byId(sViewId),
+		var oView = Element.getElementById(sViewId),
 			oCachedViewInfo = this._getCachedViewInfoToMerge(sViewId),
 			isMasterView,
 			isDetailView,

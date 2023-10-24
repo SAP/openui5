@@ -3,15 +3,18 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/m/IllustratedMessage",
 	"sap/m/Button",
 	"sap/ui/core/InvisibleMessage"
-], function(MLibrary, Core, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
+], function(Localization, MLibrary, Core, Library, Locale, LocaleData, Theming, ThemeParameters, IllustratedMessage, Button, InvisibleMessage) {
 	"use strict";
 	/*global Intl*/
 
@@ -74,7 +77,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Util.calcTypeWidth = (function() {
-		const oTimezones = LocaleData.getInstance(Core.getConfiguration().getLocale()).getTimezoneTranslations();
+		const oTimezones = LocaleData.getInstance(new Locale(Localization.getLanguageTag())).getTimezoneTranslations();
 		let sLongestTimezone;
 		var fBooleanWidth = 0;
 		var aDateParameters = [2023, 9, 26, 22, 47, 58, 999];
@@ -103,7 +106,7 @@ sap.ui.define([
 
 			if (sType == "Boolean") {
 				if (!fBooleanWidth) {
-					var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+					var oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 					var fYesWidth = Util.measureText(oResourceBundle.getText("YES"));
 					var fNoWidth = Util.measureText(oResourceBundle.getText("NO"));
 					fBooleanWidth = Math.max(fYesWidth, fNoWidth);
@@ -312,7 +315,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Util.getNoColumnsIllustratedMessage = function(fnAddColumn) {
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		var oIllustratedMessage = new IllustratedMessage({
 			illustrationType: MLibrary.IllustratedMessageType.AddColumn,
@@ -443,7 +446,7 @@ sap.ui.define([
 		var oInvisibleMessage = InvisibleMessage.getInstance();
 
 		if (oInvisibleMessage) {
-			var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 			if (iRowCount == undefined) {
 				oInvisibleMessage.announce(oResourceBundle.getText("table.ANNOUNCEMENT_TABLE_UPDATED", [sText]));

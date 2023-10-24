@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/m/ToolbarSpacer",
 	"sap/m/upload/UploadSetwithTableRenderer",
+	"sap/ui/core/Lib",
 	"sap/ui/unified/FileUploader",
 	"sap/m/upload/UploaderHttpRequestMethod",
 	"sap/m/OverflowToolbar",
@@ -39,9 +40,7 @@ sap.ui.define([
 	"sap/m/MenuButton",
 	"sap/m/MenuItem",
 	"sap/m/Menu"
-	], function (Table, ToolbarSpacer, UploadSetwithTableRenderer, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType,
-	IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager,
-	ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
+], function(Table, ToolbarSpacer, UploadSetwithTableRenderer, Library1, FileUploader, UploaderHttpRequestMethod, OverFlowToolbar, UploadSetwithTableItem, deepEqual, Log, Library, IllustratedMessageType, IllustratedMessage, IllustratedMessageSize, Uploader, DragDropInfo, DropInfo, FilePreviewDialog, EventBase, Dialog, Label, Input, MessageBox, Button, Core, VariantManagement, PersManager, ColumnsMediator, SortMediator, GroupMediator, FilterMediator, View, Element, MenuButton, MenuItem, Menu) {
 	"use strict";
 
 	/**
@@ -399,7 +398,7 @@ sap.ui.define([
 		this._setDragDropConfig();
 		this._filesTobeUploaded = [];
 		this._filePreviewDialogControl = null;
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Library1.getResourceBundleFor("sap.m");
 		this._bPersoRegistered = false;
 		this._setIllustratedMessage();
 	};

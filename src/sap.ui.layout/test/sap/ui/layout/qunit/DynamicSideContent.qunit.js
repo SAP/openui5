@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/layout/DynamicSideContent",
 	"sap/ui/layout/library",
 	"sap/m/Button",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, $, oCore) {
+], function(Library, DynamicSideContent, layoutLibrary, Button, List, Panel, Page, StandardListItem, Device, ResizeHandler, $, oCore) {
 	"use strict";
 
 	var SideContentFallDown = layoutLibrary.SideContentFallDown;
@@ -1088,7 +1089,7 @@ sap.ui.define([
 		var sSideContentTag = Device.browser.firefox ? "div" : "aside",
 				$sideContent = $("#" + this._oDSC.getId() + "-SCGridCell"),
 		//$sideContent = this.oDSC.$().find("> aside"),
-				oMessageBundle = oCore.getLibraryResourceBundle("sap.ui.layout");
+				oMessageBundle = Library.getResourceBundleFor("sap.ui.layout");
 
 		assert.strictEqual($sideContent.length, 1, "Side Content has correct " + sSideContentTag + " tag");
 		assert.strictEqual($sideContent.attr("role"), "complementary", "Side Content has correct role 'complementary'");

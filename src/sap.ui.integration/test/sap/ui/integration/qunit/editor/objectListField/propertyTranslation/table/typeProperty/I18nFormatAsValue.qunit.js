@@ -1,22 +1,24 @@
 /* global QUnit */
 sap.ui.define([
 	"sap-ui-integration-editor",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./../../../../ContextHost",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"qunit/designtime/EditorQunitUtils"
-], function (
+], function(
 	x,
+	Localization,
+	Element,
 	Editor,
 	Host,
 	sinon,
 	ContextHost,
 	deepEqual,
-	Core,
 	deepClone,
 	EditorQunitUtils
 ) {
@@ -98,7 +100,7 @@ sap.ui.define([
 		}
 	}
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function cleanUUIDAndPosition(oValue) {
@@ -310,7 +312,7 @@ sap.ui.define([
 																oDeleteButton.firePress();
 																EditorQunitUtils.wait().then(function () {
 																	var sMessageBoxId = document.querySelector(".sapMMessageBox").id;
-																	var oMessageBox = Core.byId(sMessageBoxId);
+																	var oMessageBox = Element.getElementById(sMessageBoxId);
 																	var oOKButton = oMessageBox._getToolbar().getContent()[1];
 																	oOKButton.firePress();
 																	EditorQunitUtils.wait().then(function () {

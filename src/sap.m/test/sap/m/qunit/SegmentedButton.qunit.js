@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
@@ -22,6 +25,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
+	Localization,
+	Element,
+	Library,
 	qutils,
 	SegmentedButton,
 	SegmentedButtonItem,
@@ -54,7 +60,7 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	/* =========================================================== */
 	/* Initialize module                                           */
@@ -67,7 +73,7 @@ sap.ui.define([
 		var oSegmentedButton = new SegmentedButton();
 
 		// Act
-		var s1 = oCore.byId(oSegmentedButton.getId());
+		var s1 = Element.getElementById(oSegmentedButton.getId());
 
 		// Assert
 		assert.ok((s1 !== undefined) && (s1 != null), "SegmentedButton should be found");
@@ -2728,7 +2734,7 @@ sap.ui.define([
 	 */
 	QUnit.test('Left Arrow after setSelectedButton call on image buttons - fix 619572', function(assert) {
 		// Flip the arrow keys in RTL mode
-		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
+		var keyCode = (Localization.getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
@@ -2736,7 +2742,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.28.
 	 */
 	QUnit.test('Left Arrow when the first button has the focus', function(assert) {
-		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
+		var keyCode = (Localization.getRTL()) ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 0, expectedFocusedIndex: 0, keycode: keyCode});
 	});
 
@@ -2744,7 +2750,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.28.
 	 */
 	QUnit.test('Right Arrow', function(assert) {
-		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
+		var keyCode = (Localization.getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 1, expectedFocusedIndex: 2, keycode: keyCode});
 	});
 
@@ -2752,7 +2758,7 @@ sap.ui.define([
 	 * @deprecated Since version 1.28.
 	 */
 	QUnit.test('Right Arrow when the last button has the focus', function(assert) {
-		var keyCode = (oCore.getConfiguration().getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
+		var keyCode = (Localization.getRTL()) ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT;
 		testNavigationSegmentedButton4Items({initialSelectedIndex: 3, expectedFocusedIndex: 3, keycode: keyCode});
 	});
 

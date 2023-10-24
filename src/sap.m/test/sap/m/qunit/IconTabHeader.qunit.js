@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/m/BadgeCustomData",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/library"
 ], function(
+	Library1,
 	QUnitUtils,
 	KeyCodes,
 	BadgeCustomData,
@@ -42,7 +44,7 @@ sap.ui.define([
 	var IconTabHeaderMode = Library.IconTabHeaderMode;
 
 	var DOM_RENDER_LOCATION = "content";
-	var oRB = Core.getLibraryResourceBundle("sap.m");
+	var oRB = Library1.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv(DOM_RENDER_LOCATION);
 

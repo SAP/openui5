@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./List',
 	'./library',
+	"sap/ui/core/Element",
 	'sap/ui/model/ChangeReason',
 	'sap/ui/model/Filter',
 	'./FacetFilterListRenderer',
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType"
 ],
-	function(List, library, ChangeReason, Filter, FacetFilterListRenderer, FacetFilterItem, Log, FilterOperator, FilterType) {
+	function(List, library, Element, ChangeReason, Filter, FacetFilterListRenderer, FacetFilterItem, Log, FilterOperator, FilterType) {
 	"use strict";
 
 
@@ -562,7 +563,7 @@ sap.ui.define([
 	 */
 	FacetFilterList.prototype._updateActiveState = function() {
 
-		var oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
+		var oCheckbox = Element.getElementById(this.getAssociation("allcheckbox"));
 		if (Object.getOwnPropertyNames(this._oSelectedKeys).length > 0 || (oCheckbox && oCheckbox.getSelected())) {
 			this.setActive(true);
 		}
@@ -706,7 +707,7 @@ sap.ui.define([
 		}
 
 		if (this.getMode() === ListMode.MultiSelect) {
-			oCheckbox = sap.ui.getCore().byId(this.getAssociation("allcheckbox"));
+			oCheckbox = Element.getElementById(this.getAssociation("allcheckbox"));
 			bAtLeastOneItemIsSelected = iItemsCount > 0 && iItemsCount === aItems.filter(isSelected).length;
 			bSelectAllSelected = this.getActive() && bAtLeastOneItemIsSelected;
 			oCheckbox && oCheckbox.setSelected(bSelectAllSelected);

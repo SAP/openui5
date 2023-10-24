@@ -3,14 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/m/Input",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
@@ -36,16 +36,16 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
+		Library, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
 		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage(),
-		sDefaultTimezone = Configuration.getTimezone(),
+	var sDefaultLanguage = Localization.getLanguage(),
+		sDefaultTimezone = Localization.getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataListBindingClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -481,7 +481,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
@@ -552,9 +552,9 @@ sap.ui.define([
 				this.oModel.destroy();
 			}
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 			// reset the time zone
-			Configuration.setTimezone(sDefaultTimezone);
+			Localization.setTimezone(sDefaultTimezone);
 		},
 
 		/**
@@ -2395,7 +2395,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Core.getLibraryResourceBundle()).expects("getText")
+		this.mock(Library.getResourceBundleFor("sap.ui.core")).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey) {
 				return sKey;
@@ -2512,7 +2512,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Core.getLibraryResourceBundle()).expects("getText")
+		this.mock(Library.getResourceBundleFor("sap.ui.core")).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey, aArgs) {
 				return sKey;
@@ -8299,7 +8299,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 		that = this;
 
-		Configuration.setTimezone("Europe/London");
+		Localization.setTimezone("Europe/London");
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {

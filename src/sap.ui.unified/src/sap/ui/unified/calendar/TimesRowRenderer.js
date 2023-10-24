@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/core/format/TimezoneUtil',
 	'sap/ui/core/Core',
@@ -10,9 +11,10 @@ sap.ui.define([
 	'sap/ui/unified/CalendarLegendRenderer',
 	"sap/ui/core/date/UI5Date",
 	'sap/ui/unified/library',
-	 "sap/base/Log"
-	],
+	"sap/base/Log"
+],
 	function(
+		Element,
 		CalendarUtils,
 		TimezoneUtil,
 		Core,
@@ -21,7 +23,7 @@ sap.ui.define([
 		UI5Date,
 		library,
 		Log
-		) {
+	) {
 		"use strict";
 
 
@@ -200,7 +202,7 @@ sap.ui.define([
 
 		var sLegendId = oTimesRow.getLegend();
 		if (sLegendId) {
-			var oLegend = sap.ui.getCore().byId(sLegendId);
+			var oLegend = Element.getElementById(sLegendId);
 			if (oLegend) {
 				if (!(oLegend instanceof sap.ui.unified.CalendarLegend)) {
 					throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oTimesRow);

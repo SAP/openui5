@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
 	"sap/ui/core/CalendarType",
+	"sap/ui/core/Lib",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException",
 	"sap/ui/model/odata/type/ODataType"
-], function (Log, extend, CalendarType, UI5Date, DateFormat, FormatException, ParseException,
-		ValidateException, ODataType) {
+], function(Log, extend, CalendarType, Library, UI5Date, DateFormat, FormatException, ParseException,
+	ValidateException, ODataType) {
 	"use strict";
 
 	/*
@@ -25,7 +26,7 @@ sap.ui.define([
 	 *   The locale-dependent error message
 	 */
 	function getErrorMessage(oType) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText("EnterTime",
+		return Library.getResourceBundleFor("sap.ui.core").getText("EnterTime",
 			[oType.formatValue("23:59:58", "string")]);
 	}
 

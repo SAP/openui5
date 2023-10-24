@@ -9,7 +9,7 @@ sap.ui.define(["sap/ui/core/Core",
 			  Shell) {
 		"use strict";
 
-		Core.attachInit(function () {
+		Core.ready(function () {
 			new Shell('Shell', {
 				title: 'Application under test',
 				app: new ComponentContainer({

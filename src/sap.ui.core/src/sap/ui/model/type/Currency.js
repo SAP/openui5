@@ -7,13 +7,13 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Lib",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/CompositeType",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function(Log, each, isEmptyObject, NumberFormat, CompositeType, FormatException, ParseException,
-		ValidateException) {
+], function(Log, each, isEmptyObject, Library, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
 	"use strict";
 
 	/**
@@ -154,7 +154,7 @@ sap.ui.define([
 
 	Currency.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+			var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 				aViolatedConstraints = [],
 				aMessages = [],
 				aValues = vValue,
@@ -232,7 +232,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Currency.prototype.getParseException = function () {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+		var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 			sText;
 
 		if (!this.bShowNumber) {

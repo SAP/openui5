@@ -24,8 +24,8 @@ sap.ui.define([
 	'sap/ui/base/EventProvider',
 	'sap/ui/base/Object',
 	'sap/ui/base/SyncPromise',
-	'sap/ui/core/Configuration',
-	'sap/ui/core/_UrlResolver'
+	'sap/ui/core/_UrlResolver',
+	"sap/ui/core/Supportability"
 ], function (
 	assert,
 	BaseConfig,
@@ -47,8 +47,8 @@ sap.ui.define([
 	EventProvider,
 	BaseObject,
 	SyncPromise,
-	Configuration,
-	_UrlResolver
+	_UrlResolver,
+	Supportability
 ) {
 	"use strict";
 
@@ -1872,7 +1872,7 @@ sap.ui.define([
 	 */
 	Library.getPreloadMode = function() {
 		// if debug sources are requested, then the preload feature must be deactivated
-		if (Configuration.getDebug() === true) {
+		if (Supportability.isDebugModeEnabled() === true) {
 			return "";
 		}
 		// determine preload mode (e.g. resolve default or auto)

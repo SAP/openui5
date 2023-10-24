@@ -5,6 +5,7 @@
 sap.ui.define(
 	[
 		"sap/m/p13n/BasePanel",
+		"sap/ui/core/Lib",
 		"sap/ui/model/FilterOperator",
 		"sap/m/List",
 		"sap/base/util/merge",
@@ -21,8 +22,9 @@ sap.ui.define(
 		"sap/ui/layout/cssgrid/GridItemLayoutData",
 		"sap/base/util/uid"
 	],
-	function (
+	function(
 		BasePanel,
+		Library,
 		FilterOperator,
 		List,
 		merge,
@@ -83,7 +85,7 @@ sap.ui.define(
 					 */
 					title: {
 						type: "string",
-						defaultValue: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("p13n.DEFAULT_TITLE_FILTER")
+						defaultValue: Library.getResourceBundleFor("sap.m").getText("p13n.DEFAULT_TITLE_FILTER")
 					},
 					fields: { type: "sap.m.FilterPanelField[]", defaultValue: [] }
 				}
@@ -100,7 +102,7 @@ sap.ui.define(
 
 		FilterPanel.prototype.init = function () {
 			BasePanel.prototype.init.apply(this, arguments);
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = Library.getResourceBundleFor("sap.m");
 			this._bFocusOnRearrange = false;
 			this.setEnableReorder(true);
 			this.addStyleClass("sapMP13nQueryPanel");

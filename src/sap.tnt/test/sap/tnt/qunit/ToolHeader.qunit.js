@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/thirdparty/jquery',
 	'sap/m/App',
 	'sap/m/Page',
@@ -12,6 +13,7 @@ sap.ui.define([
 	'sap/ui/qunit/utils/waitForThemeApplied',
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	jQuery,
 	App,
 	Page,
@@ -216,7 +218,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("created", function (assert) {
-		assert.ok(oCore.byId(this.toolHeader.getId()), "created");
+		assert.ok(Element.getElementById(this.toolHeader.getId()), "created");
 	});
 
 	QUnit.test("contains elements and classes", function (assert) {

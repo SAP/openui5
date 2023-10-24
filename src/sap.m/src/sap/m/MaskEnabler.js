@@ -3,18 +3,20 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'./InputBase',
 	'sap/ui/Device',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/IconPool',
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/MaskInputRule",
-	"sap/ui/core/Configuration",
-	"sap/ui/dom/jquery/cursorPos" // jQuery Plugin "cursorPos"
-], function(Control, InputBase, Device, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule, Configuration) {
+	// jQuery Plugin "cursorPos"
+	"sap/ui/dom/jquery/cursorPos"
+], function(Localization, Control, InputBase, Device, Library, coreLibrary, IconPool, KeyCodes, Log, jQuery, MaskInputRule) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -54,7 +56,7 @@ sap.ui.define([
 			// Skips setup of mask variables on every iteration when initializing default rules
 			this._bSkipSetupMaskVariables = null;
 
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = Library.getResourceBundleFor("sap.m");
 
 			this._setDefaultRules();
 			this._setupMaskVariables();
@@ -1426,7 +1428,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the current control is in RTL mode
 		 */
 		this._isRtlMode = function () {
-			return Configuration.getRTL() || (this.getTextDirection() === TextDirection.RTL);
+			return Localization.getRTL() || (this.getTextDirection() === TextDirection.RTL);
 		};
 
 		/**

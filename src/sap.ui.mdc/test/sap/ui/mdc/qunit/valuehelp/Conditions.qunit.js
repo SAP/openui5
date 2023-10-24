@@ -5,6 +5,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/valuehelp/content/Conditions",
@@ -15,9 +16,9 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ValueHelpSelectionType",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
-	"sap/m/library",
-	"sap/ui/core/Core"
+	"sap/m/library"
 ], function (
+		Library,
 		ValueHelpDelegate,
 		FieldBaseDelegate,
 		Conditions,
@@ -28,8 +29,7 @@ sap.ui.define([
 		ValueHelpSelectionType,
 		JSONModel,
 		StringType,
-		mLibrary,
-		oCore
+		mLibrary
 	) {
 	"use strict";
 
@@ -39,7 +39,7 @@ sap.ui.define([
 	let bIsOpening = false;
 	let oModel;
 	let oType;
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	const oContainer = { //to fake Container
 		getScrollDelegate: function() {

@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
@@ -8,11 +9,12 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/m/Label", // to make FormHelper could load all modules
 	"sap/m/Text", // to make FormHelper could load all modules
-	"sap/m/Button", // to make FormHelper could load all modules
-	"sap/ui/core/theming/Parameters",
-	"sap/ui/core/Core"
+	// to make FormHelper could load all modules
+	"sap/m/Button",
+	"sap/ui/core/theming/Parameters"
 	],
 	function(
+			Element,
 			FormContainer,
 			FormElement,
 			Title,
@@ -21,8 +23,7 @@ sap.ui.define([
 			Label,
 			Text,
 			Button,
-			Parameters,
-			oCore
+			Parameters
 	) {
 	"use strict";
 
@@ -118,7 +119,7 @@ sap.ui.define([
 
 		oFormContainer.destroy();
 		oFormContainer = undefined;
-		assert.notOk(oCore.byId(sButtonId), "Button destroyed");
+		assert.notOk(Element.getElementById(sButtonId), "Button destroyed");
 
 		initTest();
 	}
@@ -271,8 +272,8 @@ sap.ui.define([
 		var aFormElements = oFormContainer.getFormElements();
 
 		assert.equal(aFormElements.length, 0, "0 FormElement assigned");
-		assert.notOk(oCore.byId("FE1"), "FormElement1 destroyed");
-		assert.notOk(oCore.byId("FE2"), "FormElement2 destroyed");
+		assert.notOk(Element.getElementById("FE1"), "FormElement1 destroyed");
+		assert.notOk(Element.getElementById("FE2"), "FormElement2 destroyed");
 	});
 
 	QUnit.test("getVisibleFormElements", function(assert) {

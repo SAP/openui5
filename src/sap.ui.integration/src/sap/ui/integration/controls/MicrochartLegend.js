@@ -6,14 +6,14 @@ sap.ui.define([
 	"./MicrochartLegendRenderer",
 	"sap/m/Text",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	MicrochartLegendRenderer,
 	Text,
 	Control,
-	Core,
+	Element,
 	Parameters,
 	BindingHelper
 ) {
@@ -113,7 +113,7 @@ sap.ui.define([
 	};
 
 	MicrochartLegend.prototype._loadLegendColors = function () {
-		var oChart = Core.byId(this.getChart()),
+		var oChart = Element.getElementById(this.getChart()),
 			aNames = [],
 			vParams;
 

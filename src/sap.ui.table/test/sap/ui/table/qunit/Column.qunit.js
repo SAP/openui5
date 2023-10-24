@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
+	Element,
 	TableQUnitUtils,
 	qutils,
 	TableUtils,
@@ -524,7 +526,7 @@ sap.ui.define([
 				that._oColumnWithColumnMenu.filter("filterValue");
 				that._oColumnWithColumnMenu._openHeaderMenu(oCellDomRef);
 
-				var oFilterField = oCore.byId(oColumnMenu.getId() + "-filter");
+				var oFilterField = Element.getElementById(oColumnMenu.getId() + "-filter");
 				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
 				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
 

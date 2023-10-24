@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/TablePersoDialog",
 	"sap/m/Table",
@@ -17,6 +20,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
+	ControlBehavior,
+	Element,
+	Library,
 	createAndAppendDiv,
 	TablePersoDialog,
 	Table,
@@ -39,7 +45,7 @@ sap.ui.define([
 	// prepare DOM
 	createAndAppendDiv("content");
 
-	var iDialogDuration = oCore.getConfiguration().getAnimationMode() === "none" ? 15 : 500;
+	var iDialogDuration = ControlBehavior.getAnimationMode() === "none" ? 15 : 500;
 
 	/**
 	* Set up a test data environment. Need a table for the perso dialog
@@ -237,10 +243,10 @@ sap.ui.define([
 		oTPC.setShowSelectAll(false);
 		//oTPC.setHasGrouping(true);
 		oTPC.openDialog();
-		assert.ok(oCore.byId(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
+		assert.ok(Element.getElementById(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
 		assert.ok(document.getElementById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
-		var sTitle = oCore.byId(oTablePersoDialog.getId() + "-Dialog").getTitle();
+		var oRb = Library.getResourceBundleFor("sap.m");
+		var sTitle = Element.getElementById(oTablePersoDialog.getId() + "-Dialog").getTitle();
 		assert.strictEqual(sTitle, oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 		//Check if Reset ALL Button is invisible
 		assert.ok(oTPC.getAggregation("_tablePersoDialog")._oDialog.$('header-BarRight').children().length == 0, 'Reset All button should be hidden');
@@ -286,8 +292,8 @@ sap.ui.define([
 		oTPC.setShowSelectAll(false);
 		oTPC.openDialog();
 		var oDataList = oTablePersoDialog._oDialog.getContent()[0];
-		var oButtonUp = oCore.byId(oTablePersoDialog.getId() + "-buttonUp");
-		var oButtonDown = oCore.byId(oTablePersoDialog.getId() + "-buttonDown");
+		var oButtonUp = Element.getElementById(oTablePersoDialog.getId() + "-buttonUp");
+		var oButtonDown = Element.getElementById(oTablePersoDialog.getId() + "-buttonDown");
 		var length = oDataList.getItems().length;
 
 //			first item is selected => the Down button must be enabled
@@ -318,8 +324,8 @@ sap.ui.define([
 		oTPC1.openDialog();
 
 		var oDataList1 = oTablePersoDialog1._oDialog.getContent()[0];
-		var oButtonUp1 = oCore.byId(oTablePersoDialog1.getId() + "-buttonUp");
-		var oButtonDown1 = oCore.byId(oTablePersoDialog1.getId() + "-buttonDown");
+		var oButtonUp1 = Element.getElementById(oTablePersoDialog1.getId() + "-buttonUp");
+		var oButtonDown1 = Element.getElementById(oTablePersoDialog1.getId() + "-buttonDown");
 //			only one item in list is available(selected) => both buttons have to be disabled!
 		if (oDataList1.getItems().length == 1) {
 			oDataList1.setSelectedItem(oDataList1.getItems()[0], true, true);
@@ -338,15 +344,15 @@ sap.ui.define([
 		oTPC.openDialog();
 
 		// Set the 1st column to invisible and switch the last two around
-		var oButtonDown = oCore.byId("idRandomDataTable-PersoDialog-buttonDown");
-		var oButtonOk = oCore.byId("idRandomDataTable-PersoDialog-buttonOk");
+		var oButtonDown = Element.getElementById("idRandomDataTable-PersoDialog-buttonDown");
+		var oButtonOk = Element.getElementById("idRandomDataTable-PersoDialog-buttonOk");
 
 		// 1st column invisible
-		oCore.byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-0").setSelected(false);
+		Element.getElementById("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-0").setSelected(false);
 
 		// Switch last two around
-		oCore.byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1").setSelected(true);
-		oTablePersoDialog._oSelectedItem = oCore.byId("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1");
+		Element.getElementById("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1").setSelected(true);
+		oTablePersoDialog._oSelectedItem = Element.getElementById("idRandomDataTable-PersoDialog-cli-idRandomDataTable-PersoDialog-colTable-1");
 		oButtonDown.firePress();
 		oCore.applyChanges();
 

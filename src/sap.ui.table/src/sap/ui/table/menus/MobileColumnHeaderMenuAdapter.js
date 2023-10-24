@@ -20,8 +20,8 @@ sap.ui.define([
 	"sap/m/table/columnmenu/ActionItem",
 	"sap/m/Button",
 	"sap/m/Input",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	ColumnHeaderMenuAdapter,
@@ -41,8 +41,8 @@ sap.ui.define([
 	ActionItem,
 	Button,
 	Input,
+	Library,
 	CoreLibrary,
-	oCore,
 	Device
 ) {
 	"use strict";
@@ -249,7 +249,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._updateQuickFilter = function(oColumn) {
-		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
 		var oFilterField = this._oQuickFilter.getContent()[0];
 
 		this._oQuickFilter.setLabel(oSapMResourceBundle.getText("table.COLUMNMENU_QUICK_FILTER", [TableUtils.Column.getHeaderText(oColumn)]));
@@ -386,7 +386,7 @@ sap.ui.define([
 	};
 
 	MobileColumnHeaderMenuAdapter.prototype._createQuickResize = function(oColumn) {
-		var oSapMResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+		var oSapMResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		return new QuickAction({
 			content: new Button({

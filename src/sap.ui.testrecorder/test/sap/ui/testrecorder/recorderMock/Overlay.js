@@ -10,7 +10,7 @@ sap.ui.define([
 ],	function (Core, XMLView, Page, CommunicationMock) {
 	"use strict";
 
-	Core.attachInit(function () {
+	Core.ready(function () {
 		CommunicationMock.setup();
 
 		XMLView.create({

@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/Device",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/library",
 	"sap/m/library",
@@ -21,12 +22,14 @@ sap.ui.define([
 	EventProvider,
 	ManagedObjectObserver,
 	Device,
+	Library,
 	ShortcutHintsMixin,
 	coreLibrary,
 	mobileLibrary,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
-	SemanticContainer) {
+	SemanticContainer
+) {
 	"use strict";
 
 	// shortcut for sap.m.ButtonType
@@ -300,7 +303,7 @@ sap.ui.define([
 
 		if (!this._oShareMenuBtn) {
 			oContainer = this._getContainer();
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.f");
+			oResourceBundle = Library.getResourceBundleFor("sap.f");
 			sShortcutKey = "SEMANTIC_CONTROL_ACTION_SHARE_SHORTCUT"; // Ctrl+Shift+S
 
 			if (Device.os.macintosh) {

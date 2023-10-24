@@ -1,14 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap/ui/integration/util/CardMerger",
-	"sap/ui/core/Core",
 	"sap/base/util/deepClone"
 ], function (
+	Localization,
 	merge,
 	CardMerger,
-	Core,
 	deepClone
 ) {
 	"use strict";
@@ -190,10 +190,10 @@ sap.ui.define([
 	_aCheckedLanguages.forEach(function(sLanguage) {
 		QUnit.module("Object - In " + sLanguage.key, {
 			beforeEach: function() {
-				Core.getConfiguration().setLanguage(sLanguage.key);
+				Localization.setLanguage(sLanguage.key);
 			},
 			afterEach: function() {
-				Core.getConfiguration().setLanguage("en");
+				Localization.setLanguage("en");
 			}
 		}, function() {
 			QUnit.test("admin change with value 'string1' and no translation texts", function (assert) {
@@ -659,10 +659,10 @@ sap.ui.define([
 	_aCheckedLanguages.forEach(function(sLanguage) {
 		QUnit.module("Object list - In " + sLanguage.key, {
 			beforeEach: function() {
-				Core.getConfiguration().setLanguage(sLanguage.key);
+				Localization.setLanguage(sLanguage.key);
 			},
 			afterEach: function() {
-				Core.getConfiguration().setLanguage("en");
+				Localization.setLanguage("en");
 			}
 		}, function() {
 			QUnit.test("admin change with value 'string1' and no translation texts", function (assert) {

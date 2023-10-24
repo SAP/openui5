@@ -992,7 +992,7 @@ sap.ui.define([
 		assert.equal(oHandleTerminateSpy.callCount, 1, "_handleTerminate on UploadCollection was called.");
 
 		// Clean up
-		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = Element.getElementById(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.destroy();
 	});
 
@@ -1003,7 +1003,7 @@ sap.ui.define([
 		});
 		this.oUploadCollection._handleTerminate({}, oItem);
 		oCore.applyChanges();
-		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = Element.getElementById(this.oUploadCollection.getId() + "deleteDialog");
 		assert.ok(oDialog.getDomRef(), "Dialog was rendered.");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
@@ -1055,7 +1055,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		// Call termination
 		this.oUploadCollection._handleTerminate({}, oItem);
-		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = Element.getElementById(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
 			done();
@@ -1080,7 +1080,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		// Call termination
 		this.oUploadCollection._handleTerminate({}, oItem);
-		var oDialog = oCore.byId(this.oUploadCollection.getId() + "deleteDialog");
+		var oDialog = Element.getElementById(this.oUploadCollection.getId() + "deleteDialog");
 		oDialog.attachAfterClose(function() {
 			assert.ok(true, "Dialog is closed.");
 			done();
@@ -1605,7 +1605,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oCore.byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
+		assert.equal(Element.getElementById(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadProgress, "Correct uploadProgress text");
 		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-valuenow"), "50", "Correct ARIA-valuenow attribute");
 	});
 
@@ -1638,7 +1638,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		//Assert
-		assert.equal(oCore.byId(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
+		assert.equal(Element.getElementById(this.oUploadCollection.aItems[0].sId + "-ta_progress").getText(), sUploadCompleted, "Correct uploadCompleted text");
 		assert.equal(document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_indicator").getAttribute("aria-label"), sUploadCompleted, "Correct ARIA-label attribute");
 	});
 
@@ -2301,12 +2301,12 @@ sap.ui.define([
 	QUnit.test("Edit", function(assert) {
 		//trigger edit button of line 2 and check the status of the line
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-		assert.equal(window.getComputedStyle(oCore.byId(sEditButtonId).getDomRef().parentElement).alignSelf, "center", "Button Container is Center Alligned");
-		oCore.byId(sEditButtonId).firePress();
+		assert.equal(window.getComputedStyle(Element.getElementById(sEditButtonId).getDomRef().parentElement).alignSelf, "center", "Button Container is Center Alligned");
+		Element.getElementById(sEditButtonId).firePress();
 		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[1].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		assert.equal(oCore.byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(Element.getElementById(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text for Edited element is empty.");
 
 		var oInputField1 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
@@ -2325,16 +2325,16 @@ sap.ui.define([
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[1].sId);
 		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'cancel'");
-		assert.notEqual(oCore.byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
-		assert.equal(oCore.byId(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.notEqual(Element.getElementById(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(Element.getElementById(this.oUploadCollection.aItems[1].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		//check file name after cancel
-		var sFileNameField = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		var sFileNameField = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		assert.equal("Notes.txt", sFileNameField, "Filename is correct after 'cancel'");
 
 		//check save
-		oCore.byId(sEditButtonId).firePress();
+		Element.getElementById(sEditButtonId).firePress();
 		oCore.applyChanges();
 		var oInputField2 = this.oUploadCollection.aItems[1].$("ta_editFileName-inner");
 		oInputField2[0].value = "NewDocument";
@@ -2347,16 +2347,16 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.aItems[1]._status, "display", "Item 2 has status 'display' after 'ok'");
 
 		//check changed file name after save
-		var sFileNameField = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
+		var sFileNameField = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL").getProperty("text");
 		assert.equal("NewDocument.txt", sFileNameField, "Changed filename (NewDocument) is correct saved");
 
 		//check sameFileNameAllowed == false!
 		var sEditButtonId2 = this.oUploadCollection.aItems[2].sId + "-editButton";
-		oCore.byId(sEditButtonId2).firePress();
+		Element.getElementById(sEditButtonId2).firePress();
 		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "Edit", "Item 2 has status 'Edit'");
 		assert.equal(this.oUploadCollection.aItems[2].sId, this.oUploadCollection.editModeItem, "EditModeItem is set correct");
-		assert.equal(oCore.byId(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(Element.getElementById(this.oUploadCollection.editModeItem + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText() , "Invisible Text for Editetd element is empty.");
 
 		var oInputField3 = this.oUploadCollection.aItems[2].$("ta_editFileName-inner");
@@ -2365,15 +2365,15 @@ sap.ui.define([
 		oEvent.target.id = this.oUploadCollection.aItems[2].sId;
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
 		oCore.applyChanges();
-		var bShowValueStateMessage = oCore.byId(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
+		var bShowValueStateMessage = Element.getElementById(this.oUploadCollection.aItems[2].sId + "-ta_editFileName").getShowValueStateMessage();
 		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because the file name still exists");
 		assert.equal(this.oUploadCollection.sErrorState, "Error", "Error state is set");
 
 		// edit and delete buttons in case duplicated file name entered
-		var oEditButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		var oEditButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		var oDeleteButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		var oDeleteButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		var oEditButton0 = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton1 = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton0 = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton1 = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton0.getEnabled(), false, "Edit button of item 1 is NOT enabled");
 		assert.equal(oEditButton1.getEnabled(), false, "Edit button of item 2 is NOT enabled");
 		assert.equal(oDeleteButton0.getEnabled(), false, "Delete button of item 1 is NOT enabled");
@@ -2383,24 +2383,24 @@ sap.ui.define([
 		this.oUploadCollection._handleClick(oEvent, this.oUploadCollection.aItems[2].sId);
 		oCore.applyChanges();
 		assert.equal(this.oUploadCollection.aItems[2]._status, "display", "Item 3 has status 'display' after 'cancel'");
-		assert.notEqual(oCore.byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
-		assert.equal(oCore.byId(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
+		assert.notEqual(Element.getElementById(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], this.oUploadCollection.oInvisibleText.getId(), "Invisible Text ID is set correct");
+		assert.equal(Element.getElementById(this.oUploadCollection.aItems[2].sId + "-cli").getAriaLabelledBy()[0], undefined, "Invisible Text for the ListItem is set Correctly.");
 		assert.ok(!this.oUploadCollection.oInvisibleText.getText(), "Invisible Text is empty.");
 
 		// edit and delete buttons
-		oEditButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
-		oEditButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		oDeleteButton0 = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
-		oDeleteButton1 = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		oEditButton0 = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-editButton");
+		oEditButton1 = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-editButton");
+		oDeleteButton0 = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		oDeleteButton1 = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton0.getEnabled(), true, "Edit button of item 1 is enabled");
 		assert.equal(oEditButton1.getEnabled(), true, "Edit button of item 2 is enabled");
 		assert.equal(oDeleteButton0.getEnabled(), true, "Delete button of item 1 is enabled");
 		assert.equal(oDeleteButton1.getEnabled(), true, "Delete button of item 2 is enabled");
 
-		var oEditButton2 = oCore.byId(this.oUploadCollection.aItems[2].sId + "-editButton");
-		var oEditButton3 = oCore.byId(this.oUploadCollection.aItems[3].sId + "-editButton");
-		var oDeleteButton2 = oCore.byId(this.oUploadCollection.aItems[2].sId + "-deleteButton");
-		var oDeleteButton3 = oCore.byId(this.oUploadCollection.aItems[3].sId + "-deleteButton");
+		var oEditButton2 = Element.getElementById(this.oUploadCollection.aItems[2].sId + "-editButton");
+		var oEditButton3 = Element.getElementById(this.oUploadCollection.aItems[3].sId + "-editButton");
+		var oDeleteButton2 = Element.getElementById(this.oUploadCollection.aItems[2].sId + "-deleteButton");
+		var oDeleteButton3 = Element.getElementById(this.oUploadCollection.aItems[3].sId + "-deleteButton");
 		assert.equal(oEditButton2.getEnabled(), false, "Edit button of item 3 is NOT enabled");
 		assert.equal(oEditButton3.getEnabled(), false, "Edit button of item 4 is NOT enabled");
 		assert.equal(oDeleteButton2.getEnabled(), false, "Delete button of item 3 is NOT enabled");
@@ -2411,7 +2411,7 @@ sap.ui.define([
 	QUnit.test("Cancel with different event target", function(assert) {
 		// Arrange
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-		oCore.byId(sEditButtonId).firePress();
+		Element.getElementById(sEditButtonId).firePress();
 		oCore.applyChanges();
 
 		var oSpy = this.spy(UploadCollection.prototype, "_handleCancel");
@@ -2439,7 +2439,7 @@ sap.ui.define([
 		var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
 
 		this.oUploadCollection.invalidate();
-		oCore.byId(sEditButtonId).firePress();
+		Element.getElementById(sEditButtonId).firePress();
 		oCore.applyChanges();
 
 		//Act
@@ -2463,7 +2463,7 @@ sap.ui.define([
 			this.oUploadCollection.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			var sEditButtonId = this.oUploadCollection.aItems[1].sId + "-editButton";
-			oCore.byId(sEditButtonId).firePress();
+			Element.getElementById(sEditButtonId).firePress();
 			oCore.applyChanges();
 
 			this.oUploadCollection.aItems[1].setFileName("");
@@ -2490,8 +2490,8 @@ sap.ui.define([
 
 	QUnit.test("Delete the file name in edit", function(assert) {
 		oCore.applyChanges();
-		var bShowValueStateMessage = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
-		var sValueState = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
+		var bShowValueStateMessage = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getShowValueStateMessage();
+		var sValueState = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-ta_editFileName").getValueState();
 
 		assert.equal(bShowValueStateMessage, true, "Error message has to be shown, because no file name entered");
 		assert.equal(sValueState, "Error", "Error value state set");
@@ -2536,9 +2536,9 @@ sap.ui.define([
 			assert.equal(this.oUploadCollection.aItems[i]._status, "display", "Status of item " + i + " is correct");
 		}
 
-		var oFileName = oCore.byId(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
-		var oEditButton = oCore.byId(this.oUploadCollection.aItems[1].sId + "-editButton");
-		var oDeleteButton = oCore.byId(this.oUploadCollection.aItems[1].sId + "-deleteButton");
+		var oFileName = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-ta_filenameHL");
+		var oEditButton = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-editButton");
+		var oDeleteButton = Element.getElementById(this.oUploadCollection.aItems[1].sId + "-deleteButton");
 		assert.equal(oEditButton.getEnabled(), true, "Edit button is enabled");
 		assert.equal(oDeleteButton.getEnabled(), true, "Delete button is enabled");
 		assert.equal(oFileName.getEnabled(), true, "File name is enabled");
@@ -2550,7 +2550,7 @@ sap.ui.define([
 
 		//Act
 		// An event is triggered, because there is a url provided at item[1]
-		oCore.byId(this.oUploadCollection.getItems()[1].getId() + "-ia_iconHL").firePress();
+		Element.getElementById(this.oUploadCollection.getItems()[1].getId() + "-ia_iconHL").firePress();
 		oCore.applyChanges();
 
 		//Assert
@@ -2563,7 +2563,7 @@ sap.ui.define([
 
 		//Act
 		// No event is triggered, because there is no url provided at item[0]
-		oCore.byId(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL").firePress();
+		Element.getElementById(this.oUploadCollection.getItems()[0].getId() + "-ia_iconHL").firePress();
 		oCore.applyChanges();
 
 		//Assert
@@ -2876,26 +2876,26 @@ sap.ui.define([
 	});
 
 	QUnit.test("Icon", function(assert) {
-		var oIcon = oCore.byId(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
+		var oIcon = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		var $Icon = document.getElementById(this.oUploadCollection.aItems[0].sId + "-ia_iconHL");
 		assert.strictEqual(oIcon.getAlt(), "textForIconOfItemSusanBaker", "The icon has correct alt text");
 		assert.strictEqual($Icon.getAttribute("aria-label"), "textForIconOfItemSusanBaker", "The DOM object icon has correct tooltip");
 	});
 
 	QUnit.test("Image", function(assert) {
-		var oImage = oCore.byId(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
+		var oImage = Element.getElementById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		var $Image = document.getElementById(this.oUploadCollection.aItems[3].sId + "-ia_imageHL");
 		assert.strictEqual(oImage.getAlt(), "textForImageOfItemKateBrown", "The image has correct alt text");
 		assert.strictEqual($Image.getAttribute("aria-label"), "textForImageOfItemKateBrown", "The DOM object image has correct tooltip");
 	});
 
 	QUnit.test("Edit Button", function(assert) {
-		var oEditButton = oCore.byId(this.oUploadCollection.aItems[0].sId + "-editButton");
+		var oEditButton = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-editButton");
 		assert.strictEqual(oEditButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_EDITBUTTON_TEXT"), "The edit button has correct tooltip");
 	});
 
 	QUnit.test("Delete Button", function(assert) {
-		var oDeleteButton = oCore.byId(this.oUploadCollection.aItems[0].sId + "-deleteButton");
+		var oDeleteButton = Element.getElementById(this.oUploadCollection.aItems[0].sId + "-deleteButton");
 		assert.strictEqual(oDeleteButton.getTooltip(), this.oUploadCollection._oRb.getText("UPLOADCOLLECTION_DELETEBUTTON_TEXT"), "The delete button has correct tooltip");
 	});
 
@@ -2908,7 +2908,7 @@ sap.ui.define([
 					id: oListItem.getId()
 				}
 			},
-			oEditButton = oCore.byId(sUCItemId + "-editButton"),
+			oEditButton = Element.getElementById(sUCItemId + "-editButton"),
 			oFirePressStub = this.stub(oEditButton, "firePress"),
 			oHandleClickStub = this.stub(this.oUploadCollection, "_handleClick");
 		this.oUploadCollection.editModeItem = this.oUploadCollection.getItems()[1].getId();
@@ -2964,7 +2964,7 @@ sap.ui.define([
 					id: sUCItemId + "-cli"
 				}
 			},
-			oDeleteButton = oCore.byId(sUCItemId + "-deleteButton"),
+			oDeleteButton = Element.getElementById(sUCItemId + "-deleteButton"),
 			oFirePressStub = this.stub(oDeleteButton, "firePress");
 		//Act
 		this.oUploadCollection._handleDEL(oPressEvent);
@@ -3161,7 +3161,7 @@ sap.ui.define([
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
 		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCozy");
 
-		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		var aUploadCollectionItemsDomRef = Element.getElementById("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
 		//Act
 		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
 			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();
@@ -3178,7 +3178,7 @@ sap.ui.define([
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
 		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCompact");
 
-		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		var aUploadCollectionItemsDomRef = Element.getElementById("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
 		//Act
 		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
 			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();
@@ -3195,7 +3195,7 @@ sap.ui.define([
 		this.oUploadCollection.setMode(ListMode.MultiSelect);
 		document.getElementsByTagName("html")[0].classList.add("sapUiSizeCondensed");
 
-		var aUploadCollectionItemsDomRef = sap.ui.getCore().byId("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
+		var aUploadCollectionItemsDomRef = Element.getElementById("uploadCollection").getDomRef().querySelectorAll(".sapMLIB");
 		//Act
 		for (var i = 0 ; i < aUploadCollectionItemsDomRef.length; i++) {
 			var oCheckBoxDomRef = aUploadCollectionItemsDomRef[i].querySelector(".sapMCbBg").getBoundingClientRect();

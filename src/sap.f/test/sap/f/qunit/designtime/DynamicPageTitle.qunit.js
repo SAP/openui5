@@ -1,20 +1,20 @@
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/f/DynamicPageTitle",
 	"sap/m/Text",
 	"sap/m/Title",
-	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/m/Button"
 ],
 function (
+	Element,
 	elementDesigntimeTest,
 	elementActionTest,
 	DynamicPageTitle,
 	Text,
 	Title,
-	Button,
-	Core
+	Button
 ) {
 	"use strict";
 
@@ -415,9 +415,9 @@ function (
 			assert.strictEqual( oViewAfterAction.byId("title").getActions().length, 1, "then the DynamicPageTitle contains 1 combined action");
 			// destroy controls which are no longer part of the view after combine command
 			// to avoid duplicate id errors
-			Core.byId("comp---view--action1").destroy();
-			Core.byId("comp---view--action2").destroy();
-			Core.byId("comp---view--action3").destroy();
+			Element.getElementById("comp---view--action1").destroy();
+			Element.getElementById("comp---view--action2").destroy();
+			Element.getElementById("comp---view--action3").destroy();
 		};
 		var fnConfirmCombinedActionElementsAreSplit = function (oUiComponent, oViewAfterAction, assert) {
 			assert.strictEqual( oViewAfterAction.byId("title").getActions().length, 3, "then the DynamicPageTitle contains 3 actions");
@@ -469,7 +469,7 @@ function (
 			assert.strictEqual( aActions[1].getId(), "btn2",
 				"then the second button has the correct id");
 
-			Core.byId("comp---view--menubtn").destroy();
+			Element.getElementById("comp---view--menubtn").destroy();
 		};
 
 		var fnConfirmSplitActionElementsAreCombined = function (oUiComponent, oViewAfterAction, assert) {

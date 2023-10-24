@@ -1,10 +1,12 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/SelectFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
-], function (
+], function(
+	Element,
 	SelectFilter,
 	Card,
 	Core
@@ -145,7 +147,7 @@ sap.ui.define([
 		var oSF = new SelectFilter({
 			config: oConfig
 		});
-		var oLabel = Core.byId(oSF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Element.getElementById(oSF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

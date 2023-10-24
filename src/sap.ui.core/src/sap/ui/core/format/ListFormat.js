@@ -4,14 +4,14 @@
 
 // Provides class sap.ui.core.format.ListFormat
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/core/Configuration"
+	"sap/base/util/isEmptyObject"
 ],
-	function(Locale, LocaleData, Log, extend, isEmptyObject, Configuration) {
+	function(Formatting, Locale, LocaleData, Log, extend, isEmptyObject) {
 	"use strict";
 
 	/**
@@ -66,7 +66,7 @@ sap.ui.define([
 		}
 
 		if (!oLocale) {
-			oLocale = Configuration.getFormatSettings().getFormatLocale();
+			oLocale = new Locale(Formatting.getLanguageTag());
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);

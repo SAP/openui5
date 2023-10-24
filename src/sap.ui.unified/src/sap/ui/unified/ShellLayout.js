@@ -4,9 +4,12 @@
 
 // Provides control sap.ui.unified.ShellLayout.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/Device',
 	'sap/ui/core/Control',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Popup',
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/theming/Parameters',
 	'./SplitContainer',
 	'./library',
@@ -18,9 +21,12 @@ sap.ui.define([
 	// jQuery Plugin "firstFocusableDomRef"
 	'sap/ui/dom/jquery/Focusable'
 ], function(
+	Localization,
 	Device,
 	Control,
+	ControlBehavior,
 	Popup,
+	RenderManager,
 	Parameters,
 	SplitContainer,
 	library,
@@ -120,7 +126,7 @@ sap.ui.define([
 	}
 
 	ShellLayout.prototype.init = function(){
-		this._rtl = Configuration.getRTL();
+		this._rtl = Localization.getRTL();
 		this._animation = Configuration.getAnimation();
 		this._showHeader = true;
 		this._showCurtain = false;
@@ -129,7 +135,7 @@ sap.ui.define([
 
 		this._cont = new SplitContainer(this.getId() + "-container");
 		this._cont._bRootContent = true; // see e.g. sap.m.App#onAfterRendering
-		if (Configuration.getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			var that = this;
 			this._cont.addEventDelegate({
 				onAfterRendering : function() {
@@ -325,7 +331,7 @@ sap.ui.define([
 			if (!oHeader) {
 				this.$("hdrcntnt").html("");
 			} else {
-				var rm = sap.ui.getCore().createRenderManager();
+				var rm = new RenderManager().getInterface();
 				rm.renderControl(oHeader);
 				rm.flush(this.getDomRef("hdrcntnt"));
 				rm.destroy();

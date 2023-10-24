@@ -6,10 +6,11 @@
 sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Lib",
 	'sap/ui/core/theming/Parameters',
 	'./FormHelper',
 	'sap/base/Log'
-	], function(Element, ManagedObjectObserver, Parameters, FormHelper, Log) {
+], function(Element, ManagedObjectObserver, Library, Parameters, FormHelper, Log) {
 	"use strict";
 
 
@@ -122,7 +123,7 @@ sap.ui.define([
 		this._oInitPromise = FormHelper.init(); // check for used library and request needed controls
 
 
-		this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.layout");
+		this._rb = Library.getResourceBundleFor("sap.ui.layout");
 
 		this._oObserver = new ManagedObjectObserver(this._observeChanges.bind(this));
 

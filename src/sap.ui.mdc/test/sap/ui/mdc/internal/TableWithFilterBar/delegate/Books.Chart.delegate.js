@@ -6,13 +6,13 @@ sap.ui.define([
 	"delegates/odata/v4/ODataMetaModelUtil",
 	"./Books.FB.delegate",
 	"./GridTable.delegate",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/enums/FieldDisplay",
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/ChartItemRoleType",
 	"delegates/util/DelegateCache"
-], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, FieldDisplay, OperatorName, Log, Core, ChartItemRoleType, DelegateCache) {
+], function(ChartDelegate, ODataMetaModelUtil, BooksFBDelegate, GridTableDelegate, Element, FieldDisplay, OperatorName, Log, ChartItemRoleType, DelegateCache) {
 	"use strict";
 
 	var SampleChartDelegate = Object.assign({}, ChartDelegate);
@@ -245,7 +245,7 @@ sap.ui.define([
 	SampleChartDelegate.updateBindingInfo = function(oChart, oBindingInfo) {
 		ChartDelegate.updateBindingInfo.apply(this, arguments);
 
-		var oFilterBar = Core.byId(oChart.getFilter());
+		var oFilterBar = Element.getElementById(oChart.getFilter());
 
 		if (oFilterBar) {
 			GridTableDelegate._updateSearch(oBindingInfo, oFilterBar);

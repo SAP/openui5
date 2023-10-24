@@ -6,13 +6,14 @@
 sap.ui.define([
 	"./library",
 	'sap/ui/base/ManagedObject',
+	"sap/ui/base/ManagedObjectMetadata",
+	"sap/ui/core/Element",
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	'./utils/TableUtils',
-	"sap/ui/core/Configuration"
+	'./utils/TableUtils'
 ],
-	function(Library, ManagedObject, syncStyleClass, Log, jQuery, TableUtils, Configuration) {
+	function(Library, ManagedObject, ManagedObjectMetadata, Element, syncStyleClass, Log, jQuery, TableUtils) {
 	"use strict";
 
 	// shortcut for sap.ui.table.ResetAllMode
@@ -415,7 +416,7 @@ sap.ui.define([
 	};
 
 	TablePersoController.prototype._getTable = function() {
-		return sap.ui.getCore().byId(this.getTable());
+		return Element.getElementById(this.getTable());
 	};
 
 	TablePersoController.prototype._getColumnPersoKey = function(oColumn) {
@@ -426,7 +427,7 @@ sap.ui.define([
 		var sPersoKey = oControl.data(this.getCustomDataKey());
 		if (!sPersoKey) {
 			sPersoKey = oControl.getId();
-			if (sPersoKey.indexOf(Configuration.getUIDPrefix()) === 0) {
+			if (sPersoKey.indexOf(ManagedObjectMetadata.getUIDPrefix()) === 0) {
 				Log.warning("Generated IDs should not be used as personalization keys! The stability cannot be ensured! (Control: \"" + oControl.getId() + "\")");
 			}
 		}

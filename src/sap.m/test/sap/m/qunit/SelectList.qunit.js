@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/SelectList",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	SelectList,
@@ -3351,7 +3353,7 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(aDomRefs.length, 1);
-		assert.ok(oEnabledItem === Core.byId(aDomRefs[0].id));
+		assert.ok(oEnabledItem === Element.getElementById(aDomRefs[0].id));
 
 		// cleanup
 		oSelectList.destroy();

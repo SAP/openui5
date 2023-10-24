@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/test/TestUtils",
@@ -39,6 +41,8 @@ sap.ui.define([
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
 ], function(
+	Localization,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	TestUtils,
@@ -332,7 +336,7 @@ sap.ui.define([
 		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
 		assert.ok(oIconOne.getDecorative(), "icon is decorative");
 		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
-		assert.strictEqual(oIconOne.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT") , "icon alt is present");
+		assert.strictEqual(oIconOne.getAlt(), Library.getResourceBundleFor("sap.m").getText("OPEN_PICKER_TEXT") , "icon alt is present");
 
 		// arrange
 		var oTouchStub = this.stub(Device, "support").value({touch: true});
@@ -1325,7 +1329,7 @@ sap.ui.define([
 		// On a desktop (non-touch) device
 		Device.support.touch = false;
 		Device.system.desktop = true;
-		oCore.byId("DP5").focus();
+		Element.getElementById("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
 		oCore.applyChanges();
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
@@ -1380,7 +1384,7 @@ sap.ui.define([
 		qutils.triggerEvent("click", "DP3-icon");
 		oCore.applyChanges();
 		assert.ok(sap.ui.require("sap/ui/unified/Calendar"), "sap.ui.unified.Calendar now loaded");
-		assert.ok(oCore.byId("DP3-cal"), "DP3: calender exists");
+		assert.ok(Element.getElementById("DP3-cal"), "DP3: calender exists");
 		assert.ok(oDP3._oPopup, "DP3: popup exists");
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
@@ -1884,7 +1888,7 @@ sap.ui.define([
 		oDP3.destroySpecialDates();
 		oCore.applyChanges();
 		assert.equal(oDP3.getSpecialDates().length, 0, "0 SpecialDates in Aggregation");
-		assert.ok(!oCore.byId("SD1"), "Special date control don't exits any more");
+		assert.ok(!Element.getElementById("SD1"), "Special date control don't exits any more");
 		oCore.applyChanges();
 
 		setTimeout( function(){
@@ -1969,7 +1973,7 @@ sap.ui.define([
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
@@ -1992,7 +1996,7 @@ sap.ui.define([
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
@@ -2044,7 +2048,7 @@ sap.ui.define([
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
@@ -2066,7 +2070,7 @@ sap.ui.define([
 		oDP.toggleOpen(oDP.isOpen());
 
 		// Assert
-		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "Calendar is visible");
@@ -2083,7 +2087,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					oCore.byId("HDP").openBy(this.getDomRef());
+					Element.getElementById("HDP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -2094,7 +2098,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(oCore.byId(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDP.getId() + "-cal"), oDP.getId() + ": calender exists");
 		assert.ok(oDP._oPopup, oDP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "picker is visible");
@@ -2120,7 +2124,7 @@ sap.ui.define([
 
 	QUnit.test("aria-roledescription", function(assert) {
 		var oDP = new DatePicker(),
-			sRoledescription = oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
+			sRoledescription = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATEINPUT");
 
 		oDP.placeAt("uiArea4");
 		oCore.applyChanges();
@@ -2151,7 +2155,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -3099,12 +3103,12 @@ sap.ui.define([
 			var sTZ1 = "Europe/Sofia";
 			var sTZ2 = "Etc/GMT-12";
 
-			this.localTimezone = oCore.getConfiguration().getTimezone();
-			oCore.getConfiguration().setTimezone(this.localTimezone !== sTZ2 ? sTZ2 : sTZ1);
+			this.localTimezone = Localization.getTimezone();
+			Localization.setTimezone(this.localTimezone !== sTZ2 ? sTZ2 : sTZ1);
 			oCore.applyChanges();
 		},
 		after: function() {
-			oCore.getConfiguration().setTimezone(this.localTimezone);
+			Localization.setTimezone(this.localTimezone);
 			oCore.applyChanges();
 		}
 	});

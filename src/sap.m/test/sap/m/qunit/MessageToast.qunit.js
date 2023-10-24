@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
 	"sap/m/Page",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Element,
 	createAndAppendDiv,
 	App,
 	Page,
@@ -180,7 +182,7 @@ sap.ui.define([
 		});
 	};
 
-	isValidOf("of", oCore.byId("myApp"), 0);
+	isValidOf("of", Element.getElementById("myApp"), 0);
 	isValidOf("of", jQuery("html")[0], 0);
 	isValidOf("of", jQuery("html"), 0);
 	isValidOf("of", window, 0);

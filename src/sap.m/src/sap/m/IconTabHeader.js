@@ -6,9 +6,12 @@
 
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/EnabledPropagator',
+	"sap/ui/core/Lib",
 	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/core/InvisibleText",
 	'sap/ui/core/ResizeHandler',
@@ -24,9 +27,12 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes"
 ], function(
 	library,
+	Localization,
 	Core,
 	Control,
+	Element,
 	EnabledPropagator,
+	Library,
 	ItemNavigation,
 	InvisibleText,
 	ResizeHandler,
@@ -268,7 +274,7 @@ sap.ui.define([
 	 *
 	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	EnabledPropagator.apply(IconTabHeader.prototype, [true]);
 
@@ -320,7 +326,7 @@ sap.ui.define([
 
 		this._bIsRendered = false;
 
-		this._bRtl = Core.getConfiguration().getRTL();
+		this._bRtl = Localization.getRTL();
 
 		if (this._sResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
@@ -1328,7 +1334,7 @@ sap.ui.define([
 				if ($target.hasClass('sapMITBFilterIcon') || $target.hasClass('sapMITBCount') || $target.hasClass('sapMITBText') || $target.hasClass('sapMITBTab') || $target.hasClass('sapMITBContentArrow') || $target.hasClass('sapMITBSep') || $target.hasClass('sapMITBSepIcon')) {
 					// click on icon: fetch filter instead
 					sControlId = oEvent.srcControl.getId().replace(/-icon$/, "");
-					oControl = Core.byId(sControlId);
+					oControl = Element.getElementById(sControlId);
 					if (oControl.getMetadata().isInstanceOf("sap.m.IconTab") && !(oControl instanceof IconTabSeparator)) {
 
 						if (this._isUnselectable(oControl)) {

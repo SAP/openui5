@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/SuggestionItem",
@@ -11,8 +12,10 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	SuggestionItem,
@@ -89,7 +92,7 @@ sap.ui.define([
 		assert.ok(!!jQuery(".sapMSuL:visible").length, "The suggestions list is visible");
 
 		var popupId = jQuery(".sapMSuL:visible").parents(".sapMPopup-CTX").attr("id");
-		var popup = Core.byId(popupId);
+		var popup = Element.getElementById(popupId);
 		assert.ok(!!popup, "popup exists");
 
 		assert.ok(popup.getDomRef().style.minWidth, 'popup min-width is set');

@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/P13nDialog",
 	"sap/m/P13nGroupPanel",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element"
 ], function(
+	Library,
 	createAndAppendDiv,
 	P13nDialog,
 	P13nGroupPanel,
@@ -67,7 +69,7 @@ sap.ui.define([
 			assert.deepEqual(this.oP13nDialog.getPanels(), []);
 			assert.strictEqual(this.oP13nDialog.getVisiblePanel(), null);
 
-			assert.strictEqual(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.strictEqual(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.strictEqual(this.oP13nDialog.getVerticalScrolling(), true, "getVerticalScrolling is true");
 			assert.strictEqual(this.oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
 			assert.strictEqual(this.oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
@@ -94,7 +96,7 @@ sap.ui.define([
 			assert.deepEqual(this.oP13nDialog.getPanels(), []);
 			assert.strictEqual(this.oP13nDialog.getVisiblePanel(), null);
 
-			assert.strictEqual(this.oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.strictEqual(this.oP13nDialog.getCustomHeader().getContentMiddle()[0].getText(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.strictEqual(this.oP13nDialog.getVerticalScrolling(), false, "getVerticalScrolling is false");
 			assert.strictEqual(this.oP13nDialog.getButtons().length, 3, "OK, Cancel and Reset buttons");
 			assert.strictEqual(this.oP13nDialog.getButtons()[0].getVisible(), true, "OK button is visible");
@@ -182,7 +184,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -199,7 +201,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.filter);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -216,7 +218,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 			done();
 		}.bind(this));
@@ -258,7 +260,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel(), null);
 			done();
 		}.bind(this));
@@ -288,7 +290,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -309,7 +311,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.filter);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -330,7 +332,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), P13nPanelType.sort);
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
@@ -351,7 +353,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.filter);
 
 			assert.equal(Device.system.phone, false);
@@ -371,7 +373,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog.getPanels().length, 2);
 			assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "");
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_SORT"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_TITLE_SORT"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.sort);
 
 			assert.equal(Device.system.phone, false);
@@ -399,7 +401,7 @@ sap.ui.define([
 
 			//we expect both panels to be visible, therefore the navigation is required and the dialog needs to display 'View Settings'
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
@@ -427,7 +429,7 @@ sap.ui.define([
 			assert.equal(this.oP13nDialog._isNavigationControlExpected(), false);
 
 			//same behavior expected as if there were two different panels
-			assert.equal(this.oP13nDialog.getTitle(), oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_COLUMNS"));
+			assert.equal(this.oP13nDialog.getTitle(), Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_TITLE_COLUMNS"));
 			assert.equal(this.oP13nDialog.getVisiblePanel().getType(), P13nPanelType.columns);
 
 			assert.equal(Device.system.phone, false);
@@ -546,7 +548,7 @@ sap.ui.define([
 
 			// assertions
 			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			done();
 			oDialog.destroy();
@@ -572,7 +574,7 @@ sap.ui.define([
 
 			// assertions
 			assert.ok(oDialog);
-			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + oCore.getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
+			assert.strictEqual(oDialog.getContent()[0].getText(), "Dummy Warning..." + "\n" + Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION"));
 
 			done();
 			oDialog.destroy();
@@ -678,7 +680,7 @@ sap.ui.define([
 			// Post assertions
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getPanels()[0].getId(), "P1");
-			assert.notOk(!!oCore.byId("P2-navItem"), "navigation item destroyed after removing panel");
+			assert.notOk(!!Element.getElementById("P2-navItem"), "navigation item destroyed after removing panel");
 
 			assert.equal(this.oP13nDialog.getSubHeader().getId(), "PD1-navigationBar");
 			assert.equal(this.oP13nDialog.getSubHeader().getContentLeft().length, 1);
@@ -760,7 +762,7 @@ sap.ui.define([
 			// Post assertions
 			assert.equal(this.oP13nDialog.getPanels().length, 1);
 			assert.equal(this.oP13nDialog.getPanels()[0].getId(), "P1");
-			assert.notOk(!!oCore.byId("P2-navItem"), "navigation item destroyed after removing panel");
+			assert.notOk(!!Element.getElementById("P2-navItem"), "navigation item destroyed after removing panel");
 
 			assert.equal(this.oP13nDialog.getSubHeader(), undefined);
 

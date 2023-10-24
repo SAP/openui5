@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.f.PlanningCalendarInCardLegend.
-sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendItem', './PlanningCalendarInCardLegendRenderer', 'sap/ui/core/Core'],
-	function(PlanningCalendarLegend, CalendarLegendItem, PlanningCalendarInCardLegendRenderer, Core) {
+sap.ui.define(['sap/m/PlanningCalendarLegend', "sap/ui/core/Lib", 'sap/ui/unified/CalendarLegendItem', './PlanningCalendarInCardLegendRenderer'],
+	function(PlanningCalendarLegend, Library, CalendarLegendItem, PlanningCalendarInCardLegendRenderer) {
 		"use strict";
 
 
@@ -58,7 +58,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendIte
 		 */
 		PlanningCalendarInCardLegend.prototype._getMoreItemsText = function (iItemsLeft) {
 			if (!this._oItemsLink) {
-				var oRB = Core.getLibraryResourceBundle("sap.f");
+				var oRB = Library.getResourceBundleFor("sap.f");
 				this._oItemsLink = new CalendarLegendItem({
 					text: oRB.getText("CALENDAR_LEGEND_MORE") + " (" + iItemsLeft + ")"
 				});

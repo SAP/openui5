@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/m/IllustratedMessage",
 	"sap/m/library",
+	"sap/ui/core/Element",
 	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel"
-], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, MLib, Filter, JSONModel) {
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, mobileLibrary, IllustratedMessage, MLib, Element, Filter, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.PlacementType
@@ -84,7 +85,7 @@ sap.ui.define([
 		let oChart;
 		const sId = this.getChart();
 		if (sId) {
-			oChart = sap.ui.getCore().byId(sId);
+			oChart = Element.getElementById(sId);
 		}
 
 		return oChart;

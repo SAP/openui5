@@ -1,13 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Log, Icon, InvisibleText, jQuery, Configuration, Element, nextUIUpdate) {
+], function(Log, Localization, Icon, InvisibleText, Library, jQuery, Element, nextUIUpdate) {
 	"use strict";
 
 	var oDIV = document.createElement("div");
@@ -69,7 +70,7 @@ sap.ui.define([
 
 	QUnit.test("Shared Instances", async function(assert) {
 		// Note: configuration enforces initial language 'en'
-		var sExpectedTextEN = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+		var sExpectedTextEN = Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR");
 
 		var textId = InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_ERROR");
 		assert.ok(textId && typeof textId === 'string', "getStaticId must return an ID");
@@ -82,9 +83,9 @@ sap.ui.define([
 		assert.equal(textId2, textId, "retrieving text ID a second time must return the same ID");
 
 		// switch language
-		Configuration.setLanguage("de");
+		Localization.setLanguage("de");
 		await nextUIUpdate();
-		var sExpectedTextDE = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR");
+		var sExpectedTextDE = Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR");
 		assert.notEqual(sExpectedTextEN, sExpectedTextDE, "texts should differ between 'en' and 'de'");
 
 		// check that text has been automatically updated by language switch

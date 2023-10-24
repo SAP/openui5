@@ -1,6 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/dt/enablement/elementDesigntimeTest",
 	"sap/ui/rta/enablement/elementActionTest",
 	"sap/ui/model/json/JSONModel",
@@ -8,7 +10,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
-], function (
+], function(
+	Localization,
+	Element,
 	elementDesigntimeTest,
 	elementActionTest,
 	JSONModel,
@@ -170,7 +174,7 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			var oFirstMenuItem = oCreatedMenuButton.getMenu().getItems()[0];
-			var oTextButton = oCore.byId(oCreatedMenuButton.getFocusDomRef().id);
+			var oTextButton = Element.getElementById(oCreatedMenuButton.getFocusDomRef().id);
 
 			// Select an item, then press the menu button
 			oCreatedMenuButton.getMenu().fireItemSelected({item: oFirstMenuItem});
@@ -507,9 +511,8 @@ sap.ui.define([
 			},
 			layer: "VENDOR",
 			before: function () {
-				var config = oCore.getConfiguration();
 				//turn on rtl for this test
-				sandbox.stub(config, "getRTL").returns(true);
+				sandbox.stub(Localization, "getRTL").returns(true);
 			},
 			after: function () {
 				sandbox.reset();

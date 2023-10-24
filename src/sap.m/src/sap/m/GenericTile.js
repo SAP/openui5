@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/m/Text',
 	'sap/ui/core/HTML',
@@ -14,6 +15,7 @@ sap.ui.define([
 	'sap/m/GenericTileLineModeRenderer',
 	'sap/m/Image',
 	'sap/ui/Device',
+	"sap/ui/core/Lib",
 	'sap/ui/core/ResizeHandler',
 	"sap/base/strings/camelize",
 	"sap/base/util/deepEqual",
@@ -21,12 +23,12 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Core",
 	"sap/ui/core/Theming"
-], function (
+], function(
 	library,
+	Localization,
 	Control,
 	Text,
 	HTML,
@@ -37,6 +39,7 @@ sap.ui.define([
 	LineModeRenderer,
 	Image,
 	Device,
+	Library,
 	ResizeHandler,
 	camelize,
 	deepEqual,
@@ -44,7 +47,6 @@ sap.ui.define([
 	Parameters,
 	jQuery,
 	coreLibrary,
-	Configuration,
 	InvisibleText,
 	Core,
 	Theming
@@ -358,7 +360,7 @@ sap.ui.define([
 	/* --- Lifecycle Handling --- */
 
 	GenericTile.prototype.init = function () {
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 		// Defines custom screen range set: smaller than or equal to 449px defines 'small' and bigger than 449px defines 'large' screen
 		if (!Device.media.hasRangeSet(DEVICE_SET)) {
@@ -963,7 +965,7 @@ sap.ui.define([
 			bLineBreak = this.$().is(":not(:first-child)") && iLines > 1,
 			$LineBreak = jQuery("<span><br></span>"),
 			i = 0,
-			bRTL = Configuration.getRTL(),
+			bRTL = Localization.getRTL(),
 			oEndMarkerPosition = $End.position();
 
 		if (bLineBreak) { //tile does not fit in line without breaking --> add line-break before tile

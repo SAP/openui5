@@ -5,6 +5,7 @@
 // Provides control sap.m.Text
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
@@ -12,7 +13,7 @@ sap.ui.define([
 	'sap/m/HyphenationSupport',
 	"./TextRenderer"
 ],
-function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
+function(library, Localization, Core, Control, coreLibrary, Device, HyphenationSupport, TextRenderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -307,7 +308,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 		}
 
 		// is text direction inherited as rtl
-		if (this.getTextDirection() == TextDirection.Inherit && Core.getConfiguration().getRTL()) {
+		if (this.getTextDirection() == TextDirection.Inherit && Localization.getRTL()) {
 			return false;
 		}
 

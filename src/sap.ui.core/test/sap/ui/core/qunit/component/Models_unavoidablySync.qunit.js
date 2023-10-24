@@ -1,9 +1,9 @@
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/base/Log",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v2/ODataModel",
@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/ui/model/xml/XMLModel",
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/test/v2models/parent/CustomModel"
-], function(jQuery, URLConfigurationProvider, Log, Component, Configuration) {
+], function(jQuery, Localization, URLConfigurationProvider, Log, Component) {
 
 
 	"use strict";
@@ -47,7 +47,7 @@ sap.ui.define([
 			}
 		},
 		stubGetUriParameters: function(mMockParams) {
-			var sSAPLanguage = Configuration.getSAPLogonLanguage();
+			var sSAPLanguage = Localization.getSAPLogonLanguage();
 
 			this.oConfigurationStub = sinon.stub(URLConfigurationProvider, 'get');
 			this.oConfigurationStub.withArgs('sapLanguage').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);

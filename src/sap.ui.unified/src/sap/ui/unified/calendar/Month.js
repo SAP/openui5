@@ -4,8 +4,11 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/Control',
 	'sap/ui/Device',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -21,14 +24,16 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/InvisibleMessage',
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/date/UI5Date',
 	"sap/base/Log"
 ], function(
+	Formatting,
 	Control,
 	Device,
+	Element,
+	Library,
 	LocaleData,
 	ItemNavigation,
 	CalendarUtils,
@@ -44,7 +49,6 @@ sap.ui.define([
 	KeyCodes,
 	jQuery,
 	InvisibleMessage,
-	Configuration,
 	CalendarWeekNumbering,
 	CalendarDateUtils,
 	UI5Date,
@@ -281,7 +285,7 @@ sap.ui.define([
 
 		this._bAlwaysShowSpecialDates = false;
 
-		this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		this._oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified");
 	};
 
 	Month.prototype._getAriaRole = function(){
@@ -394,7 +398,7 @@ sap.ui.define([
 
 	Month.prototype.onsapfocusleave = function(oEvent){
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.getElementById(oEvent.relatedControlId).getFocusDomRef())) {
 			if (this._bMouseMove) {
 				this._unbindMousemove(true);
 
@@ -555,7 +559,7 @@ sap.ui.define([
 		if (oParent && oParent.getLocale) {
 			return oParent.getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;
@@ -703,7 +707,7 @@ sap.ui.define([
 			return oParent._getPrimaryCalendarType();
 		}
 
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Formatting.getCalendarType();
 	};
 
 	/*

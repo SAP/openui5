@@ -7,13 +7,15 @@ sap.ui.define([
 	'./library',
 	'./TablePersoDialog',
 	'sap/ui/base/ManagedObject',
+	"sap/ui/base/ManagedObjectMetadata",
 	'sap/ui/base/ManagedObjectRegistry',
+	"sap/ui/core/Element",
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
 ],
-	function(library, TablePersoDialog, ManagedObject, ManagedObjectRegistry, syncStyleClass, Log, jQuery, Configuration) {
+	function(library, TablePersoDialog, ManagedObject, ManagedObjectMetadata, ManagedObjectRegistry, Element, syncStyleClass, Log, jQuery, Configuration) {
 	"use strict";
 
 	// shortcut for sap.m.ResetAllMode
@@ -359,7 +361,7 @@ sap.ui.define([
 						aColumnInfo.forEach(function(oColumnInfo){
 							var sGroup = null;
 							if (this.getPersoService().getGroup) {
-								var oTable = sap.ui.getCore().byId(oTablePersoDialog.getPersoDialogFor());
+								var oTable = Element.getElementById(oTablePersoDialog.getPersoDialogFor());
 								var oColumn = this._mTablePersMap[oTable][oColumnInfo.id];
 								sGroup = this.getPersoService().getGroup(oColumn);
 								oColumnInfo.group = sGroup;
@@ -435,7 +437,7 @@ sap.ui.define([
 				var oTableColumn = mPersoMap[oNewSetting.id];
 				if (!oTableColumn) {
 					//Fallback for deprecated personalization procedure
-					oTableColumn = sap.ui.getCore().byId(oNewSetting.id);
+					oTableColumn = Element.getElementById(oNewSetting.id);
 					if (oTableColumn) {
 						// migrate old persistence id which still contain generated column ids, example: __xmlview0--idColor
 						Log.info("Migrating personalization persistence id of column " + oNewSetting.id );
@@ -514,7 +516,7 @@ sap.ui.define([
 		if (oTablePersoDialog) {
 			// Need to refresh the map which contains columns and personalizations
 			// columns may have been removed or added. (CSN 0120031469 0000415411 2014)
-			oTablePersoDialog.setPersoMap(this._getPersoColumnMap(sap.ui.getCore().byId(oTablePersoDialog.getPersoDialogFor())));
+			oTablePersoDialog.setPersoMap(this._getPersoColumnMap(Element.getElementById(oTablePersoDialog.getPersoDialogFor())));
 		}
 	};
 
@@ -669,14 +671,14 @@ sap.ui.define([
 	 * @private
 	 */
 	TablePersoController.prototype._callFunctionForAllTables = function(fnToCall) {
-		var oTable = sap.ui.getCore().byId(this.getAssociation("table"));
+		var oTable = Element.getElementById(this.getAssociation("table"));
 		if (oTable) {
 			fnToCall.call(this, oTable);
 		}
 		var aTables = this.getAssociation("tables");
 		if (aTables) {
 			for ( var i = 0, iLength = this.getAssociation("tables").length; i < iLength; i++) {
-				oTable = sap.ui.getCore().byId(this.getAssociation("tables")[i]);
+				oTable = Element.getElementById(this.getAssociation("tables")[i]);
 				fnToCall.call(this, oTable);
 			}
 		}
@@ -692,7 +694,7 @@ sap.ui.define([
 	TablePersoController.prototype._isStatic = function (sId) {
 		// SUGGESTED IMPROVEMENT: make this an inline function of '_getPersoColumnMap'
 		// it is only used there
-		var sUidPrefix = Configuration.getUIDPrefix();
+		var sUidPrefix = ManagedObjectMetadata.getUIDPrefix();
 		var rGeneratedPrefix = new RegExp("^" + sUidPrefix);
 		return !rGeneratedPrefix.test(sId);
 	};

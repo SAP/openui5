@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/semantic/SemanticPage",
@@ -22,6 +23,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/base/strings/capitalize"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	SemanticPage,
@@ -259,7 +261,7 @@ sap.ui.define([
 		assert.strictEqual(oEditButton.getId(), "editBtn", "control has the expected id");
 
 		// Act
-		var oRetrievedBtn = Core.byId("editBtn");
+		var oRetrievedBtn = Element.getElementById("editBtn");
 
 		// Assert
 		assert.notEqual(oRetrievedBtn, undefined, "the button is retrieved by id");

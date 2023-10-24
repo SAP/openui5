@@ -1,9 +1,11 @@
 /*global QUnit, sinon*/
 
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/Calendar",
-	"sap/ui/core/Configuration",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
@@ -28,9 +30,11 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese"
 ], function(
+	Formatting,
+	Localization,
+	Element,
 	qutils,
 	Calendar,
-	Configuration,
 	DateRange,
 	DateTypeRange,
 	CalendarLegend,
@@ -49,11 +53,11 @@ sap.ui.define([
 	jQuery,
 	oCore,
 	UI5Date
-	) {
+) {
 
 	"use strict";
 	// set language to en-US, since we have specific language strings tested
-	oCore.getConfiguration().setLanguage("en_US");
+	Localization.setLanguage("en_US");
 
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var bSelectFired = false;
@@ -155,17 +159,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Week day orders", function(assert) {
-		var oMonthDomRef = oCore.byId("Cal1").getAggregation("month")[0].getDomRef(),
+		var oMonthDomRef = Element.getElementById("Cal1").getAggregation("month")[0].getDomRef(),
 			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
 		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for en-US");
 
-		oMonthDomRef = oCore.byId("Cal2").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = Element.getElementById("Cal2").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Mo", "Monday is the first weekday for de-DE");
 
-		oMonthDomRef = oCore.byId("Cal3").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = Element.getElementById("Cal3").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Di", "Thuesday is the first weekday for custom setting");
 
@@ -178,7 +182,7 @@ sap.ui.define([
 		this.oCal1.setCalendarWeekNumbering("ISO_8601");
 		oCore.applyChanges();
 
-		var oMonthDomRef = oCore.byId("Cal1").getAggregation("month")[0].getDomRef(),
+		var oMonthDomRef = Element.getElementById("Cal1").getAggregation("month")[0].getDomRef(),
 			aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 
 		assert.equal(aWeekHeaders.length, 7, "7 weekheaders rendered");
@@ -187,7 +191,7 @@ sap.ui.define([
 		this.oCal2.setCalendarWeekNumbering("MiddleEastern");
 		this.oCal2.setLocale("en-US");
 		oCore.applyChanges();
-		oMonthDomRef = oCore.byId("Cal2").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = Element.getElementById("Cal2").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Sat", "Saturday is the first weekday for MiddleEastern");
 
@@ -195,7 +199,7 @@ sap.ui.define([
 		this.oCal3.setLocale("en-US");
 		this.oCal3.setFirstDayOfWeek(-1);
 		oCore.applyChanges();
-		oMonthDomRef = oCore.byId("Cal3").getAggregation("month")[0].getDomRef();
+		oMonthDomRef = Element.getElementById("Cal3").getAggregation("month")[0].getDomRef();
 		aWeekHeaders = oMonthDomRef.querySelectorAll(".sapUiCalWH:not(.sapUiCalDummy)");
 		assert.equal(aWeekHeaders[0].textContent, "Sun", "Sunday is the first weekday for WesternTraditional");
 
@@ -421,7 +425,7 @@ sap.ui.define([
 		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2014 first week for WesternTraditional");
 		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for WesternTraditional");
 
-		oCore.getConfiguration().setLanguage("en-US");
+		Localization.setLanguage("en-US");
 		oCore.applyChanges();
 		this.oCal2.focusDate(UI5Date.getInstance(2011, 0, 10));
 
@@ -450,7 +454,7 @@ sap.ui.define([
 
 		// de-DE
 		// Prepare
-		oCore.getConfiguration().setLanguage("de-DE");
+		Localization.setLanguage("de-DE");
 		oCore.applyChanges();
 		this.oCal12 = new Calendar("Cal12",{
 			width: "400px"
@@ -478,7 +482,7 @@ sap.ui.define([
 		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for de-DE");
 
 		// Act
-		oCore.getConfiguration().setLanguage("en-US");
+		Localization.setLanguage("en-US");
 		oCore.applyChanges();
 		this.oCal2.focusDate(UI5Date.getInstance(2011, 0, 10));
 
@@ -583,7 +587,7 @@ sap.ui.define([
 		$Date.trigger("focus");
 		qutils.triggerKeydown($Date.get(0), KeyCodes.ENTER, false, false, false);
 
-		this.oCal2.setPrimaryCalendarType(oCore.getConfiguration().getCalendarType());
+		this.oCal2.setPrimaryCalendarType(Formatting.getCalendarType());
 		oCore.applyChanges();
 	});
 
@@ -636,7 +640,7 @@ sap.ui.define([
 		assert.equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBText")[0]).text(), "2011", "year 2011 shown");
 		assert.equal(jQuery(jQuery("#Cal2--Head-B2").children(".sapUiCalHeadBAddText")[0]).text(), "1432 AH", "year 1432 shown");
 
-		this.oCal2.setSecondaryCalendarType(oCore.getConfiguration().getCalendarType());
+		this.oCal2.setSecondaryCalendarType(Formatting.getCalendarType());
 		oCore.applyChanges();
 
 		aDays = jQuery(aMonths[0]).find(".sapUiCalItem");
@@ -2916,7 +2920,7 @@ sap.ui.define([
 
 	QUnit.test("Islamic calendar year stays consistent", function(assert) {
 		// prepare
-		var oConfigStub = sinon.stub(Configuration, 'getCalendarType').returns("Islamic"),
+		var oConfigStub = sinon.stub(Formatting, 'getCalendarType').returns("Islamic"),
 			oInitialDate = UI5Date.getInstance(2023, 7, 10),
 			oFocusedCalendarDate = CalendarDate.fromLocalJSDate(oInitialDate, CalendarType.Islamic),
 			oCal = new Calendar("CalTypeTest", {

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib"],
+	function(Library) {
 	"use strict";
 
 
@@ -39,7 +39,7 @@ sap.ui.define([],
 			oRm.class("sapUiCalIntLarge");
 		}
 
-		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var rb = Library.getResourceBundleFor("sap.ui.unified");
 		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
 		if (oCal._bPoupupMode) {
 			mAccProps["role"] = "dialog";

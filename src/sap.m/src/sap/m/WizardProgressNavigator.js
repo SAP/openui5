@@ -5,6 +5,7 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/Device",
@@ -17,6 +18,7 @@ sap.ui.define([
 function(
 	library,
 	Control,
+	Library,
 	ResizeHandler,
 	ItemNavigation,
 	Device,
@@ -121,7 +123,7 @@ function(
 		this._iActiveStep = 1;
 		this._aCachedSteps = [];
 		this._aStepOptionalIndication = [];
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 		this._oActionSheet = new ActionSheet();
 		this._createStepNavigation();
 	};

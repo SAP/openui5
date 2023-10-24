@@ -4,12 +4,14 @@
 
 // Provides control sap.m.DateTimeField.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	'sap/ui/model/type/Date',
 	'sap/ui/model/odata/type/ODataType',
 	'sap/ui/model/odata/type/DateTimeBase',
 	'./InputBase',
 	'./ValueStateHeader',
-	'sap/ui/core/Core',
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/library',
 	'sap/ui/core/format/DateFormat',
@@ -17,18 +19,19 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/unified/calendar/CalendarUtils',
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Formatting,
+	Library,
+	Locale,
 	SimpleDateType,
 	ODataType,
 	DateTimeBase,
 	InputBase,
 	ValueStateHeader,
-	Core,
 	LocaleData,
 	coreLibrary,
 	DateFormat,
@@ -36,7 +39,6 @@ sap.ui.define([
 	deepEqual,
 	Log,
 	jQuery,
-	Configuration,
 	UI5Date,
 	CalendarUtils
 ) {
@@ -401,7 +403,7 @@ sap.ui.define([
 
 	DateTimeField.prototype._getLocaleBasedPattern = function (sPlaceholder) {
 		return LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			new Locale(Formatting.getLanguageTag())
 		).getDatePattern(sPlaceholder);
 	};
 
@@ -530,7 +532,7 @@ sap.ui.define([
 		}
 
 		if (!sCalendarType) {
-			sCalendarType = Configuration.getCalendarType();
+			sCalendarType = Formatting.getCalendarType();
 		}
 
 		if (bDisplayFormat) {
@@ -639,7 +641,7 @@ sap.ui.define([
 		if (sValueState === ValueState.None) {
 			sText = "";
 		} else {
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.core");
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.core");
 			sText = oResourceBundle.getText("VALUE_STATE_" + sValueState.toUpperCase());
 		}
 

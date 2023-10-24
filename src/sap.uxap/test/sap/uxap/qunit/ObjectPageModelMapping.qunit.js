@@ -1,9 +1,7 @@
 /*global QUnit*/
 
-sap.ui.define(["sap/ui/core/Core",
-               "sap/ui/model/json/JSONModel",
-               "sap/ui/core/mvc/XMLView"],
-function (Core, JSONModel, XMLView) {
+sap.ui.define(["sap/ui/core/Core", "sap/ui/core/Element", "sap/ui/model/json/JSONModel", "sap/ui/core/mvc/XMLView"],
+function(Core, Element, JSONModel, XMLView) {
 	"use strict";
 
 	QUnit.module("modelMapping", {
@@ -46,7 +44,7 @@ function (Core, JSONModel, XMLView) {
 		Core.applyChanges(); // allow model info to propagare
 
 		setTimeout(function () {
-			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
+			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());
 			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
 			oActualLastName = oSelectedView.byId("txtLastName").getText();
 
@@ -85,8 +83,8 @@ function (Core, JSONModel, XMLView) {
 		Core.applyChanges(); // allow model info to propagare
 
 		setTimeout(function () {
-			oBlock = Core.byId("UxAP-ModelMapping--block");
-			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
+			oBlock = Element.getElementById("UxAP-ModelMapping--block");
+			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());
 
 			// Act
 			oBlock.getMappings()[0].setExternalPath("/newEmployee"); // update external path
@@ -134,7 +132,7 @@ function (Core, JSONModel, XMLView) {
 		Core.applyChanges(); // allow model info to propagare
 
 		setTimeout(function () {
-			oSelectedView = Core.byId(this.oView.byId('block').getSelectedView());
+			oSelectedView = Element.getElementById(this.oView.byId('block').getSelectedView());
 			oActualFirstName = oSelectedView.byId("txtFirstName").getText();
 			oActualLastName = oSelectedView.byId("txtLastName").getText();
 

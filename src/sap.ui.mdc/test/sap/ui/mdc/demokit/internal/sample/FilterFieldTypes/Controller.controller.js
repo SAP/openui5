@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -8,9 +9,9 @@ sap.ui.define([
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enums/ConditionValidated",
-	'sap/ui/mdc/enums/OperatorName',
-	"sap/ui/core/Core"
+	'sap/ui/mdc/enums/OperatorName'
 ], function(
+	Messaging,
 	Controller,
 	Filter,
 	FilterOperator,
@@ -20,8 +21,7 @@ sap.ui.define([
 	FilterOperatorUtil,
 	Operator,
 	ConditionValidated,
-	OperatorName,
-	oCore
+	OperatorName
 ) {
 	"use strict";
 
@@ -29,7 +29,7 @@ sap.ui.define([
 
 		onInit: function() {
 			// this.getView().bindElement("/Books(1)");
-			oCore.getMessageManager().registerObject(this.getView(), true);
+			Messaging.registerObject(this.getView(), true);
 
 			// create a ConditionModel for the listbinding
 			const oCM = new ConditionModel();

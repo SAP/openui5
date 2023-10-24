@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Token",
@@ -8,7 +9,7 @@ sap.ui.define([
 	"sap/m/Tokenizer",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore) {
+], function(Library, qutils, createAndAppendDiv, Token, coreLibrary, InvisibleText, Tokenizer, KeyCodes, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -102,7 +103,7 @@ sap.ui.define([
 
 		var oTokenIcon = this.token1.getAggregation("deleteIcon");
 		assert.ok(oTokenIcon, "Token contains icon");
-		assert.strictEqual(oTokenIcon.getTooltip(), oCore.getLibraryResourceBundle("sap.m").getText("TOKEN_ICON_TOOLTIP"), "Token icon contains a tooltip");
+		assert.strictEqual(oTokenIcon.getTooltip(), Library.getResourceBundleFor("sap.m").getText("TOKEN_ICON_TOOLTIP"), "Token icon contains a tooltip");
 
 		isEditable = false;
 		this.token1.setEditable(isEditable);

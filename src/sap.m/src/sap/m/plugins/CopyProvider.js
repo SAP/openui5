@@ -3,7 +3,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton", "../library"], function(PluginBase, Log, Core, formatTemplate, OverflowToolbarButton, library) {
+sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage", "sap/m/OverflowToolbarButton", "../library", "sap/ui/core/Element", "sap/ui/core/Lib"], function(PluginBase, Log, formatTemplate, OverflowToolbarButton, library, Element, Library) {
 	"use strict";
 
 	const CopyPreference = library.plugins.CopyPreference;
@@ -219,7 +219,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			this._oCopyButton = new OverflowToolbarButton(Object.assign({
 				icon: "sap-icon://copy",
 				visible: this.getVisible(),
-				tooltip: Core.getLibraryResourceBundle("sap.m").getText("COPYPROVIDER_COPY"),
+				tooltip: Library.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY"),
 				press: this.copySelectionData.bind(this, true)
 			}, mSettings));
 		}
@@ -258,7 +258,7 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 
 		if (oControl.getParent().isA("sap.ui.mdc.Table")) {
 			aSelectableColumns = aSelectableColumns.map(function(oSelectableColumn) {
-				return Core.byId(oSelectableColumn.getId().replace(/\-innerColumn$/, ""));
+				return Element.getElementById(oSelectableColumn.getId().replace(/\-innerColumn$/, ""));
 			});
 		}
 

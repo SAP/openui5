@@ -6,17 +6,17 @@
  * Provides methods for information retrieval from the core.
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/VersionInfo",
 	"sap/base/util/LoaderExtensions",
 	"sap/base/security/encodeXML",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeManager",
 	"sap/ui/core/support/ToolsAPI",
 	"sap/ui/thirdparty/URI"
 ],
-	function (Core, VersionInfo, LoaderExtensions, encodeXML, Component, Configuration, ThemeManager, ToolsAPI, URI) {
+	function (VersionInfo, LoaderExtensions, encodeXML, Component, Lib, Theming, ThemeManager, ToolsAPI, URI) {
 	"use strict";
 
 	/**
@@ -132,7 +132,7 @@ sap.ui.define([
 		oTechData.resourcePaths = aResults;
 
 		//add theme paths
-		var mLibraries = Core.getLoadedLibraries();
+		var mLibraries = Lib.all();
 		aResults = [];
 		for (var n in mLibraries) {
 			if (n === "") {
@@ -141,9 +141,9 @@ sap.ui.define([
 				// (e.g. "MyControl" instead of "com.example.MyControl").
 				continue;
 			}
-			var sPath = ThemeManager._getThemePath(n, Configuration.getTheme());
+			var sPath = ThemeManager._getThemePath(n, Theming.getTheme());
 			aResults.push({
-				theme : Configuration.getTheme(),
+				theme : Theming.getTheme(),
 				library: n,
 				relativePath: sPath,
 				absolutePath: URI(sPath).absoluteTo(document.location.origin + document.location.pathname).toString()

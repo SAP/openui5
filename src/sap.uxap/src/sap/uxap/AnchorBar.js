@@ -4,6 +4,10 @@
 
 // Provides control sap.uxap.AnchorBar.
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/Button",
 	"sap/m/MenuButton",
@@ -21,10 +25,8 @@ sap.ui.define([
 	"./library",
 	"sap/uxap/AnchorBarRenderer",
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/dom/jquery/scrollLeftRTL"
-], function (jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement,
-		HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log, Configuration) {
+], function(Localization, Element, Library, Theming, jQuery, Button, MenuButton, mobileLibrary, Toolbar, IconPool, Item, ResizeHandler, ScrollEnablement, HorizontalLayout, Device, CustomData, Control, HierarchicalSelect, library, AnchorBarRenderer, Log) {
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -137,14 +139,14 @@ sap.ui.define([
 		this._oSectionInfo = {};    //keep scrolling info on sections
 		this._oScroller = null;
 		this._sSelectedKey = null; // keep track of sap.uxap.HierarchicalSelect selected key
-		this._bRtl = Configuration.getRTL();
+		this._bRtl = Localization.getRTL();
 
 		//there are 2 different uses cases:
 		//case 1: on a real phone we don't need the scrolling anchorBar, just the hierarchicalSelect
 		//case 2: on a real tablet or a desktop we need both as the size may change
 		this._bHasButtonsBar = Device.system.tablet || Device.system.desktop;
 
-		this.oLibraryResourceBundleOP = sap.ui.getCore().getLibraryResourceBundle("sap.uxap"); // get resource translation bundle
+		this.oLibraryResourceBundleOP = Library.getResourceBundleFor("sap.uxap"); // get resource translation bundle
 
 		this._oSelect = this._getHierarchicalSelect();
 
@@ -183,7 +185,7 @@ sap.ui.define([
 			bHasSelectItems = aSelectItems.length > 0;
 
 		if (typeof oButton === "string") {
-			oButton = sap.ui.getCore().byId(oButton);
+			oButton = Element.getElementById(oButton);
 		}
 
 		if (oButton) {
@@ -201,7 +203,7 @@ sap.ui.define([
 
 			if (this._bHasButtonsBar && oButton.data("secondLevel") !== true) {
 
-				oPreviouslySelectedButton = sap.ui.getCore().byId(sPreviouslySelectedButtonId);
+				oPreviouslySelectedButton = Element.getElementById(sPreviouslySelectedButtonId);
 				this._toggleSelectionStyleClass(oPreviouslySelectedButton, false);
 				this._toggleSelectionStyleClass(oButton, true);
 
@@ -232,13 +234,13 @@ sap.ui.define([
 		var oSelectedButton = this.getSelectedButton();
 
 		if (oSelectedButton && (typeof (oSelectedButton) === "string" )) {
-			oSelectedButton = sap.ui.getCore().byId(oSelectedButton);
+			oSelectedButton = Element.getElementById(oSelectedButton);
 		}
 
 		if (oSelectedButton && (oSelectedButton instanceof Button)
 			&& oSelectedButton.data("sectionId")) {
 
-			return sap.ui.getCore().byId(oSelectedButton.data("sectionId"));
+			return Element.getElementById(oSelectedButton.data("sectionId"));
 		}
 
 		return null;
@@ -359,7 +361,7 @@ sap.ui.define([
 			return;
 		}
 
-		oSelectedSection = sap.ui.getCore().byId(oSelectedItem.getKey());
+		oSelectedSection = Element.getElementById(oSelectedItem.getKey());
 
 		if (oSelectedSection) {
 			this.fireEvent("_anchorPress", { sectionBaseId: oSelectedSection.getId() });
@@ -435,12 +437,12 @@ sap.ui.define([
 
 		oScrollButton.addEventDelegate({
 			onAfterRendering: function () {
-				if (Configuration.getTheme() != "sap_hcb") {
+				if (Theming.getTheme() != "sap_hcb") {
 					this.$().attr("tabindex", -1);
 				}
 			},
 			onThemeChanged: function () {
-				if (Configuration.getTheme() == "sap_hcb") {
+				if (Theming.getTheme() == "sap_hcb") {
 					this.$().removeAttr("tabindex");
 				} else {
 					this.$().attr("tabindex", -1);
@@ -654,7 +656,7 @@ sap.ui.define([
 	 */
 	AnchorBar.prototype.scrollToCurrentlySelectedSection = function () {
 		var sSelectedButton = this.getSelectedButton(),
-			oSelectedButton = sap.ui.getCore().byId(sSelectedButton),
+			oSelectedButton = Element.getElementById(sSelectedButton),
 			sSelectedSectionId;
 
 		if (oSelectedButton) {
@@ -974,7 +976,7 @@ sap.ui.define([
 			Toolbar.prototype.onAfterRendering.call(this);
 		}
 
-		oSelectedButton = sap.ui.getCore().byId(this.getSelectedButton());
+		oSelectedButton = Element.getElementById(this.getSelectedButton());
 		this._setAnchorButtonsTabFocusValues(oSelectedButton);
 
 		//save max for arrow show/hide management, the max position is the required scroll for the item to be fully visible

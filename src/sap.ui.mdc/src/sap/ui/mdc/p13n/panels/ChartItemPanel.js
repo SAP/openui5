@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/Button",
 	'sap/m/Column',
 	"sap/m/Table",
+	"sap/ui/core/Lib",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/VBox",
@@ -27,7 +28,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/mdc/enums/ChartItemRoleType",
 	"sap/ui/core/InvisibleMessage"
-], function (BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) {
+], function(BasePanel, Label, ColumnListItem, Select, Text, Item, Button, Column, Table, Library, Filter, FilterOperator, VBox, HBox, ComboBox, Sorter, Log, mLibrary, Device, ResizeHandler, CustomData, jQuery, coreLibrary, KeyCode, ChartItemRoleType, InvisibleMessage) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -197,7 +198,7 @@ sap.ui.define([
 
 	ChartItemPanel.prototype._bindListItems = function(mBindingInfo) {
 			let oSorter;
-			const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 
 			if ( this.getPanelConfig() && this.getPanelConfig().sorter) {
 				oSorter = this.getPanelConfig().sorter;
@@ -296,7 +297,7 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getPlaceholderTextForTemplate = function(sKind) {
-		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 		return MDCRb.getText('chart.PERSONALIZATION_DIALOG_TEMPLATE_PLACEHOLDER');
 	};
 
@@ -1226,7 +1227,7 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getChartItemTextByKey = function (sKey) {
-		const MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		const MDCRb = Library.getResourceBundleFor("sap.ui.mdc");
 		const oAvailableRoles = {
 			Dimension: [
 				{
@@ -1257,7 +1258,7 @@ sap.ui.define([
 	};
 
 	ChartItemPanel.prototype._getResourceTextMDC = function(sText, aValue) {
-		this.oResourceBundleMDC = this.oResourceBundleMDC ? this.oResourceBundleMDC : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this.oResourceBundleMDC = this.oResourceBundleMDC ? this.oResourceBundleMDC : Library.getResourceBundleFor("sap.ui.mdc");
 		return sText ? this.oResourceBundleMDC.getText(sText, aValue) : this.oResourceBundleMDC;
 	};
 

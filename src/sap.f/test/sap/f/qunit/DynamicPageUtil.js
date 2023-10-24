@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/f/DynamicPage",
@@ -19,33 +20,34 @@ sap.ui.define([
 	"sap/m/GenericTag",
 	"sap/ui/Device"
 ],
-	function (
-	$,
-	Core,
-	DynamicPage,
-	DynamicPageTitle,
-	DynamicPageHeader,
-	Grid,
-	Panel,
-	MessageStrip,
-	IconTabBar,
-	IconTabFilter,
-	Button,
-	Title,
-	Label,
-	OverflowToolbar,
-	ToolbarSpacer,
-	Breadcrumbs,
-	Link,
-	GenericTag,
-	Device
-) {
+	function(
+		Library,
+		$,
+		Core,
+		DynamicPage,
+		DynamicPageTitle,
+		DynamicPageHeader,
+		Grid,
+		Panel,
+		MessageStrip,
+		IconTabBar,
+		IconTabFilter,
+		Button,
+		Title,
+		Label,
+		OverflowToolbar,
+		ToolbarSpacer,
+		Breadcrumbs,
+		Link,
+		GenericTag,
+		Device
+	) {
 	"use strict";
 
 	var TESTS_DOM_CONTAINER = "qunit-fixture",
 	oFactory = {
 		getResourceBundle: function () {
-			return Core.getLibraryResourceBundle("sap.f");
+			return Library.getResourceBundleFor("sap.f");
 		},
 		getDynamicPage: function () {
 			return new DynamicPage({

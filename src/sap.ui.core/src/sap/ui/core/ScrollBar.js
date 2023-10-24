@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.core.ScrollBar.
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/Device',
 	'./Control',
 	'./library',
@@ -11,10 +12,10 @@ sap.ui.define([
 	"sap/ui/performance/trace/Interaction",
 	"sap/base/Log",
 	"sap/ui/events/jquery/EventSimulation",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
+		Localization,
 		Device,
 		Control,
 		library,
@@ -22,8 +23,7 @@ sap.ui.define([
 		Interaction,
 		Log,
 		EventSimulation,
-		jQuery,
-		Configuration
+		jQuery
 	) {
 	"use strict";
 
@@ -145,7 +145,7 @@ sap.ui.define([
 		this._bScrollPosIsChecked = false;
 
 		// RTL mode
-		this._bRTL = Configuration.getRTL();
+		this._bRTL = Localization.getRTL();
 
 		// suppress scroll event
 		this._bSuppressScroll = false;

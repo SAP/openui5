@@ -13,7 +13,9 @@ sap.ui.define([
 	'./SinglePlanningCalendarRenderer',
 	'sap/base/Log',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -35,7 +37,9 @@ function(
 	SinglePlanningCalendarRenderer,
 	Log,
 	Control,
+	Element,
 	InvisibleText,
+	Library,
 	ResizeHandler,
 	DateFormat,
 	CalendarDate,
@@ -511,7 +515,7 @@ function(
 	SinglePlanningCalendar.prototype.init = function() {
 		var sOPCId = this.getId();
 
-		this._oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRB = Library.getResourceBundleFor("sap.m");
 		this._oDefaultView = new SinglePlanningCalendarWeekView({
 			key: "DEFAULT_INNER_WEEK_VIEW_CREATED_FROM_CONTROL",
 			title: ""
@@ -917,7 +921,7 @@ function(
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._viewsObserverCallbackFunction = function (oChanges) {
-		sap.ui.getCore().byId(oChanges.object.getId() + SEGMENTEDBUTTONITEM__SUFFIX).setText(oChanges.current);
+		Element.getElementById(oChanges.object.getId() + SEGMENTEDBUTTONITEM__SUFFIX).setText(oChanges.current);
 	};
 
 	/**
@@ -1005,7 +1009,7 @@ function(
 		if (sLegend) {
 			this.getAggregation("_grid")._sLegendId = sLegend;
 			this.getAggregation("_mvgrid")._sLegendId = sLegend;
-			oLegend = sap.ui.getCore().byId(sLegend);
+			oLegend = Element.getElementById(sLegend);
 		}
 
 		if (oLegend) { //destroy of the associated legend should rerender the SPC
@@ -1148,7 +1152,7 @@ function(
 	SinglePlanningCalendar.prototype._getSelectedView = function () {
 		var oSelectedView,
 			aViews = this.getViews(),
-			sCurrentViewKey = sap.ui.getCore().byId(this.getAssociation("selectedView")).getKey();
+			sCurrentViewKey = Element.getElementById(this.getAssociation("selectedView")).getKey();
 
 		for (var i = 0; i < aViews.length; i++) {
 			if (sCurrentViewKey === aViews[i].getKey()) {

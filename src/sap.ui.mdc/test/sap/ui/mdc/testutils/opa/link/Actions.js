@@ -3,29 +3,29 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Descendant",
 	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/test/actions/Press",
+    "sap/ui/test/actions/Press",
     "../p13n/waitForP13nButtonWithMatchers",
     "../p13n/waitForP13nDialog",
-    "./waitForLink",
-    "sap/ui/core/Core"
+    "./waitForLink"
 ], function(
+	Library,
 	Opa5,
 	Ancestor,
 	Descendant,
 	PropertyStrictEquals,
-	Press,
+    Press,
     waitForP13nButtonWithMatchers,
     waitForP13nDialog,
-    waitForLink,
-    oCore
+    waitForLink
 ) {
 	"use strict";
 
-    var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+    var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
     return {
         iOpenThePersonalizationDialog: function(oControl, oSettings) {

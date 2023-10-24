@@ -8,8 +8,9 @@ sap.ui.define([
 	'./P13nConditionPanel',
 	'./P13nPanel',
 	'./P13nGroupItem',
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery"
-], function(library, P13nConditionPanel, P13nPanel, P13nGroupItem, jQuery) {
+], function(library, P13nConditionPanel, P13nPanel, P13nGroupItem, Library, jQuery) {
 	"use strict";
 
 	// shortcut for sap.m.P13nPanelType
@@ -219,7 +220,7 @@ sap.ui.define([
 
 	P13nGroupPanel.prototype.init = function() {
 		this.setType(P13nPanelType.group);
-		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
+		this.setTitle(Library.getResourceBundleFor("sap.m").getText("GROUPPANEL_TITLE"));
 
 		this._aKeyFields = [];
 
@@ -278,7 +279,7 @@ sap.ui.define([
 			});
 			aKeyFields.splice(0, 0, {
 				key: null,
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_SELECTION_NONE")
+				text: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_SELECTION_NONE")
 			});
 			this._oGroupPanel.setKeyFields(aKeyFields);
 

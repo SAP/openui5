@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/DateTimePicker",
@@ -22,6 +25,9 @@ sap.ui.define([
 	// load all required calendars in advance
 	"sap/ui/core/date/Islamic"
 ], function(
+	Localization,
+	Element,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	DateTimePicker,
@@ -218,7 +224,7 @@ sap.ui.define([
 			oInputRef;
 
 		// arrange
-		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+		this.stub(Localization, "getTimezone").callsFake(function() {
 			return "Europe/Sofia";
 		});
 
@@ -283,7 +289,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("placeholder", function(assert) {
-		var sPlaceholderPrefix = oCore.getLibraryResourceBundle("sap.ui.core").getText("date.placeholder").split("{")[0];
+		var sPlaceholderPrefix = Library.getResourceBundleFor("sap.ui.core").getText("date.placeholder").split("{")[0];
 		if (Device.support.input.placeholder) {
 			assert.ok(jQuery("#DTP1").find("input").attr("placeholder").includes(sPlaceholderPrefix) , "DTP1: placeholder");
 			assert.ok(jQuery("#DTP2").find("input").attr("placeholder").includes(sPlaceholderPrefix), "DTP2: placeholder");
@@ -540,7 +546,7 @@ sap.ui.define([
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
-			oClocks = oCore.byId("DTP3-Clocks");
+			oClocks = Element.getElementById("DTP3-Clocks");
 			assert.equal(oClocks.getAggregation("_buttons").length, 2 , "DTP3: number of rendered clocks");
 
 			aMonths = jQuery("#DTP3-cal-content").children(".sapUiCalMonthView");
@@ -597,7 +603,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					oCore.byId("HDTP").openBy(this.getDomRef());
+					Element.getElementById("HDTP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -608,7 +614,7 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// Assert
-		assert.ok(oCore.byId(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
+		assert.ok(Element.getElementById(oDTP.getId() + "-cal"), oDTP.getId() + ": calender exists");
 		assert.ok(oDTP._oPopup, oDTP.getId() + ": popup exists");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#" + oDTP.getId() + "-cal").is(":visible"), "picker is visible");
@@ -649,7 +655,7 @@ sap.ui.define([
 		var oInfo = oInput.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, oInput.getRenderer().getAriaRole(), "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATETIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value  Date and Time", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -1081,7 +1087,7 @@ sap.ui.define([
 
 	QUnit.test("Timezone interaction on picker", function(assert) {
 		//arange
-		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+		this.stub(Localization, "getTimezone").callsFake(function() {
 			return "Europe/Sofia";
 		});
 		var oTestDate = UI5Date.getInstance("Feb 1, 2022, 00:01:00 AM");
@@ -1138,7 +1144,7 @@ sap.ui.define([
 		var oDTP;
 
 		// arrange
-		this.stub(oCore.getConfiguration(), "getTimezone").callsFake(function() {
+		this.stub(Localization, "getTimezone").callsFake(function() {
 			return "Asia/Kabul";
 		});
 
@@ -1432,19 +1438,19 @@ sap.ui.define([
 			var sTZ1 = "Europe/Sofia";
 			var sTZ2 = "Europe/Berlin";
 
-			this.localTimezone = oCore.getConfiguration().getTimezone();
-			oCore.getConfiguration().setTimezone(this.localTimezone === sTZ1 ? sTZ2 : sTZ1);
+			this.localTimezone = Localization.getTimezone();
+			Localization.setTimezone(this.localTimezone === sTZ1 ? sTZ2 : sTZ1);
 			oCore.applyChanges();
 		},
 		after: function() {
-			oCore.getConfiguration().setTimezone(this.localTimezone);
+			Localization.setTimezone(this.localTimezone);
 			oCore.applyChanges();
 		}
 	});
 
 	QUnit.test("With Bound and Configured Timezone", function(assert) {
 		// arrange
-		oCore.getConfiguration().setTimezone("Europe/London");
+		Localization.setTimezone("Europe/London");
 
 		var oModel = new JSONModel({
 			date: UI5Date.getInstance(2023, 2, 31, 10, 32),

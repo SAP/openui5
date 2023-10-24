@@ -21,6 +21,8 @@ sap.ui.define([
 	'sap/base/util/deepExtend',
 	'sap/m/library',
 	'sap/ui/Device',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/model/Sorter',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
@@ -46,6 +48,8 @@ sap.ui.define([
 		deepExtend,
 		library,
 		Device,
+		Element,
+		Library,
 		Sorter,
 		Filter,
 		FilterOperator,
@@ -172,7 +176,7 @@ sap.ui.define([
 			iLiveChangeTimer = 0;
 
 		// Resource bundle, for texts
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 		// To store the column settings
 		this._oP13nModel = new JSONModel();
@@ -609,7 +613,7 @@ sap.ui.define([
 	 * @private
 	 */
 	TablePersoDialog.prototype._readCurrentSettingsFromTable = function() {
-		var oTable = sap.ui.getCore().byId(this.getPersoDialogFor()),
+		var oTable = Element.getElementById(this.getPersoDialogFor()),
 			that = this,
 			aCurrentColumns = this.getColumnInfoCallback().call(this, oTable, this.getPersoMap());
 		this._oP13nModel.setData({

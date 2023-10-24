@@ -11,6 +11,7 @@ sap.ui.define([
 	"./_HookUtils",
 	"../library",
 	"sap/ui/base/Object",
+	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/ui/core/theming/Parameters",
@@ -28,6 +29,7 @@ sap.ui.define([
 	HookUtils,
 	library,
 	BaseObject,
+	Element,
 	ResizeHandler,
 	coreLibrary,
 	ThemeParameters,
@@ -762,7 +764,7 @@ sap.ui.define([
 
 			if ($Cell.hasClass("sapUiTableDataCell")) {
 				sColumnId = $Cell.attr("data-sap-ui-colid");
-				oColumn = sap.ui.getCore().byId(sColumnId);
+				oColumn = Element.getElementById(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.DATACELL;
 				oCellInfo.rowIndex = parseInt($Cell.parent().attr("data-sap-ui-rowindex"));
@@ -799,7 +801,7 @@ sap.ui.define([
 
 			} else if ($Cell.hasClass("sapUiTablePseudoCell")) {
 				sColumnId = $Cell.attr("data-sap-ui-colid");
-				oColumn = sap.ui.getCore().byId(sColumnId);
+				oColumn = Element.getElementById(sColumnId);
 
 				oCellInfo.type = TableUtils.CELLTYPE.PSEUDO;
 				oCellInfo.rowIndex = -1;

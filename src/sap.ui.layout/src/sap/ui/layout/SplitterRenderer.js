@@ -2,16 +2,17 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Configuration"
-], function(coreLibrary, Core, Configuration) {
+], function(ControlBehavior, Library, coreLibrary, Configuration) {
 	"use strict";
 
 	// shortcut for sap.ui.core.Orientation
 	var Orientation = coreLibrary.Orientation;
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.layout");
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.layout");
 
 	/**
 	 * Splitter renderer.
@@ -32,7 +33,7 @@ sap.ui.define([
 	SplitterRenderer.render = function(oRm, oSplitter) {
 		var bHorizontal = oSplitter.getOrientation() === Orientation.Horizontal,
 			sOrientationClass = bHorizontal ? "sapUiLoSplitterH" : "sapUiLoSplitterV",
-			sAnimationMode = Configuration.getAnimationMode(),
+			sAnimationMode = ControlBehavior.getAnimationMode(),
 			bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 		// Make sure we have the main element available before rendering the children so we can use

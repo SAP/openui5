@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/valuehelp/content/MTable",
 	"sap/ui/mdc/valuehelp/content/MDCTable",
 	"sap/ui/mdc/filterbar/vh/FilterBar",
@@ -17,11 +18,11 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated'
 ], function(
 	ODataV4ValueHelpDelegate,
+	Element,
 	MTable,
 	MDCTable,
 	FilterBar,
@@ -35,7 +36,6 @@ sap.ui.define([
 	Column,
 	ColumnListItem,
 	Text,
-	Core,
 	Condition,
 	ConditionValidated
 ) {
@@ -171,13 +171,13 @@ sap.ui.define([
 	ValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
 		const oConditions = ODataV4ValueHelpDelegate.getFilterConditions(arguments);
 
-		const oCountry = Core.byId("FB0-FF6");
+		const oCountry = Element.getElementById("FB0-FF6");
 		const aCountryConditions = oCountry && oCountry.getConditions();
 		if (aCountryConditions && aCountryConditions.length) {
 			oConditions["country_code"] = aCountryConditions;
 		}
 
-		const oRegion = Core.byId("FB0-FF7");
+		const oRegion = Element.getElementById("FB0-FF7");
 		const aRegionConditions = oRegion && oRegion.getConditions();
 		if (aRegionConditions && aRegionConditions.length) {
 			oConditions["region_code"] = aRegionConditions;

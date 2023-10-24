@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/base/util/deepClone",
 	"sap/ui/VersionInfo",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/_UrlResolver",
+	"sap/ui/core/Supportability",
 	"sap/ui/thirdparty/URI"
-], function(require, Log, deepClone, VersionInfo, Component, Configuration, _UrlResolver, URI) {
+], function(require, Log, deepClone, VersionInfo, Component, _UrlResolver, Supportability, URI) {
 
 	"use strict";
 	/*global QUnit*/
@@ -542,7 +542,7 @@ sap.ui.define([
 				}
 				// in case of debug mode is on the warning should be reported
 				// when it is turned off => no warning!
-				if (Configuration.getDebug()) {
+				if (Supportability.isDebugModeEnabled()) {
 					assert.ok(bFound, "Warning has been reported!");
 				} else {
 					assert.ok(!bFound, "Warning has not been reported!");

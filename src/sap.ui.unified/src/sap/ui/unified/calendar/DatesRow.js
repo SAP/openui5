@@ -4,6 +4,7 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/ui/core/RenderManager",
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/Month',
@@ -13,7 +14,7 @@ sap.ui.define([
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/Locale',
 	'sap/ui/core/date/UI5Date'
-], function(CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale, UI5Date) {
+], function(RenderManager, CalendarUtils, CalendarDate, Month, library, DatesRowRenderer, jQuery, DateFormat, Locale, UI5Date) {
 	"use strict";
 
 	/*
@@ -324,7 +325,7 @@ sap.ui.define([
 			var $Container = this.$("Head");
 
 			if ($Container.length > 0) {
-				var oRm = sap.ui.getCore().createRenderManager();
+				var oRm = new RenderManager().getInterface();
 				this.getRenderer().renderHeaderLine(oRm, this, oLocaleData, oStartDate);
 				oRm.flush($Container[0]);
 				oRm.destroy();

@@ -4,9 +4,9 @@
 
 sap.ui.define([
 	'./library',
-	'sap/ui/core/Core',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/m/Link',
 	'sap/m/Avatar',
@@ -15,9 +15,9 @@ sap.ui.define([
 ],
 function(
 	library,
-	Core,
 	NotificationListBase,
 	InvisibleText,
+	Library,
 	coreLibrary,
 	Link,
 	Avatar,
@@ -26,7 +26,7 @@ function(
 	) {
 	'use strict';
 
-	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+	var RESOURCE_BUNDLE = Library.getResourceBundleFor('sap.m'),
 		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_MORE'),
 		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_SHOW_LESS'),
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_ITEM_READ'),

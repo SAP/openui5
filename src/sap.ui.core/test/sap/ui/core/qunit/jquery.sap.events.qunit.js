@@ -1,15 +1,15 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"jquery.sap.events",
+	"sap/base/i18n/Localization",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/events/F6Navigation",
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/core/Configuration",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	// provides jQuery.sap.keyCodes
 	"jquery.sap.keycodes"
-], function(jQuery, Device, Control, F6Navigation, qutils, Configuration, nextUIUpdate) {
+], function(jQuery, Localization, Device, Control, F6Navigation, qutils, nextUIUpdate) {
 	"use strict";
 
 	// Initialization
@@ -41,7 +41,7 @@ sap.ui.define([
 	oTestControl1.setChild(oTestControl2);
 	oTestControl1.placeAt("uiArea");
 
-	var bRtl = Configuration.getRTL();
+	var bRtl = Localization.getRTL();
 
 	//see jQuery.sap.ControlEvents
 	var aBasicBrowserEvents = ["click", "dblclick", "contextmenu", "focusin", "focusout", "keydown", "keypress", "keyup", "mousedown", "mouseout", "mouseover",

@@ -23,6 +23,8 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/core/library",
@@ -49,9 +51,12 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableSelectionMode",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
-	"sap/ui/mdc/enums/TableGrowingMode", // load for availability
-	"sap/ui/mdc/enums/TableRowAction", // load for availability
-	"sap/ui/mdc/enums/TableRowCountMode" // load for availability
+	// load for availability
+	"sap/ui/mdc/enums/TableGrowingMode",
+	// load for availability
+	"sap/ui/mdc/enums/TableRowAction",
+	// load for availability
+	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	Control,
 	ActionToolbar,
@@ -73,6 +78,8 @@ sap.ui.define([
 	MessageBox,
 	PluginBase,
 	Core,
+	Element,
+	Library,
 	NumberFormat,
 	ListFormat,
 	coreLibrary,
@@ -977,7 +984,7 @@ sap.ui.define([
 
 	Table.prototype.setCopyProvider = function(oCopyProvider) {
 		this.setAggregation("copyProvider", oCopyProvider, true);
-		if (window.isSecureContext && oCopyProvider && !Core.byId(this.getId() + "-copy")) {
+		if (window.isSecureContext && oCopyProvider && !Element.getElementById(this.getId() + "-copy")) {
 			this._oToolbar?.insertEnd(this._getCopyButton(), 0);
 		}
 		return this;
@@ -1460,7 +1467,7 @@ sap.ui.define([
 			const aPropertyLabels = aFilteredProperties.map(function(sPropertyName) {
 				return oPropertyHelper.hasProperty(sPropertyName) ? oPropertyHelper.getProperty(sPropertyName).label : "";
 			});
-			const oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 			const oListFormat = ListFormat.getInstance();
 
 			let sFilterText;
@@ -1504,7 +1511,7 @@ sap.ui.define([
 	function createFilterInfoBar(oTable) {
 		const sToolbarId = oTable.getId() + "-filterInfoBar";
 		let oFilterInfoToolbar = internal(oTable).oFilterInfoBar;
-		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 
 		if (oFilterInfoToolbar && !oFilterInfoToolbar.isDestroyed()) {
 			oFilterInfoToolbar.destroy();
@@ -1653,7 +1660,7 @@ sap.ui.define([
 			return;
 		}
 
-		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			vNoData.setDescription(" ");
 			if (this.getFilter()) {
@@ -1686,7 +1693,7 @@ sap.ui.define([
 			return vNoData;
 		}
 
-		const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+		const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 		if (!this.isTableBound()) {
 			return oRb.getText(this.getFilter() ? "table.NO_DATA_WITH_FILTERBAR" : "table.NO_DATA");
 		}
@@ -1988,7 +1995,7 @@ sap.ui.define([
 	 * @returns {string[]} The keys of the filtered properties.
 	 */
 	function getExternallyFilteredProperties(oTable) {
-		const oFilter = Core.byId(oTable.getFilter());
+		const oFilter = Element.getElementById(oTable.getFilter());
 		return oFilter ? getFilteredProperties(oFilter.getConditions()) : [];
 	}
 
@@ -2000,7 +2007,7 @@ sap.ui.define([
 	 * @return {boolean} Whether the table is filtered (internally or externally).
 	 */
 	function isFiltered(oTable) {
-		const oFilter = Core.byId(oTable.getFilter());
+		const oFilter = Element.getElementById(oTable.getFilter());
 		return getInternallyFilteredProperties(oTable).length > 0
 			   || getExternallyFilteredProperties(oTable).length > 0
 			   || oFilter && oFilter.getSearch() !== "";
@@ -2307,7 +2314,7 @@ sap.ui.define([
 			// If no columns exist, show message and return without exporting
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
-					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
+					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
 						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
 					});
 				}.bind(that));
@@ -2363,8 +2370,8 @@ sap.ui.define([
 				});
 			}).catch(function(vError) {
 				// If sap.ui.export is not loaded, show an error message and return without exporting
-				if (!sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
-					MessageBox.error(Core.getLibraryResourceBundle("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
+				if (!Library.all().hasOwnProperty("sap.ui.export")) {
+					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("ERROR_MISSING_EXPORT_LIBRARY"));
 				}
 
 				fnReject(vError);

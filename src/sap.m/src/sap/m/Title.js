@@ -6,11 +6,12 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
+	"sap/ui/core/Element",
 	'sap/ui/core/library',
 	'./TitleRenderer',
 	"sap/m/HyphenationSupport"
 ],
-	function(Control, library, coreLibrary, TitleRenderer, HyphenationSupport) {
+	function(Control, library, Element, coreLibrary, TitleRenderer, HyphenationSupport) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -202,7 +203,7 @@ sap.ui.define([
 		var sTitle = this.getTitle();
 
 		if (sTitle) {
-			var oTitle = sap.ui.getCore().byId(sTitle);
+			var oTitle = Element.getElementById(sTitle);
 			if (oTitle && oTitle.isA("sap.ui.core.Title")) {
 				return oTitle;
 			}

@@ -2,19 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/Core',
 	'./ColumnPopoverItem',
 	'sap/m/ToggleButton',
 	'sap/m/Button',
 	'sap/m/StandardListItem',
-	'sap/m/List'],
+	'sap/m/List',
+	"sap/ui/core/Lib"],
 	function(
-		Core,
 		ColumnPopoverItem,
 		ToggleButton,
 		Button,
 		StandardListItem,
-		List) {
+		List,
+		Library) {
 	"use strict";
 
 	/**
@@ -64,7 +64,7 @@ sap.ui.define([
 	});
 
 	ColumnPopoverSortItem.prototype._createButton = function(sId, oCHPopover) {
-		var oBundle = Core.getLibraryResourceBundle("sap.m"),
+		var oBundle = Library.getResourceBundleFor("sap.m"),
 			sSortText = oBundle.getText("COLUMNHEADERPOPOVER_SORT_BUTTON"),
 			aSortItems = this.getItems(),
 			that = this;

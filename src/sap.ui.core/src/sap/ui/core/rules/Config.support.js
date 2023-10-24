@@ -62,7 +62,7 @@ sap.ui.define([
 			return;
 		}
 		// Check for FLP scenario
-		var oUshellLib = sap.ui.getCore().getLoadedLibraries()["sap.ushell"];
+		var oUshellLib = Library.all()["sap.ushell"];
 		if (oUshellLib) {
 			return;
 		}
@@ -172,7 +172,7 @@ sap.ui.define([
 		check: function(oIssueManager, oCoreFacade, oScope) {
 			if (oScope.getType() === "global") {
 				//1. Ignore libraries with instantiated elements
-				var mLibraries = sap.ui.getCore().getLoadedLibraries();
+				var mLibraries = Library.all();
 				oScope.getElements().forEach(function(oElement) {
 					var sElementLib = oElement.getMetadata().getLibraryName();
 					if (mLibraries[sElementLib]) {

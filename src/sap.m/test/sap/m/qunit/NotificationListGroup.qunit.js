@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/NotificationListGroup",
 	"sap/m/NotificationListItem",
 	"sap/m/Button",
+	"sap/ui/core/Lib",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
@@ -17,6 +18,7 @@ sap.ui.define([
 	NotificationListGroup,
 	NotificationListItem,
 	Button,
+	Library,
 	KeyCodes,
 	Core,
 	Element,
@@ -31,7 +33,7 @@ sap.ui.define([
 	// shortcut for sap.m.OverflowToolbarPriority
 	var OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
 
-	var  oResourceBundleM = Core.getLibraryResourceBundle("sap.m");
+	var  oResourceBundleM = Library.getResourceBundleFor("sap.m");
 
 	function createNotificationListGroup() {
 		return new NotificationListGroup({
@@ -255,7 +257,7 @@ sap.ui.define([
 		var closeButtonId = closeButton.sId;
 
 		notificationListGroup.destroy();
-		assert.strictEqual(Core.byId(closeButtonId), undefined, "close button is destroyed");
+		assert.strictEqual(Element.getElementById(closeButtonId), undefined, "close button is destroyed");
 	});
 
 	QUnit.module('Action and close buttons - S Size', {

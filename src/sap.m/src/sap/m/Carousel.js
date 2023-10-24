@@ -5,11 +5,13 @@
 // Provides control sap.m.Carousel.
 sap.ui.define([
 	"./library",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/Configuration",
 	"sap/ui/Device",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/library",
 	"sap/m/IllustratedMessage",
@@ -22,14 +24,17 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/IconPool",
 	"./CarouselLayout",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
-], function (
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
+], function(
 	library,
+	Localization,
 	Core,
 	Control,
 	Element,
 	Configuration,
 	Device,
+	Library,
 	ResizeHandler,
 	coreLibrary,
 	IllustratedMessage,
@@ -61,7 +66,7 @@ sap.ui.define([
 
 	var iDragRadius = 10;
 	var iMoveRadius = 20;
-	var bRtl = Core.getConfiguration().getRTL();
+	var bRtl = Localization.getRTL();
 
 	function getCursorPosition(e) {
 		e = e.originalEvent || e;
@@ -329,7 +334,7 @@ sap.ui.define([
 
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-		this._oRb = Core.getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 	};
 
 	/**

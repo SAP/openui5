@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/f/library",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	fLibrary,
@@ -667,7 +669,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ARIA attributes", function (assert) {
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.f"),
+		var oResourceBundle = Library.getResourceBundleFor("sap.f"),
 			oOverflowItemDomRef = this.oSP.getAggregation("_overflowItem").getDomRef(),
 			aItems = this.oSP.getItems(),
 			sSPId = this.oSP.getId(),

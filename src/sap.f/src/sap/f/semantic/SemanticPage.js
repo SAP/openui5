@@ -2,21 +2,23 @@
  * ${copyright}
  */
 sap.ui.define([
-    "sap/ui/core/Control",
-    "sap/ui/core/Shortcut",
-    "sap/f/library",
-    "sap/f/DynamicPage",
-    "sap/f/DynamicPageTitle",
-    "sap/f/DynamicPageHeader",
-    "sap/m/OverflowToolbar",
-    "sap/m/ActionSheet",
-    "./SemanticTitle",
-    "./SemanticFooter",
-    "./SemanticShareMenu",
-    "./SemanticConfiguration",
-    "./SemanticPageRenderer"
+	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Shortcut",
+	"sap/f/library",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
+	"sap/f/DynamicPageHeader",
+	"sap/m/OverflowToolbar",
+	"sap/m/ActionSheet",
+	"./SemanticTitle",
+	"./SemanticFooter",
+	"./SemanticShareMenu",
+	"./SemanticConfiguration",
+	"./SemanticPageRenderer"
 ], function(
-    Control,
+	Control,
+	Library,
 	Shortcut,
 	library,
 	DynamicPage,
@@ -1076,8 +1078,8 @@ sap.ui.define([
 				header: this._getHeader(),
 				footer: this._getFooter()
 			}),
-			sAriaRoleDescription = sap.ui.getCore()
-				.getLibraryResourceBundle("sap.f")
+			sAriaRoleDescription = Library
+				.getResourceBundleFor("sap.f")
 				.getText(SemanticPage.ARIA_ROLE_DESCRIPTION);
 
 		oDynamicPage._setAriaRoleDescription(sAriaRoleDescription);

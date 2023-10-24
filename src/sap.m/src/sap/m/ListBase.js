@@ -6,9 +6,9 @@
 sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/RenderManager",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
@@ -33,9 +33,9 @@ sap.ui.define([
 function(
 	Localization,
 	ControlBehavior,
+	RenderManager,
 	KeyCodes,
 	Device,
-	Core,
 	Control,
 	Element,
 	InvisibleText,
@@ -946,7 +946,7 @@ function(
 	 * @public
 	 */
 	ListBase.prototype.setSelectedItemById = function(sId, bSelect) {
-		var oListItem = Core.byId(sId);
+		var oListItem = Element.getElementById(sId);
 		return this.setSelectedItem(oListItem, bSelect);
 	};
 
@@ -1755,7 +1755,7 @@ function(
 		// render swipe content into swipe container if needed
 		if (this._bRerenderSwipeContent) {
 			this._bRerenderSwipeContent = false;
-			var rm = Core.createRenderManager();
+			var rm = new RenderManager().getInterface();
 			rm.render(this.getSwipeContent(), $container.empty()[0]);
 			rm.destroy();
 		}
@@ -2553,7 +2553,7 @@ function(
 
 		var bExecuteDefault = this.fireBeforeOpenContextMenu({
 			listItem: oLI,
-			column: Core.byId(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
+			column: Element.getElementById(jQuery(oEvent.target).closest(".sapMListTblCell", this.getNavigationRoot()).attr("data-sap-ui-column"))
 		});
 		if (bExecuteDefault) {
 			oEvent.setMarked();

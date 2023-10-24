@@ -5,6 +5,7 @@
 // Provides control sap.ui.table.ColumnMenu.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Element",
 	'sap/ui/unified/Menu',
 	'sap/ui/unified/MenuItem',
 	'sap/ui/unified/MenuTextFieldItem',
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Menu, MenuItem, MenuTextFieldItem, MenuRenderer, TableUtils, assert, jQuery) {
+	function(library, Element, Menu, MenuItem, MenuTextFieldItem, MenuRenderer, TableUtils, assert, jQuery) {
 	"use strict";
 
 	/**
@@ -409,7 +410,7 @@ sap.ui.define([
 		var oColumn = this.getParent();
 		var oTable = (oColumn ? oColumn.getParent() : undefined);
 
-		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
+		var oFilterField = Element.getElementById(this.getId() + "-filter");
 		if (oFilterField && oFilterField.setValue && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValue(sValue);
 		}
@@ -426,7 +427,7 @@ sap.ui.define([
 		var oColumn = this.getParent();
 		var oTable = (oColumn ? oColumn.getParent() : undefined);
 
-		var oFilterField = sap.ui.getCore().byId(this.getId() + "-filter");
+		var oFilterField = Element.getElementById(this.getId() + "-filter");
 		if (oFilterField && oFilterField.setValueState && (oTable && !oTable.getEnableCustomFilter())) {
 			oFilterField.setValueState(sFilterState);
 		}

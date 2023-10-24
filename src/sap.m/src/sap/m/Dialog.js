@@ -31,7 +31,6 @@ sap.ui.define([
 	"./DialogRenderer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/dom/units/Rem",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
@@ -65,7 +64,6 @@ function(
 	DialogRenderer,
 	Log,
 	jQuery,
-	Core,
 	Configuration,
 	Rem
 ) {
@@ -1580,7 +1578,7 @@ function(
 				oControl;
 
 			if (oFocusDomRef && oFocusDomRef.id) {
-				oControl = Core.byId(oFocusDomRef.id);
+				oControl = Element.getElementById(oFocusDomRef.id);
 			}
 
 			if (oControl) {
@@ -1907,7 +1905,7 @@ function(
 
 		Dialog.prototype.setLeftButton = function (vButton) {
 			if (typeof vButton === "string") {
-				vButton = Core.byId(vButton);
+				vButton = Element.getElementById(vButton);
 			}
 
 			//setting leftButton will also set the beginButton with the same button instance.
@@ -1918,7 +1916,7 @@ function(
 
 		Dialog.prototype.setRightButton = function (vButton) {
 			if (typeof vButton === "string") {
-				vButton = Core.byId(vButton);
+				vButton = Element.getElementById(vButton);
 			}
 
 			//setting rightButton will also set the endButton with the same button instance.

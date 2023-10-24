@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/integration/Extension", "sap/ui/core/Core"], function (Extension, Core) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Locale", "sap/ui/integration/Extension"], function(Localization, Locale, Extension) {
 	"use strict";
 
 	var SharedFetchExtension = Extension.extend("shared.lib.SharedFetchExtension");
@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/core/Core"], function (Ex
 	 */
 	SharedFetchExtension.prototype.fetch = function(sResource, mOptions, mRequestSettings) {
 		// Can modify any requests made by the card
-		mOptions.headers.set("Accept-Language", Core.getConfiguration().getLocale().toString());
+		mOptions.headers.set("Accept-Language", new Locale(Localization.getLanguageTag()).toString());
 
 		// Then make sure to call the method from the parent
 		return Extension.prototype.fetch.call(this, sResource, mOptions, mRequestSettings)

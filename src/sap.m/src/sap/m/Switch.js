@@ -5,26 +5,28 @@
 // Provides control sap.m.Switch.
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
 	'sap/ui/core/theming/Parameters',
 	'sap/ui/events/KeyCodes',
 	'./SwitchRenderer',
-	"sap/base/assert",
-	"sap/ui/core/Configuration"
+	"sap/base/assert"
 ],
 function(
 	library,
+	Localization,
 	Control,
 	EnabledPropagator,
 	IconPool,
+	Library,
 	Parameters,
 	KeyCodes,
 	SwitchRenderer,
-	assert,
-	Configuration
-	) {
+	assert
+) {
 		"use strict";
 
 		// shortcut for sap.m.touch
@@ -159,7 +161,7 @@ function(
 			}
 
 			this._iCurrentPosition = iPosition;
-			this.getDomRef("inner").style[Configuration.getRTL() ? "right" : "left"] = iPosition + "px";
+			this.getDomRef("inner").style[Localization.getRTL() ? "right" : "left"] = iPosition + "px";
 			this._setTempState(Math.abs(iPosition) < Switch._SWAPPOINT);
 		};
 
@@ -185,7 +187,7 @@ function(
 		};
 
 		Switch.prototype.getInvisibleElementText = function(bState) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oBundle = Library.getResourceBundleFor("sap.m");
 			var sText = "";
 
 			switch (this.getType()) {
@@ -239,7 +241,7 @@ function(
 		/* =========================================================== */
 
 		Switch.prototype.onBeforeRendering = function() {
-			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			var oRb = Library.getResourceBundleFor("sap.m");
 			this._sOn = this.getCustomTextOn() || oRb.getText("SWITCH_ON");
 			this._sOff = this.getCustomTextOff() || oRb.getText("SWITCH_OFF");
 		};
@@ -346,7 +348,7 @@ function(
 			iPosition = ((this._iStartPressPosX - oTouch.pageX) * -1) + this._iPosition;
 
 			// RTL mirror
-			if (Configuration.getRTL()) {
+			if (Localization.getRTL()) {
 				iPosition = -iPosition;
 			}
 
@@ -471,7 +473,7 @@ function(
 		/* =========================================================== */
 
 		Switch.prototype.getAccessibilityInfo = function() {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			var oBundle = Library.getResourceBundleFor("sap.m"),
 				bState = this.getState(),
 				sDesc = this.getInvisibleElementText(bState);
 

@@ -4,6 +4,9 @@
 
 // Provides control sap.uxap.ObjectPageLayout.
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/ResizeHandler",
@@ -34,6 +37,9 @@ sap.ui.define([
 	'sap/ui/dom/units/Rem',
 	"sap/ui/base/Object"
 ], function(
+	ControlBehavior,
+	Element,
+	Library,
 	jQuery,
 	ManagedObjectObserver,
 	ResizeHandler,
@@ -627,7 +633,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageLayout._getLibraryResourceBundle = function () {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
+		return Library.getResourceBundleFor("sap.uxap");
 	};
 
 	/*************************************************************************************
@@ -1810,7 +1816,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._checkSubSectionVisibilityChange = function () {
 		var bUseIconTabBar = this.getUseIconTabBar(),
-			oSelectedTabSection = bUseIconTabBar && sap.ui.getCore().byId(this.getSelectedSection()),
+			oSelectedTabSection = bUseIconTabBar && Element.getElementById(this.getSelectedSection()),
 			aSections = oSelectedTabSection ? [oSelectedTabSection] : this._getVisibleSections(),
 			oVisibleSubSections = {},
 			bIsVisibleSubSection;
@@ -2131,7 +2137,7 @@ sap.ui.define([
 		var oSection = this.oCore.byId(sId),
 			iSnapPosition,
 			oTargetSubSection,
-			bAnimationsEnabled = (Configuration.getAnimationMode()
+			bAnimationsEnabled = (ControlBehavior.getAnimationMode()
 				!== Configuration.AnimationMode.none),
 			bAnimatedScroll,
 			bSuppressLazyLoadingDuringScroll,
@@ -2268,7 +2274,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype.onAnchorBarTabPress = function (oEvent) {
-		var oSectionBase = sap.ui.getCore().byId(oEvent.getParameter("sectionBaseId")),
+		var oSectionBase = Element.getElementById(oEvent.getParameter("sectionBaseId")),
 			bIsSubSection = oSectionBase instanceof library.ObjectPageSubSection,
 			oSection,
 			oSubSection;
@@ -2944,7 +2950,7 @@ sap.ui.define([
 
 		// we use tabs => check if the section is a subSection of the current tab section
 		if (bUseIconTabBar && (oSectionBase.getParent().getId() === sSelectedSectionId)) {
-			oSelectedSection = sap.ui.getCore().byId(sSelectedSectionId);
+			oSelectedSection = Element.getElementById(sSelectedSectionId);
 			sFirstVisibleSubSection = this._getFirstVisibleSubSection(oSelectedSection);
 			return sFirstVisibleSubSection && (sFirstVisibleSubSection.getId() === sSectionBaseId);
 		}

@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
@@ -12,8 +13,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/m/Label",
-	"sap/ui/events/jquery/EventExtension" // side effect: provides jQuery.event.prototype.getMark
+	// side effect: provides jQuery.event.prototype.getMark
+	"sap/ui/events/jquery/EventExtension"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	IconPool,
@@ -39,7 +42,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("objectStatuses");
 
@@ -519,7 +522,7 @@ sap.ui.define([
 		//Assert
 		assert.strictEqual(
 			oObjectStatus.getDomRef().getAttribute("aria-roledescription"),
-			oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"),
+			Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE"),
 			"Proper roledescription added");
 
 		//Cleanup
@@ -575,7 +578,7 @@ sap.ui.define([
 		oControl.setActive(true);
 		oControl.setText("test");
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description,  oControl.getText() + " " + oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ACTIVE"), "Role-description is applied");
+		assert.strictEqual(oInfo.description,  oControl.getText() + " " + Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE"), "Role-description is applied");
 
 		oControl.destroy();
 	});
@@ -693,7 +696,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual($oInternalIcon.attr("role"), "img", "Icon isn't decorative in icon-only ObjectStatus");
-		assert.strictEqual($oInternalIcon.attr("aria-label"), oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS_ICON"),
+		assert.strictEqual($oInternalIcon.attr("aria-label"), Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ICON"),
 			"Icon has alternative text in icon-only ObjectStatus");
 
 		// Cleanup

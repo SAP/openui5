@@ -3,13 +3,13 @@
  */
 
 sap.ui.define([
+		"sap/ui/core/EventBus",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		'sap/ui/model/json/JSONModel',
 		"sap/ui/documentation/sdk/controller/util/NewsInfo",
-		"sap/ui/core/Core",
 		"sap/m/library"
 		],
-		function (BaseController, JSONModel, NewsInfo, Core, mobileLibrary) {
+		function (EventBus, BaseController, JSONModel, NewsInfo, mobileLibrary) {
 		'use strict';
 
 		return BaseController.extend('sap.ui.documentation.sdk.controller.News', {
@@ -21,7 +21,7 @@ sap.ui.define([
 
 				NewsInfo.prepareNewsData(this.getOwnerComponent().getConfigUtil());
 
-				Core.getEventBus().subscribe("newsChanged", "onDemoKitNewsChanged", this._syncModelWithNewsInfo, this);
+				EventBus.getInstance().subscribe("newsChanged", "onDemoKitNewsChanged", this._syncModelWithNewsInfo, this);
 			},
 
 			onAfterRendering: function() {

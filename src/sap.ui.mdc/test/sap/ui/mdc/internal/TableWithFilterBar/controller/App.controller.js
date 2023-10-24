@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/model/json/JSONModel",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"../Operators",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
-], function (Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter, oCore) {
+], function(Messaging, Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
@@ -30,7 +31,7 @@ sap.ui.define([
 
 		onInit: function () {
 
-			oCore.getMessageManager().registerObject(this.getView(), true);
+			Messaging.registerObject(this.getView(), true);
 
 			var oCM = new ConditionModel();
 

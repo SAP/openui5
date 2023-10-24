@@ -4,17 +4,18 @@
 
 // Provides control sap.m.Avatar.
 sap.ui.define([
-    "sap/ui/core/Control",
-    "sap/ui/core/IconPool",
-    "./AvatarRenderer",
-    "sap/ui/events/KeyCodes",
-    "sap/base/Log",
-    "sap/ui/core/Icon",
-    "./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"./AvatarRenderer",
+	"sap/ui/core/Lib",
+	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
+	"sap/ui/core/Icon",
+	"./library",
 	"sap/ui/core/library",
 	'sap/ui/core/InvisibleText',
 	'sap/m/imageUtils/getCacheBustedUrl'
-], function(Control, IconPool, AvatarRenderer, KeyCodes, Log, Icon, library, coreLibrary, InvisibleText, getCacheBustedUrl) {
+], function(Control, IconPool, AvatarRenderer, Library, KeyCodes, Log, Icon, library, coreLibrary, InvisibleText, getCacheBustedUrl) {
 	"use strict";
 
 	// shortcut for sap.m.AvatarType
@@ -281,9 +282,9 @@ sap.ui.define([
 	 * @type {string}
 	 */
 	Avatar.AVATAR_BADGE_TOOLTIP = {
-		"sap-icon://zoom-in" : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
-		"sap-icon://camera": sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_CAMERA"),
-		"sap-icon://edit": sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP_EDIT")
+		"sap-icon://zoom-in" : Library.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP_ZOOMIN"),
+		"sap-icon://camera": Library.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP_CAMERA"),
+		"sap-icon://edit": Library.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP_EDIT")
 	};
 
 	Avatar.prototype.init = function () {
@@ -646,7 +647,7 @@ sap.ui.define([
 	};
 
 	Avatar.prototype._getDefaultTooltip = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("AVATAR_TOOLTIP");
+		return Library.getResourceBundleFor("sap.m").getText("AVATAR_TOOLTIP");
 	};
 
 	Avatar.prototype._getBadgeIconSource = function() {

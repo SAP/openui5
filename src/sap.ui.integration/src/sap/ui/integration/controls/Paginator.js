@@ -5,26 +5,28 @@
 sap.ui.define([
 	"../library",
 	"sap/ui/base/EventProvider",
-	"sap/ui/core/Core",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Control",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Lib",
 	"./PaginatorRenderer"
-], function (
+], function(
 	library,
 	EventProvider,
-	Core,
+	ControlBehavior,
 	Control,
 	Configuration,
 	Icon,
+	Library,
 	PaginatorRenderer
 ) {
 	"use strict";
 
-	var sAnimationMode = Core.getConfiguration().getAnimationMode(),
+	var sAnimationMode = ControlBehavior.getAnimationMode(),
 		bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal,
 		iServerSideAfterTransitionDelay = 200,
-		oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	/**
 	 * Constructor for a new Paginator.

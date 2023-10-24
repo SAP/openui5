@@ -1,5 +1,6 @@
 /*global QUnit sinon*/
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/table/columnmenu/Menu",
 	"sap/m/table/columnmenu/QuickGroup",
@@ -7,7 +8,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/library",
 	"sap/ui/core/Core"
-], function (QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, Core) {
+], function(Library, QUnitUtils, Menu, QuickGroup, QuickGroupItem, Button, library, Core) {
 	"use strict";
 
 	QUnit.module("Basic", {
@@ -57,7 +58,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Label", function(assert) {
-		var oBundle = Core.getLibraryResourceBundle("sap.m");
+		var oBundle = Library.getResourceBundleFor("sap.m");
 		var sLabel = oBundle.getText("table.COLUMNMENU_QUICK_GROUP");
 		assert.equal(this.oQuickGroup.getLabel(), sLabel, "QuickGroup label is correct.");
 	});

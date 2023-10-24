@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/base/Object",
 	"sap/ui/core/cache/CacheManager",
 	"sap/ui/core/Component",
@@ -13,9 +14,9 @@ sap.ui.define([
 	"./testdata/TestPreprocessor",
 	"sap/base/Log",
 	"sap/base/strings/hash",
-	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/Configuration"
+	"sap/base/util/LoaderExtensions"
 ], function(
+	Localization,
 	BaseObject,
 	Cache,
 	Component,
@@ -29,8 +30,7 @@ sap.ui.define([
 	TestPreprocessor,
 	Log,
 	hash,
-	LoaderExtensions,
-	Configuration
+	LoaderExtensions
 ) {
 	"use strict";
 
@@ -206,7 +206,7 @@ sap.ui.define([
 
 		var getKeyParts = function(aKeys, sManifest, aUsedTerminologies) {
 			var sUsedTerminologies = aUsedTerminologies ? aUsedTerminologies.join("_") + "_" : "";
-			var sLanguageTag = Configuration.getLanguageTag(),
+			var sLanguageTag = Localization.getLanguageTag().toString(),
 				sHashCode = hash(sManifest || "");
 			return "_" + sLanguageTag + "_" + sUsedTerminologies + sBuildTimeStamp + "_" + aKeys.join("_") + "(" + sHashCode + ")";
 		};

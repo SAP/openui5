@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MenuItem.
-sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserver'],
-	function(library, Item, ManagedObjectObserver) {
+sap.ui.define(['./library', "sap/ui/core/Element", 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserver'],
+	function(library, Element, Item, ManagedObjectObserver) {
 		"use strict";
 
 
@@ -140,7 +140,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 			Item.prototype.addAggregation.apply(this, arguments);
 
 			if (sAggregationName === 'customData' && oVisualItemId) {
-				oVisualItem = sap.ui.getCore().byId(oVisualItemId);
+				oVisualItem = Element.getElementById(oVisualItemId);
 				this._addCustomData(oVisualItem, oObject);
 			}
 
@@ -156,7 +156,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 			Item.prototype.insertAggregation.apply(this, arguments);
 
 			if (sAggregationName === 'customData' && oVisualItemId) {
-				oVisualItem = sap.ui.getCore().byId(oVisualItemId);
+				oVisualItem = Element.getElementById(oVisualItemId);
 				oVisualItem.insertCustomData(oObject.clone(MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX), iIndex);
 				this._observeCustomDataChanges(oObject);
 			}
@@ -206,7 +206,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 		};
 
 		MenuItem.prototype.destroy = function() {
-			var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+			var oVisualControl = Element.getElementById(this._getVisualControl());
 
 			if (oVisualControl) {
 				oVisualControl.destroy();
@@ -219,7 +219,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 			Item.prototype.addEventDelegate.apply(this, arguments);
 
 			if (this._getVisualControl()) {
-				var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+				var oVisualControl = Element.getElementById(this._getVisualControl());
 				oVisualControl.addEventDelegate(oDelegate, oThis);
 			}
 
@@ -230,7 +230,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 			Item.prototype.removeEventDelegate.apply(this, arguments);
 
 			if (this._getVisualControl()) {
-				var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+				var oVisualControl = Element.getElementById(this._getVisualControl());
 				oVisualControl.removeEventDelegate(oDelegate);
 			}
 
@@ -268,7 +268,7 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObjectObserv
 		 * @private
 		 */
 		MenuItem.prototype._customDataObserverCallbackFunction = function (oChanges) {
-			sap.ui.getCore().byId(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setValue(oChanges.current);
+			Element.getElementById(oChanges.object.getId() + "-" + MenuItem.UNIFIED_MENU_ITEMS_ID_SUFFIX).setValue(oChanges.current);
 		};
 
 		/**

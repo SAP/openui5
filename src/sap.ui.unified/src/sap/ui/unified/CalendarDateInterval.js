@@ -12,12 +12,12 @@ sap.ui.define([
 	'./calendar/YearRangePicker',
 	'./calendar/CalendarDate',
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/Device',
 	"./CalendarDateIntervalRenderer",
 	"sap/base/util/deepEqual",
 	"sap/m/Popover",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Core",
 	"sap/base/Log",
 	"./DateRange",
 	"sap/ui/core/date/UI5Date"
@@ -31,12 +31,12 @@ sap.ui.define([
 	YearRangePicker,
 	CalendarDate,
 	library,
+	Localization,
 	Device,
 	CalendarDateIntervalRenderer,
 	deepEqual,
 	Popover,
 	CalendarType,
-	Core,
 	Log,
 	DateRange,
     UI5Date
@@ -1040,7 +1040,7 @@ sap.ui.define([
 			var $Popover = this._oPopup.$();
 			var iOffsetX = Math.floor(($Popover.width() - $Button.width()) / 2);
 
-			this._oPopup.setOffsetX(Core.getConfiguration().getRTL() ? iOffsetX : -iOffsetX);
+			this._oPopup.setOffsetX(Localization.getRTL() ? iOffsetX : -iOffsetX);
 
 			var iOffsetY = $Button.height();
 

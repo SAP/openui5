@@ -1,5 +1,7 @@
 sap.ui.define([
 	"sap/m/DynamicDateOption",
+	"sap/ui/core/Element",
+	"sap/ui/core/Messaging",
 	"sap/ui/core/format/DateFormat",
 	"sap/m/DynamicDate",
 	"sap/m/DynamicDateFormat",
@@ -17,6 +19,8 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date"
 ], function(
 	DynamicDateOption,
+	Element,
+	Messaging,
 	DateFormat,
 	DynamicDate,
 	DynamicDateFormat,
@@ -136,7 +140,7 @@ sap.ui.define([
 
 	function handleValueChange(oEvent) {
 		var sDDRValue = JSON.stringify(oEvent.getParameter("value"), null, 2);
-		var oTextArea = sap.ui.getCore().byId("txt1");
+		var oTextArea = Element.getElementById("txt1");
 		var oDDR = oEvent.getSource();
 
 		oTextArea.setValue(sDDRValue + "\n" + oTextArea.getValue());
@@ -224,7 +228,7 @@ sap.ui.define([
 			]
 		});
 
-	var oMessageManager = sap.ui.getCore().getMessageManager();
+	var oMessageManager = Messaging;
 	oMessageManager.registerObject(oDDR1, true);
 
 	var oModel = new JSONModel({

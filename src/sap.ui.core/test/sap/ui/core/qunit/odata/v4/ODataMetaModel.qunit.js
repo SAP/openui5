@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/JSTokenizer",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
@@ -28,7 +28,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (Log, JSTokenizer, uid, SyncPromise, Configuration, BindingMode, ChangeReason,
+], function (Log, Localization, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason,
 		ClientListBinding, BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model,
 		PropertyBinding, Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel,
 		ODataModel, ValueListType, _Helper, _MetadataRequestor, TestUtils, URI) {
@@ -1151,7 +1151,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.mock(Configuration).expects("getLanguageTag").atLeast(0).returns("ab-CD");
+			this.mock(Localization).expects("getLanguageTag").atLeast(0).returns("ab-CD");
 
 			this.oModel = {
 				getReporter : function () {},
@@ -5193,7 +5193,7 @@ sap.ui.define([
 		oMapSetExpectation = this.mock(Map.prototype).expects("set")
 			.withArgs(bAutoExpandSelect + "/Foo/ValueListService/").callThrough();
 		// observe metadataUrlParams being passed along
-		// Note: "ab-CD" is derived from Configuration#getLanguageTag here, not from mHeaders!
+		// Note: "ab-CD" is derived from Localization.getLanguageTag here, not from mHeaders!
 		this.mock(_MetadataRequestor).expects("create")
 			.withExactArgs({"Accept-Language" : "ab-CD"}, "4.0", undefined,
 				{"sap-language" : "~sLanguage~"}, undefined);

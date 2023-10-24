@@ -23,8 +23,9 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/Table",
 	"sap/m/Text",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
+	"sap/ui/core/Theming",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/VerticalLayout",
@@ -33,7 +34,7 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery"
-], function(App, Button, CheckBox, Column, ColumnListItem, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, mobileLibrary, Link, List, MessageBox, ObjectStatus, Page, Panel, RadioButton, RadioButtonGroup, RatingIndicator, ScrollContainer, StandardListItem, Table, Text, oCore, coreLibrary, NumberFormat, HorizontalLayout, VerticalLayout, SimpleForm, Filter, FilterOperator, JSONModel, jQuery) {
+], function(App, Button, CheckBox, Column, ColumnListItem, IconTabBar, IconTabFilter, IconTabSeparator, Input, Label, mobileLibrary, Link, List, MessageBox, ObjectStatus, Page, Panel, RadioButton, RadioButtonGroup, RatingIndicator, ScrollContainer, StandardListItem, Table, Text, Element, coreLibrary, Theming, NumberFormat, HorizontalLayout, VerticalLayout, SimpleForm, Filter, FilterOperator, JSONModel, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -327,7 +328,7 @@ sap.ui.define([
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 
 			for (var i = 0; i < jQuery(".sapMITB").length; i++) {
-				oCore.byId(jQuery(".sapMITB")[i].id).setTabDensityMode(sSelectedValue);
+				Element.getElementById(jQuery(".sapMITB")[i].id).setTabDensityMode(sSelectedValue);
 			}
 		}
 	});
@@ -351,7 +352,7 @@ sap.ui.define([
 		select: function (oEvent) {
 			var bSelectedValue = oEvent.getSource().getSelected();
 			jQuery("#body").toggleClass("sapUiSizeCompact", !bSelectedValue).toggleClass("sapUiSizeCozy", bSelectedValue);
-			oCore.notifyContentDensityChanged();
+			Theming.notifyContentDensityChanged();
 		}
 	});
 

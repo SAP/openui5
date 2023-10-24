@@ -13,15 +13,16 @@
 
 // Provides class sap.ui.unified.calendar.CalendarUtils
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/ui/core/date/UniversalDate',
 	'./CalendarDate',
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ],
-	function(UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, Configuration, UI5Date) {
+	function(Formatting, Localization, UniversalDate, CalendarDate, CalendarType, Locale, LocaleData, UI5Date) {
 		"use strict";
 
 		// Static class
@@ -238,8 +239,8 @@ sap.ui.define([
 			var oUniversalDate = new UniversalDate(oDate.getTime()),
 				oFirstDateOfWeek,
 				oFirstUniversalDateOfWeek,
-				oLocaleData = LocaleData.getInstance(Configuration.getFormatSettings().getFormatLocale()),
-				oLocale = Configuration.getLocale(),
+				oLocaleData = LocaleData.getInstance(new Locale(Formatting.getLanguageTag())),
+				oLocale = new Locale(Localization.getLanguageTag()),
 				iCLDRFirstWeekDay = oLocaleData.getFirstDayOfWeek(),
 				oWeek;
 
@@ -290,7 +291,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._getNumberOfWeeksForYear = function (iYear) {
-			var sLocale = Configuration.getFormatLocale(),
+			var sLocale = Formatting.getLanguageTag().toString(),
 				oLocaleData = LocaleData.getInstance(new Locale(sLocale)),
 				o1stJan = UI5Date.getInstance(Date.UTC(iYear, 0, 1)),
 				i1stDay = o1stJan.getUTCDay(),
@@ -390,7 +391,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._checkYearInValidRange = function(iYear, sCalendarType) {
-			var sConfigCalendarType = Configuration.getCalendarType(),
+			var sConfigCalendarType = Formatting.getCalendarType(),
 				oMinDate = new CalendarDate(this._minDate(CalendarType.Gregorian), sCalendarType || sConfigCalendarType),
 				oMaxDate = new CalendarDate(this._maxDate(CalendarType.Gregorian), sCalendarType || sConfigCalendarType);
 			if (typeof iYear !== "number" || iYear < oMinDate.getYear() || iYear > oMaxDate.getYear()) {
@@ -555,7 +556,7 @@ sap.ui.define([
 		 * @private
 		 */
 		CalendarUtils._getFirstDateOfWeek = function (oCalendarDate, oWeekConfig) {
-			var oLocaleData = LocaleData.getInstance(Configuration.getFormatSettings().getFormatLocale());
+			var oLocaleData = LocaleData.getInstance(new Locale(Formatting.getLanguageTag()));
 			this._checkCalendarDate(oCalendarDate);
 
 			if (!oWeekConfig || (oWeekConfig.firstDayOfWeek === -1 || oWeekConfig.firstDayOfWeek === undefined)) {

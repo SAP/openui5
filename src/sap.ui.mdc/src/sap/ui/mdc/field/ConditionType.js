@@ -4,6 +4,8 @@
 
 // Provides the base implementation for all model implementations
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/model/SimpleType',
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
@@ -22,6 +24,8 @@ sap.ui.define([
 	'sap/ui/base/SyncPromise'
 ],
 	function(
+		Element,
+		Library,
 		SimpleType,
 		FormatException,
 		ParseException,
@@ -90,7 +94,7 @@ sap.ui.define([
 		constructor : function (oFormatOptions, oConstraints) {
 			SimpleType.apply(this, arguments);
 			this.sName = "Condition";
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 			this._oCalls = {active: 0, last: 0, condition: undefined, exception: undefined}; // if Multiple async. calls, just use the last result
 		}
 
@@ -907,7 +911,7 @@ sap.ui.define([
 
 		const sID = this.oFormatOptions.valueHelpID;
 		if (sID) {
-			const oValueHelp = sap.ui.getCore().byId(sID);
+			const oValueHelp = Element.getElementById(sID);
 			if (oValueHelp && oValueHelp.isValidationSupported()) {
 				return oValueHelp;
 			}

@@ -4,10 +4,11 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-  "sap/m/Avatar",
+	"sap/m/Avatar",
 	"sap/m/AvatarRenderer",
+	"sap/ui/core/Lib",
 	"./library"
-], function(MAvatar, AvatarRenderer/*, library */) {
+], function(MAvatar, AvatarRenderer/*, library */, Library) {
 	"use strict";
 
 	/**
@@ -58,7 +59,7 @@ sap.ui.define([
 	});
 
 	Avatar.prototype._getDefaultTooltip = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.f").getText("AVATAR_TOOLTIP");
+		return Library.getResourceBundleFor("sap.f").getText("AVATAR_TOOLTIP");
 	};
 
 	return Avatar;

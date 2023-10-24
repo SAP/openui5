@@ -4,6 +4,7 @@
 // is tested in Form, FormContainer and FormElement qUnit tests.
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/base/Log",
@@ -22,8 +23,9 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/TextArea",
 	"sap/ui/core/Core"
-	],
+],
 	function(
+		Element,
 		jQuery,
 		qutils,
 		Log,
@@ -469,7 +471,7 @@ sap.ui.define([
 		assert.equal(jQuery("#TA7").parent().attr("rowspan"), "2", "Element6: Field1 (with vCells=2) rendered with rowspan 2");
 		assert.equal(jQuery("#TA7").parent().parent().next().children().length, 0, "Empty dummy row rendered after full-size rowspan");
 
-		var oGED2 = oCore.byId("TA6").getLayoutData();
+		var oGED2 = Element.getElementById("TA6").getLayoutData();
 		oGED2.setHCells("full");
 		oCore.applyChanges();
 		assert.notOk(window.document.getElementById("TA6"), "Field is not rendered");

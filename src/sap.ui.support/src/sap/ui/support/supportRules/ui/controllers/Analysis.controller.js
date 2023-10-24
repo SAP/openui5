@@ -11,6 +11,7 @@ sap.ui.define([
 	"../models/PresetsUtils",
 	"../models/CustomJSONListSelection",
 	"sap/base/util/deepExtend",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/core/Fragment",
@@ -26,7 +27,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
 	"sap/ui/support/supportRules/util/EvalUtils"
-], function (
+], function(
 	BaseController,
 	PresetsController,
 	SharedModel,
@@ -35,6 +36,7 @@ sap.ui.define([
 	PresetsUtils,
 	CustomJSONListSelection,
 	deepExtend,
+	Element,
 	JSONModel,
 	BindingMode,
 	Fragment,
@@ -351,7 +353,7 @@ sap.ui.define([
 			}
 
 			if (ctx.type === "components") {
-				var selectionContainer = sap.ui.getCore().byId("componentsSelectionContainer"),
+				var selectionContainer = Element.getElementById("componentsSelectionContainer"),
 					cbs = selectionContainer.getContent();
 
 				ctx.components = [];
@@ -509,7 +511,7 @@ sap.ui.define([
 		},
 
 		_hasSelectedComponent: function () {
-			var aAllComponentElements = sap.ui.getCore().byId("componentsSelectionContainer").getContent();
+			var aAllComponentElements = Element.getElementById("componentsSelectionContainer").getContent();
 			function isSelected(oComponent) {
 				return oComponent.getSelected();
 			}
@@ -543,7 +545,7 @@ sap.ui.define([
 					radioKey = source.getCustomData()[0].getValue(),
 					execScope = this.model.getProperty("/executionScopes")[radioKey];
 				if (radioKey === "components" && !this._hasSelectedComponent()) {
-					var aComponents = sap.ui.getCore().byId("componentsSelectionContainer").getContent();
+					var aComponents = Element.getElementById("componentsSelectionContainer").getContent();
 					if (aComponents.length > 0) {
 						aComponents[0].setSelected(true);
 						this.onScopeComponentSelect(null);
@@ -747,7 +749,7 @@ sap.ui.define([
 
 		goToCreateRule: function () {
 			var navCont = this.byId("rulesNavContainer");
-			navCont.to(sap.ui.getCore().byId("rulesCreatePage"), "show");
+			navCont.to(Element.getElementById("rulesCreatePage"), "show");
 		},
 
 		checkFunctionString: function (functionString) {
@@ -894,7 +896,7 @@ sap.ui.define([
 			this.model.setProperty("/editRuleSource", selectedRule);
 			this.model.setProperty("/editRule", deepExtend({}, selectedRule));
 			var navCont = this.byId("rulesNavContainer");
-			navCont.to(sap.ui.getCore().byId("ruleUpdatePage"), "show");
+			navCont.to(Element.getElementById("ruleUpdatePage"), "show");
 		},
 
 		deleteTemporaryRule: function (event) {

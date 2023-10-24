@@ -1,12 +1,12 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/Host",
 	"sap/ui/integration/util/ManifestResolver",
 	"sap/ui/integration/util/SkeletonCard"
 ], function (
-	Core,
+	Library,
 	Host,
 	ManifestResolver,
 	SkeletonCard
@@ -374,7 +374,7 @@ sap.ui.define([
 				manifest: oManifest,
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			}),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		assert.expect(1);
 
@@ -450,7 +450,7 @@ sap.ui.define([
 				manifest: oManifest,
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			}),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
@@ -752,7 +752,7 @@ sap.ui.define([
 				manifest: oManifest,
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			}),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)
@@ -1567,7 +1567,7 @@ sap.ui.define([
 				manifest: oManifest,
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			}),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+			oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		// Act
 		return ManifestResolver.resolveCard(oCard)

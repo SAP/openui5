@@ -1,5 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/LanguageTag",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/format/DateFormat",
@@ -29,10 +33,14 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Element",
-	"sap/ui/dom/jquery/cursorPos" // provides jQuery.fn.cursorPos
+	// provides jQuery.fn.cursorPos
+	"sap/ui/dom/jquery/cursorPos"
 ], function(
+	Formatting,
+	LanguageTag,
+	Localization,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	DateFormat,
@@ -62,7 +70,6 @@ sap.ui.define([
 	KeyCodes,
 	oCore,
 	UI5Date,
-	Configuration,
 	Element
 ) {
 	"use strict";
@@ -396,7 +403,7 @@ sap.ui.define([
 	QUnit.test("Set displayFormat to 'HH:mm'", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("HH:mm");
-		var sPlaceholderPrefix = oCore.getLibraryResourceBundle("sap.ui.core").getText("date.placeholder").split("{")[0];
+		var sPlaceholderPrefix = Library.getResourceBundleFor("sap.ui.core").getText("date.placeholder").split("{")[0];
 		// Assert
 		assert.ok(this.oTimePicker._getPlaceholder().includes(sPlaceholderPrefix), "The placeholder is correct");
 	});
@@ -404,7 +411,7 @@ sap.ui.define([
 	QUnit.test("Set displayFormat to 'short'", function (assert) {
 		// Act
 		this.oTimePicker.setDisplayFormat("short");
-		var sPlaceholderPrefix = oCore.getLibraryResourceBundle("sap.ui.core").getText("date.placeholder").split("{")[0];
+		var sPlaceholderPrefix = Library.getResourceBundleFor("sap.ui.core").getText("date.placeholder").split("{")[0];
 		// Assert
 		assert.ok(this.oTimePicker._getPlaceholder().includes(sPlaceholderPrefix), "The placeholder is correct");
 	});
@@ -718,7 +725,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("test default locale", function (assert) {
-		var stub = sinon.stub(oCore.getConfiguration().getFormatSettings(), 'getFormatLocale').returns(new Locale('ar'));
+		var stub = sinon.stub(Formatting, "getLanguageTag").returns(new LanguageTag('ar'));
 		//Test default browser locale set to arabic
 		generateValuesTest([
 			{ key: "setDisplayFormat", value: "hh:mm:ss a"},
@@ -749,7 +756,7 @@ sap.ui.define([
 		//arrange
 		var oTP = new TimePicker(),
 			oLocale,
-			oSystemLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
+			oSystemLocale = new Locale(Formatting.getLanguageTag());
 
 		// act
 		oLocale = oTP._getLocale();
@@ -766,7 +773,7 @@ sap.ui.define([
 		// arrange
 		var oTP = new TimePicker({localeId:'en'}),
 			oLocale,
-			oSystemLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale();
+			oSystemLocale = new Locale(Formatting.getLanguageTag());
 
 		// act
 		oLocale = oTP._getLocale();
@@ -1143,7 +1150,7 @@ sap.ui.define([
 			oButton = new Button({
 				icon: "sap-icon://appointment-2",
 				press: function() {
-					oCore.byId("HTP").openBy(this.getDomRef());
+					Element.getElementById("HTP").openBy(this.getDomRef());
 				}
 			}).placeAt("qunit-fixture");
 
@@ -1172,7 +1179,7 @@ sap.ui.define([
 		assert.notOk(oIconOne.getTooltip(), "icon has no tooltip");
 		assert.ok(oIconOne.getDecorative(), "icon is decorative");
 		assert.notOk(oIconOne.getUseIconTooltip(), "icon doesn't have default tooltip");
-		assert.strictEqual(oIconOne.getAlt(), oCore.getLibraryResourceBundle("sap.m").getText("OPEN_PICKER_TEXT") , "icon alt is present");
+		assert.strictEqual(oIconOne.getAlt(), Library.getResourceBundleFor("sap.m").getText("OPEN_PICKER_TEXT") , "icon alt is present");
 
 		// arrange
 		var oTouchStub = this.stub(Device, "support").value({touch: true});
@@ -1372,7 +1379,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("decrease time", function(assert) {
-		var oGetTimezoneStub = this.stub(Configuration, "getTimezone").callsFake(function () { return "Europe/Sofia"; });
+		var oGetTimezoneStub = this.stub(Localization, "getTimezone").callsFake(function () { return "Europe/Sofia"; });
 
 		var oTp = new TimePicker();
 		oTp.placeAt("qunit-fixture");
@@ -1429,7 +1436,7 @@ sap.ui.define([
 	QUnit.test("support2400 - 24:00:00 value works correctly in all scenarios", function(assert) {
 		//prepare
 		//this test checks the scenario when the default date pattern has HH for hours. this happens when "de-DE" is set for language.
-		oCore.getConfiguration().setLanguage("de-DE");
+		Localization.setLanguage("de-DE");
 		oCore.applyChanges();
 
 		var tpId = "timepicker",
@@ -1478,7 +1485,7 @@ sap.ui.define([
 		oGetClocksStub.restore();
 		oTimePickerClocks.destroy();
 		oTP.destroy();
-		oCore.getConfiguration().setLanguage("en-US");
+		Localization.setLanguage("en-US");
 	});
 
 	QUnit.module("properties in constructor options", {
@@ -1581,7 +1588,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
-			this.oRB = oCore.getLibraryResourceBundle('sap.m');
+			this.oRB = Library.getResourceBundleFor('sap.m');
 			this.oTP = new TimePicker({
 				localeId: 'en' //set localeId explicitly otherwise it will be taken from the system configuration and the test won't be stable
 			});
@@ -1710,7 +1717,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		oInfo = this.oTP.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TIMEINPUT"), "Type");
 		assert.strictEqual(oInfo.description, "Value", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");

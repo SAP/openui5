@@ -1,6 +1,6 @@
 sap.ui.define([
-	'sap/ui/core/Core',
 	'sap/ui/core/library',
+	"sap/ui/core/Messaging",
 	'sap/ui/core/message/ControlMessageProcessor',
 	'sap/ui/core/message/Message',
 	'sap/ui/core/mvc/Controller',
@@ -9,7 +9,7 @@ sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageBox'
-], function(Core, coreLibrary, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessageItem, MessageBox) {
+], function(coreLibrary, Messaging, ControlMessageProcessor, Message, Controller, Filter, JSONModel, MessagePopover, MessageItem, MessageBox) {
 	"use strict";
 
 	var MessageType = coreLibrary.MessageType;
@@ -17,7 +17,7 @@ sap.ui.define([
 	return Controller.extend("sap.f.sample.SemanticPage.controller.SemanticPage", {
 		onInit: function () {
 			var oMessageProcessor = new ControlMessageProcessor(),
-				oMessageManager = Core.getMessageManager();
+				oMessageManager = Messaging;
 
 			this.oModel = new JSONModel();
 			this.oModel.loadData(sap.ui.require.toUrl("sap/f/sample/SemanticPage/model/model.json"), null, false);

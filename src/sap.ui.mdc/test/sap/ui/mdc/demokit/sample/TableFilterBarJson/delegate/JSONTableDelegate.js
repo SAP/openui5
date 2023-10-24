@@ -1,15 +1,15 @@
 /* eslint-disable require-await */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/table/Column",
 	"sap/m/Text",
-	"sap/ui/core/Core",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"mdc/sample/model/metadata/JSONPropertyInfo",
 	"mdc/sample/delegate/JSONBaseDelegate"
 ], function (
-	TableDelegate, Column, Text, Core, Filter, FilterOperator, JSONPropertyInfo,
+	Element, TableDelegate, Column, Text, Filter, FilterOperator, JSONPropertyInfo,
 	JSONBaseDelegate) {
 	"use strict";
 
@@ -35,7 +35,7 @@ sap.ui.define([
 	JSONTableDelegate.addItem = async (oTable, sPropertyName) => {
 		const oPropertyInfo = JSONPropertyInfo.find((oPI) => oPI.name === sPropertyName);
 		const sId = oTable.getId() + "---col-" + sPropertyName;
-		return Core.byId(sId) ?? await _createColumn(sId, oPropertyInfo);
+		return Element.getElementById(sId) ?? (await _createColumn(sId, oPropertyInfo));
 	};
 
 	JSONTableDelegate.removeItem = async (oTable, oColumn) => {
@@ -59,7 +59,7 @@ sap.ui.define([
 	};
 
 	JSONTableDelegate.getFilters = (oTable) => {
-		const sSearch = Core.byId(oTable.getFilter()).getSearch();
+		const sSearch = Element.getElementById(oTable.getFilter()).getSearch();
 		const aKeys = oTable.getPayload().searchKeys;
 		let aFilters = TableDelegate.getFilters(oTable);
 		if (sSearch && aKeys) {

@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./ListBase',
 	'./library',
+	"sap/ui/core/Lib",
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./TreeRenderer',
@@ -16,6 +17,7 @@ sap.ui.define([
 function(
 	ListBase,
 	library,
+	Library,
 	ClientTreeBindingAdapter,
 	TreeBindingCompatibilityAdapter,
 	TreeRenderer,
@@ -412,7 +414,7 @@ function(
 	};
 
 	Tree.prototype.getAccessibilityType = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TREE");
+		return Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_TREE");
 	};
 
 	Tree.prototype.getAccessbilityPosition = function(oItem) {

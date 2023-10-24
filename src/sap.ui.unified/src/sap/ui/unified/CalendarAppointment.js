@@ -5,6 +5,9 @@
 // Provides control sap.ui.unified.CalendarAppointment.
 sap.ui.define([
 	'./DateTypeRange',
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/format/NumberFormat',
 	'sap/ui/core/format/TimezoneUtil',
@@ -12,11 +15,13 @@ sap.ui.define([
 	'./calendar/CalendarUtils',
 	'./library',
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
 ],
 	function(
 		DateTypeRange,
+		Formatting,
+		Library,
+		Locale,
 		DateFormat,
 		NumberFormat,
 		TimezoneUtil,
@@ -24,9 +29,8 @@ sap.ui.define([
 		CalendarUtils,
 		library,
 		Log,
-		Configuration,
 		UI5Date
-		) {
+	) {
 	"use strict";
 
 	/**
@@ -151,13 +155,13 @@ sap.ui.define([
 			oCurrentDayStart = UI5Date.getInstance(oCurrentlyDisplayedDate.getFullYear(), oCurrentlyDisplayedDate.getMonth(), oCurrentlyDisplayedDate.getDate(), 0, 0, 0),
 			oNextDayStart = UI5Date.getInstance(oCurrentDayStart.getFullYear(), oCurrentDayStart.getMonth(), oCurrentDayStart.getDate() + 1),
 			oTimeFormat = DateFormat.getTimeInstance({pattern: "HH:mm"}),
-			oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+			oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oHourFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-hour"]
-			}, Configuration.getFormatSettings().getFormatLocale()),
+			}, new Locale(Formatting.getLanguageTag())),
 			oMinuteFormat = NumberFormat.getUnitInstance({
 				allowedUnits: ["duration-minute"]
-			}, Configuration.getFormatSettings().getFormatLocale()),
+			}, new Locale(Formatting.getLanguageTag())),
 			iHour, iMinute, sHour, sMinute;
 
 		//have no intersection with the given day

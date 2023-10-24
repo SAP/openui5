@@ -4,8 +4,23 @@
 
 // Provides control sap.m.P13nDialog.
 sap.ui.define([
-	'./Dialog', './library', 'sap/ui/core/EnabledPropagator', './DialogRenderer', 'sap/ui/core/library', 'sap/ui/Device', './Bar', './Button', './Title', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/base/ManagedObjectObserver', "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/util/isEmptyObject"
-], function(Dialog, library, EnabledPropagator, DialogRenderer, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver, jQuery, Log, isEmptyObject) {
+	'./Dialog',
+	'./library',
+	"sap/ui/core/Element",
+	'sap/ui/core/EnabledPropagator',
+	'./DialogRenderer',
+	"sap/ui/core/Lib",
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'./Bar',
+	'./Button',
+	'./Title',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log",
+	"sap/base/util/isEmptyObject"
+], function(Dialog, library, Element, EnabledPropagator, DialogRenderer, Library, coreLibrary, Device, Bar, Button, Title, OverflowToolbarLayoutData, ManagedObjectObserver, jQuery, Log, isEmptyObject) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -154,7 +169,7 @@ sap.ui.define([
 	P13nDialog.prototype.init = function(oEvent) {
 		this.addStyleClass("sapMP13nDialog");
 		Dialog.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 		this._mValidationListener = {};
 		this._createDialog();
 		this._bTabBarUsed = true;
@@ -241,7 +256,7 @@ sap.ui.define([
 					});
 					MessageBox.show(sMessageText, {
 						icon: MessageBox.Icon.ERROR,
-						title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE_ERROR"),
+						title: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_TITLE_ERROR"),
 						actions: [
 							MessageBox.Action.CLOSE
 						],
@@ -251,14 +266,14 @@ sap.ui.define([
 					aWarningMessages.forEach(function(oMessage, iIndex, aMessages) {
 						sMessageText = (aMessages.length > 1 ? "• " : "") + oMessage.messageText + "\n" + sMessageText;
 					});
-					sMessageText = sMessageText + sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION");
+					sMessageText = sMessageText + Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE_QUESTION");
 
 					MessageBox.show(sMessageText, {
 						icon: MessageBox.Icon.WARNING,
-						title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
-						emphasizedAction: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"),
+						title: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
+						emphasizedAction: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_FIX"),
 						actions: [
-							sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), MessageBox.Action.IGNORE
+							Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), MessageBox.Action.IGNORE
 						],
 						onClose: function(oAction) {
 							// Fix: Stay on the current panel. There is incorrect entry and user decided to correct this.
@@ -292,13 +307,13 @@ sap.ui.define([
 				case P13nPanelType.filter:
 					aValidationResult.push({
 						messageType: MessageType.Warning,
-						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE")
+						messageText: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VALIDATION_MESSAGE")
 					});
 					break;
 				case P13nPanelType.columns:
 					aValidationResult.push({
 						messageType: MessageType.Warning,
-						messageText: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE")
+						messageText: Library.getResourceBundleFor("sap.m").getText("P13NDIALOG_VISIBLE_ITEMS_THRESHOLD_MESSAGE")
 					});
 					break;
 				default:
@@ -649,7 +664,7 @@ sap.ui.define([
 			visible: this.getShowReset(),
 			enabled: this.getShowResetEnabled(),
 			press: function() {
-				sap.ui.getCore().byId(that.getId() + "-ok").focus();//set focus back to 'Ok' button after 'Restore' has been pressed
+				Element.getElementById(that.getId() + "-ok").focus();//set focus back to 'Ok' button after 'Restore' has been pressed
 				that.setShowResetEnabled(false);
 				var oPayload = {};
 				that.getPanels().forEach(function(oPanel) {

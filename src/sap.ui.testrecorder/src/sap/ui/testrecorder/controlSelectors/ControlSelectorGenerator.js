@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/base/Object",
+	"sap/ui/core/Element",
 	"sap/ui/test/RecordReplay"
-], function (BaseObject, RecordReplay) {
+], function(BaseObject, Element, RecordReplay) {
 	"use strict";
 
 	/**
@@ -39,7 +40,7 @@ sap.ui.define([
 			return document.getElementById(mData.domElementId);
 		} else if (mData.controlId) {
 			// mDat would contain control ID: when control is selected from the recorder control tree
-			return sap.ui.getCore().byId(mData.controlId).getFocusDomRef();
+			return Element.getElementById(mData.controlId).getFocusDomRef();
 		}
 	}
 

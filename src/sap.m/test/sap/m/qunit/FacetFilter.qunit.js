@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/FacetFilter",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	FacetFilter,
@@ -578,7 +580,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -629,7 +631,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -665,7 +667,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 
 		var oSearchField = getDialogFacetSearchField(oFacetPage);
 
@@ -706,7 +708,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1825,7 +1827,7 @@ sap.ui.define([
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				var sSearchId = getPopoverFilterItemsList(oPopover).getAssociation("search");
-				var oSearch = oCore.byId(sSearchId);
+				var oSearch = Element.getElementById(sSearchId);
 				//This moves the focus out of the filter items, because when item is focused and deleted (due to filtering) on Crhome the focus for this item is lost and the popover closes.
 				oSearch.focus();
 

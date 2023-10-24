@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SegmentedButton.
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/core/Lib',
 	'./library',
 	'./Button',
@@ -18,6 +19,7 @@ sap.ui.define([
 	'./SegmentedButtonRenderer'
 ],
 function(
+	Element,
 	Library,
 	library,
 	Button,
@@ -30,7 +32,7 @@ function(
 	ListItem,
 	IconPool,
 	SegmentedButtonRenderer
-	) {
+) {
 	"use strict";
 
 	// lazy dependency to sap/m/Image
@@ -845,7 +847,7 @@ function(
 	 * @override
 	 */
 	SegmentedButton.prototype.setSelectedItem = function (vItem) {
-		var oItem = typeof vItem === "string" && vItem !== "" ? sap.ui.getCore().byId(vItem) : vItem,
+		var oItem = typeof vItem === "string" && vItem !== "" ? Element.getElementById(vItem) : vItem,
 			oItemInstanceOfSegBtnItem = oItem instanceof SegmentedButtonItem,
 			vButton = oItemInstanceOfSegBtnItem ? oItem.oButton : vItem;
 

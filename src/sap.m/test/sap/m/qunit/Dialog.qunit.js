@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
@@ -34,6 +35,7 @@ sap.ui.define([
 	"sap/m/Title",
 	"sap/ui/dom/units/Rem"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	Device,
@@ -328,7 +330,7 @@ sap.ui.define([
 		this.clock.tick(500);
 		this.dialog.$('cont').scrollTop(1000);
 		this.clock.tick(500);
-		Core.byId("lastSC").setVisible(true);
+		Element.getElementById("lastSC").setVisible(true);
 		this.dialog._onResize();
 
 		// assert
@@ -501,7 +503,7 @@ sap.ui.define([
 			oTitleDom = this.oDialog.getDomRef("title"),
 			oSubHeaderDom = $Dialog.children("header").children(".sapMDialogSubHeader")[0],
 			oIconDom = this.oDialog.getDomRef("icon"),
-			oSearchField = Core.byId("__field0").getFocusDomRef();
+			oSearchField = Element.getElementById("__field0").getFocusDomRef();
 		assert.ok(document.getElementById("dialog"), "dialog is rendered after it's opened.");
 		assert.ok($Dialog.closest("#sap-ui-static")[0], "dialog should be rendered inside the static uiArea.");
 		assert.ok(oSubHeaderDom, "Sub header should be rendered inside the dialog");
@@ -1512,7 +1514,7 @@ sap.ui.define([
 		var oDialogSuccess = new Dialog({
 			state: ValueState.Success
 		});
-		var rb = Core.getLibraryResourceBundle("sap.m");
+		var rb = Library.getResourceBundleFor("sap.m");
 		var sValueState = rb.getText("LIST_ITEM_STATE_SUCCESS");
 
 		// Act
@@ -1771,7 +1773,7 @@ sap.ui.define([
 
 		// assert
 		var sRenderedRoleDescription = oDialog.$().find('header .sapMDialogTitleGroup').attr('aria-roledescription');
-		var oRb = Core.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 		var sExpectedRoleDescription = oRb.getText("DIALOG_HEADER_ARIA_ROLE_DESCRIPTION");
 		assert.ok(sRenderedRoleDescription, "The aria-roledescription attrbute is present on a draggable/resizable dialog");
 		assert.strictEqual(sRenderedRoleDescription, sExpectedRoleDescription, "Aria-roledescription text has the correct value");
@@ -1907,7 +1909,7 @@ sap.ui.define([
 
 		this.clock.tick(500);
 
-		Core.byId("txt").setVisible(false);
+		Element.getElementById("txt").setVisible(false);
 		Core.applyChanges();
 		oDialog._onResize();
 

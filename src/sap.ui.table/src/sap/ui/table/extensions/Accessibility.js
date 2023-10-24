@@ -8,9 +8,10 @@ sap.ui.define([
 	"./AccessibilityRender",
 	"../utils/TableUtils",
 	"../library",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
-], function(ExtensionBase, AccRenderExtension, TableUtils, library, jQuery, Configuration) {
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/jquery"
+], function(ExtensionBase, AccRenderExtension, TableUtils, library, ControlBehavior, Element, jQuery) {
 	"use strict";
 
 	// shortcuts
@@ -517,7 +518,7 @@ sap.ui.define([
 		modifyAccOfCOLUMNHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
 			var $Cell = oCellInfo.cell;
-			var oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid"));
+			var oColumn = Element.getElementById($Cell.attr("data-sap-ui-colid"));
 			var oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
 					headerId: $Cell.attr("id"),
@@ -974,7 +975,7 @@ sap.ui.define([
 		 * @returns {string} The name of this extension.
 		 */
 		_init: function(oTable, sTableType, mSettings) {
-			this._accMode = Configuration.getAccessibility();
+			this._accMode = ControlBehavior.isAccessibilityEnabled();
 			this._busyCells = [];
 
 			TableUtils.addDelegate(oTable, this);

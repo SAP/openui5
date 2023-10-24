@@ -3,6 +3,7 @@
 /*eslint max-nested-callbacks: [2, 10]*/
 
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/library",
@@ -14,9 +15,11 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/FieldInput",
-	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	// make sure delegate is loaded (test delegate loading in FieldBase test)
+	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/m/Label",
-	"sap/m/Input", // async. loading of content control tested in FieldBase test
+	// async. loading of content control tested in FieldBase test
+	"sap/m/Input",
 	"sap/m/Text",
 	"sap/m/ExpandableText",
 	"sap/m/TextArea",
@@ -41,6 +44,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"./FieldBaseDelegateODataDefaultTypes"
 ], function(
+	Messaging,
 	jQuery,
 	qutils,
 	library,
@@ -788,7 +792,7 @@ sap.ui.define([
 	QUnit.test("cleanup wrong input", function(assert) {
 
 		const fnDone = assert.async();
-		oCore.getMessageManager().registerObject(oField, true); // to test valueState
+		Messaging.registerObject(oField, true); // to test valueState
 		oField.setDataType("sap.ui.model.type.Date");
 		oCore.applyChanges();
 
@@ -1231,7 +1235,7 @@ sap.ui.define([
 
 	QUnit.test("BindingContext change to same value on wrong input", function(assert) {
 
-		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
+		Messaging.registerObject(oField3, true); // to activate message manager
 		const fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async
@@ -1260,7 +1264,7 @@ sap.ui.define([
 
 	QUnit.test("BindingContext change to different value on wrong input", function(assert) {
 
-		oCore.getMessageManager().registerObject(oField3, true); // to activate message manager
+		Messaging.registerObject(oField3, true); // to activate message manager
 		const fnDone = assert.async();
 
 		setTimeout(function() { // as conditions are updated async

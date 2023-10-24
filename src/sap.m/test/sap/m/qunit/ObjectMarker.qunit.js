@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/ObjectMarker",
 	"sap/m/library",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
+	Library,
 	qutils,
 	ObjectMarker,
 	mobileLibrary,
@@ -33,7 +35,7 @@ sap.ui.define([
 	var ObjectMarkerType = mobileLibrary.ObjectMarkerType;
 
 
-	var oRB = oCore.getLibraryResourceBundle("sap.m");
+	var oRB = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Rendering");
 

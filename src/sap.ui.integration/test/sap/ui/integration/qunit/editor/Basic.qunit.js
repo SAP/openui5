@@ -1,7 +1,9 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap-ui-integration-editor",
+	"sap/ui/core/Element",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
@@ -15,9 +17,11 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/integration/formatters/IconFormatter",
 	"qunit/designtime/EditorQunitUtils"
-], function (
+], function(
+	Localization,
 	merge,
 	x,
+	Element,
 	Editor,
 	CardEditor,
 	Designtime,
@@ -39,7 +43,7 @@ sap.ui.define([
 
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/editor/jsons/withDesigntime/sap.card/";
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	function getDefaultContextModel(oResourceBundle) {
@@ -1241,7 +1245,7 @@ sap.ui.define([
 						assert.equal(oSelect.getItems().length, 3, "Field: select item number is 3");
 						oSelect.focus();
 						var oIconDomRef = oSelect.getDomRef("labelIcon");
-						var oIcon = Core.byId(oIconDomRef.id);
+						var oIcon = Element.getElementById(oIconDomRef.id);
 						QUnitUtils.triggerMouseEvent(oIconDomRef, "click");
 						EditorQunitUtils.wait().then(function () {
 							assert.ok(oIcon._oImagePopover.isOpen(), "Field: popover is open");
@@ -3987,7 +3991,7 @@ sap.ui.define([
 
 	QUnit.module("Destinations defined in DT", {
 		beforeEach: function () {
-			Core.getConfiguration().setLanguage("en");
+			Localization.setLanguage("en");
 			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {
@@ -4228,7 +4232,7 @@ sap.ui.define([
 
 	QUnit.module("Destination Group position start", {
 		beforeEach: function () {
-			Core.getConfiguration().setLanguage("en");
+			Localization.setLanguage("en");
 			this.oEditor = EditorQunitUtils.beforeEachTest();
 		},
 		afterEach: function () {

@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/unified/library",
 	"sap/m/PlanningCalendarLegend",
 	"sap/ui/unified/CalendarLegendItem",
@@ -42,6 +43,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Element,
 	unifiedLibrary,
 	PlanningCalendarLegend,
 	CalendarLegendItem,
@@ -238,7 +240,7 @@ sap.ui.define([
 					],
 					change: function (oEvent) {
 						var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
-						sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
+						Element.getElementById('PC1').setWidth(sSelectedWidth);
 					}
 				}),
 				new Select('select_calendar_type', {
@@ -266,7 +268,7 @@ sap.ui.define([
 					],
 					change: function (oEvent) {
 						var sSelectedCalendarType = oEvent.getParameter('selectedItem').getKey();
-						sap.ui.getCore().byId('PC1').setPrimaryCalendarType(sSelectedCalendarType);
+						Element.getElementById('PC1').setPrimaryCalendarType(sSelectedCalendarType);
 					}
 				}),
 				new MultiComboBox({
@@ -313,7 +315,7 @@ sap.ui.define([
 	};
 
 	var handleAppointmentSelect = function (oEvent) {
-		var oInput = sap.ui.getCore().byId("I1"),
+		var oInput = Element.getElementById("I1"),
 			oAppointment = oEvent.getParameter("appointment"),
 			sPopoverValue,
 			bDiffType,
@@ -359,7 +361,7 @@ sap.ui.define([
 	};
 
 	var handleAddRow = function () {
-		var oPC = sap.ui.getCore().byId("PC1");
+		var oPC = Element.getElementById("PC1");
 		var oRow = new PlanningCalendarRow({
 			icon: "sap-icon://employee",
 			title: "new Row"
@@ -368,7 +370,7 @@ sap.ui.define([
 	};
 
 	var handleAddAppointment = function (oEvent) {
-		var oPC = sap.ui.getCore().byId("PC1");
+		var oPC = Element.getElementById("PC1");
 		var sViewKey = oPC.getViewKey();
 		var oEventStartDate = oEvent.getParameter("startDate");
 		var oEventEndDate = oEvent.getParameter("endDate");
@@ -481,7 +483,7 @@ sap.ui.define([
 			priority: "NeverOverflow"
 		}),
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			oPC.setMultipleAppointmentsSelection(!oPC.getMultipleAppointmentsSelection());
 			if (oEvent.getParameter("pressed")) {
 				this.setTooltip("Disable multiple appointments selection");
@@ -504,7 +506,7 @@ sap.ui.define([
 		icon: "sap-icon://multi-select",
 		type: ButtonType.Transparent,
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			if (oEvent.getParameter("pressed")) {
 				oPC.setSingleSelection(false);
 			} else {
@@ -531,7 +533,7 @@ sap.ui.define([
 		pressed: true,
 		tooltip: "Toggle planning calendar showIntervalHeaders property",
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			var bPressed = oEvent.getParameter("pressed");
 			oPC.setShowIntervalHeaders(bPressed);
 		}
@@ -543,7 +545,7 @@ sap.ui.define([
 		tooltip: "Toggle planning calendar showRowHeaders property",
 		pressed: true,
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			var bPressed = oEvent.getParameter("pressed");
 			oPC.setShowRowHeaders(bPressed);
 		}
@@ -554,7 +556,7 @@ sap.ui.define([
 		text: "Weeks",
 		tooltip: "Toggle week numbers",
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			var bPressed = oEvent.getParameter("pressed");
 			oPC.setShowWeekNumbers(bPressed);
 		}
@@ -573,7 +575,7 @@ sap.ui.define([
 		pressed: false,
 		tooltip: "Toggle appointmentsReducedHeight property",
 		press: function (oEvent) {
-			var oPC = sap.ui.getCore().byId("PC1");
+			var oPC = Element.getElementById("PC1");
 			var bPressed = oEvent.getParameter("pressed");
 			oPC.setAppointmentsReducedHeight(bPressed);
 		}
@@ -699,9 +701,9 @@ sap.ui.define([
 					beginButton: new Button({
 						text: "OK",
 						press: function () {
-							var oPC = sap.ui.getCore().byId("PC1");
-							var oDTP1 = sap.ui.getCore().byId("DTP-Min");
-							var oDTP2 = sap.ui.getCore().byId("DTP-Max");
+							var oPC = Element.getElementById("PC1");
+							var oDTP1 = Element.getElementById("DTP-Min");
+							var oDTP2 = Element.getElementById("DTP-Max");
 							oPC.setMinDate(oDTP1.getDateValue());
 							oPC.setMaxDate(oDTP2.getDateValue());
 							oDialog2.close();

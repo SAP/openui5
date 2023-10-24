@@ -5,6 +5,8 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Core',
 	'sap/ui/qunit/QUnitUtils',
@@ -16,6 +18,8 @@ sap.ui.define([
 	'sap/m/ColumnListItem',
 	'sap/m/Text'
 ], function(
+	Localization,
+	Library,
 	jQuery,
 	Core,
 	QUtils,
@@ -98,7 +102,7 @@ sap.ui.define([
 			this.oTable = createResponsiveTable();
 			this.oTable.placeAt("qunit-fixture");
 			Core.applyChanges();
-			var bRTL = Core.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
@@ -142,7 +146,7 @@ sap.ui.define([
 		var aResizableColumns = jQuery(oColumnResizer.getConfig("resizable")).get();
 		aResizableColumns.forEach(function(TH) {
 			assert.ok(TH.classList.contains("sapMPluginsColumnResizerResizable"), "Resizable column have the correct style added");
-			assert.strictEqual(document.getElementById(TH.getAttribute("aria-describedby")).innerText, Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
+			assert.strictEqual(document.getElementById(TH.getAttribute("aria-describedby")).innerText, Library.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZABLE"), "The column is resizable, announcement added");
 		});
 
 		oColumnResizer.setEnabled(false);
@@ -211,7 +215,7 @@ sap.ui.define([
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
 			this.clock.tick(20);
-			var bRTL = Core.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
@@ -496,7 +500,7 @@ sap.ui.define([
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
 			this.clock.tick(20);
-			var bRTL = Core.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
@@ -613,7 +617,7 @@ sap.ui.define([
 			this.oTable.addDependent(this.oColumnResizer);
 			this.oTable.placeAt("qunit-fixture");
 			this.clock.tick(20);
-			var bRTL = Core.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			this.sBeginDirection = bRTL ? "right" : "left";
 			this.sEndDirection = bRTL ? "left" : "right";
 			this.iDirectionFactor = bRTL ? -1 : 1;
@@ -678,7 +682,7 @@ sap.ui.define([
 
 		var oResizerButton = this.oColumnResizer.getColumnResizeButton(oColumn);
 		assert.ok(oResizerButton.isA("sap.m.ColumnPopoverActionItem"), "sap.m.ColumnPopoverActionItem instance returned");
-		assert.strictEqual(oResizerButton.getText(), Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"), "correct text set");
+		assert.strictEqual(oResizerButton.getText(), Library.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"), "correct text set");
 		assert.strictEqual(oResizerButton.getIcon(), "sap-icon://resize-horizontal", "correct icon set");
 		assert.ok(oResizerButton.hasListeners("press"), "press event registered");
 
@@ -704,7 +708,7 @@ sap.ui.define([
 		var oResizerQuickAction = this.oColumnResizer.getColumnResizeQuickAction(oColumn, oColumnMenu);
 		assert.ok(oResizerQuickAction.isA("sap.m.table.columnmenu.QuickAction"), "sap.m.table.columnmenu.QuickAction instance returned");
 		assert.strictEqual(oResizerQuickAction.getLabel(), "", "label is empty");
-		assert.strictEqual(oResizerQuickAction.getContent()[0].getText(), Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
+		assert.strictEqual(oResizerQuickAction.getContent()[0].getText(), Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"), "button text is correct");
 		assert.ok(oResizerQuickAction.getContent()[0].hasListeners("press"), "press event registered");
 
 		oResizerQuickAction.getContent()[0].firePress(oColumn);

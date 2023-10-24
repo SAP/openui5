@@ -1,5 +1,6 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/thirdparty/jquery",
 	"sap/f/FlexibleColumnLayout",
 	"sap/f/FlexibleColumnLayoutAccessibleLandmarkInfo",
@@ -10,7 +11,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/f/library"
 ],
-function (
+function(
+	ControlBehavior,
 	$,
 	FlexibleColumnLayout,
 	FlexibleColumnLayoutAccessibleLandmarkInfo,
@@ -126,10 +128,10 @@ function (
 	QUnit.module("DESKTOP - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this.sOldAnimationMode = Core.getConfiguration().getAnimationMode();
+			this.sOldAnimationMode = ControlBehavior.getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE); // > 1280px
-			Core.getConfiguration().setAnimationMode("none");
+			ControlBehavior.setAnimationMode("none");
 
 			this.getBeginColumnBackArrow = function () { return this.oFCL.getAggregation("_beginColumnBackArrow"); };
 			this.getMidColumnBackArrow = function () { return this.oFCL.getAggregation("_midColumnBackArrow"); };
@@ -139,7 +141,7 @@ function (
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
-			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
+			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -484,15 +486,15 @@ function (
 	QUnit.module("TABLET - API", {
 		beforeEach: function () {
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this.sOldAnimationMode = Core.getConfiguration().getAnimationMode();
+			this.sOldAnimationMode = ControlBehavior.getAnimationMode();
 			$("html").attr("data-sap-ui-animation", "off");
 			$("#" + sQUnitFixture).width(TABLET_SIZE); // Between 960 and 1280
-			Core.getConfiguration().setAnimationMode("none");
+			ControlBehavior.setAnimationMode("none");
 		},
 		afterEach: function () {
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 			$("#" + sQUnitFixture).width("auto");
-			Core.getConfiguration().setAnimationMode(this.sOldAnimationMode);
+			ControlBehavior.setAnimationMode(this.sOldAnimationMode);
 			this.oFCL.destroy();
 		}
 	});
@@ -1638,8 +1640,8 @@ function (
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this._sOrigAminationMode = Core.getConfiguration().getAnimationMode();
-			Core.getConfiguration().setAnimationMode("none");
+			this._sOrigAminationMode = ControlBehavior.getAnimationMode();
+			ControlBehavior.setAnimationMode("none");
 			$("html").attr("data-sap-ui-animation", "off");
 
 
@@ -1651,7 +1653,7 @@ function (
 			// Clean Up
 			this.oFCL.destroy();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
-			Core.getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			ControlBehavior.setAnimationMode(this._sOrigAminationMode);
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 		}
 	});
@@ -1720,8 +1722,8 @@ function (
 			this.iPreviousFixtureWidth = $("#" + sQUnitFixture).width();
 			$("#" + sQUnitFixture).width(DESKTOP_SIZE);
 			this.sOldAnimationSetting = $("html").attr("data-sap-ui-animation");
-			this._sOrigAminationMode = Core.getConfiguration().getAnimationMode();
-			Core.getConfiguration().setAnimationMode("none");
+			this._sOrigAminationMode = ControlBehavior.getAnimationMode();
+			ControlBehavior.setAnimationMode("none");
 			$("html").attr("data-sap-ui-animation", "off");
 		},
 		afterEach: function () {
@@ -1729,7 +1731,7 @@ function (
 			// Clean Up
 			this.oFCL.destroy();
 			$("#" + sQUnitFixture).width(this.iPreviousFixtureWidth);
-			Core.getConfiguration().setAnimationMode(this._sOrigAminationMode);
+			ControlBehavior.setAnimationMode(this._sOrigAminationMode);
 			$("html").attr("data-sap-ui-animation", this.sOldAnimationSetting);
 		}
 	});

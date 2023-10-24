@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'./InstanceManager',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Popup',
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Configuration"
 ],
-	function(InstanceManager, Popup, coreLibrary, Control, Element, Device, Log, jQuery, Configuration) {
+	function(InstanceManager, ControlBehavior, Popup, coreLibrary, Control, Element, Device, Log, jQuery, Configuration) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Dock
@@ -224,7 +225,7 @@ sap.ui.define([
 
 			oMessageToastDomRef.className = CSSCLASS + " " + ENABLESELECTIONCLASS + " " + BELIZECONTRAST + " " + BELIZECONTRASTPLUS;
 
-			if (Configuration.getAccessibility()) {
+			if (ControlBehavior.isAccessibilityEnabled()) {
 				oMessageToastDomRef.setAttribute("role", "alert");
 			}
 
@@ -323,7 +324,7 @@ sap.ui.define([
 		MessageToast._setCloseAnimation = function($MessageToastDomRef, iDuration, fnClose, mSettings) {
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
 				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS,
-				sAnimationMode = Configuration.getAnimationMode(),
+				sAnimationMode = ControlBehavior.getAnimationMode(),
 				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 			if (bHasAnimations && mSettings.animationDuration > 0) {

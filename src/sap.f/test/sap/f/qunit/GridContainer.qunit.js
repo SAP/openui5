@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/f/library",
 	"sap/f/GridContainer",
 	"sap/ui/core/Core",
@@ -25,7 +26,8 @@ sap.ui.define([
 	"sap/f/dnd/GridDragOver",
 	"sap/ui/core/ResizeHandler"
 ],
-function (
+function(
+	Localization,
 	library,
 	GridContainer,
 	Core,
@@ -1535,7 +1537,7 @@ function (
 		beforeEach: function () {
 			var oSettings = new GridContainerSettings({columns: 2, rowSize: "80px", columnSize: "80px", gap: "16px"});
 
-			this.oRTLStub = this.stub(Core.getConfiguration(), "getRTL").returns(true);
+			this.oRTLStub = this.stub(Localization, "getRTL").returns(true);
 
 			this.oGrid = new GridContainer({
 				layout: oSettings,
