@@ -441,6 +441,8 @@ sap.ui.define([
 	};
 
 	GridTableType.prototype.updateSortIndicator = function(oColumn, sSortOrder) {
+		/** @deprecated As of version 1.120 */
+		oColumn.getInnerColumn().setSorted(sSortOrder !== "None");
 		oColumn.getInnerColumn().setSortOrder(sSortOrder);
 	};
 
