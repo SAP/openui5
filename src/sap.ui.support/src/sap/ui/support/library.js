@@ -219,6 +219,34 @@ sap.ui.define(["sap/ui/core/library"],
 				{ruleId: "texttooltip", libName: "sap.m"},
 				{ruleId: "rbText", libName: "sap.m"}
 			]
+		},
+
+		/**
+		 * Preset to find usages of deprecated controls, properties, aggregations and others.
+		 *
+		 * @public
+		 * @experimental since 1.120
+		 */
+		Deprecations : {
+			id: "Deprecations",
+			title: "Deprecations",
+			description: "Usage of deprecated controls, properties, aggregations and others",
+			selections: [
+				// Grouped by library
+				{ ruleId: "deprecatedProperty", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedElement", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedAggregation", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedAssociation", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedEvent", libName: "sap.ui.core" },
+				{ ruleId: "globalApiUsage", libName: "sap.ui.core" },
+				{ ruleId: "jquerySapUsage", libName: "sap.ui.core" },
+				{ ruleId: "syncFactoryLoading", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedApiUsage", libName: "sap.ui.core" },
+				{ ruleId: "jQueryThreeDeprecation", libName: "sap.ui.core" },
+				{ ruleId: "deprecatedJSViewUsage", libName: "sap.ui.core" },
+
+				{ ruleId: "smartTableDeprecatedModel", libName: "sap.ui.comp" }
+			]
 		}
 	};
 
