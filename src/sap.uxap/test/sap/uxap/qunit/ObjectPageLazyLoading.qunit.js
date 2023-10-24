@@ -59,6 +59,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 	var oConfigModel = new JSONModel();
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json", {}, false);
 
+	// @deprecated Since version 1.120
 	QUnit.module("ObjectPageConfig", {
 		beforeEach: function (assert) {
 			var done = assert.async();
@@ -81,6 +82,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		}
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("load first visible sections", function (assert) {
 		var oObjectPageLayout = this.oComponentContainer
 			.getObjectPageLayoutInstance();
@@ -106,6 +108,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		}, iLoadingDelay);
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("load first visible sections is relative to selectedSection", function (assert) {
 
 		var oObjectPageLayout = this.oComponentContainer
@@ -121,6 +124,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		this.oView.destroy();
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("load scrolled sections", function (assert) {
 
 		var oObjectPageLayout = this.oComponentContainer
@@ -145,6 +149,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		}, iLoadingDelay);
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("model mapping for scrolled sections", function (assert) {
 
 		var oObjectPageLayout = this.oComponentContainer
@@ -170,6 +175,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		}, iLoadingDelay);
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("scrollToSection with animation does not load intermediate sections", function (assert) {
 			var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
@@ -216,6 +222,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		}
 	});
 
+	// @deprecated Since version 1.120
 	QUnit.test("BCP: 1970115549 - _grepCurrentTabSectionBases should always return a value", function (assert) {
 			var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
 			aSectionBases = oObjectPageLayout._aSectionBases,
