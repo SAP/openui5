@@ -18,6 +18,9 @@ sap.ui.define(['sap/ui/model/ClientTreeBinding', "sap/base/util/each"],
 	 * @param {object} [oContext] Context object for this binding
 	 * @param {array} [aFilters] Predefined filters contained in an array
 	 * @param {object} [mParameters] Additional model-specific parameters
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 * @protected
 	 * @alias sap.ui.model.xml.XMLTreeBinding
 	 * @extends sap.ui.model.ClientTreeBinding

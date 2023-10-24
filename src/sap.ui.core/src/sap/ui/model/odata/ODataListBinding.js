@@ -38,6 +38,9 @@ sap.ui.define([
 	 * @param {Object<string,string>} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode] Defines the count mode of this binding;
 	 *           if not specified, the default count mode of the <code>oModel</code> is applied
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
 	 * @deprecated As of version 1.66, please use {@link sap.ui.model.odata.v2.ODataListBinding} instead.

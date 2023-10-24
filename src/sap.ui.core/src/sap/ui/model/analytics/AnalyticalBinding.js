@@ -269,7 +269,9 @@ sap.ui.define([
 	 * @throws {Error}
 	 *   If no analytic query result object could be determined from the bound OData entity set,
 	 *   either from an explicitly given EntitySet (via optional mParameters.entitySet argument), or
-	 *   by default implicitly from the binding path (see mandatory sPath argument).
+	 *   by default implicitly from the binding path (see mandatory sPath argument), or if the
+	 *   {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code> together with other
+	 *   filters
 	 *
 	 * @alias sap.ui.model.analytics.AnalyticalBinding
 	 * @extends sap.ui.model.TreeBinding
