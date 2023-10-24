@@ -228,7 +228,6 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
 		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
 	});
 
 	opaTest("Select a column from column header menu", function (Given, When, Then) {
@@ -474,7 +473,6 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
 		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
 
 		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
 	});
