@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.CardCSRFToken.Card6",
+		"id": "sap.ui.CardCSRFTokenDeprecated.Card2",
 		"type": "card",
 		"title": "Cards with CSRF tokens used",
 		"subTitle": "",
@@ -40,24 +40,26 @@
 				"token1": {
 					"data": {
 						"request": {
-							"url": "{{destinations.ActivitiesMockServer}}/TokensPath",
-							"method": "POST"
-						},
-						"path": "/data/0/Token"
+							"url": "{{destinations.ActivitiesMockServer}}/ExpiringTokenDeprecated",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
 					}
 				}
 			}
 		},
 		"header": {
-			"title": "Token with path"
+			"title": "With Expiring Token"
 		},
 		"content": {
 			"data": {
 				"request": {
-					"url": "{{destinations.ActivitiesMockServer}}/Activities",
+					"url": "{{destinations.ActivitiesMockServer}}/ActivitiesExpiringToken",
 					"method": "GET",
 					"headers": {
-						"X-CSRF-Token": "{csrfTokens>/token1/value}"
+						"X-CSRF-Token": "{{csrfTokens.token1}}"
 					}
 				},
 				"path": "/data"
