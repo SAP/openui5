@@ -5,6 +5,7 @@
 // Provides object sap.ui.fl.apply._internal.extensionPoint.Processor
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/Applier",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState",
 	"sap/ui/fl/Utils",
@@ -15,6 +16,7 @@ sap.ui.define([
 ],
 function(
 	Applier,
+	ExtensionPointRegistry,
 	FlexState,
 	ExtensionPointState,
 	Utils,
@@ -120,23 +122,7 @@ function(
 
 		registerExtensionPoint(mExtensionPointInfo) {
 			if (DesignTime.isDesignModeEnabled()) {
-				if (Processor.oExtensionPointRegistry) {
-					Processor.oExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
-					return SyncPromise.resolve();
-				}
-
-				Processor.oRegistryPromise = Processor.oRegistryPromise.then(function() {
-					return new Promise(function(resolve, reject) {
-						sap.ui.require(["sap/ui/fl/write/_internal/extensionPoint/Registry"], function(ExtensionPointRegistry) {
-							Processor.oExtensionPointRegistry = ExtensionPointRegistry;
-							ExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
-							resolve();
-						}, function(oError) {
-							reject(oError);
-						});
-					});
-				});
-				return Processor.oRegistryPromise;
+				ExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
 			}
 			return SyncPromise.resolve();
 		},

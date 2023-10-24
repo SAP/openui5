@@ -13,7 +13,7 @@ sap.ui.define([
 	/**
 	 * Object to register extension points to track their locations.
 	 * @constructor
-	 * @alias sap.ui.fl.write._internal.extensionPoint.Registry
+	 * @alias sap.ui.fl.apply._internal.extensionPoint.Registry
 	 *
 	 * @author SAP SE
 	 * @version ${version}

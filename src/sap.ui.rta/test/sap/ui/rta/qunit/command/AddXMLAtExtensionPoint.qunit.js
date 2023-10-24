@@ -1,29 +1,27 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
-	"sap/ui/rta/command/AddXMLAtExtensionPoint",
-	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/rta/command/AddXMLAtExtensionPoint",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/thirdparty/sinon-4",
+	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
-	CommandFactory,
-	AddXMLAtExtensionPoint,
+	XMLView,
+	ElementDesignTimeMetadata,
 	ExtensionPointRegistryAPI,
-	AddXMLAtExtensionPointCommand,
-	FlexController,
+	AddXMLAtExtensionPoint,
 	Layer,
 	LayerUtils,
-	ElementDesignTimeMetadata,
-	RtaQunitUtils,
-	XMLView,
-	sinon
+	AddXMLAtExtensionPointCommand,
+	CommandFactory,
+	sinon,
+	RtaQunitUtils
 ) {
 	"use strict";
 
@@ -82,9 +80,12 @@ sap.ui.define([
 			})
 
 			.then(function(oAddXMLAtExtensionPointCommand) {
-				assert.ok(oAddXMLAtExtensionPointCommand instanceof AddXMLAtExtensionPointCommand, "then command without flex settings is available");
-				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragment(), sFragment, "and its settings are merged correctly");
+				assert.ok(oAddXMLAtExtensionPointCommand instanceof AddXMLAtExtensionPointCommand,
+					"then command without flex settings is available");
+				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment",
+					"and its settings are merged correctly");
+				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragment(), sFragment,
+					"and its settings are merged correctly");
 			})
 
 			.then(function() {
@@ -100,13 +101,15 @@ sap.ui.define([
 
 			.then(function(oAddXMLAtExtensionPointCommand) {
 				assert.ok(oAddXMLAtExtensionPointCommand, "then command with flex settings is available");
-				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
+				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment",
+					"and its settings are merged correctly");
 				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragment(), sFragment, "and its settings are merged correctly");
 				oCommandFactory.setFlexSettings({
 					layer: Layer.VENDOR,
 					developerMode: false
 				});
-				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment, "after preparing, the fragment content is not yet in the change");
+				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment,
+					"after preparing, the fragment content is not yet in the change");
 				return oAddXMLAtExtensionPointCommand.execute()
 
 				.then(function() { return oAddXMLAtExtensionPointCommand; });
@@ -116,7 +119,8 @@ sap.ui.define([
 				assert.equal(oGetExtensionPointInfoSpy.callCount, 1, "then getExtensionPointInfo was called once");
 				assert.equal(oCompleteChangeContentSpy.callCount, 2, "then completeChangeContent is called twice");
 				assert.equal(oApplyChangeStub.callCount, 1, "then applyChange is called once");
-				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment, "after applying, the fragment content is not in the change anymore");
+				assert.notOk(oAddXMLAtExtensionPointCommand._oPreparedChange.getContent().fragment,
+					"after applying, the fragment content is not in the change anymore");
 				assert.ok(oPreloadSpy.lastCall.args[0][sPath], "the preload was called with the correct object");
 				assert.equal(oPreloadSpy.lastCall.args[0][sPath], sFragment, "the preload was called with the correct object");
 			})
@@ -140,8 +144,10 @@ sap.ui.define([
 
 			.then(function(oAddXMLAtExtensionPointCommand) {
 				assert.ok(oAddXMLAtExtensionPointCommand, "then command without flex settings is available");
-				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment", "and its settings are merged correctly");
-				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragment(), "{@i18n>Foo}", "and its settings are merged correctly");
+				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragmentPath(), "pathToFragment",
+					"and its settings are merged correctly");
+				assert.strictEqual(oAddXMLAtExtensionPointCommand.getFragment(), "{@i18n>Foo}",
+					"and its settings are merged correctly");
 			});
 		});
 

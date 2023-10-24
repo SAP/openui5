@@ -3,19 +3,19 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/ExtensionPoint",
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
-	"sap/ui/fl/write/_internal/extensionPoint/Processor",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/_internal/extensionPoint/Processor",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
 	ComponentContainer,
 	ExtensionPoint,
-	ExtensionPointRegistry,
-	ExtensionPointWriteProcessor,
 	ExtensionPointApplyProcessor,
+	ExtensionPointRegistry,
 	ManifestUtils,
+	ExtensionPointWriteProcessor,
 	sinon
 ) {
 	"use strict";
@@ -93,9 +93,12 @@ sap.ui.define([
 		var fnAssert = function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 			checkView("async");
-			assert.equal(oSpyApplyProcessorExtensionPoint.callCount, 0, "applyExtensionPoint of the apply proceesor is not called");
-			assert.equal(oSpyWriteProcessorExtensionPoint.callCount, 7, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoint.callCount, 11, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyApplyProcessorExtensionPoint.callCount, 0,
+				"applyExtensionPoint of the apply proceesor is not called");
+			assert.equal(oSpyWriteProcessorExtensionPoint.callCount, 7,
+				"number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 11,
+				"number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 
 			done();
 		};
