@@ -17,7 +17,7 @@ sap.ui.define(
 
 		var arrangements = new Opa5({
 			iStartMyApp() {
-				return this.iStartMyAppInAFrame("test-resources/sap/ui/rta/qunit/opa/contextBased/index.html");
+				return this.iStartMyAppInAFrame("test-resources/sap/ui/rta/qunit/internal/opa/contextBased/index.html");
 			}
 		});
 
