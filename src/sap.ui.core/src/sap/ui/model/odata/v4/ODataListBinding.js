@@ -3110,12 +3110,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.keepOnlyVisibleContexts = function () {
 		var aCreatedContexts = this.aContexts.slice(0, this.iCreatedContexts),
-			aContexts = aCreatedContexts.filter(function (oContext) {
-				// cannot request side effects for transient contexts
-				// Note: do not use #isTransient because #created() may not be resolved yet,
-				// although already persisted (timing issue, see caller)
-				return !oContext.getProperty("@$ui5.context.isTransient");
-			}).concat(
+			aContexts = aCreatedContexts.concat(
 				this.getCurrentContexts().filter(function (oContext) {
 					// avoid duplicates for created contexts
 					// Note: avoid #created or #isTransient because there may be created contexts
@@ -3158,7 +3153,12 @@ sap.ui.define([
 			this.aContexts.length = this.iCurrentEnd;
 		}
 
-		return aContexts;
+		return aContexts.filter(function (oContext) {
+			// cannot request side effects for transient contexts
+			// Note: do not use #isTransient because #created() may not be resolved yet,
+			// although already persisted (timing issue, see caller)
+			return !oContext.getProperty("@$ui5.context.isTransient");
+		});
 	};
 
 	/**

@@ -8402,16 +8402,18 @@ sap.ui.define([
 			oCreatedContext2 = { // in
 				getProperty : function () {}
 			},
-			oContext0 = {}, // in
-			oContext1 = {}, // in
+			oContext0 = {getProperty : mustBeMocked}, // in
+			oContext1 = {getProperty : mustBeMocked}, // in
 			oPreviousContext0 = { // in
-				isEffectivelyKeptAlive : function () {}
+				isEffectivelyKeptAlive : function () {},
+				getProperty : mustBeMocked
 			},
 			oPreviousContext1 = { // out
 				isEffectivelyKeptAlive : function () {}
 			},
 			oPreviousContext2 = { // in
-				isEffectivelyKeptAlive : function () {}
+				isEffectivelyKeptAlive : function () {},
+				getProperty : mustBeMocked
 			},
 			aResult;
 
@@ -8425,12 +8427,6 @@ sap.ui.define([
 			bar : oPreviousContext1,
 			baz : oPreviousContext2
 		};
-		this.mock(oCreatedContext0).expects("getProperty")
-			.withExactArgs("@$ui5.context.isTransient").returns(false);
-		this.mock(oCreatedContext1).expects("getProperty")
-			.withExactArgs("@$ui5.context.isTransient").returns(true);
-		this.mock(oCreatedContext2).expects("getProperty")
-			.withExactArgs("@$ui5.context.isTransient").returns(false);
 		this.mock(oBinding).expects("getCurrentContexts").withExactArgs()
 			.returns([oCreatedContext2, oContext0, oContext1, undefined]);
 		this.mock(oPreviousContext0).expects("isEffectivelyKeptAlive").withExactArgs()
@@ -8439,6 +8435,20 @@ sap.ui.define([
 			.returns(false);
 		this.mock(oPreviousContext2).expects("isEffectivelyKeptAlive").withExactArgs()
 			.returns(true);
+		this.mock(oCreatedContext0).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oCreatedContext1).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(true);
+		this.mock(oCreatedContext2).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oPreviousContext0).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oPreviousContext2).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oContext0).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
+		this.mock(oContext1).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(false);
 		this.mock(oBinding).expects("destroyLater").never();
 
 		// code under test
@@ -8464,7 +8474,11 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("keepOnlyVisibleContexts: destroy others, unless created", function (assert) {
+[false, true].forEach((bTransient) => {
+	var sTitle = "keepOnlyVisibleContexts: destroy others, unless created; transient: "
+			+ bTransient;
+
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("/Set"),
 			oBindingMock = this.mock(oBinding),
 			oCreatedContext0 = { // out
@@ -8472,16 +8486,26 @@ sap.ui.define([
 				iIndex : -1
 			},
 			oContext0 = {iIndex : 0, created : mustBeMocked}, // to be destroyed
-			oContext1 = {iIndex : 1, created : mustBeMocked}, // NOT to be destroyed
+			oContext1 = { // NOT to be destroyed
+				iIndex : 1,
+				created : mustBeMocked,
+				getProperty : mustBeMocked
+			},
 			oContext2 = {iIndex : 2, created : mustBeMocked}, // to be destroyed
 			oContext3 = { // in
-				iIndex : 3
+				iIndex : 3,
+				getProperty : mustBeMocked
 			},
 			oContext4 = { // in
-				iIndex : 4
+				iIndex : 4,
+				getProperty : mustBeMocked
 			},
 			oContext5 = {iIndex : 5, created : mustBeMocked}, // to be destroyed
-			oContext6 = {iIndex : 6, created : mustBeMocked}, // NOT to be destroyed
+			oContext6 = { // NOT to be destroyed
+				iIndex : 6,
+				created : mustBeMocked,
+				getProperty : mustBeMocked
+			},
 			oContext7 = {iIndex : 7, created : mustBeMocked}, // to be destroyed
 			aResult;
 
@@ -8503,17 +8527,30 @@ sap.ui.define([
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext2));
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext5));
 		oBindingMock.expects("destroyLater").on(oBinding).withArgs(sinon.match.same(oContext7));
+		this.mock(oContext1).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(bTransient);
+		this.mock(oContext3).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(bTransient);
+		this.mock(oContext4).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(bTransient);
+		this.mock(oContext6).expects("getProperty")
+			.withExactArgs("@$ui5.context.isTransient").returns(bTransient);
 
 		// code under test
 		aResult = oBinding.keepOnlyVisibleContexts();
 
-		assert.deepEqual(aResult, [oContext3, oContext4, oContext1, oContext6]);
-		assert.strictEqual(aResult[0], oContext3);
-		assert.strictEqual(aResult[1], oContext4);
-		assert.strictEqual(aResult[2], oContext1);
-		assert.strictEqual(aResult[3], oContext6);
+		if (bTransient) { // transient ones cannot be requested
+			assert.deepEqual(aResult, []);
+		} else {
+			assert.deepEqual(aResult, [oContext3, oContext4, oContext1, oContext6]);
+			assert.strictEqual(aResult[0], oContext3);
+			assert.strictEqual(aResult[1], oContext4);
+			assert.strictEqual(aResult[2], oContext1);
+			assert.strictEqual(aResult[3], oContext6);
+		}
 		assert.deepEqual(oBinding.aContexts, [oCreatedContext0,,,, oContext3, oContext4]);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("keepOnlyVisibleContexts: only created are visible", function (assert) {
