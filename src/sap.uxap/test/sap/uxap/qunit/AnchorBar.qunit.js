@@ -13,8 +13,9 @@ sap.ui.define([
 	"sap/uxap/AnchorBar",
 	"sap/m/Button",
 	"sap/m/Text",
+	"sap/base/i18n/Localization",
 	"sap/ui/dom/jquery/scrollLeftRTL" // jQuery Plugin "scrollLeftRTL"
-], function (jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text) {
+], function (jQuery, QUnitUtils, KeyCodes, utils, Device, Core, InvisibleText, XMLView, JSONModel, AnchorBar, Button, Text, Localization) {
 	"use strict";
 
 	var iRenderingDelay = 2000,
@@ -266,7 +267,7 @@ sap.ui.define([
 		assert.ok(oArrowRight.getTooltip() === sArrowRightTooltip, "Arrow left button should have tooltip '" + sArrowRightTooltip + "'");
 
 		//act
-		Core.getConfiguration().setRTL(true);
+		Localization.setRTL(true);
 		Core.applyChanges();
 
 		//assert
@@ -274,7 +275,7 @@ sap.ui.define([
 		assert.ok(oArrowRight.getTooltip() === sArrowRightTooltip, "Arrow left button should have tooltip '" + sArrowRightTooltip + "' in RTL mode");
 
 		//cleanup
-		Core.getConfiguration().setRTL(false);
+		Localization.setRTL(false);
 	});
 
 	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
@@ -1013,7 +1014,7 @@ sap.ui.define([
 
 	QUnit.module("RTL", {
 		beforeEach: function (assert) {
-			Core.getConfiguration().setRTL(true);
+			Localization.setRTL(true);
 			var done = assert.async(),
 			oAnchorBar = new AnchorBar();
 			this.anchorBar = oAnchorBar;
@@ -1030,7 +1031,7 @@ sap.ui.define([
 			Core.applyChanges();
 		},
 		afterEach: function () {
-			Core.getConfiguration().setRTL(false);
+			Localization.setRTL(false);
 			this.anchorBar.destroy();
 			this.anchorBar = null;
 		}

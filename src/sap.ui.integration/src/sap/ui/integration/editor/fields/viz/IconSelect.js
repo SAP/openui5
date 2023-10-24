@@ -46,7 +46,9 @@ sap.ui.define([
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		aDefaultIcons,
-		oLoadDefaultIconPromise;
+		oLoadDefaultIconPromise,
+		// disable below flag to wait for WZ supporting TNT and Business Suite icons later
+		bLoadExtraDefaultIcons = false;
 
 	/**
 	 * @class
@@ -110,6 +112,10 @@ sap.ui.define([
 				type: "UI5"
 			});
 		});
+
+		if (!bLoadExtraDefaultIcons) {
+			return;
+		}
 
 		var mFontRegistry = _IconRegistry.getFontRegistry();
 		if (!mFontRegistry["SAP-icons-TNT"]) {

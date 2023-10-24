@@ -79,21 +79,6 @@ sap.ui.define([
 				ABAPAccess.isExtensibilityEnabled = function() {
 					return Promise.resolve(true);
 				};
-				sap.ushell.Container = Object.assign({}, sap.ushell.Container, {
-					getLogonSystem() {
-						return {
-							getName() {
-								return "ABC";
-							},
-							getClient() {
-								return "123";
-							},
-							isTrial() {
-								return false;
-							}
-						};
-					}
-				});
 			}
 
 			EventBus.getInstance().subscribe("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", function() {

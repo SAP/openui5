@@ -150,6 +150,10 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				checkPartIDValueState : function (sValueState, iRow) {
+					Helper.checkValueState(this, sViewName, /partId-__clone/, sValueState,
+						undefined, false, iRow || 0);
+				},
 				checkPartsLength : function (iExpectedLength) {
 					this.waitFor({
 						controlType : "sap.ui.table.Table",
