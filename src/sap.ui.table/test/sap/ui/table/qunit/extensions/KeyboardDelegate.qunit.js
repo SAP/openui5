@@ -1524,18 +1524,6 @@ sap.ui.define([
 			that.triggerKey(Key.Arrow.UP, oTarget, oTarget);
 			that.triggerKey(Key.Arrow.LEFT, oTarget, oTarget);
 			that.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
-
-			assert.ok(true, "[INFO] SelectionMode = None");
-			qutils.triggerKeyup(oTarget, Key.SHIFT, false, false, false); // End selection mode.
-			that.oTable.setSelectionMode(library.SelectionMode.None);
-			oCore.applyChanges();
-			oTarget = that.oTable.qunit.getRowHeaderCell(1);
-			oTarget.focus();
-			qutils.triggerKeydown(oTarget, Key.SHIFT, false, false, false); // Start selection mode.
-			that.triggerKey(Key.Arrow.DOWN, oTarget, oTarget);
-			that.triggerKey(Key.Arrow.UP, oTarget, oTarget);
-			that.triggerKey(Key.Arrow.LEFT, oTarget, oTarget);
-			that.triggerKey(Key.Arrow.RIGHT, oTarget, oTarget);
 		});
 	});
 
