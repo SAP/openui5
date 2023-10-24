@@ -19,6 +19,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
 	"sap/ui/core/Rendering",
+	"sap/ui/core/util/_LocalizationHelper",
 	'sap/ui/events/jquery/EventExtension',
 	"sap/ui/events/ControlEvents",
 	"sap/ui/events/F6Navigation",
@@ -40,6 +41,7 @@ sap.ui.define([
 		uid,
 		isEmptyObject,
 		Rendering,
+		_LocalizationHelper,
 		EventExtension,
 		ControlEvents,
 		F6Navigation,
@@ -1546,6 +1548,8 @@ sap.ui.define([
 	 * @function
 	 * @public
 	 */
+
+	_LocalizationHelper.registerForUpdate("UIAreas", UIArea.registry.all);
 
 	return UIArea;
 });

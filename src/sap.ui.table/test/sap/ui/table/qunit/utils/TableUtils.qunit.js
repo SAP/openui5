@@ -1087,9 +1087,13 @@ sap.ui.define([
 		var sOriginalLanguage = oCore.getConfiguration().getLanguage();
 		var sTestLanguageA = sOriginalLanguage === "en-US" ? "de-DE" : "en-US";
 		var sTestLanguageB = sOriginalLanguage === "en-US" ? "fr-FR" : "en-US";
-		var fnOnLocalizationChanged = Table.prototype.onlocalizationChanged;
+		var fnOnLocalizationChanged = Table.prototype.onLocalizationChanged;
 		var done = assert.async();
 
+		Table.prototype.onLocalizationChanged = function() {};
+		/**
+		 * @deprecated As of version 1.120
+		 */
 		Table.prototype.onlocalizationChanged = function() {};
 
 		/* Synchronous */
