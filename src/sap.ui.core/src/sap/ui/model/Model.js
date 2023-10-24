@@ -631,6 +631,8 @@ sap.ui.define([
 	 *   Predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 *   Additional model-specific parameters
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code>
+	 *   together with other filters
 	 *
 	 * @return {sap.ui.model.ListBinding}
 	 *   The newly created binding
@@ -652,6 +654,8 @@ sap.ui.define([
 	 *   Additional model specific parameters
 	 * @param {sap.ui.model.Sorter[]} [aSorters]
 	 *   Predefined sap.ui.model.sorter/s contained in an array
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code>
+	 *   together with other filters
 	 *
 	 * @return {sap.ui.model.TreeBinding}
 	 *   The newly created binding

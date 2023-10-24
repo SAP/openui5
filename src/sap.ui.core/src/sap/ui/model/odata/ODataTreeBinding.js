@@ -21,6 +21,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @deprecated please use the <code>sap.ui.model.odata.v2.ODataModel</code> for improved tree binding support (e.g. filtering which is not supported in V1).
 	 *

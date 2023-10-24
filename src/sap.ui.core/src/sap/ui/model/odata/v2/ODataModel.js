@@ -2068,6 +2068,9 @@ sap.ui.define([
 	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
 	 *   the threshold that defines how many entries should be fetched at least by the binding if
 	 *   <code>operationMode</code> is set to <code>Auto</code>.
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 * @returns {sap.ui.model.odata.v2.ODataListBinding} The new list binding
 	 * @see sap.ui.model.Model.prototype.bindList
 	 * @public
@@ -2218,6 +2221,9 @@ sap.ui.define([
 	 *   instead.
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>vFilters</code> together with other filters
 	 *
 	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding}
 	 *   The new tree binding
