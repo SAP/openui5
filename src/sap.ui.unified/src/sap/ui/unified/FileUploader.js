@@ -2074,7 +2074,6 @@ sap.ui.define([
 
 		if (this.oBrowse &&  this.oBrowse.$().length) {
 			$browse = this.oBrowse.$();
-			$browse.attr("type', 'button"); // The default type of button is submit that's why on click of label there are submit of the form. This way we are avoiding the submit of form.
 
 			$browse.off("click").on("click", (oEvent) => {
 				oEvent.preventDefault();
