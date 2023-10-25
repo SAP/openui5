@@ -96,14 +96,20 @@
 		font-size: @sapMFontHeader5Size;
 		font-weight: bold;
 
-		.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive) {
+		.sapMBtn:not(:hover) .sapMBtnInner.sapMBtnTransparent::after,
+		.sapMBtnTransparent {
+			color: @sapUiShellTextColor;
+		}
+
+		.sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
 			background: @sapUiShellHoverBackground;
 			box-shadow: @sapUiContentInteractionShadow;
 			border-color: @sapUiButtonLiteBorderColor;
+			color: @sapUiShellActiveTextColor;
 		}
 
-		.sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed.sapMBtnActive {
-			background: @sapUiShellActiveBackground;
+		.sapMBtn:hover > .sapMBtnHoverable.sapMBtnActive {
+			background: @sapUiShellHoverBackground;
 			color: @sapUiShellActiveTextColor;
 			border-color: @sapUiButtonLiteActiveBorderColor;
 		}
@@ -506,7 +512,7 @@ html.sap-desktop .sapFShellBarSearchWrap .sapMBtn:not(.sapFShellBarSearchCancelB
 
 		// sap.m.Button
 		.sapFShellBarItem.sapMBtn,
-		.sapFShellBarItem .sapMBtn,
+		.sapFShellBarItem:not(.sapFSHMegaMenu ) .sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem.sapMBtn,
 		.sapMTB-Transparent-CTX .sapFShellBarItem .sapMBtn {
 			.sapMBtnInner::after,
