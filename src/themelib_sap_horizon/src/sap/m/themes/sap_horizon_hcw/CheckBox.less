@@ -58,8 +58,12 @@
 
 // value state
 .sapMCbErr {
-	.sapMCbBg {
+	&:hover .sapMCbBg,
+	.sapMCbBg{
 		background-color: @sapUiFieldInvalidBackground;
+	}
+
+	.sapMCbBg {
 		border: @sapUiFieldInvalidBorderWidth dashed  @sapUiFieldInvalidColor;
 		color: @sapUiFieldInvalidColor;
 
