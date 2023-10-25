@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	JSONModel,
@@ -146,7 +148,7 @@ sap.ui.define([
 
 			assert.equal(jQuery( "div." + TabStripItem.CSS_CLASS_LABEL + ":contains(" + sName + ")").length, 1, 'Element with name "' + sName + '" is still in the DOM.');
 
-		var oMessageBundle = oCore.getLibraryResourceBundle("sap.m"),
+		var oMessageBundle = Library.getResourceBundleFor("sap.m"),
 			oSelectDomRef = this.oTabContainer._getTabStrip().getAggregation('_select').getFocusDomRef();
 		assert.strictEqual(jQuery(oSelectDomRef).attr('title'),
 				oMessageBundle.getText("TABSTRIP_OPENED_TABS"),

@@ -4,13 +4,15 @@
 
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/Device',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Lib",
 	'sap/ui/core/theming/Parameters',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Control, Device, Parameters, jQuery, Configuration) {
+	function(library, Localization, Control, Device, ControlBehavior, Library, Parameters, jQuery) {
 	"use strict";
 
 
@@ -35,7 +37,7 @@ sap.ui.define([
 
 				rm.write("<div");
 				rm.writeAttribute("class", "sapUiUfdShellHeader");
-				if (Configuration.getAccessibility()) {
+				if (ControlBehavior.isAccessibilityEnabled()) {
 					rm.writeAttribute("role", "toolbar");
 				}
 				rm.write(">");
@@ -58,7 +60,7 @@ sap.ui.define([
 			renderSearch: function(rm, oHeader) {
 				var oSearch = oHeader.getSearch();
 				rm.write("<div id='", oHeader.getId(), "-hdr-search'");
-				if (Configuration.getAccessibility()) {
+				if (ControlBehavior.isAccessibilityEnabled()) {
 					rm.writeAttribute("role", "search");
 				}
 				rm.writeAttribute("class", "sapUiUfdShellSearch" + (oHeader.getSearchVisible() ? "" : " sapUiUfdShellHidden"));
@@ -98,7 +100,7 @@ sap.ui.define([
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (Configuration.getAccessibility()) {
+					if (ControlBehavior.isAccessibilityEnabled()) {
 						rm.writeAccessibilityState(aItems[i], {
 							role: "button",
 							selected: null,
@@ -121,7 +123,7 @@ sap.ui.define([
 					if (tooltip) {
 						rm.writeAttributeEscaped("title", tooltip);
 					}
-					if (Configuration.getAccessibility()) {
+					if (ControlBehavior.isAccessibilityEnabled()) {
 						rm.writeAccessibilityState(oUser, {
 							role: "button"
 						});
@@ -146,7 +148,7 @@ sap.ui.define([
 			},
 
 			_renderLogo: function(rm, oHeader) {
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
+				var rb = Library.getResourceBundleFor("sap.ui.unified"),
 					sLogoTooltip = rb.getText("SHELL_LOGO_TOOLTIP"),
 					sIco = oHeader._getLogo();
 
@@ -173,7 +175,7 @@ sap.ui.define([
 	ShellHeader.prototype.init = function(){
 		var that = this;
 
-		this._rtl = Configuration.getRTL();
+		this._rtl = Localization.getRTL();
 
 		this._handleMediaChange = function(mParams){
 			if (!that.getDomRef()) {

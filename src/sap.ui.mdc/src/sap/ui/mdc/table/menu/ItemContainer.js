@@ -3,12 +3,12 @@
  */
 sap.ui.define([
 	"sap/m/table/columnmenu/ItemContainer",
-	"sap/ui/mdc/table/menu/Item",
-	"sap/ui/core/Core"
+	"sap/ui/core/Element",
+	"sap/ui/mdc/table/menu/Item"
 ], function(
 	ItemContainerBase,
-	Item,
-	Core
+	Element,
+	Item
 ) {
 	"use strict";
 
@@ -56,7 +56,7 @@ sap.ui.define([
 	};
 
 	ItemContainer.prototype.getTable = function() {
-		return Core.byId(this.getAssociation("table"));
+		return Element.getElementById(this.getAssociation("table"));
 	};
 
 	return ItemContainer;

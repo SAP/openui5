@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Element",
 	'sap/ui/layout/library',
 	'./Form',
 	'./FormContainer',
@@ -17,6 +18,7 @@ sap.ui.define([
 ], function(
 	Control,
 	ManagedObjectObserver,
+	Element,
 	library,
 	Form,
 	FormContainer,
@@ -434,7 +436,7 @@ sap.ui.define([
 		_removeResize.call(this);
 
 		for (var i = 0; i < this._aLayouts.length; i++) {
-			var oLayout = sap.ui.getCore().byId(this._aLayouts[i]);
+			var oLayout = Element.getElementById(this._aLayouts[i]);
 			if (oLayout && oLayout.destroy) {
 				oLayout.destroy();
 			}
@@ -847,7 +849,7 @@ sap.ui.define([
 		if (this._aElements) {
 
 			if (typeof (vElement) == "string") { // ID of the element is given
-				vElement = sap.ui.getCore().byId(vElement);
+				vElement = Element.getElementById(vElement);
 			}
 
 			if (typeof (vElement) == "object") { // the element itself is given or has just been retrieved
@@ -1517,7 +1519,7 @@ sap.ui.define([
 			mSettings["label"] = oLabel;
 		} else {
 			sId = oFormContainer.getId() + "--FE-NoLabel"; // There can be only one FormElement without Label in a FomContainer (first one)
-			if (sap.ui.getCore().byId(sId)) {
+			if (Element.getElementById(sId)) {
 				// if ResponsiveLayout and ResponsiveFlowLayoutdata with Linebreak is used multiple FormElements without Label can exist
 				// as already deprecated just keep generatied ID in this very special case.
 				sId = undefined;

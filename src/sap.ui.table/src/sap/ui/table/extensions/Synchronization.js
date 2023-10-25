@@ -3,8 +3,12 @@
  */
 
 sap.ui.define([
-	"./ExtensionBase", "../utils/TableUtils", "../library", "sap/base/Log"
-], function(ExtensionBase, TableUtils, library, Log) {
+	"./ExtensionBase",
+	"../utils/TableUtils",
+	"../library",
+	"sap/base/Log",
+	"sap/ui/core/RenderManager"
+], function(ExtensionBase, TableUtils, library, Log, RenderManager) {
 	"use strict";
 
 	/**
@@ -99,7 +103,7 @@ sap.ui.define([
 			}
 
 			if (!oScrollExtension.isVerticalScrollbarExternal()) {
-				var oRenderManager = sap.ui.getCore().createRenderManager();
+				var oRenderManager = new RenderManager().getInterface();
 				oTable.getRenderer().renderVSbExternal(oRenderManager, oTable);
 				oRenderManager.flush(oHTMLElement);
 

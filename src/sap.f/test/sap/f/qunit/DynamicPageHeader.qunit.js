@@ -1,11 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
 	"./DynamicPageUtil",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/Theming"
 ],
-function (
+function(
 	DynamicPageUtil,
-	Core
+	Core,
+	Theming
 ) {
 	"use strict";
 
@@ -276,7 +278,7 @@ function (
 
 		this.applyTheme = function(sTheme, fnCallback) {
 			this.sRequiredTheme = sTheme;
-			if (Core.getConfiguration().getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+			if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
 				if (typeof fnCallback === "function") {
 					fnCallback.bind(this)();
 					fnCallback = undefined;
@@ -288,7 +290,7 @@ function (
 
 			function fnThemeApplied(oEvent) {
 				Core.detachThemeChanged(fnThemeApplied);
-				if (Core.getConfiguration().getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && Core.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;

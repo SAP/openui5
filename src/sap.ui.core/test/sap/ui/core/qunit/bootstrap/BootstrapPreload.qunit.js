@@ -1,16 +1,16 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Core"
-], function(Device, Configuration, Core) {
+	"sap/ui/core/Lib",
+	"sap/ui/core/Configuration"
+], function(Device, Lib, Configuration) {
 	"use strict";
 
 	QUnit.test("Check Existance of Core", function(assert) {
 		assert.expect(7);
 
 		var aExpectedLibraries = ["sap.ui.core", "sap.m", "sap.ui.layout", "sap.ui.table"].sort();
-		var aLoadedLibraries = Object.keys(Core.getLoadedLibraries());
+		var aLoadedLibraries = Object.keys(Lib.all());
 		var sExpectedLibrary, aDependendLibraries = [];
 
 		/* check that SAPUI5 has been loaded */

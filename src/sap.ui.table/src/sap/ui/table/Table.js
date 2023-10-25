@@ -3,8 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/Device",
 	"sap/ui/core/Control",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
 	"sap/ui/core/util/PasteHelper",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
@@ -31,8 +34,11 @@ sap.ui.define([
 	"sap/ui/core/Configuration",
 	"sap/ui/core/library"
 ], function(
+	Localization,
 	Device,
 	Control,
+	ControlBehavior,
+	Element,
 	PasteHelper,
 	ChangeReason,
 	Filter,
@@ -734,7 +740,7 @@ sap.ui.define([
 		/*
 		 * Flag indicating whether the text direction is RTL. If <code>false</code>, the text direction is LTR.
 		 */
-		this._bRtlMode = Configuration.getRTL();
+		this._bRtlMode = Localization.getRTL();
 
 		/*
 		 * Flag indicating whether the rows are currently being bound. This is the time between #bindRows and the actual instantiation of the
@@ -923,7 +929,7 @@ sap.ui.define([
 		var pUpdateLocalizationInfo = Promise.resolve();
 
 		if (bRtlChanged) {
-			this._bRtlMode = Configuration.getRTL();
+			this._bRtlMode = Localization.getRTL();
 		}
 
 		if (bLangChanged) {
@@ -2282,7 +2288,7 @@ sap.ui.define([
 		var $this = this.$();
 		var sTableId = this.getId();
 
-		if (Configuration.getAnimationMode() !== Configuration.AnimationMode.none) {
+		if (ControlBehavior.getAnimationMode() !== Configuration.AnimationMode.none) {
 			jQuery(document.body).on("webkitTransitionEnd." + sTableId + " transitionend." + sTableId,
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {

@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/write/_internal/extensionPoint/Registry"
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry"
 ], function(
 	ExtensionPointRegistry
 ) {
@@ -12,12 +12,12 @@ sap.ui.define([
 	/**
 	 * Provides an API to handle specific information about the extension points into the application.
 	 *
-	 * @namespace sap.ui.fl.write.api.ExtensionPointRegistryAPI
+	 * @namespace sap.ui.fl.apply.api.ExtensionPointRegistryAPI
 	 * @since 1.78
 	 * @private
 	 * @ui5-restricted
 	 */
-	var ExtensionPointRegistryAPI = /** @lends sap.ui.fl.write.api.ExtensionPointRegistryAPI */{
+	var ExtensionPointRegistryAPI = /** @lends sap.ui.fl.apply.api.ExtensionPointRegistryAPI */{
 		/**
 		 * Returns the extension point information.
 		 *

@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	'test-resources/sap/ui/mdc/testutils/opa/TestLibrary',
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/library"
 ], function(
 	/** @type sap.base.Log */ Log,
+	Lib,
 	/** @type sap.ui.test.Opa5 */ Opa5,
 	/** @type sap.ui.test.opaQunit */ opaTest,
 	/** @type sap.ui.test.Opa5 */ TestLibrary,
@@ -19,7 +21,8 @@ sap.ui.define([
 	/** @type sap.ui.mdc.qunit.table.OpaTests.pages.Util */ Util,
 	/** @type sap.ui.test.PageObjectDefinition */ TestObjects,
 	/** @type sap.ui.test.Opa5 */ P13nActions,
-	coreLibrary) {
+	coreLibrary
+) {
 	"use strict";
 
 	if (window.blanket) {
@@ -126,7 +129,7 @@ sap.ui.define([
 	/*                                                                  */
 	/* THESE TESTS ARE SKIPPED IF NO sap.ui.export LIBRARY IS AVAILABLE */
 	/* ================================================================ */
-	if (sap.ui.getCore().getLoadedLibraries().hasOwnProperty("sap.ui.export")) {
+	if (Lib.all().hasOwnProperty("sap.ui.export")) {
 		opaTest("The table should have the export button", function(Given, When, Then) {
 			Then.onTheAppUnderTestMDCTable.iShouldSeeTheExportMenuButton(sTableId);
 		});
@@ -228,7 +231,6 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
 		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
 	});
 
 	opaTest("Select a column from column header menu", function (Given, When, Then) {
@@ -474,7 +476,6 @@ sap.ui.define([
 		Then.onTheAppUnderTestMDCTable.iShouldSeeInfoFilterBarWithFilters(sTableId, ["Category"]);
 		When.onTheAppUnderTestMDCTable.iRemoveAllFiltersViaInfoFilterBar(sTableId);
 		Then.onTheAppUnderTestMDCTable.iShouldNotSeeInfoFilterBar(sTableId);
-		Then.onTheAppUnderTestMDCTable.iShouldSeeFocusOnControl(sTableId);
 
 		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
 	});

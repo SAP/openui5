@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/m/SliderTooltipBase",
 	"sap/m/SliderTooltipBaseRenderer",
 	"sap/m/Text",
+	"sap/ui/core/Lib",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
@@ -21,6 +22,7 @@ sap.ui.define([
 	SliderTooltipBase,
 	SliderTooltipBaseRenderer,
 	Text,
+	Library,
 	XMLView,
 	KeyCodes,
 	qutils,
@@ -173,7 +175,7 @@ sap.ui.define([
 
 	QUnit.test("_handlesLabels aggregation", function (assert) {
 		// arrange & act
-		var oResourceBundle = oCore.getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oBoundleCalledStub = this.stub(oResourceBundle, "getText"),
 			oSlider = new RangeSlider(),
 			aLabels = oSlider.getAggregation("_handlesLabels");
@@ -1342,7 +1344,7 @@ sap.ui.define([
 			sSecondHandleAriaId,
 			sKeyShortcutFirstHandle,
 			sKeyShortcutSecondHandle,
-			sResourceBundleText = oCore.getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"),
+			sResourceBundleText = Library.getResourceBundleFor("sap.m").getText("SLIDER_INPUT_TOOLTIP"),
 			oSlider = new RangeSlider({
 				showAdvancedTooltip: true,
 				inputsAsTooltips: true
@@ -1359,8 +1361,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(sFirstHandleAriaId, sSecondHandleAriaId, "aria-describedby attributes should point to the same element");
-		assert.strictEqual(oCore.byId(sFirstHandleAriaId).getText(), sResourceBundleText);
-		assert.strictEqual(oCore.byId(sSecondHandleAriaId).getText(), sResourceBundleText);
+		assert.strictEqual(Element.getElementById(sFirstHandleAriaId).getText(), sResourceBundleText);
+		assert.strictEqual(Element.getElementById(sSecondHandleAriaId).getText(), sResourceBundleText);
 
 		assert.ok(!oSlider.getDomRef("handle1").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.ok(!oSlider.getDomRef("handle2").getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');

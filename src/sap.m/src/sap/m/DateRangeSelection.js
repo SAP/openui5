@@ -4,9 +4,12 @@
 
 // Provides control sap.m.DateRangeSelection.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/Device',
 	'./DatePicker',
 	'./library',
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	'sap/ui/core/LocaleData',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/date/UniversalDate',
@@ -16,16 +19,17 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
 	"sap/base/assert",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
-	"sap/ui/core/Core",
 	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
+		Formatting,
 		Device,
 		DatePicker,
 		library,
+		Library,
+		Locale,
 		LocaleData,
 		DateFormat,
 		UniversalDate,
@@ -35,9 +39,7 @@ sap.ui.define([
 		deepEqual,
 		Log,
 		assert,
-		Configuration,
-		UI5Date,
-		Core
+		UI5Date
 	) {
 		"use strict";
 
@@ -261,7 +263,7 @@ sap.ui.define([
 
 			if (!sPlaceholder) {
 				oBinding = this.getBinding("value");
-				oLocale = Configuration.getFormatSettings().getFormatLocale();
+				oLocale = new Locale(Formatting.getLanguageTag());
 				oLocaleData = LocaleData.getInstance(oLocale);
 
 				if (oBinding && oBinding.getType() && oBinding.getType().isA("sap.ui.model.type.DateInterval")) {
@@ -1030,7 +1032,7 @@ sap.ui.define([
 			var oRenderer = this.getRenderer();
 			var oInfo = DatePicker.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
-			var sRequired = this.getRequired() ? Core.getLibraryResourceBundle("sap.m").getText("ELEMENT_REQUIRED") : '';
+			var sRequired = this.getRequired() ? Library.getResourceBundleFor("sap.m").getText("ELEMENT_REQUIRED") : '';
 
 			if (this._bValid) {
 				var oDate = this.getDateValue();
@@ -1038,7 +1040,7 @@ sap.ui.define([
 					sValue = this._formatValue(oDate, this.getSecondDateValue());
 				}
 			}
-			oInfo.type = Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
+			oInfo.type = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_DATERANGEINPUT");
 			oInfo.description = [sValue || this._getPlaceholder(), oRenderer.getLabelledByAnnouncement(this), oRenderer.getDescribedByAnnouncement(this), sRequired].join(" ").trim();
 			return oInfo;
 		};
@@ -1243,7 +1245,7 @@ sap.ui.define([
 
 			if (!sDelimiter) {
 				if (!this._sLocaleDelimiter) {
-					var oLocale = Configuration.getFormatSettings().getFormatLocale();
+					var oLocale = new Locale(Formatting.getLanguageTag());
 					var oLocaleData = LocaleData.getInstance(oLocale);
 					var sPattern = oLocaleData.getIntervalPattern();
 					var iIndex1 = sPattern.indexOf("{0}") + 3;

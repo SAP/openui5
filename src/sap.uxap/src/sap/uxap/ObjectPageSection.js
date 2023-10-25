@@ -4,20 +4,24 @@
 
 // Provides control sap.uxap.ObjectPageSection.
 sap.ui.define([
-    "./ObjectPageSectionBase",
-    "sap/ui/Device",
-    "sap/m/Button",
+	"./ObjectPageSectionBase",
+	"sap/ui/Device",
+	"sap/m/Button",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ResizeHandler",
-    "sap/ui/core/StashedControlSupport",
+	"sap/ui/core/StashedControlSupport",
 	"sap/ui/base/ManagedObjectObserver",
-    "./ObjectPageSubSection",
-    "./library",
-    "sap/m/library",
-    "./ObjectPageSectionRenderer"
+	"./ObjectPageSubSection",
+	"./library",
+	"sap/m/library",
+	"./ObjectPageSectionRenderer"
 ], function(
 	ObjectPageSectionBase,
 	Device,
 	Button,
+	Element,
+	Library,
 	ResizeHandler,
 	StashedControlSupport,
 	ManagedObjectObserver,
@@ -113,7 +117,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ObjectPageSection._getClosestSection = function (vSectionBase) {
-		var oSectionBase = (typeof vSectionBase === "string" && sap.ui.getCore().byId(vSectionBase)) || vSectionBase;
+		var oSectionBase = (typeof vSectionBase === "string" && Element.getElementById(vSectionBase)) || vSectionBase;
 		return (oSectionBase instanceof ObjectPageSubSection) ? oSectionBase.getParent() : oSectionBase;
 	};
 
@@ -124,7 +128,7 @@ sap.ui.define([
 	 * @returns {Object} the resource bundle object
 	 */
 	ObjectPageSection._getLibraryResourceBundle = function() {
-		return sap.ui.getCore().getLibraryResourceBundle("sap.uxap");
+		return Library.getResourceBundleFor("sap.uxap");
 	};
 
 	/**

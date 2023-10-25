@@ -1,11 +1,11 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/core/Core',
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library'
 ], function(
+	Messaging,
 	Controller,
-	Core,
 	Message,
 	coreLibrary
 ) {
@@ -19,7 +19,7 @@ sap.ui.define([
 				this.oView = this.getView();
 
 				// connect Message Manager
-				this._MessageManager = Core.getMessageManager();
+				this._MessageManager = Messaging;
 				this._MessageManager.registerObject(this.oView.byId("messageHandlingPage"), true);
 				this.oView.setModel(this._MessageManager.getMessageModel(), "message");
 

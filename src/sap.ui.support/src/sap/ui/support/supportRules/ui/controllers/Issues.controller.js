@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
@@ -12,7 +13,8 @@ sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/m/OverflowToolbarAssociativePopoverControls",
 	"sap/base/util/deepExtend"
-], function (
+], function(
+	Element,
 	BaseController,
 	CommunicationBus,
 	SharedModel,
@@ -167,7 +169,7 @@ sap.ui.define([
 
 		},
 		openDocumentation: function (oEvent) {
-			var link = sap.ui.getCore().byId(oEvent.mParameters.id),
+			var link = Element.getElementById(oEvent.mParameters.id),
 				url = link.getBindingContext().getProperty("href");
 			CommunicationBus.publish(channelNames.OPEN_URL, url);
 		},

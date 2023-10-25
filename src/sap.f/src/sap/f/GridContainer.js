@@ -9,7 +9,10 @@ sap.ui.define([
 	"./delegate/GridContainerItemNavigation",
 	"./library",
 	"./dnd/GridKeyboardDragAndDrop",
+	"sap/base/i18n/Localization",
 	"sap/base/strings/capitalize",
+	"sap/ui/core/Lib",
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/delegate/ItemNavigation',
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/Control",
@@ -20,7 +23,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
-], function (
+], function(
 	GridContainerRenderer,
 	GridContainerSettings,
 	GridContainerUtils,
@@ -28,7 +31,10 @@ sap.ui.define([
 	GridContainerItemNavigation,
 	library,
 	GridKeyboardDragAndDrop,
+	Localization,
 	capitalize,
+	Library,
+	RenderManager,
 	ItemNavigation,
 	ManagedObjectObserver,
 	Control,
@@ -622,7 +628,7 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype.init = function () {
-		this._oRb  = Core.getLibraryResourceBundle("sap.f");
+		this._oRb  = Library.getResourceBundleFor("sap.f");
 		this.setAggregation("_defaultLayout", new GridContainerSettings());
 
 		this._initRangeSet();
@@ -664,7 +670,7 @@ sap.ui.define([
 			return this;
 		}
 
-		var oRm = Core.createRenderManager(),
+		var oRm = new RenderManager().getInterface(),
 			oWrapper = this._createItemWrapper(oItem),
 			oNextItem = this._getItemAt(iIndex + 1),
 			oGridRef = this.getDomRef();
@@ -1060,7 +1066,7 @@ sap.ui.define([
 
 		switch (oEvent.keyCode) {
 			case KeyCodes.ARROW_RIGHT:
-				iInsertAt = Core.getConfiguration().getRTL() ? iItemIndex - 1 : iItemIndex + 1;
+				iInsertAt = Localization.getRTL() ? iItemIndex - 1 : iItemIndex + 1;
 
 				if (iInsertAt >= 0 && iInsertAt < iLength) {
 					oCfg = GridContainerUtils.createConfig(this, this.getItems()[iInsertAt]);
@@ -1069,7 +1075,7 @@ sap.ui.define([
 				}
 				break;
 			case KeyCodes.ARROW_LEFT:
-				iInsertAt = Core.getConfiguration().getRTL() ? iItemIndex + 1 : iItemIndex - 1;
+				iInsertAt = Localization.getRTL() ? iItemIndex + 1 : iItemIndex - 1;
 
 				if (iInsertAt >= 0 && iInsertAt < iLength) {
 					oCfg = GridContainerUtils.createConfig(this, this.getItems()[iInsertAt]);

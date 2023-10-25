@@ -41,7 +41,7 @@ sap.ui.define([
 	Button,
 	Input,
 	CustomData,
-	Lib,
+	Library,
 	DesignTime,
 	OverlayRegistry,
 	DtUtil,
@@ -141,18 +141,18 @@ sap.ui.define([
 	QUnit.module("Context Menu Operations: Given a plugin whose dialog always close with OK", {
 		async beforeEach(assert) {
 			registerControlsForChanges();
-			this.oRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
+			this.oRTATexts = Library.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetResourceBundleFor = Library.getResourceBundleFor;
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+			sandbox.stub(Library, "getResourceBundleFor").callsFake(function(...aArgs) {
 				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
+				return fnOriginalGetResourceBundleFor.apply(this, aArgs);
 			});
 			sandbox.stub(RTAPlugin.prototype, "hasChangeHandler").resolves(true);
 			await givenSomeBoundControls.call(this, assert);
@@ -960,19 +960,19 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has addViaDelegate and a reveal actions", function(assert) {
-			var oOriginalRTATexts = Lib.getResourceBundleFor("sap.ui.rta");
-			var fnOriginalGetLibraryResourceBundle = Lib.getResourceBundleFor;
+			var oOriginalRTATexts = Library.getResourceBundleFor("sap.ui.rta");
+			var fnOriginalGetResourceBundleFor = Library.getResourceBundleFor;
 			var sAggregationName = "contentLeft";
 			var oFakeLibBundle = {
 				getText: sandbox.stub().returnsArg(0),
 				hasText: sandbox.stub().returns(true)
 			};
-			sandbox.stub(Core, "getLibraryResourceBundle").callsFake(function(...aArgs) {
+			sandbox.stub(Library, "getResourceBundleFor").callsFake(function(...aArgs) {
 				const [sLibraryName] = aArgs;
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m") {
 					return oFakeLibBundle;
 				}
-				return fnOriginalGetLibraryResourceBundle.apply(this, aArgs);
+				return fnOriginalGetResourceBundleFor.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -996,12 +996,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function(assert) {
-			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
 				const [oLibrary] = aArgs;
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return Lib.load.wrappedMethod.apply(this, aArgs);
+				return Library.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			return createOverlayWithAggregationActions.call(this, {
@@ -1028,12 +1028,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function(assert) {
-			sandbox.stub(Lib, "load").callsFake(function(...aArgs) {
+			sandbox.stub(Library, "load").callsFake(function(...aArgs) {
 				const [oLibrary] = aArgs;
 				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), oLibrary.name)) {
 					return Promise.reject();
 				}
-				return Lib.load.wrappedMethod.apply(this, aArgs);
+				return Library.load.wrappedMethod.apply(this, aArgs);
 			});
 
 			RtaQunitUtils.stubSapUiRequire(sandbox, [{

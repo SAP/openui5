@@ -4,7 +4,10 @@
 
 // Provides control sap.m.SinglePlanningCalendarMonthGrid.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
@@ -17,7 +20,6 @@ sap.ui.define([
 	'sap/ui/core/CustomData',
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
-	'sap/ui/core/Core',
 	'./Link',
 	'./library',
 	'./PlanningCalendarLegend',
@@ -27,12 +29,14 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
-	],
-	function (
+],
+	function(
+		Formatting,
 		Control,
+		Element,
+		Library,
 		DateFormat,
 		CalendarDate,
 		CalendarUtils,
@@ -45,7 +49,6 @@ sap.ui.define([
 		CustomData,
 		KeyCodes,
 		Log,
-		Core,
 		Link,
 		library,
 		PlanningCalendarLegend,
@@ -55,7 +58,6 @@ sap.ui.define([
 		coreLibrary,
 		CalendarWeekNumbering,
 		CalendarDateUtils,
-		Configuration,
 		UI5Date,
 		DateRange
 	) {
@@ -272,7 +274,7 @@ sap.ui.define([
 			this.setStartDate(UI5Date.getInstance());
 			this._configureAppointmentsDragAndDrop();
 
-			this._oUnifiedRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+			this._oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified");
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype.exit = function() {
@@ -494,7 +496,7 @@ sap.ui.define([
 
 			} else if (this._bCurrentWeekSelection && SinglePlanningCalendarSelectionMode.MultiSelect === this.getDateSelectionMode()){
 				var iStartDate = oStartDate.getDate(),
-					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(Configuration.getFormatSettings().getFormatLocale().toString())),
+					oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(new Locale(Formatting.getLanguageTag()).toString())),
 					iAPIFirstDayOfWeek = this.getFirstDayOfWeek(),
 					iFirstDayOfWeek,
 					iWeekStartDate;
@@ -649,8 +651,8 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMoreLink = function(iAppointmentsCount, oCalendarDate, iCellIndex) {
-			var sMore = Core
-					.getLibraryResourceBundle("sap.m")
+			var sMore = Library
+					.getResourceBundleFor("sap.m")
 					.getText("SPC_MORE_LINK", [iAppointmentsCount.toString()]),
 				oLink = new Link({
 					accessibleRole: LinkAccessibleRole.Button,
@@ -680,7 +682,7 @@ sap.ui.define([
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getCoreLocaleData = function() {
-			var sLocale = Core.getConfiguration().getFormatSettings().getFormatLocale().toString(),
+			var sLocale = new Locale(Formatting.getLanguageTag()).toString(),
 				oLocale = new Locale(sLocale);
 
 			return LocaleData.getInstance(oLocale);
@@ -694,7 +696,7 @@ sap.ui.define([
 			var aDays = this._getVisibleDays(this.getStartDate()),
 				iColumns = this._getColumns(),
 				aResult = [],
-				sLocale = Core.getConfiguration().getFormatLocale().toString();
+				sLocale = new Locale(Formatting.getLanguageTag()).toString();
 
 			for (var i = 0; i < this._getRows(); i++) {
 				var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: "Gregorian", calendarWeekNumbering: this.getCalendarWeekNumbering()}, new Locale(sLocale));
@@ -752,7 +754,7 @@ sap.ui.define([
 			if (this.getFirstDayOfWeek() < 0 || this.getFirstDayOfWeek() > 6) {
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(
 					this.getCalendarWeekNumbering(),
-					new Locale(Configuration.getFormatSettings().getFormatLocale().toString())
+					new Locale(new Locale(Formatting.getLanguageTag()).toString())
 				);
 
 				if (oWeekConfigurationValues) {
@@ -1045,22 +1047,22 @@ sap.ui.define([
 		});
 
 		SinglePlanningCalendarMonthGrid.prototype._getCellStartInfo = function(oStartDate) {
-			var sStartTime = Core
-				.getLibraryResourceBundle("sap.ui.unified")
+			var sStartTime = Library
+				.getResourceBundleFor("sap.ui.unified")
 				.getText("CALENDAR_START_TIME");
 
 				return sStartTime + ": " + this._oFormatAriaFullDayCell.format(oStartDate) + "; ";
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getAppointmentAnnouncementInfo = function(oAppointment) {
-			var oUnifiedRB = Core.getLibraryResourceBundle("sap.ui.unified"),
+			var oUnifiedRB = Library.getResourceBundleFor("sap.ui.unified"),
 				sStartTime = oUnifiedRB.getText("CALENDAR_START_TIME"),
 				sEndTime = oUnifiedRB.getText("CALENDAR_END_TIME"),
 				sFormattedStartDate = this._oFormatAriaApp.format(oAppointment.getStartDate()),
 				sFormattedEndDate = this._oFormatAriaApp.format(oAppointment.getEndDate()),
 				sAppInfo = sStartTime + ": " + sFormattedStartDate + "; " + sEndTime + ": " + sFormattedEndDate;
 
-			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Core.byId(this._sLegendId), oAppointment);
+			return sAppInfo + "; " + PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(this._sLegendId), oAppointment);
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._getMaxAppointments = function() {

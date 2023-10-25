@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer', "sap/ui/core/Core"],
-	function(InputRenderer, Renderer, Core) {
+sap.ui.define(['./InputRenderer', "sap/ui/core/Lib", 'sap/ui/core/Renderer'],
+	function(InputRenderer, Library, Renderer) {
 	"use strict";
 
 
@@ -44,7 +44,7 @@ sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer', "sap/ui/core/Core"],
 
 	MultiInputRenderer.getAccessibilityState = function (oControl) {
 		var mAccessibilityState = InputRenderer.getAccessibilityState.apply(this, arguments),
-			oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		mAccessibilityState.roledescription = oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION");
 

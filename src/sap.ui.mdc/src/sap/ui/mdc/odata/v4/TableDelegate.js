@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/plugins/PluginBase",
 	"sap/ui/core/Item",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/format/ListFormat",
 	"sap/ui/base/ManagedObjectObserver",
@@ -25,7 +25,7 @@ sap.ui.define([
 	MessageBox,
 	PluginBase,
 	Item,
-	oCore,
+	Library,
 	coreLibrary,
 	ListFormat,
 	ManagedObjectObserver,
@@ -211,7 +211,7 @@ sap.ui.define([
 			// Corresponding sort conditions are not applied.
 			return {
 				validation: coreLibrary.MessageType.Information,
-				message: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+				message: Library.getResourceBundleFor("sap.ui.mdc").getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
 			};
 		}
 
@@ -219,7 +219,7 @@ sap.ui.define([
 	}
 
 	function validateGroupState(oTable, oState) {
-		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 		if (oState.aggregations) {
 			const aAggregateProperties = Object.keys(oState.aggregations);
@@ -258,7 +258,7 @@ sap.ui.define([
 	}
 
 	function validateColumnState(oTable, oState) {
-		const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+		const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		const aAggregateProperties = oState.aggregations && Object.keys(oState.aggregations);
 		let sMessage;
 
@@ -422,7 +422,7 @@ sap.ui.define([
 		if (oPopover) {
 			oPopover.getItems().forEach(function(oItem, iIndex, aItems) {
 				const sLabel = oItem.getLabel();
-				const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+				const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 				if (sLabel === oResourceBundle.getText("table.SETTINGS_GROUP") || sLabel === oResourceBundle.getText("table.SETTINGS_TOTALS")) {
 					aItems[iIndex].destroy();
@@ -546,7 +546,7 @@ sap.ui.define([
 		if (aGroupChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aGroupChildren,
-				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
+				label: Library.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_GROUP"),
 				icon: "sap-icon://group-2",
 				action: [{
 					sName: "Group",
@@ -567,7 +567,7 @@ sap.ui.define([
 		if (aAggregateChildren.length > 0) {
 			return new ColumnPopoverSelectListItem({
 				items: aAggregateChildren,
-				label: oCore.getLibraryResourceBundle("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
+				label: Library.getResourceBundleFor("sap.ui.mdc").getText("table.SETTINGS_TOTALS"),
 				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
@@ -592,7 +592,7 @@ sap.ui.define([
 		let bForcedAnalytics = false;
 
 		if (bForce) {
-			const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 			let sTitle;
 			let sMessage;
 			let sActionText;

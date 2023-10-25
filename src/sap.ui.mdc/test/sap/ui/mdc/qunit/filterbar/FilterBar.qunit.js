@@ -3,6 +3,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/qunit/QUnitUtils',
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/mdc/FilterBar",
@@ -20,7 +21,8 @@ sap.ui.define([
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName"
-], function (
+], function(
+	Localization,
 	QUnitUtils,
 	createAndAppendDiv,
 	FilterBar,
@@ -340,8 +342,8 @@ sap.ui.define([
 
 	QUnit.test("check getAssignedFiltersText", function (assert) {
 
-		const sLanguage = oCore.getConfiguration().getLanguage();
-		oCore.getConfiguration().setLanguage("EN");
+		const sLanguage = Localization.getLanguage();
+		Localization.setLanguage("EN");
 
 		const oProperty = {
 			name: "fieldPath1",
@@ -438,7 +440,7 @@ sap.ui.define([
 
 				oFilterBar.getControlDelegate().fetchProperties.restore();
 
-				oCore.getConfiguration().setLanguage(sLanguage);
+				Localization.setLanguage(sLanguage);
 				done();
 			});
 		});
@@ -1156,8 +1158,8 @@ sap.ui.define([
 			hiddenFilter: true
 		};
 
-		const sLanguage = oCore.getConfiguration().getLanguage();
-		oCore.getConfiguration().setLanguage("EN");
+		const sLanguage = Localization.getLanguage();
+		Localization.setLanguage("EN");
 
 		sinon.stub(oFilterBar, "_handleAssignedFilterNames");
 
@@ -1186,7 +1188,7 @@ sap.ui.define([
 		assert.equal(aNames[2], oProperty2.name);
 		assert.equal(aNames[3], oProperty1.name);
 
-		oCore.getConfiguration().setLanguage(sLanguage);
+		Localization.setLanguage(sLanguage);
 	});
 
 	QUnit.test("check _handleConditionModelPropertyChange with navigation paths", function (assert) {

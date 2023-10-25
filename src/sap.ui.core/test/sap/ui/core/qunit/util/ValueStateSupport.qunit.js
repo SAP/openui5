@@ -2,10 +2,10 @@
 
 sap.ui.define([
 	"sap/m/CheckBox",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/ValueStateSupport"
-], function (CheckBox, Core, coreLibrary, ValueStateSupport) {
+], function (CheckBox, Library, coreLibrary, ValueStateSupport) {
 	"use strict";
 
 	var element, errorText, warningText, successText;
@@ -17,7 +17,7 @@ sap.ui.define([
 
 
 	QUnit.test("Value State texts", function(assert) {
-		var rb = Core.getLibraryResourceBundle("sap.ui.core");
+		var rb = Library.getResourceBundleFor("sap.ui.core");
 		errorText = rb.getText("VALUE_STATE_ERROR");
 		warningText = rb.getText("VALUE_STATE_WARNING");
 		successText = rb.getText("VALUE_STATE_SUCCESS");

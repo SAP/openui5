@@ -7,8 +7,9 @@ sap.ui.define([
 	"./library",
 	"./AccButton",
 	"./IconTabFilterExpandButtonBadge",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Item",
 	"sap/ui/core/Renderer",
 	"sap/ui/core/IconPool",
@@ -20,12 +21,13 @@ sap.ui.define([
 	"sap/m/IconTabBarSelectList",
 	"sap/m/BadgeEnabler",
 	"sap/m/ImageHelper"
-], function (
+], function(
 	library,
 	AccButton,
 	IconTabFilterExpandButtonBadge,
+	Localization,
+	Library,
 	coreLibrary,
-	Core,
 	Item,
 	Renderer,
 	IconPool,
@@ -196,7 +198,7 @@ sap.ui.define([
 	 *
 	 * @type {module:sap/base/i18n/ResourceBundle}
 	 */
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	/**
 	 * Array of all available icon color CSS classes
@@ -800,7 +802,7 @@ sap.ui.define([
 	IconTabFilter.prototype._renderText =  function (oRM) {
 		var sText = this.getText(),
 			sCount = this.getCount(),
-			bRTL = Core.getConfiguration().getRTL(),
+			bRTL = Localization.getRTL(),
 			sTextDir = this.getTextDirection();
 
 		oRM.openStart("span", this.getId() + "-text")

@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/FacetFilter",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	FacetFilter,
@@ -569,7 +571,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -620,7 +622,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -656,7 +658,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 
 		var oSearchField = getDialogFacetSearchField(oFacetPage);
 
@@ -697,7 +699,7 @@ sap.ui.define([
 		oFF.openFilterDialog();
 
 		var oNavContainer = oFF.getAggregation("dialog").getContent()[0];
-		var oFacetPage = oCore.byId(oNavContainer.getInitialPage());
+		var oFacetPage = Element.getElementById(oNavContainer.getInitialPage());
 		var oFacetList = oFacetPage.getContent()[0];
 		var oFacetListItem1 = oFacetList.getItems()[0];
 
@@ -1688,6 +1690,66 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("FacetFilter allCheckboxBar - visibility after binding update", function(assert) {
+		// arrange
+		var done = assert.async(),
+			oFacetFilter = new FacetFilter({
+				lists: [new FacetFilterList()]
+			}),
+			oTargetList = oFacetFilter.getLists()[0],
+			oButtonOpener = oFacetFilter._getButtonForList(oTargetList),
+			aValues = [{key : 'k1',text : "a"}, {key : 'k2',text : "ba"}, {key : 'k3',text : "c"}],
+			oModel = new JSONModel({
+				values : aValues
+			}),
+			oPopover = oFacetFilter._getPopover(),
+			oFakeEvent = {
+				getParameters: function () {
+					return {
+						query: ""
+					};
+				}
+			};
+
+		oFacetFilter.setModel(oModel);
+		oFacetFilter.placeAt("content");
+		oCore.applyChanges();
+
+		oTargetList.attachEventOnce("search", function(oEvent) {
+			var sSearchString = oEvent.getParameters()["term"];
+
+			this.bindItems({
+				path : "/values",
+				template : new FacetFilterItem({
+					text : "{text}",
+					key : "{key}"
+				}),
+				filters: [new Filter("text", 'Contains', sSearchString.toLowerCase())]
+			});
+
+			oEvent.preventDefault();
+		});
+
+		// act
+		oFacetFilter._openPopover(oPopover, oButtonOpener);
+
+		oPopover.attachEventOnce("afterOpen", function(oEvent) {
+			// prepare
+			oTargetList.attachUpdateFinished(function() {
+				// assert
+				assert.strictEqual(oTargetList.getBinding("items").getLength(), 3, "There three items in the list");
+				assert.ok(oPopover.getSubHeader().getVisible(), "AllCheckBoxBar is visibile");
+
+				// clean
+				oFacetFilter.destroy();
+				done();
+			});
+
+			// act
+			oTargetList._handleSearchEvent(oFakeEvent);
+		});
+	});
+
 	QUnit.test("FacetFilterList.listItemsChange", function(assert) {
 		// arrange
 		var done = assert.async(),
@@ -1751,7 +1813,7 @@ sap.ui.define([
 			var oPopover = oFF._getPopover();
 			oPopover.attachEventOnce("afterOpen", function(oEvent) {
 				var sSearchId = getPopoverFilterItemsList(oPopover).getAssociation("search");
-				var oSearch = oCore.byId(sSearchId);
+				var oSearch = Element.getElementById(sSearchId);
 				//This moves the focus out of the filter items, because when item is focused and deleted (due to filtering) on Crhome the focus for this item is lost and the popover closes.
 				oSearch.focus();
 

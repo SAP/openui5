@@ -4,8 +4,8 @@
 /**
  * Defines support rules of the Form controls of sap.ui.layout library.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/layout/library"],
-	function(SupportLib, layoutLibrary) {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/support/library", "sap/ui/layout/library"],
+	function(Lib, SupportLib, layoutLibrary) {
 	"use strict";
 
 	// shortcuts
@@ -891,7 +891,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/layout/library"],
 				oScope.getElementsByClassName("sap.ui.layout.form.Form")
 					.forEach(function (oForm) {
 						var oLayout = oForm.getLayout();
-						var oLoadedLibraries = sap.ui.getCore().getLoadedLibraries();
+						var oLoadedLibraries = Lib.all();
 						if (oLayout && oLayout.isA("sap.ui.layout.form.ColumnLayout") && !oLoadedLibraries.hasOwnProperty("sap.ui.commons")) {
 							var oParent = oForm.getParent();
 							var sId;

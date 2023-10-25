@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/MessageView",
 	"sap/m/Dialog",
@@ -12,6 +15,9 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/core/InvisibleText"
 ], function(
+	Element,
+	Library,
+	Messaging,
 	qutils,
 	MessageView,
 	Dialog,
@@ -551,7 +557,7 @@ sap.ui.define([
 				}
 			});
 
-			Core.getMessageManager().addMessages(
+			Messaging.addMessages(
 					new Message({
 						message: "Invalid order of characters in this name!",
 						type: MessageType.Warning,
@@ -586,7 +592,7 @@ sap.ui.define([
 			this.oButton.firePress();
 		},
 		afterEach: function () {
-			Core.getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 
 			this.oDialog.close();
 
@@ -611,7 +617,7 @@ sap.ui.define([
 	QUnit.test("When all messages from model are removed, MessageView / Popover should return to home page", function (assert) {
 		var oMessageView = new MessageView().placeAt("qunit-fixture");
 		var fnAddMessage = function() {
-			Core.getMessageManager().addMessages(
+			Messaging.addMessages(
 				new Message({
 					message: "Something wrong happend!",
 					description: "Some Description",
@@ -621,7 +627,7 @@ sap.ui.define([
 			);
 		};
 		var fnClearMessages = function() {
-			Core.getMessageManager().removeAllMessages();
+			Messaging.removeAllMessages();
 		};
 
 		fnClearMessages();
@@ -849,7 +855,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Core.getLibraryResourceBundle("sap.m");
+		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_ERROR");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -885,7 +891,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Core.getLibraryResourceBundle("sap.m");
+		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_WARNING");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -921,7 +927,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Core.getLibraryResourceBundle("sap.m");
+		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_INFORMATION");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -957,7 +963,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		oBundle = Core.getLibraryResourceBundle("sap.m");
+		oBundle = Library.getResourceBundleFor("sap.m");
 		sContentAnnouncementLocation = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_LOCATION_SUCCESS");
 		sContentAnnouncementDescription = oBundle.getText("MESSAGE_LIST_ITEM_FOCUS_TEXT_DESCRIPTION");
 
@@ -988,7 +994,7 @@ sap.ui.define([
 		var oFirstMessageItem = new MessageItem({
 			type: "Error"
 		});
-		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var	oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		this.oMessageView.addItem(oFirstMessageItem);
 		this.oMessageView.placeAt("qunit-fixture");
@@ -1019,13 +1025,13 @@ sap.ui.define([
 				})
 			]
 		});
-		var	oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var	oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		oMessageView.placeAt("qunit-fixture");
 		Core.applyChanges();
 
 		var sInvisibleTextId = InvisibleText.getStaticId("sap.m", "MESSAGEVIEW_SEGMENTED_BTN_DESCRIPTION"),
-		oInvisibleText = Core.byId(sInvisibleTextId);
+		oInvisibleText = Element.getElementById(sInvisibleTextId);
 
 		//Assert
 		assert.strictEqual(oMessageView._oSegmentedButton._oItemNavigation.oDomRef.getAttribute("aria-labelledby"), sInvisibleTextId, "The aria-labelledby attribute is set correctly");
@@ -1171,7 +1177,7 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		Core.getMessageManager().addMessages(oMessage);
+		Messaging.addMessages(oMessage);
 		Core.applyChanges();
 
 		//Assert
@@ -1180,7 +1186,7 @@ sap.ui.define([
 		//Cleanup
 		oMessage.destroy();
 		oMessageView.destroy();
-		Core.getMessageManager().removeAllMessages();
+		Messaging.removeAllMessages();
 	});
 
 	QUnit.test("Auto bind to the sap.ui.getCore().getMessageManager() when there are items or binding", function (assert) {
@@ -1200,7 +1206,7 @@ sap.ui.define([
 			references: null,
 			validation: false
 		});
-		Core.getMessageManager().addMessages(oMessage);
+		Messaging.addMessages(oMessage);
 		Core.applyChanges();
 
 		//Assert
@@ -1210,7 +1216,7 @@ sap.ui.define([
 		//Cleanup
 		oMessage.destroy();
 		oMessageView.destroy();
-		Core.getMessageManager().removeAllMessages();
+		Messaging.removeAllMessages();
 	});
 
 

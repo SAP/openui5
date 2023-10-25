@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/ResizeHandler',
 	'sap/base/Log',
@@ -16,13 +18,14 @@ sap.ui.define([
 	'./SliderRenderer',
 	'./ResponsiveScale',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Configuration"
+	"sap/ui/events/KeyCodes"
 ],
 function(
+	Localization,
 	Control,
 	EnabledPropagator,
 	InvisibleText,
+	Library,
 	coreLibrary,
 	ResizeHandler,
 	log,
@@ -33,8 +36,7 @@ function(
 	SliderRenderer,
 	ResponsiveScale,
 	jQuery,
-	KeyCodes,
-	Configuration
+	KeyCodes
 ) {
 		"use strict";
 
@@ -551,7 +553,7 @@ function(
 			}
 
 			// update the position of the handle
-			oHandleDomRef.style[Configuration.getRTL() ? "right" : "left"] = sPerValue;
+			oHandleDomRef.style[Localization.getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the position of the advanced tooltip
 			if (this.getShowAdvancedTooltip() && oTooltipContainer.getDomRef()) {
@@ -810,7 +812,7 @@ function(
 			// resize handler of the slider
 			this._parentResizeHandler = null;
 
-			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 			// a reference to the SliderTooltipContainer
 			this._oTooltipContainer = null;
@@ -1072,7 +1074,7 @@ function(
 
 				fNewValue = (((oTouch.pageX - this._fSliderPaddingLeft - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
-				if (Configuration.getRTL()) {
+				if (Localization.getRTL()) {
 					fNewValue = this._convertValueToRtlMode(fNewValue);
 				}
 
@@ -1121,7 +1123,7 @@ function(
 				fNewValue = (((iPageX - this._fDiffX - this._fSliderOffsetLeft) / this._fSliderWidth) * (this.getMax() - fMin)) +  fMin;
 
 			// RTL mirror
-			if (Configuration.getRTL()) {
+			if (Localization.getRTL()) {
 				fNewValue = this._convertValueToRtlMode(fNewValue);
 			}
 

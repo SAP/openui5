@@ -1,11 +1,11 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/demo/cart/controller/Checkout.controller",
 	"sap/m/Button",
-	"sap/m/MessagePopover",
-	"sap/ui/core/Core"
-], function(Checkout, Button, MessagePopover, oCore) {
+	"sap/m/MessagePopover"
+], function(Element, Checkout, Button, MessagePopover) {
 	"use strict";
 
 	QUnit.module("CheckoutController", {
@@ -38,7 +38,7 @@ sap.ui.define([
 		var oStub = sinon.stub(MessagePopover.prototype, "destroy");
 		var sMessagePopoverId = this.Checkout.createId("messagePopover");
 		this.Checkout.onShowMessagePopoverPress(this.oEvent);
-		var oMessagPopover = oCore.byId(sMessagePopoverId);
+		var oMessagPopover = Element.getElementById(sMessagePopoverId);
 		oMessagPopover.fireAfterClose();
 		assert.strictEqual(oStub.callCount, 1, "The destroy function has been successfully called");
 	});

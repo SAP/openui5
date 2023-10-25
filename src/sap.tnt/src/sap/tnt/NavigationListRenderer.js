@@ -4,8 +4,8 @@
 
 // Provides the default renderer for control sap.tnt.NavigationList
 sap.ui.define([
-	"sap/ui/core/Core"
-], function (Core) {
+	"sap/ui/core/Lib"
+], function (Library) {
 	"use strict";
 
 	/**
@@ -18,7 +18,7 @@ sap.ui.define([
 		apiVersion: 2
 	};
 
-	var oRB = Core.getLibraryResourceBundle("sap.tnt");
+	var oRB = Library.getResourceBundleFor("sap.tnt");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.

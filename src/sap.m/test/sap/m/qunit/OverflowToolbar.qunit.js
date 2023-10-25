@@ -2,6 +2,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/dom/units/Rem",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/OverflowToolbar",
@@ -41,6 +42,7 @@ sap.ui.define([
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/core/Core"
 ], function(
+	Library,
 	DomUnitsRem,
 	createAndAppendDiv,
 	OverflowToolbar,
@@ -3571,8 +3573,8 @@ sap.ui.define([
 	QUnit.test("Aria attributes", function (assert) {
 		// arrange
 		var oOverflowTB = createOverflowToolbar(),
-			sExpectedAriaRoleDescription = oCore
-				.getLibraryResourceBundle("sap.m")
+			sExpectedAriaRoleDescription = Library
+				.getResourceBundleFor("sap.m")
 				.getText(oOverflowTB.constructor.ARIA_ROLE_DESCRIPTION);
 
 		// assert
@@ -3849,7 +3851,7 @@ sap.ui.define([
 			columns: [new Column({})],
 			items: [new ColumnListItem({ cells: [oOtb]})]
 		}),
-		sExpectedTooltip = oCore.getLibraryResourceBundle("sap.m")
+		sExpectedTooltip = Library.getResourceBundleFor("sap.m")
 			.getText(OverflowToolbar.TOGGLE_BUTTON_TOOLTIP);
 
 		//Act

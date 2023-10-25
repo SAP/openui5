@@ -8,14 +8,15 @@ sap.ui.define([
 	'./Link',
 	'./Text',
 	'sap/ui/core/Control',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/base/ManagedObject',
 	'./ObjectIdentifierRenderer',
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Configuration",
 	"sap/m/Image"
 ],
 function(
@@ -23,14 +24,15 @@ function(
 	Link,
 	Text,
 	Control,
+	ControlBehavior,
 	IconPool,
 	InvisibleText,
+	Library,
 	coreLibrary,
 	Device,
 	ManagedObject,
 	ObjectIdentifierRenderer,
 	KeyCodes,
-	Configuration,
 	Image
 ) {
 	"use strict";
@@ -153,9 +155,9 @@ function(
 	 * @private
 	 */
 	ObjectIdentifier.prototype.init = function() {
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oLibraryResourceBundle = Library.getResourceBundleFor("sap.m");
 
-		if (Configuration.getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			ObjectIdentifier.OI_ARIA_ROLE = oLibraryResourceBundle.getText("OI_ARIA_ROLE");
 		}
 	};

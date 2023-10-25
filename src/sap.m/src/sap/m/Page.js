@@ -6,6 +6,7 @@
 sap.ui.define([
 	"./library",
 	"sap/ui/core/Control",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Lib",
 	"sap/ui/core/delegate/ScrollEnablement",
 	"sap/m/Title",
@@ -24,6 +25,7 @@ sap.ui.define([
 function(
 	library,
 	Control,
+	ControlBehavior,
 	Library,
 	ScrollEnablement,
 	Title,
@@ -412,7 +414,7 @@ function(
 			}
 
 			var $footer = jQuery(this.getDomRef()).find(".sapMPageFooter").last(),
-				sAnimationMode = Configuration.getAnimationMode(),
+				sAnimationMode = ControlBehavior.getAnimationMode(),
 				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
 
 			if (!this.getFloatingFooter()) {

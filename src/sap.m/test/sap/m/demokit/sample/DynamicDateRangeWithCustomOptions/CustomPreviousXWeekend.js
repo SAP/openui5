@@ -1,18 +1,20 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/DynamicDateOption",
 	'sap/m/DynamicDateValueHelpUIType',
 	'sap/m/StepInput',
 	'sap/m/Label',
+	"sap/ui/core/Locale",
 	'sap/ui/core/LocaleData',
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Localization,
 	DynamicDateOption,
 	DynamicDateValueHelpUIType,
 	StepInput,
 	Label,
+	Locale,
 	LocaleData,
-	oCore,
 	UI5Date
 ) {
 	"use strict";
@@ -63,7 +65,7 @@ sap.ui.define([
 			return oStepInput.getValue() > 0;
 		},
 		toDates: function(oValue) {
-			var oLocale = oCore.getConfiguration().getLocale();
+			var oLocale = new Locale(Localization.getLanguageTag());
 			var oLocaleData = new LocaleData(oLocale);
 			var iValue = oValue.values[0];
 			var oSaturdayDate = UI5Date.getInstance();

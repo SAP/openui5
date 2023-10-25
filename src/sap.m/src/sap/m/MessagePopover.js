@@ -4,7 +4,6 @@
 
 // Provides control sap.m.MessagePopover.
 sap.ui.define([
-	'sap/ui/core/Core',
 	"./ResponsivePopover",
 	"./Button",
 	"./Toolbar",
@@ -19,10 +18,11 @@ sap.ui.define([
 	"./MessagePopoverRenderer",
 	"sap/base/Log",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery"
 ],
 function(
-	Core,
 	ResponsivePopover,
 	Button,
 	Toolbar,
@@ -37,6 +37,8 @@ function(
 	MessagePopoverRenderer,
 	Log,
 	ManagedObjectObserver,
+	Library,
+	Messaging,
 	jQuery
 ) {
 		"use strict";
@@ -348,7 +350,7 @@ function(
 			var oPopupControl;
 			this._oOpenByControl = null;
 
-			this._oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 			this._oMessageView = this._initMessageView();
 
@@ -438,7 +440,7 @@ function(
 		MessagePopover.prototype._bindToMessageModel = function() {
 			var that = this;
 
-			this.setModel(Core.getMessageManager().getMessageModel(), "message");
+			this.setModel(Messaging.getMessageModel(), "message");
 
 			this._oMessageItemTemplate = new MessageItem({
 				type: "{message>type}",

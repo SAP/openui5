@@ -1,6 +1,7 @@
 /*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/Table",
@@ -16,8 +17,10 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
+	// provides jQuery custom selectors ":sapTabbable", ":sapFocusable"
+	"sap/ui/dom/jquery/Selectors"
 ], function(
+	Localization,
 	TableQUnitUtils,
 	TableUtils,
 	Table,
@@ -1027,7 +1030,7 @@ sap.ui.define([
 		var pPromise;
 		var oBundle;
 		var oPreviousBundle;
-		var sOriginalLanguage = oCore.getConfiguration().getLanguage();
+		var sOriginalLanguage = Localization.getLanguage();
 		var sTestLanguageA = sOriginalLanguage === "en-US" ? "de-DE" : "en-US";
 		var sTestLanguageB = sOriginalLanguage === "en-US" ? "fr-FR" : "en-US";
 		var fnOnLocalizationChanged = Table.prototype.onlocalizationChanged;
@@ -1041,7 +1044,7 @@ sap.ui.define([
 		assert.ok(oBundle instanceof ResourceBundle, "{async: false, reload: false} - Returned a bundle");
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Returned the already loaded bundle");
 
-		oCore.getConfiguration().setLanguage(sTestLanguageA);
+		Localization.setLanguage(sTestLanguageA);
 
 		oPreviousBundle = oBundle;
 		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
@@ -1054,7 +1057,7 @@ sap.ui.define([
 
 		/* Asynchronous */
 
-		oCore.getConfiguration().setLanguage(sTestLanguageB);
+		Localization.setLanguage(sTestLanguageB);
 
 		pPromise = TableUtils.getResourceBundle({async: true});
 		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Returned a Promise");
@@ -1080,7 +1083,7 @@ sap.ui.define([
 			assert.strictEqual(oBundle, oPreviousBundle, "Promise returned the already loaded bundle");
 		}).then(function() {
 			// Restore
-			oCore.getConfiguration().setLanguage(sOriginalLanguage);
+			Localization.setLanguage(sOriginalLanguage);
 			Table.prototype.onlocalizationChanged = fnOnLocalizationChanged;
 
 			done();

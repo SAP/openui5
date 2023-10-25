@@ -203,7 +203,7 @@ sap.ui.define([
 	QUnit.module("Core API");
 
 	QUnit.test("Core.createRenderManager", function(assert) {
-		assert.notStrictEqual(Core.createRenderManager(), Core.createRenderManager(), "Core.createRenderManager should always return a new RenderManager instance");
+		assert.notStrictEqual(new RenderManager().getInterface(), new RenderManager().getInterface(), "Core.createRenderManager should always return a new RenderManager instance");
 	});
 
 	var aCommonMethods = ["renderControl", "cleanupControlWithoutRendering"];

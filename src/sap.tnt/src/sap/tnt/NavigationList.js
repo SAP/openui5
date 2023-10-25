@@ -4,6 +4,7 @@
 
 // Provides control sap.tnt.NavigationList
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	'./library',
 	'sap/ui/core/Core',
@@ -21,6 +22,7 @@ sap.ui.define([
 	"sap/base/Log"
 ],
 	function(
+		Library,
 		jQuery,
 		library,
 		Core,
@@ -256,7 +258,7 @@ sap.ui.define([
 			var overflowItem = this.getAggregation("_overflowItem");
 			if (!overflowItem) {
 				overflowItem = new NavigationListItem({
-					text: Core.getLibraryResourceBundle("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
+					text: Library.getResourceBundleFor("sap.tnt").getText("NAVIGATION_LIST_NAVIGATION_OVERFLOW"),
 					icon: "sap-icon://overflow",
 					selectable: false,
 					select: this._overflowPress.bind(this)
@@ -500,7 +502,7 @@ sap.ui.define([
 				return null;
 			}
 
-			return sap.ui.getCore().byId(selectedItem);
+			return Element.getElementById(selectedItem);
 		};
 
 		/**
@@ -536,7 +538,7 @@ sap.ui.define([
 			this.setAssociation('selectedItem', selectedItem, true);
 
 			if (typeof selectedItem === 'string') {
-				navigationListItem = sap.ui.getCore().byId(selectedItem);
+				navigationListItem = Element.getElementById(selectedItem);
 			} else {
 				navigationListItem = selectedItem;
 			}

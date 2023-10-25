@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/EventBus",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/controller/BaseController",
@@ -13,10 +14,10 @@ sap.ui.define([
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Sorter",
 	"sap/ui/util/Storage",
-	"sap/ui/core/Core",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
 	"sap/ui/core/Fragment"
 ], function(
+	EventBus,
 	jQuery,
 	Device,
 	BaseController,
@@ -27,7 +28,6 @@ sap.ui.define([
 	FilterOperator,
 	Sorter,
 	Storage,
-	Core,
 	Highlighter,
 	Fragment
 ) {
@@ -173,7 +173,7 @@ sap.ui.define([
 
 				this._initListSettings();
 
-				this.bus = Core.getEventBus();
+				this.bus = EventBus.getInstance();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 

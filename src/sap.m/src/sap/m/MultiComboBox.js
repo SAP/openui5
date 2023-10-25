@@ -14,6 +14,7 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/Item',
@@ -32,7 +33,6 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	'sap/ui/core/InvisibleText',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "cursorPos"
@@ -50,6 +50,7 @@ function(
 	Element,
 	EnabledPropagator,
 	IconPool,
+	Library,
 	coreLibrary,
 	Device,
 	Item,
@@ -68,7 +69,6 @@ function(
 	deepEqual,
 	assert,
 	Log,
-	core,
 	InvisibleText,
 	jQuery
 ) {
@@ -733,7 +733,7 @@ function(
 	 */
 	MultiComboBox.prototype.onsapfocusleave = function(oEvent) {
 		var bTablet = this.isPlatformTablet(),
-			oControl = core.byId(oEvent.relatedControlId),
+			oControl = Element.getElementById(oEvent.relatedControlId),
 			oFocusDomRef = oControl && oControl.getFocusDomRef(),
 			sOldValue = this.getValue(),
 			oPicker = this.getPicker(),
@@ -1888,7 +1888,7 @@ function(
 			return null;
 		}
 
-		var oFocusedElement = core.byId(document.activeElement.id);
+		var oFocusedElement = Element.getElementById(document.activeElement.id);
 
 		if (this._getList()
 			&& containsOrEquals(this._getList().getFocusDomRef(), oFocusedElement.getFocusDomRef())) {
@@ -2058,7 +2058,7 @@ function(
 
 			onsapfocusleave: function(oEvent) {
 				var oPopup = this.getAggregation("picker");
-				var oControl = core.byId(oEvent.relatedControlId);
+				var oControl = Element.getElementById(oEvent.relatedControlId);
 
 				if (oPopup && oControl && deepEqual(oPopup.getFocusDomRef(), oControl.getFocusDomRef())) {
 
@@ -2818,7 +2818,7 @@ function(
 			}
 
 			if (typeof oItem === "string") {
-				oItem = core.byId(oItem);
+				oItem = Element.getElementById(oItem);
 			}
 
 			// Update and synchronize "selectedItems" association,
@@ -2847,7 +2847,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = core.byId(oItem);
+			oItem = Element.getElementById(oItem);
 		}
 
 		this.setSelection({
@@ -2875,7 +2875,7 @@ function(
 		}
 
 		if (typeof oItem === "string") {
-			oItem = core.byId(oItem);
+			oItem = Element.getElementById(oItem);
 		}
 
 		if (!this.isItemSelected(oItem)) {
@@ -3064,7 +3064,7 @@ function(
 		var aItems = [], aItemIds = this.getAssociation("selectedItems") || [];
 
 		aItemIds.forEach(function(sItemId) {
-			var oItem = core.byId(sItemId);
+			var oItem = Element.getElementById(sItemId);
 
 			if (oItem) {
 				aItems.push(oItem);
@@ -3349,7 +3349,7 @@ function(
 		this.setAggregation("tokenizer", this._oTokenizer);
 		this._aInitiallySelectedItems = [];
 
-		this._oRbC = core.getLibraryResourceBundle("sap.ui.core");
+		this._oRbC = Library.getResourceBundleFor("sap.ui.core");
 
 		this._fillList();
 	};
@@ -3461,7 +3461,7 @@ function(
 		this.syncPickerContent();
 
 		var iItemToFocus, oItemToFocus,
-			oCurrentlyFocusedObject = core.byId(document.activeElement.id),
+			oCurrentlyFocusedObject = Element.getElementById(document.activeElement.id),
 			aSelectedItems = this.getSelectedItems(),
 			aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
 			oList = this._getList(),
@@ -3514,7 +3514,7 @@ function(
 		}).join(" ");
 
 		var oInfo = ComboBoxBase.prototype.getAccessibilityInfo.apply(this, arguments);
-		oInfo.type = core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
+		oInfo.type = Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_MULTICOMBO");
 		oInfo.description = (this.getValueDescriptionInfo() + " " + sText).trim();
 		return oInfo;
 	};
@@ -3530,7 +3530,7 @@ function(
 		if (this.getValue()) {
 			return this.getValue();
 		}
-		return this._hasTokens() ? "" : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
+		return this._hasTokens() ? "" : Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 	};
 
 	/**

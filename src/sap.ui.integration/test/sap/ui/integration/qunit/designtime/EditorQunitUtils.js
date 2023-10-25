@@ -1,17 +1,17 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/Host",
-	"./../editor/ContextHost",
-	"sap/ui/core/Core"
+	"./../editor/ContextHost"
 ], function(
+	Localization,
 	QUnitUtils,
 	KeyCodes,
 	Editor,
 	Host,
-	ContextHost,
-	Core
+	ContextHost
 ) {
 	"use strict";
 
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	EditorQunitUtils.createEditor = function(sLanguage, oDesigntime) {
 		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
+		Localization.setLanguage(sLanguage);
 		var oEditor = new Editor({
 			designtime: oDesigntime
 		});

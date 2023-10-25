@@ -5,46 +5,54 @@
 /*eslint max-nested-callbacks: [2, 6]*/
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/ValueHelp",
 	"sap/ui/mdc/valuehelp/Dialog",
 	"sap/ui/mdc/valuehelp/content/Conditions",
-	"sap/ui/mdc/field/FieldInput", // async. loading of content control tested in FieldBase test
-	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
+	// async. loading of content control tested in FieldBase test
+	"sap/ui/mdc/field/FieldInput",
+	// async. loading of content control tested in FieldBase test
+	"sap/ui/mdc/field/FieldMultiInput",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enums/BaseType",
 	"sap/ui/mdc/enums/OperatorName",
-	"delegates/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	// make sure delegate is loaded (test delegate loading in FieldBase test)
+	"delegates/odata/v4/FieldBaseDelegate",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
-	"sap/ui/model/type/String", // make sure types are loaded
+	// make sure types are loaded
+	"sap/ui/model/type/String",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Date",
 	"sap/ui/model/ParseException",
 	"sap/m/SearchField"
-], function (
-		jQuery,
-		qutils,
-		FilterField,
-		ValueHelp,
-		Dialog,
-		Conditions,
-		FieldInput,
-		FieldMultiInput,
-		FilterOperatorUtil,
-		BaseType,
-		OperatorName,
-		FieldBaseDelegate,
-		KeyCodes,
-		oCore,
-		StringType,
-		IntegerType,
-		DateType,
-		ParseException,
-		SearchField
-	) {
+], function(
+	Element,
+	Messaging,
+	jQuery,
+	qutils,
+	FilterField,
+	ValueHelp,
+	Dialog,
+	Conditions,
+	FieldInput,
+	FieldMultiInput,
+	FilterOperatorUtil,
+	BaseType,
+	OperatorName,
+	FieldBaseDelegate,
+	KeyCodes,
+	oCore,
+	StringType,
+	IntegerType,
+	DateType,
+	ParseException,
+	SearchField
+) {
 	"use strict";
 
 	let oFilterField;
@@ -95,7 +103,7 @@ sap.ui.define([
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldMultiInput", "sap.ui.mdc.field.FieldMultiInput is default");
 		assert.ok(oContent.getShowValueHelp(), "valueHelp used");
 		assert.equal(oFilterField._sDefaultValueHelp, "Field-DefineConditions-Help", "Default Field help set");
-		const oValueHelp = oCore.byId(oFilterField._sDefaultValueHelp);
+		const oValueHelp = Element.getElementById(oFilterField._sDefaultValueHelp);
 		assert.ok(oValueHelp && oValueHelp instanceof ValueHelp, "ValueHelp used");
 
 	});
@@ -188,7 +196,7 @@ sap.ui.define([
 	QUnit.test("clenaup wrong input for single value", function(assert) {
 
 		const fnDone = assert.async();
-		oCore.getMessageManager().registerObject(oFilterField, true); // to test valueState
+		Messaging.registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Integer");
 		oFilterField.setMaxConditions(1);
 		oFilterField.placeAt("content");
@@ -232,7 +240,7 @@ sap.ui.define([
 	QUnit.test("clenaup wrong input for multi value", function(assert) {
 
 		const fnDone = assert.async();
-		oCore.getMessageManager().registerObject(oFilterField, true); // to test valueState
+		Messaging.registerObject(oFilterField, true); // to test valueState
 		oFilterField.setDataType("sap.ui.model.type.Date");
 		oFilterField.placeAt("content");
 		oCore.applyChanges();

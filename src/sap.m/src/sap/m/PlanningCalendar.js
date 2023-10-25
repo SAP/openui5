@@ -4,9 +4,12 @@
 
 //Provides control sap.m.PlanningCalendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/m/delegate/DateNavigation',
 	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Lib",
 	'sap/ui/unified/library',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/CalendarDate',
@@ -20,7 +23,6 @@ sap.ui.define([
 	'sap/ui/unified/CalendarRow',
 	'sap/ui/unified/CalendarRowRenderer',
 	'sap/ui/Device',
-	'sap/ui/core/Core',
 	'sap/ui/core/Element',
 	'sap/ui/core/Renderer',
 	'sap/ui/core/ResizeHandler',
@@ -29,7 +31,6 @@ sap.ui.define([
 	'sap/ui/core/dnd/DropInfo',
 	'sap/ui/core/dnd/DragDropInfo',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/date/CalendarWeekNumbering',
 	'sap/ui/core/date/CalendarUtils',
 	'sap/ui/core/Locale',
@@ -52,11 +53,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/List",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ], function(
+	Formatting,
+	Localization,
 	DateNavigation,
 	Control,
 	ManagedObjectObserver,
+	Library,
 	unifiedLibrary,
 	CalendarUtils,
 	CalendarDate,
@@ -70,7 +75,6 @@ sap.ui.define([
 	CalendarRow,
 	CalendarRowRenderer,
 	Device,
-	Core,
 	Element,
 	Renderer,
 	ResizeHandler,
@@ -79,7 +83,6 @@ sap.ui.define([
 	DropInfo,
 	DragDropInfo,
 	DateFormat,
-	Configuration,
 	CalendarWeekNumbering,
 	CalendarDateUtils,
 	Locale,
@@ -735,7 +738,7 @@ sap.ui.define([
 		this.setAggregation("header", this._createHeader());
 		this._attachHeaderEvents();
 
-		this._oRB = Core.getLibraryResourceBundle("sap.m");
+		this._oRB = Library.getResourceBundleFor("sap.m");
 
 		var sId = this.getId();
 		this._oIntervalTypeSelect = this._getHeader()._getOrCreateViewSwitch();
@@ -1020,7 +1023,7 @@ sap.ui.define([
 			oEndDate = CalendarUtils._createLocalDate(oRangeDates.oEndDate, true),
 			sViewKey = this.getViewKey(),
 			sViewType = CalendarIntervalType[sViewKey] ? CalendarIntervalType[sViewKey] : this._getView(sViewKey).getIntervalType(),
-			bRTL = Core.getConfiguration().getRTL(),
+			bRTL = Localization.getRTL(),
 			oDateFormat,
 			sResult,
 			sBeginningResult,
@@ -1136,7 +1139,7 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Formatting.getCalendarType();
 	};
 
 	/**
@@ -2020,7 +2023,7 @@ sap.ui.define([
 			return;
 		}
 		var sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
-			oPicker = Core.byId(sCurrentPickerId),
+			oPicker = Element.getElementById(sCurrentPickerId),
 			sViewKey = this.getViewKey(),
 			oDateNav = this._dateNav,
 			oPCStart = oDateNav.getStart(),
@@ -2057,7 +2060,7 @@ sap.ui.define([
 	};
 
 	PlanningCalendar.prototype._updateWeekConfiguration = function() {
-		var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
+		var sLocale = new Locale(Formatting.getLanguageTag()).toString(),
 			sCalendarWeekNumbering = this.getCalendarWeekNumbering(),
 			iFirstDayOfWeek = this.getFirstDayOfWeek(),
 			oWeekConfiguration = CalendarDateUtils.getWeekConfigurationValues(sCalendarWeekNumbering, new Locale(sLocale));
@@ -2142,7 +2145,7 @@ sap.ui.define([
 			 * is because the dates are timezone irrelevant), it should be called with the local datetime values presented
 			 * as UTC ones(e.g. if oStartDate is 21 Dec 1981, 13:00 GMT+02:00, it will be converted to 21 Dec 1981, 13:00 GMT+00:00)
 			 */
-			var sLocale = Configuration.getFormatSettings().getFormatLocale().toString(),
+			var sLocale = new Locale(Formatting.getLanguageTag()).toString(),
 				oWeekConfigurationValues = CalendarDateUtils.getWeekConfigurationValues(this.getCalendarWeekNumbering(), new Locale(sLocale)),
 				oFirstDateOfWeek,
 				oLocalDate;
@@ -2184,7 +2187,7 @@ sap.ui.define([
 	PlanningCalendar.prototype._updatePickerSelection = function() {
 		var oRangeDates = this._getFirstAndLastRangeDate(),
 			sCurrentPickerId = this._getHeader().getAssociation("currentPicker"),
-			oPicker = Core.byId(sCurrentPickerId),
+			oPicker = Element.getElementById(sCurrentPickerId),
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
@@ -2624,7 +2627,7 @@ sap.ui.define([
 		this.setAssociation("legend", vLegend, true);
 
 		var aRows = this.getRows(),
-			oLegend = this.getLegend() && Core.byId(this.getLegend()),
+			oLegend = this.getLegend() && Element.getElementById(this.getLegend()),
 			oLegendDestroyObserver;
 
 		for (var i = 0; i < aRows.length; i++) {
@@ -3619,7 +3622,7 @@ sap.ui.define([
 		for (var i = 0; i < rows.length; i++) {
 			var aApps = getRowTimeline(rows[i]).aSelectedAppointments;
 			for (var j = 0; j < aApps.length; j++) {
-				var oApp = Core.byId(aApps[j]);
+				var oApp = Element.getElementById(aApps[j]);
 				if (oApp) {
 					oApp.setProperty("selected", false, true);
 					oApp.$().removeClass("sapUiCalendarAppSel");
@@ -3923,7 +3926,7 @@ sap.ui.define([
 			sLegendId = oTimeline.getLegend();
 
 		if (sLegendId) {
-			oLegend = Core.byId(sLegendId);
+			oLegend = Element.getElementById(sLegendId);
 			if (oLegend) {
 				aTypes = oLegend.getAppointmentItems ? oLegend.getAppointmentItems() : oLegend.getItems();
 			} else {
@@ -4248,9 +4251,9 @@ sap.ui.define([
 					fnAlignIndicator = function () {
 						var $Indicator = jQuery(oDragSession.getIndicator()),
 							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-							oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+							oRowRects = Element.getElementById(sTargetElementId).getDomRef().getBoundingClientRect(),
 							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
-							bRTL = Core.getConfiguration().getRTL(),
+							bRTL = Localization.getRTL(),
 							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
 
 						$Indicator
@@ -4438,7 +4441,7 @@ sap.ui.define([
 							$Indicator.addClass("sapUiDnDIndicatorHide");
 						},
 						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-						oRowRects = Core.byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+						oRowRects = Element.getElementById(sTargetElementId).getDomRef().getBoundingClientRect(),
 						mDraggedControlConfig = {
 							width: oDropRects.left + oDropRects.width - (oDragSession.getDragControl().$().position().left + oRowRects.left),
 							"z-index": 1,
@@ -4764,11 +4767,11 @@ sap.ui.define([
 	function getRow(oListItem) {
 		var sId = oListItem.getId();
 
-		return Core.byId(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
+		return Element.getElementById(sId.substring(0, sId.indexOf(LISTITEM_SUFFIX)));
 	}
 
 	function getListItem(oRow) {
-		return Core.byId(oRow.getId() + LISTITEM_SUFFIX);
+		return Element.getElementById(oRow.getId() + LISTITEM_SUFFIX);
 	}
 
 	function getRowHeader(oRow) {

@@ -8,10 +8,10 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/m/library",
 	"sap/m/Label",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/base/ManagedObjectModel",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/enums/TableType"
 ], function(
 	GridTableType,
@@ -19,10 +19,10 @@ sap.ui.define([
 	Log,
 	MLibrary,
 	Label,
+	Element,
 	JSONModel,
 	ManagedObjectModel,
 	Control,
-	Core,
 	TableType
 ) {
 	"use strict";
@@ -305,7 +305,7 @@ sap.ui.define([
 				oRm.openStart("div", oColumnHeaderLabel);
 				oRm.style("width", "100%");
 				oRm.openEnd();
-				oRm.renderControl(Core.byId(oColumnHeaderLabel.getColumn()));
+				oRm.renderControl(Element.getElementById(oColumnHeaderLabel.getColumn()));
 				oRm.close("div");
 			}
 		},

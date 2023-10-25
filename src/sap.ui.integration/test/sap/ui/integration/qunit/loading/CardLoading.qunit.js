@@ -2064,7 +2064,7 @@ sap.ui.define([
 				// Assert
 				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 5, "there are 5 image placeholders rendered");
 				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 5, "there are 5 row placeholders rendered");
-				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 5, "there are 3 lines rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 5, "there are 5 lines rendered");
 
 				done();
 			}.bind(this));
@@ -2082,19 +2082,6 @@ sap.ui.define([
 						"json": {
 							"title": "List Card",
 							"items": []
-						},
-						"mockData": {
-							"json": {
-								"title": "List Card with Mocked Data",
-								"items": [
-									{
-										"title": "item1"
-									},
-									{
-										"title": "item2"
-									}
-								]
-							}
 						}
 					},
 					"header": {
@@ -2175,6 +2162,42 @@ sap.ui.define([
 						"actionsStrip": [{
 							"text": "{milk/0/Revenue}"
 						}]
+					}
+				}
+			});
+		});
+
+		QUnit.test("List Card in 'Abstract' preview mode - no content", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEventOnce("_ready", function () {
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderImg").length, 0, "there are 0 image placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderRow").length, 0, "there are 0 row placeholders rendered");
+				assert.strictEqual(this.oCard.getDomRef().getElementsByClassName("sapFCardListPlaceholderItem").length, 0, "there are 0 lines rendered");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setPreviewMode(library.CardPreviewMode.Abstract);
+			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.previewModeList2",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "List",
+					"data": {
+						"request": {
+							"url": "./cardcontent/cost.json"
+						}
+					},
+					"header": {
+						"title": "{title}"
 					}
 				}
 			});

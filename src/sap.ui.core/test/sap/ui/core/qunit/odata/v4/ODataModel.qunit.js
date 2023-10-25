@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Rendering",
 	"sap/ui/core/Supportability",
 	"sap/ui/core/cache/CacheManager",
@@ -25,7 +25,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/core/library",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Configuration, Rendering, Supportability, CacheManager, Message,
+], function (Log, Localization, SyncPromise, Rendering, Supportability, CacheManager, Message,
 		Messaging, Binding, BindingMode, BaseContext, Model, OperationMode, Context,
 		ODataMetaModel, ODataModel, SubmitMode, _Helper, _MetadataRequestor, _Parser, _Requestor,
 		library, TestUtils) {
@@ -42,7 +42,7 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			this.mock(Configuration).expects("getLanguageTag").atLeast(0).returns("ab-CD");
+			this.mock(Localization).expects("getLanguageTag").atLeast(0).returns("ab-CD");
 		},
 
 		/**

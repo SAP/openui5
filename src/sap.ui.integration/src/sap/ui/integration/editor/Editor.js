@@ -3,12 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/base/util/deepClone",
 	"sap/base/util/deepEqual",
 	"sap/base/util/merge",
 	"sap/ui/base/Interface",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/Designtime",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/v4/ODataModel",
@@ -40,13 +43,16 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/m/FlexBox",
 	"sap/m/Button"
-], function (
+], function(
+	Localization,
 	Control,
 	Core,
 	deepClone,
 	deepEqual,
 	merge,
 	Interface,
+	Element,
+	Library,
 	Designtime,
 	JSONModel,
 	ODataModel,
@@ -109,7 +115,7 @@ sap.ui.define([
 	var REGEXP_TRANSLATABLE = /\{\{(?!parameters.)(?!destinations.)([^\}\}]+)\}\}/g,
 		REGEXP_PARAMETERS = /\{\{parameters\.([^\}\}]+)/g,
 		CONTEXT_TIMEOUT = 5000,
-		oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
+		oResourceBundle = Library.getResourceBundleFor("sap.ui.integration"),
 		MessageStripId = "_strip",
 		MODULE_PREFIX = "module:";
 
@@ -496,7 +502,7 @@ sap.ui.define([
 										aInfoHBox.addItem(oItem._descriptionIcon);
 										iInfoHBoxWidth += 0.9;
 									}
-									var oMessageIcon = Core.byId(oItem.getAssociation("_messageIcon"));
+									var oMessageIcon = Element.getElementById(oItem.getAssociation("_messageIcon"));
 									if (oItem.getAssociation("_messageIcon") && oMessageIcon) {
 										aInfoHBox.addItem(oMessageIcon);
 										iInfoHBoxWidth += 1.2;
@@ -862,7 +868,7 @@ sap.ui.define([
 	Editor.prototype.init = function () {
 		this._ready = false;
 		this._aFieldReadyPromise = [];
-		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
@@ -872,7 +878,7 @@ sap.ui.define([
 		oMessageStrip.addStyleClass("sapUiIntegrationEditorFieldMessageStrip");
 		this.setAggregation("_messageStrip", oMessageStrip);
 		MessageStripId = oMessageStrip.getId();
-		this.setLanguage(Core.getConfiguration().getLanguage());
+		this.setLanguage(Localization.getLanguage());
 		/**
 		 * Facade of the {@link sap.ui.integration.editor.Editor} control.
 		 * @interface
@@ -1101,7 +1107,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		var oResourceModel = new ResourceModel({
 			bundle: oResourceBundle
 		});
@@ -1273,7 +1279,7 @@ sap.ui.define([
 		if (!sHost) {
 			return null;
 		}
-		return Core.byId(sHost);
+		return Element.getElementById(sHost);
 	};
 
 	/**
@@ -1332,7 +1338,7 @@ sap.ui.define([
 			if (iLayer === Merger.layers["translation"]) {
 				var sLanguage = that._language;
 				if (sLanguage === "") {
-					sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+					sLanguage = Localization.getLanguage().replaceAll('_', '-');
 				}
 				var oTranslationChange = {
 					"texts": {}
@@ -2621,7 +2627,7 @@ sap.ui.define([
 			return;
 		}
 		var oNewLabel = null;
-		var sLanguage = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		var sLanguage = Localization.getLanguage().replaceAll('_', '-');
 		if (sMode === "translation") {
 			if (oConfig.type !== "string") {
 				return;
@@ -2906,7 +2912,7 @@ sap.ui.define([
 		if (oSettings.form && oSettings.form.items) {
 			oItems = oSettings.form.items;
 			//get current language
-			var sLanguage = this._language || this.getLanguage() || Core.getConfiguration().getLanguage().replaceAll('_', '-');
+			var sLanguage = this._language || this.getLanguage() || Localization.getLanguage().replaceAll('_', '-');
 			if (this.getMode() === "translation") {
 				//add top panel of translation editor
 				this._addItem({
@@ -3120,7 +3126,7 @@ sap.ui.define([
 		if (oPreview && oPreview.destroy) {
 			oPreview.destroy();
 		}
-		var oMessageStrip = Core.byId(MessageStripId);
+		var oMessageStrip = Element.getElementById(MessageStripId);
 		if (oMessageStrip) {
 			oMessageStrip.destroy();
 		}

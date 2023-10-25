@@ -4,25 +4,18 @@
 
 sap.ui.define([
 	"./PluginBase",
-	"sap/ui/core/Core",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/Device",
 	"sap/m/ColumnPopoverActionItem",
 	"sap/m/table/columnmenu/QuickAction",
 	"sap/m/Button",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/Aria" // jQuery Plugin "aria"
-], function(PluginBase,
-	Core,
-	Element,
-	InvisibleText,
-	Device,
-	ColumnPopoverActionItem,
-	QuickAction,
-	Button,
-	jQuery
-) {
+	// jQuery Plugin "aria"
+	"sap/ui/dom/jquery/Aria"
+], function(PluginBase, Localization, Element, InvisibleText, Device, ColumnPopoverActionItem, QuickAction, Button, Library, jQuery) {
 	"use strict";
 
 	/**
@@ -73,7 +66,7 @@ sap.ui.define([
 	var oSession = {};
 	var bResizing = false;
 	var CSS_CLASS = "sapMPluginsColumnResizer";
-	var bRTL = Core.getConfiguration().getRTL();
+	var bRTL = Localization.getRTL();
 	var sBeginDirection = bRTL ? "right" : "left";
 	var sEndDirection = bRTL ? "left" : "right";
 	var iDirectionFactor = bRTL ? -1 : 1;
@@ -514,7 +507,7 @@ sap.ui.define([
 
 		return new QuickAction({
 			content: new Button({
-				text: Core.getLibraryResourceBundle("sap.m").getText("table.COLUMNMENU_RESIZE"),
+				text: Library.getResourceBundleFor("sap.m").getText("table.COLUMNMENU_RESIZE"),
 				press: function() {
 					oColumnMenu.close();
 					this.startResizing(oColumn.getDomRef());
@@ -536,7 +529,7 @@ sap.ui.define([
 		}
 
 		return new ColumnPopoverActionItem({
-			text: Core.getLibraryResourceBundle("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"),
+			text: Library.getResourceBundleFor("sap.m").getText("COLUMNRESIZER_RESIZE_BUTTON"),
 			icon: "sap-icon://resize-horizontal",
 			press: this.startResizing.bind(this, oColumn.getDomRef())
 		});

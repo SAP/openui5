@@ -1,15 +1,15 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date",
 	// load all required calendars in advance
 	"sap/ui/core/date/Gregorian",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese"
-], function(CalendarDate, CalendarType, oCore, UI5Date) {
+], function(Formatting, CalendarDate, CalendarType, UI5Date) {
 	"use strict";
 
 	QUnit.module("Constructor");
@@ -783,7 +783,7 @@ sap.ui.define([
 	QUnit.test("toString() returns the right value", function (assert) {
 		//Act
 		var oCalendarDate = new CalendarDate(),
-				sExpectedResponse = oCore.getConfiguration().getCalendarType() + ": " + oCalendarDate.getYear() + "/" + (oCalendarDate.getMonth() + 1) + "/" + oCalendarDate.getDate();
+				sExpectedResponse = Formatting.getCalendarType() + ": " + oCalendarDate.getYear() + "/" + (oCalendarDate.getMonth() + 1) + "/" + oCalendarDate.getDate();
 
 		//Assert
 		assert.equal(oCalendarDate.toString(), sExpectedResponse, "returns the expected date");

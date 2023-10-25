@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
@@ -11,14 +13,15 @@ sap.ui.define([
 	"sap/uxap/AnchorBar",
 	"sap/uxap/ObjectPageSubSection",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */],
-function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
+	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */
+],
+function(ControlBehavior, Element, jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
 
 	function getAnchorBar() {
-		return Core.byId("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
+		return Element.getElementById("UxAP-70_KeyboardHandling--ObjectPageLayout-anchBar");
 	}
 
 	QUnit.module("F6/Group skipping", {
@@ -121,8 +124,8 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 
 	QUnit.test("TAB/SHIFT+TAB", function (assert) {
 		var aAnchors = jQuery(sAnchorSelector),
-			oFirstAnchorButton = Core.byId(aAnchors[0].id),
-			oAnchor4Button = Core.byId(aAnchors[4].id),
+			oFirstAnchorButton = Element.getElementById(aAnchors[0].id),
+			oAnchor4Button = Element.getElementById(aAnchors[4].id),
 			aSections = this.oObjectPage.getSections(),
 			oAnchor4Section = aSections[4];
 
@@ -440,9 +443,9 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	 ******************************************************************************/
 
 	QUnit.test("ObjectPageSection F7 - interactive control inside Section with only one SubSection", function (assert) {
-		var oBtn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-single-sub-section"),
+		var oBtn = Element.getElementById("UxAP-70_KeyboardHandling--interactive-el-single-sub-section"),
 			$btn = oBtn.$(),
-			oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
+			oSection = Element.getElementById("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
 			$section = oSection.$();
 
 		oSection.$ = function () {
@@ -472,9 +475,9 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	});
 
 	QUnit.test("ObjectPageSection F7 - interactive control inside Section with only one SubSection", function (assert) {
-		var oBtn = Core.byId("UxAP-70_KeyboardHandling--interactive-el-multiple-sub-section"),
+		var oBtn = Element.getElementById("UxAP-70_KeyboardHandling--interactive-el-multiple-sub-section"),
 			$btn = oBtn.$(),
-			oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-2"),
+			oSubSection = Element.getElementById("UxAP-70_KeyboardHandling--multiple-sub-section-2"),
 			$subSection = oSubSection.$();
 
 		oSubSection.$ = function () {
@@ -504,8 +507,8 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	});
 
 	QUnit.test("ObjectPageSection F7 - from toolbar move focus to coresponding section", function (assert) {
-		var $btnToolbar = Core.byId("UxAP-70_KeyboardHandling--button-toolbar").$(),
-			oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+		var $btnToolbar = Element.getElementById("UxAP-70_KeyboardHandling--button-toolbar").$(),
+			oSubSection = Element.getElementById("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
 			$subSection = oSubSection.$();
 
 		oSubSection.$ = function () {
@@ -523,7 +526,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	});
 
 	QUnit.test("ObjectPageSection F7 - from section move focus to toolbar", function (assert) {
-		var oSubSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+		var oSubSection = Element.getElementById("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
 			$subSection = oSubSection.$();
 
 		oSubSection.$ = function () {
@@ -550,9 +553,9 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 			oStub;
 
 		setTimeout(function () {
-			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			var oAnchorBarButtonControl = Element.getElementById(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			oSubSection = Core.byId(sSectionId);
+			oSubSection = Element.getElementById(sSectionId);
 
 			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
 				return {
@@ -578,9 +581,9 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 			oStub;
 
 		setTimeout(function () {
-			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			var oAnchorBarButtonControl = Element.getElementById(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			oSubSection = Core.byId(sSectionId);
+			oSubSection = Element.getElementById(sSectionId);
 
 			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
 				return {
@@ -605,9 +608,9 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 			oStub;
 
 		setTimeout(function () {
-			var oAnchorBarButtonControl = Core.byId(sButtonId),
+			var oAnchorBarButtonControl = Element.getElementById(sButtonId),
 			$anchorBarButton = oAnchorBarButtonControl.$(),
-			oSubSection = Core.byId(sSectionId);
+			oSubSection = Element.getElementById(sSectionId);
 
 			oStub = this.stub(oSubSection, "getDomRef").callsFake(function () {
 				return {
@@ -626,8 +629,8 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	});
 
 	QUnit.test("ObjectPageSection SPACE - browser scrolling is prevented", function (assert) {
-		var oSection = Core.byId("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
-			oInput = Core.byId("UxAP-70_KeyboardHandling--input-single-sub-section"),
+		var oSection = Element.getElementById("UxAP-70_KeyboardHandling--section-with-single-sub-section"),
+			oInput = Element.getElementById("UxAP-70_KeyboardHandling--input-single-sub-section"),
 			oEventSection = {
 				keyCode: KeyCodes.SPACE,
 				preventDefault: function () {},
@@ -649,8 +652,8 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	});
 
 	QUnit.test("ObjectPageSubSection SPACE - browser scrolling is prevented", function (assert) {
-		var oSection = Core.byId("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
-			oInput = Core.byId("UxAP-70_KeyboardHandling--input-multiple-sub-section"),
+		var oSection = Element.getElementById("UxAP-70_KeyboardHandling--multiple-sub-section-1"),
+			oInput = Element.getElementById("UxAP-70_KeyboardHandling--input-multiple-sub-section"),
 			oEventSection = {
 				keyCode: KeyCodes.SPACE,
 				preventDefault: function () {},
@@ -695,12 +698,12 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 
 	QUnit.test("Focus from toolbar to section", function (assert) {
 		var oSectionButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
-			oOrigAnimationMode = Core.getConfiguration().getAnimationMode();
+			oOrigAnimationMode = ControlBehavior.getAnimationMode();
 
 		assert.expect(3);
 
 		// Setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
 		this.oScrollSpy.resetHistory();
 		this.oFocusSpy.resetHistory();
 
@@ -713,7 +716,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		assert.ok(this.oFocusSpy.calledBefore(this.oScrollSpy));
 
 		// restore state
-		Core.getConfiguration().setAnimationMode(oOrigAnimationMode);
+		ControlBehavior.setAnimationMode(oOrigAnimationMode);
 	});
 
 	QUnit.module("Focus on selection, selected state", {
@@ -740,13 +743,13 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 	QUnit.test("Focus a section on selection with animation mode 'none'", function (assert) {
 		var oAnchorBar = getAnchorBar(),
 			oSectionButton = oAnchorBar.getContent()[2],
-			oOrigAnimationMode = Core.getConfiguration().getAnimationMode(),
+			oOrigAnimationMode = ControlBehavior.getAnimationMode(),
 			done = assert.async();
 
 		assert.expect(1);
 
 		// Setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
 
 
 		// Check
@@ -759,7 +762,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 				assert.strictEqual(this.oObjectPage.getSelectedSection(), oSectionButton.data("sectionId"), "Section is properly selected");
 
 				// restore state
-				Core.getConfiguration().setAnimationMode(oOrigAnimationMode);
+				ControlBehavior.setAnimationMode(oOrigAnimationMode);
 				done();
 			}.bind(this), 500);
 		}.bind(this), 500);

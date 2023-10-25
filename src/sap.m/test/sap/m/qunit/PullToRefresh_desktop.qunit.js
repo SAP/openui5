@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/StandardListItem",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes"
 ], function(
+	Library,
 	qutils,
 	createAndAppendDiv,
 	StandardListItem,
@@ -52,7 +54,7 @@ sap.ui.define([
 			}
 		};
 
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 		var oApp = new App("p2RApp", {initialPage:"page1"});
 
 		var sPullDwn = oRb.getText("PULL2REFRESH_REFRESH"),

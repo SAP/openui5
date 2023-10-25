@@ -3,11 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/BaseAddXml",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI"
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
+	"sap/ui/fl/changeHandler/BaseAddXml"
 ], function(
-	BaseAddXml,
-	ExtensionPointRegistryAPI
+	ExtensionPointRegistryAPI,
+	BaseAddXml
 ) {
 	"use strict";
 

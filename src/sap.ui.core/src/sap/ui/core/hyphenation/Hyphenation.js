@@ -4,16 +4,16 @@
 
 sap.ui.define([
 	"./HyphenationTestingWords",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/ManagedObject",
 	"sap/base/Log",
-	"sap/ui/core/Locale",
-	"sap/ui/core/Configuration"
+	"sap/ui/core/Locale"
 ], function (
 	HyphenationTestingWords,
+	Localization,
 	ManagedObject,
 	Log,
-	Locale,
-	Configuration
+	Locale
 ) {
 	"use strict";
 
@@ -267,7 +267,7 @@ sap.ui.define([
 		if (sLang) {
 			oLocale = new Locale(sLang);
 		} else {
-			oLocale = Configuration.getLocale();
+			oLocale = new Locale(Localization.getLanguageTag());
 		}
 
 		var sLanguage = oLocale.getLanguage().toLowerCase();
@@ -306,7 +306,7 @@ sap.ui.define([
 			return new Locale(sLang).toString();
 		}
 
-		return Configuration.getLocale().toString();
+		return new Locale(Localization.getLanguageTag()).toString();
 	}
 
 	/**

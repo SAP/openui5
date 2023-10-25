@@ -4,10 +4,10 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/ToggleButton",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Theming",
 	"sap/ui/core/theming/Parameters",
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/demo/iconexplorer/model/formatter",
@@ -21,10 +21,10 @@ sap.ui.define([
 	MessageToast,
 	ToggleButton,
 	Device,
-	oCore,
 	Element,
 	Fragment,
 	IconPool,
+	Theming,
 	Parameters,
 	BaseController,
 	formatter,
@@ -368,7 +368,7 @@ sap.ui.define([
 			var oConfigs = this.getOwnerComponent()._oFontConfigs;
 			var sDownloadURI = oConfigs[sFontName].downloadURI || oConfigs[sFontName].fontURI;
 
-			if (oCore.getConfiguration().getTheme().startsWith("sap_horizon")) {
+			if (Theming.getTheme().startsWith("sap_horizon")) {
 				sDownloadURI = oConfigs[sFontName].downloadURIForHorizon || sDownloadURI;
 			}
 

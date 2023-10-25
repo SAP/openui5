@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/base/DataType',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/delegate/ItemNavigation',
 	'./Button',
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	Device,
 	DataType,
+	Library,
 	coreLibrary,
 	ItemNavigation,
 	Button,
@@ -63,7 +65,7 @@ sap.ui.define([
 		var MAX_COLORS = 15;
 
 		// get resource translation bundle;
-		var oLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oLibraryResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		/**
 		 * Constructor for a new <code>ColorPalette</code>.

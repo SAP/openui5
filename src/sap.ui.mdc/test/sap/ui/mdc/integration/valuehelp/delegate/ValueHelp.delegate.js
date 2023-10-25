@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/mdc/ValueHelpDelegate',
 	"delegates/odata/v4/ValueHelpDelegate",
 	'sap/ui/mdc/condition/Condition',
@@ -10,11 +11,11 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorName',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
-	"sap/ui/core/Core",
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	"sap/ui/model/FilterType"
 ], function(
+	Element,
 	BaseValueHelpDelegate,
 	ODataV4ValueHelpDelegate,
 	Condition,
@@ -22,7 +23,6 @@ sap.ui.define([
 	OperatorName,
 	StateUtil,
 	deepEqual,
-	Core,
 	Filter,
 	FilterOperator,
 	FilterType
@@ -229,7 +229,7 @@ sap.ui.define([
 			}, []);
 
 			if (aAllConditionCountries && aAllConditionCountries.length) {
-				const oFilterBar = Core.byId("FB0");
+				const oFilterBar = Element.getElementById("FB0");
 				StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
 					let bModify = false;
 					aAllConditionCountries.forEach(function(sCountry) {
@@ -283,7 +283,7 @@ sap.ui.define([
 			} */
 
 			// Example filterbar extraction:
-			const oSourceFilterBar = Core.byId("FB0");
+			const oSourceFilterBar = Element.getElementById("FB0");
 			return StateUtil.retrieveExternalState(oSourceFilterBar).then(function (oExternalFilterBarState) {
 
 				const aSalesOrganizationConditions = oExternalFilterBarState.filter && oExternalFilterBarState.filter["salesOrganization"];

@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
@@ -22,6 +25,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
+	Localization,
+	Element,
+	Library,
 	qutils,
 	SegmentedButton,
 	SegmentedButtonItem,
@@ -54,7 +60,7 @@ sap.ui.define([
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";
 
-	var oResourceBundle = oCore.getLibraryResourceBundle("sap.m");
+	var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 	/* =========================================================== */
 	/* Initialize module                                           */
@@ -67,7 +73,7 @@ sap.ui.define([
 		var oSegmentedButton = new SegmentedButton();
 
 		// Act
-		var s1 = oCore.byId(oSegmentedButton.getId());
+		var s1 = Element.getElementById(oSegmentedButton.getId());
 
 		// Assert
 		assert.ok((s1 !== undefined) && (s1 != null), "SegmentedButton should be found");

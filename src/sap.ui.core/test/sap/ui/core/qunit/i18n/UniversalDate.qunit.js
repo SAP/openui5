@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/LanguageTag",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/Gregorian",
@@ -7,13 +10,11 @@ sap.ui.define([
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
-], function(Locale, UniversalDate, Gregorian, Islamic, Japanese, UI5Date, CalendarType,
-		Configuration, CalendarWeekNumbering) {
+], function(Formatting, LanguageTag, Localization, Locale, UniversalDate, Gregorian, Islamic, Japanese, UI5Date, CalendarType, CalendarWeekNumbering) {
 	"use strict";
 
-	const sLanguage = Configuration.getLanguage();
+	const sLanguage = Localization.getLanguage();
 	//next values must not overlap each other!
 	var year = 1400,
 		month = 3,
@@ -36,14 +37,14 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach: function () {
-			Configuration.setLanguage("en-US");
-			this.oStubCalendarType = this.stub(Configuration, "getCalendarType");
+			Localization.setLanguage("en-US");
+			this.oStubCalendarType = this.stub(Formatting, "getCalendarType");
 			this.oStubCalendarType.returns(CalendarType.Gregorian);
 			this.dateSpy = this.spy(window, 'Date');
 		},
 		afterEach: function () {
 			this.dateSpy.restore();
-			Configuration.setLanguage(sLanguage);
+			Localization.setLanguage(sLanguage);
 		}
 	});
 
@@ -309,7 +310,7 @@ sap.ui.define([
 	QUnit.test("setWeek/setUTCWeek", function (assert) {
 		this.dateSpy.restore();
 
-		Configuration.setLanguage("de-DE");
+		Localization.setLanguage("de-DE");
 		var oWeekObject = new UniversalDate(2023,0,1);
 		// ISO 8601 (de)
 		oWeekObject.setWeek({week: 0, year: 2021});
@@ -429,7 +430,6 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		let oWeekObject;
-		const oFormatSettings = Configuration.getFormatSettings();
 		const aFixtures = [
 			{
 				oInputDate: new UniversalDate(2020, 11, 21),
@@ -476,7 +476,7 @@ sap.ui.define([
 		// CW01 2020-12-27 - 2021-01-02 ({year:2021, week: 0})
 		// CW02 2021-01-03 - 2021-01-09 ({year:2021, week: 1})
 		// Note: function getWeek returns the calendar week index which starts at 0
-		const oGetFormatLocaleStub = this.stub(oFormatSettings, "getFormatLocale").returns(new Locale("en"));
+		const oGetFormatLocaleStub = this.stub(Formatting, "getLanguageTag").returns(new LanguageTag("en"));
 		aFixtures.forEach(function(oFixture) {
 			oWeekObject = oFixture.oInputDateUTC.getUTCWeek();
 			assert.equal(oWeekObject.year, oFixture.iExpectedYear, "Calendar 'week year' should be " + oFixture.iExpectedYear + ".");
@@ -527,7 +527,6 @@ sap.ui.define([
 		this.dateSpy.restore();
 
 		let oWeekObject;
-		const oFormatSettings = Configuration.getFormatSettings();
 		const aLocales = [
 			{ language: "de", region: null },
 			{ language: "en", region: "GB" }
@@ -580,7 +579,7 @@ sap.ui.define([
 		// Note: function getWeek returns the calendar week index which starts at 0
 		aLocales.forEach(function(oLocale) {
 			const sLocaleId = oLocale.region ? oLocale.language + "-" + oLocale.region : oLocale.language;
-			const oGetFormatLocaleStub = this.stub(oFormatSettings, "getFormatLocale").returns(new Locale(sLocaleId));
+			const oGetFormatLocaleStub = this.stub(Formatting, "getLanguageTag").returns(new LanguageTag(sLocaleId));
 
 
 			aFixtures.forEach(function(oFixture) {
@@ -671,17 +670,17 @@ sap.ui.define([
 });
 
 	QUnit.test("getWeekByDate/getFirstDateOfWeek", function (assert) {
-		var oConfigurationMock = this.mock(Configuration);
+		var oFormattingMock = this.mock(Formatting);
 
 		this.dateSpy.restore();
 
 		// de (ISO 8601 from Configuration)
-		oConfigurationMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
+		oFormattingMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
 		assert.deepEqual(UniversalDate.getWeekByDate("Gregorian", 2021, 11, 27, new Locale("de")), {
 			"week": 51,
 			"year": 2021
 		});
-		oConfigurationMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
+		oFormattingMock.expects("getCalendarWeekNumbering").withExactArgs().returns(CalendarWeekNumbering.ISO_8601);
 		assert.deepEqual(UniversalDate.getFirstDateOfWeek("Gregorian", 2021, 51, new Locale("de")), {
 			"day": 27,
 			"month": 11,

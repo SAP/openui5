@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"./ValueHelpODataV2.delegate",
+	"sap/ui/core/Element",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/ConditionValidated",
 	"sap/ui/mdc/enums/OperatorName",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual"
 ], function(
 	MDCValueHelpDelegate,
+	Element,
 	Condition,
 	ConditionValidated,
 	OperatorName,
@@ -23,7 +25,7 @@ sap.ui.define([
 
 	ValueHelpDelegate.retrieveContent = function(oValueHelp, oContainer, sContentId) {
 		var oPayload = oValueHelp.getPayload();
-		var oContent = sContentId ? sap.ui.getCore().byId(sContentId) : oContainer.getContent()[0];
+		var oContent = sContentId ? Element.getElementById(sContentId) : oContainer.getContent()[0];
 		sContentId = oContent && oContent.getId();
 
 		if (oContent.getTable && !oContent.getTable()) {
@@ -40,7 +42,7 @@ sap.ui.define([
 					if (iIndex >= 0) {
 						var sView = sContentId.substr(0, iIndex);
 						var sTableId = sView + (oPayload && oPayload[sContentId.substr(iIndex)]);
-						var oTable = sap.ui.getCore().byId(sTableId);
+						var oTable = Element.getElementById(sTableId);
 						if (oTable) {
 							oContent.setTable(oTable);
 							fResolve();

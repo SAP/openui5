@@ -5,6 +5,7 @@
 /*eslint max-nested-callbacks: [2, 5]*/
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/ValueHelpDelegate",
 	"sap/ui/mdc/valuehelp/base/FilterableListContent",
 	"sap/ui/mdc/condition/Condition",
@@ -16,9 +17,9 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
-	"sap/m/Popover",
-	"sap/ui/core/Core"
+	"sap/m/Popover"
 ], function (
+		Library,
 		ValueHelpDelegate,
 		FilterableListContent,
 		Condition,
@@ -30,13 +31,12 @@ sap.ui.define([
 		Icon,
 		JSONModel,
 		mLibrary,
-		Popover,
-		oCore
+		Popover
 	) {
 	"use strict";
 
 	let oContent;
-	const oResourceBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	const _teardown = function() {
 		oContent.destroy();

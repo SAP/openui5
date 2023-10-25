@@ -5,6 +5,7 @@
 // Provides control sap.f.DynamicPageTitle.
 sap.ui.define([
 	"./library",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Control",
 	"sap/ui/base/ManagedObjectObserver",
@@ -18,11 +19,12 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
-    "sap/ui/events/KeyCodes",
-	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/Core"
+	"sap/ui/core/RenderManager",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/core/InvisibleMessage"
 ], function(
 	library,
+	Library,
 	CoreLibrary,
 	Control,
 	ManagedObjectObserver,
@@ -36,9 +38,9 @@ sap.ui.define([
 	Log,
 	Icon,
 	Device,
+	RenderManager,
 	KeyCodes,
-	InvisibleMessage,
-	oCore
+	InvisibleMessage
 ) {
 	"use strict";
 
@@ -356,7 +358,7 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle._getResourceBundle = function () {
-		return oCore.getLibraryResourceBundle("sap.f");
+		return Library.getResourceBundleFor("sap.f");
 	};
 
 	DynamicPageTitle.ARIA = {
@@ -376,7 +378,7 @@ sap.ui.define([
 			return;
 		}
 
-		oRenderManager = oCore.createRenderManager();
+		oRenderManager = new RenderManager().getInterface();
 		oRenderManager.renderControl(oControlToRender);
 		oRenderManager.flush(oContainerDOM);
 		oRenderManager.destroy();

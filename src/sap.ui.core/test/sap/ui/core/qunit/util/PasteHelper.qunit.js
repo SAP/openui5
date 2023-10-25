@@ -1,8 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/util/PasteHelper",
-	"sap/ui/core/Core",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/type/String",
 	"sap/ui/model/odata/type/Byte",
@@ -11,10 +11,10 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/type/Boolean",
 	"sap/ui/model/type/Currency"
-], function(PasteHelper, Core, ODataStringType, StringType, ODataByteType, ODataInt32Type, ODataDateType, ODataBooleanType, BooleanType, CurrencyType) {
+], function(Localization, PasteHelper, ODataStringType, StringType, ODataByteType, ODataInt32Type, ODataDateType, ODataBooleanType, BooleanType, CurrencyType) {
 	"use strict";
 
-	var sDefaultLanguage = Core.getConfiguration().getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	// TEST DATA AS IN CLIPBOARD BY COPYING FROM SPREADSHEED and Expected results
 	// Simple case with two rows and two cells in each row
@@ -85,11 +85,11 @@ sap.ui.define([
 	QUnit.module("Validation of the parsed data", {
 		beforeEach: function() {
 			// Set language to english to test locale dependent values, for example Date and EDM Boolean
-			Core.getConfiguration().setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach: function() {
 			// Set language back to system lang
-			Core.getConfiguration().setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 

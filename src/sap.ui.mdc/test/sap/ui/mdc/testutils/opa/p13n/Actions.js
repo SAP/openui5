@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/Matcher",
 	"sap/ui/test/matchers/Properties",
@@ -16,9 +17,9 @@ sap.ui.define([
 	"./waitForSelectWithSelectedTextOnPanel",
 	"./Util",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
+	Library,
 	Opa5,
 	Matcher,
 	Properties,
@@ -32,12 +33,11 @@ sap.ui.define([
 	waitForSelectWithSelectedTextOnPanel,
 	Util,
 	Log,
-	oCore,
 	Device
 ) {
 	"use strict";
 
-	var oMDCBundle = oCore.getLibraryResourceBundle("sap.ui.mdc");
+	var oMDCBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	var iOpenThePersonalizationDialog = function(oControl, oSettings) {
 		var sControlId = typeof oControl === "string" ? oControl : oControl.getId();

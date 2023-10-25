@@ -4,6 +4,7 @@
 
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/Control',
 	'sap/ui/Device',
 	'sap/ui/core/delegate/ItemNavigation',
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"./YearPickerRenderer",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ], function(
+	Formatting,
 	Control,
 	Device,
 	ItemNavigation,
@@ -35,8 +36,7 @@ sap.ui.define([
 	UI5Date,
 	YearPickerRenderer,
 	KeyCodes,
-	jQuery,
-	Configuration
+	jQuery
 ) {
 	"use strict";
 
@@ -231,7 +231,7 @@ sap.ui.define([
 	};
 
 	YearPicker.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Formatting.getCalendarType();
 	};
 
 	/**
@@ -524,7 +524,7 @@ sap.ui.define([
 		if (oParent && oParent._getLocale) {
 			return oParent._getLocale();
 		} else if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;

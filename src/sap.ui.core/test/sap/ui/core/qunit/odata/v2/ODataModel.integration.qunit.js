@@ -3,14 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap/base/util/uid",
 	"sap/m/Input",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/base/SyncPromise",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/date/UI5Date",
@@ -36,16 +36,16 @@ sap.ui.define([
 	"sap/ui/util/XMLHelper"
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	// "sap/ui/table/Table"
-], function (Log, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise, Configuration,
-		Core, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
+], function (Log, Localization, merge, uid, Input, Device, ManagedObjectObserver, SyncPromise,
+		Library, coreLibrary, Messaging, UI5Date, Message, Controller, View, Rendering, BindingMode, Filter,
 		FilterOperator, FilterType, Model, Sorter, JSONModel, MessageModel, CountMode, MessageScope, Context,
 		ODataModel, XMLModel, TestUtils, datajs, XMLHelper) {
 	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, quote-props: 0*/
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage(),
-		sDefaultTimezone = Configuration.getTimezone(),
+	var sDefaultLanguage = Localization.getLanguage(),
+		sDefaultTimezone = Localization.getTimezone(),
 		MessageType = coreLibrary.MessageType, // shortcut for sap.ui.core.MessageType
 		NO_CONTENT = {/*204 no content*/},
 		sODataListBindingClassName = "sap.ui.model.odata.v2.ODataListBinding",
@@ -481,7 +481,7 @@ sap.ui.define([
 			// We use a formatter to check for property changes. However before the formatter is
 			// called, the value is passed through the type's formatValue
 			// (see PropertyBinding#_toExternalValue). Ensure that this result is predictable.
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 
 			// These metadata files are _always_ faked, the query option "realOData" is ignored
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core", {
@@ -552,9 +552,9 @@ sap.ui.define([
 				this.oModel.destroy();
 			}
 			// reset the language
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 			// reset the time zone
-			Configuration.setTimezone(sDefaultTimezone);
+			Localization.setTimezone(sDefaultTimezone);
 		},
 
 		/**
@@ -2395,7 +2395,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Core.getLibraryResourceBundle()).expects("getText")
+		this.mock(Library.getResourceBundleFor("sap.ui.core")).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey) {
 				return sKey;
@@ -2512,7 +2512,7 @@ sap.ui.define([
 	<Text text="{SalesOrderID}" />\
 </Table>';
 
-		this.mock(Core.getLibraryResourceBundle()).expects("getText")
+		this.mock(Library.getResourceBundleFor("sap.ui.core")).expects("getText")
 			.atLeast(1)
 			.callsFake(function (sKey, aArgs) {
 				return sKey;
@@ -8221,7 +8221,7 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 </FlexBox>',
 		that = this;
 
-		Configuration.setTimezone("Europe/London");
+		Localization.setTimezone("Europe/London");
 
 		this.expectHeadRequest()
 			.expectRequest("DateTimeWithTimezoneSet('1')", {
@@ -9474,6 +9474,279 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			});
 
 			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Sequential mode: Order by properties that are additionally selected and that are
+	// neither a dimension, nor a measure, nor an associated property of a dimension or a measure.
+	// JIRA: CPOUI5MODELS-1384
+	QUnit.test("AnalyticalBinding: order by additional properties (Sequential)", function (assert) {
+		let oTable;
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn leadingProperty="OrdinaryProperty">\
+		<Label text="OrdinaryProperty"/>\
+		<t:template><Text text="{OrdinaryProperty}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+				}, {__count: "20", results: []})
+				.expectRequest({ // first level request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=14&$inlinecount=allpages"
+				}, {
+					results : [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3")
+					]
+				})
+				.expectRequest({ // grand total request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=AmountInCompanyCodeCurrency,Currency&$top=100&$inlinecount=allpages"
+				}, {
+					__count: "1",
+					results: [{
+						__metadata: {uri: "/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS/Items(grandTotal)"},
+						AmountInCompanyCodeCurrency: "140",
+						Currency: "USD"
+					}]
+				});
+
+			oTable = this.oView.byId("table");
+			// bind it lately, otherwise the binding is constructed without the analytical info and the select
+			// parameter is ignored
+			oTable.bindRows({
+				path: "/Items",
+				parameters: {
+					autoExpandMode: "Sequential",
+					numberOfExpandedLevels: 0,
+					provideGrandTotals: false,
+					select: "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,OrdinaryProperty",
+					useBatchRequests: true
+				},
+				sorter: [new Sorter("OrdinaryProperty", true)]
+			});
+
+			return this.waitForChanges(assert, "bind table").then(() => {
+				assert.deepEqual(getTableContent(oTable), [
+					["A0", "", "1", ""],
+					["A1", "", "1", ""],
+					["A2", "", "1", ""],
+					["A3", "", "1", ""]
+				]);
+
+				this.expectRequest({ // leaf level request
+						encodeRequestUri: false,
+						requestUri: "Items?"
+							+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency,OrdinaryProperty"
+							+ "&$filter=(CompanyCode%20eq%20%27A0%27)"
+							+ "&$orderby=CompanyCode%20asc,OrdinaryProperty%20desc&$top=14&$inlinecount=allpages"
+					}, {
+						results: [
+							Object.assign(getFarCustomerLineItem("A0", "C0"), {OrdinaryProperty: "P1"}),
+							Object.assign(getFarCustomerLineItem("A0", "C1"), {OrdinaryProperty: "P0"})
+						]
+					});
+
+				// code under test - expand leaf level -> sort by OrdinaryProperty
+				oTable.expand(0);
+
+				return this.waitForChanges(assert, "expand node 'A0'");
+			}).then(() => {
+				assert.deepEqual(getTableContent(oTable), [
+					["A0", "", "1", ""],
+					["A0", "C0", "1", "P1"],
+					["A0", "C1", "1", "P0"],
+					["A1", "", "1", ""]
+				]);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Bundled mode: Order by properties that are additionally selected and that are
+	// neither a dimension, nor a measure, nor an associated property of a dimension or a measure.
+	// JIRA: CPOUI5MODELS-1384
+	QUnit.test("AnalyticalBinding: order by additional properties (Bundled)", function (assert) {
+		let oTable;
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="true" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn leadingProperty="OrdinaryProperty">\
+		<Label text="OrdinaryProperty"/>\
+		<t:template><Text text="{OrdinaryProperty}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({ // count request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=CompanyCode,Customer&$top=0&$inlinecount=allpages"
+				}, {__count: "20", results: []})
+				.expectRequest({ // first level request
+					encodeRequestUri: false,
+					requestUri: "Items?$select=CompanyCode,AmountInCompanyCodeCurrency,Currency"
+						+ "&$orderby=CompanyCode%20asc&$top=7"
+				}, {
+					results: [
+						getFarCustomerLineItem("A0"),
+						getFarCustomerLineItem("A1"),
+						getFarCustomerLineItem("A2"),
+						getFarCustomerLineItem("A3")
+					]
+				})
+				.expectRequest({ // leaf level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency,OrdinaryProperty"
+						+ "&$orderby=CompanyCode%20asc,OrdinaryProperty%20desc&$top=12"
+				}, {
+					results : [
+						Object.assign(getFarCustomerLineItem("A0", "C0"), {OrdinaryProperty: "P0"}),
+						Object.assign(getFarCustomerLineItem("A0", "C1"), {OrdinaryProperty: "P1"}),
+						Object.assign(getFarCustomerLineItem("A0", "C2"), {OrdinaryProperty: "P2"}),
+						Object.assign(getFarCustomerLineItem("A1", "C0"), {OrdinaryProperty: "P3"})
+					]
+				});
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Applying sorters to groups is only possible with auto expand mode 'Sequential';"
+					+ " current mode is: Bundled",
+					"/Items", "sap.ui.model.analytics.AnalyticalBinding", undefined)
+				.atLeast(1);
+
+			oTable = this.oView.byId("table");
+			// bind it lately, otherwise the binding is constructed without the analytical info and the select parameter
+			// is ignored
+			oTable.bindRows({
+				path: "/Items",
+				parameters: {
+					numberOfExpandedLevels: 1,
+					provideGrandTotals: false,
+					select: "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,OrdinaryProperty",
+					useBatchRequests: true
+				},
+				sorter: [new Sorter("OrdinaryProperty", true)]
+			});
+
+			return this.waitForChanges(assert, "bind table");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [
+				["A0", "", "1", ""],
+				["A0", "C0", "1", "P0"],
+				["A0", "C1", "1", "P1"],
+				["A0", "C2", "1", "P2"]
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Bundled mode: Order by properties that are additionally selected and that are
+	// neither a dimension, nor a measure, nor an associated property of a dimension or a measure.
+	// Data is not grouped.
+	// JIRA: CPOUI5MODELS-1384
+	QUnit.test("AnalyticalBinding: order by additional properties (ungrouped, Bundled)", function (assert) {
+		let oTable;
+		const oModel = createModel("/sap/opu/odata/sap/FAR_CUSTOMER_LINE_ITEMS");
+		const sView = '\
+<t:AnalyticalTable id="table" threshold="10" visibleRowCount="4">\
+	<t:AnalyticalColumn grouped="false" leadingProperty="CompanyCode">\
+		<Label text="CompanyCode"/>\
+		<t:template><Text text="{CompanyCode}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn grouped="false" leadingProperty="Customer">\
+		<Label text="Customer"/>\
+		<t:template><Text text="{Customer}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn summed="true" leadingProperty="AmountInCompanyCodeCurrency">\
+		<Label text="AmountInCompanyCodeCurrency"/>\
+		<t:template><Text text="{AmountInCompanyCodeCurrency}"/></t:template>\
+	</t:AnalyticalColumn>\
+	<t:AnalyticalColumn leadingProperty="OrdinaryProperty">\
+		<Label text="OrdinaryProperty"/>\
+		<t:template><Text text="{OrdinaryProperty}"/></t:template>\
+	</t:AnalyticalColumn>\
+</t:AnalyticalTable>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({ // leaf level request
+					encodeRequestUri: false,
+					requestUri: "Items?"
+						+ "$select=CompanyCode,Customer,AmountInCompanyCodeCurrency,Currency,OrdinaryProperty"
+						+ "&$orderby=OrdinaryProperty%20desc&$top=14&$inlinecount=allpages"
+				}, {
+					results: [
+						Object.assign(getFarCustomerLineItem("A1", "C0"), {OrdinaryProperty: "P3"}),
+						Object.assign(getFarCustomerLineItem("A0", "C2"), {OrdinaryProperty: "P2"}),
+						Object.assign(getFarCustomerLineItem("A0", "C1"), {OrdinaryProperty: "P1"}),
+						Object.assign(getFarCustomerLineItem("A0", "C0"), {OrdinaryProperty: "P0"})
+					]
+				});
+
+			this.oLogMock.expects("warning")
+				.withExactArgs("Applying sorters to groups is only possible with auto expand mode 'Sequential';"
+					+ " current mode is: Bundled",
+					"/Items", "sap.ui.model.analytics.AnalyticalBinding", undefined)
+				.atLeast(1);
+
+			oTable = this.oView.byId("table");
+			// bind it lately, otherwise the binding is constructed without the analytical info and the select parameter
+			// is ignored
+			oTable.bindRows({
+				path: "/Items",
+				parameters: {
+					numberOfExpandedLevels: 1,
+					provideGrandTotals: false,
+					select: "CompanyCode,AmountInCompanyCodeCurrency,Currency,Customer,OrdinaryProperty",
+					useBatchRequests: true
+				},
+				sorter: [new Sorter("OrdinaryProperty", true)]
+			});
+
+			return this.waitForChanges(assert, "bind table");
+		}).then(() => {
+			assert.deepEqual(getTableContent(oTable), [
+				["A1", "C0", "1", "P3"],
+				["A0", "C2", "1", "P2"],
+				["A0", "C1", "1", "P1"],
+				["A0", "C0", "1", "P0"]
+			]);
 		});
 	});
 

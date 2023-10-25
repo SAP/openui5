@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MessageBox",
@@ -14,6 +15,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/events/jquery/EventExtension"
 ], function(
+	Element,
 	jQuery,
 	JSONModel,
 	MessageBox,
@@ -155,7 +157,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 			newValue: "file1"// needed to enable IE9 support and non failing tests
 		});
 		assert.deepEqual(oFileUploader, oUploadCollection._aFileUploadersForPendingUpload[0], "Array _aFileUploadersForPendingUpload should contain the FileUploader instance on which Change Event was fired");
-		assert.deepEqual(oFileUploader, oCore.byId(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
+		assert.deepEqual(oFileUploader, Element.getElementById(oUploadCollection.getItems()[0].getAssociation("fileUploader")), "Association fileUploader should contain the FileUploader instance with which the Change event was fired");
 		assert.equal(oUploadCollection.getItems()[0]._status, undefined/*UploadCollection*/._pendingUploadStatus, "Item should have the 'pendingUploadStatus'");
 		oUploadCollection.destroy();
 		oUploadCollection = null;
@@ -903,7 +905,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 		//check the call of _handleDelete
 		var sDeleteButtonId = this.oUploadCollection.aItems[0].getId() + "-deleteButton";
-		var oDeleteButton = oCore.byId(sDeleteButtonId);
+		var oDeleteButton = Element.getElementById(sDeleteButtonId);
 		oDeleteButton.firePress();
 		oCore.applyChanges();
 		assert.ok(oHandleDeleteStub.called, "Function '_handleDelete' was called");

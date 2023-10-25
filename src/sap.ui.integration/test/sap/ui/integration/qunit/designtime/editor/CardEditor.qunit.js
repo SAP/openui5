@@ -1,7 +1,9 @@
 /* global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/base/util/merge",
 	"sap-ui-integration-card-editor",
+	"sap/ui/core/Element",
 	"sap/ui/integration/editor/Editor",
 	"sap/ui/integration/designtime/editor/CardEditor",
 	"sap/ui/integration/Designtime",
@@ -16,9 +18,11 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"./cards/DataExtensionImpl",
 	"qunit/designtime/EditorQunitUtils"
-], function (
+], function(
+	Localization,
 	merge,
 	x,
+	Element,
 	Editor,
 	CardEditor,
 	Designtime,
@@ -43,7 +47,7 @@ sap.ui.define([
 
 	function createEditor(sLanguage, oDesigntime) {
 		sLanguage = sLanguage || "en";
-		Core.getConfiguration().setLanguage(sLanguage);
+		Localization.setLanguage(sLanguage);
 		var oCardEditor = new CardEditor({
 			designtime: oDesigntime
 		});
@@ -269,7 +273,7 @@ sap.ui.define([
 		}
 	};
 
-	Core.getConfiguration().setLanguage("en");
+	Localization.setLanguage("en");
 	document.body.className = document.body.className + " sapUiSizeCompact ";
 
 	QUnit.module("Create an editor based on a card instance", {
@@ -685,7 +689,7 @@ sap.ui.define([
 								oField1.onfocusin();
 								Core.applyChanges();
 								var sMsgStripId = oField1.getAssociation("_messageStrip");
-								var oMsgStrip = Core.byId(sMsgStripId);
+								var oMsgStrip = Element.getElementById(sMsgStripId);
 								assert.equal(oMsgStrip.getDomRef().style.opacity, "1", "Message strip visible");
 								assert.equal(oMsgStrip.getType(), "Error", "Message strip Error");
 								assert.equal(oMsgStrip.getText(), "The parameter is not allowed to edit", "Message text correct");

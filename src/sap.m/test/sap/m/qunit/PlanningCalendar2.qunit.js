@@ -1,5 +1,10 @@
 /*global QUnit, sinon*/
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/model/json/JSONModel",
@@ -32,6 +37,11 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Formatting,
+	Localization,
+	Element,
+	Library,
+	Locale,
 	qutils,
 	createAndAppendDiv,
 	JSONModel,
@@ -67,7 +77,7 @@ sap.ui.define([
 	"use strict";
 
 	// set language to en-GB, since we have specific language strings tested
-	oCore.getConfiguration().setLanguage("en_GB");
+	Localization.setLanguage("en_GB");
 
 	// shortcut for sap.m.PlanningCalendarBuiltInView
 	var PlanningCalendarBuiltInView = mobileLibrary.PlanningCalendarBuiltInView;
@@ -214,7 +224,7 @@ sap.ui.define([
 	};
 
 	var _getListItem = function(oRow) {
-		return oCore.byId(oRow.getId() + "-CLI");
+		return Element.getElementById(oRow.getId() + "-CLI");
 	};
 
 	var _getRowTimeline = function(oRow) {
@@ -224,7 +234,7 @@ sap.ui.define([
 	};
 
 	var _switchToView = function(sViewName, oPC) {
-		var oRb = oCore.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			mIntervalStringsMap = {},
 			sIntervalTypeDropdownId,
 			oViewSwitch,
@@ -240,7 +250,7 @@ sap.ui.define([
 		sViewI18Name = oRb.getText(mIntervalStringsMap[sViewName]);
 		QUnit.assert.ok(sViewI18Name, "There must be internationalized string corresponding to the viewName " + sViewName);
 		sIntervalTypeDropdownId = oPC.getId() + "-Header-ViewSwitch-select";
-		oViewSwitch = oCore.byId(sIntervalTypeDropdownId);
+		oViewSwitch = Element.getElementById(sIntervalTypeDropdownId);
 		aItemsToSelect = oViewSwitch.getItems().filter(function(item) {
 			return item.getText().toLowerCase() === sViewI18Name.toLowerCase();
 		});
@@ -311,7 +321,7 @@ sap.ui.define([
 	};
 
 	var _getTodayButton = function(oPC) {
-		return oCore.byId(oPC.getId() + "-Header-NavToolbar-TodayBtn");
+		return Element.getElementById(oPC.getId() + "-Header-NavToolbar-TodayBtn");
 	};
 
 	//Verifies that given Date is "displayed" in the Planning Calendar
@@ -630,7 +640,7 @@ sap.ui.define([
 	});
 
 	QUnit.test('last days display appointments', function(assert) {
-		var oAppointment1July2014 = oCore.byId(this.oPC.getId() + "-R1A4");
+		var oAppointment1July2014 = Element.getElementById(this.oPC.getId() + "-R1A4");
 
 		//act
 		_switchToDate(this.oPC, this.oPCInterval, this.oPCInterval.getStartDate().getDate(), 5, 2014);
@@ -672,7 +682,7 @@ sap.ui.define([
 		oRow.attachSelect(function(oEvent) {
 			eventParams = oEvent.getParameters();
 		});
-		var oAppointment1July2014 = oCore.byId(this.oPC.getId() + "-R1A4");
+		var oAppointment1July2014 = Element.getElementById(this.oPC.getId() + "-R1A4");
 
 		//act
 		_switchToDate(this.oPC, this.oPCInterval, this.oPCInterval.getStartDate().getDate(), 5, 2014);
@@ -1006,28 +1016,28 @@ sap.ui.define([
 
 		// assert
 		assert.equal(oSelectedAppointment.getId(), "_oPC-R1A1", "appointmentSelect event fired and appointment returned");
-		assert.ok(oCore.byId("_oPC-R1A1").getSelected(), "Appointment is selected");
+		assert.ok(Element.getElementById("_oPC-R1A1").getSelected(), "Appointment is selected");
 		qutils.triggerEvent("tap", "_oPC-R1A2");
-		assert.ok(!(oCore.byId("_oPC-R1A1").getSelected()),
+		assert.ok(!(Element.getElementById("_oPC-R1A1").getSelected()),
 			"Appointment 1 is deselected because another one is selected");
-		assert.ok(oCore.byId("_oPC-R1A2").getSelected(), "Appointment 2 is selected");
+		assert.ok(Element.getElementById("_oPC-R1A2").getSelected(), "Appointment 2 is selected");
 		assert.equal(this._oPC.getSelectedAppointments().length, 1, "One appointment is selected");
 		qutils.triggerEvent("tap", "_oPC-R1A2");
-		assert.ok(!(oCore.byId("_oPC-R1A1").getSelected()),
+		assert.ok(!(Element.getElementById("_oPC-R1A1").getSelected()),
 			"Appointment 2 is deselected after a second click on it");
 		assert.equal(this._oPC.getSelectedAppointments().length, 0, "No appointment is selected");
 
 		//CTRL key included
 		qutils.triggerEvent("tap", "_oPC-R1A2");
-		qutils.triggerEvent("tap", oCore.byId("_oPC-R1A1").getDomRef(), {target :
-				oCore.byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+		qutils.triggerEvent("tap", Element.getElementById("_oPC-R1A1").getDomRef(), {target :
+				Element.getElementById("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		assert.equal(this._oPC.getSelectedAppointments().length, 2, "Two appointments are selected");
-		qutils.triggerEvent("tap", oCore.byId("_oPC-R1A1").getDomRef(), {target :
-				oCore.byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+		qutils.triggerEvent("tap", Element.getElementById("_oPC-R1A1").getDomRef(), {target :
+				Element.getElementById("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		assert.equal(this._oPC.getSelectedAppointments().length, 1,
 			"When deselecting an appointment while pressing CTRL key, only this particular appointment is deselected");
-		qutils.triggerEvent("tap", oCore.byId("_oPC-R1A1").getDomRef(), {target :
-				oCore.byId("_oPC-R1A1").getDomRef(), ctrlKey: true});
+		qutils.triggerEvent("tap", Element.getElementById("_oPC-R1A1").getDomRef(), {target :
+				Element.getElementById("_oPC-R1A1").getDomRef(), ctrlKey: true});
 		qutils.triggerEvent("tap", "_oPC-R1A2");
 		assert.equal(this._oPC.getSelectedAppointments().length, 0,
 			"When deselecting an appointment without pressing CTRL key all selections are gone");
@@ -1212,8 +1222,8 @@ sap.ui.define([
 	QUnit.module("ARIA", {
 		beforeEach: function(assert) {
 
-			this.sOldLanguage = oCore.getConfiguration().getLanguage();
-			oCore.getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+			this.sOldLanguage = Localization.getLanguage();
+			Localization.setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
 
 			this.oLegend = new PlanningCalendarLegend({
 				items: [
@@ -1417,7 +1427,7 @@ sap.ui.define([
 				this.oLegend.destroy();
 				this.oLegendWithItemsTypes01UpToTypes10.destroy();
 			}
-			oCore.getConfiguration().setLanguage(this.sOldLanguage);
+			Localization.setLanguage(this.sOldLanguage);
 		}
 	});
 
@@ -2016,10 +2026,10 @@ sap.ui.define([
 				})
 			],
 			oCurrentlyDisplayedDate = UI5Date.getInstance(2015, 0, 2),
-			oOriginalFormatLocale = oCore.getConfiguration().getFormatSettings().getFormatLocale(),
+			oOriginalFormatLocale = new Locale(Formatting.getLanguageTag()),
 			sOriginalFormatLocale = oOriginalFormatLocale.getLanguage() + "_" +  oOriginalFormatLocale.getRegion();
 
-		oCore.getConfiguration().setFormatLocale("en-GB");
+		Formatting.setLanguageTag("en-GB");
 
 		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, '');
 		assert.equal(aAppInfos[0]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, undefined);
@@ -2036,7 +2046,7 @@ sap.ui.define([
 		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).start, "07:00");
 		assert.equal(aAppInfos[6]._getDateRangeIntersectionText(oCurrentlyDisplayedDate).end, "34 mins");
 
-		oCore.getConfiguration().setFormatLocale(sOriginalFormatLocale);
+		Formatting.setLanguageTag(sOriginalFormatLocale);
 	});
 
 	QUnit.test('Removing a selected appointment from the model updates the selectedAppointments association', function(assert) {
@@ -2127,17 +2137,17 @@ sap.ui.define([
 
 		this.oPC.setViewKey(CalendarIntervalType.Day);
 		oCore.applyChanges();
-		oDatesRow = oCore.byId("OPC-DatesRow");
+		oDatesRow = Element.getElementById("OPC-DatesRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the DatesRow in the days view is false");
 
 		this.oPC.setViewKey(CalendarIntervalType.Week);
 		oCore.applyChanges();
-		oDatesRow = oCore.byId("OPC-WeeksRow");
+		oDatesRow = Element.getElementById("OPC-WeeksRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the WeeksRow in the week view is false");
 
 		this.oPC.setViewKey(CalendarIntervalType.OneMonth);
 		oCore.applyChanges();
-		oDatesRow = oCore.byId("OPC-OneMonthsRow");
+		oDatesRow = Element.getElementById("OPC-OneMonthsRow");
 		assert.equal(oDatesRow.getShowDayNamesLine(), false, "the default property of the OneMonthsRow in the one month view is false");
 
 	});
@@ -2153,9 +2163,9 @@ sap.ui.define([
 		this.oPC.setViewKey(CalendarIntervalType.Hour);
 		oCore.applyChanges();
 
-		oDatesRow = oCore.byId("OPC-DatesRow");
-		oWeeksRow = oCore.byId("OPC-WeeksRow");
-		oOneMonthsRow = oCore.byId("OPC-OneMonthsRow");
+		oDatesRow = Element.getElementById("OPC-DatesRow");
+		oWeeksRow = Element.getElementById("OPC-WeeksRow");
+		oOneMonthsRow = Element.getElementById("OPC-OneMonthsRow");
 
 		this.oPC.setShowDayNamesLine(true);
 		assert.equal(oDatesRow.getShowDayNamesLine(), true, "the property is passed to the DatesRow in the days view after setting the property to the Hour view");
@@ -3056,7 +3066,7 @@ sap.ui.define([
 					})
 				}
 			}),
-			oRb = oCore.getLibraryResourceBundle("sap.m"),
+			oRb = Library.getResourceBundleFor("sap.m"),
 			oRowHead,
 			oRowCustomHead;
 
@@ -3068,8 +3078,8 @@ sap.ui.define([
 		oPC.setModel(oModel);
 		oPC.addRow(oRow);
 
-		oRowHead = oCore.byId(oRow.getId() + "-Head");
-		oRowCustomHead = oCore.byId(oRow.getId() + "-CustomHead");
+		oRowHead = Element.getElementById(oRow.getId() + "-Head");
+		oRowCustomHead = Element.getElementById(oRow.getId() + "-CustomHead");
 
 		// Assert
 		assert.equal(oRowHead, undefined, "when there's headerContent, it creates only '-CustomHead' instance");
@@ -3139,7 +3149,7 @@ sap.ui.define([
 		// Act
 		oPC.addRow(oRow);
 
-		oRowHead = oCore.byId(oRow.getId() + "-Head");
+		oRowHead = Element.getElementById(oRow.getId() + "-Head");
 
 		// Assert
 		assert.equal(oRowHead.getIconDensityAware(), false, "icon density aware should be false");

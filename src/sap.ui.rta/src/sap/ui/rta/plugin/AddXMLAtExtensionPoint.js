@@ -6,16 +6,16 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/dt/Util",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
 	"sap/base/util/values",
 	"sap/ui/base/DesignTime"
 ], function(
 	Plugin,
 	DtUtil,
 	FlUtils,
-	ManifestUtils,
 	ExtensionPointRegistryAPI,
+	ManifestUtils,
 	values,
 	DesignTime
 ) {
@@ -24,11 +24,12 @@ sap.ui.define([
 	/**
 	 * Callback function responsible for fragment handling.
 	 *
-	 * The fragment handling function needs to be provided from outside of key user adaptation. It is called during the execution of the plugin handler
-	 * with the target overlay and a list of existing extension point information related to the target overlay. The main responsibility
-	 * is to select an extension point from the list an create an XML fragment as an extension for it. After the fragment is created, the
-	 * fragment handler needs to resolve the returned promise with the information of the selected extension point name, the path and the
-	 * name of the created fragment. If no extension point selection is done into the fragment handler, an empty object needs to be returned.
+	 * The fragment handling function needs to be provided from outside of key user adaptation. It is called during the execution of the
+	 * plugin handler with the target overlay and a list of existing extension point information related to the target overlay. The main
+	 * responsibility is to select an extension point from the list an create an XML fragment as an extension for it. After the fragment
+	 * is created, the fragment handler needs to resolve the returned promise with the information of the selected extension point name,
+	 * the path and the name of the created fragment. If no extension point selection is done into the fragment handler, an empty object
+	 * needs to be returned.
 	 *
 	 * @typedef {function} sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler
 	 * @since 1.78
@@ -39,7 +40,8 @@ sap.ui.define([
 	/**
 	 * Constructor for a new AddXMLAtExtensionPoint plugin.
 	 * Adds the content of the XML fragment behind the ExtensionPoint which needs to be selected by the fragment handler.
-	 * The fragment handler <code>{@link sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler FragmentHandler}</code>  is a callback function that needs to be passed on instantiation of the plugin or alternatively into the
+	 * The fragment handler <code>{@link sap.ui.rta.plugin.AddXMLAtExtensionPoint.fragmentHandler FragmentHandler}</code>
+	 * is a callback function that needs to be passed on instantiation of the plugin or alternatively into the
 	 * propertyBag when the handler function is called.
 	 *
 	 * @class
@@ -51,7 +53,8 @@ sap.ui.define([
 	 * @since 1.78
 	 * @alias sap.ui.rta.plugin.AddXMLAtExtensionPoint
 	 */
-	var AddXMLAtExtensionPoint = Plugin.extend("sap.ui.rta.plugin.AddXMLAtExtensionPoint", /** @lends sap.ui.rta.plugin.AddXMLAtExtensionPoint.prototype */ {
+	var AddXMLAtExtensionPoint = Plugin
+	.extend("sap.ui.rta.plugin.AddXMLAtExtensionPoint", /** @lends sap.ui.rta.plugin.AddXMLAtExtensionPoint.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -72,7 +75,9 @@ sap.ui.define([
 		// determine a list of extension points for the given element. In case the element is a view
 		// all extension points available for the view are returned
 		var aExtensionPointInfo = ExtensionPointRegistryAPI.getExtensionPointInfoByParentId({parentId: oElementId});
-		return aExtensionPointInfo.length ? aExtensionPointInfo : values(ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: oElementId}));
+		return aExtensionPointInfo.length
+			? aExtensionPointInfo
+			: values(ExtensionPointRegistryAPI.getExtensionPointInfoByViewId({viewId: oElementId}));
 	}
 
 	function hasExtensionPoints(oElement) {

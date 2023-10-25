@@ -1501,6 +1501,11 @@ sap.ui.define([
 							checkValidity : function () {}
 						};
 					},
+					getSortExpression() {
+						return {
+							getURIOrderByOptionValue: () => ""
+						};
+					},
 					getURIQueryOptionValue : function (sParameter) {
 						if (sParameter === "$select") {
 							return sSelects;
@@ -1539,6 +1544,59 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
+	[{
+		getURIOrderByOptionValue: "~additionalOrderby",
+		orderby: null,
+		resultingOrderby: "$orderby=~additionalOrderby"
+	}, {
+		getURIOrderByOptionValue: "~additionalOrderby",
+		orderby: "~orderby",
+		resultingOrderby: "$orderby=~orderby,~additionalOrderby"
+	}, {
+		getURIOrderByOptionValue: "", // no sorter for additional properties
+		orderby: null
+	}, {
+		getURIOrderByOptionValue: "", // no sorter for additional properties
+		orderby: "~orderby",
+		resultingOrderby: "$orderby=~orderby"
+	}].forEach((oFixture, i) => {
+		QUnit.test("_getQueryODataRequestOptions: $orderby considers additional selects, #" + i, function (assert) {
+			return setupAnalyticalBinding({}).then((oBinding) => {
+				const oAnalyticalQueryRequest = {
+						getFilterExpression() {},
+						getSortExpression() {},
+						getURIQueryOptionValue() {}
+					};
+				const oAnalyticalQueryRequestMock = this.mock(oAnalyticalQueryRequest);
+				const oFilterExpression = {checkValidity() {}};
+				oAnalyticalQueryRequestMock.expects("getFilterExpression").withExactArgs().returns(oFilterExpression);
+				this.mock(oFilterExpression).expects("checkValidity").withExactArgs();
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue").withExactArgs("$select").returns(null);
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue").withExactArgs("$filter").returns(null);
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue")
+					.withExactArgs("$orderby")
+					.returns(oFixture.orderby);
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue").withExactArgs("$skip").returns(null);
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue").withExactArgs("$top").returns(null);
+				oAnalyticalQueryRequestMock.expects("getURIQueryOptionValue").withExactArgs("$inlinecount").returns(null);
+				const oSortExpression = {getURIOrderByOptionValue() {}};
+				oAnalyticalQueryRequestMock.expects("getSortExpression").withExactArgs().returns(oSortExpression);
+				this.mock(oSortExpression).expects("getURIOrderByOptionValue")
+					.withExactArgs({Property0: true, Property1: true})
+					.returns(oFixture.getURIOrderByOptionValue);
+				// simulate additional selects of ordinary properties
+				oBinding.aAdditionalSelects = ["Property0", "Property1"];
+				const aResult = ["$select=Property0,Property1"];
+				if (oFixture.resultingOrderby) {
+					aResult.push(oFixture.resultingOrderby);
+				}
+
+				// code under test
+				assert.deepEqual(oBinding._getQueryODataRequestOptions(oAnalyticalQueryRequest, true), aResult);
+			});
+		});
+	});
 	//*********************************************************************************************
 	QUnit.test("_getNonHierarchyDimensions", function (assert) {
 		var aAggregationLevel = [],

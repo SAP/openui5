@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/format/TimezoneUtil"
-], function (Configuration, TimezoneUtil) {
+], function (Localization, TimezoneUtil) {
 	"use strict";
 
 	var aAllParts = ["year", "month", "day", "hour", "minute", "second", "fractionalSecond"],
@@ -905,7 +905,7 @@ sap.ui.define([
 
 	["toLocaleDateString", "toLocaleString", "toLocaleTimeString"].forEach(function (sMethod) {
 		UI5Date.prototype[sMethod] = function (sLocale, oOptions) {
-			return this.oDate[sMethod](sLocale || Configuration.getLanguageTag(),
+			return this.oDate[sMethod](sLocale || Localization.getLanguageTag().toString(),
 				Object.assign({timeZone: this.sTimezoneID}, oOptions));
 		};
 	});
@@ -966,7 +966,7 @@ sap.ui.define([
 	 * @see sap.ui.core.Configuration#getTimezone
 	 */
 	UI5Date.getInstance = function () {
-		var sTimezone = Configuration.getTimezone();
+		var sTimezone = Localization.getTimezone();
 
 		if (sTimezone !== TimezoneUtil.getLocalTimezone()) {
 			return new UI5Date(arguments, sTimezone);
@@ -990,7 +990,7 @@ sap.ui.define([
 		if (isNaN(oDate.getTime())) {
 			throw new Error("The given Date is not valid");
 		}
-		if (!(oDate instanceof UI5Date) && (Configuration.getTimezone() !== TimezoneUtil.getLocalTimezone())) {
+		if (!(oDate instanceof UI5Date) && (Localization.getTimezone() !== TimezoneUtil.getLocalTimezone())) {
 			throw new Error("Configured time zone requires the parameter 'oDate' to be an instance of"
 				+ " sap.ui.core.date.UI5Date");
 		}

@@ -5,9 +5,10 @@
 // Provides mixin sap.ui.model.odata.type.UnitMixin supporting unit customizing for types like
 // sap.ui.model.odata.type.Currency or sap.ui.model.odata.type.Unit
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/ValidateException"
-], function (ParseException, ValidateException) {
+], function(Library, ParseException, ValidateException) {
 	"use strict";
 
 	var mCodeList2CustomUnits = new Map(),
@@ -26,7 +27,7 @@ sap.ui.define([
 	 *   The message
 	 */
 	function getText(sKey, aParams) {
-		return sap.ui.getCore().getLibraryResourceBundle().getText(sKey, aParams);
+		return Library.getResourceBundleFor("sap.ui.core").getText(sKey, aParams);
 	}
 
 	/**

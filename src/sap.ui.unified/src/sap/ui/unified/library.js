@@ -6,16 +6,18 @@
  * Initialization Code and shared classes of library sap.ui.unified.
  */
 sap.ui.define([
-	'sap/ui/core/Core',
-	'sap/ui/base/Object',
-	"./ColorPickerDisplayMode",
-	"./FileUploaderHttpRequestMethod",
-	'sap/ui/core/library'
+ 'sap/ui/core/Core',
+ 'sap/ui/base/Object',
+ "./ColorPickerDisplayMode",
+ "./FileUploaderHttpRequestMethod",
+ "sap/ui/core/RenderManager",
+ 'sap/ui/core/library'
 ], function(
-	Core,
-	BaseObject,
-	ColorPickerDisplayMode,
-	FileUploaderHttpRequestMethod
+ Core,
+ BaseObject,
+ ColorPickerDisplayMode,
+ FileUploaderHttpRequestMethod,
+ RenderManager
 ) {
 
 	"use strict";
@@ -545,7 +547,7 @@ sap.ui.define([
 			this._id = sContentContainerId;
 			this._cntnt = oContent;
 			this._ctrl = oControl;
-			this._rm = sap.ui.getCore().createRenderManager();
+			this._rm = new RenderManager().getInterface();
 			this._cb = fAfterRenderCallback || function(){};
 		},
 

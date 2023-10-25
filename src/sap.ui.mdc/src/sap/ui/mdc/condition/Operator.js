@@ -3,6 +3,7 @@
 */
 sap.ui.define([
 	'sap/ui/base/Object',
+	"sap/ui/core/Lib",
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
 	'sap/ui/model/ParseException',
@@ -15,23 +16,24 @@ sap.ui.define([
 	'sap/ui/mdc/enums/OperatorOverwrite',
 	'sap/ui/mdc/enums/OperatorValueType'
 ], function(
-		BaseObject,
-		Filter,
-		FilterOperator,
-		ParseException,
-		Log,
-		merge,
-		deepEqual,
-		Condition,
-		ConditionValidated,
-		escapeRegExp,
-		OperatorOverwrite,
-		OperatorValueType
-	) {
+	BaseObject,
+	Library,
+	Filter,
+	FilterOperator,
+	ParseException,
+	Log,
+	merge,
+	deepEqual,
+	Condition,
+	ConditionValidated,
+	escapeRegExp,
+	OperatorOverwrite,
+	OperatorValueType
+) {
 	"use strict";
 
 	// translation utils
-	let oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+	let oMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	sap.ui.getCore().attachLocalizationChanged(function() {
 		oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 	});

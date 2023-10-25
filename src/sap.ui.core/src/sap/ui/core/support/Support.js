@@ -438,7 +438,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Support.getDiagnosticLibraries = function() {
-		var mLibs = sap.ui.getCore().getLoadedLibraries(),
+		var mLibs = Library.all(),
 			aLibs = [];
 		for (var n in mLibs) {
 			var oLib = mLibs[n];

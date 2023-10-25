@@ -1,6 +1,7 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Element,
 	TableQUnitUtils,
 	TreeTable,
 	Column,
@@ -613,7 +615,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.getElementById("table");
 		}
 	});
 

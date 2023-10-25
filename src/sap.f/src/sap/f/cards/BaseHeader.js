@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/IntervalTrigger",
+	"sap/ui/core/Lib",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/library",
@@ -12,8 +12,8 @@ sap.ui.define([
 	"./BaseHeaderRenderer"
 ], function(
 	Control,
-	Core,
 	IntervalTrigger,
+	Library,
 	DateFormat,
 	UniversalDate,
 	coreLibrary,
@@ -87,7 +87,17 @@ sap.ui.define([
 				 * If the header should be rendered as a tile.
 				 * @private
 				 */
-				useTileLayout: { type: "boolean", group: "Appearance", visibility: "hidden" }
+				useTileLayout: { type: "boolean", group: "Appearance", visibility: "hidden" },
+
+				/**
+				 * Defines aria-level of the header.
+				 *
+				 * When header is in a dialog aria-level is 1
+				 * When header is not in a dialog(standard scenario) aria-level is 3
+				 *
+				 * @private
+				 */
+				headingLevel: { type: "string", visibility: "hidden", defaultValue: "3"}
 			},
 			aggregations: {
 				/**
@@ -120,7 +130,7 @@ sap.ui.define([
 	});
 
 	BaseHeader.prototype.init = function () {
-		this._oRb = Core.getLibraryResourceBundle("sap.f");
+		this._oRb = Library.getResourceBundleFor("sap.f");
 
 		this._oToolbarDelegate = {
 			onfocusin: this._onToolbarFocusin,
@@ -344,7 +354,7 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	BaseHeader.prototype.getAriaHeadingLevel = function () {
-		return "3";
+		return this.getProperty("headingLevel");
 	};
 
 	/**

@@ -4,8 +4,8 @@
 
 sap.ui.define([
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(mLibrary, Core) {
+	"sap/ui/core/Element"
+], function(mLibrary, Element) {
 	"use strict";
 
 	var ValueColor = mLibrary.ValueColor;
@@ -19,7 +19,7 @@ sap.ui.define([
 	};
 
 	MicrochartLegendRenderer.render = function (oRm, oMicrochartLegend) {
-		var oChart = Core.byId(oMicrochartLegend.getChart()),
+		var oChart = Element.getElementById(oMicrochartLegend.getChart()),
 			aLegendColors = [],
 			aTexts = oMicrochartLegend.getAggregation("_titles");
 

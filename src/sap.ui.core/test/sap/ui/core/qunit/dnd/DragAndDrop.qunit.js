@@ -1,5 +1,6 @@
 /*global QUnit,sinon*/
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/dnd/DragAndDrop",
 	"sap/ui/core/dnd/DragInfo",
 	"sap/ui/core/dnd/DropInfo",
@@ -8,9 +9,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/UIArea",
 	"sap/ui/Device",
-	"sap/ui/core/Configuration",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, Configuration, nextUIUpdate) {
+], function(Localization, DragAndDrop, DragInfo, DropInfo, DragDropInfo, jQuery, Control, UIArea, Device, nextUIUpdate) {
 	"use strict";
 
 	var DivControl = Control.extend("sap.ui.core.dnd.test.DivControl", {
@@ -552,7 +552,7 @@ sap.ui.define([
 		assert.strictEqual(oEvent.dragSession.getDropPosition(), "After", "Drop position is set correctly");
 
 		// act for the RTL mode
-		sinon.stub(Configuration, "getRTL").callsFake(function() {
+		sinon.stub(Localization, "getRTL").callsFake(function() {
 			return true;
 		});
 

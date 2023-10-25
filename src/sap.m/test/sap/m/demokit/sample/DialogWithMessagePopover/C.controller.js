@@ -2,13 +2,13 @@ sap.ui.define([
 	'sap/m/MessagePopover',
 	'sap/m/MessageItem',
 	'sap/m/MessageToast',
+	"sap/ui/core/Messaging",
 	'sap/ui/core/message/Message',
 	'sap/ui/core/library',
-	'sap/ui/core/Core',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/Element'
-], function (MessagePopover, MessageItem, MessageToast, Message, coreLibrary, Core, Controller, JSONModel, Element) {
+], function (MessagePopover, MessageItem, MessageToast, Messaging, Message, coreLibrary, Controller, JSONModel, Element) {
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -19,7 +19,7 @@ sap.ui.define([
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/forms.json"));
 
 			this.oView = this.getView();
-			this._oMessageManager = Core.getMessageManager();
+			this._oMessageManager = Messaging;
 
 			// Clear the old messages
 			this._oMessageManager.removeAllMessages();

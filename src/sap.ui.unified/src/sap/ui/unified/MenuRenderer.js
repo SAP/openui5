@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.Menu
-sap.ui.define(["sap/ui/core/Configuration"],
-	function(Configuration) {
+sap.ui.define(["sap/ui/core/ControlBehavior"],
+	function(ControlBehavior) {
 	"use strict";
 
 
@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/core/Configuration"],
 	 *            oMenu An object representation of the control that should be rendered
 	 */
 	MenuRenderer.render = function(oRm, oMenu) {
-		var bAccessible = Configuration.getAccessibility(),
+		var bAccessible = ControlBehavior.isAccessibilityEnabled(),
 			oRootMenu = oMenu.getRootMenu();
 
 		if (oMenu.oHoveredItem && oMenu.indexOfItem(oMenu.oHoveredItem) < 0) {
@@ -79,7 +79,7 @@ sap.ui.define(["sap/ui/core/Configuration"],
 
 	MenuRenderer.renderItems = function(oRm, oMenu) {
 		var aItems = oMenu.getItems(),
-			bAccessible = Configuration.getAccessibility(),
+			bAccessible = ControlBehavior.isAccessibilityEnabled(),
 			bHasIcons = false,
 			bHasSubMenus = false,
 			iNumberOfVisibleItems = 0,

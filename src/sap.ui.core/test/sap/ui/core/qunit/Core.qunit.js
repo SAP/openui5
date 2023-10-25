@@ -8,6 +8,7 @@ sap.ui.define([
 	'sap/ui/base/Interface',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/Core',
+	"sap/ui/core/Supportability",
 	'sap/ui/core/UIArea',
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
@@ -18,7 +19,7 @@ sap.ui.define([
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -51,7 +52,7 @@ sap.ui.define([
 
 	QUnit.assert.isLibLoaded = function(libName) {
 		this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
-		this.ok(oCore.getLoadedLibraries()[libName], "Core should know and list " + libName + " as 'loaded'");
+		this.ok(Library.all()[libName], "Core should know and list " + libName + " as 'loaded'");
 	};
 
 	// used to get access to the non-public core parts
@@ -525,7 +526,7 @@ sap.ui.define([
 
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
-			assert.notOk(Configuration.getDebug(), "debug mode must be deactivated to properly test library loading");
+			assert.notOk(Supportability.isDebugModeEnabled(), "debug mode must be deactivated to properly test library loading");
 			this.oLibraryGetPreloadStub = this.stub(Library, "getPreloadMode").returns("sync");
 		},
 		afterEach: function(assert) {

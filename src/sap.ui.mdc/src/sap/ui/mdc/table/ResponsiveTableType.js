@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
 	"sap/ui/Device",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/enums/TableGrowingMode",
 	"sap/ui/mdc/enums/TableRowAction"
 ], function(
@@ -21,7 +22,8 @@ sap.ui.define([
 	SegmentedButton,
 	SegmentedButtonItem,
 	Device,
-	Core,
+	Element,
+	Library,
 	GrowingMode,
 	TableRowAction
 ) {
@@ -367,7 +369,7 @@ sap.ui.define([
 
 	ResponsiveTableType.prototype._getShowDetailsButton = function() {
 		if (!this._oShowDetailsButton) {
-			const oRb = Core.getLibraryResourceBundle("sap.ui.mdc");
+			const oRb = Library.getResourceBundleFor("sap.ui.mdc");
 			const sId = this.getTable().getId();
 			this.bHideDetails = true;
 			this._oShowDetailsButton = new SegmentedButton(sId + "-showHideDetails", {
@@ -405,7 +407,7 @@ sap.ui.define([
 	ResponsiveTableType.prototype.getContextMenuParameters = function(oEvent) {
 		const oListItem = oEvent.getParameter("listItem");
 		const oInnerColumn = oEvent.getParameter("column");
-		const oMDCColumn = Core.byId(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
+		const oMDCColumn = Element.getElementById(oInnerColumn.getId().replace(/\-innerColumn$/, ""));
 
 		return {
 			bindingContext: oListItem.getBindingContext(this.getInnerTable().getBindingInfo("items").model),

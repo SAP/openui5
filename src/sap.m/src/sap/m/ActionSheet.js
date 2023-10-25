@@ -8,26 +8,30 @@ sap.ui.define([
 	'./Popover',
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/core/delegate/ItemNavigation',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/Device',
 	'./ActionSheetRenderer',
 	'./Button',
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
 	function(
 		Dialog,
 		Popover,
 		library,
 		Control,
+		ControlBehavior,
+		Element,
+		Library,
 		ItemNavigation,
 		InvisibleText,
 		Device,
 		ActionSheetRenderer,
 		Button,
-		jQuery,
-		Configuration
+		jQuery
 	) {
 	"use strict";
 
@@ -437,7 +441,7 @@ sap.ui.define([
 
 	ActionSheet.prototype._createCancelButton = function() {
 		if (!this._oCancelButton) {
-			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
+			var sCancelButtonText = (this.getCancelButtonText()) ? this.getCancelButtonText() : Library.getResourceBundleFor("sap.m").getText("ACTIONSHEET_CANCELBUTTON_TEXT"),
 				that = this;
 	//			var sButtonStyle = (Device.os.ios) ? ButtonType.Unstyled : ButtonType.Default;
 			this._oCancelButton = new Button(this.getId() + '-cancelBtn', {
@@ -507,7 +511,7 @@ sap.ui.define([
 	ActionSheet.prototype._addAriaHiddenTexts = function(oButton) {
 		var sButtonId = oButton.getId(),
 			oInvisibleText;
-		if (Configuration.getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			oInvisibleText = new InvisibleText(sButtonId + "-actionSheetHiddenText");
 
 			this.addAggregation("_invisibleAriaTexts", oInvisibleText, false);
@@ -517,7 +521,7 @@ sap.ui.define([
 
 	ActionSheet.prototype._removeAriaHiddenTexts = function(oButton) {
 		oButton.getAriaDescribedBy().forEach(function(sId) {
-			var oControl = sap.ui.getCore().byId(sId);
+			var oControl = Element.getElementById(sId);
 
 			if (oControl instanceof InvisibleText && sId.indexOf("actionSheetHiddenText") > -1) {
 				this.removeAggregation("_invisibleAriaTexts", oControl, false);

@@ -4,6 +4,9 @@
 
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/EventBus",
+	"sap/ui/core/Theming",
 	"sap/ui/documentation/sdk/controller/SampleBaseController",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel",
@@ -16,13 +19,15 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/m/library",
 	"sap/base/Log",
-	"sap/ui/core/Core",
 	"sap/ui/core/Fragment",
 	"sap/ui/documentation/sdk/util/Resources",
 	"./config/sampleForwardingConfig",
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Configuration"
 ], function(
+	Element,
+	EventBus,
+	Theming,
 	SampleBaseController,
 	JSONModel,
 	ResourceModel,
@@ -35,7 +40,6 @@ sap.ui.define([
 	HTML,
 	mobileLibrary,
 	Log,
-	Core,
 	Fragment,
 	ResourcesUtil,
 	sampleForwardingConfig,
@@ -79,7 +83,7 @@ sap.ui.define([
 
 				this.getView().setModel(this.oModel);
 
-				this.bus = Core.getEventBus();
+				this.bus = EventBus.getInstance();
 				this.setDefaultSampleTheme();
 				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
@@ -319,16 +323,16 @@ sap.ui.define([
 
 			applySampleSettings: function(eMessage) {
 				if (eMessage.data.type === "SETTINGS") {
-					var oThemeSelect = Core.byId("sample--ThemeSelect");
+					var oThemeSelect = Element.getElementById("sample--ThemeSelect");
 
 					// Theme select
 					oThemeSelect.setSelectedKey(eMessage.data.data.theme);
 
 					// RTL
-					Core.byId("sample--RTLSwitch").setState(eMessage.data.data.RTL);
+					Element.getElementById("sample--RTLSwitch").setState(eMessage.data.data.RTL);
 
 					// Density mode select
-					Core.byId("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
+					Element.getElementById("sample--DensityModeSwitch").setSelectedKey(this._presetDensity(eMessage.data.data.density, true));
 
 				}
 			},
@@ -363,9 +367,9 @@ sap.ui.define([
 			},
 
 			handleSaveAppSettings: function () {
-				var	sDensityMode = Core.byId("sample--DensityModeSwitch").getSelectedKey(),
-					sTheme = Core.byId("sample--ThemeSelect").getSelectedKey(),
-					bRTL = Core.byId("sample--RTLSwitch").getState();
+				var	sDensityMode = Element.getElementById("sample--DensityModeSwitch").getSelectedKey(),
+					sTheme = Element.getElementById("sample--ThemeSelect").getSelectedKey(),
+					bRTL = Element.getElementById("sample--RTLSwitch").getState();
 
 				this._oSettingsDialog.close();
 
@@ -621,7 +625,7 @@ sap.ui.define([
 
 					// combine namespace with the file name again
 					this.sIFrameUrl = (sap.ui.require.toUrl((sIframePath + "/" + sIframeWithoutUI5Ending).replace(/\./g, "/")) + sFileEnding || ".html")
-					+ "?sap-ui-theme=" + Configuration.getTheme();
+					+ "?sap-ui-theme=" + Theming.getTheme();
 					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 				}
 				this._oHtmlControl.getDomRef().contentWindow.postMessage({
@@ -669,7 +673,7 @@ sap.ui.define([
 			setDefaultSampleTheme: function() {
 				var sSampleVersion = ResourcesUtil.getResourcesVersion();
 				this._sDefaultSampleTheme = sSampleVersion && parseInt(sSampleVersion.slice(3,5)) < 68 ?
-					"sap_belize" : Configuration.getTheme();
+					"sap_belize" : Theming.getTheme();
 			},
 
 			onDemoKitThemeChanged: function(sChannelId, sEventId, oData) {

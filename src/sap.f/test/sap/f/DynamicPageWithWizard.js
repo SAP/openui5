@@ -13,17 +13,18 @@ sap.ui.define([
 	"sap/m/TextArea",
 	"sap/m/Wizard",
 	"sap/m/WizardStep",
+	"sap/ui/core/Element",
 	"sap/ui/core/Item",
 	"sap/ui/layout/form/SimpleForm"
-], function(oDynamicPageUtil, App, Button, CheckBox, Input, mobileLibrary, Link, MessageToast, Page, Select, Text, TextArea, Wizard, WizardStep, Item, SimpleForm) {
+], function(oDynamicPageUtil, App, Button, CheckBox, Input, mobileLibrary, Link, MessageToast, Page, Select, Text, TextArea, Wizard, WizardStep, Element, Item, SimpleForm) {
 	"use strict";
 
 	var checkStep4 = function () {
-		var bSelected1 = sap.ui.getCore().byId("cBox1").getSelected(),
-			bSelected2 = sap.ui.getCore().byId("cBox2").getSelected(),
-			bSelected3 = sap.ui.getCore().byId("cBox3").getSelected(),
-			bSelected4 = sap.ui.getCore().byId("cBox4").getSelected(),
-			bSelected5 = sap.ui.getCore().byId("cBox5").getSelected();
+		var bSelected1 = Element.getElementById("cBox1").getSelected(),
+			bSelected2 = Element.getElementById("cBox2").getSelected(),
+			bSelected3 = Element.getElementById("cBox3").getSelected(),
+			bSelected4 = Element.getElementById("cBox4").getSelected(),
+			bSelected5 = Element.getElementById("cBox5").getSelected();
 
 		if (   (bSelected1 && bSelected2 && !bSelected5)
 			|| (bSelected3 && !bSelected4)

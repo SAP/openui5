@@ -1,6 +1,8 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/App",
@@ -18,7 +20,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"require"
 ], function(
+	Localization,
 	Core,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	App,
@@ -348,7 +352,7 @@ sap.ui.define([
 
 	QUnit.test("_handlesLabels aggregation", function (assert) {
 		// arrange & act
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m"),
+		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oSlider = new Slider(),
 			aLabels = oSlider.getAggregation("_handlesLabels"),
 			oSliderWithTickmarks = new Slider({enableTickmarks: true}),
@@ -1991,11 +1995,11 @@ sap.ui.define([
 
 	QUnit.module("RTL", {
 		beforeEach: function () {
-			Core.getConfiguration().setRTL(true);
+			Localization.setRTL(true);
 			this.oSlider = new Slider();
 		},
 		afterEach: function () {
-			Core.getConfiguration().setRTL(false);
+			Localization.setRTL(false);
 			this.oSlider.destroy();
 		}
 	});
@@ -2325,7 +2329,7 @@ sap.ui.define([
 		oSlider.placeAt('content');
 		Core.applyChanges();
 
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			sAriaLabel;
 
 		// act
@@ -2360,7 +2364,7 @@ sap.ui.define([
 		sKeyShortcut = oSlider.getDomRef("handle").getAttribute("aria-keyshortcuts");
 
 		// assert
-		assert.strictEqual(Core.byId(sInvisibleTextId).getText(), Core.getLibraryResourceBundle("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
+		assert.strictEqual(Element.getElementById(sInvisibleTextId).getText(), Library.getResourceBundleFor("sap.m").getText("SLIDER_INPUT_TOOLTIP"));
 		assert.ok(!oSlider.getFocusDomRef().getAttribute("aria-controls"), 'The "aria-controls" should not be set, before the tooltip is rendered');
 		assert.strictEqual(sKeyShortcut, "F2", "The 'aria-keyshortcuts' attribute should be presented with appropriate value");
 

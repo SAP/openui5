@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/GenericTile",
 	"sap/m/TileContent",
@@ -34,9 +36,9 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
-], function(jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
-			Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData,
-			GridContainerSettings, GridContainer, FormattedText, NewsContent, Parameters,qutils,DragInfo,GridDropInfo, Core, Theming,LinkTileContent) {
+], function(Localization, Element, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
+	Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings,
+	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Core, Theming, LinkTileContent) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -174,12 +176,12 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 
-			this.sStartTheme = oCore.getConfiguration().getTheme();
+			this.sStartTheme = Theming.getTheme();
 			this.sRequiredTheme = null;
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
@@ -191,7 +193,7 @@ sap.ui.define([
 
 				function fnThemeApplied(oEvent) {
 					oCore.detachThemeChanged(fnThemeApplied);
-					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 						if (typeof fnCallback === "function") {
 							fnCallback.bind(this)();
 							fnCallback = undefined;
@@ -984,7 +986,7 @@ sap.ui.define([
 
 	QUnit.test("Attributes written in RTL", function(assert) {
 		//Arrange
-		oCore.getConfiguration().setRTL(true);
+		Localization.setRTL(true);
 
 		this.oGenericTile.invalidate();
 
@@ -997,7 +999,7 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.$("subHdr-text").attr("dir"), "rtl");
 
 		//Cleanup
-		oCore.getConfiguration().setRTL(false);
+		Localization.setRTL(false);
 	});
 
 	QUnit.test("Hover style update on rendering", function(assert) {
@@ -1560,12 +1562,12 @@ sap.ui.define([
 
 	QUnit.test("GenericTile in ContentMode (Display mode)", function(assert) {
 		// In ContentMode, when the subheader available, the number of header lines should be 2
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines and subheader has 1 line");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines and subheader has 1 line");
 
 		// In ContentMode, when the subheader not available, the number of header lines should be 3
 		this.oGenericTile.setSubheader("");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 3, "The header has 3 lines when subheader unavailable");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 3, "The header has 3 lines when subheader unavailable");
 
 		// Check if the content in TileContent is still kept.
 		assert.ok(this.oGenericTile.getTileContent()[0].getContent() !== null, "The content aggregation in TileContent is kept.");
@@ -1588,12 +1590,12 @@ sap.ui.define([
 		oCore.applyChanges();
 
 		// In HeaderMode, when the subheader available, the number of header lines should be 4
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 4, "The header has 4 lines and subheader has 1 line");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 4, "The header has 4 lines and subheader has 1 line");
 
 		// In HeaderMode, when the subheader unavailable, the number of header lines should be 5
 		this.oGenericTile.setSubheader("");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 5, "The header has 5 lines when subheader unavailable");
 	});
 
 	QUnit.test("HeaderMode - Check if the TileContent's content visibility is changed", function(assert) {
@@ -2568,7 +2570,7 @@ sap.ui.define([
 			};
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
@@ -2580,7 +2582,7 @@ sap.ui.define([
 
 				function fnThemeApplied(oEvent) {
 					oCore.detachThemeChanged(fnThemeApplied);
-					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 						if (typeof fnCallback === "function") {
 							fnCallback.bind(this)();
 							fnCallback = undefined;
@@ -3017,7 +3019,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		var check = document.getElementById("tile-cont-two-by-half-footer-text");
 		if (check != null) {
-			assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
+			assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines when footer is available");
 		}
 	});
 
@@ -3074,7 +3076,7 @@ sap.ui.define([
 		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
 		this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 1, "The header has 1 lines");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 lines");
 	});
 
 
@@ -3093,7 +3095,7 @@ sap.ui.define([
 		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
 		this.oGenericTile.setSubheader("this is a very long subheader which should exceed two lines so we can test it");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
 	});
 
 	QUnit.test("Content Proritisation -  Content rendered in TwoByHalf", function(assert) {
@@ -3247,7 +3249,7 @@ sap.ui.define([
 		this.oGenericTile.setSubheader("Subtitle Launch Tile");
 		this.oGenericTile.setHeader("this is a very long header which should exceed two lines so we can test it");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 2, "The header has 2 lines");
 	});
 
 	QUnit.test("Header has max one lines if content aggregation exists for 4*1 tile", function(assert) {
@@ -3271,7 +3273,7 @@ sap.ui.define([
 		this.oGenericTile.addTileContent(tileContent);
 		this.oGenericTile.setHeader("this is a very long header which should exceed one line so we can test it");
 		oCore.applyChanges();
-		assert.equal(oCore.byId("generic-tile-title").getMaxLines(), 1, "The header has 1 line");
+		assert.equal(Element.getElementById("generic-tile-title").getMaxLines(), 1, "The header has 1 line");
 	});
 
 	QUnit.test("Check the padding classes of the 2*1 tile", function(assert) {
@@ -4922,12 +4924,12 @@ sap.ui.define([
 				})
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
-			this.sStartTheme = oCore.getConfiguration().getTheme();
+			this.sStartTheme = Theming.getTheme();
 			this.sRequiredTheme = null;
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
@@ -4939,7 +4941,7 @@ sap.ui.define([
 
 				function fnThemeApplied(oEvent) {
 					oCore.detachThemeChanged(fnThemeApplied);
-					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 						if (typeof fnCallback === "function") {
 							fnCallback.bind(this)();
 							fnCallback = undefined;

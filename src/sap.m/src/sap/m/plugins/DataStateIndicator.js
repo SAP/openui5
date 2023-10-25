@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObserver"],
-	function(PluginBase, Core, ManagedObjectObserver) {
+sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/Lib", "sap/ui/core/Messaging"],
+	function(PluginBase, Core, ManagedObjectObserver, Library, Messaging) {
 	"use strict";
 
 	/**
@@ -323,7 +323,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			}
 
 			if (bUpdateMessageModel) {
-				Core.getMessageManager().getMessageModel().checkUpdate(true, true);
+				Messaging.getMessageModel().checkUpdate(true, true);
 			}
 		} else {
 			this.showMessage("");
@@ -476,7 +476,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 			return oResourceBundle.getText(sBundleText);
 		}
 
-		return Core.getLibraryResourceBundle("sap.m").getText(sBundleText);
+		return Library.getResourceBundleFor("sap.m").getText(sBundleText);
 	};
 
 	/**

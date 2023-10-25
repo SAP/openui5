@@ -12,12 +12,13 @@ sap.ui.define([
 	"sap/m/Menu",
 	"sap/ui/core/Core",
 	"sap/base/Log",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/MenuItem",
 	"sap/ui/core/library"
 ],
-function (
+function(
 	SearchManager,
 	ShellBar,
 	Factory,
@@ -29,6 +30,7 @@ function (
 	Menu,
 	Core,
 	Log,
+	Library,
 	jQuery,
 	JSONModel,
 	MenuItem,
@@ -636,7 +638,7 @@ function (
 				showMenuButton: true
 			});
 			this.oSB.setProfile(new Avatar({initials: "UI"}));
-			this.oRb = Core.getLibraryResourceBundle("sap.f");
+			this.oRb = Library.getResourceBundleFor("sap.f");
 			this.oSB.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},

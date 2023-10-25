@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/dnd/DragDropInfo"
 ], function(
+	Element,
 	TableQUnitUtils,
 	qutils,
 	TableUtils,

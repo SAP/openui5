@@ -115,6 +115,7 @@ sap.ui.define([
 				assert.strictEqual(oSnackCard.getCombinedParameters().test, this.oCard.getCombinedParameters().test, "Parameters are transferred between cards");
 				assert.strictEqual(oSnackCard.getWidth(), "320px", "The width is transferred between cards properly");
 				assert.strictEqual(oSnackCard.getCardHeader().getTitle(), "Donna", "Data is transferred between cards properly");
+				assert.strictEqual(oSnackCard.getCardHeader().getProperty("headingLevel"), "1", "When card is in a dialog aria-level should be set to 1");
 
 				const oSnackCardActionStrip = oSnackCard.getAggregation("_footer").getActionsStrip(),
 					aSnackCardButtons = oSnackCardActionStrip._getToolbar().getContent();

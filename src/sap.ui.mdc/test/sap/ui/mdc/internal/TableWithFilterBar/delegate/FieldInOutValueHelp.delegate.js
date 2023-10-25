@@ -6,14 +6,14 @@
 
 sap.ui.define([
 	"./ValueHelp.delegate",
+	"sap/ui/core/Element",
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName',
-	'sap/ui/model/ParseException',
-	'sap/ui/core/Core'
+	'sap/ui/model/ParseException'
 ], function(
-	BaseValueHelpDelegate, StateUtil, Condition, ConditionValidated, OperatorName, ParseException, Core
+	BaseValueHelpDelegate, Element, StateUtil, Condition, ConditionValidated, OperatorName, ParseException
 ) {
 	"use strict";
 
@@ -34,7 +34,7 @@ sap.ui.define([
 				if (sContentId === oInParameter.contentId) {
 					if (oInParameter.sourceFieldId) {
 						const sSourceFieldId = oInParameter.sourceFieldId;
-						const oSourceField = Core.byId(sSourceFieldId);
+						const oSourceField = Element.getElementById(sSourceFieldId);
 
 						const aConditions = oSourceField.getConditions();
 						if (aConditions  && aConditions.length) {
@@ -109,14 +109,14 @@ sap.ui.define([
 				if (oOutParameter.targetFieldId) {
 					// update field by Id
 					const sTargetFieldId = oOutParameter.targetFieldId;
-					const oTargetField = Core.byId(sTargetFieldId);
+					const oTargetField = Element.getElementById(sTargetFieldId);
 					if (oTargetField) {
 						if (bClear) {
 							oTargetField.setValue();
 							oTargetField.setAdditionalValue();
 						} else if ((bAlways || !oTargetField.getValue())) {
 							const sOutValueHelpId = oTargetField && oTargetField.getValueHelp();
-							const oOutValueHelp = sOutValueHelpId && Core.byId(sOutValueHelpId);
+							const oOutValueHelp = sOutValueHelpId && Element.getElementById(sOutValueHelpId);
 
 							if (oOutValueHelp) {
 								const oConfig = {

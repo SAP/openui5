@@ -5,9 +5,12 @@
 // Provides control sap.m.ObjectHeader.
 sap.ui.define([
 	'./library',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/util/ResponsivePaddingsEnablement',
 	'sap/ui/Device',
 	'sap/m/Text',
@@ -16,23 +19,24 @@ sap.ui.define([
 	'./ObjectMarker',
 	'./ObjectNumber',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"sap/m/ImageHelper"
 ],
 	function(
 		library,
+		Localization,
 		Control,
 		IconPool,
+		Library,
 		coreLibrary,
+		RenderManager,
 		ResponsivePaddingsEnablement,
 		Device,
 		Text,
 		KeyCodes,
 		ObjectHeaderRenderer,
-    ObjectMarker,
-    ObjectNumber,
+		ObjectMarker,
+		ObjectNumber,
 		jQuery,
-		Configuration,
 		ImageHelper
 	) {
 		"use strict";
@@ -433,7 +437,7 @@ sap.ui.define([
 		 * @returns {Object} the resource bundle object
 		 */
 		ObjectHeader._getResourceBundle = function () {
-			return sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			return Library.getResourceBundleFor("sap.m");
 		};
 
 		ResponsivePaddingsEnablement.call(ObjectHeader.prototype, {
@@ -859,7 +863,7 @@ sap.ui.define([
 		 * @private
 		 */
 		ObjectHeader.prototype._rerenderTitle = function(nCutLen) {
-			var oRm = sap.ui.getCore().createRenderManager();
+			var oRm = new RenderManager().getInterface();
 			this.getRenderer()._rerenderTitle(oRm, this, nCutLen);
 			oRm.destroy();
 		};
@@ -870,7 +874,7 @@ sap.ui.define([
 		 * @private
 		 */
 		ObjectHeader.prototype._rerenderStates = function() {
-			var oRm = sap.ui.getCore().createRenderManager();
+			var oRm = new RenderManager().getInterface();
 			this.getRenderer()._rerenderResponsiveStates(oRm, this);
 			oRm.destroy();
 		};
@@ -961,7 +965,7 @@ sap.ui.define([
 
 		ObjectHeader.prototype.onAfterRendering = function() {
 			var oObjectNumber = this.getAggregation("_objectNumber");
-			var bPageRTL = Configuration.getRTL();
+			var bPageRTL = Localization.getRTL();
 			var $titleArrow = this.$("titleArrow");
 
 			$titleArrow.attr("role", "button");
@@ -1016,7 +1020,7 @@ sap.ui.define([
 		ObjectHeader.prototype._adjustNumberDiv = function() {
 			var sId = this.getId();
 			var oObjectNumber = this.getAggregation("_objectNumber");
-			var bPageRTL = Configuration.getRTL();
+			var bPageRTL = Localization.getRTL();
 
 			if (oObjectNumber && oObjectNumber.getNumber()) {
 				var $numberDiv = jQuery(document.getElementById(sId + "-number"));

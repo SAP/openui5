@@ -13,9 +13,9 @@ sap.ui.define([
 	"sap/m/Switch",
 	"sap/m/Text",
 	"sap/m/TextArea",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
 	"sap/ui/core/Item",
+	"sap/ui/core/Theming",
 	"sap/ui/core/Title",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/model/json/JSONModel",
@@ -37,9 +37,9 @@ sap.ui.define([
 	Switch,
 	MText,
 	TextArea,
-	Configuration,
 	oCore,
 	Item,
+	Theming,
 	Title,
 	SimpleForm,
 	JSONModel,
@@ -356,7 +356,7 @@ sap.ui.define([
 	var bBtnEnabled = (window.innerWidth < 375) ? false : true;
 	var oSizeButton = new Button("size-button", {
 		press : function(oEvent) {
-			var sTheme = Configuration.getTheme();
+			var sTheme = Theming.getTheme();
 			oCore.applyTheme(sTheme);
 			var url = window.location.href;
 			//Popup dimensions issue in chrome while using noopener: Chromium bug id=1011688

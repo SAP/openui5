@@ -1,6 +1,8 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
 	"sap/ui/unified/Currency",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/VBox",
@@ -8,14 +10,14 @@ sap.ui.define([
 	"sap/m/Panel",
 	"sap/m/library",
 	"sap/ui/thirdparty/jquery"
-], function(Currency, JSONModel, VBox, Core, Panel, mobileLibrary, jQuery) {
+], function(Localization, Library, Currency, JSONModel, VBox, Core, Panel, mobileLibrary, jQuery) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = Core.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Control API", {
 		beforeEach : function () {
@@ -483,10 +485,10 @@ sap.ui.define([
 	QUnit.test("Currency value dir in RTL", function(assert) {
 		var dirText,
 			oCurrency = new Currency({id: "cDir", value: 100, currency: "EUR"}),
-			bRTL = Core.getConfiguration().getRTL();
+			bRTL = Localization.getRTL();
 
 		// Arrange
-		Core.getConfiguration().setRTL(true);
+		Localization.setRTL(true);
 
 		oCurrency.placeAt("qunit-fixture");
 		Core.applyChanges();
@@ -495,7 +497,7 @@ sap.ui.define([
 		assert.strictEqual(dirText, "ltr", "Text direction should be set to ltr in RTL mode");
 
 		// Clean up
-		Core.getConfiguration().setRTL(bRTL);
+		Localization.setRTL(bRTL);
 		oCurrency.destroy();
 	});
 

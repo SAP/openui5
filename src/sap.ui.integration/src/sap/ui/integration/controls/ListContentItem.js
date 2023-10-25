@@ -3,6 +3,7 @@
 */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"./ListContentItemRenderer",
 	"sap/ui/integration/controls/ObjectStatus",
@@ -11,10 +12,10 @@ sap.ui.define([
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
 	"sap/m/ListItemBase",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/integration/util/BindingResolver"
 ], function (
+	Library,
 	library,
 	ListContentItemRenderer,
 	ObjectStatus,
@@ -23,7 +24,6 @@ sap.ui.define([
 	AvatarShape,
 	AvatarSize,
 	ListItemBase,
-	Core,
 	coreLibrary,
 	BindingResolver
 ) {
@@ -252,7 +252,7 @@ sap.ui.define([
 			sDescription = this.getDescription(),
 			aOutput = [],
 			sInfo = this.getInfo(),
-			oMBundle = Core.getLibraryResourceBundle("sap.m");
+			oMBundle = Library.getResourceBundleFor("sap.m");
 
 		if (sTitle) {
 			aOutput.push(sTitle);

@@ -4,20 +4,20 @@
 
 // Provides control sap.f.ProductSwitch
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/f/GridContainer",
 	"sap/f/GridContainerSettings",
 	"sap/f/ProductSwitchItem",
-	"sap/f/ProductSwitchRenderer"
+	"sap/f/ProductSwitchRenderer",
+	"sap/ui/core/Element"
 ],
 	function (
-		Core,
 		Control,
 		GridContainer,
 		GridContainerSettings,
 		ProductSwitchItem,
-		ProductSwitchRenderer
+		ProductSwitchRenderer,
+		Element
 	) {
 		"use strict";
 		/**
@@ -175,7 +175,7 @@ sap.ui.define([
 
 		ProductSwitch.prototype.setSelectedItem = function (vItem) {
 			if (typeof vItem === "string") {
-				vItem = Core.byId(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			if (!(vItem instanceof ProductSwitchItem) && vItem !== null) {

@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectIdentifier",
@@ -19,6 +21,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
+	Element,
+	Library,
 	qutils,
 	createAndAppendDiv,
 	ObjectIdentifier,
@@ -47,7 +51,7 @@ sap.ui.define([
 	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
 
 	// shortcut for library resource bundle
-	var oRb = oCore.getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	createAndAppendDiv("content");
 
@@ -758,7 +762,7 @@ sap.ui.define([
 
 		oTable.removeItem(0);
 
-		var oItemTemplate = oCore.byId('item');
+		var oItemTemplate = Element.getElementById('item');
 		oItemTemplate.getCells()[0].bindProperty('title', {
 			path:'title'
 		});

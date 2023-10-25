@@ -3,11 +3,13 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/AddIFrame",
 	"sap/ui/fl/changeHandler/common/getTargetAggregationIndex",
 	"sap/ui/fl/changeHandler/common/createIFrame"
-], function (
+], function(
+	Library,
 	JsControlTreeModifier,
 	BaseAddIFrame,
 	getTargetAggregationIndex,
@@ -50,7 +52,7 @@ sap.ui.define([
 		var oComponent = mPropertyBag.appComponent;
 		var oBaseSelector = oContent.selector;
 		// keep default title for legacy changes (without subsequent rename)
-		var sDefaultTitle = sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
+		var sDefaultTitle = Library.getResourceBundleFor("sap.uxap").getText("SECTION_TITLE_FOR_IFRAME");
 
 		var oOPSection;
 		var oOPSubSection;

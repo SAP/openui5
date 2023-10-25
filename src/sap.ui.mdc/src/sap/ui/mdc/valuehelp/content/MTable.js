@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/valuehelp/base/FilterableListContent',
 	'sap/ui/mdc/condition/FilterConverter',
 	'sap/ui/mdc/util/loadModules',
@@ -17,6 +18,7 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/ui/core/Element'
 ], function(
+	Library,
 	FilterableListContent,
 	FilterConverter,
 	loadModules,
@@ -85,8 +87,8 @@ sap.ui.define([
 		});
 
 		this._addPromise("listBinding");
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		this._oMResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
+		this._oMResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		this._iNavigateIndex = -1; // initially nothing is navigated
 		this._oFirstItemResult = {};
@@ -788,7 +790,7 @@ sap.ui.define([
 
 	function _getSAPMResourceBundle () {
 		if (!this._oResourceBundleM) {
-			this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m"); // sap.m is always loaded
+			this._oResourceBundleM = Library.getResourceBundleFor("sap.m"); // sap.m is always loaded
 		}
 		return this._oResourceBundleM;
 	}

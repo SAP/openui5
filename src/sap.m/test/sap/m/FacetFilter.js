@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/m/App",
 	"sap/m/Page",
+	"sap/ui/core/Element",
 	"sap/m/FacetFilterList",
 	"sap/m/FacetFilterItem",
 	"sap/ui/model/type/Date",
@@ -26,6 +27,7 @@ sap.ui.define([
 ], function(
 	App,
 	Page,
+	Element,
 	FacetFilterList,
 	FacetFilterItem,
 	TypeDate,
@@ -369,7 +371,7 @@ sap.ui.define([
 			text: "Active",
 			selected: oFF.getLists()[0].getActive(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				oList.setActive(oEvent.getParameter("selected"));
 			}
 		});
@@ -378,7 +380,7 @@ sap.ui.define([
 			text: "Retain List Sequence",
 			selected: oFF.getLists()[0].getRetainListSequence(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				oList.setRetainListSequence(oEvent.getParameter("selected"));
 			}
 		});
@@ -387,7 +389,7 @@ sap.ui.define([
 			text: "Show Remove Facet Icon",
 			selected: oFF.getLists()[0].getShowRemoveFacetIcon(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				oList.setShowRemoveFacetIcon(oEvent.getParameter("selected"));
 			}
 		});
@@ -395,22 +397,27 @@ sap.ui.define([
 			text: "Growing",
 			selected: oFF.getLists()[0].getGrowing(),
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				oList.setGrowing(oEvent.getParameter("selected"));
 			}
 		});
 		var oListSelect = new Select({
 			change: function(oEvent) {
+
 				var oItem = oEvent.getParameter("selectedItem");
-				var oList = sap.ui.getCore().byId(oItem.getKey());
+				var oList = Element.getElementById(oItem.getKey());
 				oSequence.setValue(oList.getSequence());
-				oRadioMultiSelect.setSelected(true);
+				if (oList.getMultiSelect()) {
+					oRadioMultiSelect.setSelected(true);
+				} else {
+					oRadioSingleSelect.setSelected(true);
+				}
 				oAllCount.setValue(oList.getAllCount());
 				oActiveCheckbox.setSelected(oList.getActive());
 				oShowRemoveFacetIconCheckBox.setSelected(oList.getShowRemoveFacetIcon());
 				oGrowingCheckbox.setSelected(oList.getGrowing());
 				oRetainListSequenceCheckBox.setSelected(oList.getRetainListSequence());
-			}
+				}
 
 		});
 		for (var i = 0; i < oFF.getLists().length; i++) {
@@ -425,7 +432,9 @@ sap.ui.define([
 			selected: false,
 			text: "Single Select",
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
+				oList.setMultiSelect(!oEvent.getParameter("selected"));
 			}
 		});
 
@@ -435,7 +444,9 @@ sap.ui.define([
 			selected: true,
 			text: "Multi Select",
 			select: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
+				oList.setMultiSelect(oEvent.getParameter("selected"));
 			}
 		});
 
@@ -443,13 +454,13 @@ sap.ui.define([
 			type: InputType.Number,
 			width: "3rem"
 		});
-		oSequence.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getSequence());
+		oSequence.setValue(Element.getElementById(oListSelect.getSelectedKey()).getSequence());
 
 		var oAllCount = new Input({
 			type: InputType.Number,
 			width: "3rem"
 		});
-		oAllCount.setValue(sap.ui.getCore().byId(oListSelect.getSelectedKey()).getAllCount());
+		oAllCount.setValue(Element.getElementById(oListSelect.getSelectedKey()).getAllCount());
 
 		var oListLabel = new Label({text: "List:",tooltip:"List", labelFor: oListSelect});
 		var oSequenceLabel = new Label({text: "Sequence: ",tooltip: "Sequence", labelFor: oSequence});
@@ -457,7 +468,7 @@ sap.ui.define([
 		var oApplyButton = new Button({
 							text: "Apply",
 							press: function() {
-								var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+								var oList = Element.getElementById(oListSelect.getSelectedKey());
 								oList.setSequence(parseInt(oSequence.getValue()));
 								oList.setAllCount(parseInt(oAllCount.getValue()));
 								oFF._getSequencedLists(); // hack...force sequencing now so we can update the button text before the FacetFilter is rendered
@@ -467,14 +478,14 @@ sap.ui.define([
 		var oSaveSelectionsButton = new Button({
 			text: "Save Selections",
 			press: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				sessionStorage.setItem(oList.getKey(), JSON.stringify(oList.getSelectedKeys()));
 			}
 		});
 		var oClearSavedSelectionsButton = new Button({
 			text: "Clear Saved Selections",
 			press: function(oEvent) {
-				var oList = sap.ui.getCore().byId(oListSelect.getSelectedKey());
+				var oList = Element.getElementById(oListSelect.getSelectedKey());
 				sessionStorage.removeItem(oList.getKey());
 			}
 		});

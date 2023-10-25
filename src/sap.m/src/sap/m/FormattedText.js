@@ -5,6 +5,7 @@
 // Provides control sap.m.FormattedText.
 sap.ui.define([
 	'./library',
+	"sap/ui/core/Element",
 	'sap/ui/core/library',
 	'sap/ui/core/Control',
 	'./FormattedTextAnchorGenerator',
@@ -12,11 +13,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/security/URLListValidator",
 	"sap/base/security/sanitizeHTML",
-	"sap/ui/util/openWindow",
-	'sap/ui/core/Core'
+	"sap/ui/util/openWindow"
 ],
 function(
 	library,
+	Element,
 	coreLibrary,
 	Control,
 	FormattedTextAnchorGenerator,
@@ -24,8 +25,7 @@ function(
 	Log,
 	URLListValidator,
 	sanitizeHTML0,
-	openWindow,
-	Core
+	openWindow
 	) {
 		"use strict";
 
@@ -327,7 +327,7 @@ function(
 				return;
 			}
 			oEvent.preventDefault();
-			var oLink = Core.byId(oEvent.currentTarget.id);
+			var oLink = Element.getElementById(oEvent.currentTarget.id);
 			if (oLink && oLink.isA('sap.m.Link') && (oLink.getAccessibleRole() === library.LinkAccessibleRole.Button || !oLink.getHref())) {
 				return;
 			}

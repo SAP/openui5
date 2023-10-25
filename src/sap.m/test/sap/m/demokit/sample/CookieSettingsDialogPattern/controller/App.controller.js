@@ -1,11 +1,11 @@
 sap.ui.define([
-	'sap/ui/core/Core',
+	"sap/ui/core/Element",
 	'sap/ui/core/Fragment',
 	'sap/ui/core/mvc/Controller',
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/resource/ResourceModel"
 ], function(
-	Core,
+	Element,
 	Fragment,
 	Controller,
 	JSONModel,
@@ -68,7 +68,7 @@ sap.ui.define([
 			}, this);
 
 			oDialog.attachAfterOpen(function() {
-				Core.byId("actionSetPreferences").focus();
+				Element.getElementById("actionSetPreferences").focus();
 			});
 
 			return oDialog;
@@ -96,7 +96,7 @@ sap.ui.define([
 			this._oModel.setProperty("/showCookieDetails", true);
 			this._oCookieSettingsDialog.addStyleClass("cookiesDetailedView");
 
-			this._focusButton(Core.byId("actionSavePreferences"));
+			this._focusButton(Element.getElementById("actionSavePreferences"));
 		},
 
 		onCancelPress: function() {
@@ -115,7 +115,7 @@ sap.ui.define([
 			this._oModel.setProperty("/showCookieDetails", false);
 			this._oCookieSettingsDialog.removeStyleClass("cookiesDetailedView");
 
-			this._focusButton(Core.byId("actionSetPreferences"));
+			this._focusButton(Element.getElementById("actionSetPreferences"));
 		},
 
 		onCancelEditCookies: function() {

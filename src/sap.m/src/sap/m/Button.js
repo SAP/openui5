@@ -5,8 +5,8 @@
 // Provides control sap.m.Button.
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/ShortcutHintsMixin",
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/core/AccessKeysEnablement",
@@ -23,8 +23,8 @@ sap.ui.define([
 	"sap/m/Image"
 ], function(
 	library,
-	Core,
 	Control,
+	Library,
 	ShortcutHintsMixin,
 	EnabledPropagator,
 	AccessKeysEnablement,
@@ -360,7 +360,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Button.prototype._updateBadgeInvisibleText = function(vValue) {
-		var oRb = Core.getLibraryResourceBundle("sap.m"),
+		var oRb = Library.getResourceBundleFor("sap.m"),
 			sInvisibleTextValue,
 			iPlusPos;
 
@@ -938,7 +938,7 @@ sap.ui.define([
 
 		return {
 			role: sAccessibleRole === ButtonAccessibleRole.Default ? "button" : sAccessibleRole.toLowerCase(),
-			type: Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
+			type: Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"),
 			description: sDesc,
 			focusable: this.getEnabled(),
 			enabled: this.getEnabled()

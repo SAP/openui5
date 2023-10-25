@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/support/supportRules/ui/controllers/BaseController",
 	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/ui/models/PresetsUtils",
@@ -15,7 +16,8 @@ sap.ui.define([
 	"sap/base/util/deepExtend",
 	"sap/ui/core/library",
 	"sap/ui/core/date/UI5Date"
-], function (
+], function(
+	Element,
 	BaseController,
 	SelectionUtils,
 	PresetsUtils,
@@ -194,7 +196,7 @@ sap.ui.define([
 		// deleting item fires tap event
 		// for the next item in the list which needs to be suppressed
 		if (iDeletedPresetIndex !== aPresets.length) {
-			var oNextListItem = sap.ui.getCore().byId(sDeletedItemId),
+			var oNextListItem = Element.getElementById(sDeletedItemId),
 				fnOntap = oNextListItem.ontap;
 
 			oNextListItem.ontap = function() {

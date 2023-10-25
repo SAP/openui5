@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/Token",
 	"sap/m/Toolbar",
 	"sap/m/ToolbarSpacer",
+	"sap/ui/core/Theming",
 	"sap/ui/model/json/JSONModel"
-], function(App, CheckBox, Column, ColumnListItem, Label, MultiInput, Page, Token, Toolbar, ToolbarSpacer, JSONModel) {
+], function(App, CheckBox, Column, ColumnListItem, Label, MultiInput, Page, Token, Toolbar, ToolbarSpacer, Theming, JSONModel) {
 	"use strict";
 
 	//Default sample
@@ -251,7 +252,7 @@ sap.ui.define([
 		selected : false,
 		select : function() {
 			document.body.classList.toggle("sapUiSizeCompact");
-			sap.ui.getCore().notifyContentDensityChanged();
+			Theming.notifyContentDensityChanged();
 		}
 	});
 

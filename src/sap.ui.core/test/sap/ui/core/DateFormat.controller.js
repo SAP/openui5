@@ -1,15 +1,15 @@
 sap.ui.define([
 	"./FormatHelper",
+	"sap/base/i18n/Formatting",
 	"sap/base/util/deepEqual",
 	"sap/base/util/JSTokenizer",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel"
-], function (FormatHelper, deepEqual, JSTokenizer, Configuration, Locale, CalendarWeekNumbering,
+], function (FormatHelper, Formatting, deepEqual, JSTokenizer, Locale, CalendarWeekNumbering,
 		UI5Date, DateFormat, Controller, JSONModel
 ) {
 	"use strict";
@@ -121,7 +121,7 @@ sap.ui.define([
 					}
 				};
 
-			var oCurrentLocale = Configuration.getFormatSettings().getFormatLocale();
+			var oCurrentLocale = new Locale(Formatting.getLanguageTag());
 			var sLocale = oCurrentLocale.getLanguage();
 			if (oCurrentLocale.getRegion()) {
 				sLocale += "-" + oCurrentLocale.getRegion();

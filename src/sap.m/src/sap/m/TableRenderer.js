@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/core/InvisibleText", "sap/ui/core/Core", "sap/ui/Device", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/ui/core/Lib"],
-	function(Localization, Renderer, InvisibleText, Core, Device, library, ListBaseRenderer, ColumnListItemRenderer, Library) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/core/InvisibleText", "sap/ui/Device", "./library", "./ListBaseRenderer", "./ColumnListItemRenderer", "sap/ui/core/Lib"],
+	function(Localization, Renderer, InvisibleText, Device, library, ListBaseRenderer, ColumnListItemRenderer, Library) {
 	"use strict";
 
 
@@ -67,7 +67,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 					ColumnListItemRenderer.makeFocusable(rm);
 				}
 				if (sLabelKey) {
-					rm.attr("aria-label", Core.getLibraryResourceBundle("sap.m").getText(sLabelKey));
+					rm.attr("aria-label", Library.getResourceBundleFor("sap.m").getText(sLabelKey));
 				}
 				if (sType == "Head") {
 					rm.class("sapMTableTH");
@@ -265,7 +265,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "sap/ui/cor
 				rm.class("sapMListTblHeaderNone");
 				rm.attr("role", sType == "Head" ? "columnheader" : "gridcell");
 				rm.attr("aria-colindex", aAriaOwns.push(sPopinColumnHeaderId));
-				rm.attr("aria-label", Core.getLibraryResourceBundle("sap.m").getText("TABLE_COLUMNHEADER_POPIN"));
+				rm.attr("aria-label", Library.getResourceBundleFor("sap.m").getText("TABLE_COLUMNHEADER_POPIN"));
 				rm.openEnd();
 				rm.close("div");
 			}

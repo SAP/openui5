@@ -5,17 +5,17 @@
 sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/base/DataType",
-	"sap/ui/core/Core",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Lib"
 ], function(
 	BaseObject,
 	DataType,
-	Core,
 	merge,
 	isPlainObject,
-	Log
+	Log,
+	Lib
 ) {
 	"use strict";
 
@@ -269,7 +269,7 @@ sap.ui.define([
 	}
 
 	function reportInvalidProperty(sMessage, oAdditionalInfo) {
-		const mLoadedLibraries = Core.getLoadedLibraries();
+		const mLoadedLibraries = Lib.all();
 
 		// Enable strict validation if
 		// 1. it is not disabled explicitly

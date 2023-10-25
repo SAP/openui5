@@ -4,6 +4,7 @@
 
 // Provides control sap.ui.layout.DynamicSideContent.
 sap.ui.define([
+	"sap/ui/core/RenderManager",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/core/Control',
 	'sap/ui/core/ResizeHandler',
@@ -11,7 +12,7 @@ sap.ui.define([
 	'sap/ui/layout/library',
 	'./DynamicSideContentRenderer'
 ],
-	function(jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
+	function(RenderManager, jQuery, Control, ResizeHandler, ScrollEnablement, library, DynamicSideContentRenderer) {
 		"use strict";
 
 		// shortcut for sap.ui.layout.SideContentPosition
@@ -537,7 +538,7 @@ sap.ui.define([
 		 */
 		DynamicSideContent.prototype._rerenderControl = function (aControls, $domElement) {
 			if (this.getDomRef()) {
-				var oRm = sap.ui.getCore().createRenderManager();
+				var oRm = new RenderManager().getInterface();
 				this.getRenderer().renderControls(oRm, aControls);
 				oRm.flush($domElement[0]);
 				oRm.destroy();

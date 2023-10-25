@@ -4,13 +4,13 @@
 
 // Provides class sap.ui.core.format.FileSizeFormat
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/base/Object',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
-	'sap/ui/core/format/NumberFormat',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/format/NumberFormat'
 ],
-	function(BaseObject, Locale, LocaleData, NumberFormat, Configuration) {
+	function(Formatting, BaseObject, Locale, LocaleData, NumberFormat) {
 	"use strict";
 
 
@@ -106,7 +106,7 @@ sap.ui.define([
 			oFormatOptions = undefined;
 		}
 		if (!oLocale) {
-			oLocale = Configuration.getFormatSettings().getFormatLocale();
+			oLocale = new Locale(Formatting.getLanguageTag());
 		}
 		oFormat.oLocale = oLocale;
 		oFormat.oLocaleData = LocaleData.getInstance(oLocale);

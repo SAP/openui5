@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/valuehelp/base/Content',
 	'sap/ui/mdc/util/loadModules',
 	'sap/ui/mdc/enums/ValueHelpSelectionType',
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/util/Common'
 ], function(
+	Library,
 	Content,
 	loadModules,
 	ValueHelpSelectionType,
@@ -82,7 +84,7 @@ sap.ui.define([
 
 	Conditions.prototype.init = function () {
 		Content.prototype.init.apply(this, arguments);
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 	};
 
 	Conditions.prototype.exit = function () {

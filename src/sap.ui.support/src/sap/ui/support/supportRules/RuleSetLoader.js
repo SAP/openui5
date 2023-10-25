@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
+	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/CommunicationBus",
@@ -16,11 +17,12 @@ sap.ui.define([
 	"sap/ui/support/supportRules/util/EvalUtils",
 	"sap/ui/support/supportRules/util/Utils",
 	"sap/ui/thirdparty/jquery"
-], function (
+], function(
 	Log,
 	extend,
 	ObjectPath,
 	VersionInfo,
+	Lib,
 	Supportability,
 	RuleSet,
 	CommunicationBus,
@@ -30,7 +32,7 @@ sap.ui.define([
 	EvalUtils,
 	Utils,
 	jQuery
-	) {
+) {
 		"use strict";
 
 		// can be put in a util container
@@ -84,7 +86,7 @@ sap.ui.define([
 		 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
 		 */
 		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk, mLibraries) {
-			var mLoadedLibraries = mLibraries || sap.ui.getCore().getLoadedLibraries(),
+			var mLoadedLibraries = mLibraries || Lib.all(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
 
 				// VersionInfo.load() returns the web application's version.

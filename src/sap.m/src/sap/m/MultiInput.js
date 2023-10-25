@@ -13,6 +13,7 @@ sap.ui.define([
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/base/ManagedObjectObserver',
+	"sap/ui/core/Lib",
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
@@ -34,6 +35,7 @@ function(
 	ManagedObject,
 	ManagedObjectMetadata,
 	ManagedObjectObserver,
+	Library,
 	ResizeHandler,
 	IconPool,
 	Device,
@@ -190,7 +192,7 @@ function(
 
 	EnabledPropagator.apply(MultiInput.prototype, [true]);
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	var oRb = Library.getResourceBundleFor("sap.m");
 
 	MultiInput.prototype.init = function () {
 		var that = this;
@@ -976,7 +978,7 @@ function(
 
 		if (oPopup && oPopup.isA("sap.m.Popover")) {
 			if (oEvent.relatedControlId) {
-				oRelatedControlDomRef = sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef();
+				oRelatedControlDomRef = Element.getElementById(oEvent.relatedControlId).getFocusDomRef();
 				bNewFocusIsInSuggestionPopup = containsOrEquals(oPopup.getFocusDomRef(), oRelatedControlDomRef);
 				bNewFocusIsInTokenizer = containsOrEquals(oTokenizer.getFocusDomRef(), oRelatedControlDomRef);
 
@@ -1382,7 +1384,7 @@ function(
 			return sDescriptionText;
 		} else {
 			// "Empty" or the description text should be set as acc description in case there are no tokens and no value.
-			return sDescriptionText ? sDescriptionText : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_EMPTY");
+			return sDescriptionText ? sDescriptionText : Library.getResourceBundleFor("sap.m").getText("INPUTBASE_VALUE_EMPTY");
 		}
 	};
 

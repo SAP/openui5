@@ -1,13 +1,6 @@
 /*global QUnit*/
-sap.ui.define(["sap/ui/core/Core",
-               "sap/ui/core/Configuration",
-               "sap/ui/core/mvc/XMLView",
-			   "sap/m/OverflowToolbar",
-			   "sap/m/HBox",
-               "sap/uxap/ObjectPageLayout",
-			   "sap/uxap/ObjectPageSection",
-			   "sap/uxap/ObjectPageSubSection"],
-function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
+sap.ui.define(["sap/ui/core/ControlBehavior", "sap/ui/core/Core", "sap/ui/core/Configuration", "sap/ui/core/mvc/XMLView", "sap/m/OverflowToolbar", "sap/m/HBox", "sap/uxap/ObjectPageLayout", "sap/uxap/ObjectPageSection", "sap/uxap/ObjectPageSubSection"],
+function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout, ObjectPageSection, ObjectPageSubSection) {
 	"use strict";
 
 	QUnit.module("ObjectPage - Rendering - Footer Visibility", {
@@ -115,10 +108,10 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 	QUnit.test("Footer is toggled when animations disabled", function (assert) {
 		// Arrange
 		var $footerWrapper = this.oObjectPage._$footerWrapper,
-			sOriginalMode = Core.getConfiguration().getAnimationMode();
+			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.none);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);
@@ -131,16 +124,16 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
 
 		// Clean up
-		Core.getConfiguration().setAnimationMode(sOriginalMode);
+		ControlBehavior.setAnimationMode(sOriginalMode);
 	});
 
 	QUnit.test("Footer is toggled when animations are set to 'minimal'", function (assert) {
 		// Arrange
 		var $footerWrapper = this.oObjectPage._$footerWrapper,
-			sOriginalMode = Core.getConfiguration().getAnimationMode();
+			sOriginalMode = ControlBehavior.getAnimationMode();
 
 		//setup
-		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.minimal);
+		ControlBehavior.setAnimationMode(Configuration.AnimationMode.minimal);
 
 		// Act: toggle to 'true'
 		this.oObjectPage.setShowFooter(true);
@@ -155,7 +148,7 @@ function (Core, Configuration, XMLView, OverflowToolbar, HBox, ObjectPageLayout,
 		assert.ok($footerWrapper.hasClass("sapUiHidden"), "footer is hidden");
 
 		// Clean up
-		Core.getConfiguration().setAnimationMode(sOriginalMode);
+		ControlBehavior.setAnimationMode(sOriginalMode);
 	});
 
 	QUnit.test("ObjectPage floating footer animation is forced to end in case of a sudden invalidate", function (assert) {

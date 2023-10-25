@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
-	function(Configuration, BaseObject) {
+sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", "sap/ui/core/Locale", "sap/ui/base/Object"],
+	function(Localization, Library, Locale, BaseObject) {
 	"use strict";
 
 
@@ -24,10 +24,10 @@ sap.ui.define(["sap/ui/core/Configuration", "sap/ui/base/Object"],
 	 * @param {sap.ui.unified.calendar.Header} oHead an object representation of the control that should be rendered
 	 */
 	HeaderRenderer.render = function(oRm, oHead){
-		var sLanguage = Configuration.getLocale().getLanguage();
+		var sLanguage = new Locale(Localization.getLanguageTag()).getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		var oRB = Library.getResourceBundleFor("sap.ui.unified");
 		var sLabelNext = oRB.getText("CALENDAR_BTN_NEXT");
 		var sLabelPrev = oRB.getText("CALENDAR_BTN_PREV");
 		var sLabelToday = oRB.getText("CALENDAR_BTN_TODAY");

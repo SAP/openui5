@@ -3,8 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/editor/Editor",
-	"sap/ui/core/Core",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/integration/editor/Merger",
 	"sap/ui/model/json/JSONModel",
@@ -12,9 +13,10 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/library",
 	"sap/ui/integration/designtime/editor/CardPreview"
-], function (
+], function(
+	Element,
+	Library,
 	Editor,
-	Core,
 	Card,
 	Merger,
 	JSONModel,
@@ -25,7 +27,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	var CardDataMode = library.CardDataMode;
 	/**
@@ -128,7 +130,7 @@ sap.ui.define([
 			} catch (ex) {
 				//not json
 				//could be a card instance id
-				var instance = Core.byId(vCardIdOrSettings);
+				var instance = Element.getElementById(vCardIdOrSettings);
 				if (!instance) { //not a card instance, but a string
 					//could be a card dom element id
 					var element = document.getElementById(vCardIdOrSettings);

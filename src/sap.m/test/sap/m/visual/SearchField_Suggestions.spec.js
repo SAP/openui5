@@ -14,6 +14,13 @@ describe("sap.m.SearchField_Suggestions", function () {
 		expect(takeScreenshot()).toLookAs("1_suggestions");
 	});
 
+	it("Should show suggestions correctly spaced", function() {
+		element(by.id("SF1")).click();
+		browser.actions().sendKeys("astro").perform();
+		expect(takeScreenshot()).toLookAs("2_suggestions");
+	});
+
+
 	// TODO: extend those tests with screenshots with result of different buttons pressed ("OK", "X", magnifier)
 	// when Visual tests are actually monitored on mobiles
 });

@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/documentation/library",
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/base/util/isPlainObject",
-	"sap/ui/core/Configuration"
-],function(library, Log, extend, isPlainObject, Configuration) {
+	"sap/base/util/isPlainObject"
+],function(Theming, library, Log, extend, isPlainObject) {
 	"use strict";
 
 	var IGNORED_GATEGORIES = {
@@ -21,7 +21,7 @@ sap.ui.define([
 	function createDemoAppData(oDemoAppMetadata, sLibUrl, sLibNamespace) {
 
 		//Define the default Demo Kit theme
-		var DEFAULT_THEME = Configuration.getTheme();
+		var DEFAULT_THEME = Theming.getTheme();
 
 		// transform simple demo app link to a configuration object
 		var aLinks = [],

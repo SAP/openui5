@@ -262,13 +262,13 @@ sap.ui.define([
 			assert.equal(this.oVariantManagement.getTitle().getText(), "Hugo");
 		});
 
-		QUnit.test("Check getVariants", function(assert) {
+		QUnit.test("Check getVariants", async function(assert) {
 			var aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);
 			assert.equal(aItems.length, 0);
 
 			this.oVariantManagement.setModel(oModel, ControlVariantApplyAPI.getVariantModelName());
-			sap.ui.getCore().applyChanges();
+			await nextUIUpdate();
 
 			aItems = this.oVariantManagement.getVariants();
 			assert.ok(aItems);

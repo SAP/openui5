@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
-		function(oCore, VersionInfo) {
+sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo", "sap/ui/core/Lib"],
+		function(oCore, VersionInfo, Lib) {
 	"use strict";
 
 	/**
@@ -236,7 +236,7 @@ sap.ui.define(['sap/ui/core/Core', "sap/ui/VersionInfo"],
 			})
 			.then(function() {
 				// get a shallow copy the loaded library metadata
-				var mLibraries = oCore.getLoadedLibraries();
+				var mLibraries = Lib.all();
 				// filter libraries out that have not been requested
 				for (var sLibName in mLibraries) {
 					if (!fnFilter(sLibName)) {

@@ -24,10 +24,11 @@ sap.ui.loader.config({
 
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
+	"sap/ui/core/Lib",
 	"sap/ui/core/RenderManager",
 	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/Theming",
 	"sap/ui/dom/includeStylesheet",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/codeeditor/js/ace/ace",
@@ -35,12 +36,13 @@ sap.ui.define([
 	"sap/ui/codeeditor/js/ace/ext-beautify",
 	"sap/ui/codeeditor/js/ace/mode-javascript",
 	"sap/ui/codeeditor/js/ace/mode-json"
-], function (
+], function(
 	library,
-	Core,
 	Control,
+	Library,
 	RenderManager,
 	ResizeHandler,
+	Theming,
 	includeStylesheet,
 	jQuery,
 	ace
@@ -183,7 +185,7 @@ sap.ui.define([
 					.style("height", oControl.getHeight())
 					.attr("data-sap-ui-syntaxhints", oControl.getSyntaxHints())
 					.attr("role", "application")
-					.attr("aria-roledescription", Core.getLibraryResourceBundle("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION"));
+					.attr("aria-roledescription", Library.getResourceBundleFor("sap.ui.codeeditor").getText("CODEEDITOR_ROLE_DESCRIPTION"));
 
 				var sTooltip = oControl.getTooltip_AsString();
 				if (sTooltip) {
@@ -305,7 +307,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CodeEditor.prototype._applyTheme = function() {
-		var sUiTheme = Core.getConfiguration().getTheme().toLowerCase();
+		var sUiTheme = Theming.getTheme().toLowerCase();
 		var sEditorTheme = "tomorrow";
 		if (sUiTheme.indexOf("hcb") > -1) {
 			sEditorTheme = "chaos";

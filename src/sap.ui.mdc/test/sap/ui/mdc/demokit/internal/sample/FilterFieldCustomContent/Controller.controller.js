@@ -1,6 +1,6 @@
 sap.ui.define([
+	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/enums/FieldEditMode",
@@ -8,8 +8,8 @@ sap.ui.define([
 	"sap/ui/mdc/enums/OperatorName",
 	"sap/m/MessageToast"
 ], function(
+	Messaging,
 	Controller,
-	oCore,
 	ConditionModel,
 	Condition,
 	FieldEditMode,
@@ -23,7 +23,7 @@ sap.ui.define([
 
 		onInit: function() {
 			const oView = this.getView();
-			oCore.getMessageManager().registerObject(oView, true);
+			Messaging.registerObject(oView, true);
 
 			const oCM = new ConditionModel();
 			oCM.addCondition("title", Condition.createCondition(OperatorName.EQ, ["4711"], undefined, undefined, ConditionValidated.NotValidated));

@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/_Helper",
@@ -14,15 +14,15 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, UI5Date, DateFormat, _Helper, CompositeType, FormatException,
+], function (Log, Localization, UI5Date, DateFormat, _Helper, CompositeType, FormatException,
 		ParseException, DateTimeWithTimezone, DecimalType, StringType, TestUtils) {
 	/*global sinon, QUnit*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.type.DateTimeWithTimezone",
-		sDefaultLanguage = Configuration.getLanguage(),
-		sDefaultTimezone = Configuration.getTimezone(),
+		sDefaultLanguage = Localization.getLanguage(),
+		sDefaultTimezone = Localization.getTimezone(),
 		MyStringType = StringType.extend("MyString", {
 			constructor : function () {
 				StringType.apply(this, arguments);
@@ -39,12 +39,12 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setLanguage("en-US");
-			Configuration.setTimezone("Europe/London");
+			Localization.setLanguage("en-US");
+			Localization.setTimezone("Europe/London");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
-			Configuration.setTimezone(sDefaultTimezone);
+			Localization.setLanguage(sDefaultLanguage);
+			Localization.setTimezone(sDefaultTimezone);
 		}
 	});
 

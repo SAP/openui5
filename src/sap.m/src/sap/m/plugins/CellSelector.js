@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	"./PluginBase",
+	"sap/base/i18n/Localization",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/base/Log"
-], function (PluginBase, KeyCodes, Core, Element, Log) {
+], function (PluginBase, Localization, KeyCodes, Element, Log) {
 	"use strict";
 
 	var DIRECTION = {
@@ -101,7 +101,7 @@ sap.ui.define([
 	 */
 	const PriorityDelegate = {
 		onBeforeRendering: function() {
-			this._iRtl = Core.getConfiguration().getRTL() ? -1 : 1;
+			this._iRtl = Localization.getRTL() ? -1 : 1;
 			if (this._oResizer) {
 				// remove resizer, as due to rerendering table element may be gone
 				this._oResizer.remove();
@@ -865,7 +865,7 @@ sap.ui.define([
 			getCellInfo: function (oTable, oTarget) {
 				return {
 					rowIndex: Element.closestTo(oTarget, true).getIndex(),
-					colIndex: this.getVisibleColumns(oTable).indexOf(Core.byId(oTarget.getAttribute("data-sap-ui-colid")))
+					colIndex: this.getVisibleColumns(oTable).indexOf(Element.getElementById(oTarget.getAttribute("data-sap-ui-colid")))
 				};
 			},
 			/**

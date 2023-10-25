@@ -2,11 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/Core", "sap/m/library"],
-	function (Device, Core, mobileLibrary) {
+sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Lib"],
+	function (Device, mobileLibrary, Library) {
 		"use strict";
 
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.f");
+		var oResourceBundle = Library.getResourceBundleFor("sap.f");
 
 		var FCLRenderer = {
 			apiVersion: 2

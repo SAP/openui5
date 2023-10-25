@@ -5,6 +5,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/core/Element",
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/IconPool',
 	'./delegate/ValueStateMessage',
@@ -17,7 +18,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Lib",
-    // jQuery Plugin "cursorPos"
+	// jQuery Plugin "cursorPos"
 	"sap/ui/dom/jquery/cursorPos",
 	// jQuery Plugin "getSelectedText"
 	"sap/ui/dom/jquery/getSelectedText",
@@ -27,6 +28,7 @@ sap.ui.define([
 function(
 	library,
 	Control,
+	Element,
 	EnabledPropagator,
 	IconPool,
 	ValueStateMessage,
@@ -1041,14 +1043,14 @@ function(
 	 */
 	InputBase.prototype.getLabels = function() {
 		var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
-			return sap.ui.getCore().byId(sLabelID);
+			return Element.getElementById(sLabelID);
 		});
 
 		var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
 
 		if (oLabelEnablement) {
 			aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-				return sap.ui.getCore().byId(sLabelID);
+				return Element.getElementById(sLabelID);
 			}));
 		}
 

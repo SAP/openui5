@@ -7,8 +7,8 @@
  */
 sap.ui.define([
 	'sap/ui/core/InvisibleText',
-	'sap/ui/core/Core'
-	], function (InvisibleText, Core) {
+	"sap/ui/core/Lib"
+	], function (InvisibleText, Library) {
 	"use strict";
 
 	/**
@@ -41,7 +41,7 @@ sap.ui.define([
 		if (sContainerRole === "group" && oAdaptiveCardElement.isRequired) {
 			var sInvisibleTextId = new InvisibleText({
 				id: oAdaptiveCardElement._renderedInputControlElement.id + "-InvisibleText",
-				text: Core.getLibraryResourceBundle("sap.ui.integration").getText("ADAPTIVE_CARDS_REQUIRED_FIELD")
+				text: Library.getResourceBundleFor("sap.ui.integration").getText("ADAPTIVE_CARDS_REQUIRED_FIELD")
 			}).toStatic().getId();
 
 			oAdaptiveCardElement.renderedInputControlElement.setAttribute("aria-describedby", sInvisibleTextId);

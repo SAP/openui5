@@ -1,5 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/HeaderContainer",
 	"sap/m/FlexBox",
@@ -16,10 +18,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/m/Panel",
-	"sap/m/GenericTile",
-	"sap/ui/core/Configuration"
-], function(jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary,
-			Log, Text, oCore, Panel, GenericTile, Configuration) {
+	"sap/m/GenericTile"
+], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -806,7 +806,7 @@ sap.ui.define([
 		this.oHeaderContainer.destroyContent();
 		//Assert
 		assert.strictEqual(this.oHeaderContainer.getContent().length, 0, "Content aggregation has been removed");
-		assert.notOk(oCore.byId(sContentId), "The content control has been destroyed");
+		assert.notOk(Element.getElementById(sContentId), "The content control has been destroyed");
 	});
 
 	QUnit.test("HeaderContainer removeContent is properly overwritten", function (assert) {
@@ -1111,7 +1111,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID0").destroy();
+		Element.getElementById("testID0").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1125,7 +1125,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID1").destroy();
+		Element.getElementById("testID1").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1139,7 +1139,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.getElementById("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1172,7 +1172,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID4").destroy();
+		Element.getElementById("testID4").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1186,7 +1186,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID3").destroy();
+		Element.getElementById("testID3").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1200,7 +1200,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.getElementById("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1233,7 +1233,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID0").destroy();
+		Element.getElementById("testID0").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1247,7 +1247,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID2").destroy();
+		Element.getElementById("testID2").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1261,7 +1261,7 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
 
-		oCore.byId("testID4").destroy();
+		Element.getElementById("testID4").destroy();
 
 		this.oHeaderContainer.invalidate();
 
@@ -1479,7 +1479,7 @@ sap.ui.define([
 	});
 	QUnit.module("HeaderContainer with RTL", {
 		beforeEach: function () {
-		Configuration.setRTL(true);
+		Localization.setRTL(true);
 		oCore.applyChanges();
 		this.initializeMobileView(320);
 		this.oHeaderContainer = new HeaderContainer({
@@ -1497,7 +1497,7 @@ sap.ui.define([
 			if (this.initialScreenWidth && this.initialWidth) {
 				this.resetMobileView();
 			}
-			Configuration.setRTL(false);
+			Localization.setRTL(false);
 			oCore.applyChanges();
 		},
 		initializeMobileView: function(iScreenWidth) {

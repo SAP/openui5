@@ -1,5 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Theming",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/SlideTile",
 	"sap/m/GenericTile",
@@ -15,10 +18,11 @@ sap.ui.define([
 	"sap/f/GridContainerItemLayoutData",
 	"sap/f/GridContainerSettings",
 	"sap/f/GridContainer",
-	"sap/ui/dom/jquery/Selectors", // provides jQuery custom selector ":sapTabbable"
-	"sap/ui/events/jquery/EventExtension" // only used indirectly?
-], function(jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData,
-	GridContainerSettings, GridContainer) {
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors",
+	// only used indirectly?
+	"sap/ui/events/jquery/EventExtension"
+], function(Localization, Library, Theming, jQuery, SlideTile, GenericTile, JSONModel, TileContent, NewsContent, Device, NumericContent, library, KeyCodes, qutils, oCore, GridContainerItemLayoutData, GridContainerSettings, GridContainer) {
 	"use strict";
 
 
@@ -125,7 +129,7 @@ sap.ui.define([
 		this.oSlideTile.setModel(oSlideTileModel);
 	}
 
-	var oResBundle = oCore.getLibraryResourceBundle("sap.m");
+	var oResBundle = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Rendering - sap.m.SlideTile", {
 		beforeEach : function() {
@@ -539,7 +543,7 @@ sap.ui.define([
 	QUnit.test("Method _scrollToTile", function(assert) {
 		//Arrange
 		var iScrollToTile = 1;
-		var sDir = oCore.getConfiguration().getRTL() ? "right" : "left";
+		var sDir = Localization.getRTL() ? "right" : "left";
 		//Act
 		this.oSlideTile._scrollToTile(iScrollToTile);
 		//Assert
@@ -921,12 +925,12 @@ var FrameType = library.FrameType;
 			if (this.initialScreenWidth && this.initialWidth) {
 				this.resetMobileView();
 			}
-			this.sStartTheme = oCore.getConfiguration().getTheme();
+			this.sStartTheme = Theming.getTheme();
 			this.sRequiredTheme = null;
 
 			this.applyTheme = function(sTheme, fnCallback) {
 				this.sRequiredTheme = sTheme;
-				if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+				if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 					if (typeof fnCallback === "function") {
 						fnCallback.bind(this)();
 						fnCallback = undefined;
@@ -938,7 +942,7 @@ var FrameType = library.FrameType;
 
 				function fnThemeApplied(oEvent) {
 					oCore.detachThemeChanged(fnThemeApplied);
-					if (oCore.getConfiguration().getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
+					if (Theming.getTheme() === this.sRequiredTheme && oCore.isThemeApplied()) {
 						if (typeof fnCallback === "function") {
 							fnCallback.bind(this)();
 							fnCallback = undefined;

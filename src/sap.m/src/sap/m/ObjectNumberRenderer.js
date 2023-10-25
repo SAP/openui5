@@ -3,12 +3,12 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	'sap/ui/core/Renderer',
 	'sap/ui/core/library',
-	'./library',
-	'sap/ui/core/Core'
+	'./library'
 ],
-	function(Renderer, coreLibrary, library, oCore) {
+	function(Library, Renderer, coreLibrary, library) {
 	"use strict";
 
 
@@ -153,7 +153,7 @@ sap.ui.define([
 		oRm.openStart("span", oON.getId() + "-emphasized");
 		oRm.class("sapUiPseudoInvisibleText");
 		oRm.openEnd();
-		oRm.text(oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_EMPHASIZED"));
+		oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_EMPHASIZED"));
 		oRm.close("span");
 	};
 
@@ -174,7 +174,7 @@ sap.ui.define([
 		oRm.openStart("span", oON.getId() + "-roledescription");
 		oRm.class("sapUiPseudoInvisibleText");
 		oRm.openEnd();
-		oRm.text(oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_NAME"));
+		oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_NAME"));
 		oRm.close("span");
 	};
 
@@ -185,7 +185,7 @@ sap.ui.define([
 	 * @param {sap.m.ObjectNumber} oON An object representation of the control that should be rendered.
 	 */
 	ObjectNumberRenderer.renderEmptyIndicator = function(oRm, oON) {
-		var oRb = oCore.getLibraryResourceBundle("sap.m");
+		var oRb = Library.getResourceBundleFor("sap.m");
 		oRm.openStart("span");
 			oRm.class("sapMEmptyIndicator");
 			if (oON.getEmptyIndicatorMode() === EmptyIndicatorMode.Auto) {

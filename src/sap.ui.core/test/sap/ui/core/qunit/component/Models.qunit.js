@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/base/config",
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/base/i18n/ResourceBundle",
 	"sap/base/util/deepExtend",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Component",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponentMetadata",
@@ -18,11 +18,11 @@ sap.ui.define([
 ], function(
 	BaseConfig,
 	Log,
+	Localization,
 	ResourceBundle,
 	deepExtend,
 	URLConfigurationProvider,
 	Component,
-	Configuration,
 	Library,
 	Manifest,
 	UIComponentMetadata,
@@ -67,7 +67,7 @@ sap.ui.define([
 			}
 		},
 		stubGetUriParameters: function(mMockParams) {
-			var sSAPLanguage = Configuration.getSAPLogonLanguage();
+			var sSAPLanguage = Localization.getSAPLogonLanguage();
 			BaseConfig._.invalidate();
 			this.oConfigurationStub = sinon.stub(URLConfigurationProvider, 'get');
 			this.oConfigurationStub.withArgs('sapLanguage').returns(mMockParams && mMockParams.sapLanguage || sSAPLanguage);

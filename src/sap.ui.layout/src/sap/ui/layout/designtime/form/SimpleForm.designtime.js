@@ -5,10 +5,12 @@
 // Provides the Design Time Metadata for the sap.ui.layout.form.SimpleForm control
 sap.ui.define([
 	"sap/m/Title",
+	"sap/ui/core/Element",
 	"sap/ui/core/Title",
 	"sap/ui/fl/Utils"
 ], function(
 	MTitle,
+	Element,
 	CoreTitle,
 	FlexUtils
 ) {
@@ -116,7 +118,7 @@ sap.ui.define([
 							return true;
 						},
 						getCreatedContainerId: function(sNewControlID) {
-							var oTitle = sap.ui.getCore().byId(sNewControlID);
+							var oTitle = Element.getElementById(sNewControlID);
 							var sParentElementId = oTitle.getParent().getId();
 
 							return sParentElementId;

@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/MultiInput",
 	"sap/m/Token",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/core/ListItem",
 	"sap/base/util/ObjectPath",
@@ -27,7 +27,7 @@ sap.ui.define([
 	Input,
 	MultiInput,
 	Token,
-	Core,
+	Element,
 	BindingHelper,
 	ListItem,
 	ObjectPath,
@@ -182,12 +182,12 @@ sap.ui.define([
 
 	BaseField.prototype.getMessagestrip = function () {
 		var sMessageStripId = this.getAssociation("_messageStrip");
-		return Core.byId(sMessageStripId);
+		return Element.getElementById(sMessageStripId);
 	};
 
 	BaseField.prototype.getMessageIcon = function () {
 		var sMessageIconId = this.getAssociation("_messageIcon");
-		return Core.byId(sMessageIconId);
+		return Element.getElementById(sMessageIconId);
 	};
 
 	BaseField.prototype._removeValidationMessage = function () {
@@ -398,7 +398,7 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._applyMessage = function () {
-		var oIcon = Core.byId(this.getAssociation("_messageIcon"));
+		var oIcon = Element.getElementById(this.getAssociation("_messageIcon"));
 		if (this.getAssociation("_messageIcon") && oIcon) {
 			var oIconDomRef = oIcon.getDomRef();
 			if (oIconDomRef) {

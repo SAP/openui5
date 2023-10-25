@@ -2,6 +2,7 @@
 
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/Bar",
 	"sap/m/Button",
 	"sap/m/Label",
@@ -10,11 +11,13 @@ sap.ui.define([
 	"sap/m/BarRenderer",
 	"sap/m/library",
 	"sap/ui/Device",
+	"sap/ui/core/Element",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
+	Localization,
 	Bar,
 	Button,
 	Label,
@@ -23,6 +26,7 @@ sap.ui.define([
 	BarRenderer,
 	mobileLibrary,
 	Device,
+	Element,
 	ResizeHandler,
 	InvisibleText,
 	jQuery,
@@ -152,19 +156,19 @@ sap.ui.define([
 			assert.ok(jQuery("#myBar").is("div"), "bar should be rendered as div");
 			assert.ok(jQuery("#myBar1").is("div"), "bar1 should be rendered as div");
 
-			var bar = oCore.byId("myBar");
+			var bar = Element.getElementById("myBar");
 			bar.setHTMLTag('Header');
 			bar.invalidate();
 			oCore.applyChanges();
 			assert.ok(jQuery("#myBar").is("header"), "bar should be rendered as header");
 
-			var bar1 = oCore.byId("myBar1");
+			var bar1 = Element.getElementById("myBar1");
 			bar1.setHTMLTag('Footer');
 			bar1.invalidate();
 			oCore.applyChanges();
 			assert.ok(jQuery("#myBar1").is("footer"), "bar1 should be rendered as footer");
 
-			var bar2 = oCore.byId("myBar2");
+			var bar2 = Element.getElementById("myBar2");
 			bar2.setHTMLTag('H1');
 			bar2.invalidate();
 			oCore.applyChanges();
@@ -222,7 +226,7 @@ sap.ui.define([
 
 		// Assert
 		function assertButton (oButton, oMargins) {
-			if (oCore.getConfiguration().getRTL()) {
+			if (Localization.getRTL()) {
 				assert.strictEqual(oButton.$().css("margin-left"), oMargins.right + "px", oButton + " did have the correct right margin");
 				assert.strictEqual(oButton.$().css("margin-right"),  oMargins.left + "px", oButton + " did have the correct left margin");
 			} else {
@@ -246,7 +250,7 @@ sap.ui.define([
 			right : 0
 		});
 
-		if (oCore.getConfiguration().getRTL()) {
+		if (Localization.getRTL()) {
 			assert.strictEqual(oBar.$("BarLeft").css("padding-right"), iStartEndPadding + "px", "Left bar does have a padding");
 		} else {
 			assert.strictEqual(oBar.$("BarLeft").css("padding-left"), iStartEndPadding + "px", "Left bar does have a padding");
@@ -687,7 +691,7 @@ sap.ui.define([
 		//Assert
 		var oBarInternals = getJqueryObjectsForBar(sut);
 
-		if (oCore.getConfiguration().getRTL()) {
+		if (Localization.getRTL()) {
 			assert.strictEqual(oBarInternals.$right.outerWidth(), Math.round(oBarInternals.$left.position().left), "left content starts where right content ends");
 		} else {
 			assert.strictEqual(oBarInternals.$left.outerWidth(), Math.round(oBarInternals.$right.position().left), "right content starts where left content ends");

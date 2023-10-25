@@ -1698,7 +1698,7 @@ sap.ui.define([
 								var oAnnotationUri = new URI(oAnnotation.uri);
 
 								if (bIsV2Model || bIsV4Model) {
-									var sValueFromConfig = Configuration.getSAPLogonLanguage();
+									var sValueFromConfig = Localization.getSAPLogonLanguage();
 									if (!oAnnotationUri.hasQuery("sap-language") && sValueFromConfig) {
 										oAnnotationUri.setQuery("sap-language", sValueFromConfig);
 									}
@@ -2737,7 +2737,7 @@ sap.ui.define([
 			// determine the semantic of the manifest property
 			bManifestFirst = !!vManifest;
 			sManifestUrl = vManifest && typeof vManifest === 'string' ? vManifest : undefined;
-			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies}) : undefined;
+			oManifest = vManifest && typeof vManifest === 'object' ? createSanitizedManifest(vManifest, {url: oConfig && oConfig.altManifestUrl, activeTerminologies: aActiveTerminologies, process: !oConfig.async}) : undefined;
 		}
 
 		// if we find a manifest URL in the configuration

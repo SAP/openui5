@@ -31,7 +31,6 @@ sap.ui.define([
 	"./DialogRenderer",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
 	"sap/ui/dom/units/Rem",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
@@ -65,7 +64,6 @@ function(
 	DialogRenderer,
 	Log,
 	jQuery,
-	Core,
 	Configuration,
 	Rem
 ) {
@@ -1554,7 +1552,7 @@ function(
 			oControl;
 
 		if (oFocusDomRef && oFocusDomRef.id) {
-			oControl = Core.byId(oFocusDomRef.id);
+			oControl = Element.getElementById(oFocusDomRef.id);
 		}
 
 		if (oControl) {

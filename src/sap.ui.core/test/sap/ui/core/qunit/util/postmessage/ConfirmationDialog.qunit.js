@@ -1,9 +1,11 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/postmessage/confirmationDialog"
 ],
 function (
+	Library,
 	confirmationDialog
 ) {
 	"use strict";
@@ -49,12 +51,8 @@ function (
 
 	QUnit.module("sap.m is loaded", {
 		beforeEach: function () {
-			sandbox.stub(sap.ui, 'getCore').returns({
-				getLoadedLibraries: function () {
-					return {
-						'sap.m': {}
-					};
-				}
+			sandbox.stub(Library, "isLoaded", function(sName) {
+				return sName === "sap.m";
 			});
 		},
 		afterEach: function () {

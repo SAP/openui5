@@ -5,9 +5,9 @@
 // Provides the concept of a sorter for list bindings
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/base/Object",
-	"sap/ui/core/Configuration"
-], function(Log, BaseObject, Configuration) {
+	"sap/base/i18n/Localization",
+	"sap/ui/base/Object"
+], function(Log, Localization, BaseObject) {
 	"use strict";
 
 	/**
@@ -141,7 +141,7 @@ sap.ui.define([
 			return 1;
 		}
 		if (typeof a == "string" && typeof b == "string") {
-			return a.localeCompare(b, Configuration.getLanguageTag());
+			return a.localeCompare(b, Localization.getLanguageTag().toString());
 		}
 		if (a < b) {
 			return -1;

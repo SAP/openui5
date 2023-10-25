@@ -5,24 +5,24 @@
  global QUnit
  */
 sap.ui.define([
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/test/opaQunit",
 	"./pages/Home",
 	"./pages/Category",
 	"./pages/Product",
 	"./pages/Cart",
 	"./pages/Dialog"
-], function (Configuration, opaTest) {
+], function (Localization, opaTest) {
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("Delete Product Journey", {
 		before : function () {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		after : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 

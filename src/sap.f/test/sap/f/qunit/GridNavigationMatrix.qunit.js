@@ -1,14 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/f/GridNavigationMatrix",
-	"sap/ui/qunit/utils/createAndAppendDiv",
-	"sap/ui/core/Configuration"
+	"sap/ui/qunit/utils/createAndAppendDiv"
 ],
 function (
+	Localization,
 	GridNavigationMatrix,
-	createAndAppendDiv,
-	Configuration
+	createAndAppendDiv
 ) {
 	"use strict";
 
@@ -51,12 +51,12 @@ function (
 
 		assert.deepEqual(matrix, config.expectedMatrix, "Navigation matrix should be correct");
 
-		Configuration.setRTL(true);
+		Localization.setRTL(true);
 		matrix = GridNavigationMatrix.create(config.grid, Array.from(config.grid.children));
 
 		assert.deepEqual(matrix, config.expectedRTLMatrix, "Navigation matrix should be correct in RTL");
 
-		Configuration.setRTL(false);
+		Localization.setRTL(false);
 		config.grid.remove();
 	}
 

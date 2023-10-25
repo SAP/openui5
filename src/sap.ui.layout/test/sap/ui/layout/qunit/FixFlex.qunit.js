@@ -1,16 +1,19 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/layout/FixFlex',
 	'sap/m/Button',
 	'sap/m/Label',
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	jQuery,
 	FixFlex,
 	Button,
 	Label,
-	oCore) {
+	oCore
+) {
 	'use strict';
 
 	/* =========================================================== */
@@ -32,7 +35,7 @@ sap.ui.define([
 		});
 
 		// Act
-		var s1 = oCore.byId(oFixFlex.getId());
+		var s1 = Element.getElementById(oFixFlex.getId());
 
 		// Assert
 		assert.ok((s1 !== undefined) && (s1 != null), "FixFlex should be found");

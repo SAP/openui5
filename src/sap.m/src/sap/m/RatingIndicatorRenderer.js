@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(
-	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Core", "sap/ui/core/Configuration"],
-	function(IconPool, Device, Core, Configuration) {
+	["sap/ui/core/IconPool", "sap/ui/Device", "sap/ui/core/Theming", "sap/ui/core/Lib"],
+	function(IconPool, Device, Theming, Library) {
 		"use strict";
 
 		/* =========================================================== */
@@ -21,7 +21,7 @@ sap.ui.define(
 			sIconSizeMeasure = "px";
 
 		// shortcut for library resource bundle
-		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+		var oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -250,7 +250,7 @@ sap.ui.define(
 
 		RatingIndicatorRenderer.getIconURI = function(sState, oControl) {
 			if (
-				Configuration
+				Theming
 					.getTheme() === "sap_hcb"
 			) {
 				if (sState === "UNSELECTED" && (oControl.getEnabled() && !oControl.getDisplayOnly())) {

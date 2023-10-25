@@ -9,6 +9,7 @@ sap.ui.define([
 	'./SearchField',
 	'./Table',
 	'./library',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'./SelectDialogBase',
 	'sap/ui/core/InvisibleText',
@@ -21,12 +22,13 @@ sap.ui.define([
 	'sap/m/Bar',
 	'sap/m/Title',
 	'sap/base/Log'
-], function (
+], function(
 	Button,
 	Dialog,
 	SearchField,
 	Table,
 	library,
+	Library,
 	CoreLibrary,
 	SelectDialogBase,
 	InvisibleText,
@@ -350,7 +352,7 @@ sap.ui.define([
 		this._bAppendedToUIArea = false;
 		this._bInitBusy = false;
 		this._bFirstRender = true;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oRb = Library.getResourceBundleFor("sap.m");
 
 		// store a reference to the table for binding management
 		this._oTable = new Table(this.getId() + "-table", {

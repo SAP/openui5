@@ -3,22 +3,24 @@
  */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/InvisibleText",
 	"sap/base/Log",
 	"sap/ui/core/Icon",
 	"sap/m/HBox",
 	"sap/m/Text",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/integration/util/LoadingProvider"
-], function (
+], function(
 	Control,
-	Core,
+	Element,
 	InvisibleText,
 	Log,
 	Icon,
 	HBox,
 	Text,
+	Library,
 	ObservableModel,
 	LoadingProvider
 ) {
@@ -183,7 +185,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card instance.
 	 */
 	BaseFilter.prototype.getCardInstance = function () {
-		return Core.byId(this.getCard());
+		return Element.getElementById(this.getCard());
 	};
 
 	BaseFilter.prototype._hasError = function () {
@@ -191,7 +193,7 @@ sap.ui.define([
 	};
 
 	BaseFilter.prototype._getErrorMessage = function () {
-		var sMessage = Core.getLibraryResourceBundle("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
+		var sMessage = Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 
 		return new HBox({
 			justifyContent: "Center",

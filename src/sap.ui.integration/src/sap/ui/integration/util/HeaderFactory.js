@@ -2,10 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"./BaseFactory",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/library",
 	"sap/m/library",
@@ -14,10 +14,10 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/m/Button"
 ], function (
-	Core,
 	BaseFactory,
 	Log,
 	isEmptyObject,
+	Library,
 	CardActions,
 	library,
 	mLibrary,
@@ -34,7 +34,7 @@ sap.ui.define([
 
 	var CardDisplayVariant = library.CardDisplayVariant;
 
-	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+	var oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 	/**
 	 * Constructor for a new <code>HeaderFactory</code>.
@@ -114,6 +114,8 @@ sap.ui.define([
 		if (bIsInDialog) {
 			// if card is in dialog - header shouldn't be focusable
 			oHeader.setProperty("focusable", false);
+			//if card is in a dialog - aria-level of the header should be 1
+			oHeader.setProperty("headingLevel", "1");
 		}
 
 		return oHeader;

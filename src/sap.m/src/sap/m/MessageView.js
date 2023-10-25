@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
+	"sap/ui/core/Messaging",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Control",
 	"sap/ui/core/CustomData",
@@ -31,6 +33,8 @@ sap.ui.define([
 	"sap/base/security/URLListValidator",
 	"sap/ui/thirdparty/caja-html-sanitizer"
 ], function(
+	Library,
+	Messaging,
 	jQuery,
 	Control,
 	CustomData,
@@ -299,7 +303,7 @@ sap.ui.define([
 		var that = this;
 		this._bHasHeaderButton = false;
 
-		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		this._createNavigationPages();
 		this._createLists();
@@ -509,7 +513,7 @@ sap.ui.define([
 	MessageView.prototype._bindToMessageModel = function () {
 		var that = this;
 
-		this.setModel(sap.ui.getCore().getMessageManager().getMessageModel(), "message");
+		this.setModel(Messaging.getMessageModel(), "message");
 
 		this._oMessageItemTemplate = new MessageItem({
 			type: "{message>type}",

@@ -1,12 +1,14 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ToggleButton",
 	"sap/m/Toolbar",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
-], function(qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes, oCore) {
+], function(Element, Library, qutils, createAndAppendDiv, ToggleButton, Toolbar, KeyCodes, oCore) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -82,7 +84,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Should not change pressed state when Shift is pressed between the keydown and keyup  of the Space press", function(assert) {
-		var oToggleButton = oCore.byId("testToggleButton_2"),
+		var oToggleButton = Element.getElementById("testToggleButton_2"),
 			bIsPressed = oToggleButton.getPressed();
 
 		qutils.triggerKeyEvent("keydown", "testToggleButton_2", KeyCodes.SPACE);
@@ -224,7 +226,7 @@ sap.ui.define([
 		var oInfo = oButton.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "button", "AriaRole");
-		assert.strictEqual(oInfo.type, oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
@@ -239,11 +241,11 @@ sap.ui.define([
 		oButton.setTooltip(null);
 		oButton.setIcon("sap-icon://search");
 		oInfo = oButton.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, oCore.getLibraryResourceBundle("sap.ui.core").getText("Icon.search"), "Description");
+		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.ui.core").getText("Icon.search"), "Description");
 		oButton.setPressed(true);
 		oInfo = oButton.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description,
-				oCore.getLibraryResourceBundle("sap.ui.core").getText("Icon.search") + " " + oCore.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PRESSED"),
+				Library.getResourceBundleFor("sap.ui.core").getText("Icon.search") + " " + Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PRESSED"),
 				"Description");
 		oButton.destroy();
 	});

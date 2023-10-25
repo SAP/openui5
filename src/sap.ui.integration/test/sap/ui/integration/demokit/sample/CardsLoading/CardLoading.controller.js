@@ -1,10 +1,10 @@
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/RequestDataProvider",
-	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/core/Core"
-], function (Controller, JSONModel, RequestDataProvider, sinon, Core) {
+	"sap/ui/thirdparty/sinon-4"
+], function (Element, Controller, JSONModel, RequestDataProvider, sinon) {
 	"use strict";
 
 	return Controller.extend("sap.ui.integration.sample.CardsLoading.CardLoading", {
@@ -31,7 +31,7 @@ sap.ui.define([
 
 		onFormSubmit: function () {
 			var sGridId = this.getView().getId() + "--grd",
-				oGridItems = Core.byId(sGridId).getItems(),
+				oGridItems = Element.getElementById(sGridId).getItems(),
 				oModelData = this.getView().getModel("manifests").getData();
 			for (var i in oGridItems) {
 				var oCard = oGridItems[i];

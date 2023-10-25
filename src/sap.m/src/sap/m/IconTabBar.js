@@ -5,14 +5,14 @@
 // Provides control sap.m.IconTabBar.
 sap.ui.define([
 	'./library',
-	"sap/ui/core/Core",
 	'sap/ui/core/Control',
 	'./IconTabBarRenderer',
 	'./IconTabHeader',
+	"sap/ui/core/RenderManager",
 	"sap/ui/core/util/ResponsivePaddingsEnablement",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(library, Core, Control, IconTabBarRenderer, IconTabHeader, ResponsivePaddingsEnablement, jQuery) {
+	function(library, Control, IconTabBarRenderer, IconTabHeader, RenderManager, ResponsivePaddingsEnablement, jQuery) {
 		"use strict";
 
 		// shortcut for sap.m.IconTabHeaderMode
@@ -480,7 +480,7 @@ sap.ui.define([
 		IconTabBar.prototype._rerenderContent = function (oContent) {
 			var $content = this.$("content");
 			if (oContent && ($content.length > 0)) {
-				var oRM = Core.createRenderManager();
+				var oRM = new RenderManager().getInterface();
 				for (var i = 0; i < oContent.length; i++) {
 					oRM.renderControl(oContent[i]);
 				}

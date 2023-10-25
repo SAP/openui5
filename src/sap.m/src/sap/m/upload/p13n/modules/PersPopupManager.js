@@ -3,7 +3,7 @@
  */
 
 
-sap.ui.define(["sap/ui/base/Object", "sap/m/p13n/Popup"], function (BaseObject, P13nPopup) {
+sap.ui.define(["sap/ui/base/Object", "sap/m/p13n/Popup", "sap/ui/core/Lib"], function(BaseObject, P13nPopup, Library) {
 	"use strict";
 
 	//Singleton storage
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/base/Object", "sap/m/p13n/Popup"], function (BaseObject, 
 	const PersPopupManager = BaseObject.extend("sap.m.upload.p13n.modules.PersPopupManager", {
 		constructor: function () {
 			BaseObject.call(this);
-			this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this._oRb = Library.getResourceBundleFor("sap.m");
 		}
 	});
 

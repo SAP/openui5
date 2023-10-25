@@ -9,10 +9,11 @@ sap.ui.define([
 	'./Popup',
 	'./StaticArea',
 	'./library',
+	"sap/ui/core/RenderManager",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(Control, Element, Popup, StaticArea, library, KeyCodes, jQuery) {
+	function(Control, Element, Popup, StaticArea, library, RenderManager, KeyCodes, jQuery) {
 	"use strict";
 
 
@@ -133,7 +134,7 @@ sap.ui.define([
 			var oPopup = this._getPopup();
 			if (!(oPopup.isOpen() && oPopup.getContent() == this)) {
 				// Update Tooltip or create a new span with texts.
-				sap.ui.getCore().createRenderManager().render(this, StaticArea.getDomRef(), true);
+				new RenderManager().getInterface().render(this, StaticArea.getDomRef(), true);
 			}
 
 			// Attach accessibility info to the control oSC

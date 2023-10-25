@@ -2,12 +2,14 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/table/rowmodes/Type",
 	"./TableHelper.support",
 	"sap/ui/support/library",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
 ], function(
+	Lib,
 	RowModeType,
 	SupportHelper,
 	SupportLibrary,
@@ -65,7 +67,7 @@ sap.ui.define([
 				}
 			}
 
-			if (sap.ui.getCore().getLoadedLibraries()["sap.m"] && $Cozy.length === 0 && $Compact.length === 0 && $Condensed.length === 0) {
+			if (Lib.all()["sap.m"] && $Cozy.length === 0 && $Compact.length === 0 && $Condensed.length === 0) {
 				SupportHelper.reportIssue(oIssueManager,
 					"If the sap.ui.table and the sap.m libraries are used together, a content density must be specified.",
 					Severity.High

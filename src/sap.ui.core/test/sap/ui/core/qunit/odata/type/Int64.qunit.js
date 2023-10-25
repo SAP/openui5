@@ -3,7 +3,7 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Control",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -12,12 +12,12 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Int64",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, Control, NumberFormat, FormatException, ParseException,
+], function (Log, Localization, Control, NumberFormat, FormatException, ParseException,
 		ValidateException, Int64, ODataType, TestUtils) {
 	/*global QUnit, sinon */
 	"use strict";
 
-	var sDefaultLanguage = Configuration.getLanguage(),
+	var sDefaultLanguage = Localization.getLanguage(),
 		NUMBER_MIN_SAFE_INTEGER = -9007199254740991,
 		NUMBER_MAX_SAFE_INTEGER = 9007199254740991;
 
@@ -27,10 +27,10 @@ sap.ui.define([
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -202,7 +202,7 @@ sap.ui.define([
 		var oType = new Int64({plusSign : ">", minusSign : "<"});
 
 		// special: non-breaking space as grouping separator
-		Configuration.setLanguage("sv");
+		Localization.setLanguage("sv");
 
 		assert.strictEqual(oType.parseValue(">1 234 567 890 123 456", "string"),
 			"1234567890123456", "plus sign, spaces");
@@ -330,7 +330,7 @@ sap.ui.define([
 			oType = new Int64();
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
-		Configuration.setLanguage("de-CH");
+		Localization.setLanguage("de-CH");
 		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});

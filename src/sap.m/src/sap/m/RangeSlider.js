@@ -2,24 +2,26 @@
  * ${copyright}
  */
 sap.ui.define([
+    "sap/base/i18n/Localization",
     "sap/ui/core/InvisibleText",
     "sap/base/Log",
     "./Slider",
     "./SliderUtilities",
     "./RangeSliderRenderer",
+    "sap/ui/core/Lib",
     "sap/ui/thirdparty/jquery",
-    "sap/ui/events/KeyCodes",
-    "sap/ui/core/Configuration"
+    "sap/ui/events/KeyCodes"
 ],
     function(
+        Localization,
         InvisibleText,
         log,
         Slider,
         SliderUtilities,
         RangeSliderRenderer,
+        Library,
         jQuery,
-        KeyCodes,
-        Configuration
+        KeyCodes
     ) {
         "use strict";
 
@@ -115,7 +117,7 @@ sap.ui.define([
             // the initial focus range which should be used
             this._aInitialFocusRange = this.getRange();
 
-            this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle('sap.m');
+            this._oResourceBundle = Library.getResourceBundleFor('sap.m');
 
             this._ariaUpdateDelay = [];
 
@@ -166,7 +168,7 @@ sap.ui.define([
         };
 
         RangeSlider.prototype.onBeforeRendering = function () {
-            this._bRTL = Configuration.getRTL();
+            this._bRTL = Localization.getRTL();
 
             var aRange = this.getRange();
 

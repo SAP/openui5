@@ -2,6 +2,7 @@
 sap.ui.define([
 	"./helper/_timezones",
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/CalendarType",
@@ -10,8 +11,7 @@ sap.ui.define([
 	"sap/ui/core/LocaleData",
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/format/TimezoneUtil"
-], function(timezones, Log, Localization, LoaderExtensions, CalendarType, Configuration, Locale,
-		LocaleData, CalendarWeekNumbering, TimezoneUtil) {
+], function(timezones, Log, Formatting, Localization, LoaderExtensions, CalendarType, Configuration, Locale, LocaleData, CalendarWeekNumbering, TimezoneUtil) {
 	"use strict";
 
 	QUnit.module("Locale Data Loading", {
@@ -224,19 +224,18 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings = Configuration.getFormatSettings();
-			this.oFormatSettings.setUnitMappings();
-			this.oFormatSettings.setCustomUnits();
+			Formatting.setUnitMappings();
+			Formatting.setCustomUnits();
 
-			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
-			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+			assert.equal(Formatting.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
 		}, afterEach: function(assert) {
 			//ensure custom unit mappings and custom units are reset
-			this.oFormatSettings.setUnitMappings();
-			this.oFormatSettings.setCustomUnits();
+			Formatting.setUnitMappings();
+			Formatting.setCustomUnits();
 
-			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
-			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+			assert.equal(Formatting.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(Formatting.getUnitMappings(), undefined, "unit mappings must be undefined");
 		}
 	});
 
@@ -262,7 +261,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Calendar type should use the value set in configuration when getting calendar related values", function(assert) {
-		Configuration.setCalendarType(CalendarType.Islamic);
+		Formatting.setCalendarType(CalendarType.Islamic);
 
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US"));
 
@@ -275,25 +274,23 @@ sap.ui.define([
 		assert.deepEqual(oLocaleData.getDateTimePattern("short"), oLocaleData.getDateTimePattern("short", CalendarType.Islamic), "getDateTimePattern uses calendar type in configuration");
 		assert.deepEqual(oLocaleData.getEras("narrow"), oLocaleData.getEras("narrow", CalendarType.Islamic), "getEra uses calendar type in configuration");
 
-		Configuration.setCalendarType(null);
+		Formatting.setCalendarType(null);
 	});
 
 	QUnit.test("Locale data with customization from format settings in configuration", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
-
-		oFormatSettings.setLegacyDateFormat("3");
-		var oLocaleData = LocaleData.getInstance(oFormatSettings.getFormatLocale());
+		Formatting.setABAPDateFormat("3");
+		var oLocaleData = LocaleData.getInstance(new Locale(Formatting.getLanguageTag()));
 		assert.equal(oLocaleData.getDatePattern("short"), "MM-dd-yyyy", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("medium"), "MM-dd-yyyy", "medium pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("short", CalendarType.Islamic), "M/d/y GGGGG", "short pattern for Islamic calendar type should be fetched from locale data");
 
-		oFormatSettings.setLegacyTimeFormat("0");
+		Formatting.setABAPTimeFormat("0");
 		assert.equal(oLocaleData.getTimePattern("short"), "HH:mm", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getTimePattern("medium"), "HH:mm:ss", "medium pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getTimePattern("short", CalendarType.Islamic), "h:mm\u202fa",
 			"short pattern for Islamic calendar type should be fetched from locale data");
 
-		oFormatSettings.setLegacyDateFormat("A");
+		Formatting.setABAPDateFormat("A");
 		assert.equal(oLocaleData.getDatePattern("short"), "yyyy/MM/dd", "short pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("short", CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
@@ -489,8 +486,7 @@ sap.ui.define([
 	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
 		var oLocaleData = LocaleData.getInstance(new Locale("en_US-x-sapufmt"));
 
-		var oFormatSettings = Configuration.getFormatSettings();
-		oFormatSettings.setCustomUnits({
+		Formatting.setCustomUnits({
 			"cats": {
 				"displayName": "kittens",
 				"unitPattern-count-one": "{0} kitten",
@@ -502,7 +498,7 @@ sap.ui.define([
 			}
 		});
 
-		oFormatSettings.setUnitMappings({
+		Formatting.setUnitMappings({
 			"CAT": "cats",
 			"fooBar": "acceleration-meter-per-second-squared"
 		});
@@ -527,52 +523,50 @@ sap.ui.define([
 			"Legacy unit is mapped to new unit in CLDR");
 
 		//reset unit mappings
-		oFormatSettings.setUnitMappings();
+		Formatting.setUnitMappings();
 	});
 
 	QUnit.test("Unit Mappings", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
-
 		var mUnitMappings = {
 			"CAT": "cats",
 			"KIT": "cats",
 			"TAS": "volume-cups"
 		};
-		oFormatSettings.setUnitMappings(mUnitMappings);
-		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+		Formatting.setUnitMappings(mUnitMappings);
+		assert.deepEqual(Formatting.getUnitMappings(), mUnitMappings, "units must be all specified");
 
 		// set to undefined
-		oFormatSettings.setUnitMappings();
-		assert.deepEqual(oFormatSettings.getUnitMappings(), undefined, "units must be undefined");
+		Formatting.setUnitMappings();
+		assert.deepEqual(Formatting.getUnitMappings(), undefined, "units must be undefined");
 
 
-		oFormatSettings.addUnitMappings(mUnitMappings);
-		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+		Formatting.addUnitMappings(mUnitMappings);
+		assert.deepEqual(Formatting.getUnitMappings(), mUnitMappings, "units must be all specified");
 
-		oFormatSettings.addUnitMappings(null);
-		oFormatSettings.addUnitMappings(undefined);
-		oFormatSettings.addUnitMappings();
-		oFormatSettings.addUnitMappings({});
+		Formatting.addUnitMappings(null);
+		Formatting.addUnitMappings(undefined);
+		Formatting.addUnitMappings();
+		Formatting.addUnitMappings({});
 
 		//add should not delete mappings
-		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
-		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "cats", "unit mapping is initially defined");
+		assert.deepEqual(Formatting.getUnitMappings(), mUnitMappings, "units must be all specified");
+		assert.equal(Formatting.getUnitMappings()["CAT"], "cats", "unit mapping is initially defined");
 
 		mUnitMappings = {
 			"CAT": "volume-cups",
 			"KIT": "cats",
 			"RAT": "volume-rat"
 		};
-		oFormatSettings.addUnitMappings(mUnitMappings);
-		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "TAS", "RAT"], "unit mappings must be all specified");
-		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "volume-cups", "unit mappings was overwritten");
+		Formatting.addUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(Formatting.getUnitMappings()), ["CAT", "KIT", "TAS", "RAT"], "unit mappings must be all specified");
+		assert.equal(Formatting.getUnitMappings()["CAT"], "volume-cups", "unit mappings was overwritten");
 
-		oFormatSettings.setUnitMappings(mUnitMappings);
-		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "RAT"], "unit mappings must be all specified");
+		Formatting.setUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(Formatting.getUnitMappings()), ["CAT", "KIT", "RAT"], "unit mappings must be all specified");
 	});
 
 	QUnit.test("Custom Units get/set/add", function(assert) {
-		var oFormatSettings = Configuration.getFormatSettings();
+		var Formatting = Configuration.getFormatSettings();
 
 		var mUnits = {
 			"cats": {
@@ -586,18 +580,18 @@ sap.ui.define([
 				"unitPattern-count-other": "{0} puppies"
 			}
 		};
-		oFormatSettings.setCustomUnits(mUnits);
+		Formatting.setCustomUnits(mUnits);
 
-		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+		assert.deepEqual(Formatting.getCustomUnits(), mUnits, "units must be all specified");
 
 
 		// set to undefined
-		oFormatSettings.setCustomUnits();
-		assert.deepEqual(oFormatSettings.getCustomUnits(), undefined, "units must be all specified");
+		Formatting.setCustomUnits();
+		assert.deepEqual(Formatting.getCustomUnits(), undefined, "units must be all specified");
 
 
-		oFormatSettings.addCustomUnits(mUnits);
-		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+		Formatting.addCustomUnits(mUnits);
+		assert.deepEqual(Formatting.getCustomUnits(), mUnits, "units must be all specified");
 
 		mUnits = {
 			"cats": {
@@ -612,27 +606,27 @@ sap.ui.define([
 			}
 		};
 
-		oFormatSettings.addCustomUnits(mUnits);
-		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+		Formatting.addCustomUnits(mUnits);
+		assert.deepEqual(Formatting.getCustomUnits(), mUnits, "units must be all specified");
 
 
-		oFormatSettings.addCustomUnits({
+		Formatting.addCustomUnits({
 			"birds": {
 				"displayName": "birds",
 				"unitPattern-count-one": "{0} bird",
 				"unitPattern-count-other": "{0} birds"
 			}
 		});
-		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+		assert.deepEqual(Object.keys(Formatting.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
 
-		oFormatSettings.addCustomUnits({});
-		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+		Formatting.addCustomUnits({});
+		assert.deepEqual(Object.keys(Formatting.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
 
-		oFormatSettings.addCustomUnits();
-		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+		Formatting.addCustomUnits();
+		assert.deepEqual(Object.keys(Formatting.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
 
-		oFormatSettings.setCustomUnits(mUnits);
-		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs"], "units must be all specified");
+		Formatting.setCustomUnits(mUnits);
+		assert.deepEqual(Object.keys(Formatting.getCustomUnits()), ["cats", "dogs"], "units must be all specified");
 	});
 
 	var aDeprecatedLocales = [
@@ -653,33 +647,33 @@ sap.ui.define([
 	QUnit.test("Currency Digits", function(assert) {
 
 		var oLocaleData = LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			Formatting.getLanguageTag()
 		);
 
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 
-		Configuration.getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
+		Formatting.setCustomCurrencies({"JPY": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
-		Configuration.getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
+		Formatting.setCustomCurrencies({"EUR": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().setCustomCurrencies();
+		Formatting.setCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
 
-		Configuration.getFormatSettings().addCustomCurrencies();
+		Formatting.addCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
+		Formatting.addCustomCurrencies({"EUR": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
+		Formatting.addCustomCurrencies({"JPY": {"digits": 3}});
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
 
-		Configuration.getFormatSettings().setCustomCurrencies();
+		Formatting.setCustomCurrencies();
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
 	});
@@ -698,14 +692,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("getCurrencySymbols", function(assert) {
-		Configuration.getFormatSettings().addCustomCurrencies({
+		Formatting.addCustomCurrencies({
 			"BTC": {
 				symbol: "Ƀ"
 			}
 		});
 
 		var oLocaleData = LocaleData.getInstance(
-			Configuration.getFormatSettings().getFormatLocale()
+			new Locale(Formatting.getLanguageTag())
 		);
 
 		var oCurrencySymbols = oLocaleData.getCurrencySymbols();
@@ -1097,13 +1091,13 @@ sap.ui.define([
 		// code under test - min days in 1st week from CLDR
 		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 1);
 
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
+		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601);
 
 		// code under test - min days in 1st week from CalendarWeekNumbering.ISO_8601
 		assert.strictEqual(oCustomLocaleData.getMinimalDaysInFirstWeek(), 4);
 
 		// clean up configuration
-		Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+		Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 	});
 
 	//*********************************************************************************************

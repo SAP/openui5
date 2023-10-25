@@ -1,14 +1,14 @@
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	'sap/ui/core/mvc/Controller',
-	'sap/ui/model/json/JSONModel',
-	"sap/ui/core/Core"
-], function(Controller, JSONModel, oCore) {
+	'sap/ui/model/json/JSONModel'
+], function(Formatting, Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.unified.sample.Currency.Controller", {
 
 		onInit: function () {
-			oCore.getConfiguration().getFormatSettings().setCustomCurrencies({ "BGN4":{"digits": 4}, "WWWW":{"digits": 5}});
+			Formatting.setCustomCurrencies({ "BGN4":{"digits": 4}, "WWWW":{"digits": 5}});
 			var aVariousNumberData = [
 				{ currency: "EUR", price: 2300.12 },
 				{ currency: "EUR", price: 38 },

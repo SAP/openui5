@@ -20,7 +20,7 @@ sap.ui.define([
 	QUnit.module("Given an IFrame with renameInfo, when the UpdateIFrame dialog gets opened and closed", {
 		beforeEach() {
 			this.oOpenDialogStub = sandbox.stub(AddIFrameDialog.prototype, "open");
-			this.oBuildUrlStub = sandbox.stub(AddIFrameDialog, "buildUrlBuilderParametersFor").resolves({});
+			sandbox.stub(AddIFrameDialog, "buildUrlBuilderParametersFor").resolves({});
 			this.oIFrame = new IFrame({
 				width: "100px",
 				height: "100px",
@@ -57,7 +57,8 @@ sap.ui.define([
 				updateContent: {
 					url: "newUrl",
 					width: "50px",
-					height: "100vh"
+					height: "100vh",
+					useLegacyNavigation: false
 				},
 				renameContent: {
 					value: "myNewTitle"
@@ -92,7 +93,8 @@ sap.ui.define([
 				updateContent: {
 					url: "https://example.com",
 					width: "50px",
-					height: "100px"
+					height: "100px",
+					useLegacyNavigation: false
 				}
 			},
 			{
@@ -109,7 +111,8 @@ sap.ui.define([
 				updateContent: {
 					url: "https://example.com",
 					width: "100px",
-					height: "100%"
+					height: "100%",
+					useLegacyNavigation: false
 				}
 			},
 			{

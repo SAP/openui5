@@ -8,8 +8,11 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'./library',
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/Element",
 	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/core/StaticArea',
 	'sap/ui/Device',
@@ -19,15 +22,17 @@ sap.ui.define([
 	'sap/base/Log',
 	'sap/base/security/encodeXML',
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration",
 	"./FileUploaderHelper",
 	// jQuery Plugin "addAriaDescribedBy"
 	'sap/ui/dom/jquery/Aria'
 ], function(
 	Control,
 	library,
+	ControlBehavior,
+	Element,
 	LabelEnablement,
 	InvisibleText,
+	Library,
 	coreLibrary,
 	StaticArea,
 	Device,
@@ -37,7 +42,6 @@ sap.ui.define([
 	Log,
 	encodeXML,
 	jQuery,
-	Configuration,
 	FileUploaderHelper
 ) {
 	// shortcut for sap.ui.core.ValueState
@@ -617,9 +621,9 @@ sap.ui.define([
 		// check if sap.m library is used
 		this.bMobileLib = this.oBrowse.getMetadata().getName() == "sap.m.Button";
 
-		if (Configuration.getAccessibility()) {
+		if (ControlBehavior.isAccessibilityEnabled()) {
 			if (!FileUploader.prototype._sAccText) {
-				var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+				var rb = Library.getResourceBundleFor("sap.ui.unified");
 				FileUploader.prototype._sAccText = rb.getText("FILEUPLOAD_ACC");
 			}
 			if (this.oBrowse.addAriaDescribedBy) {
@@ -819,7 +823,7 @@ sap.ui.define([
 			sAccDescription = "";
 
 		if (bIsRequired) {
-			sAccDescription += sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED") + " ";
+			sAccDescription += Library.getResourceBundleFor("sap.ui.unified").getText("FILEUPLOAD_REQUIRED") + " ";
 		}
 
 		if (sTooltip) {
@@ -970,7 +974,7 @@ sap.ui.define([
 
 	FileUploader.prototype.onsapfocusleave = function(oEvent) {
 
-		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), sap.ui.getCore().byId(oEvent.relatedControlId).getFocusDomRef())) {
+		if (!oEvent.relatedControlId || !containsOrEquals(this.getDomRef(), Element.getElementById(oEvent.relatedControlId).getFocusDomRef())) {
 			this.closeValueStateMessage();
 		}
 
@@ -1896,7 +1900,7 @@ sap.ui.define([
 
 	   // as the text is the same for all FileUploaders, get it only once
 	   if (!FileUploader.prototype._sBrowseText) {
-		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   var rb = Library.getResourceBundleFor("sap.ui.unified");
 		   FileUploader.prototype._sBrowseText = rb.getText("FILEUPLOAD_BROWSE");
 	   }
 
@@ -1912,7 +1916,7 @@ sap.ui.define([
 
 	   // as the text is the same for all FileUploaders, get it only once
 	   if (!FileUploader.prototype._sNoFileChosenText) {
-		   var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
+		   var rb = Library.getResourceBundleFor("sap.ui.unified");
 		   FileUploader.prototype._sNoFileChosenText = rb.getText("FILEUPLOAD_NO_FILE_CHOSEN");
 	   }
 

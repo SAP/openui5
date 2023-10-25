@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/m/ObjectStatus",
 	"sap/m/ObjectMarker",
 	"sap/m/Label",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/library",
 	"sap/ui/model/Sorter",
@@ -12,7 +13,7 @@ sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(ManagedObject, ObjectAttribute, ObjectStatus, ObjectMarker, Label, JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
+], function(ManagedObject, ObjectAttribute, ObjectStatus, ObjectMarker, Label, Element, JSONModel, mlibrary, Sorter, MessageBox, Event, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -231,7 +232,7 @@ sap.ui.define([
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
 		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
@@ -244,9 +245,9 @@ sap.ui.define([
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-cancelButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-cancelButton").firePress();
 		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
@@ -259,11 +260,11 @@ sap.ui.define([
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-editButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-editButton").firePress();
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
+		Element.getElementById(this.oItem.getId() + "-ta_editFileName").setValue("NewFileName");
 		oCore.applyChanges();
-		oCore.byId(this.oItem.getId() + "-okButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-okButton").firePress();
 		oCore.applyChanges();
 		oCollection.destroy();
 		checkDestroy(this, assert);
@@ -287,7 +288,7 @@ sap.ui.define([
 		}).placeAt("qunit-fixture");
 		oCore.applyChanges();
 		this.stub(MessageBox, "show");
-		oCore.byId(this.oItem.getId() + "-deleteButton").firePress();
+		Element.getElementById(this.oItem.getId() + "-deleteButton").firePress();
 		oCore.applyChanges();
 		oCollection._onCloseMessageBoxDeleteItem(MessageBox.Action.OK);
 		oCore.applyChanges();
@@ -389,7 +390,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		oCollection._handleTerminateRequest({}, oCollection.aItems[0]);
 		oCore.applyChanges();
-		var oDialog = oCore.byId(oCollection.getId() + "deleteDialog");
+		var oDialog = Element.getElementById(oCollection.getId() + "deleteDialog");
 		oDialog.getButtons()[1].firePress();
 		oCore.applyChanges();
 		oDialog.fireEvent("afterClose");

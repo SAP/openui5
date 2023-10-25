@@ -3,6 +3,8 @@
  */
 sap.ui.define([
 		"./CalendarContentRenderer",
+		"sap/base/i18n/Formatting",
+		"sap/ui/core/Element",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
@@ -25,12 +27,12 @@ sap.ui.define([
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/core/date/UniversalDate",
 		"sap/ui/unified/CalendarLegendItem",
-		"sap/ui/core/Configuration",
 		"sap/ui/core/date/UI5Date",
-		"sap/ui/unified/DateRange",
-		"sap/ui/core/Core"
+		"sap/ui/unified/DateRange"
 ],
 	function (CalendarContentRenderer,
+		Formatting,
+		Element,
 		ResizeHandler,
 		library,
 		BaseContent,
@@ -53,10 +55,8 @@ sap.ui.define([
 		DateTypeRange,
 		UniversalDate,
 		CalendarLegendItem,
-		Configuration,
 		UI5Date,
-		DateRange,
-		Core
+		DateRange
 		) {
 		"use strict";
 
@@ -458,7 +458,7 @@ sap.ui.define([
 				aAppointments = this.getAppointments(),
 				aSpecialDates = this._oCalendar.getSpecialDates(),
 				sLegendId = this._oCalendar.getLegend(),
-				oLegend = Core.byId(sLegendId),
+				oLegend = Element.getElementById(sLegendId),
 				aLegendItems = oLegend.getItems(),
 				aLegendAppointmentItems = oLegend.getAppointmentItems(),
 				oFocusedDate = this._oCalendar.getSelectedDates()[0] ?
@@ -941,7 +941,7 @@ sap.ui.define([
 		function _getLocale() {
 
 			if (!this._sLocale) {
-				this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+				this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 			}
 
 			return this._sLocale;

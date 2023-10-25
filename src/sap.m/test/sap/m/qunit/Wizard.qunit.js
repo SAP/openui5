@@ -8,9 +8,10 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/base/ObjectPool",
 	"sap/m/library",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library"
-], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, jQuery, coreLibrary) {
+], function(Log, DesignTime, Core, Wizard, WizardStep, Button, ObjectPool, library, Library, jQuery, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TitleLevel
@@ -81,7 +82,7 @@ sap.ui.define([
 			this.stub(ObjectPool.prototype, "returnObject").callsFake(function () {
 			});
 
-			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		},
 		afterEach: function () {
@@ -917,7 +918,7 @@ sap.ui.define([
 			this.oWizard.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		},
 		afterEach: function () {
@@ -988,7 +989,7 @@ sap.ui.define([
 			this.oWizard.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			this.oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+			this.oResourceBundle = Library.getResourceBundleFor("sap.m");
 
 		},
 		afterEach: function () {

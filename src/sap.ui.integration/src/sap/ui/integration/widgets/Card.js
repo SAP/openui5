@@ -7,8 +7,9 @@ sap.ui.define([
 	"../controls/ActionsToolbar",
 	"../controls/BlockingMessage",
 	"sap/ui/base/Interface",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/ui/core/library",
 	"sap/ui/integration/util/Manifest",
 	"sap/ui/integration/util/ServiceManager",
@@ -38,14 +39,15 @@ sap.ui.define([
 	"sap/ui/integration/util/Utils",
 	"sap/ui/integration/util/ParameterMap",
 	"sap/ui/integration/util/Measurement"
-], function (
+], function(
 	CardRenderer,
 	Footer,
 	ActionsToolbar,
 	BlockingMessage,
 	Interface,
+	Element,
+	Library,
 	jQuery,
-	Core,
 	coreLibrary,
 	CardManifest,
 	ServiceManager,
@@ -500,7 +502,7 @@ sap.ui.define([
 
 		this.setAggregation("_loadingProvider", new LoadingProvider());
 
-		this._oIntegrationRb = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oIntegrationRb = Library.getResourceBundleFor("sap.ui.integration");
 		this._iModelSizeLimit = DEFAULT_MODEL_SIZE_LIMIT;
 		this._initModels();
 		this._oContentFactory = new ContentFactory(this);
@@ -2020,7 +2022,7 @@ sap.ui.define([
 			return null;
 		}
 
-		return Core.byId(sHost);
+		return Element.getElementById(sHost);
 	};
 
 	/**
@@ -2831,7 +2833,7 @@ sap.ui.define([
 	 * @returns {sap.ui.integration.widgets.Card} The card which opened the current one.
 	 */
 	Card.prototype.getOpener = function () {
-		var oOpener = Core.byId(this.getAssociation("openerReference"));
+		var oOpener = Element.getElementById(this.getAssociation("openerReference"));
 
 		if (!oOpener) {
 			return null;

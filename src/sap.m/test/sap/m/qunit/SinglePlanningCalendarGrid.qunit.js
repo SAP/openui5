@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/base/i18n/Formatting",
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ResponsivePopover",
 	"sap/m/SinglePlanningCalendarGrid",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateTypeRange"
 ], function(
+	Formatting,
 	jQuery,
 	ResponsivePopover,
 	SinglePlanningCalendarGrid,
@@ -187,7 +189,7 @@ sap.ui.define([
 
 	QUnit.test("_getCellStartEndInfo start/end format for 12-hour clocks", function (assert) {
 		// Prepare
-		oCore.getConfiguration().setFormatLocale("en-US");
+		Formatting.setLanguageTag("en-US");
 
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = UI5Date.getInstance(2019, 7, 5, 10),
@@ -208,7 +210,7 @@ sap.ui.define([
 
 	QUnit.test("_getCellStartEndInfo start/end format for 24-hour clocks", function (assert) {
 		// Prepare
-		oCore.getConfiguration().setFormatLocale("en-GB");
+		Formatting.setLanguageTag("en-GB");
 
 		var oGrid = new SinglePlanningCalendarGrid(),
 			oMockStardDate = UI5Date.getInstance(2019, 7, 5, 10),

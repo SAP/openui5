@@ -3,8 +3,8 @@
  */
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
-	"sap/ui/core/Core",
 	"sap/base/Log",
 	"sap/base/util/deepExtend",
 	"./Validators",
@@ -14,8 +14,8 @@ sap.ui.define([
 	"./Duration"
 ], function (
 	ManagedObject,
+	Library,
 	coreLibrary,
-	Core,
 	Log,
 	deepExtend,
 	Validators,
@@ -365,7 +365,7 @@ sap.ui.define([
 		if (oControl.isA("sap.m.DatePicker") && !oControl.isValidValue()) {
 			this._addMessageToControl(oControl, bShowValueState, {
 				type: ValueState.Error,
-				message: Core.getLibraryResourceBundle("sap.ui.core").getText("VALUE_STATE_ERROR"),
+				message: Library.getResourceBundleFor("sap.ui.core").getText("VALUE_STATE_ERROR"),
 				bindingPath: "/" + oItem.id
 			});
 

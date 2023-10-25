@@ -1,12 +1,14 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	TableQUnitUtils,
 	Table,
 	FixedRowMode,
@@ -109,7 +111,7 @@ sap.ui.define([
 			}, mExpectation, sMessage);
 		},
 		getTable: function() {
-			return Core.byId("table");
+			return Element.getElementById("table");
 		}
 	});
 

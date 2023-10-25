@@ -5,9 +5,9 @@
 // Provides control sap.m.QuickViewPage
 sap.ui.define([
 	"./library",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
+	"sap/ui/core/Lib",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
@@ -34,9 +34,9 @@ sap.ui.define([
 	"sap/ui/dom/jquery/Focusable" // jQuery Plugin "firstFocusableDomRef"
 ], function (
 	library,
-	Core,
 	Control,
 	IconPool,
+	Library,
 	SimpleForm,
 	VerticalLayout,
 	HorizontalLayout,
@@ -85,7 +85,7 @@ sap.ui.define([
 	// shortcut for sap.m.EmptyIndicator
 	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
-	var oRB = Core.getLibraryResourceBundle('sap.m');
+	var oRB = Library.getResourceBundleFor('sap.m');
 
 	// shortcut for sap.m.PageBackgroundDesign
 	var PageBackgroundDesign = mLibrary.PageBackgroundDesign;

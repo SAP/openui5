@@ -8,6 +8,7 @@ sap.ui.define([
 	'./List',
 	'./library',
 	'sap/ui/Device',
+	"sap/ui/core/Element",
 	'sap/ui/core/Item',
 	'./ComboBoxRenderer',
 	"sap/ui/dom/containsOrEquals",
@@ -20,7 +21,6 @@ sap.ui.define([
 	"sap/m/inputUtils/selectionRange",
 	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/ui/events/KeyCodes",
-	"sap/ui/core/Core",
 	"sap/base/Log"
 ],
 	function(
@@ -29,6 +29,7 @@ sap.ui.define([
 		List,
 		library,
 		Device,
+		Element,
 		Item,
 		ComboBoxRenderer,
 		containsOrEquals,
@@ -41,7 +42,6 @@ sap.ui.define([
 		selectionRange,
 		calculateSelectionStart,
 		KeyCodes,
-		core,
 		Log
 	) {
 		"use strict";
@@ -352,7 +352,7 @@ sap.ui.define([
 			this._setPropertyProtected("selectedItemId", (vItem instanceof Item) ? vItem.getId() : vItem, true);
 
 			if (typeof vItem === "string") {
-				vItem = core.byId(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			if (oList) {
@@ -1400,7 +1400,7 @@ sap.ui.define([
 			}
 
 			bTablet = this.isPlatformTablet();
-			oRelatedControl = core.byId(oEvent.relatedControlId);
+			oRelatedControl = Element.getElementById(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
 			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !(this._getSuggestionsPopover().getValueStateActiveState())) {
@@ -1665,7 +1665,7 @@ sap.ui.define([
 
 			if (typeof vItem === "string") {
 				this.setAssociation("selectedItem", vItem, true);
-				vItem = core.byId(vItem);
+				vItem = Element.getElementById(vItem);
 			}
 
 			if (!(vItem instanceof Item) && vItem !== null) {
@@ -1800,7 +1800,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.getSelectedItem = function() {
 			var vSelectedItem = this.getAssociation("selectedItem");
-			return (vSelectedItem === null) ? null : core.byId(vSelectedItem) || null;
+			return (vSelectedItem === null) ? null : Element.getElementById(vSelectedItem) || null;
 		};
 
 		/**

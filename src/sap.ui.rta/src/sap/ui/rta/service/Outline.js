@@ -3,32 +3,32 @@
  */
 
 sap.ui.define([
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementOverlay",
-	"sap/ui/dt/AggregationOverlay",
-	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/write/api/ExtensionPointRegistryAPI",
+	"sap/base/Log",
 	"sap/base/util/deepEqual",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_omit",
+	"sap/ui/dt/AggregationOverlay",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/core/mvc/View",
-	"sap/base/Log",
 	"sap/ui/base/DesignTime"
 ], function(
-	OverlayRegistry,
-	ElementOverlay,
-	AggregationOverlay,
-	DtUtil,
-	FlUtils,
-	ExtensionPointRegistryAPI,
+	Log,
 	deepEqual,
 	isEmptyObject,
 	merge,
 	_omit,
+	AggregationOverlay,
+	ElementOverlay,
+	OverlayRegistry,
+	DtUtil,
+	ExtensionPointRegistryAPI,
+	FlUtils,
 	View,
-	Log,
 	DesignTime
 ) {
 	"use strict";
@@ -200,6 +200,7 @@ sap.ui.define([
 			} else if (oData.bIsView) {
 				return this._attachNotConsideredExtensionPoints(oOverlay, oData);
 			}
+			return undefined;
 		};
 
 		function getTemplateData(oChildOverlay, mTemplateData, mInnerTemplateData) {
@@ -322,7 +323,10 @@ sap.ui.define([
 			var oParentElementOverlay = oOverlay.getParentElementOverlay();
 			return oParentElementOverlay
 				&& sParentAggregationName
-				&& oParentElementOverlay.getAggregationOverlay(sParentAggregationName, "AggregationBindingTemplateOverlays") === oParentAggregationOverlay;
+				&& oParentElementOverlay.getAggregationOverlay(
+					sParentAggregationName,
+					"AggregationBindingTemplateOverlays"
+				) === oParentAggregationOverlay;
 		}
 
 		function getElementOverlayData(oOverlay, oElement, oDtMetadata) {
@@ -626,8 +630,8 @@ sap.ui.define([
 			exports: {
 				/**
 				 * Returns an outline model data associated with the key user adaptation instance, starting from the passed control.
-				 * If no control is passed, the root control(s) of the respective key user adaptation instance is taken as the initial control.
-				 * Throws an error if the control ID parameter is not a valid control with a stable ID.
+				 * If no control is passed, the root control(s) of the respective key user adaptation instance is taken as the initial
+				 * control. Throws an error if the control ID parameter is not a valid control with a stable ID.
 				 *
 				 * @method sap.ui.rta.service.Outline.get
 				 * @param {string} [sId] - ID of the control to start with. If omitted the root control(s) is used.

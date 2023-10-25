@@ -2,6 +2,8 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/mdc/p13n/subcontroller/FilterController',
 	'sap/ui/core/library',
 	'sap/ui/core/ShortcutHintsMixin',
@@ -26,6 +28,8 @@ sap.ui.define([
 	"./FilterBarBaseRenderer"
 ],
 	function(
+		Element,
+		Library,
 		FilterController,
 		coreLibrary,
 		ShortcutHintsMixin,
@@ -298,7 +302,7 @@ sap.ui.define([
 
 		Control.prototype.init.apply(this, arguments);
 
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		this._oRb = Library.getResourceBundleFor("sap.ui.mdc");
 
 		this._createInnerModel();
 
@@ -1856,7 +1860,7 @@ sap.ui.define([
 		const sVariantControlId = this.getVariantBackreference();
 
 		if (sVariantControlId) {
-			const oVariantManagement = sap.ui.getCore().byId(sVariantControlId);
+			const oVariantManagement = Element.getElementById(sVariantControlId);
 			if (oVariantManagement && oVariantManagement.isA("sap.ui.fl.variants.VariantManagement")) {
 				return oVariantManagement;
 			}

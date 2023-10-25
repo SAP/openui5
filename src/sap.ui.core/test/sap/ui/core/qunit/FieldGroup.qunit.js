@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/m/Popover",
+	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/UIArea",
 	"sap/ui/events/KeyCodes",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Button, CheckBox, DatePicker, Input, Label, Popover, Element, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv, nextUIUpdate) {
+], function(Button, CheckBox, DatePicker, Input, Label, Popover, Control, Element, UIArea, KeyCodes, HorizontalLayout, VerticalLayout, qutils, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	// Prepare a UI
@@ -396,7 +397,7 @@ sap.ui.define([
 		assert.equal(aGroup.length, 2, "2 controls with  field groups 'group6,group4'");
 
 		function byFieldGroupId(vFieldGroups) {
-			return sap.ui.getCore().byFieldGroupId(vFieldGroups).filter(function(ctrl) {
+			return Control.getControlsByFieldGroupId(vFieldGroups).filter(function(ctrl) {
 				return /^input\d+(-\d\d)*$/.test(ctrl.getId());
 			});
 		}

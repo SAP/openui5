@@ -2,13 +2,15 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/controls/ListContentItem",
 	"sap/ui/integration/controls/Microchart",
 	"sap/m/ObjectStatus"
-], function (
+], function(
 	Core,
+	Library,
 	coreLibrary,
 	ListContent,
 	ListContentItem,
@@ -152,7 +154,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count for sample 1 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 5, "Lines count are as expected.");
 	});
 
 	QUnit.test("Lines count for renderer attributes 2", function (assert) {
@@ -188,7 +190,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count for sample 2 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample2, oContent), 2, "Lines count are as expected.");
 	});
 
 	QUnit.test("Lines count for renderer - attributes 3", function (assert) {
@@ -210,7 +212,7 @@ sap.ui.define([
 		};
 
 		// assert
-		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count for sample 1 are as expected.");
+		assert.strictEqual(ListContentItem.getLinesCount(oSample1, oContent), 2, "Lines count are as expected.");
 	});
 
 	QUnit.module("Accessibility", {
@@ -228,7 +230,7 @@ sap.ui.define([
 			sDescription = "Item description",
 			sInfo = "Item info",
 			sInfoState = ValueState.Error,
-			oMBundle = Core.getLibraryResourceBundle("sap.m"),
+			oMBundle = Library.getResourceBundleFor("sap.m"),
 			sExpectedAnnouncement = sTitle + " . " + sDescription + " . " + sInfo + " . " + oMBundle.getText("LIST_ITEM_STATE_" + sInfoState.toUpperCase());
 		this.oLCI.setTitle(sTitle)
 			.setDescription(sDescription)

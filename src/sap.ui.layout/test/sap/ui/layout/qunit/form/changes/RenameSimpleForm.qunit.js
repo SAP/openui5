@@ -1,5 +1,6 @@
 /*global QUnit*/
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/layout/library",
 	"sap/ui/layout/changeHandler/RenameSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/fl/api/FlexTestAPI"
 ], function(
+	Element,
 	layoutLibrary,
 	RenameSimpleForm,
 	SimpleForm,
@@ -129,7 +131,7 @@ sap.ui.define([
 				var oExpectedChangeVizInfo = {
 					affectedControls: [
 						// as the FormElements in a SimpeForm don't get stable IDs, we have to cheat
-						oCore.byId("component---Label0").getParent().getId()
+						Element.getElementById("component---Label0").getParent().getId()
 					],
 					updateRequired: true,
 					descriptionPayload: {

@@ -302,7 +302,7 @@ sap.ui.define([
 				icons: null
 			});
 
-			sap.ui.getCore().setModel(oCustomTileModel);
+			this.setModel(oCustomTileModel);
 
 			_createTile();
 			_createTileAttributes();

@@ -4,6 +4,8 @@
 
 // Provides class sap.m.DynamicDateFormat
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/ui/core/Lib",
 	'sap/ui/core/date/UI5Date',
 	'sap/ui/core/format/DateFormat',
 	'sap/ui/core/format/NumberFormat',
@@ -11,10 +13,9 @@ sap.ui.define([
 	'sap/ui/core/LocaleData',
 	"sap/base/util/deepExtend",
 	"sap/ui/unified/calendar/CalendarUtils",
-	"./library",
-	"sap/ui/core/Configuration"
+	"./library"
 ],
-	function(UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library, Configuration) {
+	function(Formatting, Library, UI5Date, DateFormat, NumberFormat, Locale, LocaleData, deepExtend, CalendarUtils, library) {
 		"use strict";
 
 		/**
@@ -33,7 +34,7 @@ sap.ui.define([
 			throw new Error();
 		};
 
-		var _resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var _resourceBundle = Library.getResourceBundleFor("sap.m");
 		var _staticParts = {};
 		var _dynamicParameterIndexes = {};
 		var aParameterTypesByStandardOptionKey = {
@@ -151,7 +152,7 @@ sap.ui.define([
 			}
 
 			if (!oLocale) {
-				oLocale = Configuration.getFormatSettings().getFormatLocale();
+				oLocale = new Locale(Formatting.getLanguageTag());
 			}
 			oFormat.oLocale = oLocale;
 			oFormat.oLocaleData = LocaleData.getInstance(oLocale);
@@ -175,7 +176,7 @@ sap.ui.define([
 			oFormat._monthFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["month"]);
 			oFormat._yearFormatter = DateFormat.getInstance(oFormat.oOriginalFormatOptions["year"]);
 			oFormat._numberFormatter = NumberFormat.getInstance(oFormat.oOriginalFormatOptions["int"]);
-			oFormat._resourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			oFormat._resourceBundle = Library.getResourceBundleFor("sap.m");
 
 			return oFormat;
 		};

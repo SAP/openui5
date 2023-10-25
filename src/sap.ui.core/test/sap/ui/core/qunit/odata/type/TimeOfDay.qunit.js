@@ -3,8 +3,9 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/CalendarType",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Control",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/DateFormat",
@@ -14,8 +15,7 @@ sap.ui.define([
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/model/odata/type/TimeOfDay",
 	"sap/ui/test/TestUtils"
-], function (Log, CalendarType, Configuration, Control, UI5Date, DateFormat, FormatException,
-		ParseException, ValidateException, ODataType, TimeOfDay, TestUtils) {
+], function(Log, Formatting, Localization, CalendarType, Control, UI5Date, DateFormat, FormatException, ParseException, ValidateException, ODataType, TimeOfDay, TestUtils) {
 	/*global sinon, QUnit */
 	"use strict";
 
@@ -38,17 +38,17 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.TimeOfDay", {
 		beforeEach : function () {
-			this.sDefaultCalendarType = Configuration.getCalendarType();
-			this.sDefaultLanguage = Configuration.getLanguage();
+			this.sDefaultCalendarType = Formatting.getCalendarType();
+			this.sDefaultLanguage = Localization.getLanguage();
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-			Configuration.setCalendarType(CalendarType.Gregorian);
-			Configuration.setLanguage("en-US");
+			Formatting.setCalendarType(CalendarType.Gregorian);
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function () {
-			Configuration.setCalendarType(this.sDefaultCalendarType);
-			Configuration.setLanguage(this.sDefaultLanguage);
+			Formatting.setCalendarType(this.sDefaultCalendarType);
+			Localization.setLanguage(this.sDefaultLanguage);
 		}
 	});
 
@@ -255,7 +255,7 @@ sap.ui.define([
 		parseError(assert, oType, "foo");
 		parseError(assert, oType, "1:69:30 AM");
 
-		Configuration.setLanguage("de");
+		Localization.setLanguage("de");
 		oType = new TimeOfDay();
 		parseError(assert, oType, "24:00:00");
 	});
@@ -344,7 +344,7 @@ sap.ui.define([
 			oType = new TimeOfDay(undefined, {precision : 3}),
 			oParsedTimeOfDay;
 
-		Configuration.setCalendarType(CalendarType.Japanese);
+		Formatting.setCalendarType(CalendarType.Japanese);
 		oType._resetModelFormatter();
 
 		// code under test
@@ -366,7 +366,7 @@ sap.ui.define([
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		oType.formatValue(sValue, "string"); // ensure that a formatter exists
-		Configuration.setLanguage("de");
+		Localization.setLanguage("de");
 		assert.strictEqual(oType.formatValue(sValue, "string"), sValue,
 			"adjusted to changed language");
 	});

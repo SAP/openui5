@@ -3,7 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
+	"sap/ui/core/Core",
 	'sap/ui/core/CustomData',
 	'./library',
 	'sap/ui/core/library',
@@ -12,12 +14,12 @@ sap.ui.define([
 	'./SplitterRenderer',
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/layout/SplitterLayoutData",
-	"sap/ui/core/Configuration",
-	"sap/ui/core/Core"
+	"sap/ui/layout/SplitterLayoutData"
 ],
 	function(
+		Localization,
 		Control,
+		Core,
 		CustomData,
 		library,
 		coreLibrary,
@@ -26,9 +28,7 @@ sap.ui.define([
 		SplitterRenderer,
 		Log,
 		jQuery,
-		SplitterLayoutData,
-		Configuration,
-		Core
+		SplitterLayoutData
 	) {
 	"use strict";
 
@@ -162,7 +162,7 @@ sap.ui.define([
 		// Switch resizing parameters based on orientation - this must be done to initialize the values
 		this._initOrientationProperties();
 
-		this._bRtl = Configuration.getRTL();
+		this._bRtl = Localization.getRTL();
 
 		// Create bound listener functions for keyboard event handling
 		this._keyListeners = {

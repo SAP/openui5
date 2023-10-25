@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/AvatarShape",
 	"sap/m/AvatarSize",
+	"sap/ui/core/Theming",
 	"sap/ui/util/openWindow",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Lib"
 ],
 function(
@@ -30,8 +30,8 @@ function(
 	Avatar,
 	AvatarShape,
 	AvatarSize,
+	Theming,
 	openWindow,
-	Configuration,
 	CoreLib
 	) {
 	"use strict";
@@ -306,7 +306,7 @@ function(
 			return;
 		}
 
-		sTheme = Configuration.getTheme();
+		sTheme = Theming.getTheme();
 		oActionSheetPopover = event.getSource().getParent();
 		oActionSheetPopover.removeStyleClass("sapContrast sapContrastPlus");
 

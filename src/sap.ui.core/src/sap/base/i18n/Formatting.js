@@ -100,19 +100,21 @@ sap.ui.define([
 	 * Helper that creates a LanguageTag object from the given language
 	 * or, throws an error for non BCP-47 compliant languages.
 	 *
-	 * @param {string} sLanguageTag A BCP-47 compliant language tag
+	 * @param {string|module:sap/base/i18n/LanguageTag} vLanguageTag A BCP-47 compliant language tag
 	 * @returns {module:sap/base/i18n/LanguageTag} The resulting LanguageTag
 	 * @private
 	 * @since 1.116.0
 	 */
-	function createLanguageTag(sLanguageTag) {
+	function createLanguageTag(vLanguageTag) {
 		let oLanguageTag;
-		if (sLanguageTag && typeof sLanguageTag === 'string') {
+		if (vLanguageTag && typeof vLanguageTag === 'string') {
 			try {
-				oLanguageTag = new LanguageTag( sLanguageTag );
+				oLanguageTag = new LanguageTag(vLanguageTag);
 			} catch (e) {
 				// ignore
 			}
+		} else if (vLanguageTag instanceof LanguageTag) {
+			oLanguageTag = vLanguageTag;
 		}
 		return oLanguageTag;
 	}
@@ -327,7 +329,7 @@ sap.ui.define([
 		 * {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
 		 * for restrictions.
 		 *
-		 * @param {string|null} sLanguageTag the new BCP47 compliant language tag;
+		 * @param {string|module:sap/base/i18n/LanguageTag|null} vLanguageTag the new BCP47 compliant language tag;
 		 *   case doesn't matter and underscores can be used instead of dashes to separate
 		 *   components (compatibility with Java Locale IDs)
 		 * @throws {TypeError} When <code>sLanguageTag</code> is given, but is not a valid BCP47 language
@@ -335,12 +337,11 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 */
-		setLanguageTag(sLanguageTag) {
-			const oLanguageTag = createLanguageTag(sLanguageTag);
-			check(sLanguageTag == null || typeof sLanguageTag === "string" && oLanguageTag, "sLanguageTag must be a BCP47 language tag or Java Locale id or null");
-			sLanguageTag = sLanguageTag === null ? undefined : sLanguageTag;
+		setLanguageTag(vLanguageTag) {
+			const oLanguageTag = createLanguageTag(vLanguageTag);
+			check(vLanguageTag == null || oLanguageTag, "vLanguageTag must be a BCP47 language tag or Java Locale id or null");
 			const oOldLanguageTag = Formatting.getLanguageTag();
-			oWritableConfig.set("sapUiFormatLocale", sLanguageTag);
+			oWritableConfig.set("sapUiFormatLocale", oLanguageTag?.toString());
 			const oCurrentLanguageTag = Formatting.getLanguageTag();
 			if (oOldLanguageTag.toString() !== oCurrentLanguageTag.toString()) {
 				const bFireEvent = !mChanges;

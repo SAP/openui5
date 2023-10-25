@@ -1,12 +1,14 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ProgressIndicator",
 	"sap/m/Page",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
+	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/Core"
-], function(createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, Core) {
+], function(Library, createAndAppendDiv, ProgressIndicator, Page, jQuery, coreLibrary, ControlBehavior, Core) {
 	"use strict";
 
 	// shortcut for sap.ui.core.ValueState
@@ -384,15 +386,15 @@ sap.ui.define([
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "progressbar", "AriaRole");
-		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
+		assert.strictEqual(oInfo.type, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_TYPE_PROGRESS"), "Type");
+		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PROGRESS", [50]), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 		oControl.setPercentValue(10);
 		oControl.setEnabled(false);
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
+		assert.strictEqual(oInfo.description, Library.getResourceBundleFor("sap.m").getText("ACC_CTR_STATE_PROGRESS", [10]), "Description");
 		assert.strictEqual(oInfo.focusable, false, "Focusable");
 		assert.strictEqual(oInfo.enabled, false, "Enabled");
 		oControl.setDisplayValue(sDisplayValue);
@@ -465,8 +467,7 @@ sap.ui.define([
 	QUnit.test("CSS animation properties are not applied when Configuration.AnimationMode is 'none'", function(assert) {
 		// Arrange
 		var oProgressIndicator = new ProgressIndicator(),
-			oCoreConfiguration = Core.getConfiguration(),
-			oStub = sinon.stub(oCoreConfiguration, "getAnimationMode").returns("none"),
+			oStub = sinon.stub(ControlBehavior, "getAnimationMode").returns("none"),
 			oBarDomRef;
 
 		// Act

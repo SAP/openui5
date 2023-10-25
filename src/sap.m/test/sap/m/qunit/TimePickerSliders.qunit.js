@@ -1,12 +1,13 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/TimePickerSlider",
 	"sap/m/TimePickerSliders",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
 	"sap/ui/core/date/UI5Date"
-], function(QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, oCore, UI5Date) {
+], function(Library, QUnitUtils, TimePickerSlider, TimePickerSliders, KeyCodes, oCore, UI5Date) {
 	"use strict";
 
 	QUnit.module("API", {
@@ -281,7 +282,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("arrows tooltips", function (assert) {
-		var oRB = oCore.getLibraryResourceBundle("sap.m"),
+		var oRB = Library.getResourceBundleFor("sap.m"),
 			sUpArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_UP"),
 			sDownArrowTooltipText = oRB.getText("TIMEPICKER_TOOLTIP_DOWN");
 

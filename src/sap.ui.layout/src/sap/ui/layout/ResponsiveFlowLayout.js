@@ -4,18 +4,21 @@
 
 // Provides control sap.ui.layout.ResponsiveFlowLayout.
 sap.ui.define([
-	'sap/ui/core/Configuration',
+	"sap/base/i18n/Localization",
 	'sap/ui/core/Control',
+	"sap/ui/core/RenderManager",
 	'sap/ui/core/ResizeHandler',
 	'./library',
 	'./ResponsiveFlowLayoutData',
 	'./ResponsiveFlowLayoutRenderer',
 	'sap/ui/thirdparty/jquery',
-	'sap/ui/dom/jquery/rect' // jQuery Plugin "rect"
+	// jQuery Plugin "rect"
+	'sap/ui/dom/jquery/rect'
 ],
 	function(
-		Configuration,
+		Localization,
 		Control,
+		RenderManager,
 		ResizeHandler,
 		library,
 		ResponsiveFlowLayoutData,
@@ -211,7 +214,7 @@ sap.ui.define([
 			};
 
 			// Find out the "rows" within a row
-			if (Configuration.getRTL()) {
+			if (Localization.getRTL()) {
 				// for RTL-mode the elements have to be checked the other way round
 				for (var i = oRow.cont.length - 1; i >= 0; i--) {
 					fnCurrentWrapping(i);
@@ -744,7 +747,7 @@ sap.ui.define([
 		 */
 		ResponsiveFlowLayout.prototype._getRenderManager = function () {
 			if (!this.oRm) {
-				this.oRm = sap.ui.getCore().createRenderManager();
+				this.oRm = new RenderManager().getInterface();
 				this.oRm.writeHeader = function(sId, oStyles, aClasses) {
 					this.openStart("div", sId);
 

@@ -4,7 +4,7 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/extensionPoint/Processor",
-	"sap/ui/fl/write/_internal/extensionPoint/Registry",
+	"sap/ui/fl/apply/_internal/extensionPoint/Registry",
 	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/core/mvc/XMLView",
 	"sap/m/Label",

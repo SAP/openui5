@@ -4,10 +4,10 @@
 
 sap.ui.define([
 	'./library',
-	'sap/ui/core/Core',
 	'./NotificationListBase',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/IconPool',
+	"sap/ui/core/Lib",
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/m/Button',
@@ -15,10 +15,10 @@ sap.ui.define([
 ],
 function(
 	library,
-	Core,
 	NotificationListBase,
 	InvisibleText,
 	IconPool,
+	Library,
 	coreLibrary,
 	Device,
 	Button,
@@ -32,7 +32,7 @@ function(
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	var RESOURCE_BUNDLE = Core.getLibraryResourceBundle('sap.m'),
+	var RESOURCE_BUNDLE = Library.getResourceBundleFor('sap.m'),
 		EXPAND_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_EXPAND'),
 		COLLAPSE_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_COLLAPSE'),
 		READ_TEXT = RESOURCE_BUNDLE.getText('NOTIFICATION_LIST_GROUP_READ'),

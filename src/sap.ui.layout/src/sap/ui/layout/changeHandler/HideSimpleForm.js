@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/base/Log"
 ], function(
+	Element,
 	JsControlTreeModifier,
 	Log
 ) {
@@ -197,7 +199,7 @@ sap.ui.define([
 	 */
 	HideForm.completeChangeContent = function(oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {
 		if (oSpecificChangeInfo.removedElement && oSpecificChangeInfo.removedElement.id) {
-			var oStableElement = this._getStableElement(sap.ui.getCore().byId(oSpecificChangeInfo.removedElement.id));
+			var oStableElement = this._getStableElement(Element.getElementById(oSpecificChangeInfo.removedElement.id));
 			oChangeWrapper.setContent({
 				elementSelector: JsControlTreeModifier.getSelector(oStableElement, mPropertyBag.appComponent)
 			});

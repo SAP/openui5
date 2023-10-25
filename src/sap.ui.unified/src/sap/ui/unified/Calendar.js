@@ -3,9 +3,11 @@
  */
 //Provides control sap.ui.unified.Calendar.
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Control',
-	'sap/ui/core/Core',
+	"sap/ui/core/Element",
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/DateTypeRange',
@@ -27,12 +29,13 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/util/deepEqual",
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/date/CalendarWeekNumbering"
 ], function(
+	Formatting,
+	Localization,
 	CalendarType,
 	Control,
-	oCore,
+	Element,
 	LocaleData,
 	CalendarUtils,
 	DateTypeRange,
@@ -54,7 +57,6 @@ sap.ui.define([
 	containsOrEquals,
 	deepEqual,
 	Log,
-	Configuration,
 	CalendarWeekNumbering
 ) {
 	"use strict";
@@ -699,7 +701,7 @@ sap.ui.define([
 	Calendar.prototype.getLocale = function(){
 
 		if (!this._sLocale) {
-			this._sLocale = Configuration.getFormatSettings().getFormatLocale().toString();
+			this._sLocale = new Locale(Formatting.getLanguageTag()).toString();
 		}
 
 		return this._sLocale;
@@ -908,7 +910,7 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._getPrimaryCalendarType = function(){
-		return this.getProperty("primaryCalendarType") || Configuration.getCalendarType();
+		return this.getProperty("primaryCalendarType") || Formatting.getCalendarType();
 	};
 
 	/**
@@ -1294,7 +1296,7 @@ sap.ui.define([
 
 	Calendar.prototype._updateLegendParent = function(){
 		var sLegend = this.getLegend(),
-			oLegend = oCore.byId(sLegend);
+			oLegend = Element.getElementById(sLegend);
 
 		oLegend && oLegend._setParent(this);
 	};
@@ -2392,8 +2394,8 @@ sap.ui.define([
 	 */
 	Calendar.prototype._toggleTwoMonthsInTwoColumnsCSS = function () {
 		if (this._isTwoMonthsInTwoColumns()) {
-			if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "ja" ||
-				oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "zh") {
+			if (new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase() === "ja" ||
+				new Locale(Localization.getLanguageTag()).getLanguage().toLowerCase() === "zh") {
 				this.addStyleClass("sapUiCalTwoMonthsTwoColumnsJaZh");
 				this.removeStyleClass("sapUiCalTwoMonthsTwoColumns");
 			} else {
@@ -2485,7 +2487,7 @@ sap.ui.define([
 
 	Calendar.prototype._adjustYearRangeDisplay = function() {
 		var oYearRangePicker = this.getAggregation("yearRangePicker"),
-			sLang = Configuration.getLanguage().toLocaleLowerCase(),
+			sLang = Localization.getLanguage().toLocaleLowerCase(),
 			sPrimaryCalendarType = this._getPrimaryCalendarType();
 
 		if (!this._getSucessorsPickerPopup()) {

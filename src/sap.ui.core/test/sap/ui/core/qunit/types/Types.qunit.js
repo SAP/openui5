@@ -1,7 +1,9 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Lib",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/format/NumberFormat",
 	"sap/ui/model/FormatException",
@@ -19,11 +21,7 @@ sap.ui.define([
 	"sap/ui/model/type/TimeInterval",
 	"sap/ui/model/type/Unit",
 	"sap/ui/test/TestUtils"
-], function (Log, Configuration, UI5Date, NumberFormat, FormatException, ParseException,
-		ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType,
-		FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType,
-		TestUtils
-) {
+], function(Log, Localization, Configuration, Library, UI5Date, NumberFormat, FormatException, ParseException, ValidateException, BooleanType, CurrencyType, DateTimeType, DateTimeIntervalType, FileSizeType, FloatType, IntegerType, StringType, TimeType, TimeIntervalType, UnitType, TestUtils) {
 	"use strict";
 
 	function checkValidateException(oEx) {
@@ -77,7 +75,7 @@ sap.ui.define([
 		});
 	}
 
-	var sDefaultLanguage = Configuration.getLanguage();
+	var sDefaultLanguage = Localization.getLanguage();
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Boolean", {
@@ -85,10 +83,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -129,10 +127,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -432,7 +430,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var currencyType = new CurrencyType({
 			strictParsing: true,
 			showMeasure: true
@@ -481,7 +479,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var currencyType = new CurrencyType({
 			strictParsing: true,
 			showMeasure: false
@@ -534,7 +532,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var mCustomCurrencies = {
 			"BTC": {
 				"symbol": "Ƀ",
@@ -614,7 +612,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("currency parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var mCustomCurrencies = {
 			"BTC": {
 				"symbol": "Ƀ",
@@ -733,10 +731,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTime", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -814,10 +812,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.DateTimeInterval", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -892,10 +890,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1071,10 +1069,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1282,10 +1280,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1416,7 +1414,7 @@ sap.ui.define([
 				minimum: 1
 			});
 
-		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle").withExactArgs().returns(oBundle);
+		this.mock(Library).expects("getResourceBundleFor").withExactArgs("sap.ui.core").returns(oBundle);
 		this.mock(oBundle).expects("getText").withExactArgs("Integer.Minimum", ["1"]).returns(">=1");
 
 		// code under test
@@ -1437,7 +1435,7 @@ sap.ui.define([
 				maximum: 0
 			});
 
-		this.mock(sap.ui.getCore()).expects("getLibraryResourceBundle").withExactArgs().returns(oBundle);
+		this.mock(Library).expects("getResourceBundleFor").withExactArgs("sap.ui.core").returns(oBundle);
 		oBundleMock.expects("getText").withExactArgs("Integer.Minimum", ["2"]).returns(">=2");
 		oBundleMock.expects("getText").withExactArgs("Integer.Maximum", ["0"]).returns("<=0");
 
@@ -1455,10 +1453,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1599,10 +1597,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Time", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1679,10 +1677,10 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.TimeInterval", {
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -1749,10 +1747,10 @@ sap.ui.define([
 			this.__ignoreIsolatedCoverage__ = true;
 		},
 		beforeEach : function() {
-			Configuration.setLanguage("en-US");
+			Localization.setLanguage("en-US");
 		},
 		afterEach : function() {
-			Configuration.setLanguage(sDefaultLanguage);
+			Localization.setLanguage(sDefaultLanguage);
 		}
 	});
 
@@ -2142,7 +2140,7 @@ sap.ui.define([
 				//call super validateValue
 				UnitType.prototype.validateValue.apply(this, arguments);
 
-				var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
+				var oBundle = Library.getResourceBundleFor("sap.ui.core"),
 					aValues = vValue,
 					iValue;
 				if (this.oInputFormat) {
@@ -2422,7 +2420,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=true)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var unitType = new UnitType({
 			strictParsing: true,
 			showMeasure: true
@@ -2468,7 +2466,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - CLDR (showMeasure=false)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var unitType = new UnitType({
 			strictParsing: true,
 			showMeasure: false
@@ -2514,7 +2512,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - Custom (showMeasure=true)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var mCustomUnits = {
 			"zomb": {
 				"displayName": "ZOMBIES!!",
@@ -2583,7 +2581,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("unit parseValue with strict mode - Custom (showMeasure=false)", function (assert) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle();
+		var oBundle = Library.getResourceBundleFor("sap.ui.core");
 		var mCustomUnits = {
 			"zomb": {
 				"displayName": "ZOMBIES!!",

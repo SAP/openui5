@@ -3,6 +3,8 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	'sap/ui/model/json/JSONModel',
 	'sap/m/VBox',
 	'sap/ui/core/Control',
@@ -22,7 +24,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/m/library",
 	"sap/ui/core/InvisibleText"
-], function(JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, InvisibleText) {
+], function(Element, Library, JSONModel, VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, DragDropInfo, ShortcutHintsMixin, KeyCodes, Log, Device, library, InvisibleText) {
 	"use strict";
 
 	/**
@@ -516,7 +518,7 @@ sap.ui.define([
 		}
 
 		//(new) hovered item
-		var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+		var oHoveredItem = Element.getElementById(oEvt.currentTarget.id);
 		this._handleActivated(oHoveredItem);
 	};
 
@@ -531,7 +533,7 @@ sap.ui.define([
 		}
 
 		//(new) hovered item
-		var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+		var oHoveredItem = Element.getElementById(oEvt.currentTarget.id);
 
 		this._handleActivated(oHoveredItem);
 	};
@@ -619,7 +621,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._getResourceText = function(sText, aValue) {
-		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : Library.getResourceBundleFor("sap.m");
 		return sText ? this.oResourceBundle.getText(sText, aValue) : this.oResourceBundle;
 	};
 

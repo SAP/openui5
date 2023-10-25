@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
@@ -10,8 +11,9 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/Item",
 	"sap/m/Select",
-	"sap/ui/Device"],
-function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
+	"sap/ui/Device"
+],
+function(Library, $, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
 	"use strict";
 
 	var	oFactory = {
@@ -42,7 +44,7 @@ function($, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select,
 				});
 			},
 			getResourceBundle: function () {
-				return Core.getLibraryResourceBundle("sap.uxap");
+				return Library.getResourceBundleFor("sap.uxap");
 			}
 		},
 		helpers = {

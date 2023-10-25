@@ -1,6 +1,8 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/utils/TableUtils",
@@ -17,8 +19,11 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/dom/jquery/Selectors" // provides jQuery custom selector ":sapTabbable"
+	// provides jQuery custom selector ":sapTabbable"
+	"sap/ui/dom/jquery/Selectors"
 ], function(
+	Localization,
+	Element,
 	TableQUnitUtils,
 	qutils,
 	TableUtils,
@@ -176,7 +181,7 @@ sap.ui.define([
 
 	function removeFocusDummies() {
 		aFocusDummyIds.forEach(function(sId) {
-			oCore.byId(sId).destroy();
+			Element.getElementById(sId).destroy();
 		});
 		aFocusDummyIds = [];
 	}
@@ -267,8 +272,8 @@ sap.ui.define([
 	 */
 	var Key = {
 		Arrow: {
-			LEFT: oCore.getConfiguration().getRTL() ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
-			RIGHT: oCore.getConfiguration().getRTL() ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT,
+			LEFT: Localization.getRTL() ? KeyCodes.ARROW_RIGHT : KeyCodes.ARROW_LEFT,
+			RIGHT: Localization.getRTL() ? KeyCodes.ARROW_LEFT : KeyCodes.ARROW_RIGHT,
 			UP: KeyCodes.ARROW_UP,
 			DOWN: KeyCodes.ARROW_DOWN
 		},
@@ -972,7 +977,7 @@ sap.ui.define([
 			});
 
 			// The KeyboardDelegate does not handle navigation to the right. The ItemNavigation handles onsapnext (onsapprevious in RTL).
-			var bRTL = oCore.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			var mKeyInfo = {};
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapup", keyName: "ArrowUp"};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdown", keyName: "ArrowDown"};
@@ -1287,7 +1292,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = oCore.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", ctrl: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", ctrl: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", ctrl: true};
@@ -1329,7 +1334,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = oCore.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", shift: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", shift: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", shift: true};
@@ -1721,7 +1726,7 @@ sap.ui.define([
 			});
 
 			var mKeyInfo = {};
-			var bRTL = oCore.getConfiguration().getRTL();
+			var bRTL = Localization.getRTL();
 			mKeyInfo[Key.Arrow.UP] = {eventName: "onsapupmodifiers", keyName: "ArrowUp", alt: true};
 			mKeyInfo[Key.Arrow.DOWN] = {eventName: "onsapdownmodifiers", keyName: "ArrowDown", alt: true};
 			mKeyInfo[Key.Arrow.LEFT] = {eventName: bRTL ? "onsaprightmodifiers" : "onsapleftmodifiers", keyName: "ArrowLeft", alt: true};

@@ -1,5 +1,6 @@
 /*global QUnit */
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/core/IconPool",
@@ -16,6 +17,7 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core"
 ], function(
+	Element,
 	qutils,
 	createAndAppendDiv,
 	IconPool,
@@ -994,13 +996,13 @@ sap.ui.define([
 
 		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
-		assert.ok(oCore.byId("iconOH"), "Icon is found in UI5 Core");
+		assert.ok(Element.getElementById("iconOH"), "Icon is found in UI5 Core");
 		assert.ok(!$sImg.attr("title"), "Icon has no tooltip");
-		assert.ok(oCore.byId("iconOH-flag"), "Flag icon is found in UI5 Core");
-		assert.ok(oCore.byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
+		assert.ok(Element.getElementById("iconOH-flag"), "Flag icon is found in UI5 Core");
+		assert.ok(Element.getElementById("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
-		assert.notOk(oCore.byId("iconOH-flag"), "Flag icon is not found in UI5 Core");
-		assert.notOk(oCore.byId("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
+		assert.notOk(Element.getElementById("iconOH-flag"), "Flag icon is not found in UI5 Core");
+		assert.notOk(Element.getElementById("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
@@ -1017,10 +1019,10 @@ sap.ui.define([
 
 		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
-		assert.ok(oCore.byId("imageOH"), "Image is found in UI5 Core");
+		assert.ok(Element.getElementById("imageOH"), "Image is found in UI5 Core");
 		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
-		assert.notOk(oCore.byId("imageOH"), "Image is removed from UI5 Core");
+		assert.notOk(Element.getElementById("imageOH"), "Image is removed from UI5 Core");
 	});
 
 	QUnit.test("Title selector icon size", function(assert) {

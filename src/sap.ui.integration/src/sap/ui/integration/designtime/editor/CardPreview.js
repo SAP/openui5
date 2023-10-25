@@ -3,6 +3,9 @@
  */
 
 sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"sap/ui/core/Control",
 	"sap/m/HBox",
@@ -11,8 +14,18 @@ sap.ui.define([
 	"./Card",
 	"sap/ui/core/Core",
 	"sap/ui/dom/includeStylesheet"
-], function (
-	library, Control, HBox, Image, ToggleButton, Card, Core, includeStylesheet
+], function(
+	Localization,
+	Element,
+	Library,
+	library,
+	Control,
+	HBox,
+	Image,
+	ToggleButton,
+	Card,
+	Core,
+	includeStylesheet
 ) {
 	"use strict";
 
@@ -89,7 +102,7 @@ sap.ui.define([
 				if (!oControl.getSettings().preview || oControl.getSettings().preview.scaled !== false) {
 					if (oControl._getCurrentSize() !== "Full") {
 						oRm.class("sapUiIntegrationDTPreviewScale");
-						var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+						var sLanguge = Localization.getLanguage().replaceAll('_', '-');
 						if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
 							// for the languages "ar-SA"(Arabic) and "he-IL"(Hebrew) which write from right to left, use spec style
 							oRm.class("withSpec");
@@ -136,7 +149,7 @@ sap.ui.define([
 	 */
 	CardPreview.prototype.init = function () {
 		//load translations
-		this._oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.integration");
 		//if the theme changes we should toggle the class
 		Core.attachThemeChanged(function () {
 			if (this.getDomRef()) {
@@ -180,7 +193,7 @@ sap.ui.define([
 			window.setTimeout(function() {
 				try {
 					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;
-					var oVizFrame = Core.byId(vizFrameId);
+					var oVizFrame = Element.getElementById(vizFrameId);
 					if (oVizFrame.getVizProperties() && oVizFrame.getVizProperties().legendGroup.layout.position === "bottom" && oVizFrame.getVizProperties().legendGroup.layout.alignment === "center") {
 						oPreview.getDomRef().getElementsByClassName("v-m-legend")[0].transform.baseVal[0].matrix.e = 110;
 					}
@@ -193,7 +206,7 @@ sap.ui.define([
 
 	CardPreview.prototype.getEditor = function () {
 		var sEditorId = this.getAssociation("_editor");
-		return Core.byId(sEditorId);
+		return Element.getElementById(sEditorId);
 	};
 
 	/**
@@ -398,7 +411,7 @@ sap.ui.define([
 	 * @returns {sap.m.ToggleButton}
 	 */
 	 CardPreview.prototype._getModeToggleButton = function () {
-		var oBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		if (!this._oModeToggleButton) {
 			this._oModeToggleButton = new ToggleButton();
@@ -414,7 +427,7 @@ sap.ui.define([
 		this._oModeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewModeButtonFullSpec");
 		this._oModeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewModeButtonVerticalFull");
 		this._oModeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewModeButtonVerticalFullSpec");
-		var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		var sLanguge = Localization.getLanguage().replaceAll('_', '-');
 		if (this._getCurrentSize() === "Full") {
 			var sPreviewPosition = this.getSettings().preview.position;
 			if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
@@ -487,7 +500,7 @@ sap.ui.define([
 	 * @returns {sap.m.ToggleButton}
 	 */
 	 CardPreview.prototype._getResizeToggleButton = function () {
-		var oBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+		var oBundle = Library.getResourceBundleFor("sap.ui.integration");
 
 		if (!this._oSizeToggleButton) {
 			this._oSizeToggleButton = new ToggleButton();
@@ -506,7 +519,7 @@ sap.ui.define([
 		this._oSizeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlySpec");
 		this._oSizeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlyFull");
 		this._oSizeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlyFullSpec");
-		var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
+		var sLanguge = Localization.getLanguage().replaceAll('_', '-');
 		if (this._getModes() === "Mock" || this._getModes() === "MockData" || this._getModes() === "Live") {
 			if (this._getCurrentSize() === "Full") {
 				if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {

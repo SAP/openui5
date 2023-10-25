@@ -1,15 +1,16 @@
 /* global QUnit*/
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/support/Support"
 ],
-function(Support) {
+function(Lib, Support) {
 	"use strict";
 
 	QUnit.test("Load Support module and check App plugins", function(assert) {
 
 		// save plugin module names which will be replaced with the actual instances
-		var mLibs = sap.ui.getCore().getLoadedLibraries(),
+		var mLibs = Lib.all(),
 			aPluginModuleNames = [];
 		for (var n in mLibs) {
 			var oLib = mLibs[n],

@@ -1,6 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/i18n/Localization",
+	"sap/ui/core/Element",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ScrollContainer",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"require"
 ], function(
 	Localization,
+	Element,
 	qutils,
 	createAndAppendDiv,
 	ScrollContainer,
@@ -139,23 +141,23 @@ sap.ui.define([
 	// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)
 	function getScrollPos(sScrollContainerId, sDirection) {
 		var s,
-			scrollEnablement = Core.byId(sScrollContainerId).getScrollDelegate(),
+			scrollEnablement = Element.getElementById(sScrollContainerId).getScrollDelegate(),
 			aScrollPosition = null;
 
 		if (scrollEnablement._scroller) { // iScroll
 			if (Device.browser.mozilla) {
-				aScrollPosition = Core.byId(sScrollContainerId).$().css("-moz-transform").split(" ");
+				aScrollPosition = Element.getElementById(sScrollContainerId).$().css("-moz-transform").split(" ");
 				// "matrix(1, 0, 0, -99.9999, 0px, 0px)" => "99.9999,"
 				s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 			} else if (Device.browser.safari || Device.browser.chrome) {
-				aScrollPosition = Core.byId(sScrollContainerId).$().css("-webkit-transform").split(" ");
+				aScrollPosition = Element.getElementById(sScrollContainerId).$().css("-webkit-transform").split(" ");
 				s = sDirection == "left" ?  aScrollPosition[4] : aScrollPosition[5];
 			}
 
 			return Math.round(parseFloat(s));
 
 		} else { // NativeMouseScroller
-			sDirection == "left" ? s = Math.round(Core.byId(sScrollContainerId).getDomRef().scrollLeft) : s = Math.round(Core.byId(sScrollContainerId).getDomRef().scrollTop);
+			sDirection == "left" ? s = Math.round(Element.getElementById(sScrollContainerId).getDomRef().scrollLeft) : s = Math.round(Element.getElementById(sScrollContainerId).getDomRef().scrollTop);
 			return -s;
 		}
 	}

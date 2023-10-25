@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/m/App",
 	"sap/m/Bar",
 	"sap/m/Button",
@@ -7,8 +8,8 @@ sap.ui.define([
 	"sap/m/Label",
 	"sap/m/Page",
 	"sap/m/ToggleButton",
-	"sap/ui/core/Configuration",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/core/library",
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/library",
@@ -18,6 +19,7 @@ sap.ui.define([
 	"sap/ui/model/type/DateTime",
 	"sap/ui/core/date/UI5Date"
 ], function(
+	Localization,
 	App,
 	Bar,
 	Button,
@@ -26,8 +28,8 @@ sap.ui.define([
 	Label,
 	Page,
 	ToggleButton,
-	Configuration,
 	oCore,
+	Element,
 	coreLibrary,
 	DateTypeRange,
 	unifiedLibrary,
@@ -46,7 +48,7 @@ sap.ui.define([
 	var ValueState = coreLibrary.ValueState;
 
 	oCore.ready(function() {
-		Configuration.setLanguage("en-US");
+		Localization.setLanguage("en-US");
 	});
 
 	var app = new App("myApp");
@@ -66,7 +68,7 @@ sap.ui.define([
 
 	function handleChange(oEvent){
 		var oDTP = oEvent.getSource();
-		var oInput = oCore.byId("I2");
+		var oInput = Element.getElementById("I2");
 		var sValue = oEvent.getParameter("value");
 		var bValid = oEvent.getParameter("valid");
 		iEvent++;
@@ -106,7 +108,7 @@ sap.ui.define([
 
 	var handleFieldGroupValidation = function (oEvent) {
 		var oDTP = oEvent.getSource();
-		var oInput = oCore.byId("I2");
+		var oInput = Element.getElementById("I2");
 		oInput.setValue("ValidateFieldGroup - Event: DateTimePicker " + oDTP.getId());
 	};
 
@@ -114,7 +116,7 @@ sap.ui.define([
 
 	function toggleSpecialDates(oEvent) {
 		var bPressed = oEvent.getParameter("pressed");
-		var oDTP = oCore.byId("DTP2");
+		var oDTP = Element.getElementById("DTP2");
 		if (!oLegend) {
 			oLegend = new CalendarLegend("Legend1", {
 				items: [
