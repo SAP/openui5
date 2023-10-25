@@ -8,6 +8,22 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.HierarchyBindAction.Main", {
+		onChangeHierarchy : function (oEvent) {
+			const oSource = oEvent.getSource();
+			const oContext = oSource.toString().includes("ODataListBinding")
+				? oSource.getAllCurrentContexts()[0]
+				: oSource.getSelectedItem().getBindingContext();
+			const oTreeTable = this.byId("table");
+			oTreeTable.setBindingContext(oContext);
+
+			const oRowsBinding = oTreeTable.getBinding("rows");
+			oRowsBinding.setAggregation(this._oAggregation);
+
+			const oView = this.getView();
+			oView.setModel(oView.getModel(), "header");
+			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
+		},
+
 		onCreate : async function (oEvent) {
 			try {
 				const oParentContext = oEvent.getSource().getBindingContext();
@@ -60,9 +76,7 @@ sap.ui.define([
 
 		onInit : function () {
 			var oTreeTable = this.byId("table"),
-				oRowsBinding = oTreeTable.getBinding("rows"),
-				oUriParameters = new URLSearchParams(window.location.search),
-				oView = this.getView();
+				oUriParameters = new URLSearchParams(window.location.search);
 
 			oTreeTable._oProxy._bEnableV4 = true; // enable V4 tree table flag
 			const sVisibleRowCount = oUriParameters.get("visibleRowCount");
@@ -77,11 +91,9 @@ sap.ui.define([
 					: parseInt(sExpandTo || "1"),
 				hierarchyQualifier : "I_SADL_BHV_BIND_DIR_HIERVIEW"
 			};
-			oRowsBinding.setAggregation(this._oAggregation);
-			oRowsBinding.resume();
 
-			oView.setModel(oView.getModel(), "header");
-			oView.setBindingContext(oRowsBinding.getHeaderContext(), "header");
+			this.byId("selectHierarchy").getBinding("items")
+				.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
 		},
 
 		onMove : function (oEvent) {
