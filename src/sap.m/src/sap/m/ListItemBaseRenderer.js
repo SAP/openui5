@@ -326,6 +326,9 @@ sap.ui.define(["sap/ui/core/ControlBehavior", "./library", "sap/ui/Device", "sap
 			if (oLI.isGroupHeader()) {
 				bPositionNeeded = false;
 				mAccessibilityState.role = "group";
+				if (oLI.getTitle) {
+					mAccessibilityState.label = oLI.getTitle();
+				}
 				mAccessibilityState.roledescription = Library.getResourceBundleFor("sap.m").getText("LIST_ITEM_GROUP_HEADER");
 				var aGroupedItems = oLI.getGroupedItems();
 				if (aGroupedItems && aGroupedItems.length) {
