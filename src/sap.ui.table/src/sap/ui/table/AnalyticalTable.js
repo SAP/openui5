@@ -39,7 +39,6 @@ sap.ui.define([
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
-	var TreeAutoExpandMode = library.TreeAutoExpandMode;
 	var _private = TableUtils.createWeakMapFacade();
 
 	/**
@@ -375,10 +374,16 @@ sap.ui.define([
 		oBindingInfo.parameters = oBindingInfo.parameters || {};
 		oBindingInfo.parameters.analyticalInfo = this._getColumnInformation();
 
+		/**
+		 * @deprecated As of Version 1.44
+		 */
 		if (!oBindingInfo.parameters.hasOwnProperty("sumOnTop")) {
 			oBindingInfo.parameters.sumOnTop = this.getSumOnTop();
 		}
 
+		/**
+		 * @deprecated As of Version 1.44
+		 */
 		if (!oBindingInfo.parameters.hasOwnProperty("numberOfExpandedLevels")) {
 			oBindingInfo.parameters.numberOfExpandedLevels = this.getNumberOfExpandedLevels();
 		}
@@ -388,10 +393,13 @@ sap.ui.define([
 			oBindingInfo.parameters.numberOfExpandedLevels = 0;
 		}
 
+		/**
+		 * @deprecated As of Version 1.44
+		 */
 		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
 			var sExpandMode = this.getAutoExpandMode();
-			if (sExpandMode != TreeAutoExpandMode.Bundled && sExpandMode != TreeAutoExpandMode.Sequential) {
-				sExpandMode = TreeAutoExpandMode.Bundled;
+			if (sExpandMode != "Bundled" && sExpandMode != "Sequential") {
+				sExpandMode = "Bundled";
 			}
 			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
