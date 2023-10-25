@@ -32,7 +32,7 @@ sap.ui.define([
 	const oWritableConfig = BaseConfig.getWritableInstance();
 	const mSettings = {};
 	let mChanges;
-	let aLegacyDateCalendarCustomizing;
+	let aCustomIslamicCalendarData;
 
 	const M_ABAP_DATE_FORMAT_PATTERN = {
 		"" : {pattern: null},
@@ -150,9 +150,9 @@ sap.ui.define([
 		 * <li><code>languageTag</code></li>
 		 * </ul>
 		 * </li>
-		 * <li>{@link module:sap/base/i18n/Formatting.setLegacyDateCalendarCustomizing Formatting.setLegacyDateCalendarCustomizing}:
+		 * <li>{@link module:sap/base/i18n/Formatting.setCustomIslamicCalendarData Formatting.setCustomIslamicCalendarData}:
 		 * <ul>
-		 * <li><code>legacyDateCalendarCustomizing</code></li>
+		 * <li><code>customIslamicCalendarData</code></li>
 		 * </ul>
 		 * </li>
 		 * <li>{@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering Formatting.setCalendarWeekNumbering}:
@@ -876,34 +876,50 @@ sap.ui.define([
 		},
 
 		/**
+		 *
+		 * Customizing data for the support of Islamic calendar.
+		 * Represents one row of data from Table TISLCAL.
+		 *
+		 * @typedef {object} module:sap/base/i18n/Formatting.CustomIslamicCalendarData
+		 *
+		 * @property {"A"|"B"} dateFormat The date format. Column DATFM in TISLCAL.
+		 * @property {string} islamicMonthStart The Islamic date in format: 'yyyyMMdd'. Column ISLMONTHSTART in TISLCAL.
+		 * @property {string} gregDate The corresponding Gregorian date format: 'yyyyMMdd'. Column GREGDATE in TISLCAL.
+		 *
+		 * @public
+		 */
+
+		/**
 		 * Allows to specify the customizing data for Islamic calendar support
 		 *
-		 * @param {object[]} aMappings contains the customizing data for the support of Islamic calendar.
-		 * @param {string} aMappings[].dateFormat The date format
-		 * @param {string} aMappings[].islamicMonthStart The Islamic date
-		 * @param {string} aMappings[].gregDate The corresponding Gregorian date
+		 * See: {@link module:sap/base/i18n/Formatting.CustomIslamicCalendarData}
+		 *
+		 * @param {module:sap/base/i18n/Formatting.CustomIslamicCalendarData[]} aCustomCalendarData Contains the customizing data for the support of Islamic calendar.
+		 * One JSON object in the array represents one row of data from Table TISLCAL
 		 * @public
 		 * @since 1.120
 		 */
-		setLegacyDateCalendarCustomizing(aMappings) {
-			check(Array.isArray(aMappings), "aMappings must be an Array");
+		setCustomIslamicCalendarData(aCustomCalendarData) {
+			check(Array.isArray(aCustomCalendarData), "aCustomCalendarData must be an Array");
 			const bFireEvent = !mChanges;
 			mChanges ??= {};
-			aLegacyDateCalendarCustomizing = mChanges.legacyDateCalendarCustomizing = aMappings.slice();
+			aCustomIslamicCalendarData = mChanges.customIslamicCalendarData = aCustomCalendarData.slice();
 			if (bFireEvent) {
 				fireChange();
 			}
 		},
 
 		/**
-		 * Returns the currently set customizing data for Islamic calendar support
+		 * Returns the currently set customizing data for Islamic calendar support.
 		 *
-		 * @returns {object[]|undefined} Returns an array contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #setLegacyDateCalendarCustomizing}
+		 * See: {@link module:sap/base/i18n/Formatting.CustomIslamicCalendarData}
+		 *
+		 * @returns {module:sap/base/i18n/Formatting.CustomIslamicCalendarData[]|undefined} Returns an array that contains the customizing data. Each element in the array has properties: dateFormat, islamicMonthStart, gregDate. For details, please see {@link #.setCustomIslamicCalendarData}
 		 * @public
 		 * @since 1.120
 		 */
-		getLegacyDateCalendarCustomizing() {
-			return aLegacyDateCalendarCustomizing?.slice() ?? undefined;
+		getCustomIslamicCalendarData() {
+			return aCustomIslamicCalendarData?.slice() ?? undefined;
 		},
 
 		/**
