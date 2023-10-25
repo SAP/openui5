@@ -307,7 +307,7 @@ sap.ui.define([
 	 *
 	 * @static
 	 * @public
-	 * @deprecated since 1.56.0, use <code>sap.ui.require.toUrl</code> instead.
+	 * @deprecated since 1.56.0, use {@link sap.ui.require.toUrl} instead.
 	 */
 	sap.ui.resource = function(sLibraryName, sResourcePath) {
 		assert(typeof sLibraryName === "string", "sLibraryName must be a string");
@@ -349,7 +349,7 @@ sap.ui.define([
 	 * @param {string} sNamespace Namespace prefix for which to load resources relative to the application root folder
 	 * @public
 	 * @static
-	 * @deprecated since 1.56, use <code>sap.ui.loader.config</code> instead.
+	 * @deprecated since 1.56, use {@link sap.ui.loader.config} and its <code>paths</code> option instead.
 	 */
 	sap.ui.localResources = function(sNamespace) {
 		assert(sNamespace, "sNamespace must not be empty");
