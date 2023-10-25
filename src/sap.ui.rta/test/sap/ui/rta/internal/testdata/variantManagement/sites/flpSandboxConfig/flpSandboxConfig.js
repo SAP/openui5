@@ -62,23 +62,4 @@
 			}
 		}
 	};
-
-	var __sPathPrefix = document.location.pathname.match(/(.*)\/test-resources\//)[1];
-
-	document.write(`<script src="${__sPathPrefix}/test-resources/sap/ushell/bootstrap/sandbox.js" id="sap-ushell-bootstrap"><` + `/script>`);
-
-	document.write(`\
-          <script \
-            id="sap-ui-bootstrap" \
-            data-sap-ui-theme="sap_horizon" \
-            data-sap-ui-language="en" \
-            data-sap-ui-noConflict="true" \
-            data-sap-ui-async="true" \
-            data-sap-ui-libs="sap.m, sap.ushell, sap.ui.rta" \
-            data-sap-ui-xx-bindingSyntax="complex" \
-            data-sap-ui-flexibilityServices='[{"connector": "LocalStorageConnector"}]' \
-            src="${
-	document.location.pathname.match(/(.*)\/test-resources\//)[1]}/resources/sap-ui-core.js" \
-          ><` + `/script>`
-	);
 })();
