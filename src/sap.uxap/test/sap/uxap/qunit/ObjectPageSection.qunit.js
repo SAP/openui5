@@ -84,6 +84,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 		assert.strictEqual(oObjectPageLayout.getSections()[0]._getInternalTitleVisible(), true, "title is displayed when there is only 1 section");
 		assert.strictEqual(oObjectPageLayout.getSections()[0]._isTitleAriaVisible(), true, "title is displayed when there is only 1 section");
+		assert.strictEqual(oObjectPageLayout.getSections()[0].getTitleVisible(), true, "title is displayed when there is only 1 section");
 
 		oObjectPageLayout.destroy();
 	});
@@ -119,10 +120,96 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 		assert.strictEqual(aSections[0]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
 		assert.strictEqual(aSections[1]._getInternalTitleVisible(), false, "title is hidden when there is more than 1 section");
+		assert.strictEqual(aSections[0].getTitleVisible(), false, "title is hidden when there is more than 1 section");
+		assert.strictEqual(aSections[1].getTitleVisible(), false, "title is hidden when there is more than 1 section");
 
 		assert.strictEqual(aSections[0]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 		assert.strictEqual(aSections[1]._isTitleAriaVisible(), true, "title is NOT hidden from the screen reader when there is more than 1 section");
 
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("getTitleVisible with showTitle=false", function (assert) {
+		// Arrange
+		var	oSection,
+			oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: [
+					new ObjectPageSection({
+						title: "Section Title",
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								blocks: [new Text({text: "test"})]
+							}),
+							new ObjectPageSubSection({
+								title: "Title2",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					})
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		oSection = oObjectPageLayout.getSections()[0];
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible");
+
+		// Act
+		oSection.setShowTitle(false);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+
+		// Clean up
+		oObjectPageLayout.destroy();
+	});
+
+	QUnit.test("getTitleVisible with importance level of SubSections", function (assert) {
+		// Arrange
+		var	oSection,
+			oObjectPageLayout = new ObjectPageLayout("page02", {
+				useIconTabBar: true,
+				sections: [
+					new ObjectPageSection({
+						title: "Section Title",
+						showTitle: false,
+						subSections: [
+							new ObjectPageSubSection({
+								title: "Title",
+								importance: "Low",
+								blocks: [new Text({text: "test"})]
+							}),
+							new ObjectPageSubSection({
+								title: "Title2",
+								blocks: [new Text({text: "test"})]
+							})
+						]
+					})
+				]
+			});
+
+		oObjectPageLayout.placeAt('qunit-fixture');
+		Core.applyChanges();
+
+		oSection = oObjectPageLayout.getSections()[0];
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), false, "title is not visible");
+
+		// Act
+		oObjectPageLayout.setShowOnlyHighImportance(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSection.getTitleVisible(), true, "title is visible, as there is a hidden SubSection");
+
+		// Clean up
 		oObjectPageLayout.destroy();
 	});
 
@@ -469,6 +556,12 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 				_getIsHidden: this.stub().returns(this._isHidden),
 				setImportance: function (sImportance) {
 					this.getImportance = this.stub().returns(sImportance);
+				},
+				_isTitleVisible: function () {
+					return true;
+				},
+				setTitleVisible: function () {
+					return;
 				},
 				_updateShowHideState: this.spy(),
 				$: this.stub().returns(jQueryObject)

@@ -1899,10 +1899,11 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.test("SubSection without title has no title", function (assert) {
-		var $section;
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0],
+			$section = oSubSection.$();
 
-		$section = this.oObjectPage.getSections()[0].getSubSections()[0].$();
 		assert.strictEqual($section.find('.sapUxAPObjectPageSubSectionHeader').length, 0, "subsection has no title");
+		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
 
 		this.oObjectPage.destroy();
 	});
@@ -1913,6 +1914,41 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 		assert.ok(oSection.getSubSections().length > 0, "subsection is not the only child");
 		assert.notOk($subSection.hasClass("sapUxAPObjectPageSubSectionPromoted"), "subsection is not promoted");
+
+		this.oObjectPage.destroy();
+	});
+
+	QUnit.test("getTitleVisible with showTitle=true", function (assert) {
+		// Arrange
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0];
+
+		// Assert
+		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
+
+		// Act
+		oSubSection.setShowTitle(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSubSection.getTitleVisible(), true, "titleVisible is true");
+
+		this.oObjectPage.destroy();
+	});
+
+	QUnit.test("getTitleVisible with empty title", function (assert) {
+		// Arrange
+		var oSubSection = this.oObjectPage.getSections()[0].getSubSections()[0];
+
+		// Assert
+		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is false");
+
+		// Act
+		oSubSection.setShowTitle(true);
+		oSubSection.setTitle("");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oSubSection.getTitleVisible(), false, "titleVisible is still false as title is empty string");
 
 		this.oObjectPage.destroy();
 	});

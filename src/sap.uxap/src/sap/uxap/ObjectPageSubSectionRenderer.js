@@ -14,7 +14,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 	};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
-		var aActions, bHasTitle, bShowTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
+		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions,
 			bAccessibilityOn = ControlBehavior.isAccessibilityEnabled(),
 			oLabelledBy = oControl.getAggregation("ariaLabelledBy");
 
@@ -24,8 +24,7 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 		aActions = oControl.getActions() || [];
 		bHasActions = aActions.length > 0;
-		bShowTitle = oControl.getShowTitle();
-		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle().trim() !== "")) && bShowTitle;
+		bHasTitle = oControl.getTitleVisible();
 		bHasTitleLine = bHasTitle || bHasActions;
 		bHasVisibleActions = oControl._hasVisibleActions();
 
