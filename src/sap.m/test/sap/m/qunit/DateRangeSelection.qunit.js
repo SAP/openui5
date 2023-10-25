@@ -1742,4 +1742,29 @@ sap.ui.define([
 		// Clean
 		oDRS.destroy();
 	});
+
+	QUnit.test("CustomMonthPicker sets MonthPicker year", function (assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection("MMyyyy", {
+				displayFormat: "MM/yyyy",
+				dateValue: UI5Date.getInstance(2003, 6, 10),
+				secondDateValue: UI5Date.getInstance(2003, 10, 27)
+			}),
+			oMP;
+
+		oDRS.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oDRS.focus();
+		qutils.triggerEvent("click", oDRS.getId() + "-icon"); // open the picker and initialize the calendar
+		oCore.applyChanges();
+		oMP = oDRS._getCalendar()._getMonthPicker();
+
+		// Assert
+		assert.strictEqual(oMP._iYear, 2003, "Proper year is set to the internal MonthPicker");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 });
