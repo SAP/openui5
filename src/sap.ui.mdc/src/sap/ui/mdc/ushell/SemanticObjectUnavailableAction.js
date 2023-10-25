@@ -18,9 +18,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.120
-	 * @alias sap.ui.mdc.link.SemanticObjectUnavailableAction
+	 * @alias sap.ui.mdc.ushell.SemanticObjectUnavailableAction
 	 */
-	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.link.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.link.SemanticObjectUnavailableAction.prototype */
+	const SemanticObjectUnavailableAction = Element.extend("sap.ui.mdc.ushell.SemanticObjectUnavailableAction", /** @lends sap.ui.mdc.ushell.SemanticObjectUnavailableAction.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",

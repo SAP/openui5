@@ -18,9 +18,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.120
-	 * @alias sap.ui.mdc.link.SemanticObjectMapping
+	 * @alias sap.ui.mdc.ushell.SemanticObjectMapping
 	 */
-	const SemanticObjectMapping = Element.extend("sap.ui.mdc.link.SemanticObjectMapping", /** @lends sap.ui.mdc.link.SemanticObjectMapping.prototype */
+	const SemanticObjectMapping = Element.extend("sap.ui.mdc.ushell.SemanticObjectMapping", /** @lends sap.ui.mdc.ushell.SemanticObjectMapping.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
@@ -32,7 +32,7 @@ sap.ui.define([
 			defaultAggregation: "items",
 			aggregations: {
 				items: {
-					type: "sap.ui.mdc.link.SemanticObjectMappingItem",
+					type: "sap.ui.mdc.ushell.SemanticObjectMappingItem",
 					multiple: true,
 					singularName: "item"
 				}
