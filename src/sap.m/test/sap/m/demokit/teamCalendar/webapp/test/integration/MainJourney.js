@@ -9,18 +9,18 @@ sap.ui.define([
 	"use strict";
 
 	var oPCIds = {
-			sCalendarId: "PlanningCalendar",
-			sFragmentId: "PlanningCalendar",
-			sSelectorId: "PlanningCalendarTeamSelector",
-			sLegendButtonId: "PlanningCalendarLegendButton",
-			sCreateButtonId: "PlanningCalendarCreateAppointmentButton"
+			sCalendarId: "__xmlview0--PlanningCalendar",
+			sFragmentId: "__xmlview0--PlanningCalendar",
+			sSelectorId: "__xmlview0--PlanningCalendarTeamSelector",
+			sLegendButtonId: "__xmlview0--PlanningCalendarLegendButton",
+			sCreateButtonId: "__xmlview0--PlanningCalendarCreateAppointmentButton"
 		},
 		oSPCIds = {
-			sCalendarId: "SinglePlanningCalendar",
-			sFragmentId: "SinglePlanningCalendar",
-			sSelectorId: "SinglePlanningCalendarTeamSelector",
-			sLegendButtonId: "SinglePlanningCalendarLegendButton",
-			sCreateButtonId: "SinglePlanningCalendarCreateAppointmentButton"
+			sCalendarId: "__xmlview0--SinglePlanningCalendar",
+			sFragmentId: "__xmlview0--SinglePlanningCalendar",
+			sSelectorId: "__xmlview0--SinglePlanningCalendarTeamSelector",
+			sLegendButtonId: "__xmlview0--SinglePlanningCalendarLegendButton",
+			sCreateButtonId: "__xmlview0--SinglePlanningCalendarCreateAppointmentButton"
 		};
 
 	QUnit.module("Team Calendar");
