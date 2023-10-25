@@ -82,9 +82,6 @@ sap.ui.define([
 		}
 
 	//		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
-		oRm.accessibilityState(oRow, {
-			role: "row"
-		});
 		oRm.openEnd(); // div element
 
 		this.renderAppointmentsRow(oRm, oRow, aTypes);
