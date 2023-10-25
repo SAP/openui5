@@ -1667,15 +1667,15 @@ sap.ui.define([
 
 		this._oDragInfo.columnWidths = oNewColumnWidths;
 
-		if (bResizeWithPinning) {
+		if (bResizeWithPinning || bIsResizeEnd) {
 			// call the dedicated function in order to resize with reveal/conceal effect
 			this._resizeColumns({
 				columnWidths: oNewColumnWidths,
 				layout: sLayout,
 				previousLayout: sPreviousLayout,
-				updateContextualSettings: false,
-				updateMediaCSSClases: false,
-				updateDetailedActiveClasses: false,
+				updateContextualSettings: bIsResizeEnd,
+				updateMediaCSSClases: bIsResizeEnd,
+				updateDetailedActiveClasses: bIsResizeEnd,
 				restoreFocusOnBackNavigation: false
 			});
 		} else {

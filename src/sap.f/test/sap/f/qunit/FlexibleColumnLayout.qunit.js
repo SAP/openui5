@@ -1104,6 +1104,36 @@ function(
 		oConfiguration.setAnimationMode(sOriginalAnimationMode);
 	});
 
+	QUnit.test("Contextual settings are updated after column resize without layout update", function (assert) {
+		var sLayoutBeforeDrag = this.oFCL.getLayout(),
+			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings");
+
+		// Act: resize to a width that does not lead to change of <code>layoutType</code>
+		dragSeparator("begin", 10, this.oFCL);
+
+		// Assert
+		assert.strictEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is unchanged");
+		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 3, "contextual settings are upadated");
+	});
+
+	QUnit.test("Contextual settings are updated after column resize with layout update", function (assert) {
+		var sLayoutBeforeDrag = this.oFCL.getLayout(),
+			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings"),
+			fnDone = assert.async();
+
+		// Act: resize to a width that leads to change of <code>layoutType</code>
+		dragSeparator("begin", -700, this.oFCL);
+
+		// Assert
+		assert.notEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is not changed");
+		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
+			setTimeout(function() { // wait for FCL promise to complete
+				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 3, "contextual settings are upadated");
+				fnDone();
+			}, 0);
+		});
+	});
+
 	QUnit.module("ScreenReader supprot", {
 		beforeEach: function () {
 			this.oFCL = oFactory.createFCL();
@@ -1596,6 +1626,32 @@ function(
 		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
+	});
+
+	QUnit.test("columnResize event is fired after resize without layoutType change", function (assert) {
+		assert.expect(1);
+		// setup
+		var fnDone = assert.async(),
+			iEventsCount = 0,
+			fnCallback = function () {
+				iEventsCount++;
+				if (iEventsCount == 2) {
+					this.oFCL.detachColumnResize(fnCallback);
+					// assert
+					assert.equal(iEventsCount, 2, "columnResize event is fired for all resized columns");
+					fnDone();
+				}
+			}.bind(this);
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded
+		});
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+		this.oFCL.attachColumnResize(fnCallback);
+
+		// Act: resize to a width that does not lead to <code>layoutType</code> chage
+		dragSeparator("begin", 10, this.oFCL);
 	});
 
 	(function () {
