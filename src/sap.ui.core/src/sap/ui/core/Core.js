@@ -2074,7 +2074,7 @@ sap.ui.define([
 	 * @param {object} oControlEvent.getParameters
 	 * @param {string} oControlEvent.getParameters.theme Theme name
 	 * @public
-	 * @deprecated since 1.118. See {@link sap.ui.core.Theming#applied Theming#applied} instead.
+	 * @deprecated since 1.118. See {@link module:sap/ui/core/Theming.applied Theming.applied} instead.
 	 */
 
 	 /**
@@ -2090,7 +2090,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
 	 *            provider object
 	 * @public
-	 * @deprecated since 1.118. See {@link sap.ui.core.Theming#attachApplied Theming#attachApplied} instead.
+	 * @deprecated since 1.118. See {@link module:sap/ui/core/Theming.attachApplied Theming.attachApplied} instead.
 	 */
 	Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
 		// preparation for letting the "themeChanged" event be forwarded from the ThemeManager to the Core
@@ -2108,7 +2108,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Object on which the given function had to be called.
 	 * @public
-	 * @deprecated since 1.118. See {@link sap.ui.core.Theming#detachApplied Theming#detachApplied} instead.
+	 * @deprecated since 1.118. See {@link module:sap/ui/core/Theming.detachApplied Theming#detachApplied} instead.
 	 */
 	Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
@@ -2170,7 +2170,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.EventProvider} oEvent.getSource
 	 * @param {object} oEvent.getParameters
 	 * @param {object} oEvent.getParameters.changes a map of the changed localization properties
-	 * @deprecated since 1.118. See {@link sap.base.i18n.Localization#change Localization#change} instead.
+	 * @deprecated since 1.118. See {@link module:sap/base/i18n/Localization.change Localization.change} instead.
 	 * @public
 	 */
 
@@ -2183,7 +2183,7 @@ sap.ui.define([
 	 * @param {function} fnFunction Callback to be called when the event occurs
 	 * @param {object} [oListener] Context object to call the function on
 	 * @public
-	 * @deprecated since 1.118. Please use {@link sap.base.i18n.Localization#attachChange Localization#attachChange} instead.
+	 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.attachChange Localization.attachChange} instead.
 	 */
 	Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
 		_oEventProvider.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
@@ -2198,7 +2198,7 @@ sap.ui.define([
 	 * @param {function} fnFunction Callback to be deregistered
 	 * @param {object} [oListener] Context object on which the given function had to be called
 	 * @public
-	 * @deprecated since 1.118. Please use {@link sap.base.i18n.Localization#detachChange Localization#detachChange} instead.
+	 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.detachChange Localization.detachChange} instead.
 	 */
 	Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
 		_oEventProvider.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
