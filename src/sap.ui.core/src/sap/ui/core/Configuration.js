@@ -1059,8 +1059,8 @@ sap.ui.define([
 	 * @borrows module:sap/base/i18n/Formatting.getLegacyDateFormat as #getLegacyDateFormat
 	 * @borrows module:sap/base/i18n/Formatting.getLegacyTimeFormat as #getLegacyTimeFormat
 	 * @borrows module:sap/base/i18n/Formatting.getLegacyNumberFormat as #getLegacyNumberFormat
-	 * @borrows module:sap/base/i18n/Formatting.getLegacyDateCalendarCustomizing as #getLegacyDateCalendarCustomizing
-	 * @borrows module:sap/base/i18n/Formatting.setLegacyDateCalendarCustomizing as #setLegacyDateCalendarCustomizing
+	 * @borrows module:sap/base/i18n/Formatting.getCustomIslamicCalendarData as #getLegacyDateCalendarCustomizing
+	 * @borrows module:sap/base/i18n/Formatting.setCustomIslamicCalendarData as #setLegacyDateCalendarCustomizing
 	 * @borrows module:sap/base/i18n/Formatting.getTrailingCurrencyCode as #getTrailingCurrencyCode
 	 * @borrows module:sap/base/i18n/Formatting.setTrailingCurrencyCode as #setTrailingCurrencyCode
 	 * @borrows module:sap/base/i18n/Formatting.getCustomLocaleData as #getCustomLocaleData
@@ -1312,11 +1312,11 @@ sap.ui.define([
 		},
 
 		setLegacyDateCalendarCustomizing : function() {
-			Formatting.setLegacyDateCalendarCustomizing.apply(Formatting, arguments);
+			Formatting.setCustomIslamicCalendarData.apply(Formatting, arguments);
 			return this;
 		},
 
-		getLegacyDateCalendarCustomizing : Formatting.getLegacyDateCalendarCustomizing,
+		getLegacyDateCalendarCustomizing : Formatting.getCustomIslamicCalendarData,
 
 		setTrailingCurrencyCode : function() {
 			Formatting.setTrailingCurrencyCode.apply(Formatting, arguments);
@@ -1347,6 +1347,9 @@ sap.ui.define([
 		Object.keys(oEvent).forEach((sName) => {
 			if (["ABAPDateFormat", "ABAPTimeFormat", "ABAPNumberFormat"].includes(sName)) {
 				mParameters[sName.replace("ABAP", "legacy")] = mParameters[sName];
+				delete mParameters[sName];
+			} else if (sName === 'customIslamicCalendarData') {
+				mParameters['legacyDateCalendarCustomizing'] = mParameters[sName];
 				delete mParameters[sName];
 			}
 		});
