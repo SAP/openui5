@@ -1185,7 +1185,8 @@ sap.ui.define([
 	/**
 	 * Moves this node to the given parent (in case of a recursive hierarchy, see
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
-	 * <code>oAggregation.expandTo</code> must be one). No other
+	 * <code>oAggregation.expandTo</code> must be either one or at least
+	 * <code>Number.MAX_SAFE_INTEGER</code>). No other
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation}, {@link #delete deletion}, or
 	 * move must be pending, and no other modification (including collapse of some ancestor node)
 	 * must happen while this move is pending!
@@ -1199,13 +1200,14 @@ sap.ui.define([
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
 	 * @throws (Error)
-	 *   If the parent is missing or (a descendant of) this node.
+	 *   If the parent is missing or (a descendant of) this node, or if
+	 *   <code>oAggregation.expandTo</code> is unsupported.
 	 *
 	 * @experimental As of version 1.119.0
 	 * @public
 	 */
 	Context.prototype.move = function ({parent : oParent}) {
-		if (!oParent || oParent === this) {
+		if (!oParent || this.isAncestorOf(oParent)) {
 			throw new Error("Unsupported parent context: " + oParent);
 		}
 
