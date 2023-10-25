@@ -16,23 +16,19 @@ sap.ui.define(function() {
 			coverage: {
 				only: ["sap/ui/rta"],
 				branchCoverage: true
-			},
-			loader: {},
-			page: "test-resources/sap/ui/rta/qunit/testsandbox.qunit.html?testsuite={suite}&test={name}",
-			autostart: true,
-			module: "./../{name}.qunit"
+			}
 		},
 		tests: {
-			"opa/contextBased/integration/ManageAdaptationsDialogJourney": {
+			"contextBased/integration/ManageAdaptationsDialogJourney": {
 				title: "Manage Context-Based Adaptation"
 			},
-			"opa/contextBased/integration/SaveAsAdaptationDialogJourney": {
+			"contextBased/integration/SaveAsAdaptationDialogJourney": {
 				title: "SaveAs Context-Based Adaptation"
 			},
-			"opa/contextBased/integration/SearchContextBasedAdaptationDialogJourney": {
+			"contextBased/integration/SearchContextBasedAdaptationDialogJourney": {
 				title: "Search Bar Context-Based Adaptation"
 			},
-			"opa/variantManagement/integration/VariantManagementJourney": {
+			"variantManagement/integration/VariantManagementJourney": {
 				title: "Variant Management Opa Tests"
 			}
 		}
