@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/base/util/ObjectPath",
 	"sap/ui/base/BindingParser",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/date/UI5Date",
@@ -11,9 +10,6 @@ sap.ui.define([
 	"sap/ui/model/odata/AnnotationHelper",
 	"sap/ui/model/odata/_AnnotationHelperBasics",
 	"sap/ui/model/odata/_AnnotationHelperExpression",
-	"sap/ui/model/odata/v2/ODataModel",
-	"sap/ui/test/TestUtils",
-	// following imports are only used while template processing
 	"sap/ui/model/odata/type/Boolean",
 	"sap/ui/model/odata/type/Byte",
 	"sap/ui/model/odata/type/DateTime",
@@ -28,10 +24,14 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Single",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/model/odata/type/Time",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/test/TestUtils",
+	// following imports are only used while template processing
 	"sap/ui/model/odata/v4/ODataUtils",
 	"sap/ui/thirdparty/URITemplate"
-], function (Log, ObjectPath, BindingParser, ManagedObject, UI5Date, JSONModel, AnnotationHelper, Basics, Expression,
-		ODataModel, TestUtils
+], function (Log, BindingParser, ManagedObject, UI5Date, JSONModel, AnnotationHelper, Basics, Expression,
+		BooleanType, Byte, DateTime, DateTimeOffset, Decimal, Double, Guid, Int16, Int32, Int64, SByte,
+		Single, StringType, Time, ODataModel, TestUtils
 ) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
@@ -39,66 +39,66 @@ sap.ui.define([
 
 	var oCIRCULAR = {},
 		oBoolean = {
-			name : "sap.ui.model.odata.type.Boolean",
+			typeClass : BooleanType,
 			constraints : {"nullable" : false}
 		},
 		oByte = {
-			name : "sap.ui.model.odata.type.Byte",
+			typeClass : Byte,
 			constraints : {"nullable" : false}
 		},
 		oDateTime = {
-			name : "sap.ui.model.odata.type.DateTime",
+			typeClass : DateTime,
 			constraints : {"nullable" : false, "isDateOnly" : true}
 		},
 		oDateTimeOffset = {
-			name : "sap.ui.model.odata.type.DateTimeOffset",
+			typeClass : DateTimeOffset,
 			constraints : {"nullable" : false}
 		},
 		oDecimal = {
-			name : "sap.ui.model.odata.type.Decimal",
+			typeClass : Decimal,
 			constraints : {"nullable" : false, "precision" : 13, "scale" : 3}
 		},
 		oDouble = {
-			name : "sap.ui.model.odata.type.Double",
+			typeClass : Double,
 			constraints : {"nullable" : false}
 		},
 		oFloat = {
-			name : "sap.ui.model.odata.type.Single"
+			typeClass : Single
 		},
 		oGuid = {
-			name : "sap.ui.model.odata.type.Guid",
+			typeClass : Guid,
 			constraints : {"nullable" : false}
 		},
 		oInt16 = {
-			name : "sap.ui.model.odata.type.Int16",
+			typeClass : Int16,
 			constraints : {"nullable" : false}
 		},
 		oInt32 = {
-			name : "sap.ui.model.odata.type.Int32",
+			typeClass : Int32,
 			constraints : {"nullable" : false}
 		},
 		oInt64 = {
-			name : "sap.ui.model.odata.type.Int64",
+			typeClass : Int64,
 			constraints : {"nullable" : false}
 		},
 		oSByte = {
-			name : "sap.ui.model.odata.type.SByte",
+			typeClass : SByte,
 			constraints : {"nullable" : false}
 		},
 		oSingle = {
-			name : "sap.ui.model.odata.type.Single",
+			typeClass : Single,
 			constraints : {"nullable" : false}
 		},
 		oString10 = {
-			name : "sap.ui.model.odata.type.String",
+			typeClass : StringType,
 			constraints : {"nullable" : false, "maxLength" : 10}
 		},
 		oString80 = {
-			name : "sap.ui.model.odata.type.String",
+			typeClass : StringType,
 			constraints : {"maxLength" : 80}
 		},
 		oTime = {
-			name : "sap.ui.model.odata.type.Time",
+			typeClass : Time,
 			constraints : {"nullable" : false}
 		},
 		sGwsampleTestAnnotations = '\
@@ -1030,7 +1030,7 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 				+ "/Value/Eq/0";
 
 		QUnit.test("format: 14.5.12 Expression edm:Path w/ type, path = " + sPath
-			+ ", type = " + oType.name,
+			+ ", type = " + oType.typeClass.getMetadata().getName(),
 			function (assert) {
 				return withTestModel(assert, function (oMetaModel) {
 					var oCurrentContext = oMetaModel.getContext(sPath),
@@ -1046,8 +1046,8 @@ $filter=Boolean+eq+{Bool}+and+Date+eq+{Date}+and+DateTimeOffset+eq+{DateTimeOffs
 					oSingleBindingInfo = parse(sBinding);
 
 					assert.strictEqual(oSingleBindingInfo.path, oRawValue.Path);
-					assert.ok(oSingleBindingInfo.type instanceof ObjectPath.get(oType.name),
-						"type is " + oType.name);
+					assert.ok(oSingleBindingInfo.type instanceof oType.typeClass,
+						"type is " + oType.typeClass.getMetadata().getName());
 					assert.deepEqual(oSingleBindingInfo.type.oConstraints, oType.constraints);
 
 					// ensure that the formatted value does not contain double quotes
