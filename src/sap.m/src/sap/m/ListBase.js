@@ -977,7 +977,7 @@ function(
 
 			// in ODataV4Model getAllCurrentContexts will also include previously selected contexts
 			if (oModel.isA("sap.ui.model.odata.v4.ODataModel")) {
-				const aContexts = this.getBinding("items").getAllCurrentContexts() || [];
+				const aContexts = this.getBinding("items").getAllCurrentContexts?.() || [];
 				return aContexts.filter((oContext) => this._aSelectedPaths.includes(oContext.getPath()));
 			}
 
@@ -1005,7 +1005,7 @@ function(
 			this._aSelectedPaths = [];
 			if (!bDetectBinding) {
 				const oBinding = this.getBinding("items");
-				const aContexts = oBinding?.getAllCurrentContexts() || [];
+				const aContexts = oBinding?.getAllCurrentContexts?.() || [];
 				aContexts[0]?.setSelected && aContexts.forEach((oContext) => oContext.setSelected(false));
 			}
 		}
