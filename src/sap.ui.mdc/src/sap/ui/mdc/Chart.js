@@ -748,6 +748,8 @@ sap.ui.define([
                 this.getControlDelegate().createInnerChartContent(this, this._innerChartDataLoadComplete.bind(this)).then(function(){
                     this._createBreadcrumbs();
                     //From now on, listen to changes on Items Aggregation and sync them with inner chart
+                    this._oObserver?.disconnect();
+                    this._oObserver?.destroy();
                     this._oObserver = new ManagedObjectObserver(this._propagateItemChangeToInnerChart.bind(this));
                     this._oObserver.observe(this, {
                         aggregations: [
@@ -1435,6 +1437,12 @@ sap.ui.define([
                 }
             }
 
+        };
+
+        Chart.prototype.exit = function() {
+            Control.prototype.exit.apply(this, arguments);
+
+            this._oObserver?.destroy();
         };
 
         /**
