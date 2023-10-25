@@ -410,6 +410,7 @@
 			 * defaultValue: undefined
 			 * @private
 			 * @ui5-restricted sap.ui.core, sap.fl, sap.ui.intergration, sap.ui.export
+			 * @deprecated As of Version 1.120
 			 */
 			"Code": "code",
 			/**
@@ -529,6 +530,9 @@
 							vValue = !!vValue;
 						}
 						break;
+					/**
+					 * @deprecated As of Version 1.120
+					 */
 					case TypeEnum.Code:
 						vValue = typeof vValue === "function" ? vValue : String(vValue);
 						break;
