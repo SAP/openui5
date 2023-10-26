@@ -3083,21 +3083,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("createEntry with complex types which have namespace with . characters", function(assert) {
-		var done = assert.async();
-		var oModel = initModel(sURI, {metadataUrlParams : {test: "complex"}});
-		oModel.metadataLoaded().then(function() {
-			var oContext = oModel.createEntry("BusinessPartnerSet");
+		const oModel = initModel(sURI, {metadataUrlParams: {test: "complex"}});
+		return oModel.metadataLoaded().then(function() {
+			const oContext = oModel.createEntry("BusinessPartnerSet");
 			assert.ok(oContext, "context should be created");
-			var oData = oContext.getObject();
-			assert.ok(oData, " check context data");
-			assert.ok(oData.Address, " check context data");
-			assert.ok(oData.Address.hasOwnProperty('AddressType'), " check context data");
-			assert.ok(oData.Address.hasOwnProperty('Building'), " check context data");
-			assert.ok(oData.Address.hasOwnProperty('City'), " check context data");
-			assert.ok(oData.Address.hasOwnProperty('Country'), " check context data");
-			assert.ok(oData.Address.hasOwnProperty('Street'), " check context data");
+			assert.ok(oContext.getObject(), "Entity has been created");
+			// properties of complex type can be accessed
+			assert.strictEqual(oContext.getObject("Address"), undefined);
+			assert.strictEqual(oContext.getObject("Address/City"), undefined);
+			oModel.setProperty("Address/City", "Walldorf", oContext);
+			assert.strictEqual(oContext.getObject("Address/City"), "Walldorf");
 			oModel.destroy();
-			done();
 		});
 	});
 
