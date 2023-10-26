@@ -1299,6 +1299,28 @@ sap.ui.define([
 				hasExpander: false,
 				items: [
 					{
+						title: 'ComboBox',
+						target: 'exploreSamples',
+						key: 'comboBoxFilter',
+						experimental: true,
+						subSamples: [{
+							title: 'Dynamically Defined Filter',
+							key: 'dynamicFilter',
+							files: [
+								{
+									url: '/samples/filters/comboBox/dynamicComboBoxFilter.json',
+									name: 'manifest.json',
+									key: 'manifest.json'
+								},
+								{
+									url: '/samples/filters/comboBox/countries.json',
+									name: 'countries.json',
+									key: 'countries.json'
+								}
+							]
+						}]
+					},
+					{
 						title: 'DateRange',
 						target: 'exploreSamples',
 						key: 'dateRangeFilter',

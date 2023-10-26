@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Combo Box Filter</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+
+	<div class="topic">
+		<div class="content">
+			<h1 id="overview">Combo Box Filter</h1>
+			<p>
+				The combo box filter provides a menu of options.
+			</p>
+
+			<h2 id="properties">Properties</h2>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>value</td>
+						<td>any</td>
+						<td></td>
+						<td>No</td>
+						<td>The initial free-text value of the filter. If you want to select an option from the list use the selectedKey instead.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>selectedKey</td>
+						<td>string</a></td>
+						<td></td>
+						<td>No</td>
+						<td>The initial selected key of the combo box. Use this instead of value to explicitly define that one of the options is
+						selected.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>items</td>
+						<td><a href="#comboBoxFilterItemProperties">ComboBoxFilterItem[]</a></td>
+						<td></td>
+						<td>No</td>
+						<td>The items that will appear in the dropdown.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>item</td>
+						<td><a href="#comboBoxFilterItemBindingInfoProperties">ComboBoxFilterItemBindingInfo</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Binding info object used to bind data to items of a filter. Cannot be used together with 'items'.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="comboBoxFilterItemBindingInfoProperties" class="boldBlock">ComboBoxFilterItemBindingInfo Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>path</td>
+						<td>string</td>
+						<td>/</td>
+						<td>No</td>
+						<td>The context path.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>template</td>
+						<td><a href="#comboBoxFilterItemProperties">ComboBoxFilterItem</a></td>
+						<td></td>
+						<td>Yes</td>
+						<td>Binding template for items.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<div id="comboBoxFilterItemProperties" class="boldBlock">ComboBoxFilterItem Properties</div>
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Default Value</th>
+						<th>Required</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>title</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The title of the item that appears in the dropdown.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>key</td>
+						<td>string</td>
+						<td></td>
+						<td>Yes</td>
+						<td>The key of the item. This key corresponds to the value of the filter.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+					<tr>
+						<td>additionalText</td>
+						<td>string</td>
+						<td></td>
+						<td>No</td>
+						<td>The secondary text for the ComboBox filter item.</td>
+						<td>1.42.0</td>
+						<td>1.121</td>
+					</tr>
+				</table>
+			</div>
+
+			<h2 id="filtersModel">Filters Model</h2>
+			<p>The following values are available for filter of type "ComboBox":</p>
+			<table>
+				<tr>
+					<th>Path</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/value}</td>
+					<td>The current value of the filter. If the user enters free text it will be this text. If the user selects one of the options, this
+					will be the title of the option. For selected key use {filters>/keyOfTheFilter/selectedItem/key}.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/selectedItem/title}</td>
+					<td>The title of the selected item.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/selectedItem/key}</td>
+					<td>The key of the selected item.</td>
+				</tr>
+				<tr>
+					<td>{filters>/keyOfTheFilter/selectedItem/additionalText}</td>
+					<td>The secondary value of the selected item.</td>
+				</tr>
+			</table>
+
+			<h2 id="examples">Examples</h2>
+			<p>A filter for product category is defined and later used inside a data request.</p>
+			<pre class="lang-json">{
+	"sap.app": {
+		"id": "card.explorer.filters.combobox.multiple",
+		"type": "card",
+		"title": "Sample of a Card with filters"
+	},
+	"sap.card": {
+		"configuration": {
+			"filters": {
+				"country": {
+					"selectedKey": "FR",
+					"type": "ComboBox",
+					"label": "Country",
+					"item": {
+						"path": "/",
+						"template": {
+							"key": "{key}",
+							"title": "{text}",
+							"additionalText": "{key}"
+						}
+					},
+					"data": {
+						"json": [
+							{
+								"text": "Austria",
+								"key": "AT"
+							},
+							{
+								"text": "Belgium",
+								"key": "BE"
+							},
+							{
+								"text": "France",
+								"key": "FR"
+							},
+							{
+								"text": "Germany",
+								"key": "DE"
+							},
+							{
+								"text": "United Kingdom",
+								"key": "GB"
+							}
+						]
+					}
+				}
+			},
+			"destinations": {
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
+				}
+			},
+			"parameters": {
+				"maxOrdersShown": {
+					"value": 6,
+					"type": "integer",
+					"label": "Number of orders",
+					"description": "How many orders to show in the list."
+				}
+			}
+		},
+		"data": {
+			"request": {
+				"url": "{{destinations.Northwind_V4}}/Orders",
+				"parameters": {
+					"$top": "{parameters>/maxOrdersShown/value}",
+					"$filter": "ShipCountry eq '{filters>/country/value}'"
+				}
+			},
+			"path": "/value"
+		},
+		"type": "List",
+		"header": {
+			"title": "Orders from {filters>/country/value}",
+			"subTitle" : "{filters>/country/selectedItem/title} {filters>/country/selectedItem/key}",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			...
+		}
+	}
+}</pre>
+
+			<a class="try-button" href="../../../index.html#/explore/comboBoxFilter" target="_parent">Try it Out</a>
+		</div>
+	</div>
+</body>
+
+</html>
