@@ -1147,7 +1147,7 @@ function(
 
 		// Assert
 		assert.strictEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is unchanged");
-		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 3, "contextual settings are upadated");
+		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
 	});
 
 	QUnit.test("Contextual settings are updated after column resize with layout update", function (assert) {
@@ -1162,7 +1162,7 @@ function(
 		assert.notEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is not changed");
 		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
 			setTimeout(function() { // wait for FCL promise to complete
-				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 3, "contextual settings are upadated");
+				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
 				fnDone();
 			}, 0);
 		});
