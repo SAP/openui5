@@ -1,8 +1,10 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 sap.ui.require([
+	'sap/ui/core/Core',
 	'sap/ui/core/Lib'
 ], function(
+	Core,
 	Library
 ) {
 	"use strict";
@@ -16,7 +18,9 @@ sap.ui.require([
 	}
 
 	QUnit.test("Set flexibilityServices does NOT add the loading of sap.ui.fl an additional time if it is already set", function(assert) {
-		assert.equal(_getNumberOfFlModules(), 1);
+		return Core.ready().then(function() {
+			assert.equal(_getNumberOfFlModules(), 1);
+		});
 	});
 	QUnit.start();
 });
