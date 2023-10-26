@@ -774,4 +774,27 @@ sap.ui.define([
 			+ (oFixture.condition ? "as condition" : "in multiple filter")));
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("checkFilterNone", function(assert) {
+		// code under test
+		Filter.checkFilterNone();
+
+		// code under test
+		Filter.checkFilterNone(Filter.NONE);
+
+		// code under test
+		Filter.checkFilterNone([Filter.NONE]);
+
+		const oFilter = new Filter("path", FilterOperator.EQ, "value");
+		oFilter.length = 2;
+
+		// code under test - no error in case of tagged filter or Filter subclass with length property
+		Filter.checkFilterNone(oFilter);
+
+		// code under test
+		assert.throws(function () {
+			Filter.checkFilterNone([new Filter("path", FilterOperator.EQ, "value"), Filter.NONE]);
+		}, new Error("Filter.NONE cannot be used together with other filters"));
+	});
 });

@@ -1162,6 +1162,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
 	 *   Defines the count mode of the new binding; if not specified, the default count mode of this
 	 *   model will be applied
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @returns {sap.ui.model.ListBinding} A new list binding object
 	 *
