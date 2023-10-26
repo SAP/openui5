@@ -1263,6 +1263,12 @@ sap.ui.define([
 		assert.ok(sut.getDomRef("overlay"), "Overlay is rendered for the visible table");
 
 		sut.getItems()[0].focus();
+		if (Device.browser.firefox) {
+			// it looks like FF does not trigger the focus event because of the overlay
+			sut.onfocusin(jQuery.Event("focusin", {
+				target: sut.getItems()[0].getDomRef()
+			}));
+		}
 		assert.equal(document.activeElement, sut.getDomRef("overlay"));
 
 		var fnFocusSpy = sinon.spy(jQuery.fn, "trigger");
