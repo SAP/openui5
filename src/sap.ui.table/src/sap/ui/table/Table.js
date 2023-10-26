@@ -1168,7 +1168,7 @@ sap.ui.define([
 	 * Localization changed
 	 * @private
 	 */
-	Table.prototype.onlocalizationChanged = function(oEvent) {
+	Table.prototype.onLocalizationChanged = function(oEvent) {
 		var oChanges = oEvent.changes || {};
 		var bRtlChanged = oChanges.hasOwnProperty("rtl");
 		var bLangChanged = oChanges.hasOwnProperty("language");
@@ -1176,6 +1176,11 @@ sap.ui.define([
 			this.invalidate();
 		}.bind(this)).catch(function() {});
 	};
+
+	/**
+	 * @deprecated As of version 1.120
+	 */
+	Table.prototype.onlocalizationChanged = Table.prototype.onLocalizationChanged;
 
 	/**
 	 * Adapts the table to localization changes. Re-rendering or invalidation of the table needs to be taken care of by the caller.
