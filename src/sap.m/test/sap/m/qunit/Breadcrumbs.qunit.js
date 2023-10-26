@@ -272,6 +272,20 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		} );
 	});
 
+	QUnit.test("separator has aria-hidden", function (assert) {
+		// arrange
+		var oControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
+		oControl.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// assert
+		assert.strictEqual(oControl.getDomRef().querySelector(".sapMBreadcrumbsSeparator").getAttribute("aria-hidden"), "true",
+			"the separator has 'aria-hidden' attr set to 'true'");
+
+		// clean up
+		oControl.destroy();
+	});
+
 	QUnit.test("Custom separator (DOM Patching)", function (assert) {
 		//arrange
 		var oControl = this.oStandardBreadCrumbsControl;

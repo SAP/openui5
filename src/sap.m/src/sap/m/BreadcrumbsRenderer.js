@@ -67,7 +67,7 @@ sap.ui.define(["sap/m/Text"], function (Text) {
 		oRm.openEnd();
 		oRm.renderControl(oControl);
 		if (!bSkipSeparator) {
-			oRm.openStart("span").class("sapMBreadcrumbsSeparator").openEnd().text(sSeparator).close("span");
+			oRm.openStart("span").class("sapMBreadcrumbsSeparator").attr("aria-hidden", true).openEnd().text(sSeparator).close("span");
 		}
 		oRm.close("li");
 	};
