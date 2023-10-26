@@ -606,9 +606,11 @@ sap.ui.define([
 
 	QUnit.test("Change date with keyboard when 'value' binding with type is used", function(assert) {
 		// prepare
-		var oModel = new JSONModel({
-				start: UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
-				end: UI5Date.getInstance(2022, 10, 15, 10, 15, 10)
+		var oTestStartDate = UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
+			oTestEndDate = UI5Date.getInstance(2022, 10, 15, 10, 15, 10),
+			oModel = new JSONModel({
+				start: oTestStartDate,
+				end: oTestEndDate
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
@@ -638,7 +640,7 @@ sap.ui.define([
 		oDRS.onsappageup(oFakeEvent);
 
 		// assert
-		assert.equal(oDRS.getDateValue().getUTCDate(), 10, "Date is incremented");
+		assert.equal(oDRS.getDateValue().getDate(), oTestStartDate.getDate() + 1, "Date is incremented");
 
 		// clean
 		oDRS.destroy();
