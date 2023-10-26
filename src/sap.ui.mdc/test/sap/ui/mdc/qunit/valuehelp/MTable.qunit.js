@@ -225,18 +225,21 @@ sap.ui.define([
 		const oContent = oMTable.getContent();
 
 		if (oContent) {
-			oMTable.onShow(); // to update selection and scroll
+			const sItemId = oMTable.onShow(); // to update selection and scroll
 			assert.ok(oContent, "Content returned");
 			assert.equal(oContent, oTable, "Content is given Table");
 			assert.equal(oTable.getMode(), ListMode.SingleSelectMaster, "Table mode");
 			// assert.equal(oMTable.getDisplayContent(), oTable, "Table stored in displayContent"); // TODO: overwrite getDisplayContent here?
 			assert.ok(oTable.hasStyleClass("sapMComboBoxList"), "List has style class sapMComboBoxList");
+			assert.ok(oTable.hasStyleClass("sapMListFocus"), "Table has style class sapMListFocus");
 
 			const aItems = oTable.getItems();
 			let oItem = aItems[0];
 			assert.notOk(oItem.getSelected(), "Item0 not selected");
 			oItem = aItems[1];
 			assert.ok(oItem.getSelected(), "Item1 is selected");
+			assert.ok(oItem.hasStyleClass("sapMLIBFocused"), "Item1 is focused");
+			assert.equal(sItemId, oItem.getId(), "OnShow returns selected itemId");
 			oItem = aItems[2];
 			assert.notOk(oItem.getSelected(), "Item2 not selected");
 
