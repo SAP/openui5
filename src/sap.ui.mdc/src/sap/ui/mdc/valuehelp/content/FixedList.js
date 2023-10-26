@@ -635,7 +635,7 @@ sap.ui.define([
 
 	FixedList.prototype.getRelevantContexts = function(oConfig) {
 		const oListBinding = this.getListBinding();
-		const aListBindingContexts = oListBinding.getContexts();
+		const aListBindingContexts = oListBinding.getAllCurrentContexts ? oListBinding.getAllCurrentContexts() : oListBinding.getContexts();
 
 		return aListBindingContexts.filter((oListBindingContext) => {
 			const sText = oConfig.checkDescription ? oListBindingContext.getProperty("text") : oListBindingContext.getProperty("key"); // don't use oConfig.parsedValue as entered value doesn't need to be a valid (complete) key
