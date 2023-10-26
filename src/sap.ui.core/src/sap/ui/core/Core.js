@@ -2741,8 +2741,7 @@ sap.ui.define([
 	 * @param {string|string[]} [vFieldGroupIds] ID of the field group or an array of field group IDs to match
 	 * @return {sap.ui.core.Control[]} The list of controls with matching field group IDs
 	 * @public
-	 * @deprecated As of version 1.118, use {@link sap.ui.core.Control#getControlsByFieldGroup Control.prototype.getControlsByFieldGroup} instead.
-
+	 * @deprecated As of version 1.118, use {@link sap.ui.core.Control.getControlsByFieldGroupId Control.getControlsByFieldGroupId} instead.
 	 */
 	Core.prototype.byFieldGroupId = function(vFieldGroupIds) {
 		return Element.registry.filter(function(oElement) {
