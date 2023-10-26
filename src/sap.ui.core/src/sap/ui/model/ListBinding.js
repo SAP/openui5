@@ -31,6 +31,8 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 	 *   Additional, implementation-specific parameters that should be used by the new list binding;
 	 *   this base class doesn't define any parameters, check the API reference for the concrete
 	 *   model implementations to learn about their supported parameters (if any)
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
 	 * @alias sap.ui.model.ListBinding
@@ -45,6 +47,7 @@ sap.ui.define(['./Binding', './Filter', './FilterType', './Sorter', 'sap/base/ut
 			this.aSorters = makeArray(aSorters, Sorter);
 			// the binding's control filters
 			this.aFilters = [];
+			Filter.checkFilterNone(aFilters);
 			// the binding's application filters
 			this.aApplicationFilters = makeArray(aFilters, Filter);
 			// the filter combined from control and application filters
