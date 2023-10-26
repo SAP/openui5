@@ -4,22 +4,20 @@
 
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
-	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/write/_internal/Versions",
-	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/FeaturesAPI",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI"
 ], function(
 	FlexState,
-	ManifestUtils,
-	FlexInfoSession,
 	Version,
 	Versions,
-	ContextBasedAdaptationsAPI,
+	Utils,
 	FeaturesAPI,
-	Utils
+	ManifestUtils,
+	ContextBasedAdaptationsAPI
 ) {
 	"use strict";
 
@@ -211,12 +209,13 @@ sap.ui.define([
 		.then(function(sDisplayedAdaptationId) {
 			var oAppComponent = Utils.getAppComponentForControl(mPropertyBag.control);
 			var sReference = getFlexReferenceForControl(oAppComponent);
-			var oExistingFlexInfo = FlexInfoSession.get(sReference) || {};
-			FlexInfoSession.set(Object.assign(oExistingFlexInfo, {
-				adaptationId: sDisplayedAdaptationId,
-				version: mPropertyBag.version
-			}), sReference);
-			FlexState.clearState(sReference);
+			return FlexState.clearAndInitialize({
+				componentId: oAppComponent.getId(),
+				reference: sReference,
+				version: mPropertyBag.version,
+				allContexts: mPropertyBag.allContexts,
+				adaptationId: sDisplayedAdaptationId
+			});
 		});
 	};
 
@@ -296,15 +295,22 @@ sap.ui.define([
 					return ContextBasedAdaptationsAPI.refreshAdaptationModel(mPropertyBag)
 					.then(function(sDisplayedAdaptationId) {
 						// invalidate flexState to trigger getFlexData for the current active version after discard
-						var oExistingFlexInfo = FlexInfoSession.get(sReference) || {};
-						FlexInfoSession.set(Object.assign(oExistingFlexInfo, {adaptationId: sDisplayedAdaptationId}), sReference);
-						FlexState.clearState(sReference);
-						return oDiscardInfo;
+						return FlexState.clearAndInitialize({
+							componentId: oAppComponent.getId(),
+							reference: sReference,
+							adaptationId: sDisplayedAdaptationId
+						}).then(function() {
+							return oDiscardInfo;
+						});
 					});
 				}
 				// invalidate flexState to trigger getFlexData for the current active version after discard
-				FlexState.clearState(sReference);
-				return oDiscardInfo;
+				return FlexState.clearAndInitialize({
+					componentId: oAppComponent.getId(),
+					reference: sReference
+				}).then(function() {
+					return oDiscardInfo;
+				});
 			}
 			return oDiscardInfo;
 		});
