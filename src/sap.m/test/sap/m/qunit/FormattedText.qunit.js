@@ -351,6 +351,23 @@ sap.ui.define([
 		oFT.destroy();
 	});
 
+	QUnit.test("Link title isn't sanitized", function (assert) {
+		// Arrange
+		var sString = 'Should have a <a href="#" target="_blank" title="Opens in new tab">tooltip</a>.',
+			oFT = new FormattedText({
+				htmlText: sString
+			});
+
+		oFT.placeAt("content");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oFT.getDomRef().children[0].title, "Title is present");
+
+		// Cleanup
+		oFT.destroy();
+	});
+
 	QUnit.test("proper CSS classes for overflow are added when height is set", function (assert) {
 		// Arrange
 		var oFT = new FormattedText({
