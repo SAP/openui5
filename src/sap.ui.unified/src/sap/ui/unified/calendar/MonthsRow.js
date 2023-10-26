@@ -14,13 +14,13 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/library',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/library',
 	'sap/ui/core/Locale',
 	"./MonthsRowRenderer",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	'sap/ui/core/InvisibleText'
 ], function(
 	Formatting,
 	Control,
@@ -32,13 +32,13 @@ sap.ui.define([
 	CalendarDate,
 	library,
 	DateFormat,
-	coreLibrary,
 	Locale,
 	MonthsRowRenderer,
 	containsOrEquals,
 	jQuery,
 	DateRange,
-	UI5Date
+	UI5Date,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -238,6 +238,10 @@ sap.ui.define([
 			clearTimeout(this._sInvalidateMonths);
 		}
 
+		if (this._invisibleDayHint) {
+			this._invisibleDayHint.destroy();
+			this._invisibleDayHint = null;
+		}
 	};
 
 	MonthsRow.prototype.onAfterRendering = function(){
@@ -615,6 +619,20 @@ sap.ui.define([
 	MonthsRow.prototype._getAriaRole = function(){
 
 		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
+	MonthsRow.prototype._getMonthDescription = function() {
+		return this._fnInvisibleHintFactory().getId();
+	};
+
+	MonthsRow.prototype._fnInvisibleHintFactory = function() {
+		if (!this._invisibleDayHint) {
+			this._invisibleDayHint = new InvisibleText({
+				text: Library.getResourceBundleFor("sap.m").getText("SLIDETILE_ACTIVATE")
+			}).toStatic();
+		}
+
+		return this._invisibleDayHint;
 	};
 
 	/**

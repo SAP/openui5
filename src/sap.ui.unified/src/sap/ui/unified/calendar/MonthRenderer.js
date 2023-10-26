@@ -398,7 +398,7 @@ sap.ui.define([
 				role: oMonth._getAriaRole(),
 				selected: false,
 				label: "",
-				describedby: ""
+				describedby: oMonth._getDayDescription()
 			},
 			bBeforeFirstYear = oDay._bBeforeFirstYear,
 			sAriaType = "",

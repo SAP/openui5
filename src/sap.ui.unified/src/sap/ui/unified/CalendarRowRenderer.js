@@ -386,6 +386,7 @@ sap.ui.define([
 	CalendarRowRenderer.renderIntervalHeader = function(oRm, oRow, oIntervalHeader, bRtl, left, right) {
 		var sId = oIntervalHeader.appointment.getId(),
 			mAccProps = {
+				role: "listitem",
 				labelledby: { value: sId + "-Descr", append: true }
 			},
 			sStartEndAriaText;
