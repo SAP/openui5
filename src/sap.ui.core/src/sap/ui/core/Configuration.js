@@ -128,7 +128,7 @@ sap.ui.define([
 		 *
 		 * @return {module:sap/base/util/Version} the version
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/VersionInfo.load} instead.
+		 * @deprecated As of Version 1.120. Please use the async {@link module:sap/ui/VersionInfo.load VersionInfo.load} instead.
 		 */
 		getVersion: function () {
 			return oVersion;
@@ -141,7 +141,7 @@ sap.ui.define([
 		 * @return {string} the theme name
 		 * @function
 		 * @public
-		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.getTheme} instead.
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.getTheme Theming.getTheme} instead.
 		 */
 		getTheme : Theming.getTheme,
 
@@ -150,7 +150,7 @@ sap.ui.define([
 		 * @param {string} sTheme the theme name
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
-		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme} instead.
+		 * @deprecated Since 1.119. Please use {@link module:sap/ui/core/Theming.setTheme Theming.setTheme} instead.
 		 */
 		setTheme : function (sTheme) {
 			Theming.setTheme(sTheme);
@@ -182,13 +182,14 @@ sap.ui.define([
 		 *                                    represented as en-US with a private extension
 		 * </pre>
 		 *
-		 * For a normalized BCP47 tag, call {@link #getLanguageTag} or call {@link #getLocale} to get a
-		 * {@link sap.ui.core.Locale Locale} object matching the language.
+		 * For a normalized BCP47 tag, call {@link #.getLanguageTag Configuration.getLanguageTag} or call
+		 * {@link #.getLocale Configuration.getLocale} to get a {@link sap.ui.core.Locale Locale} object matching
+		 * the language.
 		 *
 		 * @return {string} Language string as configured
 		 * @function
 		 * @public
-		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguage} instead.
+		 * @deprecated Since 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguage Localization.getLanguage} instead.
 		 */
 		getLanguage :  Localization.getLanguage,
 
@@ -198,7 +199,7 @@ sap.ui.define([
 		 * functionality (e.g. formatting, data types, translated texts, ...).
 		 *
 		 * When the language can't be interpreted as a BCP47 language (using the relaxed syntax
-		 * described in {@link #getLanguage}, an error will be thrown.
+		 * described in {@link #.getLanguage Configuration.getLanguage}, an error will be thrown.
 		 *
 		 * When the language has changed, the Core will fire its
 		 * {@link sap.ui.core.Core#event:localizationChanged localizationChanged} event.
@@ -235,7 +236,8 @@ sap.ui.define([
 		 *
 		 * config method does not accept SAP language codes for <code>sLanguage</code>. Instead, a second
 		 * parameter <code>sSAPLogonLanguage</code> can be provided with an SAP language code corresponding
-		 * to the given language. A given value will be returned by the {@link #getSAPLogonLanguage} method.
+		 * to the given language. A given value will be returned by the {@link #.getSAPLogonLanguage
+		 * Configuration.getSAPLogonLanguage} method.
 		 * It is up to the caller to provide a consistent pair of BCP47 language and SAP language code.
 		 * The SAP language code is only checked to be of length 2 and must consist of letters or digits only.
 		 *
@@ -254,7 +256,7 @@ sap.ui.define([
 		 * @see http://scn.sap.com/docs/DOC-14377
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setLanguage} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage} instead.
 		 */
 		setLanguage : function() {
 			Localization.setLanguage.apply(Localization, arguments);
@@ -272,7 +274,7 @@ sap.ui.define([
 		 * @returns {string} The language tag for the current language, conforming to BCP47
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag Localization.getLanguageTag} instead.
 		 */
 		getLanguageTag : function () {
 			return Localization.getLanguageTag().toString();
@@ -287,7 +289,7 @@ sap.ui.define([
 		 * @returns {string} The SAP logon language code for the current language
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getSAPLogonLanguage} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getSAPLogonLanguage Localization.getSAPLogonLanguage} instead.
 		 */
 		getSAPLogonLanguage : Localization.getSAPLogonLanguage,
 
@@ -297,7 +299,7 @@ sap.ui.define([
 		 * @returns {string} The configured IANA timezone ID, e.g. "America/New_York"
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getTimezone} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getTimezone Localization.getTimezone} instead.
 		 */
 		getTimezone : Localization.getTimezone,
 
@@ -321,7 +323,7 @@ sap.ui.define([
 		 * @public
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @since 1.99.0
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setTimezone} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setTimezone Localization.setTimezone} instead.
 		 */
 		setTimezone : function() {
 			Localization.setTimezone.apply(Localization, arguments);
@@ -338,7 +340,7 @@ sap.ui.define([
 		 * @since 1.28.6
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarType Formatting.getCalendarType} instead.
 		 */
 		getCalendarType: Formatting.getCalendarType,
 
@@ -350,7 +352,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 * @since 1.113.0
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getCalendarWeekNumbering Formatting.getCalendarWeekNumbering} instead.
 		 */
 		getCalendarWeekNumbering: Formatting.getCalendarWeekNumbering,
 
@@ -363,7 +365,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the page uses the RTL text direction
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getRTL} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getRTL Localization.getRTL} instead.
 		 */
 		getRTL :Localization.getRTL,
 
@@ -377,15 +379,15 @@ sap.ui.define([
 		 *
 		 * After changing the character orientation mode, the framework tries
 		 * to update localization specific parts of the UI. See the documentation of
-		 * {@link #setLanguage} for details and restrictions.
+		 * {@link #.setLanguage} for details and restrictions.
 		 *
-		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
+		 * <b>Note</b>: See documentation of {@link #.setLanguage} for restrictions.
 		 *
 		 * @param {boolean|null} bRTL new character orientation mode or <code>null</code>
 		 * @returns {this} <code>this</code> to allow method chaining
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setRTL} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.setRTL Localization.setRTL} instead.
 		 */
 		setRTL : function() {
 			Localization.setRTL.apply(Localization, arguments);
@@ -395,11 +397,11 @@ sap.ui.define([
 		/**
 		 * Returns a Locale object for the current language.
 		 *
-		 * The Locale is derived from the {@link #getLanguage language} property.
+		 * The Locale is derived from the {@link #.getLanguage language} property.
 		 *
 		 * @return {sap.ui.core.Locale} The locale
 		 * @public
-		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag} instead.
+		 * @deprecated As of Version 1.119. Please use {@link module:sap/base/i18n/Localization.getLanguageTag Localization.getLanguageTag} instead.
 		 */
 		getLocale : function() {
 			var oLanguageTag = Localization.getLanguageTag();
@@ -415,7 +417,7 @@ sap.ui.define([
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 * @since 1.28.6
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarType Formatting.setCalendarType} instead.
 		 */
 		setCalendarType : function(sCalendarType) {
 			Formatting.setCalendarType.apply(Formatting, arguments);
@@ -436,7 +438,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @since 1.113.0
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setCalendarWeekNumbering Formatting.setCalendarWeekNumbering} instead.
 		 */
 		setCalendarWeekNumbering: function(sCalendarWeekNumbering) {
 			Formatting.setCalendarWeekNumbering.apply(Formatting, arguments);
@@ -449,7 +451,7 @@ sap.ui.define([
 		 *
 		 * @return {string} the format locale string with language and country code
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			return Formatting.getLanguageTag().toString();
@@ -465,21 +467,21 @@ sap.ui.define([
 		 * value) then locale specific formatters are retrieved for the current language.
 		 *
 		 * After changing the format locale, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link #setLanguage} for
+		 * specific parts of the UI. See the documentation of {@link #.setLanguage} for
 		 * details and restrictions.
 		 *
 		 * <b>Note</b>: When a format locale is set, it has higher priority than a number,
 		 * date or time format defined with a call to <code>setLegacyNumberFormat</code>,
 		 * <code>setLegacyDateFormat</code> or <code>setLegacyTimeFormat</code>.
 		 *
-		 * <b>Note</b>: See documentation of {@link #setLanguage} for restrictions.
+		 * <b>Note</b>: See documentation of {@link #.setLanguage} for restrictions.
 		 *
 		 * @param {string|null} sFormatLocale the new format locale as a BCP47 compliant language tag;
 		 *   case doesn't matter and underscores can be used instead of dashes to separate
 		 *   components (compatibility with Java Locale IDs)
 		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.setLanguageTag Formatting.setLanguageTag} instead.
 		 * @throws {Error} When <code>sFormatLocale</code> is given, but is not a valid BCP47 language
 		 *   tag or Java locale identifier
 		 */
@@ -498,7 +500,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.20
 		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.isAccessibilityEnabled ControlBehavior.isAccessibilityEnabled} instead.
 		 */
 		getAccessibility : ControlBehavior.isAccessibilityEnabled,
 
@@ -518,7 +520,7 @@ sap.ui.define([
 		 * Returns whether the animations are globally used.
 		 * @return {boolean} whether the animations are globally used
 		 * @public
-		 * @deprecated As of version 1.50. Please use {@link sap.ui.core.Configuration#getAnimationMode} instead.
+		 * @deprecated As of version 1.50. Since 1.20, please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode ControlBehavior.getAnimationMode} instead.
 		 */
 		getAnimation : function () {
 			var sAnimationMode = Configuration.getAnimationMode();
@@ -533,7 +535,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.getAnimationMode ControlBehavior.getAnimationMode} instead.
 		 */
 		getAnimationMode : ControlBehavior.getAnimationMode,
 
@@ -551,7 +553,7 @@ sap.ui.define([
 		 * @since 1.50.0
 		 * @function
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/ControlBehavior.setAnimationMode ControlBehavior.setAnimationMode} instead.
 		 */
 		setAnimationMode : ControlBehavior.setAnimationMode,
 
@@ -589,7 +591,7 @@ sap.ui.define([
 		getDebug : Supportability.isDebugModeEnabled,
 
 		/**
-		 * Returns whether the UI5 control inspe ctor is displayed.
+		 * Returns whether the UI5 control inspector is displayed.
 		 * Has only an effect when the sap-ui-debug module has been loaded
 		 * @return {boolean} whether the UI5 control inspector is displayed
 		 * @public
@@ -668,7 +670,7 @@ sap.ui.define([
 		 *
 		 * @returns {string} name of the application
 		 * @public
-		 * @deprecated As of Version 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
+		 * @deprecated As of Version 1.15.1. Please use {@link module:sap/ui/core/ComponentSupport ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getApplication : function() {
 			return BaseConfig.get({ name: "sapUiApplication", type: BaseConfig.Type.String, external: true });
@@ -679,7 +681,7 @@ sap.ui.define([
 		 *
 		 * @returns {string} name of the root component
 		 * @public
-		 * @deprecated As of Version 1.95. Please use {@link module:sap/ui/core/ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
+		 * @deprecated As of Version 1.95. Please use {@link module:sap/ui/core/ComponentSupport ComponentSupport} instead. See also {@link topic:82a0fcecc3cb427c91469bc537ebdddf Declarative API for Initial Components}.
 		 */
 		getRootComponent : function() {
 			return BaseConfig.get({ name: "sapUiRootComponent", type: BaseConfig.Type.String });
@@ -725,7 +727,7 @@ sap.ui.define([
 		 * @returns {boolean} true if a Component should load the manifest first
 		 * @public
 		 * @since 1.33.0
-		 * @deprecated As of Version 1.120. 'manifest-first' is the default for the {@link sap.ui.core.Component.create} factory.
+		 * @deprecated As of Version 1.120. 'manifest-first' is the default for the {@link sap.ui.core.Component.create Component.create} factory.
 		 */
 		getManifestFirst : function() {
 			return BaseConfig.get({name: "sapUiManifestFirst", type: BaseConfig.Type.Boolean, external: true});
@@ -775,7 +777,7 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting Formatting} instead.
 		 */
 		getFormatSettings : function() {
 			return oFormatSettings;
@@ -787,7 +789,7 @@ sap.ui.define([
 		 * @return {string} frameOptions mode
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getFrameOptions} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getFrameOptions Security.getFrameOptions} instead.
 		 */
 		getFrameOptions : Security.getFrameOptions,
 
@@ -797,7 +799,7 @@ sap.ui.define([
 		 * @return {string} whitelist service URL
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.85. Use {@link module:sap/ui/security/Security.getAllowlistService} instead.
+		 * @deprecated As of Version 1.85. Use {@link module:sap/ui/security/Security.getAllowlistService Security.getAllowlistService} instead.
 		 * SAP strives to replace insensitive terms with inclusive language.
 		 * Since APIs cannot be renamed or immediately removed for compatibility reasons, this API has been deprecated.
 		 */
@@ -809,7 +811,7 @@ sap.ui.define([
 		 * @return {string} allowlist service URL
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getAllowlistService} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getAllowlistService Security.getAllowlistService} instead.
 		 */
 		getAllowlistService : Security.getAllowlistService,
 
@@ -843,7 +845,7 @@ sap.ui.define([
 		 * @private
 		 * @function
 		 * @since 1.20.0
-		 * @deprecated As of Version 1.106. Renamed for clarity, use {@link sap.ui.core.Configuration#getStatisticsEnabled} instead.
+		 * @deprecated As of Version 1.106. Renamed for clarity, use {@link sap.ui.core.Configuration.getStatisticsEnabled Configuration.getStatisticsEnabled} instead.
 		 */
 		getStatistics : Configuration.getStatisticsEnabled,
 
@@ -880,7 +882,7 @@ sap.ui.define([
 		 * @since 1.77.0
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.118. Please use {@link module:sap/base/i18n/Localization.getActiveTerminologies} instead.
+		 * @deprecated As of Version 1.118. Please use {@link module:sap/base/i18n/Localization.getActiveTerminologies Localization.getActiveTerminologies} instead.
 		 */
 		getActiveTerminologies : Localization.getActiveTerminologies,
 
@@ -890,8 +892,8 @@ sap.ui.define([
 		 * @returns {Array<function(sap.ui.core.URI):Promise>} the security token handlers (an empty array if there are none)
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getSecurityTokenHandlers} instead.
-		 * @see #setSecurityTokenHandlers
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.getSecurityTokenHandlers Security.getSecurityTokenHandlers} instead.
+		 * @see {@link #.setSecurityTokenHandlers}
 		 */
 		getSecurityTokenHandlers : Security.getSecurityTokenHandlers,
 
@@ -902,8 +904,8 @@ sap.ui.define([
 		 * @param {Array<function(sap.ui.core.URI):Promise>} aSecurityTokenHandlers - The security token handlers
 		 * @public
 		 * @function
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.setSecurityTokenHandlers} instead.
-		 * @see #getSecurityTokenHandlers
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/security/Security.setSecurityTokenHandlers Security.setSecurityTokenHandlers} instead.
+		 * @see {@link #.getSecurityTokenHandlers}
 		 */
 		setSecurityTokenHandlers : Security.setSecurityTokenHandlers,
 
@@ -993,7 +995,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Configuration.AnimationMode
 	 * @since 1.50.0
 	 * @public
-	 * @deprecated As of Version 1.120. Please use {@link module:sap/ui/core/AnimationMode} instead.
+	 * @deprecated As of Version 1.120. Please use module {@link module:sap/ui/core/AnimationMode AnimationMode} instead.
 	 */
 
 	/**
@@ -1042,7 +1044,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Configuration.FormatSettings
 	 * @extends sap.ui.base.Object
 	 * @public
-	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting} instead.
+	 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting Formatting} instead.
 	 * @borrows module:sap/base/i18n/Formatting.getCustomUnits as #getCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.setCustomUnits as #setCustomUnits
 	 * @borrows module:sap/base/i18n/Formatting.addCustomUnits as #addCustomUnits
@@ -1075,7 +1077,7 @@ sap.ui.define([
 		 * Returns the locale to be used for formatting.
 		 *
 		 * If no such locale has been defined, this method falls back to the language,
-		 * see {@link sap.ui.core.Configuration#getLanguage Configuration.getLanguage()}.
+		 * see {@link sap.ui.core.Configuration.getLanguage Configuration.getLanguage()}.
 		 *
 		 * If any user preferences for date, time or number formatting have been set,
 		 * and if no format locale has been specified, then a special private use subtag
@@ -1084,7 +1086,7 @@ sap.ui.define([
 		 *
 		 * @return {sap.ui.core.Locale} the format locale
 		 * @public
-		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag} instead.
+		 * @deprecated As of Version 1.120. Please use {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag} instead.
 		 */
 		getFormatLocale : function() {
 			var oLocale = Formatting.getLanguageTag();
@@ -1126,10 +1128,10 @@ sap.ui.define([
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
+		 * See class {@link sap.ui.core.format.DateFormat DateFormat} for details about the pattern syntax.
 		 *
 		 * After changing the date pattern, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage Configuration.setLanguage}
 		 * for details and restrictions.
 		 *
 		 * @param {string} sStyle must be one of short, medium, long or full.
@@ -1152,11 +1154,11 @@ sap.ui.define([
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
+		 * See class {@link sap.ui.core.format.DateFormat DateFormat} for details about the pattern syntax.
 		 *
 		 * After changing the time pattern, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
@@ -1179,11 +1181,11 @@ sap.ui.define([
 		 *
 		 * If a symbol is defined, it will be preferred over symbols derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.NumberFormat} for details about the symbols.
+		 * See class {@link sap.ui.core.format.NumberFormat NumberFormat} for details about the symbols.
 		 *
 		 * After changing the number symbol, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {"group"|"decimal"|"plusSign"|"minusSign"} sType the type of symbol
 		 * @param {string} sSymbol will be used to represent the given symbol type
@@ -1221,13 +1223,13 @@ sap.ui.define([
 		 * user locale.
 		 *
 		 * After changing the first day of week, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {int} iValue must be an integer value between 0 and 6
 		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
-		 * @deprecated As of Version 1.113. Use {@link sap.ui.core.Configuration.FormatSettings#setCalendarWeekNumbering} instead.
+		 * @deprecated As of Version 1.113. Use {@link sap.ui.core.Configuration.FormatSettings#setCalendarWeekNumbering FormatSettings#setCalendarWeekNumbering} instead.
 		 */
 		setFirstDayOfWeek : function(iValue) {
 			check(typeof iValue == "number" && iValue >= 0 && iValue <= 6, "iValue must be an integer value between 0 and 6");
@@ -1246,8 +1248,8 @@ sap.ui.define([
 		 * format. When called with a null or undefined format id, any previously applied format will be removed.
 		 *
 		 * After changing the legacy date format, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {""|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9"|"A"|"B"|"C"} [sFormatId=""] ID of the ABAP date format,
 		 *   <code>""</code> will reset the date patterns for 'short' and 'medium' style to the
@@ -1271,8 +1273,8 @@ sap.ui.define([
 		 * with a null or undefined format id, any previously applied format will be removed.
 		 *
 		 * After changing the legacy time format, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {""|"0"|"1"|"2"|"3"|"4"} [sFormatId=""] ID of the ABAP time format,
 		 *   <code>""</code> will reset the time patterns for 'short' and 'medium' style and the day
@@ -1295,8 +1297,8 @@ sap.ui.define([
 		 * or undefined format id, any previously applied format will be removed.
 		 *
 		 * After changing the legacy number format, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration.setLanguage
+		 * Configuration.setLanguage} for details and restrictions.
 		 *
 		 * @param {""|" "|"X"|"Y"} [sFormatId=""] ID of the ABAP number format set,
 		 *   <code>""</code> will reset the 'group' and 'decimal' symbols to the locale-specific
