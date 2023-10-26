@@ -3079,7 +3079,7 @@ sap.ui.define([
 	LayoutHistory.prototype.getEntry = function (iIndex, bRecentFirst) {
 		var aHistory = this._aLayoutHistory;
 		if (bRecentFirst) {
-			aHistory = this._aLayoutHistory.toReversed();
+			aHistory = this._aLayoutHistory.slice().reverse();
 		}
 		return aHistory[iIndex];
 	};
