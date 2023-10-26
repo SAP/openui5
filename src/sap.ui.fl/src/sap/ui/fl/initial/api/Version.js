@@ -15,7 +15,6 @@ sap.ui.define([], function() {
 			Original: "-1",
 			Draft: "0"
 		},
-		UrlParameter: "sap-ui-fl-version",
 		Type: {
 			Active: "active",
 			Draft: "draft",

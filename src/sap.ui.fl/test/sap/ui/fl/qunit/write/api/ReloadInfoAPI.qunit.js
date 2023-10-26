@@ -48,8 +48,8 @@ sap.ui.define([
 				selector: {}
 			};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify({}));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -86,8 +86,8 @@ sap.ui.define([
 			};
 			var oFlexInfoResponse = {allContextsProvided: true};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
@@ -161,15 +161,15 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("allContextsProvided is true and a draft is available and the url parameter for draft is not present in the parsed hash", function(assert) {
+		QUnit.test("allContextsProvided is true and a draft is available and the draft is not present in the session", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -194,22 +194,16 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("allContextsProvided is false and a draft is available and the url parameter for draft is present in the parsed hash", function(assert) {
+		QUnit.test("allContextsProvided is false and a draft is available and the draft is present in the session", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
-			var mParsedHash = {
-				params: Version.UrlParameter
-			};
-
-			var oUriWithVersionUrlParameter = new URLSearchParams(`?${Version.UrlParameter}=${Version.Number.Draft}`);
-			sandbox.stub(window, "URLSearchParams").returns(oUriWithVersionUrlParameter);
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+			FlexInfoSession.setByReference({version: Version.Number.Draft});
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -226,20 +220,15 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("higher layer changes are available and max-layer parameter is not present in the parsed hash", function(assert) {
+		QUnit.test("higher layer changes are available and max-layer is not present in the session", function(assert) {
 			var oReloadInfo = {
 				ignoreMaxLayerParameter: false,
 				layer: Layer.CUSTOMER,
 				selector: {}
 			};
 
-			var mParsedHash = {
-				params: {}
-			};
-
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -263,13 +252,9 @@ sap.ui.define([
 				selector: {}
 			};
 
-			var mParsedHash = {
-				params: LayerUtils.FL_MAX_LAYER_PARAM
-			};
-
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
+			FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(true);
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
@@ -293,7 +278,7 @@ sap.ui.define([
 				selector: {}
 			};
 
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(FlexUtils, "getParameter").returns(false);
 			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
@@ -314,7 +299,7 @@ sap.ui.define([
 				selector: {}
 			};
 
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(FlexUtils, "getParameter").returns(false);
 			sandbox.stub(FlexInfoSession, "get").returns({initialAllContexts: true});
@@ -338,9 +323,9 @@ sap.ui.define([
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(null);
-			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		},
 		afterEach() {
+			FlexInfoSession.removeByReference();
 			sandbox.restore();
 		}
 	}, function() {
@@ -352,13 +337,13 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then expected reloadMethod was set");
-			assert.equal(oReloadInfo.hasVersionUrlParameter, false, "has version paramert in the url");
+			assert.equal(oReloadInfo.hasVersionStorage, false, "has version paramert in the url");
 		});
 
 		QUnit.test("and dirty draft changes exist", function(assert) {
@@ -369,8 +354,8 @@ sap.ui.define([
 				isDraftAvailable: true,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -385,8 +370,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -400,19 +385,11 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: "2",
-				URLParsingService: true // the functionality is stubbed, but is needs to exist
+				activeVersion: "2"
 			};
 
-			var mParsedHash = {
-				params: {
-					"sap-ui-fl-version": ["1"]
-				}
-			};
-
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			FlexInfoSession.set({version: "1"});
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -426,22 +403,14 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: "2",
-				URLParsingService: true // the functionality is stubbed, but is needs to exist
+				activeVersion: "2"
 			};
 
-			var mParsedHash = {
-				params: {}
-			};
-
-			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
-
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
-			window.sessionStorage.removeItem("sap.ui.fl.info.true");
 		});
 
 		QUnit.test("current active version is selected/previewed", function(assert) {
@@ -451,28 +420,19 @@ sap.ui.define([
 				changesNeedReload: false,
 				isDraftAvailable: false,
 				versioningEnabled: true,
-				activeVersion: "2",
-				URLParsingService: {
-					parseShellHash() {
-						return {
-							params: {
-								"sap-ui-fl-version": ["2"]
-							}
-						};
-					}
-				}
+				activeVersion: "2"
 			};
 
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
+			FlexInfoSession.set({version: "2", allContextsProvided: true});
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
 			assert.equal(oExpectedReloadInfo.reloadMethod, this.oRELOAD.NOT_NEEDED, "then NOT_NEEDED reloadMethod was set");
-			assert.equal(oReloadInfo.hasVersionUrlParameter, true, "has version paramert in the url");
-			window.sessionStorage.removeItem("sap.ui.fl.info.true");
+			assert.equal(oReloadInfo.hasVersionStorage, true, "has version paramert in the url");
 		});
 
-		QUnit.test("and sap-ui-fl-max-layer parameter exist", function(assert) {
+		QUnit.test("and maxLayer parameter exist", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
@@ -480,8 +440,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -496,8 +456,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -505,7 +465,7 @@ sap.ui.define([
 			assert.equal(oExpectedReloadInfo.isDraftAvailable, false, "then there is no draft");
 		});
 
-		QUnit.test("and an initial draft got activated and in the url version parameter exists", function(assert) {
+		QUnit.test("and an initial draft got activated and in the version exists in session", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
@@ -513,8 +473,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(true);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -530,8 +490,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -546,8 +506,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -562,8 +522,8 @@ sap.ui.define([
 				isDraftAvailable: false,
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -580,8 +540,8 @@ sap.ui.define([
 			};
 			var oFlexInfoResponse = {allContextsProvided: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -600,8 +560,8 @@ sap.ui.define([
 			};
 			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: true};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -618,8 +578,8 @@ sap.ui.define([
 			};
 			var oFlexInfoResponse = {allContextsProvided: true, isEndUserAdaptation: false};
 			window.sessionStorage.setItem("sap.ui.fl.info.true", JSON.stringify(oFlexInfoResponse));
-			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 
 			var oExpectedReloadInfo = ReloadInfoAPI.getReloadMethod(oReloadInfo);
@@ -640,136 +600,116 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and versioning is enabled & version parameter is in the url", function(assert) {
+		QUnit.test("and versioning is enabled & version is in the session", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
 				versioningEnabled: true
 			};
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			assert.equal(bActivated, true, "it returns true");
 		});
 
-		QUnit.test("and versioning is enabled & version parameter is not in the url", function(assert) {
+		QUnit.test("and versioning is enabled & version is not in the session", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
 				versioningEnabled: true
 			};
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(false);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(false);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			assert.equal(bActivated, false, "it returns false");
 		});
 
-		QUnit.test("and versioning is enabled & version parameter is in the url & draft is still present", function(assert) {
+		QUnit.test("and versioning is enabled & version is in the session & draft is still present", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
 				versioningEnabled: true
 			};
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			assert.equal(bActivated, false, "it returns false");
 		});
 
-		QUnit.test("and versioning is not enabled & version parameter is in the url", function(assert) {
+		QUnit.test("and versioning is not enabled & version is in the session", function(assert) {
 			var oReloadInfo = {
 				layer: Layer.CUSTOMER,
 				selector: {},
 				versioningEnabled: false
 			};
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(false);
-			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue").returns(true);
+			sandbox.stub(ReloadInfoAPI, "hasVersionStorage").returns(true);
 
 			var bActivated = ReloadInfoAPI.initialDraftGotActivated(oReloadInfo);
 			assert.equal(bActivated, false, "it returns false");
 		});
 	});
 
-	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is in the hash", {
+	QUnit.module("Given that a hasVersionStorage is called in FLP and the version is in the session", {
 		beforeEach() {
-			this.oURLParsingService = {
-				parseShellHash() {
-					return {
-						params: {
-							"sap-ui-fl-version": [Version.Number.Draft]
-						}
-					};
-				}
-			};
+			this.sReference = "foo";
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.sReference);
+			FlexInfoSession.setByReference({version: Version.Number.Draft}, this.sReference);
 		},
 		afterEach() {
+			FlexInfoSession.removeByReference(this.sReference);
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, true, "hasVersionParameterWithValue returns true");
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionStorage({value: Version.Number.Draft}, {});
+			assert.deepEqual(bHasVersionParameter, true, "hasVersionStorage returns true");
 		});
 
 		QUnit.test("with value '1'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns false");
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionStorage({value: "1"}, {});
+			assert.deepEqual(bHasVersionParameter, false, "hasVersionStorage returns false");
 		});
 	});
 
-	QUnit.module("Given that a hasMaxLayerParameterWithValue is called in FLP and the version parameter is in the hash", {
+	QUnit.module("Given that a hasMaxLayerStorage is called in FLP and the maxLayer is in the session", {
 		beforeEach() {
-			this.oURLParsingService = {
-				parseShellHash() {
-					return {
-						params: {
-							"sap-ui-fl-max-layer": [Layer.CUSTOMER]
-						}
-					};
-				}
-			};
+			this.sReference = "foo";
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.sReference);
+			FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, this.sReference);
 		},
 		afterEach() {
 			sandbox.restore();
+			FlexInfoSession.removeByReference(this.sReference);
 		}
 	}, function() {
 		QUnit.test("with value CUSTOMER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.CUSTOMER}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, true, "hasMaxLayerParameterWithValue returns true");
+			var bHasMaxLayerParameter = ReloadInfoAPI.hasMaxLayerStorage({value: Layer.CUSTOMER}, {});
+			assert.deepEqual(bHasMaxLayerParameter, true, "hasMaxLayerStorage returns true");
 		});
 
 		QUnit.test("with value USER", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: Layer.USER}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, false, "hasMaxLayerParameterWithValue returns false");
+			var bHasMaxLayerParameter = ReloadInfoAPI.hasMaxLayerStorage({value: Layer.USER}, {});
+			assert.deepEqual(bHasMaxLayerParameter, false, "hasMaxLayerStorage returns false");
 		});
 	});
 
-	QUnit.module("Given that a hasVersionParameterWithValue is called in FLP and the version parameter is not in the hash", {
-		beforeEach() {
-			this.oURLParsingService = {
-				parseShellHash() {
-					return {
-						params: {
-						}
-					};
-				}
-			};
-		},
+	QUnit.module("Given that a hasVersionStorage is called in FLP and the version is not in the session", {
 		afterEach() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("with value '0'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: Version.Number.Draft}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionStorage({value: Version.Number.Draft}, {});
+			assert.deepEqual(bHasVersionParameter, false, "hasVersionStorage returns undefined");
 		});
 
 		QUnit.test("with value '1'", function(assert) {
-			var bHasVersionParameter = ReloadInfoAPI.hasVersionParameterWithValue({value: "1"}, this.oURLParsingService);
-			assert.deepEqual(bHasVersionParameter, false, "hasVersionParameterWithValue returns undefined");
+			var bHasVersionParameter = ReloadInfoAPI.hasVersionStorage({value: "1"}, {});
+			assert.deepEqual(bHasVersionParameter, false, "hasVersionStorage returns undefined");
 		});
 	});
 
@@ -795,43 +735,8 @@ sap.ui.define([
 		});
 	});
 
-	function checkParameters(oExpectedParameters, oActualParameters, sScenario, assert) {
-		var vParameters = oExpectedParameters;
-		if (sScenario === "standalone") {
-			var oUriParameters = new URLSearchParams(oActualParameters);
-			Object.entries(oExpectedParameters).forEach(function(aKeyValue) {
-				var sActualValue = parseBooleanOrReturnValue(oUriParameters.get(aKeyValue[0]));
-				assert.strictEqual(sActualValue, aKeyValue[1][0], "the parameters are correct");
-			});
-			assert.strictEqual(Array.from(oUriParameters.keys()).length, Object.keys(oExpectedParameters).length, "the number of params is correct");
-		} else {
-			assert.deepEqual(oActualParameters, vParameters, "the parameters are correct");
-		}
-	}
-
-	function parseBooleanOrReturnValue(sValue) {
-		if (sValue === "true") {
-			return true;
-		}
-		if (sValue === "false") {
-			return false;
-		}
-		return sValue;
-	}
-
-	function initialParameter(sKey, sValue, sScenario) {
-		var oReturn;
-		if (sScenario === "flp") {
-			oReturn = {};
-			oReturn[sKey] = [sValue];
-		} else {
-			oReturn = `?${sKey}=${sValue}`;
-		}
-		return oReturn;
-	}
-
 	["flp", "standalone"].forEach(function(sScenario) {
-		var sName = `${sScenario}: handleParametersOnStart - `;
+		var sName = `${sScenario}: handleReloadInfoOnStart - `;
 		QUnit.module(sName, {
 			beforeEach() {
 				this.oReloadInfo = {
@@ -840,39 +745,40 @@ sap.ui.define([
 				};
 			},
 			afterEach() {
+				FlexInfoSession.removeByReference();
 				sandbox.restore();
 			}
 		}, function() {
 			QUnit.test("with no draft / higher layer Changes", function(assert) {
-				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameter was changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 			});
 
 			QUnit.test("with a draft / no higher layer Changes", function(assert) {
 				this.oReloadInfo.isDraftAvailable = true;
-				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({"sap-ui-fl-version": [Version.Number.Draft]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {version: Version.Number.Draft}, "flex info session is correct");
 			});
 
 			QUnit.test("with no draft / higher layer Changes", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
-				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
 			});
 
 			QUnit.test("with a draft / higher layer Changes", function(assert) {
 				this.oReloadInfo.isDraftAvailable = true;
 				this.oReloadInfo.hasHigherLayerChanges = true;
-				var bResult = ReloadInfoAPI.handleParametersOnStart(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfoOnStart(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER], "sap-ui-fl-version": [Version.Number.Draft]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER, version: Version.Number.Draft}, "flex info session is correct");
 			});
 		});
 
-		var sName2 = `${sScenario}: handleUrlParameters - `;
+		var sName2 = `${sScenario}: handleReloadInfo - `;
 		QUnit.module(sName2, {
 			beforeEach() {
 				this.oReloadInfo = {
@@ -888,107 +794,100 @@ sap.ui.define([
 				sandbox.restore();
 			}
 		}, function() {
-			QUnit.test("with max layer param in the url and hasHigherLayerChanges", function(assert) {
+			QUnit.test("with max layer param in the session and hasHigherLayerChanges", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
 				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
 				assert.equal(FlexInfoSession.get().maxLayer, undefined, "max layer is set correct in session");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 			});
 
-			QUnit.test("with max layer param in the url and hasHigherLayerChanges / ignoreMaxLayerParameter", function(assert) {
+			QUnit.test("with max layer param in the session and hasHigherLayerChanges / ignoreMaxLayerParameter", function(assert) {
 				this.oReloadInfo.hasHigherLayerChanges = true;
 				this.oReloadInfo.ignoreMaxLayerParameter = true;
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-max-layer", Layer.CUSTOMER, sScenario);
 				FlexInfoSession.set({maxLayer: Layer.CUSTOMER});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				checkParameters({"sap-ui-fl-max-layer": [Layer.CUSTOMER]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {maxLayer: Layer.CUSTOMER}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().maxLayer, Layer.CUSTOMER, "max layer is set correct in session");
 			});
 
-			QUnit.test("without version in url and versionSwitch / version set", function(assert) {
+			QUnit.test("without version in session and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
-			QUnit.test("with version in url and versionSwitch / version set", function(assert) {
+			QUnit.test("with version in session and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
 				FlexInfoSession.set({version: "1"});
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "1", sScenario);
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
-			QUnit.test("with different version in url and versionSwitch / version set", function(assert) {
+			QUnit.test("with different version in session and versionSwitch / version set", function(assert) {
 				this.oReloadInfo.versionSwitch = true;
 				this.oReloadInfo.version = "1";
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
 				FlexInfoSession.set({version: "2"});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({"sap-ui-fl-version": ["1"]}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {version: "1"}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, "1", "version is set correct in session");
 			});
 
-			QUnit.test("with version in url and removeVersionParameter", function(assert) {
+			QUnit.test("with version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", "2", sScenario);
 				FlexInfoSession.set({version: "2"});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
-			QUnit.test("with draft version in url and removeVersionParameter", function(assert) {
+			QUnit.test("with draft version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
 				FlexInfoSession.set({version: Version.Number.Draft});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
-			QUnit.test("without version in url and removeVersionParameter", function(assert) {
+			QUnit.test("without version in session and removeVersionParameter", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
-			QUnit.test("without version in url and removeDraft", function(assert) {
+			QUnit.test("without version in session and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, false, "no parameters were changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
-			QUnit.test("with draft version in url and removeDraft", function(assert) {
+			QUnit.test("with draft version in session and removeDraft", function(assert) {
 				this.oReloadInfo.removeVersionParameter = true;
-				this.oReloadInfo.parameters = initialParameter("sap-ui-fl-version", Version.Number.Draft, sScenario);
 				FlexInfoSession.set({version: Version.Number.Draft});
-				var bResult = ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				var bResult = ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.strictEqual(bResult, true, "parameters were changed");
-				checkParameters({}, this.oReloadInfo.parameters, sScenario, assert);
+				assert.deepEqual(FlexInfoSession.get(), {}, "flex info session is correct");
 				assert.equal(FlexInfoSession.get().version, undefined, "version is set correct in session");
 			});
 
 			QUnit.test("with flex session contains with a different selector", function(assert) {
 				FlexInfoSession.setByReference({maxLayer: Layer.CUSTOMER}, "foo");
-				ReloadInfoAPI.handleUrlParameters(this.oReloadInfo, sScenario);
+				ReloadInfoAPI.handleReloadInfo(this.oReloadInfo);
 				assert.deepEqual(FlexInfoSession.get(), {}, "session is empty");
 			});
 		});
@@ -1021,8 +920,8 @@ sap.ui.define([
 			selector: {}
 		};
 		FlexInfoSession.setByReference(oFlexInfoResponse);
-		sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
-		sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
+		sandbox.stub(ReloadInfoAPI, "hasMaxLayerStorage");
+		sandbox.stub(ReloadInfoAPI, "hasVersionStorage");
 		sandbox.stub(FeaturesAPI, "isVersioningEnabled").resolves(true);
 		var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 		var oGetResetAndPublishInfoAPIStub = sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves();
