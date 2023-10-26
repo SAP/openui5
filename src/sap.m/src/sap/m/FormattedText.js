@@ -167,6 +167,7 @@ function(
 				'class' : 1,
 				'a::href' : 1,
 				'a::target' : 1,
+				'a::title' : 1,
 				'dir' : 1
 			},
 			// rules for the allowed tags
