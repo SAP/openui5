@@ -2,17 +2,22 @@
 	class="sapUiSizeCompact"
 	controllerName="sap.ui.core.sample.odata.v4.HierarchyBindAction.Main"
 	xmlns="sap.ui.table"
+	xmlns:core="sap.ui.core"
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:rm="sap.ui.table.rowmodes">
 
 	<TreeTable id="table" ariaLabelledBy="title"
-		rows="{path : '/I_SADL_BHV_HIER_BIND_DIRECTORY(\'1\')/_Hierarchy',
-			parameters : {$count : true, $$patchWithoutSideEffects : true}, suspended : true}"
+		rows="{path : '_Hierarchy', parameters : {$count : true, $$patchWithoutSideEffects : true}}"
 		selectionMode="None" threshold="0">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" level="H1" text="{header>$count} Items"/>
+				<m:ToolbarSpacer/>
+				<m:Select change="onChangeHierarchy" id="selectHierarchy"
+					items="{/I_SADL_BHV_HIER_BIND_DIRECTORY}">
+					<core:ListItem text="{Description} ({Hierarchy})"/>
+				</m:Select>
 				<m:ToolbarSpacer/>
 				<m:Button icon="sap-icon://create" press=".onCreateRoot" tooltip="Create New Root"/>
 				<m:Button icon="sap-icon://synchronize" press="onSynchronize" tooltip="Synchronize"/>
