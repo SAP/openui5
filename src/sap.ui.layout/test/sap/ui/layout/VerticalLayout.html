@@ -49,6 +49,13 @@
 						new Text({text: "This text is longer than the width of the VerticalLayout.\nSo it should be cut.", width: "300px", wrapping: false})
 					]
 				}).placeAt("uiArea2");
+				new VerticalLayout("Layout3", {
+					content: [
+						new Button({text:"Press me", tooltip:"Button tooltip"}),
+						new Input({value:"This input is invisible and its vertical layout cell should not have padding", visible: false}),
+						new Image({src:"http://www.sap.com/global/images/SAPLogo.gif"})
+					]
+				}).addStyleClass("sapUiContentPadding").placeAt("uiArea3");
 			});
 		});
 		</script>
@@ -59,5 +66,7 @@
 		<div id="uiArea1" ></div>
 		<br> VerticalLayout with 5 elements and defined width of 200px but larger content -> content must be cut:
 		<div id="uiArea2" ></div>
+		<br> VerticalLayout with content padding and partially hidden content
+		<div id="uiArea3" ></div>
 	</body>
 </html>
