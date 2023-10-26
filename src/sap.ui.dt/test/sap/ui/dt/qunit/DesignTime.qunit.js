@@ -1573,7 +1573,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that the DesignTime is created with hidden layout", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({ text: "Button1" });
 			this.oLayout1 = new VerticalLayout({
@@ -1582,8 +1582,12 @@ sap.ui.define([
 			this.oLayoutOuter = new VerticalLayout({
 				content: [this.oLayout1]
 			});
+			this.oButton2 = new Button({ text: "Button2" });
+			this.oLayout2 = new VerticalLayout({
+				content: [this.oButton2]
+			});
 			this.oLayoutOuter.placeAt("qunit-fixture");
-			nextUIUpdate.runSync();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
@@ -1598,9 +1602,7 @@ sap.ui.define([
 				rootElements: [this.oLayoutOuter]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				fnDone();
-			}, this);
+			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
 		afterEach() {
 			this.oDesignTime.destroy();
@@ -1611,19 +1613,14 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when hidden layout becomes visible", function(assert) {
 			var fnDone = assert.async();
-			this.oButton2 = new Button({ text: "Button2" });
-			this.oLayout2 = new VerticalLayout({
-				content: [this.oButton2]
-			});
-			this.oLayout2.addStyleClass("hidden");
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-				assert.ok(!!this.oOverlayLayout2, "then layout2 overlay is created");
+				assert.ok(this.oOverlayLayout2, "then layout2 overlay is created");
 				assert.notOk(isOverlayVisible(this.oOverlayLayout2), "the overlay has no size");
 
 				this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
-				assert.ok(!!this.oOverlayButton2, "then button2 overlay is created");
+				assert.ok(this.oOverlayButton2, "then button2 overlay is created");
 
 				this.oOverlayLayout2.attachEventOnce("geometryChanged", function() {
 					assert.ok(isOverlayVisible(this.oOverlayLayout2), "the overlay has non-zero width/height");
@@ -1632,42 +1629,50 @@ sap.ui.define([
 				this.oLayout2.removeStyleClass("hidden");
 			}, this);
 
+			this.oLayout2.addStyleClass("hidden");
 			this.oLayoutOuter.removeContent(this.oLayout1);
 			this.oLayoutOuter.addContent(this.oLayout2);
 		});
 
 		QUnit.test("when switching between layouts", function(assert) {
 			var fnDone = assert.async();
-			this.oButton2 = new Button({ text: "Button2" });
-			this.oLayout2 = new VerticalLayout({
-				content: [this.oButton2]
-			});
 			this.oLayout1.addStyleClass("hidden");
 			this.oLayout2.addStyleClass("hidden");
 
-			this.oDesignTime.attachEventOnce("synced", function() {
+			const fnSyncedCallback = function() {
 				this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-				assert.ok(!!this.oOverlayLayout2, "layout2 overlay is created");
+				// sometimes there are additional synced events before the overlay was created
+				if (!this.oOverlayLayout2) {
+					this.oDesignTime.attachEventOnce("synced", fnSyncedCallback, this);
+					return;
+				}
+				assert.ok(this.oOverlayLayout2, "layout2 overlay is created");
 				this.oOverlayButton2 = OverlayRegistry.getOverlay(this.oButton2);
-				assert.ok(!!this.oOverlayButton2, "then button2 overlay is created");
+				assert.ok(this.oOverlayButton2, "then button2 overlay is created");
 				assert.notOk(isOverlayVisible(this.oOverlayLayout2), "the layout2 overlay has no size when hidden");
 
 				this.oOverlayLayout2.attachEventOnce("geometryChanged", function() {
 					assert.ok(isOverlayVisible(this.oOverlayLayout2), "the layout2 overlay has non-zero width/height when made visible");
 
+					// eslint-disable-next-line max-nested-callbacks
 					this.oOverlayLayout2.attachEventOnce("destroyed", function() {
 						this.oOverlayLayout2 = OverlayRegistry.getOverlay(this.oLayout2);
-						assert.notOk(!!this.oOverlayLayout2, "layout2 overlay is removed");
+						assert.notOk(this.oOverlayLayout2, "layout2 overlay is removed");
 
+						// eslint-disable-next-line max-nested-callbacks
 						this.oDesignTime.attachEventOnce("synced", function() {
 							this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
-							assert.ok(!!this.oOverlayLayout1, "then layout1 overlay is created");
+							assert.ok(this.oOverlayLayout1, "then layout1 overlay is created");
 							this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
-							assert.ok(!!this.oOverlayButton1, "then button1 overlay is created");
+							assert.ok(this.oOverlayButton1, "then button1 overlay is created");
 							assert.notOk(isOverlayVisible(this.oOverlayButton1), "the layout1 overlay has no size when hidden");
 
+							// eslint-disable-next-line max-nested-callbacks
 							this.oOverlayLayout1.attachEventOnce("geometryChanged", function() {
-								assert.ok(isOverlayVisible(this.oOverlayLayout1), "the layout1 overlay has non-zero width/height when made visible");
+								assert.ok(
+									isOverlayVisible(this.oOverlayLayout1),
+									"the layout1 overlay has non-zero width/height when made visible"
+								);
 								fnDone();
 							}, this);
 							this.oLayout1.removeStyleClass("hidden");
@@ -1680,7 +1685,9 @@ sap.ui.define([
 				}, this);
 
 				this.oLayout2.removeStyleClass("hidden");
-			}, this);
+			};
+
+			this.oDesignTime.attachEventOnce("synced", fnSyncedCallback, this);
 
 			this.oOverlayLayout1 = OverlayRegistry.getOverlay(this.oLayout1);
 			this.oOverlayLayout1.attachEventOnce("destroyed", function() {
