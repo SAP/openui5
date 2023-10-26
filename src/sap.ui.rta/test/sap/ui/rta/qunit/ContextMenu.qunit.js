@@ -111,19 +111,23 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when context menu is opened (via keyboard) for a sap.ui.comp.smartform.GroupElement", function(assert) {
 			assert.expect(8);
-			var oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
+			const done = assert.async();
+			const oGroupElementOverlay = OverlayRegistry.getOverlay(this.oBoundGroupElement);
 			oGroupElementOverlay.focus();
 			oGroupElementOverlay.setSelected(true);
 			this.oContextMenu.attachEventOnce("openedContextMenu", function() {
 				assert.ok(true, "the contextMenu is open");
 			});
-			return DtUtil.waitForSynced(this.oRta._oDesignTime)()
-			.then(RtaQunitUtils.openContextMenuWithKeyboard.bind(this, oGroupElementOverlay))
-			.then(function() {
-				var sText = "";
-				this.oContextMenuControl.getItems().forEach(function(oItem) {
+
+			window.requestAnimationFrame(async () => {
+				await DtUtil.waitForSynced(this.oRta._oDesignTime)();
+				await RtaQunitUtils.openContextMenuWithKeyboard.call(this, oGroupElementOverlay);
+
+				let sText = "";
+				function concatItemKey(oItem) {
 					sText = `${sText} - ${oItem.getKey()}`;
-				});
+				}
+				this.oContextMenuControl.getItems().forEach(concatItemKey);
 				if (this.oContextMenuControl.getItems().length === 5) {
 					assert.equal(this.oContextMenuControl.getItems().length, 5, "5 Menu Items are available");
 					assert.equal(this.oContextMenuControl.getItems()[0].getKey(), "CTX_RENAME", "we can rename a label");
@@ -137,7 +141,8 @@ sap.ui.define([
 				} else {
 					assert.ok(false, sText);
 				}
-			}.bind(this));
+				done();
+			});
 		});
 
 		QUnit.test("when context menu is opened for a sap.ui.comp.smartform.GroupElement and no fields are available", function(assert) {
