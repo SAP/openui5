@@ -3,7 +3,7 @@ sap.ui.define([
 ], function (UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.core.sample.matcher.BindingPath.Component", {
+	return UIComponent.extend("sap.ui.core.sample.matcher.Descendant.Component", {
 		metadata: {
 			manifest: "json"
 		}

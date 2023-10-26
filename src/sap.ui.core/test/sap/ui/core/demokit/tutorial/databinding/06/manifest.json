@@ -1,0 +1,22 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.tutorial.databinding.06"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/index.html",
+				"stretch": true,
+				"files": [
+					"webapp/i18n/i18n.properties",
+					"webapp/view/App.view.xml",
+					"webapp/index.html",
+					"webapp/index.js",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}

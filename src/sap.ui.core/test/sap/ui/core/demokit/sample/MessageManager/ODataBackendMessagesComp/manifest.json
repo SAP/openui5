@@ -1,17 +1,9 @@
 {
 	"sap.app": {
-		"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
-		"applicationVersion": {
-			"version": "1.0.0"
-		}
+		"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp"
 	},
 	"sap.ui5": {
 		"config": {
-			"dependencies": {
-				"libs": [
-					"sap.m"
-				]
-			},
 			"sample": {
 				"iframe": "webapp/index.html",
 				"stretch": true,
@@ -34,7 +26,8 @@
 					"webapp/Component.js",
 					"webapp/index.html",
 					"webapp/manifest.json",
-					"manifest.json"
+					"ui5.yaml",
+					"package.json"
 				]
 			}
 		}

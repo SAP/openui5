@@ -1,0 +1,27 @@
+{
+	"sap.app": {
+		"id": "sap.ui.core.tutorial.mockserver.03"
+	},
+	"sap.ui5": {
+		"config": {
+			"sample": {
+				"iframe": "webapp/test/mockServer.html",
+				"stretch": true,
+				"files": [
+					"webapp/controller/App.controller.js",
+					"webapp/i18n/i18n.properties",
+					"webapp/localService/metadata.xml",
+					"webapp/localService/mockserver.js",
+					"webapp/localService/mockdata/Meetups.json",
+					"webapp/test/initMockServer.js",
+					"webapp/test/mockServer.html",
+					"webapp/view/App.view.xml",
+					"webapp/Component.js",
+					"webapp/manifest.json",
+					"ui5.yaml",
+					"package.json"
+				]
+			}
+		}
+	}
+}
