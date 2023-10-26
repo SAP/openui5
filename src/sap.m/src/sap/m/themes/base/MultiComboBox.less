@@ -123,14 +123,17 @@ li.sapMMultiComboBoxItem .sapMCbBg {
 		}
 	}
 
-	.sapMMultiComboBoxSelectAll.sapMTB .sapMCb {
-		margin-left: 0.5rem;
-		padding-left: 2.25rem;
+	.sapMMultiComboBoxSelectAll.sapMTB.sapMIBar {
+		padding: 0;
+		.sapMCb {
+			margin-left: 0.5rem;
+			padding-left: 2.25rem;
+		}
 	}
 }
 
 .sapMMultiComboBoxSelectAll.sapMTB.sapMIBar {
-	padding: 0;
+	padding: 0.125rem;
 	&.sapMMultiComboBoxSelectAllFocused {
 		outline: @sapUiContentFocusWidth @sapUiContentFocusStyle @sapUiContentFocusColor;
 		outline-offset: -0.125rem;
