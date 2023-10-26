@@ -8,14 +8,13 @@ sap.ui.define([
 	"sap/m/Popover",
 	"sap/m/Text",
 	"sap/m/VBox",
-	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/Combine",
 	"sap/ui/rta/plugin/Remove",
@@ -32,14 +31,13 @@ sap.ui.define([
 	Popover,
 	Text,
 	VBox,
-	Core,
 	KeyCodes,
 	DesignTime,
-	DOMUtil,
 	ElementOverlay,
 	OverlayRegistry,
 	ChangesWriteAPI,
 	Layer,
+	nextUIUpdate,
 	CommandFactory,
 	Combine,
 	Remove,
@@ -54,7 +52,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given a Selection plugin, DT in MultiSelection mode and controls with custom dt metadata for different cases...", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			sandbox.stub(ChangesWriteAPI, "getChangeHandler").resolves();
@@ -112,7 +110,7 @@ sap.ui.define([
 				]
 			});
 			this.oVBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				plugins: [

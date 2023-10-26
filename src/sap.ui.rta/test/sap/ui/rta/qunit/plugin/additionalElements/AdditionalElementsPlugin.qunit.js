@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element"
 ], function(
 	includes,
@@ -60,7 +59,6 @@ sap.ui.define([
 	RTAUtils,
 	sinon,
 	RtaQunitUtils,
-	Core,
 	Element
 ) {
 	"use strict";

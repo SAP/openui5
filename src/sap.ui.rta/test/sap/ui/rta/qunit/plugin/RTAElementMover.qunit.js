@@ -10,7 +10,6 @@ sap.ui.define([
 	"sap/ui/comp/smartform/GroupElement",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/dt/plugin/ElementMover",
 	"sap/ui/dt/DesignTime",
@@ -21,6 +20,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/DragDrop",
 	"sap/ui/thirdparty/sinon-4"
@@ -34,7 +34,6 @@ sap.ui.define([
 	GroupElement,
 	Component,
 	ComponentContainer,
-	Core,
 	Element,
 	DtElementMover,
 	DesignTime,
@@ -45,6 +44,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	VerticalLayout,
 	JSONModel,
+	nextUIUpdate,
 	CommandFactory,
 	DragDropPlugin,
 	sinon
@@ -94,9 +94,9 @@ sap.ui.define([
 	// test app only used in the first module
 	QUnit.module("Given a complex test view rendered and data ready", {
 		// One model with EntityType01, EntityType02 (default) and EntityTypeNav + one i18n model ("i18n")
-		before() {
+		async before() {
 			QUnit.config.fixture = null;
-			return Component.create({
+			const oComponent = await Component.create({
 				name: "sap.ui.rta.test.additionalElements",
 				id: "Comp1",
 				settings: {
@@ -105,18 +105,14 @@ sap.ui.define([
 						useSessionStorage: true
 					}
 				}
-			})
-			.then(function(oComponent) {
-				this.oCompCont = new ComponentContainer({
-					component: oComponent
-				}).placeAt("qunit-fixture");
-				Core.applyChanges();
-				return oComponent.oView;
-			}.bind(this))
-			.then(function() {
-				this.oView = Element.getElementById("Comp1---idMain1");
-				return this.oView.getController().isDataReady();
-			}.bind(this));
+			});
+			this.oCompCont = new ComponentContainer({
+				component: oComponent
+			}).placeAt("qunit-fixture");
+			await nextUIUpdate();
+			await oComponent.oView;
+			this.oView = Element.getElementById("Comp1---idMain1");
+			return this.oView.getController().isDataReady();
 		},
 		beforeEach(assert) {
 			var done = assert.async();
@@ -131,8 +127,8 @@ sap.ui.define([
 				plugins: [this.oDragDropPlugin]
 			});
 
-			this.oDesignTime.attachEventOnce("synced", function() {
-				Core.applyChanges();
+			this.oDesignTime.attachEventOnce("synced", async function() {
+				await nextUIUpdate();
 				var oNavGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[0];
 				var oOtherGroup = this.oView.byId("ObjectPageSubSectionForNavigation").getBlocks()[0].getGroups()[1];
 				var [oBoundGroupElement] = this.oView.byId("ObjectPageSubSectionForNavigation")
@@ -223,7 +219,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oSmartGroupElement = new GroupElement("stableField", {
 				elements: [new Button("button1", {text: "mybutton"})]
 			});
@@ -259,7 +255,7 @@ sap.ui.define([
 			this.oDragDropPlugin.setCommandFactory(oCommandFactory);
 
 			this.oLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -269,8 +265,8 @@ sap.ui.define([
 			});
 
 			var done = assert.async();
-			this.oDesignTime.attachEventOnce("synced", function() {
-				Core.applyChanges();
+			this.oDesignTime.attachEventOnce("synced", async function() {
+				await nextUIUpdate();
 
 				this.oGroup1 = Element.getElementById("group1");
 				this.oGroup2 = Element.getElementById("group2");
@@ -330,7 +326,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// first scenario
 			// VerticalLayout
 			//    MovedButton1
@@ -348,7 +344,7 @@ sap.ui.define([
 			});
 
 			this.oLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -437,7 +433,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// second scenario
 			// VerticalLayout (outerLayout)
 			//    MovedButton1
@@ -459,7 +455,7 @@ sap.ui.define([
 			});
 
 			this.oOuterLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// create designtime
 			this.oDesignTime = new DesignTime({
@@ -508,7 +504,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// third scenario
 			// SmartForm
 			//    Group1
@@ -541,7 +537,7 @@ sap.ui.define([
 			});
 
 			this.oSmartForm1.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// stub designtime metadata
 			var oSmartFormPropagation = fnCreatePropagateRelevantContainerObj(true);
@@ -652,7 +648,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			// fourth scenario
 			// Bar
 			//    Aggregation1 (contentLeft)
@@ -673,7 +669,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -760,7 +756,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Bar with Buttons scenario", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var done = assert.async();
 
 			// another scenario
@@ -784,7 +780,7 @@ sap.ui.define([
 			});
 
 			this.oBar.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			// stub designtime metadata
 			var oBarMetadata = new ElementDesignTimeMetadata({
@@ -853,7 +849,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a list with template", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 			// create list with bound items
 			var oData = [
@@ -887,7 +883,7 @@ sap.ui.define([
 				content: [this.oBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDragDropPlugin = new DragDropPlugin({
 				commandFactory: new CommandFactory()

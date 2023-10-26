@@ -2,24 +2,24 @@
 
 sap.ui.define([
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/apply/api/ExtensionPointRegistryAPI",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/util/XMLHelper",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Component,
-	Core,
 	XMLView,
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	FlexObjectFactory,
 	ExtensionPointRegistryAPI,
 	AddXMLAtExtensionPoint,
+	nextUIUpdate,
 	XMLHelper,
 	sinon
 ) {
@@ -379,8 +379,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - create scenario", {
-		beforeEach(assert) {
-			var fnDone = assert.async();
+		beforeEach() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			return createComponent()
 			.then(function(oComponent) {
@@ -397,8 +396,7 @@ sap.ui.define([
 				};
 				[this.oHBox, this.oPanel, this.oPanelWithoutStableId] = oXmlView.getContent();
 				oXmlView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				fnDone();
+				return nextUIUpdate();
 			}.bind(this));
 		},
 		afterEach() {

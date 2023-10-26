@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexObjects/Variant"
 ], function(
-	Core,
 	ControlVariantUtils,
 	Variant
 ) {

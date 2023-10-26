@@ -2,7 +2,6 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
@@ -12,6 +11,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring",
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
@@ -20,7 +20,6 @@ sap.ui.define([
 	JsControlTreeModifier,
 	ComponentContainer,
 	Component,
-	Core,
 	UIComponent,
 	KeyCodes,
 	Layer,
@@ -30,6 +29,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
 	JSONModel,
+	nextUIUpdate,
 	QUnitUtils,
 	RuntimeAuthoring,
 	FlexTestAPI,
@@ -43,26 +43,6 @@ sap.ui.define([
 	}
 
 	var RtaQunitUtils = {};
-
-	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
-		disableRtaRestart();
-		var oComp = Component.create({
-			name: "sap.ui.rta.qunitrta",
-			id: "Comp1",
-			settings: {
-				componentData: {
-					showAdaptButton: true
-				}
-			}
-		});
-
-		var oCompCont = new ComponentContainer({
-			component: oComp
-		}).placeAt(sDomId);
-		Core.applyChanges();
-
-		return oCompCont;
-	};
 
 	RtaQunitUtils.clear = function(oElement, bRevert) {
 		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.get("Comp1");
@@ -131,9 +111,9 @@ sap.ui.define([
 				});
 			});
 		})
-		.then(function(oComponentContainer) {
+		.then(async function(oComponentContainer) {
 			oComponentContainer.placeAt(sDomId);
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			return oComponentContainer;
 		});
@@ -160,9 +140,9 @@ sap.ui.define([
 				});
 			});
 		})
-		.then(function(oComponentContainer) {
+		.then(async function(oComponentContainer) {
 			oComponentContainer.placeAt(sDomId);
-			Core.applyChanges();
+			await nextUIUpdate();
 			return oComponentContainer;
 		});
 	};

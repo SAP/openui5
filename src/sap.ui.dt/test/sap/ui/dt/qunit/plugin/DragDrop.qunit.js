@@ -4,26 +4,26 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/m/Panel",
-	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/ui/dt/plugin/DragDrop",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	Page,
 	Panel,
-	Core,
 	Device,
 	DragDrop,
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
 	VerticalLayout,
+	nextUIUpdate,
 	QUnitUtils,
 	sinon
 ) {
@@ -55,11 +55,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a DragDrop is initialized ", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({content: [this.oButton]});
 			this.oLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
@@ -278,12 +278,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that DragDrop touchevents are initialized ", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			this.oButton = new Button();
 			this.oLayout1 = new VerticalLayout({content: [this.oButton]});
 			this.oLayout2 = new VerticalLayout({content: [this.oLayout1]});
 			this.oLayout2.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({

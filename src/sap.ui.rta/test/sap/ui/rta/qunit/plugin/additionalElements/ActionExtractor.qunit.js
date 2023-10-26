@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/base/Log",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ActionExtractor,
@@ -26,7 +26,7 @@ sap.ui.define([
 	Button,
 	VerticalLayout,
 	Log,
-	Core,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -75,7 +75,7 @@ sap.ui.define([
 	// 	oBar (Bar)
 	//  	contentLeft
 	//      	[oVisibleLeftButton, oInvisibleLeftButton]
-	function givenBarWithButtons() {
+	async function givenBarWithButtons() {
 		this.oVisibleLeftButton = new Button({id: "VisibleLeftButton", visible: true, text: "VisibleLeft"});
 		this.oInvisibleLeftButton = new Button({id: "InvisibleLeftButton", visible: false, text: "InvisibleLeft"});
 		this.oBar = new Bar({
@@ -90,12 +90,12 @@ sap.ui.define([
 		});
 
 		this.oPseudoPublicParent.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	}
 
 	QUnit.module("Given a bar with a visible and invisible buttons", {
-		before(assert) {
-			givenBarWithButtons.call(this);
+		async before(assert) {
+			await givenBarWithButtons.call(this);
 			var done = assert.async();
 
 			this.oPlugin = new AdditionalElementsPlugin({

@@ -3,20 +3,12 @@
 sap.ui.define([
 	"sap/ui/fl/variants/context/Component",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/m/RadioButton",
-	"sap/m/MessageStrip",
 	"sap/base/util/restricted/_merge",
-	"sap/ui/core/Core",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextVisibilityComponent,
 	WriteStorage,
-	RadioButton,
-	MessageStrip,
 	_merge,
-	oCore,
-	JSONModel,
 	sinon
 ) {
 	"use strict";

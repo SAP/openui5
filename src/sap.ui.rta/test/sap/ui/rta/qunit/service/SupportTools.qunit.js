@@ -4,13 +4,13 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/m/Page",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/Rename",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -21,13 +21,13 @@ sap.ui.define([
 	Button,
 	Page,
 	ComponentContainer,
-	Core,
 	Element,
 	ElementOverlay,
 	OverlayRegistry,
 	JsControlTreeModifier,
 	ChangesWriteAPI,
 	PersistenceWriteAPI,
+	nextUIUpdate,
 	BasePlugin,
 	RenamePlugin,
 	RuntimeAuthoring,
@@ -40,7 +40,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("basic functionality", {
-		before() {
+		async before() {
 			QUnit.config.fixture = null;
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -58,7 +58,7 @@ sap.ui.define([
 				component: this.oComponent
 			});
 			this.oComponentContainer.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		beforeEach() {
 			sandbox.stub(BasePlugin.prototype, "hasChangeHandler").resolves(true);
@@ -318,7 +318,7 @@ sap.ui.define([
 			window.addEventListener("message", onMessageReceived);
 		});
 
-		QUnit.test("when contextmenu is closed", function(assert) {
+		QUnit.test("when contextmenu is closed", async function(assert) {
 			var fnDone = assert.async();
 			OverlayRegistry.getOverlay("button1").setSelected(false);
 			OverlayRegistry.getOverlay("button2").setSelected(true);
@@ -332,7 +332,7 @@ sap.ui.define([
 				buttons: 2
 			});
 			oContexMenu.oContextMenuControl.openAsContextMenu(oContextMenuEvent, OverlayRegistry.getOverlay("button2"));
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual(document.getElementsByClassName("sapUiDtContextMenu").length, 1, "ContextMenu is available");
 
 			function onMessage(oEvent) {

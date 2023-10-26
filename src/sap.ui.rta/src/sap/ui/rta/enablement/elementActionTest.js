@@ -6,7 +6,6 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/util/changeVisualization/ChangeCategories",
@@ -19,12 +18,12 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/library" // we have to ensure to load fl, so that change handler gets registered
 ], function(
 	UIComponent,
 	ComponentContainer,
-	Core,
 	XMLView,
 	CommandFactory,
 	ChangeCategories,
@@ -37,6 +36,7 @@ sap.ui.define([
 	Settings,
 	PersistenceWriteAPI,
 	Layer,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -161,7 +161,7 @@ sap.ui.define([
 					async: bAsync
 				}
 			});
-			return this.oUiComponent.oViewPromise.then(function() {
+			return this.oUiComponent.oViewPromise.then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component: this.oUiComponent,
@@ -175,7 +175,7 @@ sap.ui.define([
 					this.oView.setModel(mOptions.model);
 				}
 
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				return mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded();
 			}.bind(this));
@@ -625,8 +625,8 @@ sap.ui.define([
 						return cleanUpAfterUndo(this.aCommands);
 					}.bind(this))
 
-					.then(function() {
-						Core.applyChanges();
+					.then(async function() {
+						await nextUIUpdate();
 						mOptions.afterUndo(this.oUiComponent, this.oView, assert);
 					}.bind(this));
 				});
@@ -654,8 +654,8 @@ sap.ui.define([
 						return executeCommands(this.aRemainingCommands);
 					}.bind(this))
 
-					.then(function() {
-						Core.applyChanges();
+					.then(async function() {
+						await nextUIUpdate();
 						mOptions.afterRedo(this.oUiComponent, this.oView, assert);
 					}.bind(this));
 				});
@@ -704,8 +704,8 @@ sap.ui.define([
 					return checkChangeVisualization(this.oView, this.aCommands, assert);
 				}.bind(this))
 
-				.then(function() {
-					Core.applyChanges();
+				.then(async function() {
+					await nextUIUpdate();
 					return mOptions.afterAction(this.oUiComponent, this.oView, assert);
 				}.bind(this));
 			});
@@ -717,8 +717,8 @@ sap.ui.define([
 
 				.then(cleanUpAfterUndo.bind(null, this.aCommands))
 
-				.then(function() {
-					Core.applyChanges();
+				.then(async function() {
+					await nextUIUpdate();
 					return mOptions.afterUndo(this.oUiComponent, this.oView, assert);
 				}.bind(this));
 			});
@@ -742,8 +742,8 @@ sap.ui.define([
 					return executeCommands(this.aRemainingCommands);
 				}.bind(this))
 
-				.then(function() {
-					Core.applyChanges();
+				.then(async function() {
+					await nextUIUpdate();
 					return mOptions.afterRedo(this.oUiComponent, this.oView, assert);
 				}.bind(this));
 			});

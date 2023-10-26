@@ -3,28 +3,27 @@
 sap.ui.define([
 	"sap/m/Button",
 	"sap/m/VBox",
-	"sap/ui/core/Core",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/qunit/TestUtil",
 	"sap/ui/layout/VerticalLayout",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Button,
 	VBox,
-	Core,
 	DesignTime,
 	ElementOverlay,
 	OverlayRegistry,
 	OverlayUtil,
 	TestUtil,
 	VerticalLayout,
+	nextUIUpdate,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
@@ -35,7 +34,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	QUnit.module("Given that an Overlay is created for a control", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			//	Layout2
 			//		Layout1
 			//			Layout0
@@ -80,7 +79,7 @@ sap.ui.define([
 				]
 			});
 			this.oLayout2.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oLayout2]
@@ -343,7 +342,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a VBox with an ObjectPageLayout with Overlays created", {
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			var fnDone = assert.async();
 
 			//	VBox0
@@ -402,7 +401,7 @@ sap.ui.define([
 			this.oVBox0 = new VBox("VBox", {
 				items: [this.oLayout0]
 			}).placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVBox0]
