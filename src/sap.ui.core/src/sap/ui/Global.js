@@ -51,9 +51,6 @@ sap.ui.define([
 	 * @public
 	 * @name sap
 	 */
-	if ( typeof window.sap !== "object" && typeof window.sap !== "function"  ) {
-	  window.sap = {};
-	}
 
 	/**
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
@@ -64,11 +61,8 @@ sap.ui.define([
 	 * @name sap.ui
 	 * @public
 	 */
-	if ( typeof window.sap.ui !== "object") {
-		window.sap.ui = {};
-	}
 
-	sap.ui = Object.assign(sap.ui, {
+	let Global = {
 		/**
 		 * The version of the SAP UI Library
 		 * @type string
@@ -76,7 +70,14 @@ sap.ui.define([
 		version: "${version}",
 		// buildinfo.lastchange is deprecated and is therefore defaulted to empty string
 		buildinfo : { lastchange : "", buildtime : "${buildtime}" }
-	});
+	};
+
+	/**
+	 * Module export must be the global sap.ui namespace in UI5 v1.
+	 * In UI5 v2, the export is a plain object containing the version and buildinfo.
+	 * @deprecated since 1.120
+	 */
+	Global = Object.assign(sap.ui, Global);
 
 	var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
@@ -358,6 +359,6 @@ sap.ui.define([
 		sap.ui.loader.config({paths:mPaths});
 	};
 
-	return sap.ui;
+	return Global;
 
 });
