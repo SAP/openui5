@@ -682,7 +682,7 @@ sap.ui.define([
 			offsetX: 0,
 			offsetY: 3,
 			horizontalScrolling: false,
-			title: this._getTimezone(true)
+			title: this._getTranslatedTimezone(true)
 		});
 
 		this.addDependent(this._oTimezonePopup);
