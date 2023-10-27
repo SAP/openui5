@@ -6712,17 +6712,17 @@ sap.ui.define([
 	});
 
 	QUnit.test("Empty Arguments", function(assert) {
-		this.oModel.checkFilterOperation();
+		this.oModel.checkFilter();
 		assert.ok(true, "No arguments lead to a positive result");
 
-		this.oModel.checkFilterOperation([]);
+		this.oModel.checkFilter([]);
 		assert.ok(true, "Empty array lead to a positive result");
 	});
 
 	QUnit.test("Simple Filters - Supported are OK", function(assert) {
 		// comma separated syntax
 		var oSupported = new Filter("x", FilterOperator.NE, "Foo");
-		this.oModel.checkFilterOperation(oSupported);
+		this.oModel.checkFilter(oSupported);
 		assert.ok(true, "Valid operators are supported");
 
 		// object syntax
@@ -6731,12 +6731,12 @@ sap.ui.define([
 			operator: FilterOperator.NE,
 			value1: "FooBar"
 		});
-		this.oModel.checkFilterOperation(oSupported2);
+		this.oModel.checkFilter(oSupported2);
 		assert.ok(true, "Valid operators are supported");
 
 		// local fnTest - comma separated (should be ignored)
 		var oSupported3 = new Filter("z", function() {});
-		this.oModel.checkFilterOperation(oSupported3);
+		this.oModel.checkFilter(oSupported3);
 		assert.ok(true, true, "local fnTest is ignored (comma separated syntax)");
 
 		// local fnTest - object syntax (should be ignored)
@@ -6744,7 +6744,7 @@ sap.ui.define([
 			path: "z",
 			test: function() {}
 		});
-		this.oModel.checkFilterOperation(oSupported4);
+		this.oModel.checkFilter(oSupported4);
 		assert.ok(true, "local fnTest is ignored (object syntax)");
 	});
 
@@ -6758,7 +6758,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oUnsupported3);
+				this.oModel.checkFilter(oUnsupported3);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.Any),
 			"Invalid operators are not supported (object syntax)"
@@ -6773,7 +6773,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oUnsupported4);
+				this.oModel.checkFilter(oUnsupported4);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators are not supported (object syntax)"
@@ -6790,7 +6790,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oUnsupported3);
+				this.oModel.checkFilter(oUnsupported3);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.Any),
 			"Invalid operators are not supported (object syntax)"
@@ -6805,7 +6805,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oUnsupported4);
+				this.oModel.checkFilter(oUnsupported4);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators are not supported (object syntax)"
@@ -6818,7 +6818,7 @@ sap.ui.define([
 
 		// Comma separated syntax
 		var oMultiFilter2 = new Filter([oFilter1, oFilter2], false);
-		this.oModel.checkFilterOperation(oMultiFilter2);
+		this.oModel.checkFilter(oMultiFilter2);
 		assert.ok(true, "Valid operators in multi-filter are supported (comma separated syntax)");
 
 		// Object Syntax
@@ -6827,7 +6827,7 @@ sap.ui.define([
 			and: true
 		});
 
-		this.oModel.checkFilterOperation(oMultiFilter);
+		this.oModel.checkFilter(oMultiFilter);
 		assert.ok(true, "Valid operators in multi-filter are supported (object syntax)");
 	});
 
@@ -6843,7 +6843,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter);
+				this.oModel.checkFilter(oMultiFilter);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (object syntax)"
@@ -6856,7 +6856,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter);
+				this.oModel.checkFilter(oMultiFilter);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (object syntax)"
@@ -6866,7 +6866,7 @@ sap.ui.define([
 		var oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter2);
+				this.oModel.checkFilter(oMultiFilter2);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
@@ -6880,7 +6880,7 @@ sap.ui.define([
 		oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter2);
+				this.oModel.checkFilter(oMultiFilter2);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.Any),
 			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
@@ -6899,7 +6899,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter);
+				this.oModel.checkFilter(oMultiFilter);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (object syntax)"
@@ -6912,7 +6912,7 @@ sap.ui.define([
 		});
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter);
+				this.oModel.checkFilter(oMultiFilter);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (object syntax)"
@@ -6922,7 +6922,7 @@ sap.ui.define([
 		var oMultiFilter2 = new Filter([oFilter1, oFilter2], true);
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter2);
+				this.oModel.checkFilter(oMultiFilter2);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
@@ -6937,7 +6937,7 @@ sap.ui.define([
 
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter2);
+				this.oModel.checkFilter(oMultiFilter2);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.Any),
 			"Invalid operators in multi-filter are unsupported (comma separated syntax)"
@@ -6958,7 +6958,7 @@ sap.ui.define([
 
 		var oMultiFilter3 = new Filter([oMultiFilter2, oFilter4]);
 
-		this.oModel.checkFilterOperation(oMultiFilter3);
+		this.oModel.checkFilter(oMultiFilter3);
 		assert.ok(true, "Valid operators in multi-filter are supported");
 	});
 
@@ -6981,7 +6981,7 @@ sap.ui.define([
 
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter3);
+				this.oModel.checkFilter(oMultiFilter3);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported"
@@ -7015,7 +7015,7 @@ sap.ui.define([
 
 		assert.throws(
 			function() {
-				this.oModel.checkFilterOperation(oMultiFilter3);
+				this.oModel.checkFilter(oMultiFilter3);
 			}.bind(this),
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported"

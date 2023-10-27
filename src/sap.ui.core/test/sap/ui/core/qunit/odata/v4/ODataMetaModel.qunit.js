@@ -1249,20 +1249,20 @@ sap.ui.define([
 			FilterOperator.NotContains, FilterOperator.NotEndsWith, FilterOperator.NotStartsWith,
 			FilterOperator.StartsWith
 		].forEach(function (sFilterOperator) {
-			oMetaModel.checkFilterOperation(new Filter("path", sFilterOperator, "bar"));
+			oMetaModel.checkFilter(new Filter("path", sFilterOperator, "bar"));
 		});
-		oMetaModel.checkFilterOperation(new Filter("path", FilterOperator.BT, "bar", "foo"));
-		oMetaModel.checkFilterOperation(new Filter("path", FilterOperator.NB, "bar", "foo"));
+		oMetaModel.checkFilter(new Filter("path", FilterOperator.BT, "bar", "foo"));
+		oMetaModel.checkFilter(new Filter("path", FilterOperator.NB, "bar", "foo"));
 
 		// code under test - unsupported filters
 		assert.throws(function () {
-			oMetaModel.checkFilterOperation(new Filter({
+			oMetaModel.checkFilter(new Filter({
 				path : "path",
 				operator : FilterOperator.Any
 			}));
 		}, /unsupported FilterOperator/, "ClientModel/ClientListBinding doesn't support \"Any\"");
 		assert.throws(function () {
-			oMetaModel.checkFilterOperation(new Filter({
+			oMetaModel.checkFilter(new Filter({
 				path : "path",
 				operator : FilterOperator.All,
 				variable : "foo",
