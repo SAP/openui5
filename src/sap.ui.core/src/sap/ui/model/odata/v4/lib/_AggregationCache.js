@@ -863,16 +863,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the index of a parent node
+	 * Returns the index of a parent node.
 	 *
 	 * @param {number} iIndex
 	 *   The index of the child node
-	 * @returns {number|null}
+	 * @returns {number|undefined}
 	 *   The parent node's index, or -1 if the given node is a root node and thus has
-	 *   no parent
-	 * @throws {Error}
-	 *   If the index of a parent cannot be found
-	 *
+	 *   no parent, or <code>undefined</code> if the parent node hasn't been read yet
 	 *
 	 * @public
 	 */
@@ -883,13 +880,22 @@ sap.ui.define([
 			return -1; // a root has no parent
 		}
 
-		for (; iIndex >= 0; iIndex -= 1) {
-			if (this.aElements[iIndex]["@$ui5.node.level"] < iLevel) {
-				return iIndex;
+		let bInitialPlaceholderFound = false;
+		for (let i = iIndex; i >= 0; i -= 1) {
+			const oCandidate = this.aElements[i];
+			const iCandidateLevel = oCandidate["@$ui5.node.level"];
+
+			if (iCandidateLevel === 0) {
+				bInitialPlaceholderFound = true;
+			} else if (iCandidateLevel < iLevel) {
+				if (iCandidateLevel === iLevel - 1
+						&& (!bInitialPlaceholderFound || this.isAncestorOf(i, iIndex))) {
+					return i;
+				}
+				break; // missed the parent
 			}
 		}
-
-		throw new Error("Unexpected error");
+		// return undefined;
 	};
 
 	/**

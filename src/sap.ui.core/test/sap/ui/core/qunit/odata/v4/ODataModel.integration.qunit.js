@@ -30379,7 +30379,8 @@ sap.ui.define([
 	// Determine the parent node of "Delta" with #getParent. It is not available at the moment.
 	// Try to request the parent node of "Alpha" and "Delta".
 	// JIRA: CPOUI5ODATAV4-2342
-	QUnit.test("get and request Parent after requestSideEffects", async function (assert) {
+	QUnit.test("Recursive Hierarchy: getParent/requestParent after requestSideEffects",
+			async function (assert) {
 		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
 		const sView = `
 <t:Table id="table" rows="{path : '/EMPLOYEES',
@@ -30552,6 +30553,147 @@ sap.ui.define([
 			[undefined, 2, "3", "Delta"],
 			[undefined, 2, "4", "Epsilon"]
 		], 6);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Determine the parent of a node in a hierarchy where a preceding sibling is not
+	// yet loaded, but the parent is found. Determine the parent of a node where the parent is not
+	// yet loaded.
+	// JIRA: CPOUI5ODATAV4-2378
+	QUnit.test("Recursive Hierarchy: #getParent with expandTo > 1", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<t:Table id="table" rows="{path : '/EMPLOYEES',
+		parameters : {
+			$$aggregation : {
+				expandTo : 3,
+				hierarchyQualifier : 'OrgChart'}
+		}}" threshold="0" visibleRowCount="2">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{ID}"/>
+	<Text text="{Name}"/>
+</t:Table>`;
+
+		// 0 Alpha
+		//  1 Beta
+		//    2 Gamma // not loaded
+		//    3 Delta
+		//    4 Epsilon
+		//  5 Zeta // not loaded
+		//    6 Eta
+		//    7 Theta
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$count=true&$skip=0&$top=2", {
+				"@odata.count" : "8",
+				value : [{
+					DescendantCount : "7",
+					DistanceFromRoot : "0",
+					DrillState : "expanded",
+					ID : "0",
+					Name : "Alpha"
+				}, {
+					DescendantCount : "3",
+					DistanceFromRoot : "1",
+					DrillState : "expanded",
+					ID : "1",
+					Name : "Beta"
+				}]
+			});
+
+		await this.createView(assert, sView, oModel);
+
+		const oTable = this.oView.byId("table");
+		checkTable("initial page", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')"
+		], [
+			[true, 1, "0", "Alpha"],
+			[true, 2, "1", "Beta"]
+		], 8);
+		const oBeta = oTable.getRows()[1].getBindingContext();
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=3&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "3",
+					Name : "Delta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "4",
+					Name : "Epsilon"
+				}]
+			});
+
+		oTable.setFirstVisibleRow(3);
+
+		await this.waitForChanges(assert, "scroll to 3 (Delta)");
+
+		checkTable("after scroll to 3 (Delta)", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')"
+		], [
+			[undefined, 3, "3", "Delta"],
+			[undefined, 3, "4", "Epsilon"]
+		], 8);
+		const oDelta = oTable.getRows()[0].getBindingContext();
+
+		// code under test
+		assert.strictEqual(oDelta.getParent(), oBeta);
+
+		this.expectRequest("EMPLOYEES?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
+					+ "HierarchyNodes=$root/EMPLOYEES,HierarchyQualifier='OrgChart'"
+					+ ",NodeProperty='ID',Levels=3)"
+				+ "&$select=DescendantCount,DistanceFromRoot,DrillState,ID,Name"
+				+ "&$skip=6&$top=2", {
+				value : [{
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "6",
+					Name : "Eta"
+				}, {
+					DescendantCount : "0",
+					DistanceFromRoot : "2",
+					DrillState : "leaf",
+					ID : "7",
+					Name : "Theta"
+				}]
+			});
+
+		oTable.setFirstVisibleRow(6);
+
+		await this.waitForChanges(assert, "scroll to 6 (Eta)");
+
+		checkTable("after scroll to 6 (Eta)", assert, oTable, [
+			"/EMPLOYEES('0')",
+			"/EMPLOYEES('1')",
+			"/EMPLOYEES('3')",
+			"/EMPLOYEES('4')",
+			"/EMPLOYEES('6')",
+			"/EMPLOYEES('7')"
+		], [
+			[undefined, 3, "6", "Eta"],
+			[undefined, 3, "7", "Theta"]
+		], 8);
+		const oEta = oTable.getRows()[0].getBindingContext();
+
+		// code under test
+		assert.strictEqual(oEta.getParent(), undefined);
 	});
 
 	//*********************************************************************************************
