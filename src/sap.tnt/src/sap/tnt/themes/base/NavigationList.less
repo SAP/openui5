@@ -108,7 +108,7 @@
 
 	&.sapTntNavLIItemDisabled {
 		cursor: auto;
-		opacity: @sapContent_DisabledOpacity;
+		opacity: @sapUiContentDisabledOpacity;
 
 		span {
 			cursor: auto;
@@ -511,7 +511,7 @@
 			padding-inline: 0.5rem;
 			border-radius: @_sap_tnt_NavigationList_ItemBorderRadius;
 			transition: @_sap_tnt_NavigationList_ItemTransition;
-			font-size: 0.875rem; // @sapUiFontSize; // todo fix it when @sapUiFontSize gets correct value in Horizon
+			font-size: @sapMFontMediumSize;
 
 			.sapUiMnuItmL {
 				display: none;
