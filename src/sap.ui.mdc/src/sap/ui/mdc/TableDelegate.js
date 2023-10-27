@@ -16,7 +16,7 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/mdc/enums/TableP13nMode",
 	"sap/ui/mdc/enums/TableType",
-	"sap/ui/mdc/util/FilterUtil"
+	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault"
 ], function(
 	AggregationBaseDelegate,
 	loadModules,
@@ -27,7 +27,7 @@ sap.ui.define([
 	coreLibrary,
 	TableP13nMode,
 	TableType,
-	FilterUtil
+	FilterIntegrationDefault
 ) {
 	"use strict";
 
@@ -38,10 +38,25 @@ sap.ui.define([
 	 * @namespace
 	 * @alias module:sap/ui/mdc/TableDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
+	 * @mixes sap.ui.mdc.mixin.delegate.FilterIntegrationDefault
 	 * @since 1.60
 	 * @public
+	 *
+	 *
+	 * @borrows sap.ui.mdc.mixin.delegate.FilterIntegrationDefault.getFilters as #getFilters
+	 *
 	 */
-	const TableDelegate = Object.assign({}, AggregationBaseDelegate);
+	const TableDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
+
+	/**
+	 * Returns filters to be applied when updating the table's binding based on the
+	 * filter conditions of the table itself and it's associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the table
+	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * @name sap.ui.mdc.TableDelegate#getFilters
+	 * @protected
+	 */
 
 	/**
 	 * Provides a hook to update the binding info object that is used to bind the table to the model.
@@ -74,37 +89,6 @@ sap.ui.define([
 				})
 				: aSorters
 		);
-	};
-
-
-	/**
-	 * Returns filters that are used when updating the table's binding and are created based on the
-	 * filter conditions of the table and its associated filter control.
-	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the table
-	 * @returns {sap.ui.model.Filter[]} Array of filters
-	 * @protected
-	 */
-	TableDelegate.getFilters = function(oTable) {
-		const bTableFilterEnabled = oTable.isFilteringEnabled();
-		let aTableFilters = [], aFilterBarFilters = [];
-
-		if (bTableFilterEnabled) {
-			const mTableConditions = oTable.getConditions() || {};
-			const aTableProperties = oTable.getPropertyHelper().getProperties();
-			const oTableFilters = FilterUtil.getFilterInfo(oTable, mTableConditions, aTableProperties).filters;
-			aTableFilters = oTableFilters ? [oTableFilters] : [];
-		}
-
-		const oFilterBar = Element.getElementById(oTable.getFilter());
-		if (oFilterBar) {
-			const mFilterBarConditions = oFilterBar.getConditions() || {};
-			const aFilterBarProperties = oTable.getPropertyHelper().getProperties();
-			const oFilterBarFilters = FilterUtil.getFilterInfo(oTable, mFilterBarConditions, aFilterBarProperties).filters;
-			aFilterBarFilters = oFilterBarFilters ? [oFilterBarFilters] : [];
-		}
-
-		return aTableFilters.concat(aFilterBarFilters);
 	};
 
 	/**

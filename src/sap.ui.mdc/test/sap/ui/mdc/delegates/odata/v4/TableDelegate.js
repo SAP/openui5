@@ -69,53 +69,14 @@ sap.ui.define([
 		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
 		var oDataStateIndicator = oTable.getDataStateIndicator();
 		if (!oDataStateIndicator || !oDataStateIndicator.isFiltering()) {
-			var aFilters = createInnerFilters.call(this, oTable).concat(createOuterFilters.call(this, oTable));
+			var aFilters = this.getFilters(oTable);
 			if (aFilters.length) {
-				oBindingInfo.filters = new Filter(aFilters, true);
+				oBindingInfo.filters = aFilters;
 			}
 		}
 
 		addSearchParameter(oTable, oBindingInfo);
 	};
-
-	function createInnerFilters(oTable) {
-		var bFilterEnabled = oTable.isFilteringEnabled();
-		var aFilters = [];
-
-		if (bFilterEnabled) {
-			var aTableProperties = oTable.getPropertyHelper().getProperties();
-			var oInnerFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), oTable.getConditions(), aTableProperties);
-
-			if (oInnerFilterInfo.filters) {
-				aFilters.push(oInnerFilterInfo.filters);
-			}
-		}
-
-		return aFilters;
-	}
-
-	function createOuterFilters(oTable) {
-		var oFilter = Element.getElementById(oTable.getFilter());
-		var aFilters = [];
-
-		if (!oFilter) {
-			return aFilters;
-		}
-
-		var mConditions = oFilter.getConditions();
-
-		if (mConditions) {
-			var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-			var aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			var oOuterFilterInfo = FilterUtil.getFilterInfo(TestTableDelegate.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
-
-			if (oOuterFilterInfo.filters) {
-				aFilters.push(oOuterFilterInfo.filters);
-			}
-		}
-
-		return aFilters;
-	}
 
 	function addSearchParameter(oTable, oBindingInfo) {
 		var oFilter = Element.getElementById(oTable.getFilter());

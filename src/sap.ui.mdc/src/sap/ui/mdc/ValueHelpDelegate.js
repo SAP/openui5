@@ -101,13 +101,25 @@ sap.ui.define([
 	 */
 	ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		oBindingInfo.parameters = {};
-		oBindingInfo.filters = [];
+		oBindingInfo.filters = this.getFilters(oValueHelp, oContent);
+	};
+
+	/**
+	 * Returns filters that are used when updating the <code>ValueHelp</code>'s binding.
+	 *
+	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
+	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
+	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * @since 1.121
+	 * @protected
+	 */
+	ValueHelpDelegate.getFilters = function(oValueHelp, oContent) {
 
 		const sFilterFields = oContent.getFilterFields();
 		const sFieldSearch = oContent._getPriorityFilterValue();
 		const oFilterBar = oContent._getPriorityFilterBar();
-		const oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
 
+		const oConditions = oFilterBar ? oFilterBar.getInternalConditions() : oContent._oInitialFilterConditions || {};
 		if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
 			// add condition for Search value
 			const oCondition = Condition.createCondition(OperatorName.Contains, [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
@@ -116,10 +128,7 @@ sap.ui.define([
 
 		const oConditionTypes = oConditions && oContent._getTypesForConditions(oConditions);
 		const oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
-
-		if (oFilter) {
-			oBindingInfo.filters = [oFilter];
-		}
+		return oFilter ? [oFilter] : [];
 	};
 
 	/**
