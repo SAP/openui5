@@ -562,6 +562,7 @@ sap.ui.define([
 		}
 
 		vValue = this.getResultForChangePromise(aConditions);
+		vValue = _updateEmptyValue.call(this, vValue, vOldValue);
 		if (aConditions.length === 0 || aConditions[0].values.length === 1) {
 			if (vOldAdditionalValue) {
 				const oDataType = this.getContentFactory().getAdditionalDataType();
@@ -588,6 +589,24 @@ sap.ui.define([
 			// do not update property in OneWay mode to keep in sync with model
 			this.setProperty("additionalValue", vAdditionalValue, true);
 		}
+
+	}
+
+	function _updateEmptyValue(vValue, vOldValue) {
+
+		// if value of composite binding was "initial" before and not lead to a condition in the new value, only the changed parts
+		// of the composite value must be updated. (Parsing in Operator and ConditionType sets it to null if no old value is known.)
+		const sDataType = this.getContentFactory().getDataType() ? this.getContentFactory().getDataType().getMetadata().getName() : this.getDataType(); // as type must not exist now
+
+		if (this.getTypeMap().getBaseType(sDataType) === BaseType.Unit && Array.isArray(vValue) && Array.isArray(vOldValue) && !this.checkValueInitial(vValue) && this.checkValueInitial(vOldValue)) {
+			for (let i = 0; i < vValue.length; i++) {
+				if (vValue[i] === null && vOldValue[i] !== undefined) {
+					vValue[i] = vOldValue[i]; // take initial value from old value (might be "")
+				}
+			}
+		}
+
+		return vValue;
 
 	}
 
