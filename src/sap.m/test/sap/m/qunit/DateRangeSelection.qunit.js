@@ -614,9 +614,11 @@ sap.ui.define([
 
 	QUnit.test("Change date with keyboard when 'value' binding with type is used", function(assert) {
 		// prepare
-		var oModel = new JSONModel({
-				start: UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
-				end: UI5Date.getInstance(2022, 10, 15, 10, 15, 10)
+		var oTestStartDate = UI5Date.getInstance(2022, 10, 10, 10, 15, 10),
+			oTestEndDate = UI5Date.getInstance(2022, 10, 15, 10, 15, 10),
+			oModel = new JSONModel({
+				start: oTestStartDate,
+				end: oTestEndDate
 			}),
 			oDRS = new DateRangeSelection({
 				value: {
@@ -646,7 +648,7 @@ sap.ui.define([
 		oDRS.onsappageup(oFakeEvent);
 
 		// assert
-		assert.equal(oDRS.getDateValue().getUTCDate(), 10, "Date is incremented");
+		assert.equal(oDRS.getDateValue().getDate(), oTestStartDate.getDate() + 1, "Date is incremented");
 
 		// clean
 		oDRS.destroy();
@@ -1742,4 +1744,29 @@ sap.ui.define([
 		// Clean
 		oDRS.destroy();
 	});
+
+	QUnit.test("CustomMonthPicker sets MonthPicker year", function (assert) {
+		// Prepare
+		var oDRS = new DateRangeSelection("MMyyyy", {
+				displayFormat: "MM/yyyy",
+				dateValue: UI5Date.getInstance(2003, 6, 10),
+				secondDateValue: UI5Date.getInstance(2003, 10, 27)
+			}),
+			oMP;
+
+		oDRS.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oDRS.focus();
+		qutils.triggerEvent("click", oDRS.getId() + "-icon"); // open the picker and initialize the calendar
+		oCore.applyChanges();
+		oMP = oDRS._getCalendar()._getMonthPicker();
+
+		// Assert
+		assert.strictEqual(oMP._iYear, 2003, "Proper year is set to the internal MonthPicker");
+
+		// Clean
+		oDRS.destroy();
+	});
+
 });

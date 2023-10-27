@@ -23,8 +23,8 @@
 		"webapp/view/Home.view.xml",
 		"webapp/Component.js",
 		"webapp/index.html",
-		"webapp/manifest.json",
 		"webapp/test.html",
+		"webapp/manifest.json",
 		"package.json",
 		"ui5.yaml"
 	]

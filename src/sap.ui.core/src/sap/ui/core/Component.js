@@ -28,7 +28,8 @@ sap.ui.define([
 	'sap/ui/core/_UrlResolver',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/mvc/ViewType',
-	'sap/ui/core/Configuration'
+	'sap/ui/core/Configuration',
+	'sap/ui/core/util/_LocalizationHelper'
 ], function(
 	Manifest,
 	ComponentMetadata,
@@ -54,7 +55,8 @@ sap.ui.define([
 	_UrlResolver,
 	VersionInfo,
 	ViewType,
-	Configuration
+	Configuration,
+	_LocalizationHelper
 ) {
 	"use strict";
 
@@ -3798,6 +3800,8 @@ sap.ui.define([
 	 * @since 1.88
 	 * @protected
 	 */
+
+	_LocalizationHelper.registerForUpdate("Components", Component.registry.all);
 
 	return Component;
 });

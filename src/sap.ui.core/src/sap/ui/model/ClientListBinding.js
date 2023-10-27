@@ -28,7 +28,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters] Map of optional parameters as defined by subclasses; this class does not introduce any own parameters
-	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>aFilters</code>
+	 *   together with other filters
 	 *
 	 * @class
 	 * List binding implementation for client models.

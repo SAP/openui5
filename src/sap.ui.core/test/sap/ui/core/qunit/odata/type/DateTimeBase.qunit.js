@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
-	"sap/base/util/ObjectPath",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Control",
 	"sap/ui/core/date/UI5Date",
@@ -19,7 +18,9 @@ sap.ui.define([
 	"sap/ui/model/odata/type/DateTimeOffset",
 	"sap/ui/model/odata/type/ODataType",
 	"sap/ui/test/TestUtils"
-], function(Log, Formatting, Localization, ObjectPath, CalendarType, Control, UI5Date, DateFormat, FormatException, ParseException, ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType, TestUtils) {
+], function(Log, Formatting, Localization, CalendarType, Control, UI5Date, DateFormat, FormatException,
+	ParseException, ValidateException, JSONModel, DateTime, DateTimeBase, DateTimeOffset, ODataType,
+	TestUtils) {
 	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -40,8 +41,9 @@ sap.ui.define([
 			"EnterDate" : "EnterDate Dec 31, " + iFullYear
 		};
 
-	function createInstance(sTypeName, oFormatOptions, oConstraints) {
-		return new (ObjectPath.get(sTypeName))(oFormatOptions, oConstraints);
+	function createInstance(oTypeClass, oFormatOptions, oConstraints) {
+		// eslint-disable-next-line new-cap
+		return new oTypeClass(oFormatOptions, oConstraints);
 	}
 
 	/*
@@ -74,15 +76,13 @@ sap.ui.define([
 	/*
 	 * Wrapper to <code>QUnit.module</code> to provide a consistent test environment.
 	 *
-	 * @param {string} sTitle
-	 *   The module's title
+	 * @param {object} oTypeClass
+	 *   The type class under test within this module
 	 */
-	function module(sTitle) {
-		QUnit.module(sTitle, {
+	function module(oTypeClass) {
+		QUnit.module(oTypeClass.getMetadata().getName(), {
 			before : function () {
-				if (sTitle === "sap.ui.model.odata.type.DateTimeBase") {
-					this.__ignoreIsolatedCoverage__ = true;
-				}
+				this.__ignoreIsolatedCoverage__ = oTypeClass === DateTimeBase;
 			},
 			beforeEach : function () {
 				this.sDefaultCalendarType = Formatting.getCalendarType();
@@ -133,14 +133,14 @@ sap.ui.define([
 	/*
 	 * Tests the validation for a DateTime with the given constraints.
 	 */
-	function validate(assert, sTypeName, oConstraints, sExpectedErrorKey) {
+	function validate(assert, oTypeClass, oConstraints, sExpectedErrorKey) {
 		var oDate = UI5Date.getInstance(),
-			oType = createInstance(sTypeName, undefined, oConstraints);
+			oType = createInstance(oTypeClass, undefined, oConstraints);
 
 		oType.validateValue(null);
 
 		oConstraints.nullable = false;
-		oType = createInstance(sTypeName, undefined, oConstraints);
+		oType = createInstance(oTypeClass, undefined, oConstraints);
 		validateError(assert, oType, null, sExpectedErrorKey, "nullable");
 
 		[undefined, false, 0, 1, "foo"].forEach(function (vValue) {
@@ -149,7 +149,8 @@ sap.ui.define([
 				assert.ok(false);
 			} catch (e) {
 				assert.ok(e instanceof ValidateException);
-				assert.strictEqual(e.message, "Illegal " + sTypeName + " value: " + vValue, vValue);
+				assert.strictEqual(e.message, "Illegal " + oTypeClass.getMetadata().getName()
+					+ " value: " + vValue, vValue);
 			}
 		});
 		oDate.setFullYear(0);
@@ -160,8 +161,8 @@ sap.ui.define([
 	/*
 	 * Tests that format and parse do not change the date and that validate accepts it.
 	 */
-	function formatParseValidate(assert, sTypeName, oConstraints, oTestDate) {
-		var oType = createInstance(sTypeName, undefined, oConstraints),
+	function formatParseValidate(assert, oTypeClass, oConstraints, oTestDate) {
+		var oType = createInstance(oTypeClass, undefined, oConstraints),
 			sFormattedDate = oType.formatValue(oTestDate, "string"),
 			oResultingDate = oType.parseValue(sFormattedDate, "string");
 
@@ -170,27 +171,27 @@ sap.ui.define([
 	}
 
 	//*********************************************************************************************
-	function dateTime(sTypeName) {
+	function dateTime(oTypeClass) {
 
 		//*****************************************************************************************
 		QUnit.test("basics", function (assert) {
-			var oType = createInstance(sTypeName);
+			var oType = createInstance(oTypeClass);
 
 			assert.ok(oType instanceof DateTimeBase, "is a DateTime");
 			assert.ok(oType instanceof ODataType, "is an ODataType");
-			assert.strictEqual(oType.getName(), sTypeName, "type name");
+			assert.strictEqual(oType.getName(), oTypeClass.getMetadata().getName(), "type name");
 			assert.strictEqual(oType.oFormatOptions, undefined, "format options ignored");
 			assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 			assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
 
-			createInstance(sTypeName, null, null); // null vs. undefined MUST not make a difference!
+			createInstance(oTypeClass, null, null); // null vs. undefined MUST not make a difference!
 		});
 
 		//*****************************************************************************************
 		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
 			function (assert) {
-				var oType = createInstance(sTypeName, null, null);
+				var oType = createInstance(oTypeClass, null, null);
 
 				assert.deepEqual(oType.oFormatOptions, null, "no format options");
 				assert.deepEqual(oType.oConstraints, undefined, "default constraints");
@@ -198,7 +199,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("formatValue", function (assert) {
-			var oType = createInstance(sTypeName);
+			var oType = createInstance(oTypeClass);
 
 			assert.strictEqual(oType.formatValue(undefined, "foo"), null, "undefined");
 			assert.strictEqual(oType.formatValue(null, "foo"), null, "null");
@@ -212,7 +213,7 @@ sap.ui.define([
 				} catch (e) {
 					assert.ok(e instanceof FormatException);
 					assert.strictEqual(e.message,
-						"Don't know how to format " + sTypeName + " to " + sType);
+						"Don't know how to format " + oTypeClass.getMetadata().getName() + " to " + sType);
 				}
 			});
 
@@ -221,7 +222,7 @@ sap.ui.define([
 			assert.strictEqual(oType.formatValue(oDateTime, "sap.ui.core.CSSSize"),
 				sFormattedDateTime);
 
-			oType = createInstance(sTypeName, {}, {precision : 3});
+			oType = createInstance(oTypeClass, {}, {precision : 3});
 			// TODO DateFormat only supports split seconds using a locale-dependent pattern
 			assert.strictEqual(oType.formatValue(oDateTimeWithMS, "string"),
 				sFormattedDateTime, "format with precision");
@@ -229,7 +230,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("parseValue", function (assert) {
-			var oType = createInstance(sTypeName);
+			var oType = createInstance(oTypeClass);
 
 			assert.strictEqual(oType.parseValue(null, "foo"), null, "null is always accepted");
 			assert.strictEqual(oType.parseValue("", "string"), null, "empty string becomes null");
@@ -242,8 +243,8 @@ sap.ui.define([
 				} catch (e) {
 					assert.ok(e instanceof ParseException, sType + ": exception");
 					assert.strictEqual(e.message,
-						"Don't know how to parse " + sTypeName + " from " + sType,
-						sType + ": message");
+						"Don't know how to parse " + oTypeClass.getMetadata().getName() + " from "
+						+ sType, sType + ": message");
 				}
 			});
 
@@ -256,7 +257,7 @@ sap.ui.define([
 			assert.deepEqual(oType.parseValue(sFormattedDateTime, "sap.ui.core.CSSSize"),
 				oDateTime);
 
-			oType = createInstance(sTypeName, {}, {precision : 3});
+			oType = createInstance(oTypeClass, {}, {precision : 3});
 //			TODO not supported by DateFormat
 //			assert.deepEqual(oType.parseValue(sFormattedDateTimeWithMS, "string"),
 //				oDateTimeWithMS, "parse with precision");
@@ -264,18 +265,18 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("validateValue", function (assert) {
-			validate(assert, sTypeName, {}, "EnterDateTime");
+			validate(assert, oTypeClass, {}, "EnterDateTime");
 		});
 
 		//*****************************************************************************************
 		QUnit.test("format, parse, validate", function (assert) {
-			formatParseValidate(assert, sTypeName, undefined, oDateTime);
+			formatParseValidate(assert, oTypeClass, undefined, oDateTime);
 		});
 
 		//*****************************************************************************************
 		QUnit.test("localization change", function (assert) {
 			var oControl = new Control(),
-				oType = createInstance(sTypeName);
+				oType = createInstance(oTypeClass);
 
 			oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 			Localization.setLanguage("de-DE");
@@ -288,7 +289,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("format option UTC", function (assert) {
-			var oType = createInstance(sTypeName, {UTC : true}),
+			var oType = createInstance(oTypeClass, {UTC : true}),
 				oDateTime = UI5Date.getInstance(Date.UTC(2014, 10, 27, 13, 47, 26)),
 				sFormattedDateTime = "Nov 27, 2014, 1:47:26\u202FPM";
 
@@ -298,7 +299,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("getModelFormat", function (assert) {
-			var oType = createInstance(sTypeName),
+			var oType = createInstance(oTypeClass),
 				oFormat = oType.getModelFormat();
 
 			assert.equal(oFormat.format(oDateTime), oDateTime, "format");
@@ -308,7 +309,7 @@ sap.ui.define([
 		//*****************************************************************************************
 		QUnit.test("format: bad input type", function (assert) {
 			var oBadModelValue = "foo",
-				oType = createInstance(sTypeName);
+				oType = createInstance(oTypeClass);
 
 			assert.throws(function () {
 				oType.formatValue(oBadModelValue, "string");
@@ -318,7 +319,7 @@ sap.ui.define([
 
 		//*****************************************************************************************
 		QUnit.test("getModelValue: validateValue fails", function (assert) {
-			var oType = createInstance(sTypeName);
+			var oType = createInstance(oTypeClass);
 
 			this.mock(oType).expects("_getModelValue").withExactArgs("~oDate").returns("~oResult");
 			this.mock(oType).expects("validateValue")
@@ -332,7 +333,7 @@ sap.ui.define([
 		});
 	}
 
-	module("sap.ui.model.odata.type.DateTimeBase");
+	module(DateTimeBase);
 
 	//*********************************************************************************************
 	QUnit.test("constraints undefined", function (assert) {
@@ -491,9 +492,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTime");
+	module(DateTime);
 
-	dateTime("sap.ui.model.odata.type.DateTime");
+	dateTime(DateTime);
 
 	//*********************************************************************************************
 	[
@@ -605,13 +606,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("validate (Date only)", function (assert) {
-		validate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat : "Date"}, "EnterDate");
+		validate(assert, DateTime, {displayFormat : "Date"}, "EnterDate");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("format, parse, validate (Date only)", function (assert) {
-		formatParseValidate(assert, "sap.ui.model.odata.type.DateTime", {displayFormat : "Date"},
-			oDateOnly);
+		formatParseValidate(assert, DateTime, {displayFormat : "Date"}, oDateOnly);
 	});
 
 	//*********************************************************************************************
@@ -759,9 +759,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	//*********************************************************************************************
-	module("sap.ui.model.odata.type.DateTimeOffset");
+	module(DateTimeOffset);
 
-	dateTime("sap.ui.model.odata.type.DateTimeOffset");
+	dateTime(DateTimeOffset);
 
 	//*********************************************************************************************
 	[

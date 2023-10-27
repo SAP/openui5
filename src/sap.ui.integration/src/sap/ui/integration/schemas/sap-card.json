@@ -99,6 +99,9 @@
               },
               {
                 "$ref": "#/definitions/Configuration.FilterType.Search"
+              },
+              {
+                "$ref": "#/definitions/Configuration.FilterType.ComboBox"
               }
             ]
           }
@@ -1619,7 +1622,7 @@
           "type": "string"
         },
         "selectedKey": {
-          "description": "Defines the initially selected key from the given options for ComboBox.",
+          "description": "Defines the initially selected key from the given options for combo box.",
           "type": "string"
         },
         "placeholder": {
@@ -1632,7 +1635,7 @@
         },
         "item": {
           "type": "object",
-          "description": "Binding info for ComboBox items",
+          "description": "Binding info for combo box items",
           "required": [
             "template"
           ],
@@ -3320,6 +3323,66 @@
         }
       }
     },
+    "Configuration.FilterType.ComboBox": {
+      "description": "[Experimental] ComboBox filter",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "description": "The type of the filter",
+          "oneOf": [
+            {
+              "const": "ComboBox"
+            },
+            {
+              "$ref": "#/definitions/simpleBinding"
+            }
+          ]
+        },
+        "value": {
+          "description": "The value of the filter"
+        },
+        "selectedKey": {
+          "description": "Defines the initially selected key from the given options for combo box.",
+          "type": "string"
+        },
+        "data": {
+          "$ref": "#/definitions/data"
+        },
+        "label": {
+          "description": "Label for the filter. Used by screen readers",
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Configuration.Filter.ComboBoxItem"
+          }
+        },
+        "item": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "template"
+          ],
+          "properties": {
+            "template": {
+              "$ref": "#/definitions/Configuration.Filter.ComboBoxItem"
+            },
+            "path": {
+              "description": "Defines the path to the structure holding the data about the items",
+              "type": "string",
+              "default": "/",
+              "pattern": "^[a-zA-Z0-9_\\.\\-/|@#]*$"
+            }
+          }
+        },
+        "visible": {
+          "description": "Determines whether the filter is visible",
+          "$ref": "#/definitions/visibility"
+        }
+      }
+    },
     "Configuration.Filter.Item": {
       "description": "A single filter selection option",
       "type": "object",
@@ -3331,6 +3394,25 @@
         },
         "key": {
           "description": "The unique key of the filter option. Mapped to the filter's value",
+          "type": "string"
+        }
+      }
+    },
+    "Configuration.Filter.ComboBoxItem": {
+      "description": "A single Combo Box filter selection option",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "description": "The title of the filter option",
+          "type": "string"
+        },
+        "key": {
+          "description": "The unique key of the filter option. Mapped to the filter's value",
+          "type": "string"
+        },
+        "additionalText": {
+          "description": "The secondary value for the combo box item.",
           "type": "string"
         }
       }

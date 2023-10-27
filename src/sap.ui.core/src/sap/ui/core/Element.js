@@ -18,7 +18,8 @@ sap.ui.define([
 	"./RenderManager",
 	"./Configuration",
 	"./EnabledPropagator",
-	"./Theming"
+	"./Theming",
+	"sap/ui/core/util/_LocalizationHelper"
 ],
 	function(
 		DataType,
@@ -35,7 +36,8 @@ sap.ui.define([
 		RenderManager,
 		Configuration,
 		EnabledPropagator,
-		Theming
+		Theming,
+		_LocalizationHelper
 	) {
 		"use strict";
 
@@ -2006,6 +2008,8 @@ sap.ui.define([
 				oElement._handleEvent(oJQueryEvent);
 			});
 		});
+
+		_LocalizationHelper.registerForUpdate("Elements", Element.registry.all);
 
 		return Element;
 	});

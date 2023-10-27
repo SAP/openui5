@@ -39,7 +39,6 @@ sap.ui.define([
 	"use strict";
 
 	var GroupEventType = library.GroupEventType;
-	var TreeAutoExpandMode = library.TreeAutoExpandMode;
 	var _private = TableUtils.createWeakMapFacade();
 
 	/**
@@ -207,25 +206,9 @@ sap.ui.define([
 		oBindingInfo.parameters = oBindingInfo.parameters || {};
 		oBindingInfo.parameters.analyticalInfo = this._getColumnInformation();
 
-		if (!oBindingInfo.parameters.hasOwnProperty("sumOnTop")) {
-			oBindingInfo.parameters.sumOnTop = false;
-		}
-
-		if (!oBindingInfo.parameters.hasOwnProperty("numberOfExpandedLevels")) {
-			oBindingInfo.parameters.numberOfExpandedLevels = 0;
-		}
-
 		// The binding does not support the number of expanded levels to be bigger than the number of grouped columns.
 		if (oBindingInfo.parameters.numberOfExpandedLevels > this._aGroupedColumns.length) {
 			oBindingInfo.parameters.numberOfExpandedLevels = 0;
-		}
-
-		if (!oBindingInfo.parameters.hasOwnProperty("autoExpandMode")) {
-			var sExpandMode = "Bundled";
-			if (sExpandMode != TreeAutoExpandMode.Bundled && sExpandMode != TreeAutoExpandMode.Sequential) {
-				sExpandMode = TreeAutoExpandMode.Bundled;
-			}
-			oBindingInfo.parameters.autoExpandMode = sExpandMode;
 		}
 	};
 

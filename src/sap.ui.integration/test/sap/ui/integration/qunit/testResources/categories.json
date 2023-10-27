@@ -1,0 +1,22 @@
+[
+	{
+		"title": "Flat Screen Monitors",
+		"key": "FSM",
+		"additionalText": "FSM"
+	},
+	{
+		"title": "Graphic Cards",
+		"key": "GC",
+		"additionalText": "GC"
+	},
+	{
+		"title": "Mouses and Keyboards",
+		"key": "MK",
+		"additionalText": "MK"
+	},
+	{
+		"title": "Motherboards",
+		"key": "MB",
+		"additionalText": "MB"
+	}
+]

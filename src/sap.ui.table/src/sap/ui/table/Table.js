@@ -903,7 +903,7 @@ sap.ui.define([
 	 * Localization changed
 	 * @private
 	 */
-	Table.prototype.onlocalizationChanged = function(oEvent) {
+	Table.prototype.onLocalizationChanged = function(oEvent) {
 		var oChanges = oEvent.changes || {};
 		var bRtlChanged = oChanges.hasOwnProperty("rtl");
 		var bLangChanged = oChanges.hasOwnProperty("language");

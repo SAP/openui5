@@ -558,17 +558,8 @@ sap.ui.define([
 				// (but the loader avoids double loading).
 				Log.debug("Lazy dependency to '" + this.name + "' encountered, loading library-preload-lazy.js");
 
-				if (mOptions.sync) {
-					try {
-						sap.ui.requireSync(sLibPackage + '/library-preload-lazy'); // legacy-relevant: Sync path
-					} catch (e) {
-						Log.error("failed to load '" + sLibPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
-					}
-					return this;
-				} else {
-					return sap.ui.loader._.loadJSResourceAsync(
-						sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
-				}
+				return sap.ui.loader._.loadJSResourceAsync(
+					sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 			}
 
 			// otherwise mark as pending
@@ -630,7 +621,6 @@ sap.ui.define([
 					aPromises = aDependencies.map(function(oDependency) {
 						var oLibrary = Library._get(oDependency.name, true/* bCreate */);
 						return oLibrary._preload({
-							sync: mOptions.sync,
 							lazy: oDependency.lazy
 						});
 					});
@@ -1360,9 +1350,7 @@ sap.ui.define([
 		var oLib = Library._get(mSettings.name, true /* bCreate */);
 		oLib.enhanceSettings(mSettings);
 
-		// ensure namespace
-		var oLibNamespace = ObjectPath.create(mSettings.name),
-			i;
+		var oLibNamespace = Object.create(null);
 
 		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
 		// In this case we don't need to create Proxies for the library namespace.
@@ -1372,27 +1360,12 @@ sap.ui.define([
 
 			// activate proxy for outer library namespace object
 			oLibNamespace = new Proxy(oLibNamespace, oLibProxyHandler);
-
-			// proxy must be written back to the original path (global)
-			ObjectPath.set(mSettings.name, oLibNamespace);
 		}
 
-
-		// resolve dependencies
-		for (i = 0; i < oLib.dependencies.length; i++) {
-			var sDepLib = oLib.dependencies[i];
-			var oDepLib = Library._get(sDepLib, true /* bCreate */);
-			Log.debug("resolve Dependencies to " + sDepLib, null, METHOD);
-			if (!oDepLib.isSettingsEnhanced()) {
-				Log.warning("Dependency from " + mSettings.name + " to " + sDepLib + " has not been resolved by library itself", null, METHOD);
-				Library._load({name: sDepLib}, {sync: true}); // legacy-relevant: Sync fallback for missing manifest/AMD dependencies
-			}
-		}
 
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
-			// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if (!oLib.noLibraryCSS) {
 			var oLibThemingInfo = {
 				name: oLib.name,
@@ -1583,49 +1556,17 @@ sap.ui.define([
 			return oLib;
 		});
 
-		if (!mOptions.sync) {
-			var pPreloaded = bPreload ?
-				Promise.all(aLibs.map(function(oLib) {
-					var mOptions = {};
-					if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
-						mOptions.json = mAdditionalConfig[oLib.name].json;
-					}
-					return oLib._preload(mOptions);
-				})) :
-				Promise.resolve(aLibs);
+		const pPreloaded = bPreload ?
+			Promise.all(aLibs.map(function(oLib) {
+				const mOptions = {};
+				if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
+					mOptions.json = mAdditionalConfig[oLib.name].json;
+				}
+				return oLib._preload(mOptions);
+			})) :
+			Promise.resolve(aLibs);
 
-			return bRequire ? pPreloaded.then(requireLibrariesAsync) : pPreloaded;
-		} else {
-			if (bPreload) {
-				aLibs.forEach(function(oLib) {
-					var mOptions = {sync: true};
-					if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
-						mOptions.json = mAdditionalConfig[oLib.name].json;
-					}
-					oLib._preload(mOptions);
-				});
-			}
-
-			if (bRequire) {
-				getLibraryModuleNames(aLibs).forEach(function(sModuleName, index) {
-					if (aLibs[index].isSettingsEnhanced()) {
-						// load library only once
-						return;
-					}
-
-					// require the library module (which in turn will call initLibrary())
-					sap.ui.requireSync(sModuleName); // legacy-relevant: Sync path
-
-					// check for legacy code
-					if (!aLibs[index].isSettingsEnhanced()) {
-						Log.warning("library " + aLibs[index].name + " didn't initialize itself");
-						Library.init({ name: aLibs[index].name }); // TODO redundant to generated initLibrary call....
-					}
-				});
-			}
-
-			return aLibs;
-		}
+		return bRequire ? pPreloaded.then(requireLibrariesAsync) : pPreloaded;
 	};
 
 	/**

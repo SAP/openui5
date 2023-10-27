@@ -25,7 +25,6 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/base/util/Deferred",
-	"sap/base/util/each",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/Version",
@@ -36,8 +35,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/base/Object",
 	"sap/ui/base/syncXHRFix",
-	"sap/ui/core/Locale",
 	"sap/ui/core/support/Hotkeys",
+	"sap/ui/core/util/_LocalizationHelper",
 	"sap/ui/dom/getComputedStyleFix",
 	"sap/ui/performance/Measurement",
 	"sap/ui/performance/trace/initTraces",
@@ -76,7 +75,6 @@ sap.ui.define([
 		Formatting,
 		Localization,
 		Deferred,
-		each,
 		isEmptyObject,
 		ObjectPath,
 		Version,
@@ -87,8 +85,8 @@ sap.ui.define([
 		ManagedObject,
 		BaseObject,
 		syncXHRFix,
-		Locale,
 		Hotkeys,
+		_LocalizationHelper,
 		getComputedStyleFix,
 		Measurement,
 		initTraces,
@@ -144,6 +142,26 @@ sap.ui.define([
 		 * @private
 		 */
 		var _oEventProvider;
+
+		/**
+		 * Execute configured init module
+		 */
+		var _executeInitModule = function() {
+			var sOnInit = BaseConfig.get({
+				name: "sapUiOnInit",
+				type: BaseConfig.Type.String
+			});
+			if (sOnInit) {
+				// determine onInit being a module name prefixed via module or a global name
+				var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(sOnInit);
+				if (aResult && aResult[1]) {
+					// ensure that the require is done async and the Core is finally booted!
+					setTimeout(sap.ui.require.bind(null, [aResult[1]]), 0);
+				} else {
+					throw Error("Invalid init module " + sOnInit + " provided via config option 'sapUiOnInit'");
+				}
+			}
+		};
 
 		/**
 		 * Returns the waiting behavior for the initial theme loading.
@@ -438,7 +456,7 @@ sap.ui.define([
 
 				Log.info("Declared libraries: " + this.aLibs, METHOD);
 
-				this._setupContentDirection();
+				_LocalizationHelper.init();
 
 				this._setupBrowser();
 
@@ -447,6 +465,7 @@ sap.ui.define([
 				this._setupLang();
 
 				this._setupAnimation();
+
 
 				// create accessor to the Core API early so that initLibrary and others can use it
 				/**
@@ -724,18 +743,6 @@ sap.ui.define([
 			ElementMetadata.prototype.register = function(oMetadata) {
 				Library._registerElement(oMetadata);
 			};
-		};
-
-		/**
-		 * Set the document's dir property
-		 * @private
-		 */
-		Core.prototype._setupContentDirection = function() {
-			var METHOD = "sap.ui.core.Core",
-				sDir = Localization.getRTL() ? "rtl" : "ltr";
-
-			document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
-			Log.info("Content direction set to '" + sDir + "'",null,METHOD);
 		};
 
 		/**
@@ -1029,47 +1036,6 @@ sap.ui.define([
 			}
 		};
 
-		Core.prototype._executeOnInit = function() {
-			var vOnInit = BaseConfig.get({
-				name: "sapUiOnInit",
-				type: BaseConfig.Type.Code,
-				defaultValue: BaseConfig.get({
-					name: "sapUiEvtOninit",
-					type: BaseConfig.Type.Code
-				})
-			});
-
-			// execute a configured init hook
-			if ( vOnInit ) {
-				if ( typeof vOnInit === "function" ) {
-					vOnInit();
-				} else if (typeof vOnInit === "string") {
-					// determine onInit being a module name prefixed via module or a global name
-					var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
-					if (aResult && aResult[1]) {
-						// ensure that the require is done async and the Core is finally booted!
-						setTimeout(sap.ui.require.bind(sap.ui, [aResult[1]]), 0);
-					} else {
-						// lookup the name specified in onInit and try to call the function directly
-						var fn = ObjectPath.get(vOnInit);
-						if (typeof fn === "function") {
-							fn();
-						} else {
-							Log.warning("[Deprecated] Do not use inline JavaScript code with the oninit attribute."
-								+ " Use the module:... syntax or the name of a global function");
-							/*
-							 * In contrast to eval(), window.eval() executes the given string
-							 * in the global context, without closure variables.
-							 * See http://www.ecma-international.org/ecma-262/5.1/#sec-10.4.2
-							 */
-							// eslint-disable-next-line no-eval
-							window.eval(vOnInit);  // csp-ignore-legacy-api
-						}
-					}
-				}
-			}
-		};
-
 		Core.prototype._executeInitialization = function() {
 			// chain ready to be the firstone that is executed
 			var METHOD = "sap.ui.core.Core.init()"; // Because it's only used from init
@@ -1084,7 +1050,7 @@ sap.ui.define([
 			this.startPlugins();
 			Log.info("Plugins started",null,METHOD);
 
-			this._executeOnInit();
+			_executeInitModule();
 			this.pReady.resolve();
 			this.bReady = true;
 		};
@@ -1667,7 +1633,7 @@ sap.ui.define([
 		*            [oListener] Context object to call the event handler with. Defaults to a dummy event
 		*            provider object
 		* @public
-		* @deprecated since 1.118. See {@link sap.ui.core.Theming#attachApplied Theming#attachApplied} instead.
+		* @deprecated since 1.118. See {@link module:sap/ui/core/Theming.attachApplied Theming.attachApplied} instead.
 		*/
 		Core.prototype.attachThemeChanged = function(fnFunction, oListener) {
 			// preparation for letting the "themeChanged" event be forwarded from the ThemeManager to the Core
@@ -1685,7 +1651,7 @@ sap.ui.define([
 		 * @param {object}
 		 *            [oListener] Object on which the given function had to be called.
 		 * @public
-		 * @deprecated since 1.118. See {@link sap.ui.core.Theming#detachApplied Theming#detachApplied} instead.
+		 * @deprecated since 1.118. See {@link module:sap/ui/core/Theming.detachApplied Theming#detachApplied} instead.
 		 */
 		Core.prototype.detachThemeChanged = function(fnFunction, oListener) {
 			_oEventProvider.detachEvent(Core.M_EVENTS.ThemeChanged, fnFunction, oListener);
@@ -1712,7 +1678,7 @@ sap.ui.define([
 		 * @param {function} fnFunction Callback to be called when the event occurs
 		 * @param {object} [oListener] Context object to call the function on
 		 * @public
-		 * @deprecated since 1.118. Please use {@link sap.base.i18n.Localization#attachChange Localization#attachChange} instead.
+		 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.attachChange Localization.attachChange} instead.
 		 */
 		Core.prototype.attachLocalizationChanged = function(fnFunction, oListener) {
 			_oEventProvider.attachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
@@ -1727,7 +1693,7 @@ sap.ui.define([
 		 * @param {function} fnFunction Callback to be deregistered
 		 * @param {object} [oListener] Context object on which the given function had to be called
 		 * @public
-		 * @deprecated since 1.118. Please use {@link sap.base.i18n.Localization#detachChange Localization#detachChange} instead.
+		 * @deprecated since 1.118. Please use {@link module:sap/base/i18n/Localization.detachChange Localization.detachChange} instead.
 		 */
 		Core.prototype.detachLocalizationChanged = function(fnFunction, oListener) {
 			_oEventProvider.detachEvent(Core.M_EVENTS.LocalizationChanged, fnFunction, oListener);
@@ -1735,61 +1701,11 @@ sap.ui.define([
 
 		/**
 		 * @private
+		 * @deprecated As of Version 1.120
 		 */
 		Core.prototype.fireLocalizationChanged = function(mChanges) {
-			var sEventId = Core.M_EVENTS.LocalizationChanged,
-				oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
-				fnAdapt = ManagedObject._handleLocalizationChange;
-
-			Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap.ui.core.Core");
-
-			/*
-			 * Notify models that are able to handle a localization change
-			 */
-			each(this.oModels, function (prop, oModel) {
-				if (oModel && oModel._handleLocalizationChange) {
-					oModel._handleLocalizationChange();
-				}
-			});
-
-			/*
-			 * Notify all UIAreas, Components, Elements to first update their models (phase 1)
-			 * and then to update their bindings and corresponding data types (phase 2)
-			 */
-			function notifyAll(iPhase) {
-				UIArea.registry.forEach(function(oUIArea) {
-					fnAdapt.call(oUIArea, iPhase);
-				});
-				Component.registry.forEach(function(oComponent) {
-					fnAdapt.call(oComponent, iPhase);
-				});
-				Element.registry.forEach(function(oElement) {
-					fnAdapt.call(oElement, iPhase);
-				});
-			}
-
-			notifyAll.call(this,1);
-			notifyAll.call(this,2);
-
-			// special handling for changes of the RTL mode
-			if ( mChanges.rtl != undefined ) {
-				// update the dir attribute of the document
-				document.documentElement.setAttribute("dir", mChanges.rtl ? "rtl" : "ltr");
-
-				// invalidate all UIAreas
-				UIArea.registry.forEach(function(oUIArea) {
-					oUIArea.invalidate();
-				});
-				Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
-			}
-
-			// notify Elements via a pseudo browser event (onlocalizationChanged, note the lower case 'l')
-			Element.registry.forEach(function(oElement) {
-				oElement._handleEvent(oBrowserEvent);
-			});
-
 			// notify registered Core listeners
-			_oEventProvider.fireEvent(sEventId, {changes : mChanges});
+			_oEventProvider.fireEvent(Core.M_EVENTS.LocalizationChanged, {changes : mChanges});
 		};
 
 		/**

@@ -32,8 +32,8 @@
 					"webapp/index.html",
 					"webapp/manifest.json",
 					"demoapp.json",
-					"manifest.json",
-					"ui5.yaml"
+					"ui5.yaml",
+					"package.json"
 				]
 			}
 		}

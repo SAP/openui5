@@ -2041,6 +2041,9 @@ sap.ui.define([
 	 *   Deprecated since 1.102.0, as {@link sap.ui.model.odata.OperationMode.Auto} is deprecated;
 	 *   the threshold that defines how many entries should be fetched at least by the binding if
 	 *   <code>operationMode</code> is set to <code>Auto</code>.
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 * @returns {sap.ui.model.odata.v2.ODataListBinding} The new list binding
 	 * @see sap.ui.model.Model.prototype.bindList
 	 * @public
@@ -2191,6 +2194,9 @@ sap.ui.define([
 	 *   instead.
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>vFilters</code> together with other filters
 	 *
 	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding}
 	 *   The new tree binding
@@ -5499,12 +5505,12 @@ sap.ui.define([
 			}
 			if (oFunctionMetadata.parameter != null) {
 				oFunctionMetadata.parameter.forEach(function (oParam) {
-					oData[oParam.name] = that._createPropertyValue(oParam.type);
 					if (mUrlParams[oParam.name] !== undefined) {
 						oData[oParam.name] = mUrlParams[oParam.name];
 						mUrlParams[oParam.name] = ODataUtils.formatValue(mUrlParams[oParam.name],
 							oParam.type);
 					} else {
+						oData[oParam.name] = undefined;
 						Log.warning("No value given for parameter '" + oParam.name
 							+ "' of function import '" + sFunctionName + "'", that, sClassName);
 					}
@@ -7004,8 +7010,10 @@ sap.ui.define([
 	 *   Whether the created context is inactive. An inactive context will only be sent to the
 	 *   server after the first property update. From then on it behaves like any other created
 	 *   context. Supported since 1.98.0
-	 * @param {array|object} [mParameters.properties]
-	 *   An array that specifies a set of properties or the entry
+	 * @param {object|string[]} [mParameters.properties]
+	 *   The initial values of the entry, or an array that specifies a list of property names to be
+	 *   initialized with <code>undefined</code>; <b>Note:</b> Passing a list of property names is
+	 *   deprecated since 1.120; pass the initial values as an object instead
 	 * @param {boolean} [mParameters.refreshAfterChange]
 	 *   Whether to update all bindings after submitting this change operation, see
 	 *   {@link #setRefreshAfterChange}; if given, this overrules the model-wide
@@ -7093,21 +7101,6 @@ sap.ui.define([
 			}
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
 				oEntity = merge({}, vProperties);
-			} else {
-				for (var i = 0; i < oEntityMetadata.property.length; i++) {
-					var oPropertyMetadata = oEntityMetadata.property[i];
-
-					var bPropertyInArray = (vProperties ? vProperties.indexOf(oPropertyMetadata.name) : -1) > -1;
-					if (!vProperties || bPropertyInArray)  {
-						oEntity[oPropertyMetadata.name] = that._createPropertyValue(oPropertyMetadata.type);
-						if (bPropertyInArray) {
-							vProperties.splice(vProperties.indexOf(oPropertyMetadata.name),1);
-						}
-					}
-				}
-				if (vProperties) {
-					assert(vProperties.length === 0, "No metadata for the following properties found: " + vProperties.join(","));
-				}
 			}
 			sEntityType = "" + oEntityMetadata.entityType;
 			oEntitySetMetadata = that.oMetadata._getEntitySetByType(oEntityMetadata);
@@ -7343,42 +7336,6 @@ sap.ui.define([
 	 */
 	ODataModel.prototype._isCreatedEntity = function(oEntity) {
 		return !!(oEntity && oEntity.__metadata && oEntity.__metadata.created);
-	};
-
-	/**
-	 * Return value for a property. This can also be a ComplexType property.
-	 *
-	 * @param {string} sType Fully qualified name of a type
-	 * @returns {any} The property value
-	 * @private
-	 */
-	ODataModel.prototype._createPropertyValue = function(sType) {
-		var oTypeInfo = this.oMetadata._splitName(sType); // name, namespace
-		var sNamespace = oTypeInfo.namespace;
-		var sTypeName = oTypeInfo.name;
-		if (sNamespace.toUpperCase() !== 'EDM') {
-			var oComplexType = {};
-			var oComplexTypeMetadata = this.oMetadata._getObjectMetadata("complexType",sTypeName,sNamespace);
-			assert(oComplexTypeMetadata, "Complex type " + sType + " not found in the metadata !");
-			for (var i = 0; i < oComplexTypeMetadata.property.length; i++) {
-				var oPropertyMetadata = oComplexTypeMetadata.property[i];
-				oComplexType[oPropertyMetadata.name] = this._createPropertyValue(oPropertyMetadata.type);
-			}
-			return oComplexType;
-		} else {
-			return this._getDefaultPropertyValue(sTypeName,sNamespace);
-		}
-	};
-
-	/**
-	 * Returns the default value for a property.
-	 * @param {string} sType The property type
-	 * @param {string} sNamespace The property namespace
-	 * @returns {string} Returns <code>undefined</code>
-	 * @private
-	 */
-	ODataModel.prototype._getDefaultPropertyValue = function(sType, sNamespace) {
-		return undefined;
 	};
 
 	/**

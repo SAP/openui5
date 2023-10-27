@@ -79,7 +79,7 @@ sap.ui.define([
 				this.oChangeIndicator.bindElement("/");
 				this.oChangeIndicator.placeAt("qunit-fixture");
 
-				fnDone();
+				nextUIUpdate().then(fnDone);
 			}.bind(this));
 
 			this.oDesignTime.addRootElement(this.oButton);

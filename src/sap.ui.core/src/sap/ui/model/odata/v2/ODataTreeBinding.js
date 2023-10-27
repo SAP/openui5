@@ -89,6 +89,9 @@ sap.ui.define([
 	 *   sets, which is used for constructing and paging the tree
 	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
 	 *   The dynamic sorters to be used initially
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>vFilters</code> together with other filters
 	 *
 	 * @alias sap.ui.model.odata.v2.ODataTreeBinding
 	 * @author SAP SE

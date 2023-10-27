@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/model/ListBinding",
 	"sap/ui/model/Sorter"
 ], function (Log, Filter, ListBinding, Sorter) {
-	/*global QUnit*/
+	/*global QUnit, sinon*/
 	"use strict";
 
 	//*********************************************************************************************
@@ -63,23 +63,38 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("constructor, application filters", function (assert) {
-		var aApplicationFilters = ["~filter"],
-			// code under test
-			oBinding = new ListBinding("~oModel", "~sPath", "~oContext", undefined, aApplicationFilters);
+		const aApplicationFilters = ["~filter"];
+		let oBinding;
+		const oFilterMock = this.mock(Filter);
+		oFilterMock.expects("checkFilterNone").withExactArgs(sinon.match.same(aApplicationFilters));
+
+		// code under test
+		oBinding = new ListBinding("~oModel", "~sPath", "~oContext", undefined, aApplicationFilters);
 
 		assert.strictEqual(oBinding.aApplicationFilters, aApplicationFilters, "filter: any array is kept as is");
 
-		var oFilter = new Filter({path: "~filterPath", test : function () {}});
+		const oFilter = new Filter({path: "~filterPath", test : function () {}});
+		oFilterMock.expects("checkFilterNone").withExactArgs(sinon.match.same(oFilter));
 
 		// code under test
 		oBinding = new ListBinding("~oModel", "~sPath", "~oContext", undefined, oFilter);
 
 		assert.deepEqual(oBinding.aApplicationFilters, [oFilter], "filter: single Filter is put into array");
 
+		oFilterMock.expects("checkFilterNone").withExactArgs("~noFilter");
+
 		// code under test
 		oBinding = new ListBinding("~oModel", "~sPath", "~oContext", undefined, "~noFilter");
 
 		assert.deepEqual(oBinding.aApplicationFilters, [], "filter: non-Filter object");
+
+		const oError = new Error("~Filter.NONE error");
+		oFilterMock.expects("checkFilterNone").withExactArgs("~invalidFilter").throws(oError);
+
+		// code under test
+		assert.throws(() => {
+			oBinding = new ListBinding("~oModel", "~sPath", "~oContext", undefined, "~invalidFilter");
+		}, oError);
 	});
 
 	//*********************************************************************************************

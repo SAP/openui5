@@ -4560,62 +4560,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Update all localization dependent objects that this managed object can reach,
-	 * except for its aggregated children (which will be updated by the Core).
-	 *
-	 * To make the update work as smooth as possible, it happens in two phases:
-	 * <ol>
-	 *  <li>In phase 1 all known models are updated.</li>
-	 *  <li>In phase 2 all bindings are updated.</li>
-	 * </ol>
-	 * This separation is necessary as the models for the bindings might be updated
-	 * in some ManagedObject or in the Core and the order in which the objects are visited
-	 * is not defined.
-	 *
-	 * @private
-	 */
-	ManagedObject._handleLocalizationChange = function(iPhase) {
-		var oModel, sName, oBindingInfo, i;
-
-		if ( iPhase === 1 ) {
-
-			/*
-			 * phase 1: update the models
-			 */
-			for (sName in this.oModels) {
-				oModel = this.oModels[sName];
-				if ( oModel && oModel._handleLocalizationChange ) {
-					oModel._handleLocalizationChange();
-				}
-			}
-
-		} else if ( iPhase === 2 ) {
-
-			/*
-			 * phase 2: update bindings and types
-			 */
-			for (sName in this.mBindingInfos) {
-				oBindingInfo = this.mBindingInfos[sName];
-				var aParts = oBindingInfo.parts;
-				if (aParts) {
-					// property or composite binding: visit all parts
-					for (i = 0; i < aParts.length; i++) {
-						if ( oBindingInfo.type && oBindingInfo.type._handleLocalizationChange ) {
-							oBindingInfo.type._handleLocalizationChange();
-						}
-					}
-					if ( oBindingInfo.modelChangeHandler ) {
-						oBindingInfo.modelChangeHandler();
-					}
-				} // else: don't update list bindings
-				// Note: the template for a list binding will be visited by the core!
-			}
-
-		}
-	};
-
-
-	/**
 	 * Searches and returns all aggregated objects that pass the given check function.
 	 *
 	 * When the search is done recursively (<code>bRecursive === true</code>), it will be

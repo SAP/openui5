@@ -41,26 +41,6 @@ sap.ui.define([
 		RELOAD_PAGE: "HARD_RELOAD"
 	};
 
-	/**
-	 * Builds the navigation arguments object required to trigger the navigation
-	 * using the <code>CrossApplicationNavigation</code> ushell service.
-	 *
-	 * @param {object} mParsedHash Parsed URL hash
-	 * @return {object} Argument map ("oArg" parameter of the "toExternal" function)
-	 */
-	function buildNavigationArguments(mParsedHash) {
-		return {
-			target: {
-				semanticObject: mParsedHash.semanticObject,
-				action: mParsedHash.action,
-				context: mParsedHash.contextRaw
-			},
-			params: mParsedHash.params,
-			appSpecificRoute: mParsedHash.appSpecificRoute,
-			writeHistory: false
-		};
-	}
-
 	function getReloadMessageOnStart(oReloadInfo) {
 		var sReason;
 		var bIsCustomerLayer = oReloadInfo.layer === Layer.CUSTOMER;
@@ -164,38 +144,6 @@ sap.ui.define([
 		});
 	}
 
-	function triggerReloadForStandalone(oReloadInfo) {
-		oReloadInfo.parameters = document.location.search;
-		if (oReloadInfo.onStart) {
-			ReloadInfoAPI.handleParametersOnStart(oReloadInfo, "standalone");
-		} else {
-			ReloadInfoAPI.handleUrlParameters(oReloadInfo, "standalone");
-		}
-
-		if (document.location.search === oReloadInfo.parameters) {
-			ReloadManager.reloadPage();
-		} else {
-			ReloadManager.setUriParameters(oReloadInfo.parameters);
-		}
-	}
-
-	function triggerReloadForFLP(oReloadInfo) {
-		oReloadInfo.URLParsingService = mUShellServices.URLParsing;
-		oReloadInfo.parsedHash = FlUtils.getParsedURLHash(mUShellServices.URLParsing);
-		oReloadInfo.parameters = oReloadInfo.parsedHash.params;
-		var bChanged = oReloadInfo.onStart ? ReloadInfoAPI.handleParametersOnStart(oReloadInfo, "flp") : ReloadInfoAPI.handleUrlParameters(oReloadInfo, "flp");
-
-		if (bChanged) {
-			// if a hard reload is required the crossAppNav still has to be triggered to update the URL
-			mUShellServices.CrossApplicationNavigation.toExternal(buildNavigationArguments(oReloadInfo.parsedHash));
-		} else {
-			mUShellServices.AppLifeCycle.reloadCurrentApp();
-		}
-		if (oReloadInfo.triggerHardReload) {
-			ReloadManager.reloadPage();
-		}
-	}
-
 	ReloadManager.setUShellServices = function(mPassedUShellServices) {
 		mUShellServices = mPassedUShellServices;
 	};
@@ -245,10 +193,13 @@ sap.ui.define([
 	 * @param {string} oReloadInfo.removeDraft - Indicates if draft parameter should be removed
 	 */
 	ReloadManager.triggerReload = function(oReloadInfo) {
+		oReloadInfo.onStart ? ReloadInfoAPI.handleReloadInfoOnStart(oReloadInfo) : ReloadInfoAPI.handleReloadInfo(oReloadInfo);
 		if (FlUtils.getUshellContainer()) {
-			triggerReloadForFLP(oReloadInfo);
-		} else {
-			triggerReloadForStandalone(oReloadInfo);
+			mUShellServices.AppLifeCycle.reloadCurrentApp();
+		}
+		// standalone app always trigger hard reload
+		if (!FlUtils.getUshellContainer() || oReloadInfo.triggerHardReload) {
+			ReloadManager.reloadPage();
 		}
 	};
 
@@ -329,7 +280,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Layer} oReloadInfo.layer - Current layer
 	 * @param {boolean} oReloadInfo.hasHigherLayerChanges - Indicates if higher layer changes exist
 	 */
-	ReloadManager.handleUrlParametersOnExit = function(oReloadInfo) {
+	ReloadManager.handleReloadOnExit = function(oReloadInfo) {
 		if (oReloadInfo.layer !== Layer.USER && oReloadInfo.reloadMethod !== mReloadMethods.NOT_NEEDED) {
 			oReloadInfo.removeVersionParameter = true;
 			ReloadManager.triggerReload(oReloadInfo);

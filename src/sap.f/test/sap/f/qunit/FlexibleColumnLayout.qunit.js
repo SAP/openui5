@@ -902,7 +902,7 @@ function(
 		}
 	});
 
-	QUnit.test("ResizeHandler's suspend method is not called for pinned columns", function (assert) {
+	QUnit.test("ResizeHandler's suspend method is called for pinned columns", function (assert) {
 		// Arrange
 		var oSpySuspendHandler = this.spy(ResizeHandler, "suspend");
 
@@ -912,7 +912,7 @@ function(
 		this.oFCL._resizeColumns();
 
 		// Assert
-		assert.ok(oSpySuspendHandler.notCalled, "does not suspend resizeHandler for pinned columns");
+		assert.ok(oSpySuspendHandler.called, "suspend resizeHandler for pinned column too (all columns have ResizeHandlers suspended, when animations are on");
 	});
 
 	QUnit.test("Suspending and resuming ResizeHandler upon column layout change", function (assert) {
@@ -983,6 +983,23 @@ function(
 		// Returning from a fullscreen layout
 		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
 			false, "No pinning should be done when closing a fullscreen layout");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.OneColumn),
+		true, "Second column should be pinned when going from OneColumn fullscreen to TwoColumn fullscreen");
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("begin", LT.OneColumn, LT.MidColumnFullScreen),
+		true, "First column should be pinned when going from TwoColumn fullscreen to OneColumn fullscreen");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.EndColumnFullScreen, LT.MidColumnFullScreen),
+		true, "Third column should be pinned when going from TwoColumn fullscreen to ThreeColumn fullscreen");
+
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.EndColumnFullScreen),
+		true, "Second column should be pinned when going from ThreeColumn fullscreen to TwoColumn fullscreen");
 	});
 
 	QUnit.test("_shouldConcealColumn", function (assert) {
@@ -1004,6 +1021,23 @@ function(
 		// Returning from a fullscreen layout
 		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
 			false, "No pinning should be done when closing a fullscreen layout");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("begin", LT.MidColumnFullScreen, LT.OneColumn),
+		true, "First column should be pinned when going from OneColumn fullscreen to TwoColumn fullscreen");
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.OneColumn, LT.MidColumnFullScreen),
+		true, "Second column should be pinned when going back from TwpColumn fullscreen to OneColumn fullscreen");
+
+		// Going from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.EndColumnFullScreen, LT.MidColumnFullScreen),
+		true, "Second column should be pinned when going from TwoColumn fullscreen to ThreeColumn fullscreen");
+
+
+		// Going back from fullscreen to another fullscreen
+		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.MidColumnFullScreen, LT.EndColumnFullScreen),
+		true, "Third column should be pinned when going back from ThreeColumn fullscreen to TwoColumn fullscreen");
 	});
 
 	QUnit.test("Conceal effect layout changes", function(assert) {
@@ -1102,6 +1136,36 @@ function(
 
 		// clean-up
 		oConfiguration.setAnimationMode(sOriginalAnimationMode);
+	});
+
+	QUnit.test("Contextual settings are updated after column resize without layout update", function (assert) {
+		var sLayoutBeforeDrag = this.oFCL.getLayout(),
+			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings");
+
+		// Act: resize to a width that does not lead to change of <code>layoutType</code>
+		dragSeparator("begin", 10, this.oFCL);
+
+		// Assert
+		assert.strictEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is unchanged");
+		assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
+	});
+
+	QUnit.test("Contextual settings are updated after column resize with layout update", function (assert) {
+		var sLayoutBeforeDrag = this.oFCL.getLayout(),
+			oSpyUpdateContextualSettings = this.spy(this.oFCL, "_updateColumnContextualSettings"),
+			fnDone = assert.async();
+
+		// Act: resize to a width that leads to change of <code>layoutType</code>
+		dragSeparator("begin", -700, this.oFCL);
+
+		// Assert
+		assert.notEqual(this.oFCL.getLayout(), sLayoutBeforeDrag, "layout is not changed");
+		this.oFCL._attachAfterAllColumnsResizedOnce(function() {
+			setTimeout(function() { // wait for FCL promise to complete
+				assert.strictEqual(oSpyUpdateContextualSettings.callCount, 2, "contextual settings are updated for visible columns");
+				fnDone();
+			}, 0);
+		});
 	});
 
 	QUnit.module("ScreenReader supprot", {
@@ -1494,7 +1558,7 @@ function(
 	});
 
 	QUnit.test("columnResize event is fired after resize of all animated columns", function (assert) {
-		assert.expect(3);
+		assert.expect(4);
 		// setup
 		var fnDone = assert.async(),
 			oResizeFunctionSpy = this.spy(ResizeHandler, "resume"),
@@ -1504,9 +1568,10 @@ function(
 				if (iEventsCount == 3) {
 					this.oFCL.detachColumnResize(fnCallback);
 					// assert
-					assert.equal(oResizeFunctionSpy.callCount, 2, "ResizeHandler.resume is called for all columns");
+					assert.equal(oResizeFunctionSpy.callCount, 3, "ResizeHandler.resume is called for all columns");
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
 					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['end'].get(0)).calledOnce);
 					fnDone();
 				}
 			}.bind(this);
@@ -1596,6 +1661,32 @@ function(
 		this.oEventSpy.resetHistory();
 		this.oFCL.setLayout(LT.ThreeColumnsMidExpandedEndHidden);
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(fnCallback.bind(this));
+	});
+
+	QUnit.test("columnResize event is fired after resize without layoutType change", function (assert) {
+		assert.expect(1);
+		// setup
+		var fnDone = assert.async(),
+			iEventsCount = 0,
+			fnCallback = function () {
+				iEventsCount++;
+				if (iEventsCount == 2) {
+					this.oFCL.detachColumnResize(fnCallback);
+					// assert
+					assert.equal(iEventsCount, 2, "columnResize event is fired for all resized columns");
+					fnDone();
+				}
+			}.bind(this);
+
+		this.oFCL = oFactory.createFCL({
+			layout: LT.TwoColumnsBeginExpanded
+		});
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+		this.oFCL.attachColumnResize(fnCallback);
+
+		// Act: resize to a width that does not lead to <code>layoutType</code> chage
+		dragSeparator("begin", 10, this.oFCL);
 	});
 
 	(function () {

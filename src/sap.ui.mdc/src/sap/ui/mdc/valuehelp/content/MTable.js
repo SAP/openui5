@@ -961,7 +961,7 @@ sap.ui.define([
 
     MTable.prototype.getRelevantContexts = function(oConfig) {
 		const oListBinding = this.getListBinding();
-		const aListBindingContexts = oListBinding.getContexts();
+		const aListBindingContexts = oListBinding.getAllCurrentContexts ? oListBinding.getAllCurrentContexts() : oListBinding.getContexts();
 
 		return aListBindingContexts;
 	};

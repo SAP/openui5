@@ -578,6 +578,30 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Externally referenced label interaction", function(assert) {
+		// prepare
+		var oFileUploader = new FileUploader("uploader"),
+			oLabel = new Label({labelFor: "uploader", text: "label"}),
+			oClickEvent = new MouseEvent("click", {bubbles: true, cancelable: true}),
+			oBrowseClickSpy;
+
+		oLabel.placeAt("qunit-fixture");
+		oFileUploader.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oBrowseClickSpy = this.spy(oFileUploader.getDomRef("fu"), "click");
+
+		// act
+		oLabel.getDomRef().dispatchEvent(oClickEvent);
+
+		// assert
+		assert.ok(oBrowseClickSpy.calledOnce, "The browse button gets activated");
+
+		// clean
+		oLabel.destroy();
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("dependency of submit and rendering", function (assert) {
 		// arrange
 		var oFileUploader = new FileUploader().placeAt("qunit-fixture");

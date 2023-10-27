@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/m/TimePicker",
 	"sap/m/Popover",
 	"sap/m/Button",
+	"sap/ui/core/Icon",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
@@ -29,6 +30,7 @@ sap.ui.define([
 	TimePicker,
 	Popover,
 	Button,
+	Icon,
 	Opa5,
 	opaTest,
 	mobileLibrary,
@@ -363,6 +365,19 @@ sap.ui.define([
 		sinon.assert.calledWith(this.oErrorLog, sinon.match(/Please provide a text/));
 	});
 
+	QUnit.test("Should log a warning and exit early when control is not an input", async function (assert) {
+		this.oControl = new Icon({src: "sap-icon://edit"});
+
+		this.oControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		// without a safe-check, the line below causes errors with the
+		// the current alorithm, when executed on a non-input control:
+		this.oEnterText.setText("entering some long enough text on an non-input control");
+		this.oEnterText.executeOn(this.oControl);
+
+		sinon.assert.calledWith(this.oDebugLog, sinon.match(/Cannot enter text in control/));
+	});
 
 	QUnit.test("Should enter number with decimals in input of type number and preserve the value", function (assert) {
 		var fnDone = assert.async();

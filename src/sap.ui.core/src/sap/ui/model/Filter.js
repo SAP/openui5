@@ -271,6 +271,22 @@ sap.ui.define([
 	Filter.NONE = new Filter({path : "/", test : () => false});
 
 	/**
+	 * Checks if the given filters contain the {@link sap.ui.model.Filter.NONE} filter instance together with
+	 * other filters. If a single filter or <code>undefined</code> is provided, the check always succeeds.
+	 *
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [vFilter]
+	 *   The filters to check
+	 * @throws {Error} If the {@link sap.ui.model.Filter.NONE} filter instance is contained in <code>vFilter</code>
+	 *   together with other filters
+	 * @private
+	 */
+	Filter.checkFilterNone = function (vFilter) {
+		if (Array.isArray(vFilter) && vFilter.length > 1 && vFilter.includes(Filter.NONE)) {
+			throw new Error("Filter.NONE cannot be used together with other filters");
+		}
+	};
+
+	/**
 	 * Checks the types of the arguments for a lambda operator.
 	 * @private
 	 */

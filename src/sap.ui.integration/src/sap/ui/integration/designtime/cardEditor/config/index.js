@@ -116,22 +116,16 @@ sap.ui.define([
 					"tags": ["general"],
 					"label": "{i18n>CARD_EDITOR.TYPE}",
 					"type": "select",
-					"items": sap.ui.version.includes('SNAPSHOT') && !window.location.host.includes("openui5nightly")
-						? [
-							{ "key": "List" },
-							{ "key": "Analytical" },
-							{ "key": "Table" },
-							{ "key": "Object" },
-							{ "key": "Timeline" },
-							{ "key": "Component" },
-							{ "key": "Calendar" },
-							{ "key": "AdaptiveCard" }
-						]
-						: [
-							{ "key": "List" },
-							{ "key": "Table" },
-							{ "key": "Object" }
-						],
+					"items": [
+						{ "key": "List" },
+						{ "key": "Analytical" },
+						{ "key": "Table" },
+						{ "key": "Object" },
+						{ "key": "Timeline" },
+						{ "key": "Component" },
+						{ "key": "Calendar" },
+						{ "key": "AdaptiveCard" }
+					],
 					"path": "type"
 				},
 				"parameters": {

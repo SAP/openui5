@@ -18,9 +18,9 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.120
-	 * @alias sap.ui.mdc.link.SemanticObjectMappingItem
+	 * @alias sap.ui.mdc.ushell.SemanticObjectMappingItem
 	 */
-	const SemanticObjectMappingItem = Element.extend("sap.ui.mdc.link.SemanticObjectMappingItem", /** @lends sap.ui.mdc.link.SemanticObjectMappingItem.prototype */
+	const SemanticObjectMappingItem = Element.extend("sap.ui.mdc.ushell.SemanticObjectMappingItem", /** @lends sap.ui.mdc.ushell.SemanticObjectMappingItem.prototype */
 	{
 		metadata: {
 			library: "sap.ui.mdc",
