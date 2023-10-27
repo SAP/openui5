@@ -75,7 +75,8 @@ sap.ui.define([
 	 * 			runtimeOnlyData: {
 	 * 				liveDependencyMap: {...}
 	 * 			}
-	 * 		}
+	 * 		},
+	 * 		maxLayer: <string>,
 	 * 		emptyState: <boolean>,
 	 *		partialFlexState: <boolean>,
 	 *		componentId: "<componentId>",
@@ -160,6 +161,9 @@ sap.ui.define([
 		mPropertyBag.componentData ||= (oComponent && oComponent.getComponentData()) || {};
 		mPropertyBag.manifest ||= mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
 		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
+		const oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
+		mPropertyBag.version ||= oFlexInfoSession.version;
+		mPropertyBag.adaptationId ||= oFlexInfoSession.adaptationId;
 	}
 
 	function createFlexObjects(oStorageResponse) {
@@ -314,6 +318,7 @@ sap.ui.define([
 		}
 		if (!_mInstances[sReference].storageResponse) {
 			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
+			_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
 			// Flex objects need to be recreated
 			delete _mInstances[sReference].runtimePersistence;
 			bDataUpdated = true;
@@ -414,6 +419,12 @@ sap.ui.define([
 		});
 	}
 
+	function rebuildResponseIfMaxLayerChanged(sReference) {
+		if (_mInstances[sReference]?.maxLayer !== FlexInfoSession.getByReference(sReference).maxLayer) {
+			FlexState.rebuildFilteredResponse(sReference);
+		}
+	}
+
 	function initializeEmptyState(sReference) {
 		_mInstances[sReference] = {
 			unfilteredStorageResponse: { changes: StorageUtils.getEmptyFlexDataResponse() },
@@ -463,6 +474,8 @@ sap.ui.define([
 			checkComponentId(mProperties);
 			if (mProperties.reInitialize) {
 				await loadFlexData(mProperties);
+			} else {
+				rebuildResponseIfMaxLayerChanged(mPropertyBag.reference);
 			}
 		} else {
 			await loadFlexData(mProperties);
@@ -482,24 +495,6 @@ sap.ui.define([
 	FlexState.isInitialized = function(mPropertyBag) {
 		var sReference = mPropertyBag.reference ? mPropertyBag.reference : ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 		return !!_mInstances[sReference];
-	};
-
-	/**
-	 * Clears the cache and then triggers a call to the backend to fetch new data
-	 *
-	 * @param {object} mPropertyBag - Contains additional data needed for reading and storing changes
-	 * @param {string} mPropertyBag.componentId - ID of the component
-	 * @param {string} [mPropertyBag.reference] - Flex reference of the app
-	 * @param {object} [mPropertyBag.manifest] - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.componentData] - Component data of the current component
-	 * @param {string} [mPropertyBag.version] - Number of the version in which the state should be initialized
-	 * @param {string} [mPropertyBag.adaptationId] - Context-based adaptation for which the state should be initialized
-	 * @returns {Promise<undefined>} Resolves a promise as soon as FlexState is initialized again
-	 */
-	FlexState.clearAndInitialize = function(mPropertyBag) {
-		enhancePropertyBag(mPropertyBag);
-		FlexState.clearState(mPropertyBag.reference);
-		return FlexState.initialize(mPropertyBag);
 	};
 
 	/**
@@ -531,6 +526,7 @@ sap.ui.define([
 		await _mInitPromises[sReference];
 		await loadFlexData(mPropertyBag);
 		_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
+		_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
 		var bUpdated = updateRuntimePersistence(
 			sReference,
 			_mInstances[sReference].storageResponse,
@@ -704,6 +700,7 @@ sap.ui.define([
 		if (_mInstances[sReference]) {
 			_mInstances[sReference].preparedMaps = {};
 			_mInstances[sReference].storageResponse = filterByMaxLayer(sReference, _mInstances[sReference].unfilteredStorageResponse);
+			_mInstances[sReference].maxLayer = FlexInfoSession.getByReference(sReference).maxLayer;
 			// Storage response has changed, recreate the flex objects
 			_mInstances[sReference].runtimePersistence = buildRuntimePersistence(
 				_mInstances[sReference],
@@ -723,7 +720,7 @@ sap.ui.define([
 		if (!_mInstances[sReference]) {
 			initializeEmptyState(sReference);
 		}
-		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
+		const sAdaptationLayer = FlexInfoSession.getByReference(sReference).adaptationLayer;
 		const bFlexObjectsOverAdaptationLayer = !!sAdaptationLayer
 			&& LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer);
 		// FIXME: Currently called from the ChangePersistence which might be
@@ -749,7 +746,7 @@ sap.ui.define([
 		if (!_mInstances[sReference]) {
 			initializeEmptyState(sReference);
 		}
-		const sAdaptationLayer = FlexInfoSession.getByReference(sReference)?.adaptationLayer;
+		const sAdaptationLayer = FlexInfoSession.getByReference(sReference).adaptationLayer;
 		aFlexObjects = !sAdaptationLayer ? aFlexObjects : aFlexObjects
 		.filter((oFlexObject) => !LayerUtils.isOverLayer(oFlexObject.getLayer(), sAdaptationLayer));
 

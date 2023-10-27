@@ -164,11 +164,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("Obtains the componentId from component instance and propagates even if there are no changes for the component", function(assert) {
-			var oClearStub = sandbox.stub(FlexState, "rebuildFilteredResponse");
-
 			return ComponentLifecycleHooks.instanceCreatedHook(this.oAppComponent, {asyncHints: true, id: "differentComponentId"})
 			.then(function() {
-				assert.strictEqual(oClearStub.callCount, 1, "the prepared stuff in FlexState was cleared");
 				assert.strictEqual(this.oAddPropagationListenerStub.callCount, 1, "propagation was triggered");
 				assert.strictEqual(this.oInitializeStub.callCount, 1, "FlexState was initialized");
 				assert.ok(this.oInitializeStub.calledWith({

@@ -94,7 +94,6 @@ sap.ui.define([
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			this.oLoadVersionSpy = sandbox.spy(VersionsAPI, "loadVersionForApplication");
 			this.oLoadAdaptationsStub = sandbox.stub(ContextBasedAdaptationsAPI, "load");
-			this.oFlexStateStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(oAdaptationsModel);
 			return this.oRta.start().then(function() {
 				this.oRta._oContextBasedAdaptationsModel = oAdaptationsModel;
@@ -117,7 +116,6 @@ sap.ui.define([
 			})
 			.then(function() {
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
-				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
 				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
 				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
@@ -144,7 +142,6 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.oEnableRestartStub.callCount, 1, "then a restart is enabled");
 				assert.equal(oRemoveAllCommandsStub.callCount, 1, "then all commands are removed from stack");
-				assert.equal(this.oFlexStateStub.callCount, 1, "a clear and initalize of FlexState is called");
 				assert.equal(this.oLoadVersionSpy.callCount, 1, "a reload for versions is triggered");
 				var oLoadVersionArguments = this.oLoadVersionSpy.getCall(0).args[0];
 				assert.equal(oLoadVersionArguments.control, oComp, "with the control");
