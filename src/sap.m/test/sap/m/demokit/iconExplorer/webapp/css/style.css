@@ -1,10 +1,20 @@
 /***** Home page styles *****/
 
 .sapUiDemoIconExplorer .HomeHeaderText {
-    font-size: 5.5rem;
-    font-family: Arial;
-    text-shadow: 0 0 0.250rem #000;
+    font-size: 3.75rem;
+    font-family: '72';
+	font-weight: 900;
     position:relative;
+}
+
+.sapMTB.sapUiDocumentationFooter {
+	height: auto;
+	padding: .5rem 1rem 0.25rem 1rem;
+}
+
+.sap-phone .sapMTB.sapUiDocumentationFooter {
+	padding: 1rem;
+	padding-top: 1.25rem;
 }
 
 .BlockLayoutFlex {
@@ -17,10 +27,57 @@
 	flex-grow: 1;
 }
 
-.IconExplorerHomeBackground {
-	background-color: #2b556d;
-	background-repeat-x: repeat;
-    background-repeat-y: no-repeat;
+.sapUiDocumentationInfoLinksHolder .sapUiIcon {
+	border-radius: .5rem;
+}
+
+.IconExplorerHomePage .sapMPageEnableScrolling {
+	background-image: url("../images/Icon_Explorer_Background.svg");
+}
+
+.IconExplorerHomePage .IconExplorerSearchContainer {
+	margin: auto;
+	height: 70%;
+}
+
+.IconExplorerHomePage .IconExplorerHomePageInfoButton {
+	position: absolute;
+	right: 1rem;
+	top: 0.5rem;
+}
+
+.sapUiDemoIconExplorer .IconExplorerHomePage {
+	background-image: linear-gradient(#FA4F96, #0057d2);
+}
+
+.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapUiIcon,
+.sapUiTheme-sap_horizon .IconExplorerHomePage .IconExplorerSearchContainer .sapMTitle  {
+	color: #eaecee;
+}
+
+.IconExplorerHomePage .sapMInputBaseContentWrapper,
+.IconExplorerHomePage .sapMFocus.sapMInputBase .sapMInputBaseContentWrapper:not(.sapMInputBaseDisabledWrapper)::before {
+	border-radius: 2rem;
+}
+
+.sapUiTheme-sap_horizon_dark .sapUiDemoIconExplorer .IconExplorerHomePage,
+.sapUiTheme-sap_horizon_hcb .sapUiDemoIconExplorer .IconExplorerHomePage {
+	background-image: linear-gradient(#E40052, #00409A);
+}
+
+.sapUiDemoIconExplorer .SidePanelGridList {
+	padding: .125rem;
+}
+
+.sapUiDemoIconExplorer .SidePanelGridList .sapMListItems > * {
+	padding: 1rem;
+}
+
+.sapUiDemoIconExplorer .sapMPage {
+	position: absolute;
+	left: 0;
+	top: 0;
+	background-color: transparent;
 }
 
 /*SMALL*/

@@ -1,0 +1,46 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	xmlns:core="sap.ui.core">
+	<ScrollContainer
+		vertical="true"
+		horizontal="false"
+		height="100%">
+		<Panel
+			id="resultContainer"
+			visible="{= ${view>/empty}}"
+			accessibleRole="Region">
+			<Toolbar>
+				<Title visible="{= ${device>/system/phone} ? false : true}" text='{i18n>previewSearchResults} ({view>/iconFilterCount})' />
+				<ToolbarSpacer visible="{= ${device>/system/phone} ? false : true}" />
+				<Label text='{i18n>previewCopyMode} ' />
+				<Select
+					selectedKey="{view>/SelectedCopyMode}"
+					items="{
+						path: 'view>/CopyModeCollection'
+					}">
+					<core:Item key="{view>CopyModeId}" text="{view>Name}" />
+				</Select>
+				<SegmentedButton
+					id="layoutSelectionSB"
+					selectionChange='.onSegmentSelected'
+					selectedKey="grid">
+					<items>
+						<SegmentedButtonItem
+							icon="sap-icon://grid"
+							tooltip="{i18n>overviewTabGridText}"
+							key="grid"/>
+						<SegmentedButtonItem
+							icon="sap-icon://list"
+							tooltip="{i18n>overviewTabDetailsText}"
+							key="details"/>
+						<SegmentedButtonItem
+							icon="sap-icon://favorite-list"
+							tooltip="{i18n>overviewTabFavoritesText}"
+							key="favorites"/>
+					</items>
+				</SegmentedButton>
+			</Toolbar>
+		</Panel>
+	</ScrollContainer>
+</core:FragmentDefinition>

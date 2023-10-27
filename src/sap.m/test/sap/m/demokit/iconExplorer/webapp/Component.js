@@ -47,7 +47,7 @@ sap.ui.define([
 				var oVersionModel = new JSONModel({
 					isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
 				});
-				this.setModel(oVersionModel, "version");
+				this.setModel(oVersionModel, "versionData");
 
 				// set up a helper model to manage favorite icons
 				var oFavoriteModel = new FavoriteModel();
@@ -162,7 +162,6 @@ sap.ui.define([
 			this._pCookiesComponent && this._pCookiesComponent.then(function(oCookiesMgmtComponent) {
 				oCookiesMgmtComponent.destroy();
 			});
-
 			this._oConfigUtil.destroy();
 			this._oConfigUtil = null;
 

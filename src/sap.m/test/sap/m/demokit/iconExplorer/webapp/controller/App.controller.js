@@ -1,8 +1,9 @@
 sap.ui.define([
 		"sap/ui/demo/iconexplorer/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
-		"sap/base/Log"
-	], function (BaseController, JSONModel, Log) {
+		"sap/base/Log",
+		"sap/ui/documentation/sdk/controller/util/ThemePicker"
+	], function (BaseController, JSONModel, Log, ThemePicker) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.iconexplorer.controller.App", {
@@ -39,6 +40,12 @@ sap.ui.define([
 				oComponent.getCookiesManagement().then(function(oCookieMgmtComponent) {
 					oCookieMgmtComponent.enable(oComponent.getRootControl());
 				});
+
+				this._initThemePicker();
+			},
+
+			_initThemePicker : function() {
+				ThemePicker.init(this);
 			}
 		});
 

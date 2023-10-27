@@ -39,6 +39,14 @@ sap.ui.define(["sap/ui/core/mvc/Controller", "sap/ui/core/UIComponent"], functio
 			 */
 			getResourceBundle : function () {
 				return this.getOwnerComponent().getModel("i18n").getResourceBundle();
+			},
+
+			/**
+			 * Navigates to the icons info sub-page
+			 * @public
+			 */
+			onNavToInfo: function () {
+				this.getRouter().navTo("info");
 			}
 
 		});

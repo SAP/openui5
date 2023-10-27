@@ -6,10 +6,10 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.demo.iconexplorer.controller.NotFound", {
 
 			/**
-			 * Navigates to the worklist when the link is pressed
+			 * Navigates to the worklist when the button is pressed
 			 * @public
 			 */
-			onLinkPressed : function () {
+			onButtonPressed : function () {
 				this.getRouter().navTo("overview");
 			}
 
