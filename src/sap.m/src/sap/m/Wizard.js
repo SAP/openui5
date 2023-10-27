@@ -228,9 +228,7 @@ sap.ui.define([
 					 * The complete event is fired when the user clicks the finish button of the Wizard.
 					 * The finish button is only available on the last step of the Wizard.
 					 */
-					complete: {
-						parameters: {}
-					}
+					complete: {}
 				},
 				dnd: { draggable: false, droppable: true }
 			},
