@@ -147,7 +147,7 @@ sap.ui.define([
 			this.bRemovePersistedCreatedAfterRefresh = false;
 
 			// check filter integrity
-			this.oModel.checkFilterOperation(this.aApplicationFilters);
+			this.oModel.checkFilter(this.aApplicationFilters);
 
 			if (mParameters && (mParameters.batchGroupId || mParameters.groupId)) {
 				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
@@ -1731,6 +1731,9 @@ sap.ui.define([
 	 * @param {sap.ui.model.FilterType} [sFilterType=Control] Type of the filter which should be adjusted. If it is not given, type <code>Control</code> is assumed
 	 * @param {boolean} [bReturnSuccess=false] Whether the success indicator should be returned instead of <code>this</code>
 	 * @return {this} Reference to <code>this</code> to facilitate method chaining or a boolean success indicator
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
 	 */
@@ -1749,7 +1752,7 @@ sap.ui.define([
 		}
 
 		// check filter integrity
-		this.oModel.checkFilterOperation(aFilters);
+		this.oModel.checkFilter(aFilters);
 
 		if (sFilterType === FilterType.Application) {
 			this.aApplicationFilters = aFilters;

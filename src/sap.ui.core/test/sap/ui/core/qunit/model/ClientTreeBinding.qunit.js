@@ -178,10 +178,10 @@ sap.ui.define([
 			aFilters = ["~anyFilter"],
 			oModel = {
 				_getObject : function () {},
-				checkFilterOperation : function () {}
+				checkFilter : function () {}
 			};
 
-		this.mock(oModel).expects("checkFilterOperation").withExactArgs(sinon.match.same(aFilters));
+		this.mock(oModel).expects("checkFilter").withExactArgs(sinon.match.same(aFilters));
 		this.mock(oModel).expects("_getObject")
 			.withExactArgs("~path", "~oContext")
 			.returns({/*any data*/});

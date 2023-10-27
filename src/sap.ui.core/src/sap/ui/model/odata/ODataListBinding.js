@@ -67,7 +67,7 @@ sap.ui.define([
 			this.oCombinedFilter = null;
 
 			// check filter integrity
-			this.oModel.checkFilterOperation(this.aApplicationFilters);
+			this.oModel.checkFilter(this.aApplicationFilters);
 
 			// load the entity type for the collection only once and not e.g. every time when filtering
 			if (!this.oModel.getServiceMetadata()) {
@@ -871,6 +871,9 @@ sap.ui.define([
 	 *   depending on whether the filtering has been done
 	 * @return {this}
 	 *   Returns <code>this</code> to facilitate method chaining or the success state
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
 	 *
 	 * @public
 	 */
@@ -887,7 +890,7 @@ sap.ui.define([
 		}
 
 		// check filter integrity
-		this.oModel.checkFilterOperation(aFilters);
+		this.oModel.checkFilter(aFilters);
 
 		if (sFilterType == FilterType.Application) {
 			this.aApplicationFilters = aFilters;

@@ -34,10 +34,10 @@ sap.ui.define([
 		var oBinding,
 			aFilters = [],
 			oModel = {
-				checkFilterOperation : function () {}
+				checkFilter : function () {}
 			};
 
-		this.mock(oModel).expects("checkFilterOperation").withExactArgs(sinon.match.same(aFilters));
+		this.mock(oModel).expects("checkFilter").withExactArgs(sinon.match.same(aFilters));
 		this.mock(FilterProcessor).expects("combineFilters")
 			.withExactArgs([], sinon.match.same(aFilters))
 			.returns("~combinedFilters");

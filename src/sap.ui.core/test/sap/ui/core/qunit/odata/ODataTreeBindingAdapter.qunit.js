@@ -2135,7 +2135,7 @@ sap.ui.define([
 			"sap/ui/model/odata/v2/ODataTreeBinding", "sap/ui/model/odata/ODataTreeBindingAdapter"],
 			function(ODataTreeBinding, ODataTreeBindingAdapter) {
 				var oBinding = new ODataTreeBinding({
-					checkFilterOperation: function() { }
+					checkFilter: function() { }
 				}, "/");
 				ODataTreeBindingAdapter.apply(oBinding);
 
