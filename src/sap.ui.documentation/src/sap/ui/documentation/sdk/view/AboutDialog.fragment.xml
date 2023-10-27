@@ -112,7 +112,7 @@
 							<core:Title text="{appView>displayName}"/>
 						</f:title>
 						<f:layout>
-							<f:GridLayout/>
+							<f:ResponsiveGridLayout/>
 						</f:layout>
 						<f:formContainers>
 							<f:FormContainer>
