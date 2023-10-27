@@ -110,7 +110,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (oParent && (oParent instanceof library.ObjectPageLayout) && oParent.getShowEditHeaderButton()) {
+			if (oParent && oParent.isA("sap.uxap.ObjectPageLayout") && oParent.getShowEditHeaderButton()) {
 				oEditHeaderButton = this._getInternalBtnAggregation("_editHeaderButton", "EDIT_HEADER", "-editHeaderBtn", "Transparent");
 				oEditHeaderButton.attachPress(this._handleEditHeaderButtonPress, this);
 			}
