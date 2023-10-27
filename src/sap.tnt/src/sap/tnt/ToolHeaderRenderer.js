@@ -26,6 +26,7 @@ sap.ui.define([
 
 	ToolHeaderRenderer.renderBarContent = function (oRM, oToolbar) {
 		var bOverflowButtonRendered = false,
+			oFirstVisibleControl = null,
 			bIsUtilitySeparator;
 
 		if (oToolbar.getActive()) {
@@ -43,6 +44,12 @@ sap.ui.define([
 			}
 
 			if (oToolbar._getControlPriority(oControl) !== OverflowToolbarPriority.AlwaysOverflow) {
+				if (!oFirstVisibleControl && oControl.getVisible()) {
+					oControl.addStyleClass("sapMBarChildFirstChild");
+					oFirstVisibleControl = oControl;
+				} else {
+					oControl.removeStyleClass("sapMBarChildFirstChild");
+				}
 				oRM.renderControl(oControl);
 			}
 		}.bind(this));
