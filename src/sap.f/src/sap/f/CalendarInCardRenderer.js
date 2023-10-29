@@ -23,13 +23,6 @@ sap.ui.define([
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.f.CalendarInCard} oCal an object representation of the control that should be rendered
 		 */
-
-		/**
-		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.f.Calendar} oCal an object representation of the control that should be rendered
-		 */
 		CalendarInCardRenderer.render = function(oRm, oCal){
 
 			// oCal._iMode = 0; // it's rendered always as DayPicker

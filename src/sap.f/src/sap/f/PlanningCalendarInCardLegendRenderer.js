@@ -17,7 +17,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		/**
 		 * Renders a header for the <code>items</code> list.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.unified.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
+		 * @param {sap.f.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
 		 * @override
 		 */
 		PlanningCalendarInCardLegendRenderer.renderItemsHeader = function(oRm, oLeg) {};
@@ -25,14 +25,14 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		/**
 		 * Renders a header for the <code>appointmentItems</code> list.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.unified.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
+		 * @param {sap.f.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
 		 */
 		PlanningCalendarInCardLegendRenderer.renderAppointmentsItemsHeader = function(oRm, oLeg) {};
 
 		/**
 		 * Renders additional content after the <code>items</code> list - a second list for the <code>appointmentItems</code> with a header.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.unified.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
+		 * @param {sap.f.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
 		 * @override
 		 */
 		PlanningCalendarInCardLegendRenderer.renderAdditionalContent = function(oRm, oLeg) {};
@@ -40,7 +40,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		/**
 		 * Renders additional content after the <code>items</code> list - a second list for the <code>appointmentItems</code> with a header.
 		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
-		 * @param {sap.ui.unified.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
+		 * @param {sap.f.PlanningCalendarInCardLegend} oLeg an object representation of the legend that should be rendered
 		 * @override
 		 */
 		PlanningCalendarInCardLegendRenderer.renderAdditionalItems = function(oRm, oLeg) {
