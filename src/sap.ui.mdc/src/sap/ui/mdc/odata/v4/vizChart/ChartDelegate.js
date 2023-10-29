@@ -1586,51 +1586,10 @@ sap.ui.define([
      * @ui5-restricted sap.fe, sap.ui.mdc
      */
     ChartDelegate.updateBindingInfo = function (oChart, oBindingInfo) {
-        const aFilters = createInnerFilters.call(this, oChart).concat(createOuterFilters.call(this, oChart));
         addSearchParameter(oChart, oBindingInfo);
-		oBindingInfo.filters = new Filter(aFilters, true);
+		oBindingInfo.filters = this.getFilters(oChart);
         oBindingInfo.sorter = this.getSorters(oChart);
-
     };
-
-    function createInnerFilters(oChart) {
-		const bFilterEnabled = oChart.getP13nMode().indexOf("Filter") > -1;
-		const aFilters = [];
-
-		if (bFilterEnabled) {
-			const aChartProperties = oChart.getPropertyHelper().getProperties();
-			const oInnerFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), oChart.getConditions(), aChartProperties);
-
-			if (oInnerFilterInfo.filters) {
-				aFilters.push(oInnerFilterInfo.filters);
-			}
-		}
-
-		return aFilters;
-	}
-
-	function createOuterFilters(oChart) {
-		const oFilter = Element.getElementById(oChart.getFilter());
-		const aFilters = [];
-
-		if (!oFilter) {
-			return aFilters;
-		}
-
-		const mConditions = oFilter.getConditions();
-
-		if (mConditions) {
-			const aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
-			const aParameterNames = DelegateUtil.getParameterNames(oFilter);
-			const oOuterFilterInfo = FilterUtil.getFilterInfo(this.getTypeMap(), mConditions, aPropertiesMetadata, aParameterNames);
-
-			if (oOuterFilterInfo.filters) {
-				aFilters.push(oOuterFilterInfo.filters);
-			}
-		}
-
-		return aFilters;
-	}
 
 	function addSearchParameter(oChart, oBindingInfo) {
 		const oFilter = Element.getElementById(oChart.getFilter());

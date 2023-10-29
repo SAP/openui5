@@ -3,8 +3,8 @@
  */
 
 // Provides enumeration sap.m.p13n.ProcessingStrategy
-sap.ui.define(function() {
-	"use strict";
+sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
+    "use strict";
 
    /**
 	 * Defines the delta types of the <code>sap.m.p13n.p13n.Engine</code>.
@@ -41,6 +41,8 @@ sap.ui.define(function() {
 		 */
 		FullReplace: "FullReplace"
 	};
+
+	DataType.registerEnum("sap.m.p13n.enum.ProcessingStrategy", ProcessingStrategy);
 
 	return ProcessingStrategy;
 

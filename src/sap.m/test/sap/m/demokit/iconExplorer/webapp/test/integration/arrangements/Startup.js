@@ -73,12 +73,6 @@ sap.ui.define([
 			this.iStartMyApp(oOptions);
 		},
 
-		iStartMyAppOnTheVisualTab: function (oOptions) {
-			oOptions = oOptions || {};
-			oOptions.hash = "overview/SAP-icons?tab=visual";
-			this.iStartMyApp(oOptions);
-		},
-
 		iStartMyAppOnTheFavoriteTab: function (oOptions) {
 			oOptions = oOptions || {};
 			oOptions.hash = "overview/SAP-icons?tab=favorite";

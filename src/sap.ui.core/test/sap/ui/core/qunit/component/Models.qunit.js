@@ -33,7 +33,6 @@ sap.ui.define([
 	XMLModel,
 	CustomModel
 ) {
-
 	"use strict";
 	/*global sinon, QUnit*/
 
@@ -139,8 +138,6 @@ sap.ui.define([
 		}
 	};
 
-
-
 	QUnit.module('default', {
 		before: function() {
 			// preload any used libraries / modules to avoid sync requests
@@ -165,7 +162,7 @@ sap.ui.define([
 			this.spyModels();
 			this.oLogSpy = this.spy(Log, "error");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.restoreGetUriParameters();
 		}
@@ -1147,7 +1144,7 @@ sap.ui.define([
 			this.stubGetUriParameters();
 			this.oLogSpy = sinon.spy(Log, "error");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.restoreGetUriParameters();
 			this.oLogSpy.restore();
@@ -1486,7 +1483,7 @@ sap.ui.define([
 				"Not found"
 			]);
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
@@ -1923,9 +1920,8 @@ sap.ui.define([
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 		}
@@ -2004,9 +2000,8 @@ sap.ui.define([
 
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
-
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 		}
@@ -2265,7 +2260,7 @@ sap.ui.define([
 
 			this.stubGetUriParameters();
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 			this.restoreGetUriParameters();
@@ -2481,11 +2476,12 @@ sap.ui.define([
 	QUnit.module("sap.ui.model.v2.ODataModel (with cacheTokens)", {
 		beforeEach: function() {
 			bindHelper.apply(this);
+
 			BaseConfig._.invalidate();
 			this.oLogErrorSpy = sinon.spy(Log, "error");
 			this.oLogWarningSpy = sinon.spy(Log, "warning");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 		}
@@ -2660,7 +2656,7 @@ sap.ui.define([
 
 			this.stubGetUriParameters();
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.oLogErrorSpy.restore();
 			this.oLogWarningSpy.restore();
 			this.restoreGetUriParameters();
@@ -3656,7 +3652,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
 			this.restoreModels();
 			this.oLogSpy.restore();
 

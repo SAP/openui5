@@ -61,14 +61,6 @@ sap.ui.define([
 		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
 	});
 
-	opaTest("Should see the not found text for no search results on the visual tab", function (Given, When, Then) {
-		//Actions
-		When.onTheOverviewPage.iPressOnTheTabWithTheKey("visual");
-
-		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
-	});
-
 	opaTest("Should see the not found text for no search results on the favorites tab", function (Given, When, Then) {
 		//Actions
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");

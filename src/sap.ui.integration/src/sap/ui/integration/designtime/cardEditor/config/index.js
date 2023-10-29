@@ -118,13 +118,8 @@ sap.ui.define([
 					"type": "select",
 					"items": [
 						{ "key": "List" },
-						{ "key": "Analytical" },
 						{ "key": "Table" },
-						{ "key": "Object" },
-						{ "key": "Timeline" },
-						{ "key": "Component" },
-						{ "key": "Calendar" },
-						{ "key": "AdaptiveCard" }
+						{ "key": "Object" }
 					],
 					"path": "type"
 				},

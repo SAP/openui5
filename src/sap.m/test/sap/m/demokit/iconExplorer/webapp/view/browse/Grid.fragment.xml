@@ -16,7 +16,6 @@
 			},
 			templateShareable: true
 		}"
-		noDataText="{view>/overviewNoDataText}"
 		growing="true"
 		growingScrollToLoad="true"
 		growingThreshold="{view>/growingThreshold}"

@@ -242,7 +242,6 @@ sap.ui.define([
 
 	{
 		constructor : function(sId, mSettings) {
-
 			// create a copy of arguments for later handover to ManagedObject
 			var args = Array.prototype.slice.call(arguments);
 
@@ -280,17 +279,21 @@ sap.ui.define([
 
 			}
 
+			// --- Special settings (internal only) below ---
+
+			// cache tokens
 			if (mSettings && typeof mSettings._cacheTokens === "object") {
 				this._mCacheTokens = mSettings._cacheTokens;
 				delete mSettings._cacheTokens;
 			}
 
+			// active terminologies
 			if (mSettings && Array.isArray(mSettings._activeTerminologies)) {
 				this._aActiveTerminologies = mSettings._activeTerminologies;
 				delete mSettings._activeTerminologies;
 			}
 
-			// registry of models from manifest
+			// registry of preloaded models from manifest ('afterManifest' models)
 			if (mSettings && typeof mSettings._manifestModels === "object") {
 				// use already created models from sap.ui.component.load if available
 				this._mManifestModels = mSettings._manifestModels;
@@ -982,7 +985,6 @@ sap.ui.define([
 			dataSources: mDataSources,
 			componentName: sComponentName
 		});
-		Component._loadManifestModelClasses(mAllModelConfigs, sComponentName);
 
 		var mAllModelConfigurations = Component._createManifestModelConfigurations({
 			models: mAllModelConfigs,
@@ -1605,14 +1607,11 @@ sap.ui.define([
 		var mModelConfigurations = {};
 		// create a model for each ["sap.ui5"]["models"] entry
 		for (var sModelName in mConfig.models) {
-
 			var oModelConfig = mConfig.models[sModelName];
 			var fnClass = sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
-			if (!fnClass) {
-				fnClass =  ObjectPath.get(oModelConfig.type);
-			}
-			// class could not be loaded by _loadManifestModelClasses
-			if (!fnClass) {
+			// class could not be loaded by _loadManifestModelClasses, or module export is not
+			// a valid UI5 class (no metadata available) -> a legacy testcases exist for this scenario!
+			if (!fnClass?.getMetadata) {
 				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be found", "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
 				continue;
 			}
@@ -1918,7 +1917,6 @@ sap.ui.define([
 
 			// Add final configuration to result map
 			mModelConfigurations[sModelName] = oModelConfig;
-
 		}
 
 		if (oManifest.getEntry("/sap.ui5/commands") || (oComponent && oComponent._getManifestEntry("/sap.ui5/commands", true))) {
@@ -1931,19 +1929,23 @@ sap.ui.define([
 		return mModelConfigurations;
 	};
 
-	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName) {
-		for (var sModelName in mModelConfigurations) {
-			var oModelConfig = mModelConfigurations[sModelName];
+	Component._loadManifestModelClasses = function(mModelConfigurations, sLogComponentName, bSync) {
+		const aLoadPromises = [];
 
-			// load model class and log error message if it couldn't be loaded.
-			// error gets caught to continue creating the other models and not breaking the execution here
-			try {
-				sap.ui.requireSync(oModelConfig.type.replace(/\./g, "/"));
-			} catch (oError) {
-				Log.error("Component Manifest: Class \"" + oModelConfig.type + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
-				continue;
-			}
+		function logLoadingError(sModelClassName, sModelName, oError) {
+			Log.error("Component Manifest: Class \"" + sModelClassName + "\" for model \"" + sModelName + "\" could not be loaded. " + oError, "[\"sap.ui5\"][\"models\"][\"" + sModelName + "\"]", sLogComponentName);
 		}
+
+		for (const sModelName in mModelConfigurations) {
+			const oModelConfig = mModelConfigurations[sModelName];
+			const sModelClass = oModelConfig.type.replace(/\./g, "/");
+
+			aLoadPromises.push(new Promise((resolve, reject) => {
+				sap.ui.require([sModelClass], resolve, reject);
+			}).catch(logLoadingError.bind(null, oModelConfig.type, sModelName)));
+		}
+
+		return Promise.all(aLoadPromises);
 	};
 
 	/**
@@ -1963,8 +1965,11 @@ sap.ui.define([
 			// and this only works from the global namespace export, not via probing require.
 			// To keep those tests working, the global name is checked first. Only in a context
 			// where global names don't exist or when the model is unknown, the fallback will be used.
-			var fnModelClass = ObjectPath.get(oModelConfig.type)
-				|| sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
+			let fnModelClass;
+
+			if (!fnModelClass) {
+				fnModelClass = sap.ui.require(oModelConfig.type.replace(/\./g, "/"));
+			}
 
 			// create arguments array with leading "null" value so that it can be passed to the apply function
 			var aArgs = [null].concat(oModelConfig.settings || []);
@@ -2471,7 +2476,8 @@ sap.ui.define([
 				id: sId,
 				componentData: oComponentData,
 				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
-				_activeTerminologies: aActiveTerminologies
+				_activeTerminologies: aActiveTerminologies,
+				_syncCreation: !vConfig.async
 			}));
 			assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
 			Log.info("Component instance Id = " + oInstance.getId());
@@ -2538,16 +2544,39 @@ sap.ui.define([
 					});
 				};
 				return loadDependenciesAndIncludes(oClass.getMetadata()).then(async function () {
-					const oManifest = oClass.getMetadata().getManifestObject();
+					const oClassMetadata = oClass.getMetadata();
+					const oManifest = oClassMetadata.getManifestObject();
 					const sComponentName = oManifest.getComponentName();
 
-					// after evaluating the manifest & loading the necessary dependencies,
-					// we make sure the routing related classes are required before instantiating the Component
+					// --- final class provisioning before instantiation ---
+
+					// [1] after evaluating the manifest & loading the necessary dependencies,
+					//     we make sure the routing related classes are required before instantiating the Component
 					const aRoutingClassNames = collectRoutingClasses(oManifest);
 					const aModuleLoadingPromises = aRoutingClassNames.map((sClassName) => {
 						return loadModuleAndLog(sClassName, sComponentName);
 					});
-					await Promise.all(aModuleLoadingPromises);
+
+					// [2] Async require for all(!) manifests models ("preload: true" models might be required already)
+					//     in v1 we prevent sync requests, in v2 we ensure all manifest models can be instantiated
+					//     The best practice is that all model classes are part of a Component dependency (e.g. lib, eager dep in Component.js, ...)
+
+					//     retrieve the merged sap.app and sap.ui5 sections of the manifest
+					const mManifestDataSources = getManifestEntry(oClassMetadata, oManifest, "/sap.app/dataSources", true) || {};
+					const mManifestModels = getManifestEntry(oClassMetadata, oManifest, "/sap.ui5/models", true) || {};
+
+					//     extract classes from manifest
+					const mAllModelConfigs = Component._findManifestModelClasses({
+						models: mManifestModels,
+						dataSources: mManifestDataSources,
+						componentName: sComponentName
+					});
+
+					//     load model classes async
+					const pModelClassLoading = Component._loadManifestModelClasses(mAllModelConfigs, sComponentName);
+
+					// load all classes in parallel
+					await Promise.all([...aModuleLoadingPromises, pModelClassLoading]);
 
 					return ManagedObject.runWithOwner(function() {
 						return createInstance(oClass);
@@ -3096,14 +3125,14 @@ sap.ui.define([
 
 				// create "afterPreload" models in parallel to loading the component preload (below)
 				if (mOptions.createModels) {
-					collect(oManifest.then(function(oManifest) {
+					collect(oManifest.then(async function(oManifest) {
 						var sComponentName = oManifest.getComponentName();
 						// Calculate configurations of preloaded models once the manifest is available
 						mPreloadModelConfigs = getPreloadModelConfigsFromManifest(oManifest);
 
 						// Create preloaded models directly after the manifest has been loaded
 						if (Object.keys(mPreloadModelConfigs.afterManifest).length > 0) {
-							Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
+							await Component._loadManifestModelClasses(mPreloadModelConfigs.afterManifest, sComponentName);
 
 							// deep clone is needed as manifest only returns a read-only copy (frozen object)
 							var oManifestDataSources = merge({}, oManifest.getEntry("/sap.app/dataSources"));

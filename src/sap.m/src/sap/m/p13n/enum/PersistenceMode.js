@@ -1,7 +1,7 @@
 /*
  * ${copyright}
  */
-sap.ui.define(function () {
+sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
     "use strict";
 
 	/**
@@ -48,6 +48,8 @@ sap.ui.define(function () {
          */
         Transient: "Transient"
     };
+
+    DataType.registerEnum("sap.m.p13n.enum.PersistenceMode", PersistenceMode);
 
     return PersistenceMode;
 }, /* bExport= */ true);

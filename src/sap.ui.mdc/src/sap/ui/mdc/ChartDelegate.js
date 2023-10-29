@@ -2,8 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/AggregationBaseDelegate"
-], function (AggregationBaseDelegate) {
+	"sap/ui/mdc/AggregationBaseDelegate",
+	"sap/ui/mdc/mixin/delegate/FilterIntegrationDefault"
+], function (AggregationBaseDelegate, FilterIntegrationDefault) {
 	"use strict";
 
 	/**
@@ -14,11 +15,26 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @alias module:sap/ui/mdc/ChartDelegate
 	 * @extends module:sap/ui/mdc/AggregationBaseDelegate
+	 * @mixes sap.ui.mdc.mixin.delegate.FilterIntegrationDefault
 	 * @since 1.88
 	 * @public
 	 *
+	 *
+	 * @borrows sap.ui.mdc.mixin.delegate.FilterIntegrationDefault.getFilters as #getFilters
+	 *
 	 */
-	const ChartDelegate = Object.assign({}, AggregationBaseDelegate);
+	const ChartDelegate = Object.assign({}, AggregationBaseDelegate, FilterIntegrationDefault);
+
+	/**
+	 * Returns filters to be applied when updating the chart's binding based on the
+	 * filter conditions of the chart itself and it's associated {@link sap.ui.mdc.IFilterSource IFilterSource}.
+	 *
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @returns {sap.ui.model.Filter[]} Array of filters
+	 * @name sap.ui.mdc.ChartDelegate#getFilters
+	 * @since 1.121
+	 * @protected
+	 */
 
 	/**
 	 * Notifies the inner chart to zoom in.
@@ -90,35 +106,35 @@ sap.ui.define([
 			},
 
 			/**
-             * This method is called when an <code>AddCondition</code> change is applied by the personalization.
-             * It can be used to perform tasks, such as caching information or modifying the control.
-             *
-             * @param {sap.ui.mdc.Control} oControl Instance of the control
-             * @param {string} sPropertyName Name of a property
-             * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
-             * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
-             *
-             * @experimental
-             * @private
-             * @ui5-restricted sap.fe, sap.ui.mdc
-             */
+			 * This method is called when an <code>AddCondition</code> change is applied by the personalization.
+			 * It can be used to perform tasks, such as caching information or modifying the control.
+			 *
+			 * @param {sap.ui.mdc.Control} oControl Instance of the control
+			 * @param {string} sPropertyName Name of a property
+			 * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
+			 * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
+			 *
+			 * @experimental
+			 * @private
+			 * @ui5-restricted sap.fe, sap.ui.mdc
+			 */
 			addCondition: function (oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			},
 
-            /**
-             * This method is called when a <code>RemoveCondition</code> change is applied by the personalization.
-             * It can be used to perform tasks, such as caching information or modifying the control.
-             *
-             * @param {sap.ui.mdc.Control} oControl Instance of the control
-             * @param {string} sPropertyName Name of a property
-             * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
-             * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
-             *
-             * @experimental
-             * @private
-             * @ui5-restricted sap.fe, sap.ui.mdc
-             */
+			/**
+			 * This method is called when a <code>RemoveCondition</code> change is applied by the personalization.
+			 * It can be used to perform tasks, such as caching information or modifying the control.
+			 *
+			 * @param {sap.ui.mdc.Control} oControl Instance of the control
+			 * @param {string} sPropertyName Name of a property
+			 * @param {Object} mPropertyBag Instance of property bag from the SAPUI5 flexibility API
+			 * @returns {Promise} <code>Promise</code> that resolves once the properyInfo property has been updated
+			 *
+			 * @experimental
+			 * @private
+			 * @ui5-restricted sap.fe, sap.ui.mdc
+			 */
 			removeCondition: function (oControl, sPropertyName, mPropertyBag) {
 				return Promise.resolve();
 			}
@@ -155,15 +171,15 @@ sap.ui.define([
 		return Promise.resolve(true);
 	};
 
-    /**
-     * Event handler for <code>SelectionDetails</code> popover.
-     *
-     * @typedef {object} sap.ui.mdc.chart.SelectionDetails
-     * @property {string} eventId  ID of the selection event
-     * @property {sap.ui.core.Control} listener Reference to inner chart
-     *
-     * @public
-     */
+	/**
+	 * Event handler for <code>SelectionDetails</code> popover.
+	 *
+	 * @typedef {object} sap.ui.mdc.chart.SelectionDetails
+	 * @property {string} eventId  ID of the selection event
+	 * @property {sap.ui.core.Control} listener Reference to inner chart
+	 *
+	 * @public
+	 */
 
 	/**
 	 * Returns the event handler for <code>SelectionDetails</code> as an object.
@@ -431,6 +447,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChartDelegate.updateBindingInfo = function (oChart, oBindingInfo) {
+		oBindingInfo.filters = this.getFilters(oChart);
 	};
 
 	/**
@@ -474,25 +491,25 @@ sap.ui.define([
 	ChartDelegate.getPropertyFromNameAndKind = function (sName, sKind, oChart) {
 	};
 
-    /**
-     * Returns the relevant property info based on the metadata used with the chart instance.
-     *
-     * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-     * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos that is used within the chart
-     *
-     * @public
-     */
+	/**
+	 * Returns the relevant property info based on the metadata used with the chart instance.
+	 *
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @returns {Promise<sap.ui.mdc.chart.PropertyInfo[]>} Array of the property infos that is used within the chart
+	 *
+	 * @public
+	 */
 	ChartDelegate.fetchProperties = function (oChart) {
 	};
 
-    /**
-     * Adds/Removes the busy overlay shown above the inner chart.
-     *
-     * @param {sap.ui.mdc.Chart} oChart Reference to the chart
-     * @param {boolean} bShow Shows overlay if set to <code>true</code>
-     *
-     * @public
-     */
+	/**
+	 * Adds/Removes the busy overlay shown above the inner chart.
+	 *
+	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
+	 * @param {boolean} bShow Shows overlay if set to <code>true</code>
+	 *
+	 * @public
+	 */
 	ChartDelegate.showOverlay = function (oChart, bShow) {
 	};
 

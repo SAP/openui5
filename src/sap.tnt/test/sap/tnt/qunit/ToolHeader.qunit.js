@@ -242,5 +242,22 @@ sap.ui.define([
 		assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
 	});
 
+	QUnit.test("ToolHeader sapMBarChildFirstChild class", function (assert) {
+		var oFirstControl = this.toolHeader.getContent()[0],
+			oSecondControl = this.toolHeader.getContent()[1];
+
+		//Assert
+		assert.ok(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child has 'sapMBarChildFirstChild' class");
+		assert.notOk(oSecondControl.hasStyleClass("sapMBarChildFirstChild"), "Second child does not have 'sapMBarChildFirstChild' class");
+
+		//Act
+		oFirstControl.setVisible(false);
+		oCore.applyChanges();
+
+		//Assert
+		assert.notOk(oFirstControl.hasStyleClass("sapMBarChildFirstChild"), "First child does not have 'sapMBarChildFirstChild' class");
+		assert.ok(oSecondControl.hasStyleClass("sapMBarChildFirstChild"), "Second child now has 'sapMBarChildFirstChild' class, as the first one is not visible");
+	});
+
 	return waitForThemeApplied();
 });

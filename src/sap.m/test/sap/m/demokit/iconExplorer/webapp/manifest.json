@@ -111,6 +111,11 @@
 					"target": "home"
 				},
 				{
+					"pattern": "info",
+					"name": "info",
+					"target": "info"
+				},
+				{
 					"pattern": ":?query:",
 					"name": "legacy",
 					"target": ["overview"]
@@ -127,6 +132,11 @@
 					"name": "Home",
 					"id": "home",
 					"level": 1
+				},
+				"info": {
+					"name": "Info",
+					"id": "info",
+					"level": 2
 				},
 				"overview": {
 					"name": "Overview",
