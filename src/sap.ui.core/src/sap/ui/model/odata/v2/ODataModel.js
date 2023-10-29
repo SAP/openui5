@@ -3959,7 +3959,7 @@ sap.ui.define([
 	 * @param {map} mRequests Request queue
 	 * @param {string} sGroupId ID of a request group; requests belonging to the same group will be bundled in one batch request
 	 * @param {string} [sChangeSetId] The changeSet Id
-	 * @param {oRequest} oRequest The request
+	 * @param {object} oRequest The request
 	 * @param {function} fnSuccess The success callback function
 	 * @param {function} fnError The error callback function
 	 * @param {object} requestHandle Handle for the requests

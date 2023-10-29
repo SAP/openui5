@@ -808,7 +808,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent event object
 	 * @private
 	 */
 	ElementOverlay.prototype._onElementModified = function(oEvent) {

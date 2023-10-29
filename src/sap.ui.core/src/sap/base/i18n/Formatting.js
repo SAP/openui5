@@ -945,7 +945,7 @@ sap.ui.define([
 		 * Returns a live object with the current settings
 		 * TODO this method is part of the facade to be accessible from LocaleData, but it shouldn't be
 		 *
-		 * @returns {mSettings} The custom LocaleData settings object
+		 * @returns {object} The custom LocaleData settings object
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 * @since 1.116.0

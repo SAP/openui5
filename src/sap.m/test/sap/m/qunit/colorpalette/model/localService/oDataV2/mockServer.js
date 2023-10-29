@@ -1,7 +1,7 @@
 sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/base/Log",
-	"jQuery.sap.sjax"
+	"jquery.sap.sjax"
 ], function (MockServer, Log, jQuery) {
 	"use strict";
 	var oMockServer,

@@ -53,7 +53,7 @@ sap.ui.define([
 		/**
 		 * Adapt the given container control like table or form
 		 *
-		 * @param {oControl} [oControl]
+		 * @param {sap.m.Table|sap.ui.layout.form.SimpleForm} [oControl]
 		 *   The Container control
 		 * @param {number} [iStart]
 		 *   Index in the "items" or "content" aggregation of the container control: controls can be
