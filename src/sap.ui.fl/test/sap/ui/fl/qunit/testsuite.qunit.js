@@ -876,10 +876,10 @@ sap.ui.define([
 					flexibilityServices: '[{"connector": "ObjectStorageConnector", "layers": []}]'
 				}
 			},
-			"descriptorRelated/internal/Utils": {
+			"descriptorRelated/Utils": {
 				group: "Descriptor related Utils",
 				coverage: {
-					only: ["sap/ui/fl/descriptorRelated/internal/Utils"]
+					only: ["sap/ui/fl/descriptorRelated/Utils"]
 				}
 			},
 
