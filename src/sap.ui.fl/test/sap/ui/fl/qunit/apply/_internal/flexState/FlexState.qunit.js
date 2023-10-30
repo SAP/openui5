@@ -341,19 +341,13 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when getUIChanges / getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
+		QUnit.test("when getAppDescriptorChanges / getVariantsState is called without initialization", function(assert) {
 			return FlexState.initialize({
 				reference: "sap.ui.fl.other.reference",
 				componentId: sComponentId
 			})
 			.then(function() {
 				assert.equal(this.oCallPrepareFunctionStub.callCount, 0, "no prepare function was called");
-				assert.throws(
-					function() {
-						FlexState.getUIChanges(sReference);
-					},
-					"the getUIChanges function throws an error"
-				);
 				assert.throws(
 					function() {
 						FlexState.getAppDescriptorChanges(sReference);
@@ -387,19 +381,12 @@ sap.ui.define([
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
 				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 
-				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once for the UI Changes");
-				assert.strictEqual(FlexState.getUIChanges(sReference), "changes", "the correct map is returned");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
+				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was called once for the CompVariants");
+				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
 				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 2, "the prepare function was not called again");
 				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session  was not triggered again");
-
-				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was called once for the CompVariants");
-				assert.strictEqual(FlexState.getCompVariantsMap(sReference), "compVariants", "the correct map is returned");
-				assert.strictEqual(this.oCallPrepareFunctionStub.callCount, 3, "the prepare function was not called again");
-				assert.strictEqual(this.oIsLayerFilteringRequiredStub.callCount, 1, "the filtering was not triggered again");
-				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session  was not triggered again");
+				assert.strictEqual(this.oGetFlexInfoSessionStub.callCount, 1, "get flex info session was not triggered again");
 			}.bind(this));
 		});
 
@@ -416,34 +403,34 @@ sap.ui.define([
 				componentId: sComponentId
 			}))
 			.then(function() {
-				assert.ok(FlexState.getUIChanges(sReference), "before clearState state1 is available");
-				assert.ok(FlexState.getUIChanges(sReference2), "before clearState state2 is available");
+				assert.ok(FlexState.getCompVariantsMap(sReference), "before clearState state1 is available");
+				assert.ok(FlexState.getCompVariantsMap(sReference2), "before clearState state2 is available");
 				FlexState.clearState(sReference);
 				assert.throws(
 					function() {
-						FlexState.getUIChanges({reference: sReference});
+						FlexState.getCompVariantsMap({reference: sReference});
 					},
 					"after clearState(1) there is no state1 anymore"
 				);
-				assert.ok(FlexState.getUIChanges(sReference2), "after clearState(1) state2 is still there");
+				assert.ok(FlexState.getCompVariantsMap(sReference2), "after clearState(1) state2 is still there");
 			})
 			.then(FlexState.initialize.bind(null, {
 				reference: sReference3,
 				componentId: sComponentId
 			}))
 			.then(function() {
-				assert.ok(FlexState.getUIChanges(sReference2), "before clearState state2 is available");
-				assert.ok(FlexState.getUIChanges(sReference3), "before clearState state3 is available");
+				assert.ok(FlexState.getCompVariantsMap(sReference2), "before clearState state2 is available");
+				assert.ok(FlexState.getCompVariantsMap(sReference3), "before clearState state3 is available");
 				FlexState.clearState();
 				assert.throws(
 					function() {
-						FlexState.getUIChanges({reference: sReference});
+						FlexState.getCompVariantsMap({reference: sReference});
 					},
 					"after clearState() there is no state2 anymore"
 				);
 				assert.throws(
 					function() {
-						FlexState.getUIChanges({reference: sReference});
+						FlexState.getCompVariantsMap({reference: sReference});
 					},
 					"after clearState() there is no state3 anymore"
 				);
