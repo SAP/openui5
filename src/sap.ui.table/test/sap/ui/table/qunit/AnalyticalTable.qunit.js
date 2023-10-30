@@ -705,7 +705,10 @@ sap.ui.define([
 		function doTest(oTable) {
 			assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
 
-			TableUtils.Menu.openContextMenu(oTable, {target: oTable.getRows()[0].getCells()[4].getDomRef()});
+			TableUtils.Menu.openContextMenu(oTable, {
+				target: oTable.getRows()[0].getCells()[4].getDomRef(),
+				preventDefault: () => {}
+			});
 			assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
 
 			oTable._adaptLocalization(true, false).then(function() {

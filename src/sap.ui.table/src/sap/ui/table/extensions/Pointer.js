@@ -744,11 +744,7 @@ sap.ui.define([
 				delete oPointerExtension._bShowDefaultMenu;
 
 			} else if (oPointerExtension._bShowMenu) {
-				var bContextMenuOpened = TableUtils.Menu.openContextMenu(this, oEvent);
-
-				if (bContextMenuOpened) {
-					oEvent.preventDefault(); // To prevent opening the default browser context menu.
-				}
+				TableUtils.Menu.openContextMenu(this, oEvent);
 				oEvent.setMarked("sapUiTableHandledByPointerExtension");
 				delete oPointerExtension._bShowMenu;
 

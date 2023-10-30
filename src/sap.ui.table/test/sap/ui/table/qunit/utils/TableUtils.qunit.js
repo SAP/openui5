@@ -194,7 +194,7 @@ sap.ui.define([
 
 		var oCell = getCell(0, 0);
 		var oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Data Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "Data Cell: Correct cell object returned");
 		assert.strictEqual(oInfo.isOfType(), false, "No parameter was passed to isOfType() -> Returned false");
 		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is DATACELL");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
@@ -218,7 +218,7 @@ sap.ui.define([
 
 		oCell = getColumnHeader(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Column Header Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "Column Header Cell: Correct cell object returned");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
 		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is COLUMNHEADER");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
@@ -254,7 +254,7 @@ sap.ui.define([
 
 		oCell = getRowHeader(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Header Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "Row Header Cell: Correct cell object returned");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
 		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is ROWHEADER");
@@ -272,7 +272,7 @@ sap.ui.define([
 
 		oCell = getRowAction(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Action Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "Row Action Cell: Correct cell object returned");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
@@ -290,7 +290,7 @@ sap.ui.define([
 
 		oCell = getSelectAll();
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "SelectAll Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "SelectAll Cell: Correct cell object returned");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
@@ -308,7 +308,7 @@ sap.ui.define([
 
 		oCell = oTable.getCreationRow()._getCellDomRef(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Creation Row Pseudo Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.cell, oCell.get(0), "Creation Row Pseudo Cell: Correct cell object returned");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
 		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
