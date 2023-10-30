@@ -62,6 +62,15 @@ function(
 		throw new Error("No Manifest received, descriptor changes are not possible");
 	}
 
+	function getAppVersionFromManifest(oManifest) {
+		if (oManifest) {
+			var oSapApp = (oManifest.getEntry) ? oManifest.getEntry("sap.app") : oManifest["sap.app"];
+			var sAppVersion = oSapApp.applicationVersion?.version;
+			return sAppVersion;
+		}
+		return undefined;
+	}
+
 	/**
 	 * Provides utility functions for handling manifests; All function work with Manifest Objects or raw manifests
 	 *
@@ -81,6 +90,17 @@ function(
 		 * @ui5-restricted sap.ui.fl, sap.ui.rta
 		 */
 		getAppIdFromManifest,
+
+		/**
+		 * Returns the app version
+		 *
+		 * @param {object|sap.ui.core.Manifest} oManifest - Manifest of the component
+		 * @returns {string} Version of application if it is available in the manifest, otherwise an empty string
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.fl, sap.ui.rta
+		 */
+		getAppVersionFromManifest,
 
 		getFlexReference,
 

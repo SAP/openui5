@@ -268,6 +268,27 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("ManifestUtils.getAppVersionFromManifest", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("without a getEntry function (manifest JSON)", function(assert) {
+			var sId = "appId";
+			var sVersion = "appVersion";
+			var oManifest = {
+				"sap.app": {
+					applicationVersion: {
+						version: sVersion
+					},
+					id: sId
+				}
+			};
+
+			assert.equal(ManifestUtils.getAppVersionFromManifest(oManifest), sVersion, "the Version is returned");
+		});
+	});
+
 	QUnit.module("ManifestUtils.getCacheKeyFromAsyncHints", {}, function() {
 		QUnit.test("without async hints given", function(assert) {
 			assert.equal(ManifestUtils.getCacheKeyFromAsyncHints({}), undefined, "nothing is returned");
