@@ -11,7 +11,8 @@ sap.ui.define([
 	"./BindingHelper",
 	"./BindingResolver",
 	"./DateRangeHelper",
-	"./Duration"
+	"./Duration",
+	"./ComboBoxHelper"
 ], function (
 	ManagedObject,
 	Library,
@@ -22,7 +23,8 @@ sap.ui.define([
 	BindingHelper,
 	BindingResolver,
 	DateRangeHelper,
-	Duration
+	Duration,
+	ComboBoxHelper
 ) {
 	"use strict";
 
@@ -149,7 +151,7 @@ sap.ui.define([
 			vValue = oFormControlData.value;
 
 		if (oControl.isA("sap.m.ComboBox")) {
-			this._setComboBoxValue(oControl, oFormControlData);
+			ComboBoxHelper.setValueAndKey(oControl, oFormControlData.key, oFormControlData.value);
 		} else if (vValue) {
 			if (oControl.isA("sap.m.DatePicker") || oControl.isA("sap.m.DynamicDateRange")) {
 				DateRangeHelper.setValue(oControl, vValue, this._oCard);
@@ -165,33 +167,6 @@ sap.ui.define([
 
 	Form.prototype.updateModel = function () {
 		this._mControls.forEach(this._updateModel.bind(this));
-	};
-
-	Form.prototype._setComboBoxValue = function (oComboBox, oControlData) {
-		var oSelectedItem;
-
-		if ("key" in oControlData) {
-			oComboBox.setSelectedKey(oControlData.key);
-
-			oSelectedItem = oComboBox.getItems().find(function (oItem) {
-				return oItem.getKey() === oControlData.key;
-			});
-
-			oComboBox.setValue(oSelectedItem ? oSelectedItem.getText() : "");
-		}
-
-		if ("value" in oControlData && !("key" in oControlData)) {
-			oSelectedItem = oComboBox.getItems().find(function (oItem) {
-				return oItem.getText() === oControlData.value;
-			});
-
-			if (oSelectedItem) {
-				oComboBox.setSelectedItem(oSelectedItem);
-			} else {
-				oComboBox.setSelectedKey(""); // now entering unknown value, reset selectedKey to keep it in sync
-				oComboBox.setValue(oControlData.value);
-			}
-		}
 	};
 
 	Form.prototype._isValidControlId = function (sId) {

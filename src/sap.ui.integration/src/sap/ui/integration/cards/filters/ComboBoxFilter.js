@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/util/ComboBoxHelper",
 	"sap/base/util/merge"
 ], function (
 	BaseFilter,
@@ -14,6 +15,7 @@ sap.ui.define([
 	ListItem,
 	JSONModel,
 	BindingResolver,
+	ComboBoxHelper,
 	merge
 ) {
 	"use strict";
@@ -76,9 +78,11 @@ sap.ui.define([
 	ComboBoxFilter.prototype.onDataChanged = function () {
 		const oComboBox = this._getComboBox();
 
-		if (oComboBox.getSelectedKey()) {
-			oComboBox.setSelectedKey(oComboBox.getSelectedKey());
-		}
+		ComboBoxHelper.setValueAndKey(
+			oComboBox,
+			oComboBox.getSelectedKey(),
+			oComboBox.getValue()
+		);
 
 		this._syncValue();
 	};
@@ -107,9 +111,15 @@ sap.ui.define([
 
 	/**
 	 * @override
+	 * @param {Object} oValue The new value for the filter.
+	 * @param {string} oValue.value The value of the Combo Box.
+	 * @param {string} oValue.selectedKey If selectedKey is given - this will be used for selectedKey of the ComboBox and "value" will be ignored.
 	 */
-	ComboBoxFilter.prototype.setValueFromOutside = function (sKey) {
-		this._getComboBox().setSelectedKey(BindingResolver.resolveValue(sKey, this.getCardInstance()));
+	ComboBoxFilter.prototype.setValueFromOutside = function (oValue) {
+		const oResolvedValue = BindingResolver.resolveValue(oValue, this.getCardInstance());
+
+		ComboBoxHelper.setValueAndKey(this._getComboBox(), oResolvedValue?.selectedKey, oResolvedValue?.value);
+
 		this._syncValue();
 	};
 
@@ -149,7 +159,10 @@ sap.ui.define([
 		const oStaticConfiguration = merge({}, oConfiguration);
 		delete oStaticConfiguration.item;
 		oStaticConfiguration.items = aResolvedItems;
-		oStaticConfiguration.value = this.getValueForModel().value;
+
+		const oValueForModel = this.getValueForModel();
+		oStaticConfiguration.value = oValueForModel.value;
+		oStaticConfiguration.selectedKey = oValueForModel.selectedItem?.key;
 
 		return oStaticConfiguration;
 	};
@@ -217,8 +230,12 @@ sap.ui.define([
 
 		oComboBox.setShowSecondaryValues(true);
 		oComboBox.setFilterSecondaryValues(true);
-		oComboBox.setSelectedKey(BindingResolver.resolveValue(oConfig.selectedKey, oCard));
-		oComboBox.setValue(BindingResolver.resolveValue(oConfig.value, oCard));
+
+		ComboBoxHelper.setValueAndKey(
+			oComboBox,
+			BindingResolver.resolveValue(oConfig.selectedKey, oCard),
+			BindingResolver.resolveValue(oConfig.value, oCard)
+		);
 
 		const oLabel = this.createLabel(oConfig);
 		if (oLabel) {
