@@ -101,13 +101,16 @@ sap.ui.define([
 		});
 
 		QUnit.test("more link shows correct value for multi-day appointments", function(assert) {
-			var oLinkDay3 = this.oSPC._aLinks[4],
-				oLinkDay5 = this.oSPC._aLinks[6];
+			var oLinkDay2 = this.oSPC._aLinks[3],
+				oLinkDay3 = this.oSPC._aLinks[4],
+				oLinkDay5 = this.oSPC._aLinks[6],
+				oLinkDay6 = this.oSPC._aLinks[7];
 
 			// assert
+			assert.equal(oLinkDay2.getText().toLowerCase(), "3 more", "it's text is correct on the next day");
 			assert.equal(oLinkDay3.getText().toLowerCase(), "2 more", "it's text is correct on the next day");
-			assert.equal(oLinkDay5.getText().toLowerCase(), "1 more", "it's text is correct on the last day");
-
+			assert.equal(oLinkDay5, undefined, "overflowing appointment renders on next day");
+			assert.equal(oLinkDay6, undefined, "overflowing appointment renders on next day");
 		});
 
 		QUnit.test("more link custom data", function(assert) {
@@ -278,8 +281,8 @@ sap.ui.define([
 			aAppointmentNodes = this.oSPC._calculateAppointmentsNodes(this.oSPC.getStartDate());
 
 			// assert
-			assert.ok(aAppointmentNodes[1].level, 0, "same-day appointments have correct levels");
-			assert.ok(aAppointmentNodes[2].level, 1, "same-day appointments have correct levels");
+			assert.equal(aAppointmentNodes[1].level, 1, "same-day appointments have correct levels");
+			assert.equal(aAppointmentNodes[2].level, 2, "same-day appointments have correct levels");
 		});
 
 		QUnit.test("Invalid appointments", function(assert) {
