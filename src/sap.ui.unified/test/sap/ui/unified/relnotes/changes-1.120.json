@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "59dc8877fc21fc02ce5e125fe448e730b8136376",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomMonthPicker: fixed missing year in internal MonthPicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009186302023"
+          }
+        ]
+      },
+      {
         "id": "6fc891f91c23a87ded04339bd5995f576dddd467",
         "type": "FIX",
         "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",

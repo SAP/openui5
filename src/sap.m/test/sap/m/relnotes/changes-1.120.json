@@ -3,6 +3,39 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "a69406b6398bb5fe83bda631bcea489ccefd81ec",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      },
+      {
+        "id": "59dc8877fc21fc02ce5e125fe448e730b8136376",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomMonthPicker: fixed missing year in internal MonthPicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009186302023"
+          }
+        ]
+      },
+      {
+        "id": "dd95ea33c0e95972f69df995bfa233753f7f7f72",
+        "type": "FIX",
+        "text": " sap.m.Input: Reopen Suggestion Popover when new data is bound",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122595"
+          }
+        ]
+      },
+      {
         "id": "8f4c93b5b2b092e9a1e54dcd91f3ef5d2b02fcd1",
         "type": "FIX",
         "text": " sap.m.Input: Type-ahead functionality corrected",

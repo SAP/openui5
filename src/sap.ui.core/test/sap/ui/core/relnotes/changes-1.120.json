@@ -3,6 +3,127 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "4b769e6452265f5cb4516d4a60991279104fc5e9",
+        "type": "FIX",
+        "text": " Remove legacy onInit definitions (global,function,eval)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "17813f26a67fbacccfb9d588584d5baf1d292d66",
+        "type": "FIX",
+        "text": " Deprecate legacy config options",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2d4bd01ac6f35d192ce87795cb44ef7caed61eb4",
+        "type": "FIX",
+        "text": " sap/base/i18n/Formatting.setLanguageTag accept LanguageTag",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "2791797d0276564b7320215a7f2355857f9c7aa3",
+        "type": "FIX",
+        "text": " sap.ui.core.qunit.i18n.helper._timezones: Set CLDR version to 43 for aCLDRTimezoneIDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122403"
+          }
+        ]
+      },
+      {
+        "id": "ed2ec605b708fe0ed17c88bad2e33068b130816c",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      },
+      {
+        "id": "36abc5a0b331de04388b1eca3aa951dd7ae25daa",
+        "type": "FIX",
+        "text": " sap/base/i18n/Formatting: JSDoc correction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c377ba33fdc67144aec72ec268ebe2897f9971a0",
+        "type": "FIX",
+        "text": " core/support/plugins/Selector: Fix missing Element dependency",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370117058"
+          }
+        ]
+      },
+      {
+        "id": "c682d42fa690b74db6df6768ff45ae63b062901c",
+        "type": "FIX",
+        "text": " sap/base/config: Harmonize logging and only log sap params",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118877"
+          }
+        ]
+      },
+      {
+        "id": "910613f41979d0f427fca15043162ce042868e53",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#bindTree: document transitionMessagesOnly parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122405"
+          }
+        ]
+      },
+      {
+        "id": "1e0e92bf271614276a0a71230ac8f472688d8d5b",
+        "type": "FIX",
+        "text": " Stabilize Qunit test for themeRoot validation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370121940"
+          }
+        ]
+      },
+      {
+        "id": "00a07605a035fbd8c79d35666d70ccc522468946",
+        "type": "FIX",
+        "text": " Normalize globalThis \"sap-ui-config\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370116536"
+          }
+        ]
+      },
+      {
         "id": "cbb7e26fc583fb458decc15f2dbe027ab337583c",
         "type": "FIX",
         "text": " sap.ui.model.odata.v2.ODataModel#_processSuccess: RFC9110 (205) violation",

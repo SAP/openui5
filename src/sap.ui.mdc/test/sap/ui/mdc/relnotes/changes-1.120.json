@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "12747270c78295defb2cd0e237b0b971f55f9171",
+        "type": "FIX",
+        "text": " ValueHelp: busy indicator for typeahed stays forever",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370124674"
+          }
+        ]
+      },
+      {
         "id": "dd73e2f83d8720e0417cbb9c6a91f1b4fa822b79",
         "type": "FEATURE",
         "text": " CellSelector: Improve removal of selection"
