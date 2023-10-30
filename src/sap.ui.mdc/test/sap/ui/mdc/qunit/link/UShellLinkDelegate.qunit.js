@@ -487,7 +487,7 @@ sap.ui.define([
 		}
 	});
 	QUnit.test("Navigation service not available", function(assert) {
-		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("LinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
+		const fnSapLogErrorSpy = sinon.spy(SapBaseLog, "error").withArgs("LinkDelegate: Service 'Navigation' or 'URLParsing' could not be obtained");
 		FakeUShellConnector.disableFakeConnector();
 		const done = assert.async();
 		this.oLink = new Link({
@@ -500,7 +500,7 @@ sap.ui.define([
 		});
 		this.oLink.awaitControlDelegate().then(function() {
 			this.oLink.getControlDelegate()._retrieveNavigationTargets("", {}, this.oLink.getDelegate().payload).then(function(aLinks, oOwnNavigationLink) {
-				assert.ok(fnSapLogErrorSpy.withArgs("LinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained").called);
+				assert.ok(fnSapLogErrorSpy.withArgs("LinkDelegate: Service 'Navigation' or 'URLParsing' could not be obtained").called);
 				assert.equal(oOwnNavigationLink, null);
 				assert.deepEqual(aLinks, []);
 				done();
