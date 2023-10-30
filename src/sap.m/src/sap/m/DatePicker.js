@@ -938,7 +938,7 @@ sap.ui.define([
 	 * Sets <code>showFooter</code> property to the given boolean value
 	 *
 	 * @since 1.70
-	 * @param {} bFlag when true footer is displayed
+	 * @param {boolean} bFlag when true footer is displayed
 	 * @public
 	 */
 	DatePicker.prototype.setShowFooter = function(bFlag) {
@@ -1004,7 +1004,7 @@ sap.ui.define([
 	 *
 	 * @since 1.38.5
 	 * @param {sap.ui.unified.DateTypeRange} oSpecialDate The <code>specialDate</code> to remove or its index or ID
-	 * @returns {sap.ui.unified.DateTypeRange|null} The removed <code>specialDate</code> or <code>null</code>
+	 * @returns {int | string | sap.ui.unified.DateTypeRange} The removed <code>specialDate</code>
 	 * @public
 	 */
 	DatePicker.prototype.removeSpecialDate = function(oSpecialDate){

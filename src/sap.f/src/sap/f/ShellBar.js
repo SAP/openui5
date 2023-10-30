@@ -499,7 +499,7 @@ function(
 		return this.setProperty("showMenuButton", bShow);
 	};
 
-	/**
+	/*
 	 * Sets the number of upcoming notifications.
 	 *
 	 * @override

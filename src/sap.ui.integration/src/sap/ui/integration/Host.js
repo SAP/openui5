@@ -412,10 +412,10 @@ sap.ui.define([
 		/**
 		 * Modifies the card HTTP data request headers before sending.
 		 * Override if you need to change the default headers behavior, including cache headers.
-		 * @param {map} mHeaders The current map of headers.
-		 * @param {map} mSettings The map of request settings defined in the card manifest.
+		 * @param {object} mHeaders The current map of headers.
+		 * @param {object} mSettings The map of request settings defined in the card manifest.
 		 * @param {sap.ui.integration.widgets.Card} [oCard] Optional. The card for which the request is made.
-		 * @returns {map} Map of http headers.
+		 * @returns {object} Map of http headers.
 		 * @private
 		 * @ui5-restricted
 	 	 * @deprecated Since 1.113 Use Host.prototype.fetch instead.
@@ -427,12 +427,12 @@ sap.ui.define([
 		/**
 		 * Modifies the card HTTP data request before sending.
 		 * Override if you need to change the default data request behavior.
-		 * @param {map} mRequest The current request.
+		 * @param {object} mRequest The current request.
 		 * @param {string} mRequest.url The request url.
 		 * @param {object} mRequest.options The request options in the same format as for the native Request object.
-		 * @param {map} mSettings The map of request settings defined in the card manifest.
+		 * @param {object} mSettings The map of request settings defined in the card manifest.
 		 * @param {sap.ui.integration.widgets.Card} [oCard] Optional. The card for which the request is made.
-		 * @returns {map} The modified request.
+		 * @returns {object} The modified request.
 		 * @private
 		 * @ui5-restricted
 		 * @deprecated Since 1.113 Use Host.prototype.fetch instead.
@@ -478,7 +478,7 @@ sap.ui.define([
 		/**
 		 * @private
 		 * @param {Headers} mHeaders The current map of headers.
-		 * @param {map} mRequestSettings The map of request settings defined in the card manifest.
+		 * @param {object} mRequestSettings The map of request settings defined in the card manifest.
 		 */
 		Host.prototype._addCacheHeaders = function (mHeaders, mRequestSettings) {
 			var oCacheSettings = mRequestSettings.cache,

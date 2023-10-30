@@ -114,7 +114,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets the <code>alignSelf</code> property.
 	 *
 	 * @public
-	 * @param {string} sValue Align option.
+	 * @param {sap.m.FlexAlignSelf} sValue Align option.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setAlignSelf = function(sValue) {
@@ -129,11 +129,11 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets the order.
 	 *
 	 * @public
-	 * @param {string} sValue Order in string format.
+	 * @param {int} iValue Order in integer format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
-	FlexItemData.prototype.setOrder = function(sValue) {
-		this.setProperty("order", sValue, true);
+	FlexItemData.prototype.setOrder = function(iValue) {
+		this.setProperty("order", iValue, true);
 		FlexBoxStylingHelper.setStyle(null, this, "order", this.getOrder());
 
 		return this;
@@ -143,11 +143,11 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets the <code>growFactor</code> property.
 	 *
 	 * @public
-	 * @param {string} sValue Grow factor in string format.
+	 * @param {float} fValue Grow factor as a number.
 	 * @returns {this} this FlexItemData reference for chaining.
 	 */
-	FlexItemData.prototype.setGrowFactor = function(sValue) {
-		this.setProperty("growFactor", sValue, true);
+	FlexItemData.prototype.setGrowFactor = function(fValue) {
+		this.setProperty("growFactor", fValue, true);
 		FlexBoxStylingHelper.setStyle(null, this, "flex-grow", this.getGrowFactor());
 
 		return this;
@@ -157,12 +157,12 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets the <code>shrinkFactor</code> property.
 	 *
 	 * @public
-	 * @param {string} sValue Shrink factor in string format.
+	 * @param {float} fValue Shrink factor as a number.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 * @see https://www.w3.org/TR/css-flexbox-1/#propdef-flex-shrink
 	 */
-	FlexItemData.prototype.setShrinkFactor = function(sValue) {
-		this.setProperty("shrinkFactor", sValue, true);
+	FlexItemData.prototype.setShrinkFactor = function(fValue) {
+		this.setProperty("shrinkFactor", fValue, true);
 		FlexBoxStylingHelper.setStyle(null, this, "flex-shrink", this.getShrinkFactor());
 
 		return this;
@@ -172,7 +172,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets the base size for flex items.
 	 *
 	 * @public
-	 * @param {string} sValue Base size in string format.
+	 * @param {sap.ui.core.CSSSize} sValue Base size in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setBaseSize = function(sValue) {
@@ -186,7 +186,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets minimum height.
 	 *
 	 * @public
-	 * @param {string} sValue Minimum height in string format.
+	 * @param {sap.ui.core.CSSSize} sValue Minimum height in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setMinHeight = function(sValue) {
@@ -200,7 +200,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets maximum height.
 	 *
 	 * @public
-	 * @param {string} sValue Maximum height in string format.
+	 * @param {sap.ui.core.CSSSize} sValue Maximum height in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setMaxHeight = function(sValue) {
@@ -214,7 +214,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets minimum width.
 	 *
 	 * @public
-	 * @param {string} sValue Minimum width in string format.
+	 * @param {sap.ui.core.CSSSize} sValue Minimum width in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setMinWidth = function(sValue) {
@@ -228,7 +228,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets maximum width.
 	 *
 	 * @public
-	 * @param {string} sValue Maximum width in string format.
+	 * @param {sap.ui.core.CSSSize} sValue Maximum width in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setMaxWidth = function(sValue) {
@@ -242,7 +242,7 @@ sap.ui.define(["./FlexBoxStylingHelper", "./library", "sap/ui/core/LayoutData"],
 	 * Sets background design for flex items.
 	 *
 	 * @public
-	 * @param {string} sValue Background design in string format.
+	 * @param {sap.m.BackgroundDesign} sValue Background design in string format.
 	 * @returns {this} <code>this</code> FlexItemData reference for chaining.
 	 */
 	FlexItemData.prototype.setBackgroundDesign = function(sValue) {

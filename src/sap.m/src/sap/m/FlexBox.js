@@ -275,7 +275,7 @@ function(
 	 * Sets the render type of the FlexBox.
 	 *
 	 * @public
-	 * @param {string} sValue Render type in string format.
+	 * @param {sap.m.FlexRendertype} sValue Render type in string format.
 	 * @returns {this} <code>this</code> FlexBox reference for chaining.
 	 */
 	FlexBox.prototype.setRenderType = function(sValue) {

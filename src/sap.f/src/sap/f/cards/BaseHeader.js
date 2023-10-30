@@ -207,7 +207,7 @@ sap.ui.define([
 		}
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	BaseHeader.prototype.setDataTimestamp = function (sDataTimestamp) {
@@ -229,7 +229,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
+	 * @private
 	 */
 	BaseHeader.prototype.setDataTimestampUpdating = function (bDataTimestampUpdating) {
 		var oTimestampText = this._createDataTimestamp();

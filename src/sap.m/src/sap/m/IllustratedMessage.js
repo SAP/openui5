@@ -347,7 +347,7 @@ sap.ui.define([
 		this._detachResizeHandlers();
 	};
 
-	/**
+	/*
 	 * GETTERS / SETTERS
 	 */
 

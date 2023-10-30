@@ -208,7 +208,7 @@ function(library, Localization, Core, Control, coreLibrary, Device, HyphenationS
 	 * Gets the text.
 	 *
 	 * @public
-	 * @param {boolean} bNormalize Indication for normalized text.
+	 * @param {boolean} [bNormalize] Indication for normalized text.
 	 * @returns {string} Text value.
 	 */
 	Text.prototype.getText = function (bNormalize) {

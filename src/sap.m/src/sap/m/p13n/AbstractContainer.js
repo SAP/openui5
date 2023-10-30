@@ -163,8 +163,8 @@ sap.ui.define([
 	/**
 	 * This method can be used to remove a view from the <code>AbstractContainer</code> instance.
 	 *
-	 * @param {string|sap.m.p13n.AbstractContainerItem} vContainerItem View that is removed
-	 * @param {boolean} bSuppress Suppress invalidate
+	 * @param {sap.ui.core.ID|sap.m.p13n.AbstractContainerItem} vContainerItem View that is removed
+	 * @param {boolean} [bSuppress] Suppress invalidate
 	 *
 	 * @returns {this} The <code>AbstractContainer<code> instance
 	 */
