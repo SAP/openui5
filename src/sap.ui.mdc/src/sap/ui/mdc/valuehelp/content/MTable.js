@@ -116,7 +116,7 @@ sap.ui.define([
 			const aItems = this._oTable.getItems();
 			const aConditions = this.getConditions();
 			const bHideSelection = this.isSingleSelect() && !FilterableListContent.prototype.isSingleSelect.apply(this); // if table is in single selection but Field allows multiple values, don't select items
-			const bUseFirstMatch = this.isTypeahead() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result;
+			const bUseFirstMatch = this.isTypeahead() && !!this.getFilterValue() && this._iNavigateIndex === -1 && !!this._oFirstItemResult.result && ((this.isSingleSelect() && aConditions.length === 0) || !this.isSingleSelect());
 			const oFirstItem = this._oFirstItemResult.result;
 
 			aItems.forEach(function(oItem) {
@@ -131,6 +131,7 @@ sap.ui.define([
 					oItem.addStyleClass("sapMLIBFocused")
 						.addStyleClass("sapMListFocus")
 						.addStyleClass("sapMLIBSelected");
+					this._oFirstItemResult.index = this._oTable.indexOfItem(oItem);
 				} else {
 					oItem.removeStyleClass("sapMLIBFocused")
 						.removeStyleClass("sapMListFocus")
@@ -223,7 +224,8 @@ sap.ui.define([
 				const oBindingContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this);
 				this._oFirstItemResult = {
 					result: this.getItemFromContext(oBindingContext),
-					filterValue: this.getFilterValue()
+					filterValue: this.getFilterValue(),
+					index: -1
 				};
 				_fireTypeahedSuggested.call(this, oBindingContext);
 			});
@@ -306,7 +308,14 @@ sap.ui.define([
 		FilterableListContent.prototype.onShow.apply(this, arguments);
 
 		if (oTable && this.isTypeahead() && this.isSingleSelect()) { // if Typeahed and SingleSelect (ComboBox case) scroll to selected item
-			const oSelectedItem = this._iNavigateIndex >= 0 ? oTable.getItems()[this._iNavigateIndex] : oTable.getSelectedItem();
+			let oSelectedItem;
+			if (this._iNavigateIndex >= 0) {
+				oSelectedItem = oTable.getItems()[this._iNavigateIndex];
+			} else if (this._oFirstItemResult && this._oFirstItemResult.index >= 0) {
+				oSelectedItem = oTable.getItems()[this._oFirstItemResult.index];
+			} else {
+				oSelectedItem = oTable.getSelectedItem();
+			}
 			if (oSelectedItem) {
 				this._handleScrolling(oSelectedItem);
 				return oSelectedItem.getId();
