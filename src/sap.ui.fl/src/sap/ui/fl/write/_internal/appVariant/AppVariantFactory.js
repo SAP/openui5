@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/write/_internal/appVariant/AppVariant",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/descriptorRelated/Utils",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/base/util/merge",
 	"sap/base/util/isPlainObject"

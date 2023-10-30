@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/base/ManagedObject",
-	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/descriptorRelated/Utils",
 	"sap/ui/fl/write/_internal/connectors/LrepConnector",
 	"sap/base/util/merge",
 	"sap/base/Log",
