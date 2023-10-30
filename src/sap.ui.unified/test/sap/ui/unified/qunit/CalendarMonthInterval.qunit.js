@@ -238,7 +238,7 @@ sap.ui.define([
 
 		//Act
 		oCalendarMonthInt.invalidate();
-		oCore.applyChanges();
+		this.clock.tick(0);
 
 		//Assert
 		_assertFocus(aMonths[1], "Calendar: after rerendering  second month still has focus", assert);
@@ -258,7 +258,8 @@ sap.ui.define([
 		_assertFocus(oExternalControl.getDomRef(), "Prerequisites check: 'extControl' should be focused", assert);
 
 		//Act
-		oCalendarMonthInt.rerender();
+		oCalendarMonthInt.invalidate();
+		this.clock.tick(0);
 
 		//Assert
 		_assertFocus(oExternalControl.getDomRef(), "After rerendering, the focus should stay on the 'extControl'", assert);

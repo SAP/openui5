@@ -53,7 +53,7 @@ sap.ui.define([
 		assert.equal(this.oVSB.getVertical(), true, "This is vertical scrollbar");
 	});
 
-	QUnit.test("Scroll Position", function(assert) {
+	QUnit.test("Scroll Position", async function(assert) {
 		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
 		this.oVSB.setScrollPosition(5); // steps
 		this.oHSB.setScrollPosition(38); // pixels
@@ -61,8 +61,9 @@ sap.ui.define([
 
 		assert.equal(this.oVSB.getScrollPosition(), 5, "1scroll position should be 5");
 		assert.equal(this.oHSB.getScrollPosition(), 38, "1scroll position is 38");
-		this.oVSB.rerender();
-		this.oHSB.rerender();
+		this.oVSB.invalidate();
+		this.oHSB.invalidate();
+		await nextUIUpdate();
 
 		var done = assert.async();
 		window.setTimeout(function(){

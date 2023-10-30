@@ -380,7 +380,7 @@ sap.ui.define([
 		oLogSpy.restore();
 	});
 
-	QUnit.test("Don't remove afterRendering delegate when either busy or block state is still active", function(assert) {
+	QUnit.test("Don't remove afterRendering delegate when either busy or block state is still active", async function(assert) {
 		var iInitialDelegateCount = this.oButton.aDelegates.length;
 		assert.ok(iInitialDelegateCount >= 1, "Button should already have at least one delegate initially");
 		this.oButton.setBlocked(true);
@@ -397,7 +397,8 @@ sap.ui.define([
 		assert.equal(this.oButton.getBlocked(), true, "Button should still be blocked");
 		assert.equal(this.oButton.aDelegates.length, iInitialDelegateCount + 1 , "onBefore-/onAfterRendering delegate should still be available");
 
-		this.oButton.rerender();
+		this.oButton.invalidate();
+		await nextUIUpdate();
 		assert.equal(this.oButton.getBlocked(), true, "After Re-rendering: Button should still be blocked");
 
 		var oBlockLayerDOM = document.getElementsByClassName("sapUiBlockLayer");

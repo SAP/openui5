@@ -92,7 +92,8 @@ sap.ui.define([
 
 		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
-		oControl.rerender();
+		oControl.invalidate();
+		await nextUIUpdate();
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: oControl.isDragAllowed method did not permit");
 		delete oControl.isDragAllowed;
 

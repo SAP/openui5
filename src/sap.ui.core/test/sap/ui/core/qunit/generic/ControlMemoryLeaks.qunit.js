@@ -100,7 +100,7 @@ sap.ui.define([
 							await nextUIUpdate();
 
 							if (bFinalIteration) {
-								oControl.rerender();  // just re-render again - this finds problems
+								oControl.invalidate();  // just re-render again - this finds problems
 								await nextUIUpdate();
 							}
 						} else if (bFinalIteration) {

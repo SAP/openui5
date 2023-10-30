@@ -23,10 +23,12 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/events/jquery/EventExtension"
 ], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
 			ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
-			MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library, KeyCodes, oCore
+			MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter,
+			Sorter, Element, library, KeyCodes, oCore, nextUIUpdate
 ) {
 	"use strict";
 
@@ -217,7 +219,7 @@ sap.ui.define([
 		assert.ok(sFileNameStyle.indexOf("max-width: calc(100%") >= 0, "FileName max width was calculated due to marker presence");
 	});
 
-	QUnit.test("Marker is not displayed when the item is in edit mode", function(assert) {
+	QUnit.test("Marker is not displayed when the item is in edit mode", async function(assert) {
 		//Arrange
 		var oFirstItem = this.oUploadCollection.getItems()[0];
 		var oMarkerFirstItem = oFirstItem.getMarkers()[0];
@@ -225,7 +227,8 @@ sap.ui.define([
 		var oMarkerSecondItem = oSecondItem.getMarkers()[0];
 		oFirstItem.setEnableEdit(true);
 		oFirstItem._status = "Edit";
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 		//Act
 		var oMarkerContainerFirstItem = oMarkerFirstItem.getDomRef().parentNode;
 		var sMarkerFirstItemStyle = oMarkerContainerFirstItem.getAttribute("style");
@@ -249,12 +252,13 @@ sap.ui.define([
 		assert.ok($IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is present");
 	});
 
-	QUnit.test("Item with a clickable placeholder is rendered", function(assert) {
+	QUnit.test("Item with a clickable placeholder is rendered", async function(assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[0];
 		//Act
 		oItem.setUrl("Screenshot.jpg");
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 		oItem.setUrl(""); // restore the url
 		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
 		var oIconItem = oListItem.getContent()[0];
@@ -279,13 +283,14 @@ sap.ui.define([
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
 	});
 
-	QUnit.test("Item with a non clickable icon is rendered", function(assert) {
+	QUnit.test("Item with a non clickable icon is rendered", async function(assert) {
 		//Arrange
 		var oItem = this.oUploadCollection.getItems()[1];
 		var sUrl = oItem.getUrl();
 		//Act
 		oItem.setUrl("");
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 		oItem.setUrl(sUrl); // restore the url
 		var oListItem = this.oUploadCollection._getListItemById(oItem.getId() + "-cli");
 		var oIconItem = oListItem.getContent()[0];
@@ -496,12 +501,13 @@ sap.ui.define([
 		assert.equal(this.oUploadCollection.$("no-data-description").text(), "myNoDataDescription", "The no data description set by user is rendered");
 	});
 
-	QUnit.test("Reset renderNoData of the ListRenderer to the original function", function(assert) {
+	QUnit.test("Reset renderNoData of the ListRenderer to the original function", async function(assert) {
 		//Arrange
 		var oListRenderNoDataBefore = this.oUploadCollection._oList.getRenderer().renderNoData;
 		var oListRenderNoDataAfter;
 		//Act
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 		oListRenderNoDataAfter = this.oUploadCollection._oList.getRenderer().renderNoData;
 		//Assert
 		assert.equal(oListRenderNoDataAfter, oListRenderNoDataBefore, "Function renderNoData has been successfully reset to the original function");
@@ -1536,14 +1542,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Focus is only set once after delete", function(assert) {
+	QUnit.test("Focus is only set once after delete", async function(assert) {
 		//Arrange
 		var oSpy = this.spy(this.oUploadCollection, "_setFocusAfterDeletion");
 		this.oUploadCollection.sDeletedItemId = "someId";
 
 		//Act
-		this.oUploadCollection.rerender();
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadCollection.sDeletedItemId, null, "Member sDeletedItemId has been reset.");
@@ -1821,11 +1827,12 @@ sap.ui.define([
 		assert.notOk(bDragAndDropAllowed, "Function returns false when uploadEnabled is set to false");
 	});
 
-	QUnit.test("Drag and drop is not allowed", function(assert) {
+	QUnit.test("Drag and drop is not allowed", async function(assert) {
 		var $DragDropArea;
 		//Arrange
 		this.oUploadCollection.setUploadButtonInvisible(true);
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 		$DragDropArea = this.oUploadCollection.$("drag-drop-area");
 		//Act
 		$DragDropArea.trigger("dragenter");
@@ -2594,14 +2601,15 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("Rendering", async function(assert) {
 		//Arrange
 		this.spy(this.oUploadCollection._oList, "addItemGroup");
 		var aList = this.oUploadCollection._oList,
 			aItems = aList.getItems();
 
 		//Act
-		this.oUploadCollection.rerender();
+		this.oUploadCollection.invalidate();
+		await nextUIUpdate();
 
 		//Assert
 		assert.equal(this.oUploadCollection._oList.addItemGroup.callCount, 4, "Four groups were added");

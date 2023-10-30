@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
@@ -14,6 +15,7 @@ sap.ui.define([
 	"sap/m/Button"
 ], function(
 	createAndAppendDiv,
+	nextUIUpdate,
 	Log,
 	Device,
 	jQuery,
@@ -131,7 +133,7 @@ sap.ui.define([
 	var oRerenderPageButton = new Button({
 		text:"Rerender Page 1",
 		press: function() {
-			page1.rerender();
+			page1.invalidate();
 		}
 	});
 	var oRemovePageButton = new Button({
@@ -143,7 +145,7 @@ sap.ui.define([
 	var oRerenderAppButton = new Button({
 		text:"Rerender App",
 		press: function() {
-			app.rerender();
+			app.invalidate();
 		}
 	});
 
@@ -193,8 +195,9 @@ sap.ui.define([
 
 
 	if (!Device.browser.internet_explorer) { // known gap in IE
-		QUnit.test("Scroll position after rerendering page1", function(assert) {
-			page1.rerender();
+		QUnit.test("Scroll position after rerendering page1", async function(assert) {
+			page1.invalidate();
+			await nextUIUpdate();
 
 			assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
@@ -250,18 +253,18 @@ sap.ui.define([
 			}, 300);
 		};
 
-		var goBack = function() {
+		var goBack = async function() {
 			app.detachAfterNavigate(goBack);
 			app.attachAfterNavigate(test);
 
-				page1.rerender();
+			page1.invalidate();
+			await nextUIUpdate();
+			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
 
+			window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 				assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
-
-				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-					assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
-					app.back();
-				}, 100);
+				app.back();
+			}, 100);
 		};
 
 		app.attachAfterNavigate(goBack);
@@ -270,8 +273,9 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Scroll position after rerendering the APP", function(assert) {
-		app.rerender();
+	QUnit.test("Scroll position after rerendering the APP", async function(assert) {
+		app.invalidate();
+		await nextUIUpdate();
 
 		assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 		assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
@@ -297,11 +301,11 @@ sap.ui.define([
 				app.detachAfterNavigate(goBack);
 				app.attachAfterNavigate(test);
 
-					app.rerender();
+				app.invalidate();
 
-					window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
-						app.back();
-					}, 100);
+				window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
+					app.back();
+				}, 100);
 			};
 
 			app.attachAfterNavigate(goBack);

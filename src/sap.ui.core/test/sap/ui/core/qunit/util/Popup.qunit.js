@@ -3445,8 +3445,9 @@ sap.ui.define([
 			oPopup.close();
 			return oClosedPromise;
 		}).then(function() {
-			oControl.rerender();
-
+			oControl.invalidate();
+			return nextUIUpdate();
+		}).then(function() {
 			var oOpenedPromise = waitTillOpen(oPopup);
 			oPopup.open();
 			return oOpenedPromise;

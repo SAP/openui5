@@ -210,7 +210,6 @@ sap.ui.define([
 			}, this);
 
 			this.oButton.invalidate();
-			this.oButton.rerender(true);
 		});
 
 		QUnit.test("elementModified event — setParent", function(assert) {
