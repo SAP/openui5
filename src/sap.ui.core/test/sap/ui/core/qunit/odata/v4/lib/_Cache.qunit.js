@@ -7591,9 +7591,9 @@ sap.ui.define([
 		// code under test
 		oPromise = oCache.requestElements(iStart, iEnd, "~oGroupLock~", 0, "~fnDataRequested~");
 
-		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd}]);
+		assert.deepEqual(oCache.aReadRequests, [{iStart, iEnd, bObsolete : false}]);
 		if (bSuccess === undefined) {
-			oCache.aReadRequests[0].obsolete = true;
+			oCache.aReadRequests[0].bObsolete = true;
 		}
 		assert.strictEqual(oCache.bSentRequest, true);
 		assert.strictEqual(oFillExpectation.args[0][0], oPromise);
@@ -10791,8 +10791,8 @@ sap.ui.define([
 			.withExactArgs({"" : "~listeners~"}, "")
 			.callsFake(function () {
 				assert.deepEqual(oCache.aReadRequests, [
-					{iStart : 1, iEnd : 2, obsolete : true},
-					{iStart : 3, iEnd : 4, obsolete : true}
+					{iStart : 1, iEnd : 2, bObsolete : true},
+					{iStart : 3, iEnd : 4, bObsolete : true}
 				]);
 			});
 
@@ -10800,8 +10800,8 @@ sap.ui.define([
 		oCache.reset([], undefined, "~mQueryOptions~");
 
 		assert.deepEqual(oCache.aReadRequests, [
-			{iStart : 1, iEnd : 2, obsolete : true},
-			{iStart : 3, iEnd : 4, obsolete : true}
+			{iStart : 1, iEnd : 2, bObsolete : true},
+			{iStart : 3, iEnd : 4, bObsolete : true}
 		]);
 		assert.strictEqual(oCache.aElements, aElements);
 		assert.strictEqual(oCache.aElements.length, 0);

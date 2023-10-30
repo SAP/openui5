@@ -3385,6 +3385,7 @@ sap.ui.define([
 		var oPromise,
 			oReadRequest = {
 				iEnd : iEnd,
+				bObsolete : false,
 				iStart : iStart
 			},
 			that = this;
@@ -3399,7 +3400,7 @@ sap.ui.define([
 		]).then(function (aResult) {
 			var iFiltered;
 
-			if (oReadRequest.obsolete) {
+			if (oReadRequest.bObsolete) {
 				const oError = new Error("Request is obsolete");
 				oError.canceled = true;
 				throw oError;
@@ -3634,7 +3635,7 @@ sap.ui.define([
 		});
 		// Beware: fireChange can trigger a read which must not be obsoleted
 		this.aReadRequests?.forEach((oReadRequest) => {
-			oReadRequest.obsolete = true;
+			oReadRequest.bObsolete = true;
 		});
 		if (mChangeListeners[""]) {
 			this.mChangeListeners[""] = mChangeListeners[""];
