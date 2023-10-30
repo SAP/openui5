@@ -233,10 +233,6 @@ sap.ui.define([
 		return getInstanceEntryOrThrowError(sReference, "appDescriptorChanges");
 	}
 
-	function getChangesMap(sReference) {
-		return getInstanceEntryOrThrowError(sReference, "changes");
-	}
-
 	function getCompVariantsMap(sReference) {
 		return getInstanceEntryOrThrowError(sReference, "compVariants");
 	}
@@ -725,10 +721,6 @@ sap.ui.define([
 
 	FlexState.getFlexObjectsDataSelector = function() {
 		return oFlexObjectsDataSelector;
-	};
-
-	FlexState.getUIChanges = function(sReference) {
-		return getChangesMap(sReference).changes;
 	};
 
 	FlexState.getAppDescriptorChanges = function(sReference) {
