@@ -28,8 +28,7 @@ sap.ui.define([
 	"use strict";
 
 	function isDraftAvailable(oReloadInfo) {
-		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
-		if (oFlexInfoSession?.version) {
+		if (FlexInfoSession.get(oReloadInfo.selector).version) {
 			return Promise.resolve(false);
 		}
 
@@ -44,7 +43,7 @@ sap.ui.define([
 	function areHigherLayerChangesAvailable(oReloadInfo) {
 		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
-		if (bUserLayer || (oFlexInfoSession && oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oReloadInfo.layer)) {
+		if (bUserLayer || (oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oReloadInfo.layer)) {
 			return Promise.resolve(false);
 		}
 
@@ -82,17 +81,17 @@ sap.ui.define([
 	function needContextSpecificReload(oReloadInfo) {
 		// TODO: could be disabled when ContextBasedAdaptationAPI is enabled
 		var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
-		if (oFlexInfoSession && oFlexInfoSession.initialAllContexts) {
+		if (oFlexInfoSession.initialAllContexts) {
 			return false; // if we are already in RTA mode, no reload needed again
 		}
-		if (oFlexInfoSession === null || oFlexInfoSession.allContextsProvided === undefined) {
+		if (oFlexInfoSession.allContextsProvided === undefined) {
 			var mPropertyBag = {
 				selector: oReloadInfo.selector,
 				layer: oReloadInfo.layer
 			};
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag)
 			.then(function(oResult) {
-				if (oFlexInfoSession === null || !oFlexInfoSession.initialAllContexts) {
+				if (!oFlexInfoSession.initialAllContexts) {
 					oResult.initialAllContexts = true;
 				}
 				FlexInfoSession.set(oResult, oReloadInfo.selector);
@@ -105,13 +104,11 @@ sap.ui.define([
 	}
 
 	function isAllContextsAvailable(oControl) {
-		var oFlexInfoSession = FlexInfoSession.get(oControl);
-		return oFlexInfoSession && !oFlexInfoSession.allContextsProvided;
+		return FlexInfoSession.get(oControl).allContextsProvided === false;
 	}
 
 	function needAdaptationReloadOnExit(oControl) {
-		var oFlexInfoSession = FlexInfoSession.get(oControl);
-		return oFlexInfoSession && oFlexInfoSession.isEndUserAdaptation === false;
+		return FlexInfoSession.get(oControl).isEndUserAdaptation === false;
 	}
 
 	/**
@@ -156,7 +153,7 @@ sap.ui.define([
 		 */
 		hasVersionStorage(oParameter, oControl) {
 			var oFlexInfoSession = FlexInfoSession.get(oControl);
-			return !!(oFlexInfoSession && oFlexInfoSession.version && oFlexInfoSession.version === oParameter.value);
+			return !!(oFlexInfoSession.version && oFlexInfoSession.version === oParameter.value);
 		},
 
 		/**
@@ -179,7 +176,7 @@ sap.ui.define([
 		 */
 		hasMaxLayerStorage(oParameter, oControl) {
 			var oFlexInfoSession = FlexInfoSession.get(oControl);
-			return !!(oFlexInfoSession && oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oParameter.value);
+			return !!(oFlexInfoSession.maxLayer && oFlexInfoSession.maxLayer === oParameter.value);
 		},
 
 		/**
@@ -201,7 +198,7 @@ sap.ui.define([
 		 */
 		handleReloadInfo(oReloadInfo) {
 			var bFlexInfoSessionChanged = false;
-			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
 			if (!oReloadInfo.ignoreMaxLayerParameter && oReloadInfo.hasHigherLayerChanges) {
 				delete oFlexInfoSession.maxLayer;
 				bFlexInfoSessionChanged = true;
@@ -237,7 +234,7 @@ sap.ui.define([
 		 */
 		handleReloadInfoOnStart(oReloadInfo) {
 			var bFlexInfoSessionChanged = false;
-			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector) || {};
+			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
 			if (oReloadInfo.hasHigherLayerChanges) {
 				oFlexInfoSession.maxLayer = oReloadInfo.layer;
 				bFlexInfoSessionChanged = true;
@@ -301,8 +298,7 @@ sap.ui.define([
 			);
 
 			oReloadInfo.isDraftAvailable ||= ReloadInfoAPI.hasVersionStorage({value: Version.Number.Draft}, oReloadInfo.selector);
-			var oFlexInfoSession = FlexInfoSession.get(oReloadInfo.selector);
-			oReloadInfo.hasVersionStorage = !!(oFlexInfoSession && oFlexInfoSession.version);
+			oReloadInfo.hasVersionStorage = !!FlexInfoSession.get(oReloadInfo.selector).version;
 
 			if (
 				oReloadInfo.activeVersion
