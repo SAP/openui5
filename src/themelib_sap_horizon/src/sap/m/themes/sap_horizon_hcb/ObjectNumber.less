@@ -8,20 +8,17 @@
 .sapMObjectNumberInverted {
 	box-sizing: border-box;
 	&:not(.sapMObjectNumberLarge) .sapMObjectNumberInner {
-		height: 0.875rem;
-		line-height: 0.75rem;
-	}
-	.sapMObjectNumberText,
-	.sapMObjectNumberUnit {
-		vertical-align: middle;
-		line-height: 0.875rem;
+		min-height: 1rem;
+		height: auto;
 	}
 }
 
 .sapMObjectNumberInverted .sapMObjectNumberInner {
 	background-color: @sapUiBaseBG;
-	border-width: 0.0625rem;
-	border-style: solid;
+	border: 0.0625rem solid;
+	border-radius: @sapUiButtonBorderCornerRadius;
+	padding: 0.1875rem 0.25rem;
+	vertical-align: middle;
 }
 
 html.sap-desktop .sapMObjectNumberActive:focus {
@@ -35,11 +32,11 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 	}
 
 	&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
-		top: -2px;
-		left: 1px;
-		bottom: -2px;
-		right: 1px;
-		outline: 2px dotted @sapUiContentFocusColor;
+		top: 0.125rem;
+		left: 0.125rem;
+		bottom: 0.0625rem;
+		right: 0.125rem;
+		outline: 0.125rem dotted @sapUiContentFocusColor;
 	}
 
 	&.sapMObjectNumberLarge {
