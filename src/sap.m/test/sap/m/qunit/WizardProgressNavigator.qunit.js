@@ -6,8 +6,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device",
 	"sap/ui/core/InvisibleText",
-	"sap/ui/core/Core"
-], function(WizardProgressNavigator, Library, JSONModel, Device, InvisibleText, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/events/KeyCodes"
+], function(WizardProgressNavigator, Library, JSONModel, Device, InvisibleText, oCore, QUnitUtils, KeyCodes) {
 	"use strict";
 
 	QUnit.module("sap.m.WizardProgressNavigator API", {
@@ -367,6 +369,18 @@ sap.ui.define([
 
 		assert.strictEqual(oStepChangedSpy.callCount, 1, "stepChanged event should be fired once");
 		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 2, "currentStep should change to 2");
+	});
+
+	QUnit.test("onsapspace", function(assert) {
+		var oSpaceSpy = this.spy(this.oProgressNavigator, "onsapspace"),
+			oStep = this.oProgressNavigator.getDomRef().querySelectorAll(".sapMWizardProgressNavStep")[1];
+
+		oStep.focus();
+
+		QUnitUtils.triggerKeydown(oStep, KeyCodes.SPACE);
+
+		assert.ok(oSpaceSpy.called, "onsapspace should be called");
+		assert.ok(oSpaceSpy.args[0][0].isDefaultPrevented(), "Default handling of space should be prevented.");
 	});
 
 	QUnit.module("sap.m.WizardProgressNavigator ARIA Support", {
