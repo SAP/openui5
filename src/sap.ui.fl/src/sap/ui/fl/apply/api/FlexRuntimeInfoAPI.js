@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/controlVariants/Utils",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
@@ -20,6 +21,7 @@ sap.ui.define([
 	VariantUtils,
 	ManifestUtils,
 	FlexConfiguration,
+	FlexInfoSession,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
@@ -178,6 +180,20 @@ sap.ui.define([
 		 */
 		getConfiguredFlexServices() {
 			return FlexConfiguration.getFlexibilityServices();
+		},
+
+		/**
+		 * Returns the version that is used for Flexibility Services
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Reference of the application
+		 * @returns {string} Version of Flexibility Services
+		 *
+		 * @private
+		 * @ui5-restricted sap.ushell
+		 */
+		getFlexVersion(mPropertyBag) {
+			return FlexInfoSession.getByReference(mPropertyBag.reference)?.version;
 		}
 	};
 

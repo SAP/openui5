@@ -111,7 +111,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/initial/_internal/storageResultDisassemble"]
 				}
 			},
-
 			"apply/api/FlexRuntimeInfoAPI": {
 				group: "Apply API",
 				coverage: {

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/_internal/FlexConfiguration",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -21,6 +22,7 @@ sap.ui.define([
 	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	FlexConfiguration,
+	FlexInfoSession,
 	FlexControllerFactory,
 	Layer,
 	Utils,
@@ -329,6 +331,25 @@ sap.ui.define([
 			const aReturnValue = [{foo: "bar"}];
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns(aReturnValue);
 			assert.deepEqual(FlexRuntimeInfoAPI.getConfiguredFlexServices(), aReturnValue, "the function returns the configured value");
+		});
+	});
+
+	QUnit.module("getFlexVersion", {
+		before() {
+			this.sReference = "reference";
+		},
+		afterEach() {
+			FlexInfoSession.removeByReference(this.sReference);
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("no flex info session exists", function(assert) {
+			assert.equal(FlexRuntimeInfoAPI.getFlexVersion({reference: this.sReference}), undefined, "version not exists");
+		});
+
+		QUnit.test("flex info session exists with version", function(assert) {
+			FlexInfoSession.setByReference({version: "1"}, this.sReference);
+			assert.equal(FlexRuntimeInfoAPI.getFlexVersion({reference: this.sReference}), "1", "version exists");
 		});
 	});
 
