@@ -67,7 +67,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oDragControl The control which is dragged
 	 * @param {sap.ui.core.Control} oDropContainer The drop container
 	 * @param {string} sTargetAggregation The name of the target aggregation inside the drop container
-	 * @param {sap.ui.core.DragSession} oCoreDragSession
+	 * @param {sap.ui.core.dnd.DragSession} oCoreDragSession
 	 * @returns {this} Self for method chaining
 	 */
 	GridDragOver.prototype.setCurrentContext = function (oDragControl, oDropContainer, sTargetAggregation, oCoreDragSession) {

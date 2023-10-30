@@ -1036,11 +1036,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.test("Checking if abort is properly called. 2 files, 1 instance of File Uploader", function(assert) {
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
-			assert.expect(0);
-			return;
-		}
 		this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile1]);
 		this.simulateDeleteLastAddedItem.bind(this)();
 
@@ -1066,11 +1061,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.test("Checking if abort is properly called. 5 files, 2 instances of File Uploader, 2 deletions ", function(assert) {
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
-			assert.expect(0);
-			return;
-		}
 		this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile1, this.oFile2]);
 		this.simulateDeleteLastAddedItem.bind(this)();
 		this.simulateFilePreselection.bind(this)([this.oFile3, this.oFile4]);
@@ -1090,11 +1080,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.test("Checking if abort is properly called. 3 files with same names, 1 instance of File Uploader, 2 deletions ", function(assert) {
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			// In case of IE9, multiple selection is not possible, so nothing needs to be tested.
-			assert.expect(0);
-			return;
-		}
 		this.simulateFilePreselection.bind(this)([this.oFile0, this.oFile0, this.oFile0]);
 		this.simulateDeleteLastAddedItem.bind(this)();
 		this.simulateDeleteLastAddedItem.bind(this)();

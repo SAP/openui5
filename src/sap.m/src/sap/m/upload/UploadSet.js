@@ -1443,7 +1443,7 @@ sap.ui.define([
 	/**
 	 * Edited item confirmation handling.
 	 * @param {object} oEvent Event instance.
-	 * @param {UploadSetItem} oItem Item whose editing is to be confirmed.
+	 * @param {sap.m.upload.UploadSetItem} oItem Item whose editing is to be confirmed.
 	 * @private
 	 */
 	UploadSet.prototype._handleItemEditConfirmation = function (oEvent, oItem) {
@@ -1506,7 +1506,7 @@ sap.ui.define([
 	 * Edited item cancelation handling.
 	 *
 	 * @param {object} oEvent Event instance.
-	 * @param {UploadSetItem} oItem Item whose editing is to be canceled.
+	 * @param {sap.m.upload.UploadSetItem} oItem Item whose editing is to be canceled.
 	 * @private
 	 */
 	UploadSet.prototype._handleItemEditCancelation = function (oEvent, oItem) {

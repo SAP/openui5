@@ -47,7 +47,7 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "./InputRen
 	 * @param {sap.m.Input} oControl An object representation of the control
 	 * @returns {string}
 	 */
-	 NumericInputRenderer.getAriaRole = function (oControl) {
+	NumericInputRenderer.getAriaRole = function (oControl) {
 		return "spinbutton";
 	};
 
@@ -55,8 +55,8 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Renderer", "./InputRen
 	/**
 	* Overwrites the accessibility state using the <code>getAccessibilityState</code> method of the <code>InputBaseRenderer</code>.
 	*
-	* @param {NumericInput} oNumericInput The numeric input instance
-	* @returns {Array} mAccessibilityState
+	* @param {sap.m.NumericInput} oNumericInput The numeric input instance
+	* @returns {object} mAccessibilityState
 	*/
 	NumericInputRenderer.getAccessibilityState = function(oNumericInput) {
 		var mAccessibilityState = InputRenderer.getAccessibilityState.apply(this, arguments),

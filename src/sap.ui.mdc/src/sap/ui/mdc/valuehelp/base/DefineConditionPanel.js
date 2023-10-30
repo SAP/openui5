@@ -661,7 +661,7 @@ sap.ui.define([
 		// TODO: remove this function and replace by getValueHelp once FieldHelp association is completetly removed.
 		_getValueHelp: function() {
 
-			return this.getValueHelp() || (this.getFieldHelp && null); // as getFieldHelp not exist in legacy-free UI5
+			return this.getValueHelp() || (undefined); // as getFieldHelp not exist in legacy-free UI5
 
 		}
 	});

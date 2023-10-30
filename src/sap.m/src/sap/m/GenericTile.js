@@ -1011,15 +1011,10 @@ sap.ui.define([
 		};
 
 		var oLineBreakPosition;
-		if (Device.browser.msie || Device.browser.edge) {
-			//in IE, the line break's position cannot be determined by the container, but only by the br element
-			oLineBreakPosition = $LineBreak.find("br").position();
-		} else {
-			oLineBreakPosition = $LineBreak.position();
-		}
+		oLineBreakPosition = $LineBreak.position();
 
 		var oStyleHelperPosition = oLineBreakPosition;
-		if (!(Device.browser.mozilla || Device.browser.msie || Device.browser.edge) && oLineBreakPosition.left < oEndMarkerPosition.left) {
+		if (!(Device.browser.mozilla || false || false) && oLineBreakPosition.left < oEndMarkerPosition.left) {
 			//if the line break is positioned left of the end marker (RTL), the end marker's position
 			//is used by the browser to determine the origin of the tile
 			oStyleHelperPosition = oEndMarkerPosition;

@@ -2702,7 +2702,7 @@ sap.ui.define([
 	// TODO: remove this function and replace by getValueHelp once ValueHelp association is completetly removed.
 	FieldBase.prototype._getValueHelp = function() {
 
-		return this.getValueHelp() || (this.getFieldHelp && null); // as getFieldHelp not exist in legacy-free UI5
+		return this.getValueHelp() || (undefined); // as getFieldHelp not exist in legacy-free UI5
 
 	};
 

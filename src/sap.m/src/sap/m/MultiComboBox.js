@@ -382,7 +382,7 @@ function(
 	/**
 	 * Handles the Down Arrow press event.
 	 *
-	 * @param {jquery.Event} oEvent The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	MultiComboBox.prototype.handleDownEvent = function (oEvent) {

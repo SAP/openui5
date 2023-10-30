@@ -310,11 +310,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	});
 
 	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the third case of uploadComplete", function (assert) {
-		// at present it is very hard to simulate IE9 in QUnits
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			assert.expect(0);
-			return;
-		}
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -348,11 +343,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	});
 
 	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the fourth case of uploadComplete", function (assert) {
-		// at present it is very hard to simulate IE9 in QUnits
-		if (Device.browser.msie && Device.browser.version <= 9) {
-			assert.expect(0);
-			return;
-		}
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];

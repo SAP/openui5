@@ -102,7 +102,7 @@ sap.ui.define([
 				sTooltip = oButton._getTooltip(),
 				sText = oButton._getText(),
 				sTextDir = oButton.getTextDirection(),
-				bIE_Edge = Device.browser.internet_explorer || Device.browser.edge,
+				bIE_Edge = false,
 				// render bdi tag only if the browser is different from IE and Edge since it is not supported there
 				bRenderBDI = (sTextDir === TextDirection.Inherit) && !bIE_Edge;
 

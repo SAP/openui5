@@ -13,6 +13,12 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		apiVersion: 2
 	};
 
+	/**
+	 * Renders the ObjectPageHeader.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.uxap.ObjectPageHeader} oControl The ObjectPageHeader
+	 */
 	ObjectPageHeaderRenderer.render = function (oRm, oControl) {
 		var oNavigationBar = oControl.getNavigationBar(),
 			bTitleVisible = (oControl.getIsObjectIconAlwaysVisible() || oControl.getIsObjectTitleAlwaysVisible() || oControl.getIsObjectSubtitleAlwaysVisible() || oControl.getIsActionAreaAlwaysVisible()),
@@ -108,10 +114,10 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 
 	/**
-	 * Renders the SelectTitleArrow icon.
+	 * Renders the title.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.uxap.ObjecPageHeader} oControl The ObjectPageHeader
+	 * @param {sap.uxap.ObjectPageHeader} oControl The ObjectPageHeader
 	 *
 	 * @private
 	 */

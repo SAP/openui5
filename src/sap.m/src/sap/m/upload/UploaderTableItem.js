@@ -135,10 +135,6 @@ sap.ui.define([
 		return new Promise(function(resolve, reject) {
 			oXhr.open(sHttpRequestMethod, sUrl, true);
 
-			if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
-				oXhr.setRequestHeader("Content-Type", oFile.type);
-			}
-
 			if (aHeaderFields) {
 				aHeaderFields.forEach(function (oHeader) {
 					oXhr.setRequestHeader(oHeader.getKey(), oHeader.getText());
@@ -178,10 +174,6 @@ sap.ui.define([
 			sUploadUrl = oItem.getUploadUrl() || this.getUploadUrl();
 
 		oXhr.open(sHttpRequestMethod, sUploadUrl, true);
-
-		if ((Device.browser.edge || Device.browser.internet_explorer) && oFile.type && oXhr.readyState === 1) {
-			oXhr.setRequestHeader("Content-Type", oFile.type);
-		}
 
 		if (aHeaderFields) {
 			aHeaderFields.forEach(function (oHeader) {
@@ -224,7 +216,6 @@ sap.ui.define([
 			oXhr.send(oFile);
 			this.fireUploadStarted({item: oItem});
 		}
-
 	};
 
 	/**

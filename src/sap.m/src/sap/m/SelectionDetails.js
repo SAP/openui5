@@ -723,12 +723,6 @@ function(
 		var iContentHeight = this._getInitialPageHeight(),
 			oPopover = this._getPopover();
 
-		if (Device.browser.edge && this._oMainList.getDomRef() && this._oMainList.getDomRef().getBoundingClientRect().height === 0) {
-			// Force rendering if for some reason the main list has not been rendered in MS Edge
-			oPopover.setContentHeight(SelectionDetails._POPOVER_MAX_HEIGHT + "px");
-			return;
-		}
-
 		if (this._oNavContainer.getCurrentPage() === this._oInitialPage && iContentHeight < SelectionDetails._POPOVER_MAX_HEIGHT) {
 			oPopover.setProperty("contentHeight", iContentHeight + "px", true);
 		} else {

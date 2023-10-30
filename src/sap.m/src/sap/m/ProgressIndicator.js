@@ -157,7 +157,7 @@ sap.ui.define([
 	};
 
 	ProgressIndicator.prototype.init = function () {
-		this._bIEBrowser = Device.browser.internet_explorer;
+		this._bIEBrowser = false;
 
 		// The difference between the old and new values, used to calulate the animation duration
 		this._fPercentValueDiff = 0;

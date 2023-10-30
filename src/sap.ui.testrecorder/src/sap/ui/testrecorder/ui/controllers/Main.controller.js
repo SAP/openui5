@@ -95,13 +95,9 @@ sap.ui.define([
 				}
 				oEvent.preventDefault();
 			};
-			if (Device.browser.msie && window.clipboardData) {
-				window.clipboardData.setData("text", sCodeSnippet);
-			} else {
-				document.addEventListener('copy', fnCopyToClipboard);
-				document.execCommand('copy');
-				document.removeEventListener('copy', fnCopyToClipboard);
-			}
+			document.addEventListener('copy', fnCopyToClipboard);
+			document.execCommand('copy');
+			document.removeEventListener('copy', fnCopyToClipboard);
 		},
 		clearCodeSnippet: function () {
 			CommunicationBus.publish(CommunicationChannels.CLEAR_SNIPPETS);

@@ -129,7 +129,8 @@ sap.ui.define([
 	const Formatting = {
 		/**
 		 * The <code>change</code> event is fired, when the configuration options are changed.
-		 * For the event parameters please refer to {@link module:sap/base/i18n/Formatting$ChangeEvent}.
+		 * For the event parameters please refer to {@link module:sap/base/i18n/Formatting$ChangeEvent
+		 * Formattin$ChangeEvent}.
 		 *
 		 * @name module:sap/base/i18n/Formatting.change
 		 * @event
@@ -501,11 +502,11 @@ sap.ui.define([
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
+		 * See class {@link sap.ui.core.format.DateFormat DateFormat} for details about the pattern syntax.
 		 *
 		 * After changing the date pattern, the framework tries to update localization
-		 * specific parts of the UI. See the documentation of {@link module:sap/base/i18n/Localization.setLanguage Localization.setLanguage()}
-		 * for details and restrictions.
+		 * specific parts of the UI. See the documentation of {@link module:sap/base/i18n/Localization.setLanguage
+		 * Localization.setLanguage()} for details and restrictions.
 		 *
 		 * @param {"short"|"medium"|"long"|"full"} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
@@ -536,7 +537,7 @@ sap.ui.define([
 		 *
 		 * If a pattern is defined, it will be preferred over patterns derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.DateFormat} for details about the pattern syntax.
+		 * See class {@link sap.ui.core.format.DateFormat DateFormat} for details about the pattern syntax.
 		 *
 		 * After changing the time pattern, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
@@ -581,7 +582,7 @@ sap.ui.define([
 		 *
 		 * If a symbol is defined, it will be preferred over symbols derived from the current locale.
 		 *
-		 * See class {@link sap.ui.core.format.NumberFormat} for details about the symbols.
+		 * See class {@link sap.ui.core.format.NumberFormat NumberFormat} for details about the symbols.
 		 *
 		 * After changing the number symbol, the framework tries to update localization
 		 * specific parts of the UI. See the documentation of
@@ -610,8 +611,8 @@ sap.ui.define([
 		 * @returns {object} the mapping between custom currencies and its digits
 		 * @public
 		 * @since 1.120
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies}
-		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies}
+		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies}
+		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}
 		 */
 		getCustomCurrencies() {
 			return mSettings["currency"];
@@ -650,7 +651,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 * @param {object} mCurrencies currency map which is set
-		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies}
+		 * @see {@link module:sap/base/i18n/Formatting.addCustomCurrencies Formatting.addCustomCurrencies}
 		 */
 		setCustomCurrencies(mCurrencies) {
 			check(typeof mCurrencies === "object" || mCurrencies == null, "mCurrencyDigits must be an object");
@@ -674,7 +675,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.120
 		 * @param {object} mCurrencies adds to the currency map
-		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies}
+		 * @see {@link module:sap/base/i18n/Formatting.setCustomCurrencies Formatting.setCustomCurrencies}
 		 */
 		addCustomCurrencies(mCurrencies) {
 			// add custom units, or remove the existing ones if none are given
@@ -884,8 +885,8 @@ sap.ui.define([
 		 * When set to <code>false</code> the placement of the currency code is done dynamically, depending on the
 		 * configured locale using data provided by the Unicode Common Locale Data Repository (CLDR).
 		 *
-		 * Each currency instance ({@link sap.ui.core.format.NumberFormat.getCurrencyInstance}) will be created
-		 * with this setting unless overwritten on instance level.
+		 * Each currency instance ({@link sap.ui.core.format.NumberFormat.getCurrencyInstance
+		 * NumberFormat.getCurrencyInstance}) will be created with this setting unless overwritten on instance level.
 		 *
 		 * @param {boolean} bTrailingCurrencyCode Whether currency codes shall always be placed after the numeric value
 		 * @public
@@ -916,7 +917,7 @@ sap.ui.define([
 		 * Returns a live object with the current settings
 		 * TODO this method is part of the facade to be accessible from LocaleData, but it shouldn't be
 		 *
-		 * @returns {mSettings} The custom LocaleData settings object
+		 * @returns {object} The custom LocaleData settings object
 		 * @private
 		 * @ui5-restricted sap.ui.core
 		 * @since 1.116.0
@@ -927,7 +928,8 @@ sap.ui.define([
 
 		/**
 		 * Returns the calendar week numbering algorithm used to determine the first day of the week
-		 * and the first calendar week of the year, see {@link module:sap/base/i18n/data/CalendarWeekNumbering}.
+		 * and the first calendar week of the year, see {@link module:sap/base/i18n/date/CalendarWeekNumbering
+		 * CalendarWeekNumbering}.
 		 *
 		 * @returns {module:sap/base/i18n/date/CalendarWeekNumbering} The calendar week numbering algorithm
 		 *
@@ -952,13 +954,14 @@ sap.ui.define([
 
 		/**
 		 * Sets the calendar week numbering algorithm which is used to determine the first day of the week
-		 * and the first calendar week of the year, see {@link module:sap/base/i18n/date/CalendarWeekNumbering}.
+		 * and the first calendar week of the year, see {@link module:sap/base/i18n/date/CalendarWeekNumbering
+		 * CalendarWeekNumbering}.
 		 *
 		 * @param {module:sap/base/i18n/date/CalendarWeekNumbering} sCalendarWeekNumbering
 		 *   The calendar week numbering algorithm
 		 * @throws {TypeError}
 		 *   If <code>sCalendarWeekNumbering</code> is not a valid calendar week numbering algorithm,
-		 *   defined in {@link module:sap/base/i18n/date/CalendarWeekNumbering}
+		 *   defined in {@link module:sap/base/i18n/date/CalendarWeekNumbering CalendarWeekNumbering}
 		 *
 		 * @public
 		 * @since 1.120

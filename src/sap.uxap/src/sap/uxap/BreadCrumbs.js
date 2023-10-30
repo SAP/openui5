@@ -128,7 +128,7 @@ sap.ui.define([
 	 * Handles the initial mode selection between overflowSelect and normal mode
 	 *
 	 * @private
-	 * @returns {object} this
+	 * @returns {this} this
 	 */
 	BreadCrumbs.prototype._handleInitialModeSelection = function () {
 		if (this._bOnPhone) {
@@ -307,7 +307,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the Breadcrumbs jQuery object
 	 *
-	 * @returns {jQuery.Object} breadcrumbs jQuery instance
+	 * @returns {jQuery} breadcrumbs jQuery instance
 	 * @private
 	 */
 	BreadCrumbs.prototype._getBreadcrumbsAsJQueryObject = function () {
@@ -321,7 +321,7 @@ sap.ui.define([
 	/**
 	 * Retrieves the overflowSelect jQuery object
 	 *
-	 * @returns {jQuery.Object} jQuery select object
+	 * @returns {jQuery} jQuery select object
 	 * @private
 	 */
 	BreadCrumbs.prototype._getOverflowSelectAsJQueryObject = function () {
@@ -336,7 +336,7 @@ sap.ui.define([
 	 * Sets the visibility of the Breadcrumbs
 	 *
 	 * @param {boolean} bVisible visibility of breadcrumbs
-	 * @returns {jQuery.Object} $this
+	 * @returns {jQuery} $this
 	 * @private
 	 */
 	BreadCrumbs.prototype._setBreadcrumbsVisible = function (bVisible) {
@@ -360,7 +360,7 @@ sap.ui.define([
 	 * Sets the visibility of the overflowSelect
 	 *
 	 * @param {boolean} bVisible select visibility state
-	 * @returns {*} this
+	 * @returns {this} this
 	 * @private
 	 */
 	BreadCrumbs.prototype._setSelectVisible = function (bVisible) {
@@ -379,7 +379,7 @@ sap.ui.define([
 	/**
 	 * Resets all of the internally cached values used by the control
 	 *
-	 * @returns {object} this
+	 * @returns {this} this
 	 * @private
 	 */
 	BreadCrumbs.prototype._resetControl = function () {
@@ -447,7 +447,7 @@ sap.ui.define([
 	 * Configures the Keyboard handling for the control
 	 *
 	 * @private
-	 * @returns {object} this
+	 * @returns {this} this
 	 */
 	BreadCrumbs.prototype._configureKeyboardHandling = function () {
 		var oItemNavigation = this._getItemNavigation(),

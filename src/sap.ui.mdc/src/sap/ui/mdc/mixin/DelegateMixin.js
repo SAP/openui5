@@ -236,7 +236,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log", "sap/ui/mdc/BaseDe
 		this.isControlDelegateInitialized = DelegateMixin.isControlDelegateInitialized;
 		this.getControlDelegate = DelegateMixin.getControlDelegate;
 		this.getPayload = DelegateMixin.getPayload;
-		this.getTypeUtil = DelegateMixin.getTypeUtil;
+		this.getTypeUtil = undefined;
 		this.getTypeMap = DelegateMixin.getTypeMap;
 		this.initControlDelegate = DelegateMixin.initControlDelegate;
 	};

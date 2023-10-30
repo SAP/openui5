@@ -2594,7 +2594,7 @@ sap.ui.define([
 	 * e.g. in the BT condition one or both of the values is/are empty of for other condition operations the value1 field is not filled.
 	 *
 	 * @private
-	 * @param {Grid} oConditionGrid which contains the fields of a single condition
+	 * @param {sap.ui.layout.Grid} oConditionGrid which contains the fields of a single condition
 	 * @param {boolean} isLast indicated if this is the last condition in the group
 	 * @returns {boolean} true, when the condition is filled correct, else false.
 	 */

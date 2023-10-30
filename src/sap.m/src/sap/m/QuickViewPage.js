@@ -162,9 +162,7 @@ sap.ui.define([
 		renderer: QuickViewPageRenderer
 	});
 
-	QuickViewPage.prototype.init =  function() {
-		if (this._initCrossAppNavigationService) {}
-	};
+	QuickViewPage.prototype.init =  function() {};
 
 	QuickViewPage.prototype.exit = function() {
 		if (this._oPage) {
@@ -404,11 +402,6 @@ sap.ui.define([
 				href: sTitleUrl,
 				target: "_blank"
 			});
-		} else if (this.getCrossAppNavCallback && undefined && sTitle) {
-			oTitle = new Link({
-				text: sTitle
-			});
-			oTitle.attachPress(this._crossApplicationNavigation.bind(this));
 		} else if (sTitle) {
 			oTitle = new Title({
 				text: sTitle,
@@ -534,23 +527,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickViewPage.prototype._crossApplicationNavigation = function () {
-		if (this.getCrossAppNavCallback && undefined && this.oCrossAppNavigator) {
-			var targetConfigCallback = undefined;
-			if (typeof targetConfigCallback == "function") {
-				var targetConfig = targetConfigCallback();
-				var href = this.oCrossAppNavigator.hrefForExternal(
-					{
-						target : {
-							semanticObject : targetConfig.target.semanticObject,
-							action : targetConfig.target.action
-						},
-						params : targetConfig.params
-					}
-				);
-
-				URLHelper.redirect(href);
-			}
-		} else if (this.getTitleUrl()) {
+		if (this.getTitleUrl()) {
 			URLHelper.redirect(this.getTitleUrl(), true);
 		}
 	};
@@ -663,14 +640,14 @@ sap.ui.define([
 
 	QuickViewPage.prototype._getAvatar = function () {
 		var oAvatar = null,
-			sIcon = this.getIcon && "";
+			sIcon = undefined;
 
 		if (this.getAvatar()) {
 			// Copy the values of properties directly, don't clone bindings,
 			// as this avatar and the whole NavContainer are not aggregated by the real QuickViewPage
 			oAvatar = this.getAvatar().clone(null, null, { cloneBindings: false, cloneChildren: true });
 			this._checkAvatarProperties(oAvatar);
-		} else if (sIcon && this.getFallbackIcon) {
+		} else if (sIcon && undefined) {
 			oAvatar = new Avatar({
 				displayShape: AvatarShape.Square,
 				fallbackIcon: this.getFallbackIcon(),
