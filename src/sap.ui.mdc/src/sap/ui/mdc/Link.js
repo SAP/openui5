@@ -76,7 +76,7 @@ sap.ui.define([
 	 * @since 1.74
 	 *
 	 * @public
-   	 * @experimental As of version 1.74.0
+		   * @experimental As of version 1.74.0
 	 */
 	const Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -90,15 +90,27 @@ sap.ui.define([
 					defaultValue: true
 				},
 				/**
-				 * Path to <code>LinkDelegate</code> module that provides the required APIs to create content for the <code>Link</code> control.<br>
+				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * The object has the following properties:
+				 * <ul>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
+				 * </ul>
+				 * <i>Sample delegate object:</i>
+				 * <pre><code>{
+				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	payload: {}
+				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
-				 * Do not bind or modify the module. Once the required module is associated, this property might not be needed any longer.
-				 *
+				 * Do not bind or modify the module. This property can only be configured during control initialization.
 				 * @experimental
 				 */
 				delegate: {
 					type: "object",
-					defaultValue: { name: "sap/ui/mdc/LinkDelegate", payload: {} }
+					defaultValue: {
+						name: "sap/ui/mdc/LinkDelegate",
+						payload: {}
+					}
 				}
 			},
 			associations: {
@@ -177,8 +189,8 @@ sap.ui.define([
 				}.bind(this));
 			}
 			return this._oLinkType ?
-					(this._oLinkType.type === LinkType.DirectLink || this._oLinkType.type === LinkType.Popover) :
-					(oInitialLinkType.type === LinkType.DirectLink || oInitialLinkType.type === LinkType.Popover);
+				(this._oLinkType.type === LinkType.DirectLink || this._oLinkType.type === LinkType.Popover) :
+				(oInitialLinkType.type === LinkType.DirectLink || oInitialLinkType.type === LinkType.Popover);
 		}.bind(this));
 	};
 
@@ -512,7 +524,7 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.ui.core.Control[]} aAdditionalContent The given <code>AdditionalContent</code> objects
 	 */
-	 Link.prototype._setAdditionalContent = function(aAdditionalContent) {
+	Link.prototype._setAdditionalContent = function(aAdditionalContent) {
 		this._aAdditionalContent = aAdditionalContent;
 	};
 

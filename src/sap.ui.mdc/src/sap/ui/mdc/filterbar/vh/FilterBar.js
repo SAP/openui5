@@ -11,7 +11,7 @@ sap.ui.define(
 		"sap/m/Button",
 		"sap/m/p13n/enum/PersistenceMode"
 	],
-	function (
+	function(
 		mLibrary,
 		FilterBarBase,
 		FilterBarBaseRenderer,
@@ -54,27 +54,30 @@ sap.ui.define(
 					library: "sap.ui.mdc",
 					properties: {
 						/**
-						 * Path to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+						 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+						 * The object has the following properties:
+						 * <ul>
+						 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+						 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
+						 * </ul>
+						 * <i>Sample delegate object:</i>
+						 * <pre><code>{
+						 * 	name: "sap/ui/mdc/BaseDelegate",
+						 * 	payload: {}
+						 * }</code></pre>
 						 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 						 * Do not bind or modify the module. This property can only be configured during control initialization.
-						 *
 						 * @experimental
 						 */
 						delegate: {
 							type: "object",
 							defaultValue: {
-								/**
-								 * Contains the class name which implements the {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} class.
-								 */
 								name: "sap/ui/mdc/filterbar/vh/FilterBarDelegate",
-								/**
-								 * Contains the mandatory information about the metamodel name <code>modelName</code> and the main data part in its <code>collectionName</code>.<br>
-								 * <b>Note:</b> Additional information relevant for the specific {@link sap.ui.mdc.FilterBarDelegate FilterBarDelegate} implementation might be included but is of no relevance for the {@link sap.ui.mdc.FilterBar FilterBar} control itself.
-								 */
 								payload: {
 									modelName: undefined,
 									collectionName: ""
-								}}
+								}
+							}
 						},
 						/**
 						 * Determines whether the Show/Hide Filters button is in the state show or hide.<br>
@@ -91,7 +94,7 @@ sap.ui.define(
 							defaultValue: 8
 						}
 					},
-					aggregations : {
+					aggregations: {
 					}
 				},
 
@@ -101,7 +104,7 @@ sap.ui.define(
 
 		const ButtonType = mLibrary.ButtonType;
 
-		FilterBar.prototype._createInnerLayout = function () {
+		FilterBar.prototype._createInnerLayout = function() {
 			this._cLayoutItem = FilterItemLayout;
 
 			this._oFilterBarLayout = new FilterContainer(this.getId() + "-innerLayout", {});
@@ -113,14 +116,14 @@ sap.ui.define(
 				press: this._onToggleFilters.bind(this)
 			});
 			this._oBtnFilters.bindProperty("text", {
-				model : FilterBarBase.INNER_MODEL_NAME,
+				model: FilterBarBase.INNER_MODEL_NAME,
 				path: "/expandFilterFields",
 				formatter: function(bExpandFilterFields) {
 					return this._oRb.getText("valuehelp." + (bExpandFilterFields ? "HIDE" : "SHOW") + "ADVSEARCH");
 				}.bind(this)
 			});
 			this._oBtnFilters.bindProperty("visible", {
-				model : FilterBarBase.INNER_MODEL_NAME,
+				model: FilterBarBase.INNER_MODEL_NAME,
 				path: "/filterItems",
 				formatter: function(aItems) {
 					return aItems.length > 0;
@@ -174,11 +177,11 @@ sap.ui.define(
 			this._oShowAllFiltersBtn = null;
 		};
 
-		FilterBar.prototype._onToggleFilters = function (oEvent) {
+		FilterBar.prototype._onToggleFilters = function(oEvent) {
 			this.setExpandFilterFields(!this.getExpandFilterFields());
 		};
 
-		FilterBar.prototype._onShowAllFilters = function (oEvent) {
+		FilterBar.prototype._onShowAllFilters = function(oEvent) {
 			this._oFilterBarLayout._updateFilterBarLayout(true);
 		};
 
@@ -191,7 +194,7 @@ sap.ui.define(
 		 * @returns {this} Reference to <code>this</code> to allow method chaining
 		 * @protected
 		 */
-		FilterBar.prototype.setCollectiveSearch = function (oCollectiveSearch) {
+		FilterBar.prototype.setCollectiveSearch = function(oCollectiveSearch) {
 			if (this._oCollectiveSearch) {
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
@@ -213,7 +216,7 @@ sap.ui.define(
 		 * @returns {sap.ui.mdc.filterbar.vh.CollectiveSearchSelect} Instance of the {@link sap.ui.mdc.filterbar.vh.CollectiveSearchSelect CollectiveSearchSelect} control
 		 * @protected
 		 */
-		FilterBar.prototype.getCollectiveSearch = function () {
+		FilterBar.prototype.getCollectiveSearch = function() {
 			return this._oCollectiveSearch;
 		};
 
@@ -225,7 +228,7 @@ sap.ui.define(
 		 * @returns {this} Reference to <code>this</code> to allow method chaining
 		 * @protected
 		 */
-		 FilterBar.prototype.destroyCollectiveSearch = function () {
+		FilterBar.prototype.destroyCollectiveSearch = function() {
 			if (this._oCollectiveSearch && this._oFilterBarLayout) {
 				this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
 				this._oCollectiveSearch.destroy();
@@ -235,7 +238,7 @@ sap.ui.define(
 			return this;
 		};
 
-		FilterBar.prototype.setBasicSearchField = function (oBasicSearchField) {
+		FilterBar.prototype.setBasicSearchField = function(oBasicSearchField) {
 			if (this._oBasicSearchField) {
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oBasicSearchField);
@@ -254,23 +257,23 @@ sap.ui.define(
 				}
 
 				oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
-				if (!this._oObserver.isObserved(oBasicSearchField, {properties: ["visible"]})) {
-					this._oObserver.observe(oBasicSearchField, {properties: ["visible"]});
+				if (!this._oObserver.isObserved(oBasicSearchField, { properties: ["visible"] })) {
+					this._oObserver.observe(oBasicSearchField, { properties: ["visible"] });
 				}
 			}
 
 			return this;
 		};
 
-		FilterBar.prototype.getBasicSearchField = function () {
+		FilterBar.prototype.getBasicSearchField = function() {
 			return this._oBasicSearchField;
 		};
 
-		FilterBar.prototype.destroyBasicSearchField = function () {
+		FilterBar.prototype.destroyBasicSearchField = function() {
 			if (this._oBasicSearchField && this._oFilterBarLayout) {
 				this._oFilterBarLayout.removeControl(this._oBasicSearchField);
 				this._oBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
-				if (this._oObserver.isObserved(this._oBasicSearchField, {properties: ["visible"]})) {
+				if (this._oObserver.isObserved(this._oBasicSearchField, { properties: ["visible"] })) {
 					this._oObserver.unobserve(this._oBasicSearchField);
 				}
 				this._oBasicSearchField.destroy();
