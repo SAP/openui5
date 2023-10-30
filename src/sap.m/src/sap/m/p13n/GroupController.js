@@ -2,21 +2,21 @@
  * ${copyright}
  */
 sap.ui.define([
-    'sap/m/p13n/SelectionController', 'sap/m/p13n/GroupPanel', 'sap/m/p13n/modules/xConfigAPI'
+	'sap/m/p13n/SelectionController', 'sap/m/p13n/GroupPanel', 'sap/m/p13n/modules/xConfigAPI'
 ], function (BaseController, GroupPanel, xConfigAPI) {
-    "use strict";
+	"use strict";
 
-     /**
+	 /**
 	 * Constructor for a new <code>GroupController</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-     * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
+	 * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
 	 *
 	 * @class
 	 * The <code>GroupController</code> entity serves as a base class to create group-specific personalization implementations.
 	 *
-	 * @extends sap.ui.base.Object
+	 * @extends sap.m.p13n.SelectionController
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -24,118 +24,118 @@ sap.ui.define([
 	 * @since 1.104
 	 * @alias sap.m.p13n.GroupController
 	 */
-    var GroupController = BaseController.extend("sap.m.p13n.subcontroller.GroupController");
+	var GroupController = BaseController.extend("sap.m.p13n.GroupController");
 
-    GroupController.prototype.getStateKey = function () {
-        return "groupLevels";
-    };
+	GroupController.prototype.getStateKey = function () {
+		return "groupLevels";
+	};
 
-    GroupController.prototype.getCurrentState = function(bExternalize) {
-        var oXConfig = xConfigAPI.readConfig(this.getAdaptationControl()) || {};
-        var aSortConditions = oXConfig.hasOwnProperty("properties") ? oXConfig.properties.groupConditions : [];
+	GroupController.prototype.getCurrentState = function(bExternalize) {
+		var oXConfig = xConfigAPI.readConfig(this.getAdaptationControl()) || {};
+		var aSortConditions = oXConfig.hasOwnProperty("properties") ? oXConfig.properties.groupConditions : [];
 
-        return aSortConditions || [];
-    };
+		return aSortConditions || [];
+	};
 
-    GroupController.prototype.initAdaptationUI = function(oPropertyHelper){
-        var oGroupPanel = new GroupPanel();
-        var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
+	GroupController.prototype.initAdaptationUI = function(oPropertyHelper){
+		var oGroupPanel = new GroupPanel();
+		var oAdaptationData = this.mixInfoAndState(oPropertyHelper);
 		var oAdaptationControl = this.getAdaptationControl();
 
 		if (oAdaptationControl.isA("sap.m.Table")) {
 			oGroupPanel.setQueryLimit(1);
 		}
 
-        oGroupPanel.setP13nData(oAdaptationData.items);
-        this._oPanel = oGroupPanel;
+		oGroupPanel.setP13nData(oAdaptationData.items);
+		this._oPanel = oGroupPanel;
 
-        return Promise.resolve(oGroupPanel);
-    };
+		return Promise.resolve(oGroupPanel);
+	};
 
-    GroupController.prototype.model2State = function() {
-        var aItems = [];
-        this._oPanel.getP13nData(true).forEach(function(oItem){
-            if (oItem.grouped){
-                aItems.push({
-                    key: oItem.key
-                });
-            }
-        });
-        return aItems;
-    };
+	GroupController.prototype.model2State = function() {
+		var aItems = [];
+		this._oPanel.getP13nData(true).forEach(function(oItem){
+			if (oItem.grouped){
+				aItems.push({
+					key: oItem.key
+				});
+			}
+		});
+		return aItems;
+	};
 
-    GroupController.prototype.getChangeOperations = function () {
-        return {
-            add: "addGroup",
-            remove: "removeGroup",
-            move: "moveGroup"
-        };
-    };
+	GroupController.prototype.getChangeOperations = function () {
+		return {
+			add: "addGroup",
+			remove: "removeGroup",
+			move: "moveGroup"
+		};
+	};
 
-    GroupController.prototype._getPresenceAttribute = function () {
-        return "grouped";
-    };
+	GroupController.prototype._getPresenceAttribute = function () {
+		return "grouped";
+	};
 
-    GroupController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent){
-        var oAddRemoveChange = {
-            selectorElement: oControl,
-            changeSpecificData: {
-                changeType: sOperation,
-                content: oContent
-            }
-        };
-        return oAddRemoveChange;
-    };
+	GroupController.prototype._createAddRemoveChange = function(oControl, sOperation, oContent){
+		var oAddRemoveChange = {
+			selectorElement: oControl,
+			changeSpecificData: {
+				changeType: sOperation,
+				content: oContent
+			}
+		};
+		return oAddRemoveChange;
+	};
 
-    GroupController.prototype._createMoveChange = function(sId, sPropertykey, iNewIndex, sMoveOperation, oControl, bPersistId){
-        var oMoveChange =  {
-            selectorElement: oControl,
-            changeSpecificData: {
-                changeType: sMoveOperation,
-                content: {
-                    id: sId,
-                    key: sPropertykey,
-                    index: iNewIndex
-                }
-            }
-        };
+	GroupController.prototype._createMoveChange = function(sId, sPropertykey, iNewIndex, sMoveOperation, oControl, bPersistId){
+		var oMoveChange =  {
+			selectorElement: oControl,
+			changeSpecificData: {
+				changeType: sMoveOperation,
+				content: {
+					id: sId,
+					key: sPropertykey,
+					index: iNewIndex
+				}
+			}
+		};
 
-        if (!bPersistId) {
-            delete oMoveChange.changeSpecificData.content.id;
-        }
+		if (!bPersistId) {
+			delete oMoveChange.changeSpecificData.content.id;
+		}
 
-        return oMoveChange;
-    };
+		return oMoveChange;
+	};
 
-    GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
+	GroupController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mItemState = this.arrayToMap(aItemState);
-        var oController = this.getAdaptationControl();
-        var oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
+		var aItemState = this.getCurrentState();
+		var mItemState = this.arrayToMap(aItemState);
+		var oController = this.getAdaptationControl();
+		var oAggregations = oController.getAggregateConditions ? oController.getAggregateConditions() || {} : {};
 
-        var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
-            var oExisting = mItemState[oProperty.key];
-            mItem.grouped = !!oExisting;
-            mItem.position =  oExisting ? oExisting.position : -1;
-            return !(oProperty.groupable === false || oAggregations[oProperty.key]);
-        });
+		var oP13nData = this.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+			var oExisting = mItemState[oProperty.key];
+			mItem.grouped = !!oExisting;
+			mItem.position =  oExisting ? oExisting.position : -1;
+			return !(oProperty.groupable === false || oAggregations[oProperty.key]);
+		});
 
-        this.sortP13nData({
-            visible: "grouped",
-            position: "position"
-        }, oP13nData.items);
+		this.sortP13nData({
+			visible: "grouped",
+			position: "position"
+		}, oP13nData.items);
 
-        oP13nData.presenceAttribute = this._getPresenceAttribute();
-        oP13nData.items.forEach(function(oItem){delete oItem.position;});
+		oP13nData.presenceAttribute = this._getPresenceAttribute();
+		oP13nData.items.forEach(function(oItem){delete oItem.position;});
 
-        return oP13nData;
-    };
+		return oP13nData;
+	};
 
-    GroupController.prototype.applyChange = function(aSortState){
-        return Promise.resolve();
-    };
+	GroupController.prototype.applyChange = function(aSortState){
+		return Promise.resolve();
+	};
 
-    return GroupController;
+	return GroupController;
 
 });

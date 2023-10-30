@@ -626,7 +626,7 @@ sap.ui.define([
 		/**
 		 * Sets background design.
 		 *
-		 * @param {string} sBgDesign The new background design parameter.
+		 * @param {sap.m.PageBackgroundDesign} sBgDesign The new background design parameter.
 		 * @returns {this} <code>this</code> to facilitate method chaining.
 		 */
 		Wizard.prototype.setBackgroundDesign = function (sBgDesign) {
@@ -640,7 +640,7 @@ sap.ui.define([
 		/**
 		 * Dynamic step insertion is not yet supported.
 		 * @param {sap.m.WizardStep} oWizardStep The step to be inserted
-		 * @param {index} iIndex The index at which to insert
+		 * @param {int} iIndex The index at which to insert
 		 * @experimental
 		 * @private
 		 */
@@ -654,7 +654,7 @@ sap.ui.define([
 
 		/**
 		 * Dynamic step removal is not yet supported.
-		 * @param {sap.m.WizardStep} oWizardStep The step to be removed
+		 * @param {int|sap.ui.core.ID|sap.m.WizardStep} oWizardStep The step to be removed or its ID or index
 		 * @experimental
 		 * @private
 		 */

@@ -2836,7 +2836,7 @@ function(
 	/**
 	 * Adds some item <code>oItem</code> to the association named <code>selectedItems</code>.
 	 *
-	 * @param {sap.ui.core.Item} oItem The selected item to add; if empty, nothing is added.
+	 * @param {sap.ui.core.ID|sap.ui.core.Item} oItem The selected item to add; if empty, nothing is added.
 	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */

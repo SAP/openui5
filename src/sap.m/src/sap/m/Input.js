@@ -914,7 +914,7 @@ function(
 	 *
 	 *
 	 * @public
-	 * @param {sap.ui.core.Item} [oItem=null] New value for the <code>selectedItem</code> association.
+	 * @param {sap.ui.core.ID|sap.ui.core.Item|null} [oItem=null] New value for the <code>selectedItem</code> association.
 	 * If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the
 	 * <code>selectedItem</code> association.
 	 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear
@@ -1090,7 +1090,7 @@ function(
 	 * Default value is <code>null</code>.
 	 *
 	 * @public
-	 * @param {sap.m.ColumnListItem} oListItem New value for the <code>selectedRow</code> association.
+	 * @param {sap.ui.core.ID|sap.m.ColumnListItem|null} oListItem New value for the <code>selectedRow</code> association.
 	 * If an ID of a <code>sap.m.ColumnListItem</code> is given, the item with this ID becomes the
 	 * <code>selectedRow</code> association.
 	 * Alternatively, a <code>sap.m.ColumnListItem</code> instance may be given or <code>null</code> to clear

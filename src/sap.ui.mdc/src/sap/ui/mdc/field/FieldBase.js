@@ -786,7 +786,7 @@ sap.ui.define([
 	 * @param {object} [oFocusInfo={}] Options for setting the focus
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 If set to <code>true</code>, the focused
 	 *   element won't be moved into the viewport if it's not completely visible before the focus is set
-	 * @param {any} [oFocusInfo.targetInfo] @since 1.98 Further control-specific setting of the focus target within the control
+	 * @param {object} [oFocusInfo.targetInfo] @since 1.98 Further control-specific setting of the focus target within the control
 	 * @param {boolean} [oFocusInfo.targetInfo.silent] @since 1.114 Suppresses typeahead opening
 	 * @public
 	 */

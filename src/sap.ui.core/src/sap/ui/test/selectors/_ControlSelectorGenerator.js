@@ -455,14 +455,15 @@
     };
 
      /**
-     * Iterate through all controls a a given level and attempt to generate a unique selector for each one.
+     * Iterate through all controls at a given level and attempt to generate a unique selector for each one.
      * stop the cycle as soon as one unique selector is found
      * @param {object} oOptions Object with options
-     * @param {Array} oOptions.siblings the children at a given tree level
+     * @param {array} oOptions.siblings the children at a given tree level
      * @param {object} oOptions.options filter options
      * @param {number} oOptions.index index of the child for which to start the search
      * @param {object} oOptions.targetMultiSelector intermediate selector for the target - not unique
-     * @param {object} oOptions.level.siblings siblings at the current level
+     * @param {object} oOptions.level options related to the current level
+     * @param {array} oOptions.level.siblings siblings at the current level
      * @param {number} oOptions.level.number the current level
      * @param {number} oOptions.level.width maximum width to search for the current level
      * @returns {object} a selector

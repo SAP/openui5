@@ -390,7 +390,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Sets custom icon.
 		 *
 		 * @public
-		 * @param {string} sIcon Icon to use as a busy animation.
+		 * @param {sap.ui.core.URI} sIcon Icon to use as a busy animation.
 		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIcon = function (sIcon) {
@@ -429,7 +429,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Sets the width of the custom icon.
 		 *
 		 * @public
-		 * @param {string} sWidth Width of the provided icon in CSSSize.
+		 * @param {sap.ui.core.CSSSize} sWidth Width of the provided icon in CSSSize.
 		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconWidth = function (sWidth) {
@@ -442,7 +442,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Sets the height of the custom icon.
 		 *
 		 * @public
-		 * @param {string} sHeight Height of the provided icon in CSSSize.
+		 * @param {sap.ui.core.CSSSize} sHeight Height of the provided icon in CSSSize.
 		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconHeight = function (sHeight) {

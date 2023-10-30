@@ -213,7 +213,7 @@ function(library,
 	 * Gets the text.
 	 *
 	 * @public
-	 * @param {boolean} bNormalize Indication for normalized text.
+	 * @param {boolean} [bNormalize] Indication for normalized text.
 	 * @returns {string} Text value.
 	 */
 	ExpandableText.prototype.getText = function (bNormalize) {

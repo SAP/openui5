@@ -81,7 +81,7 @@ function(Control, ScrollBarRenderer) {
 		this.invalidate();
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	ScrollBar.prototype.setScrollPosition = function (iScrollPosition) {
@@ -91,7 +91,7 @@ function(Control, ScrollBarRenderer) {
 		return this.setProperty("scrollPosition", iPos, true);
 	};
 
-	/**
+	/*
 	 * Custom setter, helping DOM changes to appear to the element, before DOM event handlers hit on it.
 	 * @override
 	 */
