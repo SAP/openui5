@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/ui/Global",
+	"sap/ui/VersionInfo",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/ControlBehavior",
@@ -22,6 +23,7 @@ sap.ui.define([
 		Formatting,
 		Localization,
 		Global,
+		VersionInfo,
 		AnimationMode,
 		Configuration,
 		ControlBehavior,
@@ -46,7 +48,7 @@ sap.ui.define([
 		 * @private
 		 */
 		function _getLibraries() {
-			var libraries = Global.versioninfo ? Global.versioninfo.libraries : undefined;
+			var libraries = VersionInfo._content ? VersionInfo._content.libraries : undefined;
 			var formattedLibraries = Object.create(null);
 
 			if (libraries !== undefined) {

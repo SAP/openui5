@@ -1,17 +1,31 @@
 /*global QUnit sinon */
 sap.ui.define([
-	"sap/ui/Global",
+	"sap/ui/VersionInfo",
 	"sap/ui/core/Component",
 	"sap/ui/core/Lib"
-], function(Global, Component, Library) {
+], function(VersionInfo, Component, Library) {
 	"use strict";
 
 	function noop() {}
 
 	QUnit.module("When a Component is contained in a Library,", {
-		before: function() {
+		/**
+		 * Fakes a server responding to a "sap-ui-version.json" request.
+		 */
+		initFakeServer: function(oResponse) {
+			this.oServer = sinon.createFakeServer();
+			this.oServer.autoRespond = true;
+			this.oServer.respondWith("GET", sap.ui.require.toUrl("sap-ui-version.json"), [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oResponse)
+			]);
+		},
+		before: async function() {
 			// inject mocked version info
-			Global.versioninfo = {
+			this.initFakeServer({
 				"name": "qunit",
 				"version": "1.0.0",
 				"buildTimestamp": "<TIMESTAMP>",
@@ -46,7 +60,12 @@ sap.ui.define([
 						}
 					}
 				}
-			};
+			});
+
+			await VersionInfo.load();
+		},
+		after: function() {
+			this.oServer.restore();
 		}
 	});
 
