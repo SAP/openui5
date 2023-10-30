@@ -38,7 +38,9 @@ sap.ui.define([
 	var _aOtherInputFields = ["frameWidthUnit", "frameHeightUnit", "useLegacyNavigation"];
 
 	function isValidUrl(sUrl) {
-		return IFrame.isValidUrl(encodeURI(sUrl));
+		return typeof sUrl === "string"
+			&& sUrl.trim() !== ""
+			&& IFrame.isValidUrl(encodeURI(sUrl));
 	}
 
 	return Controller.extend("sap.ui.rta.plugin.iframe.AddIFrameDialogController", {
@@ -86,14 +88,15 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - Event
 		 */
 		onShowPreview() {
-			var sURL = this._buildPreviewURL(this._buildReturnedURL());
+			const sReturnedURL = this._buildReturnedURL();
+			const sURL = this._buildPreviewURL(sReturnedURL);
 			if (!isValidUrl(sURL)) {
 				return;
 			}
-			var oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
+			const oIFrame = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewFrame");
 			// enable/disable expanding the Panel
-			var oPanel = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
-			var oPanelButton = oPanel.getDependents()[0];
+			const oPanel = Element.getElementById("sapUiRtaAddIFrameDialog_PreviewLinkPanel");
+			const oPanelButton = oPanel.getDependents()[0];
 			if (sURL) {
 				oPanelButton.setEnabled(true);
 			} else {
@@ -102,6 +105,7 @@ sap.ui.define([
 			}
 			try {
 				this._oJSONModel.setProperty("/previewUrl/value", sURL);
+				this._oJSONModel.setProperty("/previousFrameUrl/value", sReturnedURL);
 				this._oJSONModel.setProperty(
 					"/previewUseLegacyNavigation/value",
 					this._oJSONModel.getProperty("/useLegacyNavigation/value")
@@ -191,8 +195,10 @@ sap.ui.define([
 			var oUrlInput = Element.getElementById("sapUiRtaAddIFrameDialog_EditUrlTA");
 			if (isValidUrl(sUrl)) {
 				oUrlInput.setValueState("None");
+				this._oJSONModel.setProperty("/validFrameUrl/value", true);
 			} else {
 				oUrlInput.setValueState("Error");
+				this._oJSONModel.setProperty("/validFrameUrl/value", false);
 			}
 		},
 
