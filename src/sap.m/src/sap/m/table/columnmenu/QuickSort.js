@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/m/table/columnmenu/QuickActionBase"
+	"sap/m/table/columnmenu/QuickActionBase",
+	"sap/m/table/columnmenu/QuickSortItem"
 ], function (
-	QuickActionBase
+	QuickActionBase,
+	QuickSortItem
 ) {
 	"use strict";
 
@@ -37,7 +39,7 @@ sap.ui.define([
 				/**
 				 * The sortable properties and the initial state.
 				 */
-				items: { type: "sap.m.table.columnmenu.QuickSortItem", multiple: true }
+				items: { type: "sap.m.table.columnmenu.QuickSortItem", defaultClass: QuickSortItem, multiple: true }
 			},
 			events: {
 				/**
