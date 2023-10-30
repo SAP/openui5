@@ -6,7 +6,7 @@
 	<Page showHeader="false" >
 		<subHeader>
 			<OverflowToolbar>
-				<SearchField liveChange=".onSearch" width="100%" />
+				<SearchField liveChange=".onSearch" width="80%" />
 			</OverflowToolbar>
 		</subHeader>
 		<List
