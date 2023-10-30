@@ -1300,7 +1300,7 @@ sap.ui.define([
 				"The highlight text element " + (bTextExists ? "exists in the DOM" : "does not exist in the DOM"));
 
 			if (oHighlightTextElement != null) {
-				assert.strictEqual(oHighlightTextElement.innerHTML, sText, "The highlight text is correct: \"" + sText + "\"");
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText || "-", "The highlight text is correct: \"" + sText + "\"");
 			}
 		}
 
