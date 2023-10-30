@@ -3,6 +3,38 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "5033f63bc90b221699dfbf7ed86bd07f15853ead",
+        "type": "FIX",
+        "text": " onlocalizationEvent not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127742"
+          }
+        ]
+      },
+      {
+        "id": "07a257d45941e60bfb65fe424c00183c7938b7b8",
+        "type": "FIX",
+        "text": " Remove legacy onInit definitions (global,function,eval)"
+      },
+      {
+        "id": "e26abbaae4fa3c9b76d59c1bd228381523129929",
+        "type": "FIX",
+        "text": " Flexibility tests must wait for Core to be ready"
+      },
+      {
+        "id": "238c8c29dbd4b2761366fa885a1e26ffbef6583c",
+        "type": "FIX",
+        "text": " core/Component: skip the sync processing of i18n before resources are loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007495122023"
+          }
+        ]
+      },
+      {
         "id": "bc876ac37dc32d2714e6ceea39320877e0903437",
         "type": "FIX",
         "text": " sap.ui.core.qunit.i18n.helper._timezones: Set CLDR version to 43 for aCLDRTimezoneIDs",

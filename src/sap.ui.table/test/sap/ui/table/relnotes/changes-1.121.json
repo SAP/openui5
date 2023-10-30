@@ -1,0 +1,18 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "5033f63bc90b221699dfbf7ed86bd07f15853ead",
+        "type": "FIX",
+        "text": " onlocalizationEvent not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127742"
+          }
+        ]
+      }
+    ]
+  }
+}

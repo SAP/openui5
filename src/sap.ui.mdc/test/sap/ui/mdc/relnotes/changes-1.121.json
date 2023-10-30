@@ -1,0 +1,18 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "f4d7fd6a9aedf1546eced885b0ae2665f3968a78",
+        "type": "FIX",
+        "text": " ValueHelp: busy indicator for typeahed stays forever",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370124674"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "ea257a3e8df77e523256a6ad79987d7b3f56468b",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Align focus to specification",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126312"
+          }
+        ]
+      },
+      {
+        "id": "6b72769559f91d109a64b9bfdf9904b8d5a52434",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fix focus outline in high contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105198"
+          }
+        ]
+      }
+    ]
+  }
+}

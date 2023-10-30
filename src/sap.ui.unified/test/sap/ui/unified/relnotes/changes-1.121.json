@@ -1,0 +1,40 @@
+{
+  "1.121.0": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "41a889685707129482a9fc63cf4929d985aced56",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust rows accessibility semantics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370087919"
+          }
+        ]
+      },
+      {
+        "id": "3b4a9eac2b6c181ca57e4a8e7c3e630035d3ed99",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomMonthPicker: fixed missing year in internal MonthPicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009186302023"
+          }
+        ]
+      },
+      {
+        "id": "025b380f575d471c11b6a151b1941b470647ba02",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: remove redundant browse button type",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370122194"
+          }
+        ]
+      }
+    ]
+  }
+}

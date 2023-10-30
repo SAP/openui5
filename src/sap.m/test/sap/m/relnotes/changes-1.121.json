@@ -3,6 +3,105 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "ec9f967440c83e73eb9cf479e7222d8f6c2a6374",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: timezone is now correctly translated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129541"
+          }
+        ]
+      },
+      {
+        "id": "6c4c600d1301e5fef961333bf6aad130050bc262",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: using a stable date in a test scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370125750"
+          }
+        ]
+      },
+      {
+        "id": "e20208ac2669d61b08d68c8d5d583ba5e4bba229",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Allow title attribute in link",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370018787"
+          }
+        ]
+      },
+      {
+        "id": "2e86d931342ac7a96a78b1bcd1ce916f7c91045c",
+        "type": "FIX",
+        "text": " sap.m.DynamicDateRange: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370107055"
+          }
+        ]
+      },
+      {
+        "id": "21d83244b1e6de9e2381e7fc40806719dc0b47c2",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      },
+      {
+        "id": "3b4a9eac2b6c181ca57e4a8e7c3e630035d3ed99",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.CustomMonthPicker: fixed missing year in internal MonthPicker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400009186302023"
+          }
+        ]
+      },
+      {
+        "id": "981ba4a2bc06f54be737da1521f75315061b96e0",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: selectAll visualization adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370109539"
+          }
+        ]
+      },
+      {
+        "id": "0609b34dfa6de98857e0e843993417a7977892fc",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Suggestions are correctly visualized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120906"
+          }
+        ]
+      },
+      {
+        "id": "eff0157b39addaec4846b1ec7b1678a86b36e384",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: adjust select all checkbox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380124243"
+          }
+        ]
+      },
+      {
         "id": "d7aced42b4e05df174d2c219586e91ddc8c463d3",
         "type": "FIX",
         "text": " sap.m.Avatar: Fix detailBox destroying",
@@ -10,6 +109,17 @@
           {
             "type": "BCP",
             "reference": "2380079125"
+          }
+        ]
+      },
+      {
+        "id": "158095eac8a9de79b954adf96672be3430d41802",
+        "type": "FIX",
+        "text": " sap.m Date & Time controls: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380097696"
           }
         ]
       },

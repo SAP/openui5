@@ -3,6 +3,17 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "031fac60ca0f0a278f48aadf195518e2f1b2f348",
+        "type": "FIX",
+        "text": " sap.tnt.ToolHeader: Add missing sapMBarChildFirstChild class",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370124402"
+          }
+        ]
+      },
+      {
         "id": "094ced3826221eb5b3c47ae7c7d311f4e9ccd563",
         "type": "FIX",
         "text": " sap.tnt.ToolPage: Parent busy indicator is now shown on ToolPage",

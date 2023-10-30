@@ -3,6 +3,28 @@
     "date": "October 2023",
     "notes": [
       {
+        "id": "b7a62857a6efe6760afc17d6469d6d5e3172b426",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Restrict column size",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370115780"
+          }
+        ]
+      },
+      {
+        "id": "2bc4758fcf78c6eae3748b987541e99d9535fccb",
+        "type": "FIX",
+        "text": " sap.ui.integration.widgets.Card: aria-level is correct when card is in dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370104563"
+          }
+        ]
+      },
+      {
         "id": "9851fa26f844d02372bdfb23efa7ce4b061b1a44",
         "type": "FIX",
         "text": " sap.f.DynamicPageHeader: Aligned with visual specification",
