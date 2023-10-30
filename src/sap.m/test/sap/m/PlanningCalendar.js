@@ -107,14 +107,14 @@ sap.ui.define([
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
-	// shortcut for sap.m.PlacementType
-	var PlacementType = mobileLibrary.PlacementType;
-
 	// shortcut for sap.ui.unified.CalendarDayType
 	var CalendarDayType = unifiedLibrary.CalendarDayType;
 
 	// shortcut for sap.ui.unified.StandardCalendarLegendItem
 	var StandardCalendarLegendItem = unifiedLibrary.StandardCalendarLegendItem;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oLegend = new PlanningCalendarLegend("Legend1", {
 		standardItems: [StandardCalendarLegendItem.WorkingDay, StandardCalendarLegendItem.NonWorkingDay, StandardCalendarLegendItem.Today],
@@ -203,7 +203,10 @@ sap.ui.define([
 
 	function createFooter() {
 		return new Bar({
-			contentLeft: new Input("inputFocusHelper", {value: "VisualTest focus helper, Don't remove."}),
+			contentLeft: [
+				new Label({labelFor: "inputFocusHelper", text: "Focus helper"}),
+				new Input("inputFocusHelper", {value: "VisualTest focus helper, Don't remove."})
+			],
 			contentMiddle: [new Button({
 				text: "PlanningCalendar",
 				press: function () {
@@ -219,6 +222,7 @@ sap.ui.define([
 						oPC1.setShowEmptyIntervalHeaders(!bSEIH);
 					}
 				}),
+				new Label({labelFor: "select_width", text: "Screen width"}),
 				new Select('select_width', {
 					items: [
 						new Item('select_width_item_0', {
@@ -243,6 +247,7 @@ sap.ui.define([
 						Element.getElementById('PC1').setWidth(sSelectedWidth);
 					}
 				}),
+				new Label({labelFor: "select_calendar_type", text: "Calendar type"}),
 				new Select('select_calendar_type', {
 					items: [
 						new Item('select_calendar_type_item_0', {
@@ -271,6 +276,7 @@ sap.ui.define([
 						Element.getElementById('PC1').setPrimaryCalendarType(sSelectedCalendarType);
 					}
 				}),
+				new Label({labelFor: "MCB1", text: "Built-in views"}),
 				new MultiComboBox({
 					id: "MCB1",
 					width: "230px",
@@ -317,46 +323,20 @@ sap.ui.define([
 	var handleAppointmentSelect = function (oEvent) {
 		var oInput = Element.getElementById("I1"),
 			oAppointment = oEvent.getParameter("appointment"),
-			sPopoverValue,
-			bDiffType,
 			aAppointments,
 			sValue,
-			sGroupAppointmentType,
-			sGroupAppDomRefId = oEvent.getParameter("domRefId"),
-			sTitle,
 			i;
 
 		if (oAppointment) {
 			oInput.setValue("Appointment selected: " + oAppointment.getId());
-			sPopoverValue = "Appointment selected: " + oAppointment.getId();
-			sTitle = "Appointment";
 		} else {
 			aAppointments = oEvent.getParameter("appointments");
 			sValue = aAppointments.length + " Appointments selected: ";
-			sGroupAppointmentType = aAppointments[0].getType();
-			sTitle = "Group Appointment";
 			for (i = 1; i < aAppointments.length; i++) {
-				if (sGroupAppointmentType !== aAppointments[i].getType()) {
-					bDiffType = true;
-				}
 				sValue = sValue + aAppointments[i].getId() + " ";
 			}
 			oInput.setValue(sValue);
-			if (bDiffType) {
-				sPopoverValue = aAppointments.length + " Appointments of different types selected";
-			} else {
-				sPopoverValue = aAppointments.length + " Appointments of " + sGroupAppointmentType + " selected";
-			}
 		}
-		var oPopover = new Popover({
-			title: sTitle,
-			placement: PlacementType.Auto,
-			content: new Label({
-				text: sPopoverValue
-			})
-		});
-		oPopover.addStyleClass("sapUiContentPadding");
-		oPopover.openBy(document.getElementById(sGroupAppDomRefId));
 		setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 	};
 
@@ -496,7 +476,7 @@ sap.ui.define([
 	var oButton1 = new Button("B1", {
 		icon: "sap-icon://sap-ui5",
 		type: ButtonType.Transparent,
-		tooltip: "UI5",
+		tooltip: "UI5 button",
 		press: function () {
 			MessageToast.show("UI5 Button pressed");
 		}
@@ -517,6 +497,7 @@ sap.ui.define([
 
 	var oButtonAddAppointment = new Button("B_AddAppointment", {
 		icon: "sap-icon://add",
+		tooltip: "Add appointment",
 		type: ButtonType.Transparent,
 		press: handleAddAppointment
 	});
@@ -661,6 +642,7 @@ sap.ui.define([
 
 	var oDialog2;
 	var oButtonMinMax = new Button("B_MinMax", {
+		tooltip: "Change view start/end date",
 		icon: "sap-icon://group-2",
 		type: ButtonType.Transparent,
 		press: function () {
@@ -669,7 +651,6 @@ sap.ui.define([
 				var oForm = new SimpleForm("SimpleForm1", {
 					layout: SimpleFormLayout.ResponsiveGridLayout,
 					content: [
-						new Title({text: "valid interval"}),
 						new Label({text: "minimum date"}),
 						new DateTimePicker("DTP-Min", {
 							change: function (oEvent) {
@@ -696,7 +677,7 @@ sap.ui.define([
 				});
 
 				oDialog2 = new Dialog("D2", {
-					title: "Date interval",
+					title: "View's start/end date",
 					content: [oForm],
 					beginButton: new Button({
 						text: "OK",
@@ -855,11 +836,9 @@ sap.ui.define([
 												src: "sap-icon://employee-rejections"
 											}),
 											new Icon({
-												blocked: true,
 												src: "sap-icon://doctor"
 											}),
 											new Icon({
-												blocked: true,
 												src: "sap-icon://add-employee"
 											})
 										]
@@ -1384,6 +1363,10 @@ sap.ui.define([
 		rowSelectionChange: handleRowSelectionChange
 	});
 
+	var oLabel = new Label({
+		labelFor: "I1", text: "Readonly"
+	});
+
 	var oInput = new Input("I1", {
 		editable: false,
 		width: "100%"
@@ -1391,8 +1374,10 @@ sap.ui.define([
 
 	var page1 = new Page("page1", {
 		title: "Mobile PlanningCalendar",
+		titleLevel: TitleLevel.H1,
 		content: [
 			oPC1,
+			oLabel,
 			oInput
 		],
 		footer: createFooter()

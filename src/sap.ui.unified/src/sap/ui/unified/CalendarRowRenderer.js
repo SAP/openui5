@@ -462,7 +462,7 @@ sap.ui.define([
 		}
 
 		var sTitle = oIntervalHeader.appointment.getTitle();
-		if (sTitle) {
+		if (sTitle && !oIntervalHeader.appointment.getCustomContent().length) {
 			oRm.openStart("span", sId + "-Title");
 			oRm.class("sapUiCalendarRowAppsIntHeadTitle");
 			oRm.openEnd(); // span element
@@ -471,7 +471,7 @@ sap.ui.define([
 		}
 
 		var sText = oIntervalHeader.appointment.getText();
-		if (sText) {
+		if (sText && !oIntervalHeader.appointment.getCustomContent().length) {
 			oRm.openStart("span", sId + "-Text");
 			oRm.class("sapUiCalendarRowAppsIntHeadText");
 			oRm.openEnd(); // span element
@@ -527,11 +527,11 @@ sap.ui.define([
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + aAriaLabels.join(" ");
 		}
 
-		if (sTitle) {
+		if (sTitle && !oAppointment.getCustomContent().length) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Title";
 		}
 
-		if (sText) {
+		if (sText && !oAppointment.getCustomContent().length) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
 		}
 
