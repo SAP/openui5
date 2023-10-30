@@ -4284,20 +4284,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("_setInternalProperty", function(assert) {
-		return this.oTable._fullyInitialized().then(() => {
-			const oInnerTable = this.oTable._oTable;
-			const oInnerTableMetadata = oInnerTable.getMetadata();
-			sinon.spy(oInnerTableMetadata, "getProperty");
-			sinon.spy(oInnerTable, "setSelectionBehavior");
-			this.oTable._setInternalProperty("selectionBehavior", "Row");
-			assert.ok(oInnerTableMetadata.getProperty.calledWithExactly("selectionBehavior"), "Determines mutator using metadata.");
-			assert.ok(oInnerTable.setSelectionBehavior.calledWith("Row"), "Inner control's property mutator called correctly.");
-			oInnerTableMetadata.getProperty.restore();
-			oInnerTable.setSelectionBehavior.restore();
-		});
-	});
-
 	QUnit.test("Context Menu", function(assert) {
 		const done = assert.async();
 
