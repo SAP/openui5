@@ -56,6 +56,11 @@ sap.ui.define([
 					key: "calendarExtended",
 					text: "Calendar example with extension",
 					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/calendarExtension/manifest.json")
+				},
+				{
+					key: "clientSidePagination",
+					text: "Client Side Pagination",
+					path: sap.ui.require.toUrl("sap/f/cardsdemo/cardcontent/mobileSdk/clientSidePagination.json")
 				}
 			];
 
