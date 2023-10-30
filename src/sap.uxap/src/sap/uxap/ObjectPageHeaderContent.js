@@ -188,14 +188,14 @@ sap.ui.define([
 
 			if (!oLayoutData) {
 				return;
-			} else if (oLayoutData instanceof library.ObjectPageHeaderLayoutData) {
+			} else if (oLayoutData.isA("sap.uxap.ObjectPageHeaderLayoutData")) {
 				return oLayoutData;
 			} else if (oLayoutData.getMetadata().getName() == "sap.ui.core.VariantLayoutData") {
 				// multiple LayoutData available - search here
 				var aLayoutData = oLayoutData.getMultipleLayoutData();
 				for (var i = 0; i < aLayoutData.length; i++) {
 					var oLayoutData2 = aLayoutData[i];
-					if (oLayoutData2 instanceof library.ObjectPageHeaderLayoutData) {
+					if (oLayoutData2.isA("sap.uxap.ObjectPageHeaderLayoutData")) {
 						return oLayoutData2;
 					}
 				}
