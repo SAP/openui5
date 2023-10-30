@@ -4235,7 +4235,7 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 			}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
-		fnWithRenderAsserts: function(assert, sGenericTileState, sTileContentState, sFrameType) {
+		fnWithRenderAsserts: function(assert, sGenericTileState, sTileContentState, sFrameType, oSpy) {
 			assert.ok(document.getElementById("generic-tile"), "Generic tile was rendered successfully.");
 			assert.ok(this.oGenericTile.getDomRef(), "Generic Tile is loaded on Dom");
 			if (!(sFrameType === FrameType.TwoByHalf || sFrameType === FrameType.OneByHalf)) {
@@ -4277,6 +4277,10 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 				assert.ok(document.querySelector(".sapMGenericTileFtrFldTxt"), "Failed Text feild created.");
 			}
 			assert.ok(this.oGenericTile.$().hasClass(sFrameType), "FrameType class has been added");
+			if (sFrameType === FrameType.Stretch) {
+				assert.ok(oSpy.notCalled, "_getSizeDescription method is not called.");
+				oSpy.restore();
+			}
 		}
 	});
 
@@ -4513,37 +4517,44 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 
 	QUnit.test("GenericTile - Loaded/Stretch , TileContent - Loaded", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loaded, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Loaded/Stretch , TileContent - Loading", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Loading, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Loaded/Stretch , TileContent - Failed", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Failed, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Loaded/Stretch , TileContent - Disabled", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loaded, LoadState.Disabled, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Loading/Stretch", function(assert) {
 		this.fnCreateGenericTile(LoadState.Loading, LoadState.Loaded, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Disabled/Stretch", function(assert) {
 		this.fnCreateGenericTile(LoadState.Disabled, LoadState.Loaded, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.test("GenericTile - Failed/Stretch", function(assert) {
 		this.fnCreateGenericTile(LoadState.Failed, LoadState.Loaded, FrameType.Stretch);
-		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType());
+		var oSpy = this.spy(this.oGenericTile, "_getSizeDescription");
+		this.fnWithRenderAsserts(assert,this.oGenericTile.getState(), this.oGenericTile.getTileContent()[0].getState(), this.oGenericTile.getFrameType(), oSpy);
 	});
 
 	QUnit.module("NewsContent Tests", {
