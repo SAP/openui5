@@ -185,6 +185,8 @@ function(
 	};
 
 	WizardProgressNavigator.prototype.onsapspace = function (oEvent) {
+		oEvent.preventDefault();
+
 		if (this._onEnter) {
 			this._onEnter(oEvent, this._oStepNavigation.getFocusedIndex());
 		}
