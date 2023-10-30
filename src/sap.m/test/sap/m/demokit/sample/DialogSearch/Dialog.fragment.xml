@@ -6,7 +6,7 @@
 		class="sapUiContentPadding" >
 		<subHeader>
 			<Toolbar>
-				<SearchField width="100%" />
+				<SearchField width="90%" />
 			</Toolbar>
 		</subHeader>
 		<content>

@@ -4,6 +4,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	height="100%">
 	<Page showHeader="false" >
+		<Label text="Suggestions Search: " id="idSuggestionsSearch" />
 		<SearchField
 			id="searchField"
 			width="50%"
