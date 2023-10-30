@@ -278,7 +278,22 @@ sap.ui.define([
 				const iLevels = mQueryOptions.$apply.includes(",Levels=")
 					? parseInt(mQueryOptions.$apply.match(/,Levels=(\d+)/)[1])
 					: Infinity;
-				selectCountSkipTop(topLevels(iLevels - 1), mQueryOptions, oResponse);
+				let aRows = topLevels(iLevels - 1); // Note: already cloned
+				if ("$filter" in mQueryOptions) {
+					// ID%20eq%20'1'
+					const aIDs = mQueryOptions.$filter.split("%20or%20")
+						.map((sID_Predicate) => sID_Predicate.split("%20eq%20")[1].slice(1, -1));
+					if (aIDs.length !== 1) {
+						throw new Error("Unexpected ID filter length");
+					}
+					aRows = aRows.filter((oNode, i) => {
+						if (oNode.ID === aIDs[0]) {
+							oNode.LimitedRank = "" + i; // Edm.Int64
+							return true;
+						}
+					});
+				}
+				selectCountSkipTop(aRows, mQueryOptions, oResponse);
 				return;
 			}
 			// "EMPLOYEES?$apply=descendants($root/EMPLOYEES,OrgChart,ID"
