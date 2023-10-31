@@ -30,7 +30,6 @@
     </jscoverage>
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <raw-module name="sap/ui/documentation/sdk/thirdparty/esprima.js" />
         <raw-module name="sap/ui/documentation/sdk/thirdparty/elasticlunr.js" />
         <raw-module name="sap/ui/documentation/sdk/thirdparty/highlight.js/highlight.js" requiresTopLevelScope="false" />
       </module-infos>
@@ -40,11 +39,6 @@
     </packaging>
     <!-- Thirdparty references -->
     <thirdparty xmlns="http://www.sap.com/ui5/buildext/thirdparty" >
-      <lib name="esprima" displayName="Esprima" npmName="esprima" version="1.2.2" hash="86db44deddd075b5e8e718500ffddeb8" homepage="http://esprima.org" id="73554900106100003281">
-        <license url="http://esprima.org/doc/index.html#license" type="BSD-2-Clause" />
-        <copyright>2013 Ariya Hidayat and other contributors</copyright>
-        <pattern>sap/ui/documentation/sdk/thirdparty/esprima.js</pattern>
-      </lib>
       <lib name="highlight.js" displayName="highlight.js" npmName="highlight.js" hash="b447d2220863c232801f6acfa58b22c0" version="10.4.1" homepage="https://highlightjs.org/" id="73555000106100051976">
         <license url="https://github.com/highlightjs/highlight.js/blob/10.4.1/LICENSE" type="BSD-3-Clause" />
         <copyright>2006-2020, Ivan Sagalaev</copyright>
