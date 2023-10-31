@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/m/OverflowToolbar",
 	"sap/m/OverflowToolbarRenderer",
 	"sap/m/ToolbarSpacer",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/enums/ActionToolbarActionAlignment",
 	"sap/ui/mdc/p13n/subcontroller/ActionToolbarController",
 	"sap/m/p13n/Engine"
-], function(OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine) {
+], function(Core, OverflowToolbar, OverflowToolbarRenderer, ToolbarSpacer, ToolbarSeparator, mobileLibrary, ActionToolbarActionAlignment, ActionToolbarController, Engine) {
 	"use strict";
 
 	// shortcut for sap.m.OverflowToolbarPriority
@@ -49,6 +50,17 @@ sap.ui.define([
 					type: "boolean",
 					group: "Behavior",
 					defaultValue: true
+				},
+
+				/**
+				 * Defines the order of the end aggregation.
+				 * @private
+				 * @ui5-restricted sap.ui.mdc
+				 */
+				_endOrder: {
+					type: "string[]",
+					defaultValue: [],
+					visibility: "hidden"
 				}
 			},
 			aggregations: {
@@ -151,9 +163,21 @@ sap.ui.define([
 		}
 	};
 
+	ActionToolbar.prototype.setProperty = function(sProperty) {
+		if (sProperty === "_endOrder") {
+			this._bEnforceEndOrder = true;
+		}
+
+		return OverflowToolbar.prototype.setProperty.apply(this, arguments);
+	};
+
 	ActionToolbar.prototype.addAggregation = function(sAggregationName, oControl) {
 		if (sAggregationName === "content") {
 			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
+		}
+
+		if (sAggregationName === "end") {
+			this._bEnforceEndOrder = true;
 		}
 
 		const aArguments = arguments;
@@ -197,6 +221,10 @@ sap.ui.define([
 	ActionToolbar.prototype.insertAggregation = function(sAggregationName, oControl, iIndex) {
 		if (sAggregationName === "content") {
 			throw new Error("Mutator functions of the content aggregation of the ActionToolbar '" + this.getId() + "' must not be used.");
+		}
+
+		if (sAggregationName === "end") {
+			this._bEnforceEndOrder = true;
 		}
 
 		if (aAggregations.includes(sAggregationName)) {
@@ -273,6 +301,29 @@ sap.ui.define([
 			const oActionLayoutInformation = oActionToolbarAction.getLayoutInformation();
 			return oActionLayoutInformation.aggregationName === oLayoutInformation.aggregationName && oActionLayoutInformation.alignment === oLayoutInformation.alignment;
 		});
+	};
+
+	ActionToolbar.prototype.onBeforeRendering = function() {
+		OverflowToolbar.prototype.onBeforeRendering.apply(this, arguments);
+
+		if (this._bEnforceEndOrder) {
+
+			this.getProperty("_endOrder").reduce((iOrder, sElementId) => {
+				const oElement = Core.byId(sElementId);
+				if (!oElement) {
+					return iOrder;
+				}
+
+				const iIndex = this.indexOfEnd(oElement);
+				if (iIndex != iOrder) {
+					this.insertEnd(this.removeEnd(oElement), iOrder);
+				}
+
+				return iOrder + 1;
+			}, 0);
+
+			this._bEnforceEndOrder = false;
+		}
 	};
 
 	// According to visual designs currently no separator between actions and end content, only title separator is handled below
