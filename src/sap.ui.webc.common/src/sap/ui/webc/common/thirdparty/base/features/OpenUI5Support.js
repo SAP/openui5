@@ -63,7 +63,8 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../config/Theme", "../util/Pop
           calendarType: Formatting.getCalendarType(),
           formatSettings: {
             firstDayOfWeek: CalendarUtils.getWeekConfigurationValues().firstDayOfWeek,
-            legacyDateCalendarCustomizing: Formatting.getLegacyDateCalendarCustomizing()
+            legacyDateCalendarCustomizing: Formatting.getCustomIslamicCalendarData?.() ??
+                                            Formatting.getLegacyDateCalendarCustomizing?.()
           }
         };
       }

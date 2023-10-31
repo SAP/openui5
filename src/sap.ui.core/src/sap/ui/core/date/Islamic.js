@@ -217,7 +217,7 @@ sap.ui.define([
 
 		sDateFormat = Formatting.getABAPDateFormat();
 		sDateFormat = _isSupportedIslamicCalendarType(sDateFormat) ? sDateFormat : "A"; // set "A" as a fall-back format always
-		oCustomizationJSON = Formatting.getLegacyDateCalendarCustomizing();
+		oCustomizationJSON = Formatting.getCustomIslamicCalendarData();
 		oCustomizationJSON = oCustomizationJSON || [];
 
 

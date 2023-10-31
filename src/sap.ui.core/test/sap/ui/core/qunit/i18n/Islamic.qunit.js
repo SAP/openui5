@@ -173,7 +173,7 @@ sap.ui.define([
 			this.oLogMock.expects("warning").never();
 			// set to "1" and it will fall-back to "A"
 			this.stub(Formatting, "getABAPDateFormat").returns("1");
-			this.stub(Formatting, "getLegacyDateCalendarCustomizing")
+			this.stub(Formatting, "getCustomIslamicCalendarData")
 				.returns(customizingInfo);
 		}
 	});
