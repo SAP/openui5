@@ -19,8 +19,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>SelectionController</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {object} mSettings Initial settings for the new controller
 	 * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
 	 * @param {function} [mSettings.getKeyForItem] By default the SelectionController tries to identify the existing item through the
 	 * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
