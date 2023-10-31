@@ -18,10 +18,15 @@
 	.sapMObjStatusIcon {
 		width: 1rem;
 		text-align: center;
-		display: inline-block;
 		height: 1rem;
 		line-height: 1rem;
-		vertical-align: top;
+		display: inline-flex;
+		justify-content: center;
+		align-items: center;
+		& > .sapMImg {
+			max-width: 1rem;
+			max-height: 1rem;
+		}
 	}
 	.sapMObjStatusTitle,
 	.sapMObjStatusText {
@@ -83,11 +88,13 @@
 		font-size: 1.5rem;
 		font-family: @sapUiFontLightFamily;
 		height: 2rem;
-		display: inline-block;
-		vertical-align: middle;
 	}
 	.sapMObjStatusIcon {
 		width: 2rem;
+		& > .sapMImg {
+			max-width: 1.5rem;
+			max-height: 1.5rem;
+		}
 	}
 	.sapMObjStatusIcon > .sapUiIcon {
 		vertical-align: baseline;
