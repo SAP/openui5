@@ -1202,8 +1202,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @private
-	 * @ui5-restricted sap.m
+	 * @public
 	 *
 	 * This method is the central point of access to the Engine Singleton.
 	 * @returns {sap.m.p13n.Engine} The Engine instance
