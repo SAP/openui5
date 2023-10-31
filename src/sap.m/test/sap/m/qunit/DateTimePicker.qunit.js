@@ -1172,6 +1172,24 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("Timezone popup title is correctly formatted", function(assert) {
+		// arrange
+		var oDTP = new DateTimePicker("dtp", {
+				timezone: "Etc/UTC"
+			}).placeAt("qunit-fixture"),
+			oTimezonePopup;
+
+		// act
+		oTimezonePopup = oDTP._getTimezoneNamePopup();
+
+		// assert
+		assert.equal(oTimezonePopup.getTitle(), "UTC",
+			"the popup shows the correct timezone");
+
+		// clean
+		oDTP.destroy();
+	});
+
 	QUnit.test("displayFormatType + timezone", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker({
@@ -1359,7 +1377,7 @@ sap.ui.define([
 		oTimezonePopup = oDTP._getTimezoneNamePopup();
 
 		// assert
-		assert.equal(oTimezonePopup.getTitle(), "America/New_York",
+		assert.equal(oTimezonePopup.getTitle(), "Americas, New York",
 			"the popup shows the correct timezone");
 
 		// act

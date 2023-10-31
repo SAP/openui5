@@ -12,7 +12,7 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/Device",
-	"sap/ui/Global",
+	"sap/ui/VersionInfo",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
@@ -26,7 +26,7 @@ sap.ui.define([
 	each,
 	LoaderExtensions,
 	Device,
-	Global,
+	VersionInfo,
 	Library,
 	Theming,
 	ThemeHelper,
@@ -666,8 +666,8 @@ sap.ui.define([
 			sQuery = "?version=" + oLibInfo.version;
 
 			// distribution version may not be available (will be loaded in Core constructor syncpoint2)
-			if (Global.versioninfo) {
-				sQuery += "&sap-ui-dist-version=" + Global.versioninfo.version;
+			if (VersionInfo._content) {
+				sQuery += "&sap-ui-dist-version=" + VersionInfo._content.version;
 			}
 		}
 		return sQuery;

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define([], function() {
+sap.ui.define(["sap/base/Log"], function(Log) {
 	"use strict";
 
 	/**
@@ -14,38 +14,29 @@ sap.ui.define([], function() {
 	 * @since 1.54.0
 	 */
 	return {
-        getUShellContainer: function() {
-            return sap.ui.require("sap/ushell/Container");
-        },
-		getService: function(sServiceName) {
-            const oContainer = this.getUShellContainer();
-            if (!oContainer) {
-                return null;
-            }
+		getUShellContainer: function() {
+			return sap.ui.require("sap/ushell/Container");
+		},
+		getService: function(sServiceName, bAsync) {
+			const oContainer = this.getUShellContainer();
+			if (!oContainer) {
+				return bAsync ? Promise.resolve(null) : null;
+			}
 
 			switch (sServiceName) {
 				case "CrossApplicationNavigation":
-					return oContainer.getService("CrossApplicationNavigation");
+					Log.error("sap.ui.mdc.link.Factory: tried to retrieve deprecated service 'CrossApplicationNavigation', please use 'Navigation' instead!");
+					return bAsync ? oContainer.getServiceAsync("CrossApplicationNavigation") : oContainer.getService("CrossApplicationNavigation");
+				case "Navigation":
+					return bAsync ? oContainer.getServiceAsync("Navigation") : oContainer.getService("Navigation");
 				case "URLParsing":
-					return oContainer.getService("URLParsing");
+					return bAsync ? oContainer.getServiceAsync("URLParsing") : oContainer.getService("URLParsing");
 				default:
-					return null;
+					return bAsync ? Promise.resolve(null) : null;
 			}
 		},
-        getServiceAsync: function(sServiceName) {
-            const oContainer = this.getUShellContainer();
-            if (!oContainer) {
-                return Promise.resolve(null);
-            }
-
-            switch (sServiceName) {
-				case "CrossApplicationNavigation":
-					return oContainer.getServiceAsync("CrossApplicationNavigation");
-				case "URLParsing":
-					return oContainer.getServiceAsync("URLParsing");
-				default:
-					return Promise.resolve(null);
-			}
-        }
+		getServiceAsync: function(sServiceName) {
+			this.getService(sServiceName, true);
+		}
 	};
 });

@@ -48,9 +48,6 @@ sap.ui.define([
 		 * @public
 		 * @name sap
 		 */
-		if ( typeof window.sap !== "object" && typeof window.sap !== "function"  ) {
-		  window.sap = {};
-		}
 
 		/**
 		 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
@@ -61,11 +58,8 @@ sap.ui.define([
 		 * @name sap.ui
 		 * @public
 		 */
-		if ( typeof window.sap.ui !== "object") {
-			window.sap.ui = {};
-		}
 
-		sap.ui = Object.assign(sap.ui, {
+		let Global = {
 			/**
 			 * The version of the SAP UI Library
 			 * @type string
@@ -73,9 +67,9 @@ sap.ui.define([
 			version: "${version}",
 			// buildinfo.lastchange is deprecated and is therefore defaulted to empty string
 			buildinfo : { lastchange : "", buildtime : "${buildtime}" }
-		});
+		};
 
 		var syncCallBehavior = sap.ui.loader._.getSyncCallBehavior();
 
-		return sap.ui;
+		return Global;
 	});

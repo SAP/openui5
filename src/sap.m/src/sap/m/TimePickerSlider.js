@@ -265,7 +265,7 @@ sap.ui.define([
 		 *
 		 * @override
 		 * @param {boolean} bValue True or false
-		 * @param {boolean} suppressEvent Whether to suppress event firing
+		 * @param {boolean} [suppressEvent] Whether to suppress event firing
 		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */

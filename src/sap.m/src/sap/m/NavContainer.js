@@ -1786,7 +1786,7 @@ sap.ui.define([
 	/**
 	 * Removes a page.
 	 *
-	 * @param {int | string | sap.ui.core.Control}
+	 * @param {int | sap.ui.core.ID | sap.ui.core.Control}
 	 *            vPage the position or ID of the <code>Control</code> that should be removed
 	 *            or that <code>Control</code> itself;
 	 *            if <code>vPage</code> is invalid, a negative value or a value greater or equal than the current size

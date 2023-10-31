@@ -625,7 +625,7 @@ sap.ui.define([
 		 * Sets the alternative text of the <code>ObjectHeader</code> icon.
 		 * @override
 		 * @public
-		 * @param {boolean} sIconAlt the alternative icon text
+		 * @param {string} sIconAlt the alternative icon text
 		 * @returns {this} this pointer for chaining
 		 */
 		ObjectHeader.prototype.setIconAlt = function(sIconAlt) {

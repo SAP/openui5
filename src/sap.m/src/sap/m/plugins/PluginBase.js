@@ -233,6 +233,9 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	/**
 	 * Activates or deactivates the plugin when the enabled property is set.
 	 *
+	 * @param {boolean} bEnabled Whether the plugin should be active
+	 * @returns {this}
+	 * @public
 	 * @override
 	 */
 	PluginBase.prototype.setEnabled = function(bEnabled) {

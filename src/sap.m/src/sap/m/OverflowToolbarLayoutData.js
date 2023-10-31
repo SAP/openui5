@@ -75,7 +75,7 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/library', "sap/base/Log"],
 		return ToolbarLayoutData.prototype.invalidate.call(this);
 	};
 
-	/**
+	/*
 	 * @override
 	 */
 	OverflowToolbarLayoutData.prototype.setPriority = function (sPriority) {

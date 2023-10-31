@@ -103,6 +103,7 @@ sap.ui.define([
 		 * @param {boolean} [mPropertyBag.visible] - Flag if the variant should be set visible
 		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant update takes place
+		 * @param {object} [mPropertyBag.changeSpecificData] - Map of parameters, see below
 		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the variant is personalization only
 		 * this either updates the variant from the layer or writes a change to that layer.
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant

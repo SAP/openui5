@@ -1045,7 +1045,7 @@ sap.ui.define([
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
 			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
-			assert.equal($RowSelectorTextRef.text(), "", "The row header doesn't have row selector text because SelectionMode is \"None\"");
+			assert.equal($RowSelectorTextRef.text(), "-", "The row header doesn't have row selector text because SelectionMode is \"None\"");
 		} else {
 			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
 			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
@@ -1895,7 +1895,7 @@ sap.ui.define([
 				"The highlight text element " + (bTextExists ? "exists in the DOM" : "does not exist in the DOM"));
 
 			if (oHighlightTextElement != null) {
-				assert.strictEqual(oHighlightTextElement.innerHTML, sText, "The highlight text is correct: \"" + sText + "\"");
+				assert.strictEqual(oHighlightTextElement.innerHTML, sText || "-", "The highlight text is correct: \"" + sText + "\"");
 			}
 		}
 

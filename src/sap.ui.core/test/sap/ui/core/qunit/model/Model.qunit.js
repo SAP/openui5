@@ -5,9 +5,11 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/Model"
-], function (Log, Message, BindingMode, Model) {
-	/*global QUnit, Set*/
+], function (Log, Message, BindingMode, Filter, FilterOperator, Model) {
+	/*global QUnit, sinon*/
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
@@ -240,5 +242,44 @@ sap.ui.define([
 
 		assert.strictEqual(oModel.bForceUpdate, undefined);
 		assert.strictEqual(oModel.sUpdateTimer, null);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkFilter: success", function (assert) {
+		const oFilter = new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100});
+		this.mock(Filter).expects("checkFilterNone").withExactArgs(sinon.match.same(oFilter));
+		const oModel = new Model();
+		this.mock(Model).expects("_traverseFilter").withExactArgs(sinon.match.same(oFilter), sinon.match.func)
+			.callsArgOnWith(1, oModel, oFilter);
+
+		// code under test
+		oModel.checkFilter(oFilter);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkFilter: throws error", function (assert) {
+		const oError = new Error("~Error");
+		const oFilter = new Filter({path: 'Price', operator: FilterOperator.EQ, value1: 100});
+		const oFilterMock = this.mock(Filter);
+		oFilterMock.expects("checkFilterNone").withExactArgs(sinon.match.same(oFilter))
+			.throws(oError);
+		const oModelMock = this.mock(Model);
+		oModelMock.expects("_traverseFilter").never();
+
+		const oModel = new Model();
+		// code under test
+		assert.throws(function () {
+			oModel.checkFilter(oFilter);
+		}, oError);
+
+		oModel.mUnsupportedFilterOperators["EQ"] = true;
+		oFilterMock.expects("checkFilterNone").withExactArgs(sinon.match.same(oFilter));
+		oModelMock.expects("_traverseFilter").withExactArgs(oFilter, sinon.match.func)
+			.callsArgOnWith(1, oModel, oFilter);
+
+		// code under test
+		assert.throws(function () {
+			oModel.checkFilter(oFilter);
+		}, new Error("Filter instances contain an unsupported FilterOperator: EQ"));
 	});
 });

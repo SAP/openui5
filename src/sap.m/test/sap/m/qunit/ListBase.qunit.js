@@ -3053,6 +3053,7 @@ sap.ui.define([
 		aGroupHeaderListItems.forEach(function(oGroupItem) {
 			var $GroupItem = oGroupItem.$();
 			assert.strictEqual($GroupItem.attr("role"), "group", "Group header has role='group'");
+			assert.strictEqual($GroupItem.attr("aria-label"), oGroupItem.getTitle(), "correct aria-label is set");
 			assert.strictEqual($GroupItem.attr("aria-roledescription"), oRb.getText("LIST_ITEM_GROUP_HEADER"), "correct aria-roledescription assigned");
 			assert.notOk($GroupItem.attr("aria-posinset"), "aria-posinset attribute not added to groupHeader");
 			assert.notOk($GroupItem.attr("aria-setsize"), "aria-setsize attribute not added to groupHeader");

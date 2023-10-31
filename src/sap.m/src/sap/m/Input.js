@@ -286,6 +286,7 @@ function(
 				/**
 				 * Specifies whether the suggestions highlighting is enabled.
 				 * <b>Note:</b> Due to performance constraints, the functionality will be disabled above 200 items.
+				 * <b>Note:</b> Highlighting in table suggestions will work only for cells containing sap.m.Label or sap.m.Text controls.
 				 *
 				 * @since 1.46
 				 */
@@ -899,7 +900,7 @@ function(
 	 *
 	 *
 	 * @public
-	 * @param {sap.ui.core.Item} [oItem=null] New value for the <code>selectedItem</code> association.
+	 * @param {sap.ui.core.ID|sap.ui.core.Item|null} [oItem=null] New value for the <code>selectedItem</code> association.
 	 * If an ID of a <code>sap.ui.core.Item</code> is given, the item with this ID becomes the
 	 * <code>selectedItem</code> association.
 	 * Alternatively, a <code>sap.ui.core.Item</code> instance may be given or <code>null</code> to clear
@@ -1075,7 +1076,7 @@ function(
 	 * Default value is <code>null</code>.
 	 *
 	 * @public
-	 * @param {sap.m.ColumnListItem} oListItem New value for the <code>selectedRow</code> association.
+	 * @param {sap.ui.core.ID|sap.m.ColumnListItem|null} oListItem New value for the <code>selectedRow</code> association.
 	 * If an ID of a <code>sap.m.ColumnListItem</code> is given, the item with this ID becomes the
 	 * <code>selectedRow</code> association.
 	 * Alternatively, a <code>sap.m.ColumnListItem</code> instance may be given or <code>null</code> to clear
@@ -2399,7 +2400,7 @@ function(
 					return;
 				}
 
-				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMLabel');
+				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMText, tbody .sapMLabel');
 
 				highlightDOMElements(aTableCellsDomRef, this._getTypedInValue());
 			}

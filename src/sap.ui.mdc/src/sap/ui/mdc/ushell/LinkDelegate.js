@@ -82,24 +82,23 @@ sap.ui.define([
 		};
 		const fnRetrieveDistinctSemanticObjects = function() {
 			if (!oPromise) {
-				oPromise = new Promise(function(resolve) {
-					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
-					if (!oCrossApplicationNavigation) {
-						SapBaseLog.error("LinkDelegate: Service 'CrossApplicationNavigation' could not be obtained");
-						resolve({});
+				oPromise = Factory.getServiceAsync("Navigation").then((oNavigationService) => {
+					if (!oNavigationService) {
+						SapBaseLog.error("LinkDelegate: Service 'Navigation' could not be obtained");
+						Promise.resolve({});
 						return;
 					}
-					oCrossApplicationNavigation.getDistinctSemanticObjects().then(function(aDistinctSemanticObjects) {
+					oNavigationService.getSemanticObjects().then(function(aDistinctSemanticObjects) {
 						aDistinctSemanticObjects.forEach(function(sSemanticObject) {
 							mSemanticObjects[sSemanticObject] = {
 								exists: true
 							};
 						});
 						oPromise = null;
-						return resolve(mSemanticObjects);
+						return Promise.resolve(mSemanticObjects);
 					}, function() {
-						SapBaseLog.error("LinkDelegate: getDistinctSemanticObjects() of service 'CrossApplicationNavigation' failed");
-						return resolve({});
+						SapBaseLog.error("LinkDelegate: getSemanticObjects() of service 'Navigation' failed");
+						return Promise.resolve({});
 					});
 				});
 			}
@@ -226,9 +225,7 @@ sap.ui.define([
 	 */
 	LinkDelegate._retrieveNavigationTargets = function(sAppStateKey, oSemanticAttributes, oPayload, oInfoLog) {
 		if (!oPayload.semanticObjects) {
-			return new Promise(function(resolve) {
-				resolve([]);
-			});
+			return new Promise.resolve([]);
 		}
 		const aSemanticObjects = oPayload.semanticObjects;
 		const sSourceControlId = oPayload.sourceControl;
@@ -239,67 +236,69 @@ sap.ui.define([
 		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
 			async: true
 		}).then(function() {
-			return new Promise(function(resolve) {
-				sap.ui.require([
-					'sap/ui/fl/Utils'
-				], function(Utils) {
-					const oCrossApplicationNavigation = Factory.getService("CrossApplicationNavigation");
-					const oURLParsing = Factory.getService("URLParsing");
-					if (!oCrossApplicationNavigation || !oURLParsing) {
-						SapBaseLog.error("LinkDelegate: Service 'CrossApplicationNavigation' or 'URLParsing' could not be obtained");
-						return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
+
+			const Utils = sap.ui.require('sap/ui/fl/Utils');
+			if (!Utils) {
+				return Promise.reject("Could not load 'sap/ui/fl/Utils'!");
+			}
+
+			const oNavigationServicePromise = Factory.getServiceAsync("Navigation");
+			const oURLParsingServicePromise = Factory.getServiceAsync("URLParsing");
+
+			return Promise.all([oNavigationServicePromise, oURLParsingServicePromise]).then(function (aValues) {
+				const oNavigationService = aValues[0];
+				const oURLParsingService = aValues[1];
+
+				if (!oNavigationService || !oURLParsingService) {
+					SapBaseLog.error("LinkDelegate: Service 'Navigation' or 'URLParsing' could not be obtained");
+					return Promise.resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
+				}
+				const oControl = sap.ui.getCore().byId(sSourceControlId);
+				const oAppComponent = Utils.getAppComponentForControl(oControl);
+				const aParams = aSemanticObjects.map(function(sSemanticObject) {
+					return {
+						semanticObject: sSemanticObject,
+						params: oSemanticAttributes ? oSemanticAttributes[sSemanticObject] : undefined,
+						appStateKey: sAppStateKey,
+						ui5Component: oAppComponent,
+						sortResultsBy: "text"
+					};
+				});
+
+				return oNavigationService.getLinks(aParams).then(function(aLinks) {
+					if (!aLinks || !aLinks.length) {
+						return Promise.resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 					}
-					const oControl = Element.getElementById(sSourceControlId);
-					const oAppComponent = Utils.getAppComponentForControl(oControl);
-					const aParams = aSemanticObjects.map(function(sSemanticObject) {
-						return [
-							{
-								semanticObject: sSemanticObject,
-								params: oSemanticAttributes ? oSemanticAttributes[sSemanticObject] : undefined,
-								appStateKey: sAppStateKey,
-								ui5Component: oAppComponent,
-								sortResultsBy: "text"
-							}
-						];
-					});
+					const aSemanticObjectUnavailableActions = LinkDelegate._getSemanticObjectUnavailableActions(oPayload);
+					const oUnavailableActions = LinkDelegate._convertSemanticObjectUnavailableAction(aSemanticObjectUnavailableActions);
+					return oNavigationService.getHref().then((sCurrentHash) => {
+						if (sCurrentHash && sCurrentHash.indexOf("?") !== -1) {
+							// sCurrentHash can contain query string, cut it off!
+							sCurrentHash = sCurrentHash.split("?")[0];
+						}
+						if (sCurrentHash) {
+							// BCP 1770315035: we have to set the end-point '?' of action in order to avoid matching of "#SalesOrder-manage" in "#SalesOrder-manageFulfillment"
+							sCurrentHash += "?";
+						}
+						// var fnGetDescription = function(sSubTitle, sShortTitle) {
+						// 	if (sSubTitle && !sShortTitle) {
+						// 		return sSubTitle;
+						// 	} else if (!sSubTitle && sShortTitle) {
+						// 		return sShortTitle;
+						// 	} else if (sSubTitle && sShortTitle) {
+						// 		return sSubTitle + " - " + sShortTitle;
+						// 	}
+						// };
 
-					return new Promise(function() {
-						// We have to wrap getLinks method into Promise. The returned jQuery.Deferred.promise brakes the Promise chain.
-						oCrossApplicationNavigation.getLinks(aParams).then(function(aLinks) {
-							if (!aLinks || !aLinks.length) {
-								return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
+						const fnIsUnavailableAction = function(sSemanticObject, sAction) {
+							return !!oUnavailableActions && !!oUnavailableActions[sSemanticObject] && oUnavailableActions[sSemanticObject].indexOf(sAction) > -1;
+						};
+						const fnAddLink = function(oLink) {
+							const oShellHash = oURLParsingService.parseShellHash(oLink.intent);
+							if (fnIsUnavailableAction(oShellHash.semanticObject, oShellHash.action)) {
+								return Promise.resolve();
 							}
-							const aSemanticObjectUnavailableActions = LinkDelegate._getSemanticObjectUnavailableActions(oPayload);
-							const oUnavailableActions = LinkDelegate._convertSemanticObjectUnavailableAction(aSemanticObjectUnavailableActions);
-							let sCurrentHash = oCrossApplicationNavigation.hrefForExternal();
-							if (sCurrentHash && sCurrentHash.indexOf("?") !== -1) {
-								// sCurrentHash can contain query string, cut it off!
-								sCurrentHash = sCurrentHash.split("?")[0];
-							}
-							if (sCurrentHash) {
-								// BCP 1770315035: we have to set the end-point '?' of action in order to avoid matching of "#SalesOrder-manage" in "#SalesOrder-manageFulfillment"
-								sCurrentHash += "?";
-							}
-							// var fnGetDescription = function(sSubTitle, sShortTitle) {
-							// 	if (sSubTitle && !sShortTitle) {
-							// 		return sSubTitle;
-							// 	} else if (!sSubTitle && sShortTitle) {
-							// 		return sShortTitle;
-							// 	} else if (sSubTitle && sShortTitle) {
-							// 		return sSubTitle + " - " + sShortTitle;
-							// 	}
-							// };
-
-							const fnIsUnavailableAction = function(sSemanticObject, sAction) {
-								return !!oUnavailableActions && !!oUnavailableActions[sSemanticObject] && oUnavailableActions[sSemanticObject].indexOf(sAction) > -1;
-							};
-							const fnAddLink = function(oLink) {
-								const oShellHash = oURLParsing.parseShellHash(oLink.intent);
-								if (fnIsUnavailableAction(oShellHash.semanticObject, oShellHash.action)) {
-									return;
-								}
-								const sHref = oCrossApplicationNavigation.hrefForExternal({ target: { shellHash: oLink.intent } }, oAppComponent);
-
+							return oNavigationService.getHref({ target: { shellHash: oLink.intent } }, oAppComponent).then((sHref) => {
 								if (oLink.intent && oLink.intent.indexOf(sCurrentHash) === 0) {
 									// Prevent current app from being listed
 									// NOTE: If the navigation target exists in
@@ -330,14 +329,14 @@ sap.ui.define([
 										text: oLinkItem.getText()
 									});
 								}
-							};
-							for (let n = 0; n < aSemanticObjects.length; n++) {
-								aLinks[n][0].forEach(fnAddLink);
-							}
-							return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
-						}, function() {
-							SapBaseLog.error("LinkDelegate: '_retrieveNavigationTargets' failed executing getLinks method");
-							return resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
+							});
+						};
+						const aAddLinkPromises = [];
+						for (let iIndex = 0; iIndex < aSemanticObjects.length; iIndex++) {
+							aAddLinkPromises.push(aLinks[iIndex].map(fnAddLink));
+						}
+						return Promise.all(aAddLinkPromises).then(() => {
+							return Promise.resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 						});
 					});
 				});

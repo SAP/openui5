@@ -478,6 +478,7 @@ sap.ui.define([
 			 * Removes a radio button from the group.
 			 *
 			 * @public
+			 * @param {int|sap.ui.core.ID|sap.m.RadioButton} vElement The button to remove
 			 * @returns {sap.m.RadioButton} vElement The removed radio button.
 			 */
 			RadioButtonGroup.prototype.removeButton = function(vElement) {

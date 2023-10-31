@@ -5281,7 +5281,7 @@ sap.ui.define([
 			oModel = {
 				// used by ODataListBinding and ODataTreeBinding
 				_getCreatedContextsCache : function () {},
-				checkFilterOperation : function () {},
+				checkFilter : function () {},
 				createCustomParams : function () { return {}; }, // used by ODataListBinding
 				resolveDeep : function () {},
 				resolveFromCache : function () {}

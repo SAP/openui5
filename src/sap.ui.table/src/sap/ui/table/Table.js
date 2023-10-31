@@ -278,7 +278,7 @@ sap.ui.define([
 			/**
 			 * Columns of the Table
 			 */
-			columns: {type: "sap.ui.table.Column", multiple: true, singularName: "column", bindable: "bindable", dnd: {layout: "Horizontal"}},
+			columns: {type: "sap.ui.table.Column", defaultClass: Column, multiple: true, singularName: "column", bindable: "bindable", dnd: {layout: "Horizontal"}},
 
 			/**
 			 * This aggregation is managed by the table itself. It can only be used with data binding, is read-only, and does not support templates or

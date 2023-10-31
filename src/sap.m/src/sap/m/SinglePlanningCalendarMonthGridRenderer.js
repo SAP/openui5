@@ -3,39 +3,33 @@
  */
 
 sap.ui.define([
-	"sap/base/i18n/Formatting",
-	"sap/base/i18n/Localization",
-	"sap/ui/core/Element",
-	"sap/ui/core/Theming",
 	'sap/ui/unified/calendar/CalendarDate',
 	'sap/ui/unified/calendar/CalendarUtils',
 	'sap/ui/unified/calendar/Month',
 	'sap/ui/core/IconPool',
 	'./PlanningCalendarLegend',
 	'sap/ui/core/InvisibleText',
+	'sap/ui/core/Core',
 	'sap/ui/unified/library',
 	"sap/ui/core/date/CalendarUtils",
 	'sap/ui/core/Locale',
 	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date"
-],
+	],
 	function(
-		Formatting,
-		Localization,
-		Element,
-		Theming,
 		CalendarDate,
 		CalendarUtils,
 		Month,
 		IconPool,
 		PlanningCalendarLegend,
 		InvisibleText,
+		Core,
 		unifiedLibrary,
 		CalendarDateUtils,
 		Locale,
 		Configuration,
 		UI5Date
-	) {
+		) {
 		"use strict";
 
 		// shortcut for sap.ui.unified.CalendarDayType
@@ -113,7 +107,7 @@ sap.ui.define([
 					aApps = oControl._getAppointmetsForADay(oDay);
 					aPreviousWeekApps = oControl._getPreviousAppointmetsForADay(oDay);
 					aPreviousWeekAppsPerDay.push(aPreviousWeekApps);
-					iMoreCount = oControl._getMoreCountPerCell(iCellIndex);
+					iMoreCount = oControl._aMoreCountPerDay[iCellIndex];
 					aMoreCountPerCell.push(iMoreCount);
 					aAppsPerDay.push(aApps);
 
@@ -144,10 +138,10 @@ sap.ui.define([
 
 					// render appointments which started in previous rows
 					if (j === 0) {
-						this.renderAppointments(oRm, oControl, aPreviousWeekAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i, oDay);
+						this.renderAppointments(oRm, oControl, aPreviousWeekAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i, oDay, aCells);
 					}
 
-					this.renderAppointments(oRm, oControl, aAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i, oDay);
+					this.renderAppointments(oRm, oControl, aAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i, oDay, aCells);
 				}
 
 				oRm.close("div"); // end appointments
@@ -182,7 +176,7 @@ sap.ui.define([
 				if (aDayTypes && aDayTypes[0]) {
 					oType = aDayTypes[0];
 					oRm.class("sapUiCalendarSpecialDay" + oType.type);
-					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Element.getElementById(oControl._sLegendId), oType);
+					sLegendItemType = PlanningCalendarLegend.findLegendItemForItem(Core.byId(oControl._sLegendId), oType);
 				}
 			}
 
@@ -237,13 +231,30 @@ sap.ui.define([
 			oRm.close("div");
 		};
 
-		SinglePlanningCalendarMonthGridRenderer.renderAppointments = function(oRm, oControl, apps, iColumn, iMore, oDensitySizes, iRow, oDay) {
+		SinglePlanningCalendarMonthGridRenderer.renderAppointments = function(oRm, oControl, apps, iColumn, iMore, oDensitySizes, iRow, oDay, aDays) {
 			var MAX_APPS = oControl._getMaxAppointments(),
-				iMaxLvl = iMore ? MAX_APPS - 2 : MAX_APPS - 1;
+				iMaxLvl = iMore ? MAX_APPS - 2 : MAX_APPS - 1,
+				iColumns = oControl._getColumns(),
+				iRowEndIndex,
+				oApp,
+				bRenderDateOutsideRow;
 
 			for (var i = 0; i < apps.length; i++) {
-				if (apps[i].level <= iMaxLvl) {
-					this.renderAppointment(oRm, oControl, apps[i], iColumn, oDensitySizes, iRow, oDay);
+				oApp = apps[i];
+				iRowEndIndex = oControl._getRowEndIndex(aDays, aDays.indexOf(oDay), iColumns);
+
+				if (oApp.level <= iMaxLvl) {
+					bRenderDateOutsideRow = oApp._nextDay > iRowEndIndex;
+					if (oApp._nextDay === undefined || bRenderDateOutsideRow) {
+						continue;
+					}
+					this.renderAppointment(oRm, oControl, oApp, iColumn, oDensitySizes, iRow, oDay);
+				} else if (oApp._overflows) {
+					//If it's an overflowing appointment, start from first available level of next day.
+					oApp.level = oApp._nextDayLevel;
+					if (oApp._nextDay && oApp._nextDayLevel < oControl._getMaxAppointments() - 1) {
+						this.renderAppointment(oRm, oControl, oApp, oApp._nextDay, oDensitySizes, iRow, oDay);
+					}
 				}
 			}
 		};
@@ -252,6 +263,7 @@ sap.ui.define([
 			var oAppointment = app.data,
 				iWidth = app.width,
 				iLevel = app.level,
+				aCells = oControl._getCells(),
 				iColumns = oControl._getColumns(),
 				sTooltip = oAppointment.getTooltip_AsString(),
 				sType = oAppointment.getType(),
@@ -271,12 +283,45 @@ sap.ui.define([
 					// Prevents aria-selected from being added on the appointment
 					selected: null
 				},
-				// aAriaLabels = oControl.getAriaLabelledBy(),
 				iRight = iColumns - iColumn - iWidth,
-				bIsRTL = Localization.getRTL(),
+				bIsRTL = Core.getConfiguration().getRTL(),
+				sThemeName = Core.getConfiguration().getTheme(),
+				iAppStartDateIndex = oControl._findStartDateIndex(aCells, app, oControl._iStartDayOffset),
+				bFirstRenderedDayIsAfterStart = app._nextDay > iAppStartDateIndex,
+				oNextDate = aCells[app._nextDay],
+				oEndDate = app.end,
+				iAppNextDateColumn = oControl._getDateColumn(aCells, oNextDate, iColumns),
+				iAppNextDateRow = oControl._getDateRow(aCells, oNextDate, iColumns),
+				bNextDateIsWithinRow = iAppNextDateRow === iRow,
 				aClasses,
-				sThemeName = Theming.getTheme(),
-				iBorderThickness;
+				iBorderThickness,
+				iAppEndDateColumn,
+				bAppContinuesOutsideCells,
+				oEndCalendarDate;
+
+				if (app._overflows || bNextDateIsWithinRow) {
+
+					if (!app._partRendered) {
+						app._partRendered = true;
+						bFirstRenderedDayIsAfterStart = app._nextDay > iAppStartDateIndex;
+						iColumn = iAppNextDateColumn;
+						iRight = iColumns - iAppNextDateColumn + 1 - iWidth;
+						oEndDate = app.data.getEndDate();
+						oEndCalendarDate = CalendarDate.fromLocalJSDate(oEndDate);
+						iAppEndDateColumn = oControl._getDateColumn(aCells, oEndCalendarDate, iColumns);
+
+						if (iRight > 0 || bAppContinuesOutsideCells) {
+							iRight = iColumns - iAppEndDateColumn - 1;
+
+							if (iAppEndDateColumn < iColumn || bAppContinuesOutsideCells) {
+								iRight = 0;
+							}
+						}
+					}
+				}
+				if (app._overflows) {
+					iLevel = app.level;
+				}
 
 				if (sThemeName.includes("horizon")){
 					if (oToday) {
@@ -331,7 +376,7 @@ sap.ui.define([
 				oRm.class("sapUiCalendarApp" + sType);
 			}
 			if (sColor) {
-				if (Localization.getRTL()) {
+				if (Core.getConfiguration().getRTL()) {
 					oRm.style("border-right-color", sColor);
 				} else {
 					oRm.style("border-left-color", sColor);
@@ -369,7 +414,7 @@ sap.ui.define([
 
 			oRm.openEnd(); // div element
 
-			if (app.hasPrevious < 0) {
+			if ((app.hasPrevious < 0 || app._overflows || bFirstRenderedDayIsAfterStart)) {
 				aClasses = ["sapUiCalendarAppArrowIconLeft", "sapUiCalendarAppArrowIcon"];
 				oRm.icon("sap-icon://arrow-left", aClasses, { title: null, role: "img" });
 			}
@@ -385,7 +430,7 @@ sap.ui.define([
 			}
 
 			if (sTitle) {
-				oRm.openStart("span", sId + "-Title");
+				oRm.openStart("span", sId + "-" + iColumn + "_" + iRow + "-Title");
 				oRm.class("sapUiCalendarAppTitle");
 				oRm.openEnd(); // span element
 				oRm.text(sTitle, true);
@@ -413,7 +458,7 @@ sap.ui.define([
 			var iFirstDayOfWeek = oControl._getFirstDayOfWeek(),
 				sId = oControl.getId(),
 				sDayId,
-				sCalendarType = Formatting.getCalendarType(),
+				sCalendarType = Core.getConfiguration().getCalendarType(),
 				aWeekDays = oLocaleData.getDaysStandAlone("abbreviated", sCalendarType),
 				aWeekDaysWide = oLocaleData.getDaysStandAlone("wide", sCalendarType),
 				oStartDate = UI5Date.getInstance(oControl.getStartDate()),

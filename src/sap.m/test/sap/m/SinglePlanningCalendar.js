@@ -500,7 +500,141 @@ sap.ui.define([
 			title: "1 full day - from 9th until 9th - second appointment",
 			startDate: UI5Date.getInstance(2018, 6, 9),
 			endDate: UI5Date.getInstance(2018, 6, 9)
+		},
+		{
+			title: "5h appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance(2018, 7, 8, 5, 0),
+			endDate: UI5Date.getInstance(2018, 7, 8, 10, 0)
+		},
+		{
+			title: "2 day appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "9", "10", "0")
+		},
+		{
+			title: "5h appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "8", "10", "0")
+		},
+		{
+			title: "7 day appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "1"),
+			endDate: UI5Date.getInstance("2018", "7", "14", "1", "0")
+		},
+		{
+			title: "6 day appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "13", "1", "0")
+		},
+		{
+			title: "5 day appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "12", "1", "0")
+		},
+		{
+			title: "4 day appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "11", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "8", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "8", "6", "0")
+		},
+		{
+			title: "Workshop out of the country",
+			type: CalendarDayType.Type05,
+			startDate: UI5Date.getInstance("2018", "7", "11", "00", "00"),
+			endDate: UI5Date.getInstance("2018", "7", "20", "00", "00")
+		},
+		{
+			title: "2 day appointment 31st to 1st",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "6", "31", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "1", "6", "0")
+		},
+		{
+			title: "2 day appointment 31st to 1st",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "6", "31", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "1", "6", "0")
+		},
+		{
+			title: "2 day appointment 31st to 1st",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "6", "31", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "1", "6", "0")
+		},
+		{
+			title: "2 day appointment 31st to 1st",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "6", "31", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "1", "6", "0")
+		},
+		{
+			title: "2 day appointment 31st to 1st",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "6", "31", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "1", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "2", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "2", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "2", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "2", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "2", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "2", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "2", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "2", "6", "0")
+		},
+		{
+			title: "4 day appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "2", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "5", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "3", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "3", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "3", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "3", "6", "0")
+		},
+		{
+			title: "1h appointment",
+			type: CalendarDayType.Type04,
+			startDate: UI5Date.getInstance("2018", "7", "3", "5", "0"),
+			endDate: UI5Date.getInstance("2018", "7", "3", "6", "0")
 		}
+
+
 	];
 	var oModel = new JSONModel();
 	oModel.setData({modelData: aAppointments});

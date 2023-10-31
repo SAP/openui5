@@ -164,13 +164,9 @@ sap.ui.define([
 		return VersionInfo.load().then(function() {
 			assert.ok(false, "Promise should not get resolved.");
 		}, function(err) {
-
 			// Check if exception is correct
 			sinon.assert.match(err.message, sinon.match("resource sap-ui-version.json could not be loaded"),
 				"Should give an error saying the file can not be found.");
-
-			assert.strictEqual(sap.ui.versioninfo, undefined,
-				"'sap.ui.versioninfo' should still be undefined after calling the function.");
 
 			this.checkVersionInfoRequest(assert);
 		}.bind(this));
@@ -182,12 +178,8 @@ sap.ui.define([
 		return VersionInfo.load({
 			library: "sap.ui.core"
 		}).then(function(oVersionInfo) {
-
 			assert.deepEqual(oVersionInfo, this.oVersionInfo.libraries[0],
 				"'sap.ui.getVersionInfo{ library: \"sap.ui.core\", async: true }' should asynchronously load and return the 'sap.ui.core' library info.");
-
-			assert.deepEqual(sap.ui.versioninfo.libraries[0], this.oVersionInfo.libraries[0],
-				"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
 
 			this.checkVersionInfoRequest(assert);
 		}.bind(this));
@@ -197,14 +189,10 @@ sap.ui.define([
 		this.initFakeServer();
 
 		return VersionInfo.load().then(function(oVersionInfo) {
-
 			assert.deepEqual(oVersionInfo, this.oVersionInfo,
 				"'sap.ui.getVersionInfo{ library: \"sap.ui.core\", async: true }' should asynchronously load and return the 'sap.ui.core' library info.");
 
-			assert.deepEqual(sap.ui.versioninfo, this.oVersionInfo,
-				"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
-
-				this.checkVersionInfoRequest(assert);
+			this.checkVersionInfoRequest(assert);
 		}.bind(this));
 	});
 

@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/base/ManagedObjectMetadata",
 	"sap/base/strings/escapeRegExp",
-	"sap/base/util/isEmptyObject"
-], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject) {
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/ObjectPath"
+], function(BindingInfo, BindingParser, DataType, ManagedObject, Element, JSONModel, Context, ManagedObjectModel, StringType, Control, Component, UIComponent, Sorter, ManagedObjectMetadata, escapeRegExp, isEmptyObject, ObjectPath) {
 	"use strict";
 	var mObjects = {};
 
@@ -28,6 +29,15 @@ sap.ui.define([
 	};
 
 	DataType.registerEnum("MyEnum", MyEnum);
+
+	// sample item object, will be used as aggregation content for defaultClass test
+	const TestItem = ManagedObject.extend("sap.ui.core.TestItem", {
+		metadata: {
+			properties: {
+				name: { type: "string", defaultValue: "hello" }
+			}
+		}
+	});
 
 	// define new types for testing
 	var TestManagedObject = ManagedObject.extend("sap.ui.core.TestManagedObject", {
@@ -54,7 +64,8 @@ sap.ui.define([
 				singleBindableAggr : { type : "sap.ui.core.TestManagedObject", multiple : false, bindable: "bindable" },
 				subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
 				elements : { type : "sap.ui.core.Element", multiple : true, bindable: "bindable"},
-				skippedPropagation : { type: "sap.ui.core.Element", multiple: false }
+				skippedPropagation : { type: "sap.ui.core.Element", multiple: false },
+				itemsWithDefaultClass: { type: "sap.ui.core.TestItem", defaultClass: TestItem, multiple: true}
 			},
 			associations : {
 				selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
@@ -1950,6 +1961,78 @@ sap.ui.define([
 			bThrown = true;
 		}
 		assert.ok(bThrown, "Must throw error on unknown aggregation bind");
+	});
+
+	QUnit.module("defaultClass");
+
+	QUnit.test("ManagedObjects created from object-literals", function(assert) {
+		// spy ObjectPath.get() to check if aggregations with default class don't probe the global namespace
+		const oObjectPathGetSpy = this.spy(ObjectPath, "get");
+
+		// Create aggregation content from object literals
+		const oContainer = new TestManagedObject({
+			itemsWithDefaultClass: [{
+				name: "item 0"
+			},
+			{
+				name: "item 1"
+			}]
+		});
+
+		assert.equal(oObjectPathGetSpy.callCount, 0, "No access to global namespace for aggregations with 'defaultClass'");
+
+		// check aggregation content
+		oContainer.getItemsWithDefaultClass().forEach((obj, i) => {
+			assert.ok(obj instanceof TestItem, "Aggregation Item was correctly instantiated from 'defaultClass'");
+			assert.ok(obj.getName(), `item ${i}`, "Aggregation Item properties correctly passed to 'defaultClass' constructor");
+		});
+
+		oObjectPathGetSpy.restore();
+	});
+
+	QUnit.test("validation: defaultClass does not match aggregation type", function(assert) {
+		assert.throws(() => {
+			// sample item object, will be used as aggregation content for defaultClass test
+			ManagedObject.extend("sap.ui.core.FaultyTestClass", {
+				metadata: {
+					aggregations: {
+						items: { type: "sap.ui.core.TestItem", defaultClass: ManagedObject }
+					}
+				}
+			});
+		},
+		new TypeError("The 'defaultClass' of the aggregation 'items' in 'sap.ui.core.FaultyTestClass' is not of type 'sap.ui.core.TestItem'."),
+		"'defaultClass' definition not matching aggregation type leads to a TypeError");
+	});
+
+	QUnit.test("validation: defaultClass is defined together with altTypes containing 'object'", function(assert) {
+		assert.throws(() => {
+			// sample item object, will be used as aggregation content for defaultClass test
+			ManagedObject.extend("sap.ui.core.FaultyTestClass", {
+				metadata: {
+					aggregations: {
+						items: { type: "sap.ui.base.ManagedObject", defaultClass: ManagedObject, altTypes: ["string", "object"] }
+					}
+				}
+			});
+		},
+		new TypeError("The aggregation 'items' in 'sap.ui.core.FaultyTestClass' must not defined a 'defaultClass' together with the altType 'object'."),
+		"'defaultClass' definition together with 'altTypes' definition containing 'object' leads to a TypeError");
+	});
+
+	QUnit.test("validation: defaultClass property is defined, but nullish", function(assert) {
+		assert.throws(() => {
+			// sample item object, will be used as aggregation content for defaultClass test
+			ManagedObject.extend("sap.ui.core.FaultyTestClass", {
+				metadata: {
+					aggregations: {
+						items: { type: "sap.ui.base.ManagedObject", defaultClass: undefined }
+					}
+				}
+			});
+		},
+		new TypeError("The 'defaultClass' of the aggregation 'items' in 'sap.ui.core.FaultyTestClass' is defined with a nullish value (undefined)."),
+		"'defaultClass' definition with nullish value leads to a TypeError");
 	});
 
 	QUnit.module("Hidden Aggregations", {

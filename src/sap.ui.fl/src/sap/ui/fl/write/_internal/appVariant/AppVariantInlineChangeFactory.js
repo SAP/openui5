@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/descriptorRelated/internal/Utils",
+	"sap/ui/fl/descriptorRelated/Utils",
 	"sap/ui/fl/write/_internal/appVariant/AppVariantInlineChange"
 ], function(
 	Utils,

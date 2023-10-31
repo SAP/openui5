@@ -449,10 +449,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * This setter is overriden because the property is inherited from <code>DatePicker</code> but its usage makes no sense
-	 * in <code>DateTimePicker</code> as it always have footer with buttons. Setting the property won't have an effect at all.
+	 * This setter is overridden because the property is inherited from <code>DatePicker</code> but its usage makes no sense
+	 * in <code>DateTimePicker</code> as it always has a footer with buttons. Setting the property won't have an effect at all.
+	 * @param {boolean} _bFlag Whether to show a footer (ignored, footer will always be shown)
+	 * @returns {this}
 	 */
-	DateTimePicker.prototype.setShowFooter = function() {
+	DateTimePicker.prototype.setShowFooter = function(_bFlag) {
 		return this;
 	};
 
@@ -682,7 +684,7 @@ sap.ui.define([
 			offsetX: 0,
 			offsetY: 3,
 			horizontalScrolling: false,
-			title: this._getTimezone(true)
+			title: this._getTranslatedTimezone(true)
 		});
 
 		this.addDependent(this._oTimezonePopup);

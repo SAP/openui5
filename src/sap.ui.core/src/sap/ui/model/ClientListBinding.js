@@ -45,7 +45,7 @@ sap.ui.define([
 			ListBinding.apply(this, arguments);
 
 			this.mNormalizeCache = {};
-			this.oModel.checkFilterOperation(this.aApplicationFilters);
+			this.oModel.checkFilter(this.aApplicationFilters);
 			this.oCombinedFilter = FilterProcessor.combineFilters(this.aFilters, this.aApplicationFilters);
 			this.bIgnoreSuspend = false;
 			// the serialized context data for the contexts returned by the last call of getContexts
@@ -321,11 +321,14 @@ sap.ui.define([
 	 *  be adjusted; if no type is given, then any previously configured application filters are
 	 *  cleared and the given filters are used as control filters
 	 * @returns {this} returns <code>this</code> to facilitate method chaining
-	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
+	 * @throws {Error} If one of the filters uses an operator that is not supported by the underlying model
+	 *   implementation or if the {@link sap.ui.model.Filter.NONE} filter instance is contained in
+	 *   <code>aFilters</code> together with other filters
+	 *
 	 * @public
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
-		this.oModel.checkFilterOperation(aFilters);
+		this.oModel.checkFilter(aFilters);
 
 		if (this.bSuspended) {
 			this.checkUpdate(true);

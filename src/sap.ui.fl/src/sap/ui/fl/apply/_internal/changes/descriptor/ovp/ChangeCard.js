@@ -29,7 +29,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.apply._internal.flexObjects.AppDescriptorChange} oChange - Change made by key user
 		 * @param {object} oChange.content - Details of the change
 		 * @param {string} oChange.content.cardId - ID of card being changed
-		 * @param {string} oChange.content.entityPropertyChange - Change content
+		 * @param {object} oChange.content.entityPropertyChange - Change content
 		 * @param {string} oChange.content.entityPropertyChange.propertyPath - Path to the property which should be changed
 		 * @param {string} oChange.content.entityPropertyChange.operation - Operation that is performed on property defined under propertyPath. Possible value: <code>UPSERT</code>
 		 * @param {object} oChange.content.entityPropertyChange.propertyValue - New value of <code>dataSource</code> property defined under propertyPath

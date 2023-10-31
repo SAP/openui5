@@ -446,7 +446,7 @@ sap.ui.define([
 	/**
 	 * @private
 	 * @param {Headers} mHeaders The current map of headers.
-	 * @param {map} mRequestSettings The map of request settings defined in the card manifest.
+	 * @param {object} mRequestSettings The map of request settings defined in the card manifest.
 	 */
 	Host.prototype._addCacheHeaders = function (mHeaders, mRequestSettings) {
 		var oCacheSettings = mRequestSettings.cache,

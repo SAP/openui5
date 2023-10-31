@@ -103,7 +103,7 @@ sap.ui.define([
 		var bForceUpdate,
 			oOldContext = this.oContext;
 
-		if (oContext && undefined && oContext.isPreliminary()) {
+		if (oContext && oContext.isPreliminary && oContext.isPreliminary()) {
 			return;
 		}
 

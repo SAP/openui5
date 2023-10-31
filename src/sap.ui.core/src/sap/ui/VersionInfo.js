@@ -5,13 +5,24 @@
 sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	"use strict";
 
+	let oVersionInfo;
+
 	/**
 	 * @alias module:sap/ui/VersionInfo
 	 * @namespace
 	 * @since 1.56.0
 	 * @public
 	 */
-	var VersionInfo = {};
+	var VersionInfo = {
+		/**
+		 * Retrieves the version info in case it was already loaded.
+		 * @private
+		 * @ui5-restricted sap.ui.core
+		 */
+		get _content() {
+			return oVersionInfo;
+		}
+	};
 
 	/**
 	 * Loads the version info asynchronously from resource "sap-ui-version.json".
@@ -47,8 +58,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 	 */
 	var oVersionInfoPromise = null;
 
-	var oVersionInfo;
-
 	/**
 	 * Mapping of library name to it's dependencies.
 	 * Extracted from the loaded version info.
@@ -68,17 +77,6 @@ sap.ui.define(['sap/base/util/LoaderExtensions'], function (LoaderExtensions) {
 		mKnownLibs = null;
 		mKnownComponents = null;
 	}
-
-	Object.defineProperty(sap.ui, "versioninfo", {
-		configurable: true,
-		enumerable: true,
-		get: function() {
-			return oVersionInfo;
-		},
-		set: function(oNewVersionInfo) {
-			updateVersionInfo(oNewVersionInfo);
-		}
-	});
 
 	/**
 	 * Version retrieval. Used by {@link sap.ui.getVersionInfo} and {@link module:sap/ui/VersionInfo.load}
