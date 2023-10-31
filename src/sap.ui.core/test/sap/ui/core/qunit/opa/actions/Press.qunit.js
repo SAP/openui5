@@ -39,7 +39,8 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/RatingIndicator",
 	"sap/ui/core/UIArea",
-	"sap/ui/qunit/utils/nextUIUpdate"
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/m/OverflowToolbarLayoutData"
 ],
 function(Press,
 		 Button,
@@ -80,7 +81,8 @@ function(Press,
 		 Slider,
 		 RatingIndicator,
 		 UIArea,
-		 nextUIUpdate
+		 nextUIUpdate,
+		 OverflowToolbarLayoutData
 ){
 	"use strict";
 
@@ -88,7 +90,6 @@ function(Press,
 	var ButtonType = mobileLibrary.ButtonType;
 	var ListMode = mobileLibrary.ListMode;
 	var OverflowToolbarPriority = mobileLibrary.OverflowToolbarPriority;
-	var OverflowToolbarLayoutData = mobileLibrary.OverflowToolbarLayoutData;
 
 	// stack contains controls to be destroyed
 	// and emptied after each test

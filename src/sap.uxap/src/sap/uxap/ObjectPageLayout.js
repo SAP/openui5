@@ -2275,7 +2275,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype.onAnchorBarTabPress = function (oEvent) {
 		var oSectionBase = Element.getElementById(oEvent.getParameter("sectionBaseId")),
-			bIsSubSection = oSectionBase instanceof library.ObjectPageSubSection,
+			bIsSubSection = oSectionBase.isA("sap.uxap.ObjectPageSubSection"),
 			oSection,
 			oSubSection;
 
