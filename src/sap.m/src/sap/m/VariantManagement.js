@@ -210,7 +210,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Controls the visibility of the 'SaveAs' button
+				 * Controls the visibility of the Save As button.
 				 */
 				showSaveAs: {
 					type: "boolean",
@@ -219,7 +219,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set to <code>false</code> neither 'Save As' nor 'Save' buttons on the 'My Views' dialog are visible.
+				 * If set to <code>false</code>, neither the Save As nor the Save button in the My Views dialog is visible.
 				 */
 				creationAllowed: {
 					type: "boolean",
@@ -228,7 +228,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Indicates if the buttons and the complete footer in the <i>My Views</i> dialog are visible.
+				 * Indicates if the buttons and the complete footer in the My Views dialog are visible.
 				 */
 				showFooter: {
 					type: "boolean",
@@ -246,7 +246,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * The title in the 'My Views' popover.
+				 * The title in the My Views popover.
 				 */
 				popoverTitle: {
 					type: "string",
@@ -298,7 +298,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Defines the Apply Automatically text for the standard variant in the <i>Manage Views</i> dialog if the application controls this behavior.
+				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
 				 */
 				_displayTextForExecuteOnSelectionForStandardVariant: {
 					type: "string",
@@ -361,7 +361,7 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * This event is fired when either <i>Save As</i> is triggered from the <i>Save View</i> dialog, or <i>Save</i> from <i>My Views</i>.
+				 * This event is fired when the Save View dialog or the Save As dialog is closed with the Save button.
 				 */
 				save: {
 					parameters: {
@@ -374,7 +374,6 @@ sap.ui.define([
 
 						/**
 						 * Indicates if an existing variant is updated or if a new variant is created.
-						 * Basically 'Save' operation leads to overwrite <code>true</code>, while 'Save As' leads to overwrite <code>false</code>.
 						 */
 						overwrite: {
 							type: "boolean"
@@ -410,6 +409,7 @@ sap.ui.define([
 
 						/**
 						 * Array describing the contexts.
+						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
 						 */
 						contexts: {
 							type: "object[]"
@@ -443,7 +443,8 @@ sap.ui.define([
 				manage: {
 					parameters: {
 						/**
-						 * List of changed variants. Each entry contains a 'key' - the variant key and a 'name' - the new title of the variant
+						 * List of changed variants.
+						 * Each entry contains a <code>key</code> (the variant key)  and a <code>name</code> (the new title of the variant).
 						 */
 						renamed: {
 							type: "object[]"
@@ -457,14 +458,16 @@ sap.ui.define([
 						},
 
 						/**
-						 * List of variant keys and the associated Execute on Selection indicator. Each entry contains a 'key' - the variant key and a 'exe' - flag describing the intention
+						 * List of variant keys and the associated Execute on Selection indicator.
+						 * Each entry contains a <code>key</code> (the variant key) and an <code>exe</code> flag describing the intention.
 						 */
 						exe: {
 							type: "object[]"
 						},
 
 						/**
-						 * List of variant keys and the associated favorite indicator. Each entry contains a 'key' - the variant key and a 'visible' - flag describing the intention
+						 * List of variant keys and the associated favorite indicator.
+						 * Each entry contains a <code>key</code> (the variant key) and a <code>visible</code> flag describing the intention.
 						 */
 						fav: {
 							type: "object[]"
@@ -478,7 +481,9 @@ sap.ui.define([
 						},
 
 						/**
-						 * List of variant keys and the associated contexts array. Each entry contains a 'key' - the variant key and a 'contexts' - array describing the contexts
+						 * List of variant keys and the associated contexts array.
+						 * Each entry contains a <code>key</code> (the variant key) and a <code>contexts</code> array describing the contexts.
+						 * <b>Note:</b> It is only used internally by the SAPUI5 flexibility layer.
 						 */
 						contexts: {
 							type: "object[]"
@@ -1203,16 +1208,7 @@ sap.ui.define([
 					}
 				}
 				if (sSelectionKey) {
-
-					var bTriggerForSameItem = this.getProperty("_selectStategyForSameItem");
-
-					if (bTriggerForSameItem || (!bTriggerForSameItem && (this.getSelectedKey() !== sSelectionKey))) {
-						this.setSelectedKey(sSelectionKey);
-
-						this.fireSelect({
-							key: sSelectionKey
-						});
-					}
+					this.setCurrentVariantKey(sSelectionKey);
 					this.oVariantPopOver.close();
 				}
 			}.bind(this)
@@ -1295,6 +1291,30 @@ sap.ui.define([
 		// this.oVariantList.getBinding("items").filter(this._getFilters());
 	};
 
+
+	/**
+	 * Enables the programmatic selection of a variant.
+	 * @public
+	 * @param {string} sKey of variant to be selected. If the passed key doesn't identify a variant, it will be ignored
+	 */
+	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
+		var oItem = this.getItemByKey(sKey);
+		if (oItem) {
+			var bTriggerForSameItem = this.getProperty("_selectStategyForSameItem");
+
+			if (bTriggerForSameItem || (!bTriggerForSameItem && (this.getSelectedKey() !== sKey))) {
+				this.setSelectedKey(sKey);
+
+				this.setModified(false);
+
+				this.fireSelect({
+					key: sKey
+				});
+			}
+		} else {
+			Log.error("setCurrentVariantKey called with unknown key:'" + sKey + "'");
+		}
+	};
 
 	VariantManagement.prototype._determineEmphasizedFooterButton = function() {
 		if (this.oVariantSaveBtn.getVisible()) {
