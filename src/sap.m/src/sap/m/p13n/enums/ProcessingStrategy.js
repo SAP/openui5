@@ -13,7 +13,7 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
      * @private
      * @ui5-restricted sap.m.p13n
 	 * @since 1.108
-	 * @alias sap.m.p13n.enum.ProcessingStrategy
+	 * @alias sap.m.p13n.enums.ProcessingStrategy
 	 */
 	var ProcessingStrategy = {
 		/**
@@ -42,7 +42,7 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
 		FullReplace: "FullReplace"
 	};
 
-	DataType.registerEnum("sap.m.p13n.enum.ProcessingStrategy", ProcessingStrategy);
+	DataType.registerEnum("sap.m.p13n.enums.ProcessingStrategy", ProcessingStrategy);
 
 	return ProcessingStrategy;
 

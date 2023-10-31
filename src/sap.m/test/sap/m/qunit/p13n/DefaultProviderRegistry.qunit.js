@@ -1,7 +1,7 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Control",
-	"sap/m/p13n/enum/PersistenceMode",
+	"sap/m/p13n/enums/PersistenceMode",
 	"sap/m/p13n/modules/DefaultProviderRegistry",
 	"sap/m/p13n/Engine"
 ], function (Control, PersistenceMode, DefaultProviderRegistry, Engine) {

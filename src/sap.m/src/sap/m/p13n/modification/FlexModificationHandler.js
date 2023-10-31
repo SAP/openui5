@@ -4,7 +4,7 @@
 sap.ui.define([
     "./ModificationHandler",
     "sap/m/p13n/FlexUtil",
-    "sap/m/p13n/enum/PersistenceMode",
+    "sap/m/p13n/enums/PersistenceMode",
     "sap/ui/core/Core"
 ], function(ModificationHandler, FlexUtil, mode, Core) {
 	"use strict";
