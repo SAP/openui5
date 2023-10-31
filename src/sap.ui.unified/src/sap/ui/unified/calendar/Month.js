@@ -293,6 +293,10 @@ sap.ui.define([
 		return "gridcell";
 	};
 
+	Month.prototype._getDayDescription = function() {
+		return "";
+	};
+
 	Month.prototype.exit = function(){
 
 		if (this._oItemNavigation) {

@@ -1457,7 +1457,7 @@ sap.ui.define([
 	QUnit.test("role button set on header cells in different views when we have intervalSelect event attached", function(assert) {
 		//Prepare
 		var oSut = createPlanningCalendar("PC", new SearchField(), new Button(), UI5Date.getInstance(2015, 0, 1)),
-			sExpectedRole = "button";
+			sExpectedRole = "columnheader";
 		oSut.attachIntervalSelect(this.stub());
 
 		//Act
