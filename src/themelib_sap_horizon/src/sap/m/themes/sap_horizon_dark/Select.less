@@ -118,8 +118,10 @@ html.sap-desktop .sapMSltIconOnly.focus:not(.sapMSltExpanded):not(.sapMSltDisabl
 }
 
 .sapMSlt.sapMSltReadonly {
-    background: @sapUiFieldReadOnlyBackground;
-    border-bottom: dashed @sapUiElementBorderWidth @sapUiFieldReadOnlyBorderColor;
+    border-color: @sapUiFieldReadOnlyBorderColor;
+    background:@sapUiFieldReadOnlyBackgroundStyle;
+    background-color: @sapUiFieldReadOnlyBackground;
+    box-shadow: none;
 }
 
 div.sapMSltPicker .sapMSltPickerValueState {
