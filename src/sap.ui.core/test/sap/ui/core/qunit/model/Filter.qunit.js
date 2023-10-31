@@ -10,9 +10,6 @@ sap.ui.define([
 	var sDefaultLanguage = Localization.getLanguage();
 
 	QUnit.module("sap.ui.model.Filter", {
-		before() {
-			this.__ignoreIsolatedCoverage__ = true;
-		},
 		beforeEach : function () {
 			Localization.setLanguage("en-US");
 			this.oLogMock = this.mock(Log);
@@ -94,7 +91,15 @@ sap.ui.define([
 		assert.strictEqual(oFilter.getValue1(), sValue1);
 		assert.strictEqual(oFilter.getValue2(), sValue2);
 
-		// // code under test (legacy names bAnd and aFilters used in constructor)
+		// code under test (non-object notation, operator as function)
+		oFilter = new Filter(sPath, fnTest, sValue1, sValue2);
+		assert.strictEqual(oFilter.getOperator(), undefined);
+		assert.strictEqual(oFilter.getTest(), fnTest);
+		assert.strictEqual(oFilter.getPath(), sPath);
+		assert.strictEqual(oFilter.getValue1(), sValue1);
+		assert.strictEqual(oFilter.getValue2(), sValue2);
+
+		// code under test (legacy names bAnd and aFilters used in constructor)
 		oFilter = new Filter({
 			bAnd : 0, // some falsy value,
 			aFilters : aFilters
@@ -124,6 +129,25 @@ sap.ui.define([
 
 		// code under test: every multifilter has to be an instance of Filter
 		new Filter({filters : [new Filter("path", FilterOperator.EQ, 42), {/*no Filter*/}]});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("defaultComparator: basics", function (assert) {
+
+		// code under test (less)
+		assert.strictEqual(Filter.defaultComparator(42, 43), -1);
+
+		// code under test (equal)
+		assert.strictEqual(Filter.defaultComparator(42, 42), 0);
+
+		// code under test (greater)
+		assert.strictEqual(Filter.defaultComparator(43, 42), 1);
+
+		// code under test (NaN)
+		assert.ok(Number.isNaN(Filter.defaultComparator(42, null)));
+		assert.ok(Number.isNaN(Filter.defaultComparator(null, 43)));
+		assert.ok(Number.isNaN(Filter.defaultComparator(42, {})));
+		assert.ok(Number.isNaN(Filter.defaultComparator(42, NaN)));
 	});
 
 	//*********************************************************************************************
@@ -795,6 +819,9 @@ sap.ui.define([
 		assert.strictEqual(Filter.NONE.getPath(), "/");
 		assert.strictEqual(typeof Filter.NONE.getTest(), "function");
 		assert.strictEqual(Filter.NONE.getTest()(), false);
+		assert.throws(() => {
+			Filter.NONE.getAST();
+		}, new Error("Unknown operator: undefined"));
 	});
 
 	//*********************************************************************************************
