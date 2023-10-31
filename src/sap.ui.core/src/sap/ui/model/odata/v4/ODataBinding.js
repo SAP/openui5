@@ -587,6 +587,9 @@ sap.ui.define([
 				.then(function (sReducedPath) {
 					if (sReducedPath) {
 						vQueryOptions = undefined;
+					} else if (!vQueryOptions) {
+						// fetchCache only creates a cache if there are query options
+						vQueryOptions = {};
 					}
 					return wrapQueryOptions(false, sReducedPath);
 				});

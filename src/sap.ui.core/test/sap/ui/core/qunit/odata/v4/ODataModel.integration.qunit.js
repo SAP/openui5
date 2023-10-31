@@ -6625,6 +6625,44 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: Show properties of various entities in a collection-valued navigation property. The
+	// application in the incident even used different navigation properties via dynamically created
+	// paths based on data it loaded before.
+	// BCP: 2370133257
+	QUnit.test("BCP: 2370133257", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="order" binding="{/SalesOrderList(\'1\')}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+</FlexBox>\
+<FlexBox id="item">\
+	<Text id="note10" text="{SO_2_SOITEM(SalesOrderID=\'1\',ItemPosition=\'10\')/Note}"/>\
+	<Text id="note20" text="{SO_2_SOITEM(SalesOrderID=\'1\',ItemPosition=\'20\')/Note}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID", {SalesOrderID : "1"})
+			.expectChange("id", "1")
+			.expectChange("note10")
+			.expectChange("note20");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest(
+					"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='10')/Note",
+					{value : "Note #10"})
+				.expectRequest(
+					"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='20')/Note",
+					{value : "Note #20"})
+				.expectChange("note10", "Note #10")
+				.expectChange("note20", "Note #20");
+
+			that.oView.byId("item").setBindingContext(that.oView.byId("order").getBindingContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Modify a property which does not belong to the parent binding's entity
 	QUnit.test("Modify a foreign property", function (assert) {
 		var sView = '\
