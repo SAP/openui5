@@ -16,4 +16,39 @@
 		outline: 0.125rem dotted @sapUiHcStandardForeground;
 		outline-offset: -0.125rem;
 	}
+
+	.sapMSltIcon:before,
+	.sapMSltIcon:after {
+		font-size: @sapMFontMediumSize;
+		color: @sapUiBlackBG;
+		padding-bottom: 0.0625rem;
+		speak: none;
+	}
+
+	.sapMSltIcon:before {
+		font-family: @sapUiFontLightFamily;
+		content: "••• ";
+		vertical-align: bottom;
+	}
+
+	.sapMSltIcon:after {
+		font-family: @sapUiContentIconFontFamily;
+		content: "\e1ef";
+	}
+
+	.sapMBreadcrumbsItem.sapMBreadcrumbsSelectItem >
+	.sapMSlt.sapMSltIconOnly.sapMSltWithIcon.sapMSltHoverable.sapMSltWithArrow {
+		background: transparent;
+		border: none;
+
+		&.sapMSltFocused,
+		&:hover {
+			outline: 0.125rem dotted @sapUiHcStandardForeground;
+			outline-offset: -0.125rem;
+
+			.sapMSltIcon:before {
+				border-bottom: none;
+			}
+		}
+	}
 }
