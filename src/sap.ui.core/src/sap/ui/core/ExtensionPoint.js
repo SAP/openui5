@@ -56,7 +56,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
 	 * For compatibility we cannot change the actual return value of this module.
 	 * @deprecated since 1.56
 	 */
-	ExtensionPoint = sap.ui.extensionpoint;
+	(() => {
+		ExtensionPoint = sap.ui.extensionpoint;
+	})();
 
 	/**
 	 * API documentation see ExtensionPoint.load() (v2 API) and sap.ui.extensionpoint() (v1 API).
