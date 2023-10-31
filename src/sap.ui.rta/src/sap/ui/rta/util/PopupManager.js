@@ -179,7 +179,7 @@ sap.ui.define([
 			? oPopup.getContent().some(
 				function(oContent) {
 					if (oContent instanceof ComponentContainer) {
-						return this.oRtaRootAppComponent === this._getAppComponentForControl(Component.get(oContent.getComponent()));
+						return this.oRtaRootAppComponent === this._getAppComponentForControl(Component.getComponentById(oContent.getComponent()));
 					}
 					return undefined;
 				}.bind(this))

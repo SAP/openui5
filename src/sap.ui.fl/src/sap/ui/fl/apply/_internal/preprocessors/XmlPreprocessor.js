@@ -58,7 +58,7 @@ sap.ui.define([
 			// align view id attribute with the js processing (getting the id passed in "viewId" instead of "id"
 			mProperties.viewId = mProperties.id;
 
-			var oComponent = Component.get(mProperties.componentId);
+			var oComponent = Component.getComponentById(mProperties.componentId);
 
 			if (!oComponent) {
 				Log.warning("View is generated without a component. Flexibility features are not possible.");
@@ -112,7 +112,7 @@ sap.ui.define([
 	 * @public
 	 */
 	XmlPreprocessor.getCacheKey = async function(mProperties) {
-		var oComponent = Component.get(mProperties.componentId);
+		var oComponent = Component.getComponentById(mProperties.componentId);
 		var oAppComponent = Utils.getAppComponentForControl(oComponent);
 
 		// no caching possible with startup parameter based variants

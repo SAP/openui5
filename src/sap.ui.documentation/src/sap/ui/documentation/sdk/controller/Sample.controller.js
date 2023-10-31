@@ -650,7 +650,7 @@ sap.ui.define([
 				var sCompName = this._sId;
 				var oMainComponent = this.getOwnerComponent();
 
-				var oComp = Component.get(sCompId);
+				var oComp = Component.getComponentById(sCompId);
 
 				if (oComp) {
 					oComp.destroy();
