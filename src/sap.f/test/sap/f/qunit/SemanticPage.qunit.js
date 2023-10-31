@@ -1379,19 +1379,16 @@ function (
 		this.oSemanticPage.setDiscussInJamAction(new DiscussInJamAction());
 
 		this.oSemanticPage.addDelegate({"onAfterRendering": function () {
+			oActionSheet.attachAfterOpen(function() {
+				assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
+				this.oSemanticPage.destroy();
+				done();
+			}, this);
+
 			// Act - QUtils.triggerKeyEvent does not dispatch this
 			oSemanticPageTitle.getDomRef().dispatchEvent(new KeyboardEvent("keydown", {
 				bubbles: true, key: "S", shiftKey: true, ctrlKey: !bMacOS, metaKey: bMacOS
 			}));
-
-			setTimeout(function() {
-				// Assert
-				assert.strictEqual(oActionSheet.isOpen(), true, "Share menu is shown");
-
-				// Clean up
-				this.oSemanticPage.destroy();
-				done();
-			}.bind(this));
 		}.bind(this)});
 	});
 });
