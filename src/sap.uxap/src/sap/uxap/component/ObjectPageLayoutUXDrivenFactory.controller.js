@@ -47,8 +47,10 @@ sap.ui.define([
 				if (oHeaderTitleContext.getProperty("")) {
 					try {
 						//retrieve the header class
-						this._oHeader = this.controlFactory(oObjectPageLayout.getId(), oHeaderTitleContext);
-						oObjectPageLayout.setHeaderTitle(this._oHeader);
+						this.controlFactoryAsync(oObjectPageLayout.getId(), oHeaderTitleContext)
+							.then(function (oHeader) {
+								oObjectPageLayout.setHeaderTitle(oHeader);
+							});
 					} catch (sError) {
 						Log.error("ObjectPageLayoutFactory :: error in header creation from config: " + sError);
 					}
@@ -70,6 +72,7 @@ sap.ui.define([
 		 * @param {string} sParentId the Id of the parent
 		 * @param {object} oBindingContext binding context
 		 * @returns {*} new control
+		 * @deprecated Since version 1.120
 		 */
 		controlFactory: function (sParentId, oBindingContext) {
 			var oControlInfo = oBindingContext.getProperty(""), oControl, oControlClass, oControlMetadata;
@@ -100,6 +103,49 @@ sap.ui.define([
 			}
 
 			return oControl;
+		},
+
+		/**
+		 * generates a control to be used in actions, blocks or moreBlocks aggregations
+		 * known issue: bindings are not applied, the control is built with data only
+		 * @param {object} oBindingContext binding context
+		 * @returns {Promise} new control
+		 */
+		controlFactoryAsync: function (oBindingContext) {
+			var oControlInfo = oBindingContext.getProperty(""), oControl, oControlMetadata;
+
+			var oControlFactoryPromise = new Promise(function (resolve, reject) {
+				try {
+					//retrieve the block class
+					sap.ui.require([oControlInfo.Type.replace(/\./g, "/")], function (oControlClass) {
+						oControlMetadata = oControlClass.getMetadata();
+
+						//pre-processing: substitute event handler as strings by their function instance
+						each(oControlMetadata._mAllEvents, function (sEventName) {
+							if (typeof oControlInfo[sEventName] == "string") {
+								oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
+							}
+						}.bind(this));
+
+						//creates the control with control info = create with provided properties
+						oControl = ManagedObject.create(oControlInfo);
+
+						//post-processing: bind properties on the objectPageLayoutMetadata model
+						each(oControlMetadata._mAllProperties, function (sPropertyName, oProperty) {
+							if (oControlInfo[sPropertyName]) {
+								oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
+							}
+						});
+
+						resolve(oControl);
+					});
+				} catch (sError) {
+					Log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
+					reject();
+				}
+			});
+
+			return oControlFactoryPromise;
 		},
 
 		/**
