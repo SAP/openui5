@@ -377,7 +377,7 @@ sap.ui.define([
 		var fnReset = this.getReset();
 		var sTitle = this.getTitle();
 		var sWarningText = this.getWarningText();
-        var oPopup = this;
+		var oPopup = this;
 
 		var oBar;
 

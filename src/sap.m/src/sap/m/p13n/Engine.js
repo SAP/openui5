@@ -257,8 +257,8 @@ sap.ui.define([
 	 * Check if there are changes for a given control instance
 	 *
 	 * @private
-         * @ui5-restricted sap.m, sap.ui.mdc
-         *
+	 * @ui5-restricted sap.m, sap.ui.mdc
+	 *
 	 * @param {sap.ui.core.Control} control The control instance
 	 * @param {string} key The affected controller key
 	 * @returns {Promise<boolean>} A Promise that resolves if the given control instance has applied changes
@@ -1354,8 +1354,7 @@ sap.ui.define([
 	/**
 	 * This method is the central point of access to the Engine Singleton.
 	 *
-	 * @private
-	 * @ui5-restricted sap.m, sap.ui.mdc
+	 * @public
 	 *
 	 * @returns {sap.m.p13n.Engine} The Engine instance
 	 */

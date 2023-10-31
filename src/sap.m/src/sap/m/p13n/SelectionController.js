@@ -15,10 +15,20 @@ sap.ui.define([
 	"use strict";
 
 	/**
+	 * Personalization <code>SelectionState</code> object type. This object describes the state processed by this controller when accessing it through the {@link sap.m.p13n.Engine Engine}.
+	 *
+	 * @public
+	 * @typedef {object} sap.m.p13n.SelectionState
+	 * @property {string} key The key for the group state
+	 * @property {boolean} [visible] Defines whether the item is selected (if a selection state is provided, it's selected automatically)
+	 * @property {int} [index] Describes the index of the selection item
+	 *
+	 */
+
+	/**
 	 * Constructor for a new <code>SelectionController</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] Initial settings for the new control
+	 * @param {object} mSettings Initial settings for the new controller
 	 * @param {sap.ui.core.Control} mSettings.control The control instance that is personalized by this controller
 	 * @param {function} [mSettings.getKeyForItem] By default the SelectionController tries to identify the existing item through the
 	 * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
