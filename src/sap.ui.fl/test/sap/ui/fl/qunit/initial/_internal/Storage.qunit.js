@@ -649,7 +649,7 @@ sap.ui.define([
 				{connector: "JsObjectConnector", layers: []},
 				{connector: "LrepConnector", layers: ["ALL"]}
 			]);
-			FlexInfoSession.setByReference({version: Version.Number.Draft}, "app.id");
+			FlexInfoSession.setByReference({version: Version.Number.Draft, initialAllContexts: true, maxLayer: Layer.CUSTOMER}, "app.id");
 
 			var oStaticFileConnectorStub = sandbox.stub(StaticFileConnector, "loadFlexData").resolves();
 			var oLrepConnectorStub = sandbox.stub(LrepConnector, "loadFlexData").resolves();
@@ -662,6 +662,9 @@ sap.ui.define([
 				assert.equal(oStaticFileConnectorStub.getCall(0).args[0].version, undefined, "the StaticFileConnector has the version property NOT set");
 				assert.equal(oJsObjectConnectorStub.getCall(0).args[0].version, undefined, "the connector NOT in charge for draft layer has the version property NOT set");
 				assert.equal(oLrepConnectorStub.getCall(0).args[0].version, Version.Number.Draft, "the connector for draft layer has the version property set");
+				assert.equal(FlexInfoSession.getByReference("app.id").version, undefined, "version is deleted in flex info session");
+				assert.equal(FlexInfoSession.getByReference("app.id").maxLayer, undefined, "max layer is deleted in flex info session");
+				assert.equal(FlexInfoSession.getByReference("app.id").initialAllContexts, true, "initialAllContexts still in flex info session");
 				FlexInfoSession.removeByReference("app.id");
 			});
 		});
