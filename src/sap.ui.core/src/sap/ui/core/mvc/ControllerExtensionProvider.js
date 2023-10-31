@@ -66,7 +66,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/core/Component"], function(Log, Component
 			providerControllers: []           // extensions loaded via external provider
 		};
 
-		var oComponent = Component.get(sComponentId);
+		var oComponent = Component.getComponentById(sComponentId);
 		// the view ID used in the customizing definition in the manifest.json
 		// must not contain a reference to the runtime ID of the component itself
 		if (oComponent && oComponent.getLocalId) {

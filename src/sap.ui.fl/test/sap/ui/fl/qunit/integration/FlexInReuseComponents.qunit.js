@@ -44,7 +44,7 @@ sap.ui.define([
 			var sFlexReference = ManifestUtils.getFlexReference({manifest: this.oComponent.getManifest()});
 			var oComponentContainer = this.oComponent.getRootControl();
 			var sEmbeddedComponentId = oComponentContainer.getAssociation("component");
-			var oEmbeddedComponent = Component.get(sEmbeddedComponentId);
+			var oEmbeddedComponent = Component.getComponentById(sEmbeddedComponentId);
 			var oView = oEmbeddedComponent.getRootControl();
 			var oForm = oView.byId("myForm");
 			var oInitialFieldInstance = oView.byId("myGroupField");
