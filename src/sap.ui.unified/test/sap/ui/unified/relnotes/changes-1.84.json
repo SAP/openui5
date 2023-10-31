@@ -572,5 +572,21 @@
         ]
       }
     ]
+  },
+  "1.84.40": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "a8bd7a66e93db8dc67dbe904811ccc51e7f08cb4",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      }
+    ]
   }
 }

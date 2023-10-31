@@ -2111,5 +2111,58 @@
         ]
       }
     ]
+  },
+  "1.84.40": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "924c3f8a965c9e76ee81ecd6ccd59c3b943d6f16",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      },
+      {
+        "id": "a8bd7a66e93db8dc67dbe904811ccc51e7f08cb4",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      },
+      {
+        "id": "03cc83aace9720e5cdd1db40a0e122416ca9b7e1",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Add ARIA label to the items list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007520392022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007944252023"
+          }
+        ]
+      },
+      {
+        "id": "8e0358c2b9d2382ddcc53c478f9576aa71f728b1",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: Value is now formatted even if matching with previous value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500006449282023"
+          }
+        ]
+      }
+    ]
   }
 }

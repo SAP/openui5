@@ -751,5 +751,32 @@
         ]
       }
     ]
+  },
+  "1.84.40": {
+    "date": "October 2023",
+    "notes": [
+      {
+        "id": "e227369704760779a125f56a070744371a4856e7",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      },
+      {
+        "id": "eaffc884095309bb0832b3502472dadd381d5f67",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
