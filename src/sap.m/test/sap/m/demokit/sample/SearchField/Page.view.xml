@@ -7,8 +7,12 @@
 		<subHeader>
 			<Toolbar>
 				<SearchField width="100%" search=".onSearch" />
+				<Text text="Default Search" id="idSearchListToolbar" />
 			</Toolbar>
 		</subHeader>
-		<SearchField width="90%" class="sapUiSmallMargin" />
+		<VBox class="sapUiSmallMargin">
+			<Label text="Default Search Field:" />
+			<SearchField width="90%" class="sapUiSmallMargin" />
+		</VBox>
 	</Page>
 </mvc:View>

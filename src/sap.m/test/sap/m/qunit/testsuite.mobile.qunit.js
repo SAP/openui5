@@ -2245,6 +2245,14 @@ sap.ui.define([
 				sinon: false,
 				group: "Designtime"
 			},
+			"designtime/SearchField": {
+				title: "QUnit Page for sap.m.SearchField design time and rta enabling",
+				ui5: {
+					libs: ["sap.m", "sap.ui.rta"]
+				},
+				sinon: false,
+				group: "Designtime"
+			},
 			"designtime/Select": {
 				title: "QUnit Page for sap.m.Select design time",
 				ui5: {
