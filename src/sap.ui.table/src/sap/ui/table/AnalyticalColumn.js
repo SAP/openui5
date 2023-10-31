@@ -122,7 +122,6 @@ sap.ui.define([
 		var oParent = this.getParent();
 
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			oParent._bContextsAvailable = false;
 			if (bGrouped) {
 				oParent._addGroupedColumn(this.getId());
 			} else {

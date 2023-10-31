@@ -335,12 +335,14 @@ sap.ui.define([
 			oQuickGroup = that.getQuickAction(oMenu, "QuickGroup");
 			var aContent = oQuickGroup.getContent();
 
+			oMenu.attachEventOnce("afterClose", function() {
+				assert.ok(oColumnSetGroupedSpy.calledOnceWithExactly(true), "Column#_setGrouped is called once with the correct parameters");
+				oTable.getColumns()[0]._setGrouped(false);
+				return that.closeMenu(oMenu);
+			});
+
 			qutils.triggerMouseEvent(aContent[0].getId(), "mousedown", null, null, null, null, 0);
 			qutils.triggerMouseEvent(aContent[0].getId(), "click");
-
-			assert.ok(oColumnSetGroupedSpy.calledOnceWithExactly(true), "Column#_setGrouped is called once with the correct parameters");
-			oTable.getColumns()[0]._setGrouped(false);
-			return that.closeMenu(oMenu);
 		}).then(function() {
 			oTable.setEnableGrouping(false);
 			return that.openColumnMenu(0);
