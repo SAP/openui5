@@ -1631,3 +1631,22 @@ html[data-sap-ui-animation='off'] {
 		}
 	}
 }
+
+// FIXES SAP case ID: 002075129400007731262023 only for 1.96 and 1.108 for mobile safari on phone
+html[data-sap-ui-browser^="msf"].sap-phone {
+	.sapMITB {
+		.sapMITH.sapMITBNoText .sapMITBHead {
+			.sapMITBItem.sapMITBVertical.sapMITBFilter {
+				.sapMITBFilterWrapper {
+					.sapMITBTab {
+						.sapMITBFilterIcon + .sapMITBCount {
+							position: relative;
+							vertical-align: top;
+							display: inline-block;
+						}
+					}
+				}
+			}
+		}
+	}
+}
