@@ -3855,6 +3855,9 @@ function(
 	});
 
 
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.module("ObjectPageComponentContainer", {
 		beforeEach: function (assert) {
 			var done = assert.async();
@@ -3876,6 +3879,9 @@ function(
 		}
 	});
 
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.test("component instance", function (assert) {
 		var oComponent = this.oComponentContainer._oComponent;
 
