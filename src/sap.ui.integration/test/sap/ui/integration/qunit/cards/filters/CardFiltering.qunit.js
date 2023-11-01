@@ -533,7 +533,7 @@ sap.ui.define([
 
 		this.oCard.attachEvent("_ready", function () {
 			var oFilterBar = this.oCard.getAggregation("_filterBar");
-			var sErrorText = oFilterBar._getFilters()[0]._getErrorMessage().getItems()[1].getText();
+			var sErrorText = oFilterBar._getFilters()[0].getAggregation("_error").getItems()[1].getText();
 			var sExpectedErrorText = Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 
 			// Assert

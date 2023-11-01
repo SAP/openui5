@@ -60,9 +60,10 @@ sap.ui.define([
 	 *
 	 * @param {map} mFiltersConfig A map of the parameters config - the same that is defined in sap.card/configuration/filters.
 	 * @param {sap.ui.model.json.JSONModel} oModel The model for filters.
+	 * @param {function} fnOnChange Handler for filter value change.
 	 * @returns {sap.ui.integration.cards.filters.FilterBar|null} The Filter bar.
 	 */
-	FilterBarFactory.prototype.create = function (mFiltersConfig, oModel) {
+	FilterBarFactory.prototype.create = function (mFiltersConfig, oModel, fnOnChange) {
 		var aFilters = [],
 			aReadyPromises = [],
 			mConfig,
@@ -83,7 +84,8 @@ sap.ui.define([
 					model: "filters",
 					path: "/" + sKey
 				},
-				visible: mConfig.visible
+				visible: mConfig.visible,
+				change: fnOnChange
 			});
 
 			oModel.setProperty("/" + sKey, oFilter.getValueForModel());

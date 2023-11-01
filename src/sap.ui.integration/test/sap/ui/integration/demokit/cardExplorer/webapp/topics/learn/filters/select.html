@@ -56,6 +56,15 @@
 						<td>1.27.0</td>
 						<td>1.83</td>
 					</tr>
+					<tr>
+						<td>data</td>
+						<td><a href="../../../index.html#/learn/features/data" target="_parent">Data</a></td>
+						<td></td>
+						<td>No</td>
+						<td>Data to populate the filter.</td>
+						<td>1.27.0</td>
+						<td>1.83</td>
+					</tr>
 				</table>
 			</div>
 
@@ -152,7 +161,7 @@
 	"sap.card": {
 		"configuration": {
 			"filters": {
-				"productCategory": {
+				<mark>"productCategory": {
 					"value": "Notebooks",
 					"type": "Select",
 					"label": "Category",
@@ -181,14 +190,14 @@
 							]
 						}
 					}
-				}
+				}</mark>
 			}
 		},
 		"data": {
 			"request": {
 				"url": "/SEPMRA_PROD_MAN/SEPMRA_C_PD_Product",
 				"parameters": {
-					"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",
+					<mark>"$filter": "{= ${filters>/productCategory/value} !== 'all' ? 'ProductCategory eq ' + ${filters>/productCategory/value} + ' and ' : ''}AverageRatingValue gt 3",</mark>
 					"$orderby": "AverageRatingValue desc",
 					"$inlinecount": "allpages"
 				}

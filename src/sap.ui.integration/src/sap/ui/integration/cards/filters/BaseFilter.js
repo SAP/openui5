@@ -73,7 +73,9 @@ sap.ui.define([
 				/**
 				 * The hidden label for this control
 				 */
-				_label: { type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden" }
+				_label: { type: "sap.ui.core.InvisibleText", multiple: false, visibility: "hidden" },
+
+				_error: { type: "sap.m.HBox", multiple: false, visibility: "hidden" }
 			},
 			associations: {
 
@@ -81,24 +83,32 @@ sap.ui.define([
 				 * Association with the parent Card that contains this filter.
 				 */
 				card: { type: "sap.ui.integration.widgets.Card", multiple: false }
+			},
+			events: {
+				change: {
+					parameters: {
+						key: { type: "string"},
+						value: { type: "string"}
+					}
+				}
 			}
 
 		},
 		renderer: {
 			apiVersion: 2,
 			render: function (oRM, oFilter) {
-				var bLoading = oFilter.isLoading();
+				const oError = oFilter.getAggregation("_error");
 
 				oRM.openStart("div", oFilter).class("sapFCardFilter");
 
-				if (bLoading) {
+				if (oFilter.isLoading()) {
 					oRM.class("sapFCardFilterLoading");
 				}
 
 				oRM.openEnd();
 
-				if (oFilter._hasError()) {
-					oRM.renderControl(oFilter._getErrorMessage());
+				if (oError) {
+					oRM.renderControl(oError);
 				} else {
 					oRM.renderControl(oFilter.getField());
 				}
@@ -188,28 +198,23 @@ sap.ui.define([
 		return Element.getElementById(this.getCard());
 	};
 
-	BaseFilter.prototype._hasError = function () {
-		return !!this._bError;
-	};
-
-	BaseFilter.prototype._getErrorMessage = function () {
+	BaseFilter.prototype._showError = function () {
 		var sMessage = Library.getResourceBundleFor("sap.ui.integration").getText("CARD_FILTER_DATA_LOAD_ERROR");
 
-		return new HBox({
+		this.destroyAggregation("_error");
+		this.setAggregation("_error", new HBox({
 			justifyContent: "Center",
 			alignItems: "Center",
 			items: [
 				new Icon({ src: "sap-icon://message-error", size: "1rem" }).addStyleClass("sapUiTinyMargin"),
 				new Text({ text: sMessage })
 			]
-		});
+		}));
 	};
 
 	BaseFilter.prototype._handleError = function (sLogMessage) {
 		Log.error(sLogMessage);
-
-		this._bError = true;
-		this.invalidate();
+		this._showError();
 	};
 
 	BaseFilter.prototype._onDataRequestComplete = function () {
@@ -276,19 +281,13 @@ sap.ui.define([
 	};
 
 	BaseFilter.prototype._syncValue = function () {
-		var oValueForModel = this.getValueForModel(),
-			oCard = this.getCardInstance(),
-			mParams = {},
-			sManifestKey;
+		const oValueForModel = this.getValueForModel();
 
 		this.setValue(oValueForModel);
-
-		if (oCard) {
-			sManifestKey = "/sap.card/configuration/filters/" + this.getKey() + "/value";
-			mParams[sManifestKey] = oValueForModel.value;
-			oCard._fireConfigurationChange(mParams);
-			oCard.resetPaginator();
-		}
+		this.fireChange({
+			key: this.getKey(),
+			value: oValueForModel.value
+		});
 	};
 
 	BaseFilter.prototype._isDataProviderJson = function () {

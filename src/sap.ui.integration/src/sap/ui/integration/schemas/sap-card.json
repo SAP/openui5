@@ -3433,9 +3433,6 @@
             }
           ]
         },
-        "data": {
-          "$ref": "#/definitions/data"
-        },
         "label": {
           "description": "Label for the filter. Used by screen readers",
           "type": "string"
@@ -3523,9 +3520,6 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
-        },
-        "data": {
-          "$ref": "#/definitions/data"
         },
         "label": {
           "description": "Label for the filter. Used by screen readers",

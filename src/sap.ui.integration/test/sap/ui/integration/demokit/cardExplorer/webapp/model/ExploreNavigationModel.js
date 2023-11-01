@@ -1373,7 +1373,6 @@ sap.ui.define([
 						title: 'Search',
 						target: 'exploreSamples',
 						key: 'searchFilter',
-						experimental: true,
 						subSamples: [
 							{
 								title: 'Single Filter',

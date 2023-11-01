@@ -13,12 +13,9 @@
 	<div class="topic">
 		<div class="content">
 			<h1 id="overview">Search Filter</h1>
-			<div class="messageStripWarning">
-				Experimental feature since version 1.98. The API may change.
-			</div>
+
 			<p>
 				The Search filter allows users to enter text to search or filter for specific data.
-				The search is triggered after the user presses the Search button.
 			</p>
 
 			<h2 id="properties">Properties</h2>
@@ -36,7 +33,7 @@
 					<tr>
 						<td>value</td>
 						<td>string</td>
-						<td>""</td>
+						<td></td>
 						<td>No</td>
 						<td>The initial value of the filter.</td>
 						<td>1.38.0</td>
@@ -73,11 +70,11 @@
 	"sap.card": {
 		"configuration": {
 			"filters": {
-				"searchQuery": {
+				<mark>"searchQuery": {
 					"type": "Search",
 					"label": "City",
 					"placeholder": "Enter a city"
-				}
+				}</mark>
 			},
 			"destinations": {
 				"Northwind_V4": {
@@ -91,7 +88,7 @@
 			"request": {
 				"url": "{{destinations.Northwind_V4}}/Customer_and_Suppliers_by_Cities",
 				"parameters": {
-					"$filter": "contains(City, '{filters>/searchQuery/value}')",
+					<mark>"$filter": "contains(City, '{filters>/searchQuery/value}')",</mark>
 					"$count": true
 				}
 			}

@@ -380,13 +380,13 @@
 	"sap.card": {
 		"configuration": {
 			"filters": {
-				"activityPeriod": {
+				<mark>"activityPeriod": {
 					"type": "DateRange",
 					"value": {
 						"option": "today",
 						"values": []
 					}
-				}
+				}</mark>
 			}
 		},
 		"data": {
@@ -394,8 +394,8 @@
 				"request": {
 					"url": "/activities",
 					"parameters": {
-						"startDate": "{filters>/activityPeriod/range/start}",
-						"endDate": "{filters>/activityPeriod/range/end}"
+						<mark>"startDate": "{filters>/activityPeriod/range/start}",
+						"endDate": "{filters>/activityPeriod/range/end}"</mark>
 					}
 				}
 			}
