@@ -92,7 +92,7 @@
 
 						<OverflowToolbarButton
 							id="surveyButton"
-							class="surveyButton"
+							class="sapUiDemoKitHeaderActionsSurveyButton"
 							icon="sap-icon://feedback"
 							press="launchSurvey"
 							text="{i18n>APP_INFORMATION_BTN_FEEDBACK}"
