@@ -4009,10 +4009,10 @@ sap.ui.define([
 	QUnit.module("One extra long token", {
 		beforeEach : function() {
 			this.oMultiInput = new MultiInput({
-				width: "100px",
+				width: "200px",
 				tokens: [new Token({text: "Extra long token, Extra long token, Extra long token, Extra long token"})]
 			});
-			this.oMultiInput.placeAt("qunit-fixture");
+			this.oMultiInput.placeAt("content");
 
 			Core.applyChanges();
 		},
@@ -4022,6 +4022,18 @@ sap.ui.define([
 	});
 
 	QUnit.test("Token should be truncated initially", function (assert) {
+		// Assert
+		assert.ok(this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
+	});
+
+	QUnit.test("Token should be truncated on re-rerender", function (assert) {
+		this.oMultiInput.destroyTokens();
+		this.oMultiInput.addToken(new sap.m.Token({
+			text: "Extra long token, Extra long token, Extra long token, Extra long token"
+		}));
+
+		Core.applyChanges();
+
 		// Assert
 		assert.ok(this.oMultiInput.getAggregation("tokenizer").hasOneTruncatedToken(), "Token is truncated initially.");
 	});
