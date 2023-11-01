@@ -12,6 +12,14 @@ sap.ui.define([],
 				singular: "SEARCH_FIELD_NAME",
 				plural: "SEARCH_FIELD_NAME_PLURAL"
 			},
+			actions: {
+				remove: {
+					changeType: "hideControl"
+				},
+				reveal: {
+					changeType: "unhideControl"
+				}
+			},
 			palette: {
 				group: "INPUT",
 				icons: {

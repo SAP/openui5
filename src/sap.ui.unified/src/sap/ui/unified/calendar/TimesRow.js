@@ -20,7 +20,8 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/unified/DateRange",
-	"sap/ui/core/date/UI5Date"
+	"sap/ui/core/date/UI5Date",
+	'sap/ui/core/InvisibleText'
 ], function(
 	Formatting,
 	Control,
@@ -38,7 +39,8 @@ sap.ui.define([
 	deepEqual,
 	jQuery,
 	DateRange,
-	UI5Date
+	UI5Date,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -210,6 +212,10 @@ sap.ui.define([
 			delete this._oItemNavigation;
 		}
 
+		if (this._invisibleDayHint) {
+			this._invisibleDayHint.destroy();
+			this._invisibleDayHint = null;
+		}
 	};
 
 	TimesRow.prototype.onAfterRendering = function(){
@@ -985,6 +991,20 @@ sap.ui.define([
 	TimesRow.prototype._getAriaRole = function(){
 
 		return this._ariaRole ? this._ariaRole : "gridcell";
+	};
+
+	TimesRow.prototype._getTimeDescription = function() {
+		return this._fnInvisibleHintFactory().getId();
+	};
+
+	TimesRow.prototype._fnInvisibleHintFactory = function() {
+		if (!this._invisibleDayHint) {
+			this._invisibleDayHint = new InvisibleText({
+				text: Library.getResourceBundleFor("sap.m").getText("SLIDETILE_ACTIVATE")
+			}).toStatic();
+		}
+
+		return this._invisibleDayHint;
 	};
 
 	TimesRow.prototype._updateItemARIASelected = function($oDomRef, bSelect) {

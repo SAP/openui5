@@ -1,12 +1,14 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/base/i18n/Localization",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/library",
 	"sap/ui/unified/calendar/TimesRow",
-	"sap/ui/core/format/DateFormat"
-], function (Localization, qutils, unifiedLibrary, TimesRow, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/Core"
+], function (Library, Localization, qutils, unifiedLibrary, TimesRow, DateFormat, Core) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -28,4 +30,31 @@ sap.ui.define([
 		oTimesRow.destroy();
 	});
 
+	QUnit.test("_fnInvisibleHintFactory", function(assert) {
+		// prepare
+		var oTimesRow = new TimesRow();
+		var sText = Library.getResourceBundleFor("sap.m").getText("SLIDETILE_ACTIVATE");
+
+		// act
+		// assert
+		assert.strictEqual(oTimesRow._fnInvisibleHintFactory().getText(), sText, "The invisible text is accurate");
+	});
+
+	QUnit.test("Time intervals have keyboard hint available", function(assert) {
+		// prepare
+		var oTimesRow = new TimesRow();
+		oTimesRow.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// act
+		// assert
+		assert.strictEqual(
+			oTimesRow._fnInvisibleHintFactory().getId(),
+			oTimesRow.getDomRef().querySelector(".sapUiCalItem").getAttribute("aria-describedby"),
+			"Keyboard hint is added"
+		);
+
+		// clean
+		oTimesRow.destroy();
+	});
 });

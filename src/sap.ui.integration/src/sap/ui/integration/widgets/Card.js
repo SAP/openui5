@@ -608,10 +608,12 @@ sap.ui.define([
 			},
 			paginator: {
 				init: () => this.setModel(new JSONModel({
-					skip: 0
+					skip: 0,
+					pageIndex: 0
 				}),  "paginator"),
 				reset: () => this.getModel("paginator").setData({
-					skip: 0
+					skip: 0,
+					pageIndex: 0
 				})
 			},
 			form: {

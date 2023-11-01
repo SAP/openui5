@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/mdc/odata/TypeMap",
 	"test-resources/sap/m/qunit/p13n/TestModificationHandler",
+	"sap/ui/mdc/ActionToolbar",
 	"sap/ui/mdc/actiontoolbar/ActionToolbarAction",
 	"sap/m/plugins/CopyProvider",
 	"sap/m/plugins/CellSelector",
@@ -92,6 +93,7 @@ sap.ui.define([
 	MLibrary,
 	ODataTypeMap,
 	TestModificationHandler,
+	ActionToolbar,
 	ActionToolbarAction,
 	CopyProvider,
 	CellSelector,
@@ -199,6 +201,16 @@ sap.ui.define([
 		}
 	}
 
+	const aToolbarEndOrderSuffix = ["copy", "paste", "showHideDetails", "collapseAll", "expandAll", "settings", "export"];
+	const fnActionToolbarValidateAggregation = ActionToolbar.prototype.validateAggregation;
+
+	ActionToolbar.prototype.validateAggregation = function(sAggregationName, oAggregation) {
+		if (sAggregationName === "end" && !aToolbarEndOrderSuffix.some((sSuffix) => oAggregation.getId().endsWith("-" + sSuffix))) {
+			throw new Error("The order is not defined for the toolbar item " + oAggregation.getId());
+		}
+		return fnActionToolbarValidateAggregation.apply(this, arguments);
+	};
+
 	QUnit.module("sap.ui.mdc.Table", {
 		beforeEach: function() {
 			this.oTable = new Table({
@@ -252,6 +264,13 @@ sap.ui.define([
 			assert.ok(oDomRef.classList.contains("sapUiMdcTable"), "Table has class sapUiMdcTable if the type provides additional classes");
 			assert.ok(oDomRef.classList.contains("MyTestClassA"), "Table has class MyTestClassA provided by the type");
 			assert.ok(oDomRef.classList.contains("MyTestClassB"), "Table has class MyTestClassB provided by the type");
+		});
+	});
+
+	QUnit.test("The sort order defined for the end aggregation of the toolbar", function(assert) {
+		return this.oTable.initialized().then(() => {
+			const aEndOrder = aToolbarEndOrderSuffix.map((sSuffix) => this.oTable.getId() + "-" + sSuffix);
+			assert.deepEqual(this.oTable._oToolbar.getProperty("_endOrder"), aEndOrder);
 		});
 	});
 

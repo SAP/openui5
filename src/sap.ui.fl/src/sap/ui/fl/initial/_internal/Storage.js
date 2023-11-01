@@ -34,10 +34,10 @@ sap.ui.define([
 				path: oConnectorConfig.path
 			});
 
+			var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 			if (!oConnectorConfig.layers || (oConnectorConfig.layers[0] !== "ALL" && oConnectorConfig.layers.indexOf(Layer.CUSTOMER) === -1)) {
 				delete oConnectorSpecificPropertyBag.version;
 			} else {
-				var oFlexInfoSession = FlexInfoSession.getByReference(mPropertyBag.reference);
 				// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
 				if (oFlexInfoSession?.initialAllContexts) {
 					oConnectorSpecificPropertyBag.allContexts = true;
@@ -48,7 +48,9 @@ sap.ui.define([
 			}
 			var bIsRtaStarting = !!window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			if (!bIsRtaStarting) {
-				FlexInfoSession.removeByReference(mPropertyBag.reference);
+				delete oFlexInfoSession?.version;
+				delete oFlexInfoSession?.maxLayer;
+				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
 			}
 
 			return oConnectorConfig.loadConnectorModule.loadFlexData(oConnectorSpecificPropertyBag)

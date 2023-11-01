@@ -813,4 +813,51 @@ sap.ui.define([
 		], "After destroyEnd");
 		checkAggregation(assert, this.oToolbarDestroyAggregation, "end", [], "After destroyEnd");
 	});
+
+	QUnit.module("_endOrder Property");
+
+	QUnit.test("aggregation order", function(assert) {
+		const sText = "ABCDEFGHI";
+		const aOrder = [...sText];
+
+		Array.from({length: 10}).forEach(() => {
+			const aRandomOrder1 = aOrder.slice().sort(() => Math.random() - 0.5);
+			const oToolbar = new ActionToolbar({
+				end: aRandomOrder1.map((sLetter) => new Button(sLetter, {text: sLetter}))
+			});
+
+			oToolbar.setProperty("_endOrder", aOrder);
+			oToolbar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+			assert.equal(oToolbar.getDomRef().textContent, sText, `End aggregation in the constructor: ${aRandomOrder1} => ${aOrder}`);
+			oToolbar.destroyEnd();
+
+			const aRandomOrder2 = aOrder.slice().sort(() => Math.random() - 0.5);
+			aRandomOrder2.forEach((sLetter) => oToolbar.insertEnd(new Button(sLetter, {text: sLetter}), 0));
+			oCore.applyChanges();
+			assert.equal(oToolbar.getDomRef().textContent, sText, `End aggregation filled by insertEnd: ${aRandomOrder2} => ${aOrder}`);
+			oToolbar.destroyEnd();
+
+			const aRandomOrder3 = aOrder.concat("X").sort(() => Math.random() - 0.5);
+			aRandomOrder3.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, {text: sLetter})));
+			oCore.applyChanges();
+			assert.equal(oToolbar.getDomRef().textContent, sText + "X", `Unknown button X is at the end: ${aRandomOrder3} => ${aOrder},X`);
+			oToolbar.destroyEnd();
+
+			const aRandomOrder4 = aOrder.slice().sort(() => Math.random() - 0.5);
+			const sRemovedLetter = aRandomOrder4.pop();
+			const sNewText = sText.replace(sRemovedLetter, "");
+			aRandomOrder4.forEach((sLetter) => oToolbar.addEnd(new Button(sLetter, {text: sLetter})));
+			oCore.applyChanges();
+			assert.equal(oToolbar.getDomRef().textContent, sNewText, `Button ${sRemovedLetter} removed: ${aRandomOrder4} => ${sNewText}`);
+
+			const aRandomOrder5 = aRandomOrder4.slice().sort(() => Math.random() - 0.5);
+			const sRandomOrder5 = aRandomOrder5.join("");
+			oToolbar.setProperty("_endOrder", aRandomOrder5);
+			oCore.applyChanges();
+			assert.equal(oToolbar.getDomRef().textContent, sRandomOrder5, `_endOrder changed without aggregation change: ${aRandomOrder5}`);
+			oToolbar.destroy();
+		});
+	});
+
 });

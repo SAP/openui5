@@ -581,6 +581,10 @@ sap.ui.define([
 					 "moveControls": "default",
 					 "unhideControl": "default"
 				 },
+				 "sap.m.SearchField": {
+					 "hideControl": "default",
+					 "unhideControl": "default"
+				 },
 				 "sap.m.Slider": {
 					 "hideControl": "default",
 					 "unhideControl": "default"

@@ -1338,7 +1338,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("List with pagination", function (assert) {
+	QUnit.test("List with pagination - client side", function (assert) {
 		var oManifest = {
 			"sap.app": {
 				"id": "manifestResolver.test.card",
@@ -1377,27 +1377,21 @@ sap.ui.define([
 				},
 				{
 					"title": "ITelO Vault"
-				}
-			],
-			oExpectedPaginatorPage1 = {
-				"pageCount": 2,
-				"pageIndex": 0
-			},
-			oExpectedItemsPage2 = [
+				},
 				{
 					"title": "Product 3"
 				}
 			],
-			oExpectedPaginatorPage2 = {
-				"pageCount": 2,
-				"pageIndex": 1
+			oExpectedPaginatorPage1 = {
+				"pageCount": 1,
+				"pageIndex": 0
 			},
 			oCard = new SkeletonCard({
 				manifest: oManifest,
 				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
 			});
 
-		assert.expect(6);
+		assert.expect(2);
 
 		// Act
 		return oCard.resolveManifest()
@@ -1410,24 +1404,6 @@ sap.ui.define([
 				oCard.getCardFooter().getPaginator().next();
 
 				return oCard.resolveManifest();
-			})
-			.then(function (oRes) {
-				// Assert
-				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage2, "content for second page is resolved correctly");
-				assert.deepEqual(oRes["sap.card"].footer.paginator, oExpectedPaginatorPage2, "paginator for second page is resolved correctly");
-
-				// Act - previous page
-				oCard.getCardFooter().getPaginator().previous();
-
-				return oCard.resolveManifest();
-			})
-			.then(function (oRes) {
-				// Assert
-				assert.deepEqual(oRes["sap.card"].content.groups[0].items, oExpectedItemsPage1, "content for first page is resolved correctly");
-				assert.deepEqual(oRes["sap.card"].footer.paginator, oExpectedPaginatorPage1, "paginator for first page is resolved correctly");
-
-				// Clean up
-				oCard.destroy();
 			});
 	});
 

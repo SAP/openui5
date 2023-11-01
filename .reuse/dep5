@@ -347,11 +347,6 @@ Comment: these files contain content from SAP and Time Zone Database: _timezones
 
 # Library: sap.ui.documentation:
 
-Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/esprima.js
-Copyright: 2013 Ariya Hidayat and other contributors
-License: BSD-2-Clause
-Comment: these files belong to: Esprima
-
 Files: src/sap.ui.documentation/src/sap/ui/documentation/sdk/thirdparty/highlight.js/*
 Copyright: 2006-2020, Ivan Sagalaev
 License: BSD-3-Clause

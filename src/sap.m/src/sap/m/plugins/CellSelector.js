@@ -150,7 +150,7 @@ sap.ui.define([
 			if (isKeyCombination(oEvent, KeyCodes.SPACE, true, false)) {
 				if (this._inSelection(oEvent.target)) {
 					var oInfo = this.getConfig("getCellInfo", this.getControl(), oEvent.target);
-					this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex) && this.removeSelection();
+					this.getConfig("selectRows", this.getControl(), mBounds.from.rowIndex, mBounds.to.rowIndex, oInfo.rowIndex);
 					oEvent.setMarked();
 				}
 
@@ -209,6 +209,7 @@ sap.ui.define([
 		this._fnOnMouseOut = this._onmouseout.bind(this);
 		this._fnOnMouseMove = this._onmousemove.bind(this);
 		this._fnOnMouseUp = PriorityDelegate.onmouseup.bind(this);
+		this._fnRemoveSelection = this.removeSelection.bind(this);
 
 		// Register Events, as adding dependent does not trigger rerendering
 		this._registerEvents();
@@ -239,9 +240,11 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._registerEvents = function() {
-		if (this.getControl()) {
-			this.getControl().attachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
-			var oScrollArea = this.getControl().getDomRef(this.getConfig("scrollArea"));
+		var oControl = this.getControl();
+		if (oControl) {
+			oControl.attachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
+			this.getConfig("attachSelectionChange", oControl, this._fnRemoveSelection);
+			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
 			if (oScrollArea) {
 				oScrollArea.addEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.addEventListener("mouseenter", this._fnOnMouseEnter);
@@ -252,9 +255,11 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._deregisterEvents = function() {
-		if (this.getControl()) {
-			this.getControl().detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
-			var oScrollArea = this.getControl().getDomRef(this.getConfig("scrollArea"));
+		var oControl = this.getControl();
+		if (oControl) {
+			oControl.detachEvent(this.getConfig("scrollEvent"), this._fnControlUpdate);
+			this.getConfig("detachSelectionChange", oControl, this._fnRemoveSelection);
+			var oScrollArea = oControl.getDomRef(this.getConfig("scrollArea"));
 			if (oScrollArea) {
 				oScrollArea.removeEventListener("mouseleave", this._fnOnMouseOut);
 				oScrollArea.removeEventListener("mouseenter", this._fnOnMouseEnter);
@@ -911,7 +916,7 @@ sap.ui.define([
 			 * @param {int} mFocus focused row index
 			 */
 			selectRows: function(oTable, iFrom, iTo, iFocus) {
-				var oSelectionOwner = PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
+				var oSelectionOwner = this._getSelectionOwner(oTable);
 				var sSelectionMode = oTable.getSelectionMode();
 
 				if (sSelectionMode == "None") {
@@ -935,7 +940,7 @@ sap.ui.define([
 				return true;
 			},
 			isRowSelected: function(oTable, iRow) {
-				var oSelectionOwner = PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
+				var oSelectionOwner = this._getSelectionOwner(oTable);
 				var oRow = oTable.getRows().find(function(oRow) {
 					return oRow.getIndex() == iRow;
 				});
@@ -969,6 +974,25 @@ sap.ui.define([
 					return Promise.resolve();
 				}
 				return false;
+			},
+			attachSelectionChange: function(oTable, fnCallback) {
+				var oSelectionOwner = this._getSelectionOwner(oTable);
+				if (oSelectionOwner.attachSelectionChange) {
+					oSelectionOwner.attachSelectionChange(fnCallback);
+					return;
+				}
+				oSelectionOwner.attachRowSelectionChange(fnCallback);
+			},
+			detachSelectionChange: function(oTable, fnCallback) {
+				var oSelectionOwner = this._getSelectionOwner(oTable);
+				if (oSelectionOwner.detachSelectionChange) {
+					oSelectionOwner.detachSelectionChange(fnCallback);
+					return;
+				}
+				oSelectionOwner.detachRowSelectionChange(fnCallback);
+			},
+			_getSelectionOwner: function(oTable) {
+				return PluginBase.getPlugin(oTable, "sap.ui.table.plugins.SelectionPlugin") || oTable;
 			}
 		}
 	}, CellSelector);

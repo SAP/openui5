@@ -73,10 +73,16 @@ sap.ui.define([
 			return null;
 		}
 
+		let vPageSize = oConfig.pageSize;
+		if (oCard.isSkeleton() && !oConfig.totalCount) {
+			// client side pagination for resolved manifest should directly show all items
+			vPageSize = oCard.getModelSizeLimit();
+		}
+
 		return new Paginator({
 			card: oCard,
 			totalCount: oConfig.totalCount,
-			pageSize: oConfig.pageSize,
+			pageSize: vPageSize,
 			skip: oConfig.skip,
 			visible: oConfig.visible
 		});
@@ -233,7 +239,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._prepareAnimation = function (iStartIndex) {
-		if (!this._hasAnimation() || this._isSkeletonCard()) {
+		if (!this._hasAnimation()) {
 			return;
 		}
 
@@ -268,7 +274,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._clearAnimation = function () {
-		if (!this._hasAnimation() || !this._bActiveAnimation || this._isSkeletonCard()) {
+		if (!this._hasAnimation() || !this._bActiveAnimation) {
 			return;
 		}
 
@@ -303,7 +309,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._listUpdateFinished = function () {
-		if (!this._bActiveAnimation || this.isServerSide() || this._isSkeletonCard()) {
+		if (!this._bActiveAnimation || this.isServerSide()) {
 			return;
 		}
 
@@ -367,7 +373,7 @@ sap.ui.define([
 	};
 
 	Paginator.prototype._hasAnimation = function () {
-		return bHasAnimations && this.getCard().getCardContent().isA("sap.ui.integration.cards.ListContent");
+		return bHasAnimations && this.getCard().getCardContent().isA("sap.ui.integration.cards.ListContent") && !this._isSkeletonCard();
 	};
 
 	Paginator.prototype._hasActiveLoadingProvider = function () {

@@ -307,13 +307,11 @@ sap.ui.define([
 					}
 
 					if (oTest.hasOwnProperty("longText")) {
-						//TODO: check to reactive
-						//assert.equal(oOperator.longText, oTest.longText, "has expected longText");
+						assert.equal(oOperator.longText, oTest.longText, "has expected longText");
 					}
 
 					if (oTest.hasOwnProperty("tokenText")) {
-						//TODO: check to reactive
-						//assert.equal(oOperator.tokenText, oTest.tokenText, "has expected tokenText");
+						assert.equal(oOperator.tokenText, oTest.tokenText, "has expected tokenText");
 					}
 				}
 			}
@@ -1398,7 +1396,7 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				tokenText: mdcMessageBundle.getText("operators.TOMORROW.tokenText")
+				tokenText: mdcMessageBundle.getText("operators.TOMORROW.longText")
 			}],
 			[OperatorName.LASTDAYS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTDAYS, [4])],
@@ -1409,8 +1407,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X days",
-				tokenText: "Last {0} days",
+				longText: mdcMessageBundle.getText("operators.LASTDAYS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTDAYS.tokenText"),
 				oType: oDateType,
 				baseType: BaseType.Date,
 				filter: {path: "test", operator: FilterOperator.BT, value1 : sLastDaysStart, value2: sLastDaysEnd}
@@ -1514,8 +1512,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
-				longText: "Today -X / +Y days",
-				tokenText: "Today -{0} / +{1} days"
+				longText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.TODAYFROMTO.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.TODAYFROMTO, [4, 6]), undefined, undefined, true],
@@ -1536,8 +1534,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X days",
-				tokenText: "Next {0} days"
+				longText: mdcMessageBundle.getText("operators.NEXTDAYS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTDAYS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTDAYS, [3]), undefined, undefined, true],
@@ -1557,8 +1555,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X hours",
-				tokenText: "Next {0} hours"
+				longText: mdcMessageBundle.getText("operators.NEXTHOURS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTHOURS.tokenText")
 			}],
 			[OperatorName.LASTHOURS]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTHOURS, [2])],
@@ -1568,8 +1566,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X hours",
-				tokenText: "Last {0} hours"
+				longText: mdcMessageBundle.getText("operators.LASTHOURS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTHOURS.tokenText")
 			}],
 			[OperatorName.NEXTMINUTES]: [{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTMINUTES, [2])],
@@ -1579,8 +1577,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X minutes",
-				tokenText: "Next {0} minutes"
+				longText: mdcMessageBundle.getText("operators.NEXTMINUTES.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTMINUTES.tokenText")
 			}],
 			[OperatorName.LASTMINUTES]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTMINUTES, [2])],
@@ -1590,8 +1588,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X minutes",
-				tokenText: "Last {0} minutes"
+				longText: mdcMessageBundle.getText("operators.LASTMINUTES.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTMINUTES.tokenText")
 			}],
 			[OperatorName.LASTWEEK]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTWEEK, [undefined])],
@@ -1628,8 +1626,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X weeks",
-				tokenText: "Last {0} weeks"
+				longText: mdcMessageBundle.getText("operators.LASTWEEKS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTWEEKS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.LASTWEEKS, [2]), undefined, undefined, true],
@@ -1649,8 +1647,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X weeks",
-				tokenText: "Next {0} weeks"
+				longText: mdcMessageBundle.getText("operators.NEXTWEEKS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTWEEKS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTWEEKS, [2]), undefined, undefined, true],
@@ -1698,8 +1696,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X months",
-				tokenText: "Last {0} months"
+				longText: mdcMessageBundle.getText("operators.LASTMONTHS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTMONTHS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.LASMONTHS, [2]), undefined, undefined, true],
@@ -1719,8 +1717,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X months",
-				tokenText: "Next {0} months"
+				longText: mdcMessageBundle.getText("operators.NEXTMONTHS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTMONTHS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTMONTHS, [2]), undefined, undefined, true],
@@ -1740,8 +1738,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Month",
-				tokenText: "Month ({0})"
+				longText: mdcMessageBundle.getText("operators.SPECIFICMONTH.longText"),
+				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTH.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.SPECIFICMONTH, [4]), undefined, undefined, true],
@@ -1761,8 +1759,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: false,
-				longText: "Month in Year",
-				tokenText: "Month in Year ({0},{1})"
+				longText: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.longText"),
+				tokenText: mdcMessageBundle.getText("operators.SPECIFICMONTHINYEAR.tokenText")
 			}],
 			[OperatorName.LASTQUARTER]: [{
 				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTER, [undefined])],
@@ -1799,8 +1797,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X quarters",
-				tokenText: "Last {0} quarters"
+				longText: mdcMessageBundle.getText("operators.LASTQUARTERS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTQUARTERS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.LASTQUARTERS, [2]), undefined, undefined, true],
@@ -1820,8 +1818,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X quarters",
-				tokenText: "Next {0} quarters"
+				longText: mdcMessageBundle.getText("operators.NEXTQUARTERS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTQUARTERS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTQUARTERS, [2]), undefined, undefined, true],
@@ -1869,8 +1867,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Last X years",
-				tokenText: "Last {0} years"
+				longText: mdcMessageBundle.getText("operators.LASTYEARS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.LASTYEARS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.LASTYEARS, [2]), undefined, undefined, true],
@@ -1890,8 +1888,8 @@ sap.ui.define([
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true,
-				longText: "Next X years",
-				tokenText: "Next {0} years"
+				longText: mdcMessageBundle.getText("operators.NEXTYEARS.tokenText").replace(/\{0\}/g, "X").replace(/\{1\}/g, "Y"),
+				tokenText: mdcMessageBundle.getText("operators.NEXTYEARS.tokenText")
 			},
 			{
 				formatArgs: [Condition.createCondition(OperatorName.NEXTYEARS, [2]), undefined, undefined, true],
@@ -1927,15 +1925,6 @@ sap.ui.define([
 				formatValue: mdcMessageBundle.getText("operators.QUARTER3.longText"),
 				parsedValue: "",
 				condition: Condition.createCondition(OperatorName.QUARTER3, [], undefined, undefined, ConditionValidated.NotValidated),
-				isEmpty: false,
-				valid: true,
-				isSingleValue: true
-			}],
-			"FORTHQUARTER": [{
-				formatArgs: [Condition.createCondition("FORTHQUARTER", [undefined])],
-				formatValue: mdcMessageBundle.getText("operators.FORTHQUARTER.longText"),
-				parsedValue: "",
-				condition: Condition.createCondition("FORTHQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true

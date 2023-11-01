@@ -907,7 +907,7 @@ sap.ui.define([
 		if (this.hasListeners("intervalSelect")) {
 			INTERVAL_CTR_REFERENCES.forEach(function (sControlRef) {
 				if (this[sControlRef]) {
-					this[sControlRef]._setAriaRole("button"); // set new aria role
+					this[sControlRef]._setAriaRole("columnheader"); // set new aria role
 				}
 			}, this);
 		}
@@ -1240,7 +1240,7 @@ sap.ui.define([
 
 	PlanningCalendar.prototype._setAriaRole = function (oInterval) {
 		if (this.hasListeners("intervalSelect")) {
-			oInterval._setAriaRole("button"); // set new aria role
+			oInterval._setAriaRole("columnheader"); // set new aria role
 		} else {
 			oInterval._setAriaRole("gridcell"); // set new aria role
 		}

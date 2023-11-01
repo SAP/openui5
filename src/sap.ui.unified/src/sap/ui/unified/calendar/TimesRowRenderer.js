@@ -226,7 +226,7 @@ sap.ui.define([
 				// aria-selected isn't valid for role="button"
 				selected: sRole !== "gridcell" ? null : false,
 				label: "",
-				describedby: ""
+				describedby: oTimesRow._getTimeDescription()
 			};
 
 		var sYyyyMMddHHmm = oTimesRow._oFormatYyyyMMddHHmm.format(oDate.getJSDate(), true);

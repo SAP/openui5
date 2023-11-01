@@ -265,7 +265,7 @@ sap.ui.define(["sap/ui/core/Element", 'sap/ui/unified/calendar/CalendarUtils', '
 			role: oMonthsRow._getAriaRole(),
 			selected: false,
 			label: "",
-			describedby: ""
+			describedby: oMonthsRow._getMonthDescription()
 		};
 
 		var sYyyymm = oMonthsRow._oFormatYyyymm.format(oDate.toUTCJSDate(), true);

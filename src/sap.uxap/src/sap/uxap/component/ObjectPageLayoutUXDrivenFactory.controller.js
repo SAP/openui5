@@ -22,7 +22,6 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.uxap.component.ObjectPageLayoutUXDrivenFactory", {
-
 		/**
 		 * injects the header based on configuration
 		 * @param {object} oModel model instance
@@ -47,8 +46,10 @@ sap.ui.define([
 				if (oHeaderTitleContext.getProperty("")) {
 					try {
 						//retrieve the header class
-						this._oHeader = this.controlFactory(oObjectPageLayout.getId(), oHeaderTitleContext);
-						oObjectPageLayout.setHeaderTitle(this._oHeader);
+						this.controlFactoryAsync(oObjectPageLayout.getId(), oHeaderTitleContext)
+							.then(function (oHeader) {
+								oObjectPageLayout.setHeaderTitle(oHeader);
+							});
 					} catch (sError) {
 						Log.error("ObjectPageLayoutFactory :: error in header creation from config: " + sError);
 					}
@@ -67,39 +68,44 @@ sap.ui.define([
 		/**
 		 * generates a control to be used in actions, blocks or moreBlocks aggregations
 		 * known issue: bindings are not applied, the control is built with data only
-		 * @param {string} sParentId the Id of the parent
 		 * @param {object} oBindingContext binding context
-		 * @returns {*} new control
+		 * @returns {Promise} new control
 		 */
-		controlFactory: function (sParentId, oBindingContext) {
-			var oControlInfo = oBindingContext.getProperty(""), oControl, oControlClass, oControlMetadata;
+		controlFactoryAsync: function (oBindingContext) {
+			var oControlInfo = oBindingContext.getProperty(""), oControl, oControlMetadata;
 
-			try {
-				//retrieve the block class
-				oControlClass = sap.ui.requireSync(oControlInfo.Type.replace(/\./g, "/"));
-				oControlMetadata = oControlClass.getMetadata();
+			var oControlFactoryPromise = new Promise(function (resolve, reject) {
+				try {
+					//retrieve the block class
+					sap.ui.require([oControlInfo.Type.replace(/\./g, "/")], function (oControlClass) {
+						oControlMetadata = oControlClass.getMetadata();
 
-				//pre-processing: substitute event handler as strings by their function instance
-				each(oControlMetadata._mAllEvents, function (sEventName, oEventProperties) {
-					if (typeof oControlInfo[sEventName] == "string") {
-						oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
-					}
-				}.bind(this));
+						//pre-processing: substitute event handler as strings by their function instance
+						each(oControlMetadata._mAllEvents, function (sEventName) {
+							if (typeof oControlInfo[sEventName] == "string") {
+								oControlInfo[sEventName] = this.convertEventHandler(oControlInfo[sEventName]);
+							}
+						}.bind(this));
 
-				//creates the control with control info = create with provided properties
-				oControl = ManagedObject.create(oControlInfo);
+						//creates the control with control info = create with provided properties
+						oControl = ManagedObject.create(oControlInfo);
 
-				//post-processing: bind properties on the objectPageLayoutMetadata model
-				each(oControlMetadata._mAllProperties, function (sPropertyName, oProperty) {
-					if (oControlInfo[sPropertyName]) {
-						oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
-					}
-				});
-			} catch (sError) {
-				Log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
-			}
+						//post-processing: bind properties on the objectPageLayoutMetadata model
+						each(oControlMetadata._mAllProperties, function (sPropertyName, oProperty) {
+							if (oControlInfo[sPropertyName]) {
+								oControl.bindProperty(sPropertyName, "objectPageLayoutMetadata>" + oBindingContext.getPath() + "/" + sPropertyName);
+							}
+						});
 
-			return oControl;
+						resolve(oControl);
+					});
+				} catch (sError) {
+					Log.error("ObjectPageLayoutFactory :: error in control creation from config: " + sError);
+					reject();
+				}
+			});
+
+			return oControlFactoryPromise;
 		},
 
 		/**

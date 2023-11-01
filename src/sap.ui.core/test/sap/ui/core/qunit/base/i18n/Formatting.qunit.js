@@ -274,4 +274,23 @@ sap.ui.define([
 
 		Formatting.detachChange(formattingChanged);
 	});
+
+	QUnit.test("CustomIslamicCalendarData", function(assert) {
+		var aData = [{
+			"dateFormat": "A",
+			"islamicMonthStart": "14351201",
+			"gregDate": "20140925"
+		}, {
+			"dateFormat": "A",
+			"islamicMonthStart": "14360101",
+			"gregDate": "20141024"
+		}, {
+			"dateFormat": "A",
+			"islamicMonthStart": "14360201",
+			"gregDate": "20141123"
+		}];
+
+		Formatting.setCustomIslamicCalendarData(aData);
+		assert.deepEqual(Formatting.getCustomIslamicCalendarData(), aData, "The customizing data set can be retrieved");
+	});
 });
