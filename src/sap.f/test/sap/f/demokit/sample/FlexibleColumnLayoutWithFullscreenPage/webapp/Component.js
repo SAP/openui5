@@ -37,7 +37,6 @@ sap.ui.define([
 				oParams = new URLSearchParams(window.location.search),
 				oSettings = {
 					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
-					mode: oParams.get("mode"),
 					initialColumnsCount: oParams.get("initial"),
 					maxColumnsCount: oParams.get("max")
 				};

@@ -32,7 +32,6 @@ sap.ui.define([
 				oSettings = {
 					defaultTwoColumnLayoutType: LayoutType.TwoColumnsMidExpanded,
 					defaultThreeColumnLayoutType: LayoutType.ThreeColumnsMidExpanded,
-					mode: oParams.get("mode"),
 					initialColumnsCount: oParams.get("initial"),
 					maxColumnsCount: oParams.get("max")
 				};
