@@ -7,6 +7,9 @@ sap.ui.define(["exports", "../FeaturesRegistry", "../config/Theme", "../util/Pop
   _exports.default = void 0;
   class OpenUI5Support {
     static isAtLeastVersion116() {
+      if (!window.sap.ui.version) {
+        return true;
+      }
       const version = window.sap.ui.version;
       const parts = version.split(".");
       if (!parts || parts.length < 2) {
