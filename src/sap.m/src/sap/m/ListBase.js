@@ -1416,6 +1416,12 @@ function(
 			if (this.getEnableBusyIndicator()) {
 				// only call the setBusy method if enableBusyIndicator=true
 				this.setBusy(false, "listUl");
+
+				// while the control is busy the focus events are blocked by the BlockLayer
+				const oNavigationRoot = this.getNavigationRoot();
+				if (document.activeElement == oNavigationRoot) {
+					jQuery(oNavigationRoot).trigger("focus");
+				}
 			}
 		}
 	};
