@@ -910,7 +910,7 @@ sap.ui.define([
 				mChanges.changes.language = "";
 			}
 
-			oTable.onlocalizationChanged(mChanges);
+			oTable.onLocalizationChanged(mChanges);
 
 			var pAssert = new Promise(function(resolve) {
 				setTimeout(function() {
@@ -1000,7 +1000,7 @@ sap.ui.define([
 				mChanges.changes.language = "";
 			}
 
-			oTable.onlocalizationChanged(mChanges);
+			oTable.onLocalizationChanged(mChanges);
 
 			var pAssert = new Promise(function(resolve) {
 				setTimeout(function() {
