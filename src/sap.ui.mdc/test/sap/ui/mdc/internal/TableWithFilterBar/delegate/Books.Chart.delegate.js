@@ -173,6 +173,10 @@ sap.ui.define([
 
 					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
 
+					if (sKey === "modifiedAt" || sKey === "createdAt") {
+						oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] = true;
+					}
+
 					//TODO: Check what we want to do with properties neither aggregatable nor groupable
 					//Right now: skip them, since we can't create a chart from it
 					if (!oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] && !oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"]) {
