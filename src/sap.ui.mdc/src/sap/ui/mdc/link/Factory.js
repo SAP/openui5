@@ -36,7 +36,7 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 			}
 		},
 		getServiceAsync: function(sServiceName) {
-			this.getService(sServiceName, true);
+			return this.getService(sServiceName, true);
 		}
 	};
 });
