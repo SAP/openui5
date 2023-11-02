@@ -14,7 +14,6 @@ sap.ui.define([
 	 * @param {oControl} oControl
 	 * @returns {boolean} If the DomRef of the Control is positioned behind another element. If the DomRef is null or it is outside the visible viewport, returns "false".
 	 * @alias module:sap/ui/dom/isBehindOtherElement
-	 * @experimental Since 1.110
 	 * @public
 	 */
 	function isBehindOtherElement(oDomRef) {
