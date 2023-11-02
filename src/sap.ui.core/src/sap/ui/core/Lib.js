@@ -560,6 +560,7 @@ sap.ui.define([
 				// (but the loader avoids double loading).
 				Log.debug("Lazy dependency to '" + this.name + "' encountered, loading library-preload-lazy.js");
 
+				/** @deprecated */
 				if (mOptions.sync) {
 					try {
 						sap.ui.requireSync(sLibPackage + '/library-preload-lazy'); // legacy-relevant: Sync path
@@ -567,10 +568,10 @@ sap.ui.define([
 						Log.error("failed to load '" + sLibPackage + "/library-preload-lazy.js" + "' synchronously (" + (e && e.message || e) + ")");
 					}
 					return this;
-				} else {
-					return sap.ui.loader._.loadJSResourceAsync(
-						sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 				}
+
+				return sap.ui.loader._.loadJSResourceAsync(
+					sLibPackage + '/library-preload-lazy.js', /* ignoreErrors = */ true);
 			}
 
 			// otherwise mark as pending
@@ -632,6 +633,7 @@ sap.ui.define([
 					aPromises = aDependencies.map(function(oDependency) {
 						var oLibrary = Library._get(oDependency.name, true/* bCreate */);
 						return oLibrary._preload({
+							/** @deprecated since 1.120 */
 							sync: mOptions.sync,
 							lazy: oDependency.lazy
 						});
@@ -1366,9 +1368,14 @@ sap.ui.define([
 		var oLib = Library._get(mSettings.name, true /* bCreate */);
 		oLib.enhanceSettings(mSettings);
 
-		// ensure namespace
-		var oLibNamespace = ObjectPath.create(mSettings.name),
+		var oLibNamespace = Object.create(null),
 			i;
+
+		/**
+		 * Creates the library namespace inside the global object.
+		 * @deprecated since 1.120
+		 */
+		oLibNamespace = ObjectPath.create(mSettings.name);
 
 		// If a library states that it is using apiVersion 2, we expect types to be fully declared.
 		// In this case we don't need to create Proxies for the library namespace.
@@ -1379,12 +1386,18 @@ sap.ui.define([
 			// activate proxy for outer library namespace object
 			oLibNamespace = new Proxy(oLibNamespace, oLibProxyHandler);
 
-			// proxy must be written back to the original path (global)
+			/**
+			 * proxy must be written back to the original path (global)
+			 * @deprecated since 1.120
+			 */
 			ObjectPath.set(mSettings.name, oLibNamespace);
 		}
 
 
-		// resolve dependencies
+		/**
+		 * Synchronously resolve dependencies
+		 * @deprecated since 1.120
+		 */
 		for (i = 0; i < oLib.dependencies.length; i++) {
 			var sDepLib = oLib.dependencies[i];
 			var oDepLib = Library._get(sDepLib, true /* bCreate */);
@@ -1398,14 +1411,22 @@ sap.ui.define([
 		// register interface types
 		DataType.registerInterfaceTypes(oLib.interfaces);
 
-		// Declare a module for each (non-builtin) simple type
-		// Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own
+		/**
+		 * Declare a module for each (non-builtin) simple type.
+		 * Only needed for backward compatibility: some code 'requires' such types although they never have been modules on their own.
+		 * @deprecated since 1.120
+		 */
 		for (i = 0; i < oLib.types.length; i++) {
 			if ( !/^(any|boolean|float|int|string|object|void)$/.test(oLib.types[i]) ) {
-				sap.ui.loader._.declareModule(oLib.types[i].replace(/\./g, "/") + ".js");
+				// register a wrapper module that logs a deprecation warning
+				const sTypeName = oLib.types[i];
+				sap.ui.predefine(sTypeName.replace(/\./g, "/"), [], function(sTypeName) {
+					Log.error(`Deprecation: Import the type '${sTypeName}' as a module is deprecated. Please require the corresponding 'library.js' containing the type directly. You can then reference the type via the library's module export.`);
+					return ObjectPath.get(sTypeName);
+				}.bind(null, sTypeName));
 
 				// ensure parent namespace of the type
-				var sNamespacePrefix = oLib.types[i].substring(0, oLib.types[i].lastIndexOf("."));
+				var sNamespacePrefix = sTypeName.substring(0, sTypeName.lastIndexOf("."));
 				if (ObjectPath.get(sNamespacePrefix) === undefined) {
 					// parent type namespace does not exists, so we create its
 					ObjectPath.create(sNamespacePrefix);
@@ -1413,11 +1434,16 @@ sap.ui.define([
 			}
 		}
 
-		// create lazy loading stubs for all controls and elements
-		var aElements = oLib.controls.concat(oLib.elements);
-		for (i = 0; i < aElements.length; i++) {
-			sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
-		}
+		/**
+		 * create lazy loading stubs for all controls and elements
+		 * @deprecated since 1.120
+		 */
+		(() => {
+			var aElements = oLib.controls.concat(oLib.elements);
+			for (i = 0; i < aElements.length; i++) {
+				sap.ui.lazyRequire(aElements[i], "new extend getMetadata"); // TODO don't create an 'extend' stub for final classes
+			}
+		})();
 
 			// include the library theme, but only if it has not been suppressed in library metadata or by configuration
 		if (!oLib.noLibraryCSS) {
@@ -1610,19 +1636,11 @@ sap.ui.define([
 			return oLib;
 		});
 
-		if (!mOptions.sync) {
-			var pPreloaded = bPreload ?
-				Promise.all(aLibs.map(function(oLib) {
-					var mOptions = {};
-					if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
-						mOptions.json = mAdditionalConfig[oLib.name].json;
-					}
-					return oLib._preload(mOptions);
-				})) :
-				Promise.resolve(aLibs);
-
-			return bRequire ? pPreloaded.then(requireLibrariesAsync) : pPreloaded;
-		} else {
+		/**
+		 * sync loading
+		 * @deprecated since 1.120
+		 */
+		if (mOptions.sync) {
 			if (bPreload) {
 				aLibs.forEach(function(oLib) {
 					var mOptions = {sync: true};
@@ -1653,6 +1671,18 @@ sap.ui.define([
 
 			return aLibs;
 		}
+
+		const pPreloaded = bPreload ?
+			Promise.all(aLibs.map(function(oLib) {
+				const mOptions = {};
+				if (mAdditionalConfig[oLib.name] && mAdditionalConfig[oLib.name].hasOwnProperty("json")) {
+					mOptions.json = mAdditionalConfig[oLib.name].json;
+				}
+				return oLib._preload(mOptions);
+			})) :
+			Promise.resolve(aLibs);
+
+		return bRequire ? pPreloaded.then(requireLibrariesAsync) : pPreloaded;
 	};
 
 	/**
