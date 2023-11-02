@@ -9,6 +9,21 @@ sap.ui.define([
 ], function(Interaction, XMLView, FESRHelper, Press, Button, nextUIUpdate) {
 	"use strict";
 
+	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
+	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
+	// so they won't affect tests.
+	//
+	// *Note:* Call this method after sinon.useFakeTimers(); as for example performance.timeOrigin is read only
+	// in its nature and cannot be modified otherwise.
+	function mockPerformanceObject (iTime) {
+		window.performance.getEntriesByType = function() { return []; };
+		window.performance.timeOrigin = iTime || 1;
+	}
+	function cleanPerformanceMock() {
+		delete window.performance.getEntriesByType;
+		delete window.performance.timeOrigin;
+	}
+
 	QUnit.module("Interaction API", {
 		before: function() {
 			Interaction.setActive(true);
@@ -80,7 +95,7 @@ sap.ui.define([
 	QUnit.module("Interaction API with fake timer", {
 		before: function() {
 			this.clock = sinon.useFakeTimers();
-			window.performance.getEntriesByType = function() { return []; };
+			mockPerformanceObject();
 			Interaction.setActive(true);
 			this.clock.runAll();
 		},
@@ -89,7 +104,7 @@ sap.ui.define([
 
 			// Run all pending setTimeout and restore the timer
 			this.clock.runAll();
-			delete window.performance.getEntriesByType;
+			cleanPerformanceMock();
 			this.clock.restore();
 		}
 	});
