@@ -2626,9 +2626,8 @@ sap.ui.define([
 		const oClipboardStub = sinon.stub(window, "navigator").value({clipboard: {}});
 		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
 		this.oTable.setCopyProvider(new CopyProvider());
-		this.oTable.setSelectionMode("Multi");
 
-		return this.oTable.setType(TableType.ResponsiveTable)._fullyInitialized().then(function() {
+		return this.oTable._fullyInitialized().then(function() {
 			assert.equal(this.oTable.getCopyProviderPluginOwner(), this.oTable._oTable, "The inner table is set as plugin owner for CopyProvider");
 
 			const oColumn = new Column();
@@ -2800,35 +2799,6 @@ sap.ui.define([
 				assert.ok(this.oTable._oPasteButton.getVisible(), "Paste button is now visible");
 			}.bind(this));
 
-		}.bind(this));
-	});
-
-	QUnit.test("No Copy button created - ResponsiveTable and SelectionMode=None", function(assert) {
-		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
-		this.oTable.setCopyProvider(new CopyProvider());
-		this.oTable.setSelectionMode("None");
-
-		return this.oTable.setType(TableType.ResponsiveTable).initialized().then(function() {
-			assert.equal(this.oTable.getType(), TableType.ResponsiveTable, "Table is of type ResponsiveTable.");
-			assert.equal(this.oTable.getSelectionMode(), "None", "SelectionMode is None.");
-			assert.equal(this.oTable._getCopyButton(), undefined, "Copy Button is not created.");
-
-			oSecureContextStub.restore();
-		}.bind(this));
-	});
-
-	QUnit.test("No Copy button created - No ResponsiveTable and SelectionMode=None and no CellSelector", function(assert) {
-		const oSecureContextStub = sinon.stub(window, "isSecureContext").value(true);
-		this.oTable.setCopyProvider(new CopyProvider());
-		this.oTable.setSelectionMode("None");
-
-		return this.oTable.setType(TableType.Table).initialized().then(function() {
-			assert.equal(this.oTable.getType(), TableType.Table, "Table is of type GridTable.");
-			assert.equal(this.oTable.getSelectionMode(), "None", "SelectionMode is None.");
-			assert.notOk(this.oTable.getAggregation('cellSelector'), "CellSelection plugin is not available");
-			assert.equal(this.oTable._getCopyButton(), undefined, "Copy Button is not created.");
-
-			oSecureContextStub.restore();
 		}.bind(this));
 	});
 

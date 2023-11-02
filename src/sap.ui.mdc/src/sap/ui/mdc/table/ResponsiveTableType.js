@@ -552,12 +552,5 @@ sap.ui.define([
 		}
 	};
 
-	//The following function should be moved into the TableTypeBase as soon as the CellSelector is available for the responsive table.
-	ResponsiveTableType.prototype.isSelectable = function() {
-		const bSelectionEnabled = this.getTable().getSelectionMode() !== "None";
-
-		return bSelectionEnabled;
-	};
-
 	return ResponsiveTableType;
 });

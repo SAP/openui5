@@ -206,7 +206,6 @@ sap.ui.define([
 	TableTypeBase.prototype.updateRowActions = function() {};
 	TableTypeBase.prototype.updateSortIndicator = function(oColumn, sSortOrder) {};
 	TableTypeBase.prototype.getTableStyleClasses = function() {return [];};
-	TableTypeBase.prototype.isSelectable = function() {};
 
 	return TableTypeBase;
 });
