@@ -2094,7 +2094,12 @@ sap.ui.define([
 		var mFiltersConfig = this._oCardManifest.get(MANIFEST_PATHS.FILTERS),
 			oFactory = new FilterBarFactory(this);
 
-		return oFactory.create(mFiltersConfig, this.getModel("filters"));
+		return oFactory.create(mFiltersConfig, this.getModel("filters"), (oEvent) => {
+			this._fireConfigurationChange({
+				[`/sap.card/configuration/filters/${oEvent.getParameter("key")}/value`]: oEvent.getParameter("value")
+			});
+			this.resetPaginator();
+		});
 	};
 
 	Card.prototype.createFooter = function () {

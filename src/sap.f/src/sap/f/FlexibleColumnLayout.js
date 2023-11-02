@@ -2135,9 +2135,9 @@ sap.ui.define([
 			bWasFullScreen = this._isFullScreenLayout(sPreviousLayout),
 			bIsFullscreen = this._isFullScreenLayout(sLayout);
 
-		return ((iVisibleColumnsCount > iPreviousVisibleColumnsCount) &&
-			!bWasFullScreen &&
-			bIsLastColumn
+		return ((iVisibleColumnsCount > iPreviousVisibleColumnsCount)
+			&& !(sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen)
+			&& bIsLastColumn
 			|| (bWasFullScreen && bIsFullscreen && sPreviousLastVisibleColumn !== sColumn && bIsLastColumn));
 	};
 
@@ -2175,7 +2175,7 @@ sap.ui.define([
 
 		return ((iVisibleColumnsCount < iPreviousVisibleColumnsCount
 			&& sColumn === sPreviousLastVisibleColumn
-			&& !bWasFullScreen
+			&& !(sPreviousLayout === LT.MidColumnFullScreen || sPreviousLayout === LT.EndColumnFullScreen)
 			&& this._getColumnSizeForLayout(sColumn, sLayout) === 0)
 			|| (bWasFullScreen && bIsFullscreen && sColumn !== sLastVisibleColumn && sPreviousLastVisibleColumn === sColumn));
 	};

@@ -89,6 +89,22 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("setValueFromOutside", function (assert) {
+		// Arrange
+		const oSF = new SearchFilter();
+		const sValue = "some value";
+
+		// Act
+		oSF.setValueFromOutside(sValue);
+
+		// Assert
+		assert.deepEqual(oSF.getValue(), { value: sValue }, "Filter value is set");
+		assert.strictEqual(oSF._getSearchField().getValue(), sValue, "Inner SearchField value is set");
+
+		// Clean up
+		oSF.destroy();
+	});
+
 	QUnit.module("SearchFilter Properties");
 
 	QUnit.test("Placeholder", function (assert) {

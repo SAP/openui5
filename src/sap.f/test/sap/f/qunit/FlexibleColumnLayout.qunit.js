@@ -984,6 +984,10 @@ function(
 		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
 			false, "No pinning should be done when closing a fullscreen layout");
 
+		// Returning from a fullscreen layout
+		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.TwoColumnsMidExpanded, LT.OneColumn),
+			true, "Second column should be pinned when going from OneColumn to TwoColumnsMidExpanded");
+
 		// Going from fullscreen to another fullscreen
 		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.OneColumn),
 		true, "Second column should be pinned when going from OneColumn fullscreen to TwoColumn fullscreen");
@@ -995,7 +999,6 @@ function(
 		// Going from fullscreen to another fullscreen
 		assert.strictEqual(this.oFCL._shouldRevealColumn("end", LT.EndColumnFullScreen, LT.MidColumnFullScreen),
 		true, "Third column should be pinned when going from TwoColumn fullscreen to ThreeColumn fullscreen");
-
 
 		// Going back from fullscreen to another fullscreen
 		assert.strictEqual(this.oFCL._shouldRevealColumn("mid", LT.MidColumnFullScreen, LT.EndColumnFullScreen),
@@ -1017,6 +1020,10 @@ function(
 		// New layout has more columns than the current one
 		assert.strictEqual(this.oFCL._shouldConcealColumn("end", LT.ThreeColumnsMidExpanded, LT.TwoColumnsMidExpanded),
 			false, "No concealing should be done when the new layout has more columns");
+
+		// Returning from a fullscreen layout
+		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.OneColumn, LT.TwoColumnsMidExpanded),
+			true, "Second column should be pinned when going from TwoColumnsMidExpanded to OneColumn");
 
 		// Returning from a fullscreen layout
 		assert.strictEqual(this.oFCL._shouldConcealColumn("mid", LT.TwoColumnsBeginExpanded, LT.MidColumnFullScreen),
