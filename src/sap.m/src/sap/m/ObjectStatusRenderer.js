@@ -161,6 +161,12 @@ sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", 'sap/ui/core/lib
 
 			if (oObjStatus._isActive()) {
 				oRm.close("span");
+			} else {
+				oRm.openStart("span", oObjStatus.getId() + "-role");
+				oRm.class("sapUiPseudoInvisibleText");
+				oRm.openEnd();
+				oRm.text(Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS"));
+				oRm.close("span");
 			}
 		}
 
