@@ -207,6 +207,9 @@ sap.ui.define([
 			}
 		});
 
+		/**
+		 * @deprecated since 1.120
+		 */
 		QUnit.test("Cloning: Event listeners are called on the correct controller instance", function(assert) {
 			var fnWaitForNestedViews = function (oView) {
 
