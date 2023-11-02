@@ -5,16 +5,16 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/base/security/URLListValidator",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Core",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	IFrame,
 	Utils,
 	URLListValidator,
 	JSONModel,
-	Core,
 	XMLView,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -68,7 +68,7 @@ sap.ui.define([
 			const oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oIFrame.setUrl(sNewUrl);
 			await checkUrl(assert, this.oIFrame, sNewUrl);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual(oReplaceLocationSpy.callCount, 2, "then the iframe location is properly replaced");
 			assert.strictEqual(
 				oReplaceLocationSpy.firstCall.args[0],
@@ -88,7 +88,7 @@ sap.ui.define([
 			this.oIFrame.setUseLegacyNavigation(true);
 			this.oIFrame.setUrl(sNewUrl);
 			await checkUrl(assert, this.oIFrame, sNewUrl);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual(oSetUrlSpy.callCount, 2);
 			assert.strictEqual(
 				oSetUrlSpy.firstCall.args[1],
@@ -109,7 +109,7 @@ sap.ui.define([
 			const oReplaceLocationSpy = sandbox.spy(oIFrame, "_replaceIframeLocation");
 			oIFrame.setUrl(sNewUrl);
 			await checkUrl(assert, oIFrame, sNewUrl);
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.strictEqual(
 				oReplaceLocationSpy.callCount,
 				2,
@@ -130,7 +130,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Visibility property set to false", {
-		beforeEach() {
+		async beforeEach() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -138,7 +138,7 @@ sap.ui.define([
 				visible: false
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -155,7 +155,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when creating a fresh Iframe with useLegacyNavigation set to false", function(assert) {
+		QUnit.test("when creating a fresh Iframe with useLegacyNavigation set to false", async function(assert) {
 			// This test ensures that props are set in the correct order, i.e. first applying the useLegacyNavigation
 			// setting and then applying the url setting which depends on it
 			const oLegacyNavigationSpy = sandbox.spy(IFrame.prototype, "_setUrlLegacy");
@@ -167,14 +167,14 @@ sap.ui.define([
 				useLegacyNavigation: true
 			});
 			oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oLegacyNavigationSpy.called, "then the legacy approach is used to set the initial url");
 			oIFrame.destroy();
 		});
 	});
 
 	QUnit.module("Title Parameter of IFrame is set", {
-		beforeEach() {
+		async beforeEach() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -182,7 +182,7 @@ sap.ui.define([
 				title: sTitle
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -197,7 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Bindings", {
-		beforeEach() {
+		async beforeEach() {
 			this.oIFrame = new IFrame({
 				width: "{model>/width}",
 				height: "{model>/height}",
@@ -211,7 +211,7 @@ sap.ui.define([
 			});
 			this.oIFrame.setModel(this.oModel, "model");
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -225,41 +225,37 @@ sap.ui.define([
 			assert.strictEqual(oIframe, oFocusDomRef, "Returns the iframe DOM element");
 		});
 
-		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", function(assert) {
+		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe", async function(assert) {
 			const oFocusDomRef = this.oIFrame.getFocusDomRef();
 			const sSapUI5Url = `${sProtocol}://sapui5/`;
 			const oReplaceLocationSpy = sandbox.spy(this.oIFrame, "_replaceIframeLocation");
 			this.oModel.setProperty("/flavor", "sapui5");
 
-			return checkUrl(assert, this.oIFrame, sSapUI5Url)
-			.then(function() {
-				Core.applyChanges();
-				assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
-				assert.strictEqual(
-					oReplaceLocationSpy.lastCall.args[0],
-					sSapUI5Url,
-					"iframe src has changed to the expected one"
-				);
-			}.bind(this));
+			await checkUrl(assert, this.oIFrame, sSapUI5Url);
+			await nextUIUpdate();
+			assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+			assert.strictEqual(
+				oReplaceLocationSpy.lastCall.args[0],
+				sSapUI5Url,
+				"iframe src has changed to the expected one"
+			);
 		});
 
-		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe (legacy)", function(assert) {
+		QUnit.test("URL should refresh if bound to a changing model without rewriting the iframe (legacy)", async function(assert) {
 			const oFocusDomRef = this.oIFrame.getFocusDomRef();
 			const sSapUI5Url = `${sProtocol}://sapui5/`;
 			this.oIFrame.setUseLegacyNavigation(true);
 			this.oModel.setProperty("/flavor", "sapui5");
 
-			return checkUrl(assert, this.oIFrame, sSapUI5Url)
-			.then(function() {
-				Core.applyChanges();
-				assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
-				assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
-			}.bind(this));
+			await checkUrl(assert, this.oIFrame, sSapUI5Url);
+			await nextUIUpdate();
+			assert.strictEqual(this.oIFrame.getFocusDomRef(), oFocusDomRef, "iframe DOM reference did not change");
+			assert.strictEqual(oFocusDomRef.getAttribute("src"), sSapUI5Url, "iframe src has changed to the expected one");
 		});
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service available)", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
@@ -268,8 +264,8 @@ sap.ui.define([
 				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
-			return this.oIFrame.waitForInit();
+			await nextUIUpdate();
+			await this.oIFrame.waitForInit();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -282,7 +278,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service available but no email)", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(undefined, sUserFullName, sUserFirstName, sUserLastName);
 			this.oIFrame = new IFrame({
@@ -291,8 +287,8 @@ sap.ui.define([
 				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
-			return this.oIFrame.waitForInit();
+			await nextUIUpdate();
+			await this.oIFrame.waitForInit();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -305,7 +301,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service not available)", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(false);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
@@ -313,8 +309,8 @@ sap.ui.define([
 				url: `${sOpenUI5Url}?domain={$user>/domain}`
 			});
 			this.oIFrame.placeAt("qunit-fixture");
-			Core.applyChanges();
-			return this.oIFrame.waitForInit();
+			await nextUIUpdate();
+			await this.oIFrame.waitForInit();
 		},
 		afterEach() {
 			this.oIFrame.destroy();
@@ -327,10 +323,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("URL binding in XML view", {
-		beforeEach() {
+		async beforeEach() {
 			sandbox.stub(Utils, "getUshellContainer").returns(true);
 			stubGetUShellService(sUserEmail, sUserFullName, sUserFirstName, sUserLastName);
-			return XMLView.create({
+			this.myView = await XMLView.create({
 				definition: `<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.ui.fl.util">` +
 					`<IFrame id="iframe1" url="${sOpenUI5Url}" />` +
 					`<IFrame id="iframe2" url="${sOpenUI5Url}?fullName={$user>/fullName}" />` +
@@ -338,13 +334,11 @@ sap.ui.define([
 					`<IFrame id="iframe4" url="{= '${sOpenUI5Url}?domain=' + \${$user>/domain} }" />` +
 					`<IFrame id="iframe5" url="{= '${sOpenUI5Url}?domain=' + (\${$user>/domain}.indexOf('sap.com') !== -1 ? 'SAP' : 'EXTERNAL') }" />` +
 				`</mvc:View>`
-			}).then(function(oView) {
-				this.myView = oView;
-				var iFrame = this.myView.byId("iframe1");
-				this.myView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				return iFrame.waitForInit();
-			}.bind(this));
+			});
+			var iFrame = this.myView.byId("iframe1");
+			this.myView.placeAt("qunit-fixture");
+			await nextUIUpdate();
+			await iFrame.waitForInit();
 		},
 		afterEach() {
 			this.myView.destroy();

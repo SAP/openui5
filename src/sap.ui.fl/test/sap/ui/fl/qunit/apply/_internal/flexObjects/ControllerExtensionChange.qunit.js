@@ -2,11 +2,9 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
-	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory"
 ], function(
 	_omit,
-	Core,
 	FlexObjectFactory
 ) {
 	"use strict";

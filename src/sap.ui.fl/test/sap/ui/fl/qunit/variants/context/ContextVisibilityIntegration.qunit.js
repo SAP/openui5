@@ -4,21 +4,21 @@ sap.ui.define([
 	"sap/ui/fl/variants/context/controller/ContextVisibility.controller",
 	"sap/ui/fl/variants/context/Component",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer",
 	"sap/base/util/restricted/_merge",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ContextVisibilityController,
 	ContextVisibilityComponent,
 	ComponentContainer,
-	Core,
 	Element,
 	WriteStorage,
 	Layer,
 	_merge,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -27,13 +27,13 @@ sap.ui.define([
 
 	var sCompName = "test---ContextVisibility--";
 
-	function renderComponent(aSelectedRoles) {
+	async function renderComponent(aSelectedRoles) {
 		this.oComp = new ContextVisibilityComponent("test");
 		this.oComp.showMessageStrip(true);
 		this.oComp.setSelectedContexts({role: aSelectedRoles});
 		this.oCompCont = new ComponentContainer({ component: this.oComp, id: "comp"});
 		this.oCompCont.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		this.oRootControl = this.oCompCont.getComponentInstance().getRootControl();
 		return this.oRootControl.loaded();
 	}
@@ -175,7 +175,7 @@ sap.ui.define([
 			QUnit.config.fixture = "";
 		},
 
-		beforeEach() {
+		async beforeEach() {
 			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts");
 			this.fnGetContextsStub.withArgs({layer: Layer.CUSTOMER, type: "role"}).resolves(this.oMockResponse);
@@ -183,10 +183,9 @@ sap.ui.define([
 			var oMockDoubledResponse = { values: this.oMockResponse.values.concat(oDuplicates), lastHitReached: true};
 			this.fnGetContextsStub.withArgs({layer: Layer.CUSTOMER, type: "role", $skip: 106}).resolves(oMockDoubledResponse);
 
-			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(function() {
-				setInitialControls.call(this);
-				Core.applyChanges();
-			}.bind(this));
+			await renderComponent.call(this, ["Random Test ID", "REMOTE"]);
+			setInitialControls.call(this);
+			await nextUIUpdate();
 		},
 		afterEach() {
 			this.oCompCont.destroy();
@@ -213,7 +212,7 @@ sap.ui.define([
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 			var oSearchStub = sandbox.stub(ContextVisibilityController.prototype, "onSearch");
 
-			var fnAsyncFireSearch = function() {
+			var fnAsyncFireSearch = async function() {
 				assert.equal(this.fnGetContextsStub.callCount, 1, "write storage was called once");
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
@@ -222,7 +221,7 @@ sap.ui.define([
 
 				// unselect first item
 				aSelectedItems[0].setSelected(false);
-				Core.applyChanges();
+				await nextUIUpdate();
 
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oSearchField.isActive(), true, "search field is active");
@@ -230,14 +229,14 @@ sap.ui.define([
 				this.oSearchField.fireSearch();
 			};
 
-			var fnAsyncAssertions = function() {
-				Core.applyChanges();
+			var fnAsyncAssertions = async function() {
+				await nextUIUpdate();
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
 				assert.equal(this.oList.getItems().length, 1, "list contains searched entries");
 				this.oList.getItems()[0].setSelected(true);
-				Core.applyChanges();
+				await nextUIUpdate();
 				this.oConfirmBtn.firePress();
-				Core.applyChanges();
+				await nextUIUpdate();
 				fnDone();
 			};
 
@@ -260,9 +259,9 @@ sap.ui.define([
 				this.oMoreListItem.firePress();
 			};
 
-			var fnAsyncAssertions = function() {
+			var fnAsyncAssertions = async function() {
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
-				Core.applyChanges();
+				await nextUIUpdate();
 				assert.equal(this.oList.getItems().length, 100, "list contains next entries");
 				fnDone();
 			};
@@ -277,7 +276,7 @@ sap.ui.define([
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
-			var fnAsyncFireSelectAll = function() {
+			var fnAsyncFireSelectAll = async function() {
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries (growinThreshold=50)");
@@ -285,7 +284,7 @@ sap.ui.define([
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 
 				this.oSelectDialog.fireCancel();
-				Core.applyChanges();
+				await nextUIUpdate();
 				assert.equal(this.oSelectedRolesList.getItems().length, 2, "number of selected items did not change");
 				fnDone();
 			};
@@ -299,14 +298,14 @@ sap.ui.define([
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
-			var fnAsyncFireConfirm = function() {
+			var fnAsyncFireConfirm = async function() {
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
 
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 				this.oConfirmBtn.firePress();
-				Core.applyChanges();
+				await nextUIUpdate();
 				fnDone();
 			};
 
@@ -353,31 +352,31 @@ sap.ui.define([
 			assert.equal(this.oSelectedRolesList.getItems()[1].getTooltip(), "No description available", "fallback tooltip is used");
 		});
 
-		QUnit.test("when pressing remove first row button, first context is removed", function(assert) {
+		QUnit.test("when pressing remove first row button, first context is removed", async function(assert) {
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
 			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			oRmvFirstRowBtn.firePress();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(this.oSelectedRolesList.getItems().length, 1, "table contains 1 entry");
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 		});
 
-		QUnit.test("when pressing remove first row button until every role is removed, select roles list should be visible and empty", function(assert) {
+		QUnit.test("when pressing remove first row button until every role is removed, select roles list should be visible and empty", async function(assert) {
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
 			var oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
 			oRmvFirstRowBtn.firePress();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), false, "message strip is not visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 1, "table contains 1 entry");
 			oRmvFirstRowBtn = this.oSelectedRolesList.getItems()[0].getDeleteControl();
 			assert.equal(oRmvFirstRowBtn.getVisible(), true, "remove first row button is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");
 			oRmvFirstRowBtn.firePress();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(this.oVisibilityMessageStrip.getVisible(), true, "message strip is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 0, "table contains no entries");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "select roles control is visible");

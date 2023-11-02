@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/m/HBox",
 	"sap/m/MessageBox",
 	"sap/ui/comp/smartvariants/SmartVariantManagement",
-	"sap/ui/core/Core",
 	"sap/ui/core/Lib",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
@@ -18,6 +17,7 @@ sap.ui.define([
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/CompVariant",
 	"sap/ui/rta/Utils",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4",
 	"test-resources/sap/ui/rta/qunit/RtaQunitUtils"
 ], function(
@@ -25,7 +25,6 @@ sap.ui.define([
 	HBox,
 	MessageBox,
 	SmartVariantManagement,
-	Core,
 	Lib,
 	DesignTime,
 	OverlayRegistry,
@@ -38,6 +37,7 @@ sap.ui.define([
 	CommandFactory,
 	CompVariant,
 	Utils,
+	nextUIUpdate,
 	sinon,
 	RtaQunitUtils
 ) {
@@ -85,7 +85,7 @@ sap.ui.define([
 				standardVariant: {}
 			});
 		},
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
@@ -107,7 +107,7 @@ sap.ui.define([
 			sandbox.stub(this.oVariantManagementControl, "getAllVariants").returns([this.oVariant]);
 
 			this.oVariantManagementControl.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oVariantManagementControl],
@@ -474,7 +474,7 @@ sap.ui.define([
 				standardVariant: {}
 			});
 		},
-		beforeEach(assert) {
+		async beforeEach(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({getUserId() {return undefined;}});
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
@@ -495,7 +495,7 @@ sap.ui.define([
 			sandbox.stub(this.oVariantManagementControl, "getPresentVariantId").returns("id1");
 
 			this.oHBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oDesignTime = new DesignTime({
 				rootElements: [this.oHBox],

@@ -4,7 +4,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_pick",
 	"sap/base/util/ObjectPath",
-	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/AppDescriptorChange",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/ControllerExtensionChange",
@@ -19,7 +18,6 @@ sap.ui.define([
 ], function(
 	_pick,
 	ObjectPath,
-	Core,
 	AppDescriptorChange,
 	CompVariant,
 	ControllerExtensionChange,

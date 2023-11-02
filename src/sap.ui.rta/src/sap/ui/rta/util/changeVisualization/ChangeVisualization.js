@@ -658,6 +658,7 @@ sap.ui.define([
 		// Sort the Indicators according XY-Position
 		// Set the tabindex according the sorting
 		// Focus the first visible indicator
+		// TODO remove synchronous rendering
 		Core.applyChanges();
 
 		var aVisibleIndicators = this._oChangeIndicatorRegistry.getChangeIndicators()

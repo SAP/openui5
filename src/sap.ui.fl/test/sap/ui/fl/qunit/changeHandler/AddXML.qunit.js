@@ -3,23 +3,23 @@
 sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/core/Core",
 	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddXML",
 	"sap/ui/util/XMLHelper",
 	"sap/m/Button",
-	"sap/m/HBox"
+	"sap/m/HBox",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	Core,
 	Component,
 	FlexObjectFactory,
 	AddXML,
 	XMLHelper,
 	Button,
-	HBox
+	HBox,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -105,7 +105,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXML Change Handler with JSTreeModifier", {
-		beforeEach() {
+		async beforeEach() {
 			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = AddXML;
 
@@ -140,7 +140,7 @@ sap.ui.define([
 			});
 			this.sAggregationType = this.oHBox.getMetadata().getAggregation("items").type;
 			this.oHBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.oPropertyBag = {
 				modifier: JsControlTreeModifier, view: {

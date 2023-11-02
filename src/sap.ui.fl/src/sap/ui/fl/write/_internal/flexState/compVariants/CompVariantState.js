@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
@@ -24,7 +23,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	_pick,
-	Core,
 	Element,
 	Layer,
 	Utils,

@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
-	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
 	"sap/ui/core/UIComponent",
@@ -28,6 +27,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	Log,
@@ -36,7 +36,6 @@ sap.ui.define([
 	XMLView,
 	ComponentContainer,
 	Control,
-	Core,
 	Element,
 	StaticArea,
 	UIComponent,
@@ -57,6 +56,7 @@ sap.ui.define([
 	Layer,
 	Utils,
 	FlexState,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -505,7 +505,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", function(assert) {
+		QUnit.test("When save() is called with an array of changes and a valid component and an invalid VM control on the page", async function(assert) {
 			var sChangesSaved = "changesSaved";
 			var aSuccessfulChanges = ["mockChange1", "mockChange2"];
 			var oSaveStub = sandbox.stub(this.oFlexController, "saveSequenceOfDirtyChanges").resolves(sChangesSaved);
@@ -513,16 +513,14 @@ sap.ui.define([
 				modelName: ControlVariantApplyAPI.getVariantModelName()
 			}).placeAt(StaticArea.getDomRef());
 			sandbox.stub(VariantUtils, "getAllVariantManagementControlIds").returns([aVMControl.getId()]);
-			Core.applyChanges();
+			await nextUIUpdate();
 
-			return ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges})
+			const vResponse = await ControlPersonalizationWriteAPI.save({selector: {appComponent: this.oComp}, changes: aSuccessfulChanges});
 
-			.then(function(vResponse) {
-				assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
-				assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
+			assert.strictEqual(vResponse, sChangesSaved, "then the correct response was received");
+			assert.strictEqual(oSaveStub.lastCall.args[0], aSuccessfulChanges, "the two changes were passed to the FlexController");
 
-				aVMControl.destroy();
-			});
+			aVMControl.destroy();
 		});
 
 		QUnit.test("When save() is called with an invalid element", function(assert) {

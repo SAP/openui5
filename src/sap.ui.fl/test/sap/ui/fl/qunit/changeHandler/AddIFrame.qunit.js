@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
-	"sap/ui/core/Core",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
 	"sap/ui/fl/changeHandler/AddIFrame",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/util/XMLHelper"
 ], function(
 	Button,
@@ -18,9 +18,9 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	Component,
-	Core,
 	FlexObjectFactory,
 	AddIFrame,
+	nextUIUpdate,
 	XMLHelper
 ) {
 	"use strict";
@@ -98,7 +98,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with JSTreeModifier", {
-		beforeEach() {
+		async beforeEach() {
 			this.oMockedAppComponent = {
 				getLocalId() {
 					return undefined;
@@ -144,7 +144,7 @@ sap.ui.define([
 			});
 
 			this.oHBox.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			this.mPropertyBag = {
 				modifier: JsControlTreeModifier,
