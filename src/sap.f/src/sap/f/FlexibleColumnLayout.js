@@ -1685,6 +1685,13 @@ sap.ui.define([
 			this._$columns.begin.css("width", this._oDragInfo.columnWidths.begin + "px");
 			this._$columns.end.css("width", this._oDragInfo.columnWidths.end + "px");
 		}
+
+		if (bLayoutChange) {
+			this.fireEvent("_liveStateChange", {
+				layout: sLayout,
+				maxColumnsCount: this.getMaxColumnsCount()
+			});
+		}
 	};
 
 	/**
