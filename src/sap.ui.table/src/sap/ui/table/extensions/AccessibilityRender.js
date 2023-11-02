@@ -26,6 +26,8 @@ sap.ui.define([
 		oRm.openEnd();
 		if (sText) {
 			oRm.text(sText);
+		} else {
+			oRm.text("-");
 		}
 		oRm.close("span");
 	};
