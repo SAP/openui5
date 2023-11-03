@@ -102,6 +102,12 @@ sap.ui.define([
 				value: "",
 				valueState: ValueState.None
 			},
+			previousFrameUrl: {
+				value: ""
+			},
+			validFrameUrl: {
+				value: true
+			},
 			previewUrl: { value: "" },
 			documentationLink: {
 				HTML: _sDocumentationHTML
