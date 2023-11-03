@@ -5,21 +5,6 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 	var requestCounter = 0;
 
-	// window.performance is hijacked by sinon's fakeTimers (https://github.com/sinonjs/fake-timers/issues/374)
-	// and might be out of sync with the latest specs and APIs. Therefore, mock them further,
-	// so they won't affect tests.
-	//
-	// *Note:* Call this method after sinon.useFakeTimers(); as for example performance.timeOrigin is read only
-	// in its nature and cannot be modified otherwise.
-	function mockPerformanceObject (iTime) {
-		window.performance.getEntriesByType = function() { return []; };
-		window.performance.timeOrigin = iTime || 1;
-	}
-	function cleanPerformanceMock() {
-		delete window.performance.getEntriesByType;
-		delete window.performance.timeOrigin;
-	}
-
 	QUnit.module("FESR", {
 		beforeEach: function(assert) {
 			assert.notOk(FESR.getActive(), "FESR is deactivated");
@@ -250,7 +235,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	QUnit.test("Beacon strategy", function(assert) {
 		assert.expect(9);
 		this.clock = sinon.useFakeTimers();
-		mockPerformanceObject();
+		window.performance.getEntriesByType = function() { return []; };
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 		var fileReader = new FileReader();
 		var done = assert.async();
@@ -295,8 +280,6 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		fileReader.readAsText(blobToSend);
 
 		FESR.setActive(false);
-		// Cleanup
-		cleanPerformanceMock();
 		sendBeaconStub.restore();
 		this.clock.restore();
 	});
@@ -305,7 +288,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.expect(9);
 		this.clock = sinon.useFakeTimers();
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
-		mockPerformanceObject(3); // clock.tick affects performance.now() and we need to adjust this magic number, so it's after the clock.tick in addFakeProcessingTime()
+		window.performance.getEntriesByType = function() { return []; };
 		var addFakeProcessingTime = function () {
 			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
 			var notifyAsyncStepCallback;
@@ -357,7 +340,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		assert.ok(sendBeaconStub.notCalled, "Beacon not called after deactivation");
 
 		// cleanup
-		cleanPerformanceMock();
+		delete window.performance.getEntriesByType;
 		sendBeaconStub.restore();
 		this.clock.restore();
 	});
@@ -365,7 +348,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 	QUnit.test("Semantic Stepname", function(assert) {
 		assert.expect(3);
 		this.clock = sinon.useFakeTimers();
-		mockPerformanceObject();
+		window.performance.getEntriesByType = function() { return []; };
 		var addFakeProcessingTime = function () {
 			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
 			var notifyAsyncStepCallback;
@@ -395,7 +378,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		FESR.setActive(false);
 
 		// cleanup
-		cleanPerformanceMock();
+		delete window.performance.getEntriesByType;
 		this.clock.restore();
 	});
 
