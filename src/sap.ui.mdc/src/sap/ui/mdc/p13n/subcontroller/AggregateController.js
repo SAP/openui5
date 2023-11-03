@@ -13,12 +13,12 @@ sap.ui.define([
     };
 
 	AggregateController.prototype.getCurrentState = function() {
-		return this.getAdaptationControl().getAggregateConditions();
+		return this.getAdaptationControl().getAggregateConditions() || {};
 	};
 
     AggregateController.prototype.sanityCheck = function(change) {
         const aAggregations = [];
-        Object.keys(change).forEach(function(sKey) {
+        Object.keys({...change}).forEach(function(sKey) {
             const oAggregate = {
                 name: sKey,
                 key: sKey
@@ -50,6 +50,28 @@ sap.ui.define([
     AggregateController.prototype._getPresenceAttribute = function () {
         return "aggregated";
     };
+
+    AggregateController.prototype.changesToState = function(aChanges) {
+
+        const mStateDiff = {};
+
+        aChanges.forEach(function(oChange){
+            const sName = oChange.changeSpecificData.content.name;
+
+            if (!mStateDiff[sName]) {
+                mStateDiff[sName] = [];
+            }
+
+            const oAggregationValue = {};
+            //set the presence attribute to false in case of an explicit remove
+            if (oChange.changeSpecificData.changeType === this.getChangeOperations()["remove"]) {
+                oAggregationValue.aggregated = false;
+            }
+            mStateDiff[sName] = oAggregationValue;
+        }.bind(this));
+
+        return mStateDiff;
+	};
 
     AggregateController.prototype.mixInfoAndState = function(oPropertyHelper) {
 
