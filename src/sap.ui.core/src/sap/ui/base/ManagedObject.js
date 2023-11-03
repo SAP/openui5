@@ -2056,9 +2056,17 @@ sap.ui.define([
 			}
 		}
 
-		// legacy validation for (unsupported) types that don't subclass BaseObject
-		oType = ObjectPath.get(oAggregation.type);
-		if ( typeof oType === "function" && oObject instanceof oType ) {
+		/**
+		 * @deprecated
+		 */
+		if ((() => {
+			// legacy validation for (unsupported) types that don't subclass BaseObject
+			oType = ObjectPath.get(oAggregation.type);
+			if ( typeof oType === "function" && oObject instanceof oType ) {
+				return true;
+			}
+			return false;
+		})()) {
 			return oObject;
 		}
 
