@@ -1,10 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/core/Configuration",
+	"sap/base/i18n/Formatting",
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/UI5Date"
-], function(Log, Configuration, Islamic, UI5Date) {
+], function(Log, Formatting, Islamic, UI5Date) {
 	"use strict";
 	/* eslint-disable camelcase */
 
@@ -172,8 +172,8 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("warning").never();
 			// set to "1" and it will fall-back to "A"
-			this.stub(Configuration.getFormatSettings(), "getLegacyDateFormat").returns("1");
-			this.stub(Configuration.getFormatSettings(), "getLegacyDateCalendarCustomizing")
+			this.stub(Formatting, "getABAPDateFormat").returns("1");
+			this.stub(Formatting, "getCustomIslamicCalendarData")
 				.returns(customizingInfo);
 		}
 	});
