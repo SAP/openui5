@@ -1310,6 +1310,17 @@ sap.ui.define([
 		return oColumn;
 	};
 
+	TableQUnitUtils.createMouseWheelEvent = function(iScrollDelta, iDeltaMode, bShift) {
+		return new window.WheelEvent("wheel", {
+			deltaY: bShift ? 0 : iScrollDelta,
+			deltaX: bShift ? iScrollDelta : 0,
+			deltaMode: iDeltaMode,
+			shiftKey: bShift,
+			bubbles: true,
+			cancelable: true
+		});
+	};
+
 	var oTable, oTreeTable;
 	var oModel = new JSONModel();
 	var aFields = ["A", "B", "C", "D", "E"];

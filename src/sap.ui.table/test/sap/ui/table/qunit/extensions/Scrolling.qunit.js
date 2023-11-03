@@ -15,9 +15,10 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
 	"sap/ui/model/ChangeReason",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/m/TextArea"
 ], function(TableQUnitUtils, Table, RowAction, RowActionItem, FixedRowMode, AutoRowMode, TableUtils, Device, tableLibrary, Column,
-			Control, JSONModel, Context, ChangeReason, jQuery) {
+			Control, JSONModel, Context, ChangeReason, jQuery, TextArea) {
 	"use strict";
 
 	// mapping of global function calls
@@ -5975,6 +5976,52 @@ sap.ui.define([
 			oTableContainer.dispatchEvent(oWheelEvent);
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Scrolled vertically -> Table is in Navigation Mode again");
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(0, 0), "Cell has focus");
+		});
+	});
+
+	QUnit.test("MouseWheel, scroll TextArea inside a cell", function(assert) {
+		var oTable = this.oTable;
+		oTable.insertColumn(new Column({template: new TextArea({value: "A\nB\nC\nD\nE"})}), 0);
+		sap.ui.getCore().applyChanges();
+
+		var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
+		var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
+		var oTargetElement = oTable.qunit.getDataCell(0, 0).querySelectorAll('textarea')[0];
+		oTargetElement.dispatchEvent(oWheelEvent);
+
+		return TableQUnitUtils.wait(100).then(function() {
+			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "Table did not scroll");
+			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
+			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
+
+			oTargetElement.scrollTop = 70;
+			oTargetElement.dispatchEvent(oWheelEvent);
+
+			return TableQUnitUtils.wait(100);
+		}).then(function() {
+			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "TextArea is scrolled to bottom, Table did not scroll");
+			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
+			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
+
+			oWheelEvent = TableQUnitUtils.createMouseWheelEvent(-20, MouseWheelDeltaMode.PIXEL, false);
+			oTargetElement.dispatchEvent(oWheelEvent);
+
+			return TableQUnitUtils.wait(100);
+		}).then(function() {
+			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "Table did not scroll");
+			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
+			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
+
+			oTargetElement.scrollTop = 0;
+			oTargetElement.dispatchEvent(oWheelEvent);
+
+			return TableQUnitUtils.wait(100);
+		}).then(function() {
+			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "TextArea is scrolled to top, Table did not scroll");
+			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
+			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
+
+			oStopPropagationSpy.restore();
 		});
 	});
 
