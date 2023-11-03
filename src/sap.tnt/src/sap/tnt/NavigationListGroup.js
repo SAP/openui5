@@ -71,7 +71,7 @@ sap.ui.define([
 			.attr("role", "none")
 			.openEnd();
 
-		oRM.openStart("div", this.getId())
+		oRM.openStart("div")
 			.class("sapTntNLI")
 			.class("sapTntNLGroup");
 
