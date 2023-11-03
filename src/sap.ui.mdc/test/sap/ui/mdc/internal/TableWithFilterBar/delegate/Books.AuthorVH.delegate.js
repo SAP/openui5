@@ -10,8 +10,10 @@ sap.ui.define([
 	"sap/ui/mdc/enums/TableGrowingMode",
 	"sap/ui/mdc/enums/TableRowCountMode",
 	"sap/ui/mdc/enums/TableSelectionMode",
-	"sap/ui/mdc/enums/TableP13nMode"
-], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode) {
+	"sap/ui/mdc/enums/TableP13nMode",
+	"sap/m/plugins/CellSelector",
+	"sap/m/plugins/CopyProvider"
+], function (ODataValueHelpDelegate, FilterField, FilterBar, MdcTable, MdcColumn, GridTableType, ResponsiveTableType, Text, GrowingMode, TableRowCountMode, TableSelectionMode, TableP13nMode, CellSelector, CopyProvider) {
 	"use strict";
 	var Delegate = Object.assign({}, ODataValueHelpDelegate);
 
@@ -110,7 +112,7 @@ sap.ui.define([
 					oTable = new MdcTable(oCurrentContent.getId() + "--" +  "default", {
 						autoBindOnInit: false,
 						width: "100%",
-						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.Single,
+						selectionMode: bMultiSelect ? TableSelectionMode.Multi : TableSelectionMode.SingleMaster,
 						p13nMode: [TableP13nMode.Sort],
 						delegate: {name: 'sap/ui/v4demo/delegate/GridTable.delegate', payload: {collectionName: 'Authors'}},
 						threshold: 50,
@@ -120,7 +122,11 @@ sap.ui.define([
 							new MdcColumn({header: "ID", propertyKey : "ID", template: new Text(oCurrentContent.getId() + "--" +  "template1-AuthorId", {text: "{path: 'ID', type:'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}"})}),
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
 							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})})
-						]
+						],
+						...bMultiSelect ? {
+							dependents: [new CellSelector({rangeLimit: 200})],
+							copyProvider: [new CopyProvider()]
+						} : {}
 					});
 					break;
 			}
