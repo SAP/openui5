@@ -99,7 +99,6 @@ sap.ui.define([
 	};
 
 	async function getChangesFromFlexState(sReference, mPropertyBag, bInvalidateCache) {
-		// TODO the CompVariantState causes an exception in the save scenario
 		try {
 			if (bInvalidateCache) {
 				await FlexState.update(mPropertyBag);
@@ -107,7 +106,8 @@ sap.ui.define([
 
 			await FlexState.getStorageResponse(sReference);
 		} catch (oError) {
-			Log.error("Error during ChangePersistence.prototype.getChangesForComponent");
+			// FIXME the CompVariantState causes an exception in the save scenario,
+			Log.warning("Problem during ChangePersistence.prototype.getChangesForComponent");
 		}
 	}
 
