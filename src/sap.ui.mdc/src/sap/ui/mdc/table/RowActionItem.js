@@ -4,10 +4,9 @@
 
 sap.ui.define([
 	'sap/ui/core/Element',
-	'sap/ui/core/IconPool',
-	"sap/ui/core/Lib",
+	// load for availability
 	'sap/ui/mdc/enums/TableRowAction'
-], function(Element, IconPool, Library, TableRowAction) {
+], function(Element) {
 	"use strict";
 
 	/**
@@ -80,33 +79,6 @@ sap.ui.define([
 			}
 		}
 	});
-
-	const mThemeParameters = {
-		navigationIcon: "navigation-right-arrow"
-	};
-
-	RowActionItem.prototype._getText = function () {
-		let sText;
-		if (this.getText()) {
-			sText = this.getText();
-		} else {
-			const oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
-			if (this.getType() === TableRowAction.Navigation) {
-				sText = oResourceBundle.getText("table.ROW_ACTION_ITEM_NAVIGATE");
-			}
-		}
-		return sText;
-	};
-
-	RowActionItem.prototype._getIcon = function () {
-		let oIcon;
-		if (this.getIcon()) {
-			oIcon = this.getIcon();
-		} else if (this.getType() === TableRowAction.Navigation) {
-			oIcon = IconPool.getIconURI(mThemeParameters["navigationIcon"]);
-		}
-		return oIcon;
-	};
 
 	RowActionItem.prototype._onPress = function(mPropertyBag) {
 		this.firePress({

@@ -54,8 +54,6 @@ sap.ui.define([
 	// load for availability
 	"sap/ui/mdc/enums/TableGrowingMode",
 	// load for availability
-	"sap/ui/mdc/enums/TableRowAction",
-	// load for availability
 	"sap/ui/mdc/enums/TableRowCountMode"
 ], function(
 	Control,
