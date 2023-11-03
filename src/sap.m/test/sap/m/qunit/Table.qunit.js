@@ -1001,6 +1001,19 @@ sap.ui.define([
 		sut.destroy();
 	});
 
+	QUnit.test("Test for SingleSelectMaster - enter key should trigger selectionChange event", function(assert) {
+		const sut = createSUT(true, true, "SingleSelectMaster");
+		const fnSelectionChangeSpy = sinon.spy();
+		sut.attachSelectionChange(fnSelectionChangeSpy);
+		sut.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		sut.getItems()[0].focus();
+		qutils.triggerKeydown(document.activeElement, KeyCodes.ENTER);
+		assert.ok(fnSelectionChangeSpy.calledOnce, "selectionChange event is triggered once");
+		sut.destroy();
+	});
+
 	QUnit.test("Test for destroyItems", function(assert) {
 		var sut = createSUT(true, true);
 		sut.placeAt("qunit-fixture");
