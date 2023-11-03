@@ -313,7 +313,6 @@ sap.ui.define([
 			}
 
 			const bGridTableType = this._oTable._isOfType(TableType.Table);
-			const bResponsiveTableType = !bGridTableType && this._oTable._isOfType(TableType.ResponsiveTable);
 
 			if (bGridTableType) {
 				const oRowCountMode = oTableType.getRowCountMode();
@@ -321,17 +320,6 @@ sap.ui.define([
 					oTableType.setRowCount(3);
 				}
 			}
-
-			// Wait for internal table creation to apply the selectionBehavior
-			this._oTable.initialized().then(() => {
-				if (bGridTableType) {
-					if (sSelectionMode !== TableSelectionMode.SingleMaster) {
-						this._oTable._setInternalProperty("selectionBehavior", "Row"); // We want to be able to click anywhere on the row for selection in Multi mode
-					}
-				} else if (bResponsiveTableType) {
-					this._oTable._setInternalProperty("includeItemInSelection", true);
-				}
-			});
 		}
 	};
 
