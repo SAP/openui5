@@ -2,7 +2,6 @@
 
 sap.ui.define([
 	"../../RtaQunitUtils",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
@@ -12,13 +11,13 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ContextBasedAdaptationsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/core/library"
 ], function(
 	RtaQunitUtils,
-	Core,
 	Control,
 	Element,
 	Fragment,
@@ -28,6 +27,7 @@ sap.ui.define([
 	ContextBasedAdaptationsAPI,
 	Layer,
 	JSONModel,
+	nextUIUpdate,
 	Adaptation,
 	SaveAsAdaptation,
 	sinon,
@@ -48,7 +48,7 @@ sap.ui.define([
 		return Element.getElementById(sId);
 	}
 
-	function initializeToolbar() {
+	async function initializeToolbar() {
 		var aVersions = [{
 			version: "1",
 			title: "Version Title",
@@ -83,26 +83,25 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		return oToolbar;
 	}
 
 	var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 	QUnit.module("Given a Toolbar with enabled context-based adaptations feature", {
-		beforeEach() {
+		async beforeEach() {
 			this.oGetAppComponentStub = sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.test.app");
 			this.oModel = ContextBasedAdaptationsAPI.createModel([DEFAULT_ADAPTATION], DEFAULT_ADAPTATION, true);
 			sandbox.stub(ContextBasedAdaptationsAPI, "getAdaptationsModel").returns(this.oModel);
-			this.oToolbar = initializeToolbar();
+			this.oToolbar = await initializeToolbar();
 			this.oSaveAsAdaptation = new SaveAsAdaptation({ toolbar: this.oToolbar });
 			this.oEvent = {
 				getSource: function() {
 					return this.oToolbar.getControl("manageAdaptations");
 				}.bind(this)
 			};
-			return this.oToolbar.onFragmentLoaded().then(function() {
-				return this.oToolbar.show();
-			}.bind(this));
+			await this.oToolbar.onFragmentLoaded();
+			return this.oToolbar.show();
 		},
 		afterEach() {
 			this.oToolbar.destroy();

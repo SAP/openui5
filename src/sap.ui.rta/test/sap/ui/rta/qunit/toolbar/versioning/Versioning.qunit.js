@@ -3,7 +3,6 @@
 sap.ui.define([
 	"../../RtaQunitUtils",
 	"sap/m/Popover",
-	"sap/ui/core/Core",
 	"sap/ui/core/Control",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Lib",
@@ -11,13 +10,13 @@ sap.ui.define([
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/Layer",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/rta/toolbar/Adaptation",
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RtaQunitUtils,
 	Popover,
-	Core,
 	Control,
 	Fragment,
 	Lib,
@@ -25,6 +24,7 @@ sap.ui.define([
 	Version,
 	Layer,
 	JSONModel,
+	nextUIUpdate,
 	Adaptation,
 	Utils,
 	sinon
@@ -36,7 +36,7 @@ sap.ui.define([
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
 
-	function initializeToolbar() {
+	async function initializeToolbar() {
 		var aVersions = [{
 			version: Version.Number.Draft,
 			type: Version.Type.Draft,
@@ -76,21 +76,20 @@ sap.ui.define([
 
 		oToolbar.animation = false;
 		oToolbar.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 		return oToolbar;
 	}
 
 	QUnit.module("VersionHistory", {
-		beforeEach() {
-			this.oToolbar = initializeToolbar();
+		async beforeEach() {
+			this.oToolbar = await initializeToolbar();
 			this.oEvent = {
 				getSource: function() {
 					return this.oToolbar.getControl("versionButton");
 				}.bind(this)
 			};
-			return this.oToolbar.onFragmentLoaded().then(function() {
-				return this.oToolbar.show();
-			}.bind(this));
+			await this.oToolbar.onFragmentLoaded();
+			return this.oToolbar.show();
 		},
 		afterEach() {
 			this.oToolbar.destroy();
@@ -188,11 +187,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("ActivateVersionDialog", {
-		beforeEach() {
-			this.oToolbar = initializeToolbar();
-			return this.oToolbar.onFragmentLoaded().then(function() {
-				return this.oToolbar.show();
-			}.bind(this));
+		async beforeEach() {
+			this.oToolbar = await initializeToolbar();
+			await this.oToolbar.onFragmentLoaded();
+			return this.oToolbar.show();
 		},
 		afterEach() {
 			this.oToolbar.destroy();
@@ -277,12 +275,11 @@ sap.ui.define([
 	}
 
 	QUnit.module("Formatting of direct Toolbar content", {
-		beforeEach() {
-			this.oToolbar = initializeToolbar();
+		async beforeEach() {
+			this.oToolbar = await initializeToolbar();
 			this.oTextResources = this.oToolbar.getTextResources();
-			return this.oToolbar.onFragmentLoaded().then(function() {
-				return this.oToolbar.show();
-			}.bind(this));
+			await this.oToolbar.onFragmentLoaded();
+			return this.oToolbar.show();
 		},
 		afterEach() {
 			this.oToolbar.destroy();

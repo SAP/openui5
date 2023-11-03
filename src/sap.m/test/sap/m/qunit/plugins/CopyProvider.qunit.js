@@ -5,19 +5,18 @@ sap.ui.define([
 	"sap/m/ColumnListItem",
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/plugins/MultiSelectionPlugin",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/m/plugins/PluginBase",
 	"sap/m/plugins/CopyProvider",
 	"sap/m/plugins/CellSelector",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/base/util/Deferred",
 	"sap/ui/core/CustomData",
 	"sap/ui/core/Core",
 	"test-resources/sap/ui/mdc/qunit/QUnitUtils",
 	"test-resources/sap/ui/mdc/qunit/table/QUnitUtils"
-], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, ManagedObjectObserver, Deferred, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
+], function(Text, Table, Column, ColumnListItem, GridTable, GridColumn, MultiSelectionPlugin, MDCTable, MDCColumn, PluginBase, CopyProvider, CellSelector, JSONModel, CustomData, Core, MDCQUnitUtils, MDCTableQUnitUtils) {
 
 	"use strict";
 	/*global sinon, QUnit */
@@ -361,6 +360,27 @@ sap.ui.define([
 		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Data is extracted from the row since there is no binding");
 	});
 
+	QUnit.test("Copy button visibility", function(assert) {
+		const oCopyButton = this.oCopyProvider.getCopyButton();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
+
+		this.oTable.setMode("None");
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
+
+		this.setClipboardText("DummyClipboardText");
+		triggerCopy();
+		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
+
+		this.oTable.setMode("SingleSelectMaster");
+		Core.applyChanges();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible again with single selection");
+
+		this.oTable.setMode("Delete");
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
+	});
+
 
 	QUnit.module("GridTable", TableModule(createGridTable));
 
@@ -419,6 +439,87 @@ sap.ui.define([
 		oCellSelector.removeSelection();
 		triggerCopy();
 		assert.equal(this.getClipboardText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
+	});
+
+	QUnit.test("Copy button visibility", function(assert) {
+		const oCopyButton = this.oCopyProvider.getCopyButton();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
+
+		this.oTable.setSelectionMode("None");
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since selection is not possible");
+
+		this.setClipboardText("DummyClipboardText");
+		triggerCopy();
+		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no selection");
+
+		this.oTable.setSelectionMode("Single");
+		Core.applyChanges();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible again with single selection");
+
+		this.oTable.setSelectionMode("None");
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since row selection is not possible");
+
+		const oCellSelector = new CellSelector();
+		this.oTable.addDependent(oCellSelector);
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since there is a cell selection");
+
+		oCellSelector.setEnabled(false);
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the cell selection is disabled");
+
+		this.setClipboardText("DummyClipboardText");
+		triggerCopy();
+		assert.equal(this.getClipboardText(), "DummyClipboardText", "Copy action is not taken into account since there is no cell selection");
+
+		oCellSelector.setEnabled(true);
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since cell selection is active again");
+
+		this.oTable.attachCellClick(Function.prototype);
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since cellClick event blocks the cell selection");
+
+		this.oTable.detachCellClick(Function.prototype);
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since cellClick event is removed and the cell selection is supported");
+
+		this.oTable.setSelectionBehavior("RowOnly");
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since selectionBehavior=RowOnly blocks the cell selection");
+
+		this.oTable.setSelectionBehavior("RowSelector");
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since the cell selection is supported with selectionBehavior=RowSelector");
+
+		this.oTable.removeDependent(oCellSelector);
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the CellSelector is removed");
+
+		const oMultiSelectionPlugin = new MultiSelectionPlugin({selectionMode: "MultiToggle"});
+		this.oTable.addDependent(oMultiSelectionPlugin);
+		Core.applyChanges();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible since multi selection is enabled with MultiSelectionPlugin");
+
+		oMultiSelectionPlugin.setEnabled(false);
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not visible since the MultiSelectionPlugin is disabled");
+
+		oMultiSelectionPlugin.setEnabled(true);
+		Core.applyChanges();
+		assert.ok(oCopyButton.getVisible(), "The copy button is visible again since the MultiSelectionPlugin is enabled again");
+
+		oMultiSelectionPlugin.setSelectionMode("None");
+		Core.applyChanges();
+		assert.notOk(oCopyButton.getVisible(), "The copy button is not invisible since the setSelectionMode is set to None");
+
+		this.oCopyProvider.setVisible(false).setVisible(true);
+		assert.notOk(oCopyButton.getVisible(), "The copy button is still invisible although visible property is changed");
+
+		this.oTable.removeDependent(this.oCopyProvider);
+		assert.ok(oCopyButton.isDestroyed(), "The copy button is destroyed since CopyProvider is removed");
+
+		const oNewCellSelector = new CellSelector();
+		this.oTable.addDependent(oNewCellSelector);
+
+		this.oCopyProvider = new CopyProvider({extractData: Function.prototype});
+		this.oTable.addDependent(this.oCopyProvider);
+		const oNewCopyButton = this.oCopyProvider.getCopyButton();
+		assert.ok(oNewCopyButton.getVisible(), "The copy button is visible although the CopyProvider is added after the CellSelector");
 	});
 
 	QUnit.module("MDCTable", TableModule(createMDCTable));
@@ -544,6 +645,10 @@ sap.ui.define([
 			this.setClipboardText("DummyClipboardText");
 			oNewCopyButton.firePress();
 			assert.equal(this.getClipboardText(), "name1 (1)\t1 name1 color1\nname3 (3)\t3 name3 color3", "Selection is copied via new copy button");
+
+			this.oTable.setSelectionMode("None");
+			Core.applyChanges();
+			assert.notOk(oNewCopyButton.getVisible(), "The copy button is invisible since there is no selection possible");
 
 			this._oSecureContextStub.restore();
 			oNewCopyProvider.destroy();

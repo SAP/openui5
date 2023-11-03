@@ -2146,7 +2146,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._getCopyButton = function() {
-		if (window.isSecureContext && this._getType().isSelectable()) {
+		if (window.isSecureContext) {
 			return this.getCopyProvider()?.getCopyButton({id: this.getId() + "-copy"});
 		}
 	};

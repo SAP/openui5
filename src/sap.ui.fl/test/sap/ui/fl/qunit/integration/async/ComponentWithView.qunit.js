@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/initial/_internal/StorageUtils",
-	"sap/ui/core/Core",
 	"sap/ui/Device"
 ], function(
 	XMLHelper,
@@ -26,7 +25,6 @@ sap.ui.define([
 	sinon,
 	Utils,
 	StorageUtils,
-	oCore,
 	Device
 ) {
 	"use strict";

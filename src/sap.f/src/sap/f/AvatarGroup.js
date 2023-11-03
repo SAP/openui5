@@ -101,7 +101,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.73. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 * @since 1.73
 	 * @alias sap.f.AvatarGroup
 	 */

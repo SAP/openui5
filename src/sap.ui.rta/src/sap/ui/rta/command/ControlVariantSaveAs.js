@@ -2,7 +2,6 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Core",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/write/api/ContextSharingAPI",
@@ -10,7 +9,6 @@ sap.ui.define([
 	"sap/ui/rta/library",
 	"sap/ui/rta/Utils"
 ], function(
-	Core,
 	JsControlTreeModifier,
 	flUtils,
 	ContextSharingAPI,

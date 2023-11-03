@@ -2219,7 +2219,7 @@ sap.ui
 				// add the service request (HEAD request for CSRF Token)
 				aRequests.push({
 					method: "HEAD",
-					path: new RegExp("$"),
+					path: new RegExp("(\\?.*)?$"),
 					response: function(oXhr) {
 						Log.debug("MockServer: incoming request for url: " + oXhr.url);
 						var mHeaders = {

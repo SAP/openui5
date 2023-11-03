@@ -866,7 +866,6 @@ sap.ui.define([
 	 * It can be used when you have applied ImageCustomData to the Avatar control and you want to force the browser to reload the image.
 	 *
 	 * @function
-	 * @experimental
 	 * @private
 	 * @ui5-restricted sap.fe
 	 */

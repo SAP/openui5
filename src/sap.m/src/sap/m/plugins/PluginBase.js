@@ -110,6 +110,17 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		})[0];
 	};
 
+	/**
+	 * Returns the first applied plugin with the specified name that is defined in the same context as this plugin.
+	 *
+	 * @param {string} sPlugin The full name of the plugin
+	 * @return {undefined|sap.m.plugins.PluginBase} The found plugin instance or <code>undefined</code> if not found
+	 * @protected
+	 */
+	PluginBase.prototype.getPlugin = function(sPlugin) {
+		return PluginBase.getPlugin(this.getParent(), sPlugin);
+	};
+
 
 	/**
 	 * Indicates whether the plugin is added to an applicable control and the <code>enabled</code> property of the plugin is <code>true</code>.
@@ -157,7 +168,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 */
 	PluginBase.prototype.getConfig = function(sKey, vParam1, vParam2, vParam3, vParam4) {
 		var oControl = this.getControl();
-		if (!oControl) {
+		if (!(oControl instanceof Element)) {
 			return;
 		}
 
@@ -285,9 +296,9 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 			throw new Error(this + " is not applicable to " + oControl);
 		}
 
+		this._bActive = true;
 		this.getConfig("onActivate", oControl, this);
 		this.onActivate(oControl);
-		this._bActive = true;
 	};
 
 	/**
@@ -298,10 +309,10 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 			return;
 		}
 
-		var oControl = this.getControl();
+		this._bActive = false;
+		const oControl = this.getControl();
 		this.getConfig("onDeactivate", oControl, this);
 		this.onDeactivate(oControl);
-		this._bActive = false;
 	};
 
 	return PluginBase;

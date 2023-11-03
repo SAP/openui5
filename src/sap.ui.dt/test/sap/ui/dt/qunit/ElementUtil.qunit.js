@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/VBox",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Core",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/core/Item",
@@ -29,6 +28,7 @@ sap.ui.define([
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	DynamicPage,
@@ -46,7 +46,6 @@ sap.ui.define([
 	Text,
 	VBox,
 	ManagedObject,
-	Core,
 	ComponentContainer,
 	Element,
 	Item,
@@ -59,6 +58,7 @@ sap.ui.define([
 	FormContainer,
 	FormElement,
 	JSONModel,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -79,7 +79,7 @@ sap.ui.define([
 		this.oIconTabBar.destroy();
 	};
 
-	var fnCreateControls = function() {
+	var fnCreateControls = async function() {
 		fnCreateMinimumControls.call(this);
 		this.oHorizontalLayoutChild = new HorizontalLayout({
 			content: [
@@ -97,7 +97,7 @@ sap.ui.define([
 			]
 		});
 		this.oVerticalLayout.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	};
 
 	var fnDestroyControls = function() {
@@ -247,8 +247,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("getClosestElementForNode()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -284,8 +284,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("fixComponentParent()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
 		afterEach() {
@@ -354,8 +354,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("getDomRef()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 			fnCreateForm.call(this);
 			this.oVerticalLayout.addContent(this.oForm);
 		},
@@ -381,8 +381,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("hasAncestor()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
 		afterEach() {
@@ -417,8 +417,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("findAllSiblingsInContainer()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 			fnCreateMoreControls.call(this);
 		},
 		afterEach() {
@@ -466,8 +466,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("getAggregationAccessors()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -639,8 +639,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("addAggregation()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -677,8 +677,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("insertAggregation()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -736,8 +736,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("removeAggregation()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -763,8 +763,8 @@ sap.ui.define([
 	});
 
 	QUnit.module("isValidForAggregation()", {
-		beforeEach() {
-			fnCreateControls.call(this);
+		async beforeEach() {
+			await fnCreateControls.call(this);
 		},
 		afterEach() {
 			fnDestroyControls.call(this);
@@ -1038,7 +1038,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control", {
-		beforeEach() {
+		async beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
 				texts: aTexts
@@ -1069,7 +1069,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			[this.oVBox1] = this.oList.getItems()[1].getContent();
 			[this.oListItem0] = this.oList.getItems();
@@ -1150,7 +1150,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control and a control inside of the list which is not in the template", {
-		beforeEach() {
+		async beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
 				texts: aTexts
@@ -1201,7 +1201,7 @@ sap.ui.define([
 			this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].addItem(new Button("evil-btn2"));
 
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			[this.oButton1] = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems();
 			[this.oButton2] = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems();
@@ -1230,7 +1230,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
-		beforeEach() {
+		async beforeEach() {
 			// create list with bound items
 			var oData = [
 				{text: "item1-bound"},
@@ -1262,7 +1262,7 @@ sap.ui.define([
 				content: [this.oBoundList, this.oUnboundList, this.oFactoryBoundList]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			[this.oBound, this.oAnotherBound] = this.oBoundList.getItems();
 			[this.oBoundChild] = this.oBoundList.getItems()[0].getContent();
@@ -1374,7 +1374,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a bound list control with a bound Select control inside it", {
-		beforeEach() {
+		async beforeEach() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var aItemTexts = [
 				{key: "item1", text: "Item Text 1"},
@@ -1414,7 +1414,7 @@ sap.ui.define([
 			}).setModel(oModel);
 
 			this.oList.placeAt("qunit-fixture");
-			Core.applyChanges();
+			await nextUIUpdate();
 
 			[this.oVBox1] = this.oList.getItems()[1].getContent();
 			[this.oVBox2] = this.oList.getItems()[2].getContent();

@@ -8,8 +8,9 @@ sap.ui.define([
 	'sap/ui/core/routing/History',
 	'sap/ui/thirdparty/hasher',
 	"sap/ui/documentation/sdk/controller/util/ControlsInfo",
+	"sap/ui/documentation/sdk/controller/util/URLUtil",
 	"sap/ui/thirdparty/URI"
-], function(Router, History, Hasher, ControlsInfo, URI) {
+], function(Router, History, Hasher, ControlsInfo, URLUtil, URI) {
 	"use strict";
 
 	// We need to set the global hasher instance to not encode URL's. This is specific for the SDK
@@ -329,7 +330,9 @@ sap.ui.define([
 		// or if the ctrl is hold and left mouse button is clicked
 		// we change the href of the anchor element
 		if (iPressedButton === 2 || iPressedButton === 4 || (bNewWindow && iPressedButton === 1)) {
-			sTargetHref = this.convertToStaticFormat(sTargetHref);
+			if (URLUtil.hasSEOOptimizedFormat) {
+				sTargetHref = this.convertToStaticFormat(sTargetHref);
+			}
 			oAnchorElement.setAttribute("href", sTargetHref);
 		}
 	};

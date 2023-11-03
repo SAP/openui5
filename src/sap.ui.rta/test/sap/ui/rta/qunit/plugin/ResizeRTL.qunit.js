@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/m/Column",
 	"sap/m/Text",
 	"sap/ui/layout/VerticalLayout",
-	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	RuntimeAuthoring,
@@ -18,7 +18,7 @@ sap.ui.define([
 	Column,
 	Text,
 	VerticalLayout,
-	Core,
+	nextUIUpdate,
 	sinon
 ) {
 	"use strict";
@@ -26,7 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.createSandbox();
 
 	// Build table
-	function givenTableWithResizableColumns() {
+	async function givenTableWithResizableColumns() {
 		this.oComponent = RtaQunitUtils.createAndStubAppComponent(sandbox);
 		this.oTable = new Table({
 			id: this.oComponent.createId("myTable"),
@@ -43,7 +43,7 @@ sap.ui.define([
 			width: "100%"
 		});
 		this.oContainer.placeAt("qunit-fixture");
-		Core.applyChanges();
+		await nextUIUpdate();
 	}
 
 	function setDefaultMetadataAndSelectHandle(oResizePlugin, oColumnOverlay) {
@@ -62,8 +62,8 @@ sap.ui.define([
 
 	// Some tests need RTA as the calculations are dependent on the style class (handle position)
 	QUnit.module("Given a table in RTA...", {
-		beforeEach() {
-			givenTableWithResizableColumns.call(this);
+		async beforeEach() {
+			await givenTableWithResizableColumns.call(this);
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl: this.oContainer,
@@ -73,11 +73,9 @@ sap.ui.define([
 				}
 			});
 
-			return this.oRta.start()
-			.then(function() {
-				this.oColumn0Overlay = OverlayRegistry.getOverlay(this.oComponent.createId("column0"));
-				this.oResizePlugin = this.oRta.getPlugins().resize;
-			}.bind(this));
+			await this.oRta.start();
+			this.oColumn0Overlay = OverlayRegistry.getOverlay(this.oComponent.createId("column0"));
+			this.oResizePlugin = this.oRta.getPlugins().resize;
 		},
 		afterEach() {
 			this.oComponent.destroy();

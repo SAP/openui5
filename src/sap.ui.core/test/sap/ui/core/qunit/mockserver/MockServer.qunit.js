@@ -1644,19 +1644,26 @@ sap.ui.define([
 		oMockServer.start();
 		assert.ok(oMockServer.isStarted(), "Mock server is started");
 
-		oResponse = syncAjax({
+		var oResponse = syncAjax({
 			url: "/myservice/",
 			type: 'HEAD',
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 
-		var oResponse = syncAjax({
+		oResponse = syncAjax({
 			url: "/myservice/",
 			dataType: "json"
 		});
 		assert.ok(oResponse.success);
 		assert.equal(oResponse.data.d.EntitySets.length, 9);
+
+		oResponse = syncAjax({
+			url: "/myservice/?sap-client=200",
+			type: 'HEAD',
+			dataType: "json"
+		});
+		assert.ok(oResponse.success);
 
 		oMockServer.destroy();
 
