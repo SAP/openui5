@@ -70,7 +70,7 @@ sap.ui.define([
 					headerFields: {type: "sap.ui.core.Item", multiple: true, singularName: "headerField"}
 				}
 			},
-			render: UploadSetwithTableItemRenderer
+			renderer: UploadSetwithTableItemRenderer
     });
 
 	/* ================== */

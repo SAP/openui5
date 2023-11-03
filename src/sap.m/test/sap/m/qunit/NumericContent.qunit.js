@@ -3,9 +3,13 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
+	"sap/m/Button",
 	"sap/m/GenericTile",
+	"sap/m/Label",
 	"sap/m/NumericContent",
 	"sap/m/Table",
+	"sap/m/Toolbar",
+	"sap/m/ToolbarSpacer",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
 	"sap/ui/model/json/JSONModel",
@@ -13,10 +17,11 @@ sap.ui.define([
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/library",
+	"sap/ui/events/KeyCodes",
 	"sap/ui/util/Mobile",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils"
-], function(Localization, Library, jQuery, GenericTile, NumericContent, Table, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, Mobile, oCore, qutils) {
+], function(Localization, Library, jQuery, Button, GenericTile, Label, NumericContent, Table, Toolbar, ToolbarSpacer, Column, ColumnListItem, JSONModel, TileContent, TooltipBase, ResizeHandler, library, KeyCodes, Mobile, oCore, qutils) {
 	"use strict";
 
 	var oResourceBundle = Library.getResourceBundleFor("sap.m");
@@ -55,8 +60,8 @@ sap.ui.define([
 		this.oNumericContent.setValue("12");
 		oCore.applyChanges();
 		var oSpy = this.spy(this.oNumericContent, "firePress");
-		qutils.triggerKeyup("numeric-cnt", jQuery.sap.KeyCodes.ENTER);
-		qutils.triggerKeyEvent("keypress", "numeric-cnt", jQuery.sap.KeyCodes.ENTER);
+		qutils.triggerKeyup("numeric-cnt", KeyCodes.ENTER);
+		qutils.triggerKeyEvent("keypress", "numeric-cnt", KeyCodes.ENTER);
 		assert.ok(oSpy.notCalled, "The firePress function has been called only once when the enter key is press");
 	});
 
@@ -185,7 +190,7 @@ sap.ui.define([
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
 
 	QUnit.test("Numeric content inside sap.m.Table", function(assert) {
-		var oModel = new sap.ui.model.json.JSONModel();
+		var oModel = new JSONModel();
 				oModel.setData({
 					numbers: [
 						{
@@ -196,18 +201,18 @@ sap.ui.define([
 						}]
 				});
 
-				var oTable = new sap.m.Table("idRandomDataTable", {
-					headerToolbar: new sap.m.Toolbar({
-						content: [new sap.m.Label({
+				var oTable = new Table("idRandomDataTable", {
+					headerToolbar: new Toolbar({
+						content: [new Label({
 							text: "Test"
-						}), new sap.m.ToolbarSpacer({}), new sap.m.Button("idPersonalizationButton", {
+						}), new ToolbarSpacer({}), new Button("idPersonalizationButton", {
 							icon: "sap-icon://person-placeholder"
 						})]
 					}),
 
-					columns: [new sap.m.Column({
+					columns: [new Column({
 						width: "2em",
-						header: new sap.m.Label({
+						header: new Label({
 							text: "Number1"
 						})
 
@@ -217,9 +222,9 @@ sap.ui.define([
 
 				oTable.setModel(oModel);
 
-				oTable.bindItems("/numbers", new sap.m.ColumnListItem({
+				oTable.bindItems("/numbers", new ColumnListItem({
 
-					cells: [new sap.m.NumericContent({
+					cells: [new NumericContent({
 						value: "{number1}"
 					})]
 

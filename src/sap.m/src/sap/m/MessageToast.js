@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	'./InstanceManager',
+	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Popup',
 	'sap/ui/core/library',
@@ -11,10 +12,9 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/Device',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Configuration"
+	"sap/ui/thirdparty/jquery"
 ],
-	function(InstanceManager, ControlBehavior, Popup, coreLibrary, Control, Element, Device, Log, jQuery, Configuration) {
+	function(InstanceManager, AnimationMode, ControlBehavior, Popup, coreLibrary, Control, Element, Device, Log, jQuery) {
 		"use strict";
 
 		// shortcut for sap.ui.core.Dock
@@ -325,7 +325,7 @@ sap.ui.define([
 			var sCssTransition = "opacity " + mSettings.animationTimingFunction + " " + mSettings.animationDuration + "ms",
 				sTransitionEnd = "webkitTransitionEnd." + CSSCLASS + " transitionend." + CSSCLASS,
 				sAnimationMode = ControlBehavior.getAnimationMode(),
-				bHasAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
+				bHasAnimations = sAnimationMode !== AnimationMode.none && sAnimationMode !== AnimationMode.minimal;
 
 			if (bHasAnimations && mSettings.animationDuration > 0) {
 				$MessageToastDomRef[0].style.webkitTransition = sCssTransition;
