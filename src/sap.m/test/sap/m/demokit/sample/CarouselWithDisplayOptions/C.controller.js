@@ -110,6 +110,20 @@ sap.ui.define([
 					decorative: false
 				}));
 			}
+		},
+
+		onNumberOfPages: function(oEvent) {
+				const sVisiblePageCount = oEvent.getParameter("value");
+
+				this.byId("carouselSample").getCustomLayout()?.setVisiblePagesCount(Number(sVisiblePageCount));
+		},
+
+		OnScrollModeChange: function(oEvent) {
+			const CarouselScrollMode = mobileLibrary.CarouselScrollMode,
+					bViewMode = oEvent.getParameter("state"),
+					sScrollMode = bViewMode ?  CarouselScrollMode.VisiblePages : CarouselScrollMode.SinglePage;
+
+					this.byId("carouselSample").getCustomLayout()?.setScrollMode(sScrollMode);
 		}
 
 	});
