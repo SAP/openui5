@@ -25,7 +25,6 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', "sap/ui/core/Lib", 'sap/ui/unifie
 		 * @constructor
 		 * @private
 		 * @since 1.74
-		 * @experimental Since 1.74.
 		 * @alias sap.f.PlanningCalendarInCardLegend
 		 */
 		var PlanningCalendarInCardLegend = PlanningCalendarLegend.extend("sap.f.PlanningCalendarInCardLegend", /** @lends sap.f.PlanningCalendarInCardLegend.prototype */ {

@@ -305,8 +305,7 @@ sap.ui.define([
 
 				/**
 				 * Defines rounding of the width <code>CalendarAppoinment</code>
-				 * <b>Note:</b> This property is applied, when the calendar interval type is day and the view shows more than 20 days
-				 * @experimental Since 1.81.0
+				 * <b>Note:</b> This property is applied, when the calendar interval type is Day and the view shows more than 20 days
 				 * @since 1.81.0
 				 */
 				appointmentRoundWidth: { type: "sap.ui.unified.CalendarAppointmentRoundWidth", group: "Appearance", defaultValue: CalendarAppointmentRoundWidth.None},
