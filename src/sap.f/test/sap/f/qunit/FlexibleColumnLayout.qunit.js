@@ -1668,6 +1668,25 @@ function(
 		});
 	});
 
+	QUnit.test("setting two layouts synchronously", function (assert) {
+		assert.expect(1);
+		// setup
+		var fnDone = assert.async();
+
+		this.oFCL.setLayout(LT.OneColumn);
+		this.oFCL.placeAt(sQUnitFixture);
+		Core.applyChanges();
+
+		// Setup: change to layouts that requires animation
+		this.oFCL.setLayout(LT.TwoColumnsMidExpanded);
+		this.oFCL.setLayout(LT.ThreeColumnsMidExpanded);
+
+		setTimeout(function () {
+			assert.strictEqual(this.oFCL._verifyColumnWidthsMatchLayout(this.oFCL._oColumnWidthInfo, LT.ThreeColumnsMidExpanded), true, "Three columns layout is set");
+			fnDone();
+		}.bind(this), 1000);
+	});
+
 	QUnit.test("Switching layout from OneColumn to ThreeColumnsEndExpanded", function (assert) {
 		assert.expect(1);
 		var fnDone = assert.async(),
