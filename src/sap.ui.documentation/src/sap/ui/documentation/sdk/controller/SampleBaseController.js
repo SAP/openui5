@@ -78,7 +78,7 @@ sap.ui.define([
 						aPromises.push(this._addFileToZip({
 							name: this._formatWebAppPath(oFile.name.replace(new RegExp(/(\.\.\/)+/g), "./")),
 							url: sUrl,
-							formatter: (bChangeBootstrap && !bCustomIndexHTML) ? this._changeIframeBootstrapToCloud : undefined
+							formatter: (bChangeBootstrap && !bCustomIndexHTML) ? this._rewriteRelativeURLs.bind(this) : undefined
 						}, oZipFile));
 						aPromises.push(this.fetchSourceFile(sUrl).then(fnAddMockFileToZip.bind(this)));
 					}
@@ -98,22 +98,24 @@ sap.ui.define([
 
 
 					if (!bCustomIndexHTML) {
+						var sIndexHTMLFileName = this._formatWebAppPath("index.html");
 						aPromises.push(this._addFileToZip({
-							name: this._formatWebAppPath("index.html"),
+							name: sIndexHTMLFileName,
 							url: TMPL_REF + "/" + (bHasManifest ? "indexevo.html.tmpl" : "index.html.tmpl"),
 							formatter: function(sIndexFile) {
-								return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
+								return this._rewriteRelativeURLs(this._formatIndexHtmlFile(sIndexFile, oData), sIndexHTMLFileName);
 							}.bind(this)
 						}, oZipFile, true));
 					}
 
 
 					if (!bHasManifest) {
+						var sIndexJSFileName = this._formatWebAppPath("index.js");
 						aPromises.push(this._addFileToZip({
-							name: this._formatWebAppPath("index.js"),
+							name: sIndexJSFileName,
 							url: TMPL_REF + "/" + "index.js.tmpl",
 							formatter: function(sIndexJsFile) {
-								return this._changeIframeBootstrapToCloud(this._formatIndexJsFile(sIndexJsFile, oData));
+								return this._rewriteRelativeURLs(this._formatIndexJsFile(sIndexJsFile, oData), sIndexJSFileName);
 							}.bind(this)
 						}, oZipFile, true));
 					}
@@ -179,7 +181,7 @@ sap.ui.define([
 						return; // ignore 404 responses, e.g. for Apache license text file in SAPUI5 environment
 					}
 					if (fnFileFormatter) {
-						vRawFile = fnFileFormatter(vRawFile);
+						vRawFile = fnFileFormatter(vRawFile, sFileName);
 					}
 					oZipFile.file(sFileName, vRawFile);
 				});
@@ -272,12 +274,18 @@ sap.ui.define([
 			return sMockData.replace(oRegExp, sCorrectPath);
 		},
 
-		_changeIframeBootstrapToCloud: function (sRawIndexFileHtml) {
-			var rReplaceIndex = /src=(?:"[^"]*\/sap-ui-core\.js"|'[^']*\/sap-ui-core\.js')/,
-				oRelativeBootstrapURI = new URI(sap.ui.require.toUrl("") + "/sap-ui-core.js"),
-				sBootstrapURI = oRelativeBootstrapURI.toString();
+		_rewriteRelativeURLs: function (sRawHTMLFile, sFileName) {
+			const rQuotedUrl = /(['"])(?:[a-zA-Z0-9./])*(resources|test-resources)\//g;
+			const sRelativePathToRoot = this._getRelativePathToRoot(sFileName);
+			return sRawHTMLFile.replaceAll(rQuotedUrl, "$1" + sRelativePathToRoot + "$2/");
+		},
 
-			return sRawIndexFileHtml.replace(rReplaceIndex, 'src="' + sBootstrapURI + '"');
+		_getRelativePathToRoot: function(sFilePath) {
+			// webapp/test/unit/unitTests.qunit.html -> 2
+			// webapp/test/mockServer.html -> 1
+			// webapp/index.html -> 0
+			const iNumberOfLevels = sFilePath.split("/").length - 2;
+			return "../".repeat(iNumberOfLevels);
 		},
 
 		_formatWebAppPath: function(sPath) {
