@@ -56,7 +56,7 @@ sap.ui.define([
 				return Promise.reject(sMessage);
 			}
 
-			function ifValidFileType(oChange) {
+			function filterByValidFileType(oChange) {
 				return oChange.getFileType() === "change";
 			}
 
@@ -88,9 +88,10 @@ sap.ui.define([
 			return oChangePersistence.getChangesForComponent({currentLayer: Layer.USER, includeCtrlVariants: true})
 			.then(function(aChanges) {
 				return aChanges
+				.filter(filterByValidFileType)
 				.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
 				.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
-				.some(ifValidFileType);
+				.length > 0;
 			}.bind(this));
 		},
 
