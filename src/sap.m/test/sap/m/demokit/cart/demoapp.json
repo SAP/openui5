@@ -207,11 +207,11 @@
 		"webapp/view/OrderCompleted.view.xml",
 		"webapp/view/Product.view.xml",
 		"webapp/view/Welcome.view.xml",
+		"webapp/initMockServer.js",
 		"webapp/Component.js",
 		"webapp/index.html",
-		"webapp/initMockServer.js",
-		"webapp/manifest.json",
 		"webapp/test.html",
+		"webapp/manifest.json",
 		"package.json",
 		"ui5.yaml"
 	]

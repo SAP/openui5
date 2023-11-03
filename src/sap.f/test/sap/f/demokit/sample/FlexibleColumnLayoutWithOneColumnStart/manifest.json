@@ -24,7 +24,8 @@
 					"webapp/Component.js",
 					"webapp/index.html",
 					"webapp/manifest.json",
-					"manifest.json"
+					"ui5.yaml",
+					"package.json"
 				]
 			}
 		}
