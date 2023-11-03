@@ -471,9 +471,7 @@ sap.ui.define([
 				icon : "sap-icon://paper-plane",
 				tooltip : this.getButtonTooltip(),
 				press : jQuery.proxy(function () {
-					setTimeout(function() {
-						this._oTextArea.focus();
-					},1000);
+					this._oTextArea.focus();
 					this.firePost({
 						value : this._sanitizeHTML(this.getValue())
 					});
