@@ -4,8 +4,11 @@
 
 sap.ui.define([
 	'sap/m/library', 'sap/ui/core/Item'
-], function(library, Item) {
+], function(mLibrary, Item) {
 	"use strict";
+
+	// shortcut for sap.m.SharingMode
+	var SharingMode = mLibrary.SharingMode;
 
 	/**
 	 * Constructor for a new sap.m.VariantItem.
@@ -28,9 +31,9 @@ sap.ui.define([
 				 * Contains the information is the item is public or private.
 				 */
 				sharing: {
-					type: "string",
+					type: "sap.m.SharingMode",
 					group: "Misc",
-					defaultValue: "private"
+					defaultValue: SharingMode.Private
 				},
 
 				/**

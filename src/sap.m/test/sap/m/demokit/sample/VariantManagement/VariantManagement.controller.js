@@ -1,9 +1,13 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
+	'sap/m/library',
 	"sap/m/MessageToast",
 	"sap/m/VariantItem"
-], function(Controller, MessageToast, VariantItem) {
+], function(Controller, mLibrary, MessageToast, VariantItem) {
 	"use strict";
+
+	// shortcut for sap.m.SharingMode
+	var SharingMode = mLibrary.SharingMode;
 
 	return Controller.extend("sap.m.sample.VariantManagement.Page", {
 
@@ -54,8 +58,8 @@ sap.ui.define([
 				remove: true
 			});
 
-			if (mParams.hasOwnProperty("public")) {
-				oItem.setSharing(mParams.public);
+			if (mParams.hasOwnProperty("public") && mParams.public) {
+				oItem.setSharing(SharingMode.Public);
 			}
 			if (mParams.def) {
 				this._oVM.setDefaultKey(sKey);

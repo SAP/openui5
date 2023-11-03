@@ -5041,7 +5041,7 @@ sap.ui.define([
 		};
 
 	/**
-	 * Enumeration of the <code>ResetAllMode>/code> that can be used in a <code>TablePersoController</code>.
+	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
 	 * @enum {string}
 	 * @public
 	 */
@@ -5064,6 +5064,26 @@ sap.ui.define([
 		 * @public
 		 */
 		ServiceReset: "ServiceReset"
+	};
+
+	/**
+	 * Enumeration of the <code>SharingMode</code> that can be used in a <code>VariantItem</code>.
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.SharingMode = {
+
+		/**
+		 * Public mode of the <code>VariantItem</code>.
+		 * @public
+		 */
+		Public: "public",
+
+		/**
+		 * Private mode of the <code>VariantItem</code>.
+		 * @public
+		 */
+		Private: "private"
 	};
 
 	/**
