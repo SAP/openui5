@@ -985,8 +985,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[true, false].forEach(function (bCanUseCache) {
+		[false, true].forEach(function (bHasQueryOptions) {
 		QUnit.test("fetchOrGetQueryOptionsForOwnCache, auto-$expand/$select: non-parent binding, "
-				+ "can use cache " + bCanUseCache,
+				+ "can use cache " + bCanUseCache + ", has query=" + bHasQueryOptions,
 			function (assert) {
 				var oBinding = new ODataBinding({
 						doFetchOrGetQueryOptions : function () {},
@@ -998,11 +999,12 @@ sap.ui.define([
 						sPath : "relative",
 						bRelative : true
 					}),
-					mLocalQueryOptions = {},
 					oParentBinding = {
 						fetchIfChildCanUseCache : function () {}
 					},
-					oQueryOptionsPromise = SyncPromise.resolve(Promise.resolve(mLocalQueryOptions)),
+					vQueryOptions = bHasQueryOptions
+						? SyncPromise.resolve(Promise.resolve("~mLocalQueryOptions~"))
+						: undefined,
 					oContext = Context.create({}, oParentBinding, "/v4Context");
 
 				this.mock(oBinding.oModel).expects("resolve")
@@ -1010,20 +1012,28 @@ sap.ui.define([
 					.returns("/resolved/path");
 				this.mock(oBinding).expects("doFetchOrGetQueryOptions")
 					.withExactArgs(sinon.match.same(oContext))
-					.returns(oQueryOptionsPromise);
+					.returns(vQueryOptions);
 				this.mock(oParentBinding).expects("fetchIfChildCanUseCache")
 					.withExactArgs(sinon.match.same(oContext), "relative",
-						sinon.match.same(oQueryOptionsPromise), true)
+						sinon.match.same(vQueryOptions), true)
 					.returns(SyncPromise.resolve(bCanUseCache ? "/reduced/path" : undefined));
 
 				// code under test
 				return oBinding.fetchOrGetQueryOptionsForOwnCache(oContext)
 					.then(function (oResult) {
-						assert.deepEqual(oResult, {
-							sReducedPath : bCanUseCache ? "/reduced/path" : "/resolved/path",
-							mQueryOptions : bCanUseCache ? undefined : mLocalQueryOptions
-						});
+						if (bCanUseCache) {
+							assert.deepEqual(oResult, {
+								sReducedPath : "/reduced/path",
+								mQueryOptions : undefined
+							});
+						} else {
+							assert.deepEqual(oResult, {
+								sReducedPath : "/resolved/path",
+								mQueryOptions : bHasQueryOptions ? "~mLocalQueryOptions~" : {}
+							});
+						}
 					});
+		});
 		});
 	});
 
