@@ -111,6 +111,8 @@ sap.ui.define([
 
 				/**
 				 * Contains the contexts information of the item.
+				 * <b>Note</b>: This property must not be bound.<br>
+				 * <b>Note</b>: This property is used exclusively for SAPUI5 flexibility. Do not use it otherwise.
 				 */
 				contexts: {
 					type: "object",
