@@ -95,7 +95,8 @@ sap.ui.define([
 						fileType: "ctrl_variant",
 						content: {
 							title: "variant 0"
-						}
+						},
+						layer: Layer.USER
 					}, {
 						fileName: "variant1",
 						fileType: "ctrl_variant",

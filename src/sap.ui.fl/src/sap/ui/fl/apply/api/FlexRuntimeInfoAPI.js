@@ -54,7 +54,7 @@ sap.ui.define([
 				return Promise.reject(sMessage);
 			}
 
-			function ifValidFileType(oChange) {
+			function filterByValidFileType(oChange) {
 				return oChange.getFileType() === "change";
 			}
 
@@ -77,18 +77,19 @@ sap.ui.define([
 				return logAndReject("At least one control ID has to be provided as a parameter");
 			}
 
-			var oAppComponent = mPropertyBag.selectors[0].appComponent || Utils.getAppComponentForControl(mPropertyBag.selectors[0]);
+			const oAppComponent = mPropertyBag.selectors[0].appComponent || Utils.getAppComponentForControl(mPropertyBag.selectors[0]);
 			if (!oAppComponent) {
 				return logAndReject("App Component could not be determined");
 			}
 
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
+			const oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oAppComponent);
 			return oChangePersistence.getChangesForComponent({currentLayer: Layer.USER, includeCtrlVariants: true})
 			.then(function(aChanges) {
 				return aChanges
+				.filter(filterByValidFileType)
 				.filter(filterBySelectors.bind(this, oAppComponent, mPropertyBag.selectors))
 				.filter(filterByChangeType.bind(this, mPropertyBag.changeTypes))
-				.some(ifValidFileType);
+				.length > 0;
 			}.bind(this));
 		},
 
