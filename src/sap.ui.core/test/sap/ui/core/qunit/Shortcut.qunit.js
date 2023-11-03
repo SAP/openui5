@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("fnWrapper trigger", function(assert) {
-		assert.expect(4);
+		assert.expect(5);
 		var done = assert.async();
 		var oHTMLElementFocusSpy = sinon.spy(HTMLElement.prototype, "focus");
 		var oInput = new Input();
@@ -101,6 +101,7 @@ sap.ui.define([
 		oInput.addEventDelegate({"onAfterRendering": function() {
 			oInput.focus();
 			QUtils.triggerKeydown(oInput.getDomRef(), "s", true, false, false);
+			assert.ok(oInput.getDomRef().contains(document.activeElement), "Focus should be within the input directly after triggering the shortcut");
 		}});
 	});
 });

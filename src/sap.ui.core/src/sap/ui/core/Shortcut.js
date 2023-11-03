@@ -108,8 +108,14 @@ sap.ui.define([
 				// add span to static-ui-area
 				oStaticAreaDomRef.appendChild(oSpan);
 
-				// set focus on span to enforce blur - e.g. data of input field needs to get peristed
-				oSpan.focus();
+				// switch the focus after the current call stack because some input device (e.g. Barcode scanner) fires
+				// both "keydown" and "keyup" event in the same call stack. We need to make sure that the element can
+				// receive both of the events before we switch the focus to the "span"
+				Promise.resolve().then(function() {
+					// set focus on span to enforce blur - e.g. data of input field needs to get persisted
+					oSpan.focus();
+				});
+
 				// setting back the focus async ensures that also a fieldGroupChange happens
 				setTimeout(function() {
 					// restore old focus
