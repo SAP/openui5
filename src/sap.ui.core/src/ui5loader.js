@@ -1178,7 +1178,7 @@
 		}
 
 		// avoid cycles
-		oModule.state = READY;
+		oModule.state = EXECUTING;
 
 		return oModule;
 	}
@@ -2002,7 +2002,8 @@
 			queue.push(sResourceName, aDependencies, vFactory, bExport);
 			if ( sResourceName != null ) {
 				const oModule = Module.get(sResourceName);
-				if ( oModule.state === INITIAL ) {
+				// change state of PRELOADED or INITIAL modules to prevent further requests/executions
+				if ( oModule.state <= INITIAL ) {
 					oModule.state = EXECUTING;
 					oModule.async = true;
 				}
