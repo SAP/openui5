@@ -3033,23 +3033,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows programmatic configuration of the inner table's properties.
-	 * @param {string} sProperty Property name to be modified
- 	 * @param {any} vValue Value to be set
-	 * @ui5-restricted sap.ui.mdc
-	 * @private
-	*/
-	Table.prototype._setInternalProperty = function (sProperty, vValue) {
-		if (this._oTable) {
-			const oPropertyMetaData = this._oTable.getMetadata().getProperty(sProperty);
-			const sMutator = oPropertyMetaData && oPropertyMetaData._sMutator;
-			if (sMutator) {
-				this._oTable[sMutator](vValue);
-			}
-		}
-	};
-
-	/**
 	 * @name sap.ui.mdc.Table#addAction
 	 * @private
 	 * @ui5-restricted sap.ui.mdc, sap.ui.fl

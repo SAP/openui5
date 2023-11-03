@@ -65,14 +65,41 @@ sap.ui.define([
             });
         },
         iToggleTheValueHelpListItem: function (sText, sValueHelpId, oOptions) {
-            return doWait(this).forValueHelpListItemWithTexts(sText, {
-                success: function(oResult) {
-                    if (oResult.isA('sap.m.ColumnListItem')) {
-                        new Press().executeOn(oResult);
-                    } else {
-                        new TriggerEvent({event: "tap", payload: oOptions}).executeOn(oResult.getCells()[0]);
-                    }
-                    Opa5.assert.ok(oResult, "The listitem with text " + sText + " was pressed. ");
+            return doWait(this).forValueHelpList({
+                success: function(oTable) {
+                    var bMDCTable = oTable.isA("sap.ui.mdc.Table");
+                    var oRelevantTable = bMDCTable ? oTable._oTable : oTable;
+                    var oTableAncestor = new Ancestor(oRelevantTable);
+
+                    var bIsGridTable = oRelevantTable && oRelevantTable.isA("sap.ui.table.Table");
+                    var oMatcher = new Matcher();
+                    oMatcher.isMatching = function(oListItem) {
+                        return !!oListItem.getCells().find(function (oCell) {
+                            return sText === oCell.mProperties["text"];
+                        });
+                    };
+
+                    return this.waitFor({
+                        searchOpenDialogs: true,
+                        controlType: bIsGridTable ? "sap.ui.table.Row" : "sap.m.ColumnListItem",
+                        matchers: [oTableAncestor, oMatcher],
+                        success: function (aResults) {
+                            Opa5.assert.equal(aResults.length, 1, "exactly 1 listitem for " + aResults[0] + "found.");
+                            const oResult = aResults[0];
+                            if (oResult.isA('sap.m.ColumnListItem')) {
+                                new Press().executeOn(oResult);
+                            } else {
+                                const $RowSelector = oResult.getDomRefs().rowSelector;
+                                const bUseSelector = $RowSelector?.offsetParent;
+                                if (bUseSelector) {
+                                    new TriggerEvent({event: "tap", payload: {target: oResult.getDomRefs().rowSelector, ...oOptions}}).executeOn(oTable);
+                                } else {
+                                    new TriggerEvent({event: "tap", payload: oOptions}).executeOn(oResult.getCells()[0]);
+                                }
+                            }
+                            Opa5.assert.ok(oResult, "The listitem with text " + sText + " was pressed. ");
+                        }
+                    });
                 }
             }, sValueHelpId);
         },
