@@ -89,6 +89,9 @@ function (Core, JSONModel, XMLView) {
 		};
 
 
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.module("ObjectPage with tabs - lazy loading", {
 		beforeEach: function (assert) {
 			var done = assert.async();
@@ -112,6 +115,10 @@ function (Core, JSONModel, XMLView) {
 			this.clock.restore();
 		}
 	});
+
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.test("loading the selected section/tab", function (assert) {
 		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
@@ -136,6 +143,9 @@ function (Core, JSONModel, XMLView) {
 		oObjectPageLayout.destroy();
 	});
 
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.test("loading only the selected section/tab", function (assert) {
 		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
 			oData = oConfigModel.getData(),
@@ -165,6 +175,9 @@ function (Core, JSONModel, XMLView) {
 		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
 	});
 
+	/**
+	 * @deprecated Since version 1.120
+	 */
 	QUnit.test("loading in IconTab mode", function (assert) {
 		// Arrange
 		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
