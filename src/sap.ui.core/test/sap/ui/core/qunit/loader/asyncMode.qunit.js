@@ -497,6 +497,52 @@
 
 	});
 
+	QUnit.test("No premature READY state", function(assert) {
+		var done = assert.async();
+		const MODULE_NAME = "fixture/embedded-module-definitions/module2";
+		const UNIQUE_FROM_PREDEFINE = {};
+		const UNIQUE = {};
+
+		// precondition: the module is already in the preload cache (state === -1)
+		sap.ui.predefine(MODULE_NAME, [], function() {
+			return UNIQUE_FROM_PREDEFINE;
+		});
+
+		// Act:
+		// embedded module definition
+		sap.ui.define(MODULE_NAME, [
+			// some dependency that is not part of the preloads and which hasn't been required yet
+			"sap/ui/thirdparty/jszip"
+		], function() {
+			return UNIQUE;
+		});
+
+		setTimeout(() => {
+			assert.strictEqual(
+				sap.ui.require(MODULE_NAME),
+				undefined,
+				"module is not defined yet"
+			);
+			assert.notStrictEqual(
+				privateLoaderAPI.getModuleState(MODULE_NAME + ".js"),
+				/* READY */ 4,
+				"module should not be READY immediately after sap.ui.define call was processed"
+			);
+
+			sap.ui.require([MODULE_NAME], function(importValue) {
+				assert.strictEqual(
+					importValue,
+					UNIQUE,
+					"require should receive the module export from the embedded module"
+				);
+				done();
+			}, function() {
+				assert.ok(false, "no error should occur when requiring the module");
+				done();
+			});
+		}, 0); // depends on implementation details: must be after ui5loader's queue processing timeout of 0
+	});
+
 	// ========================================================================================
 	// Automatic Export to Global
 	// ========================================================================================

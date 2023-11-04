@@ -16,7 +16,6 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/F6Navigation",
 	"./RenderManager",
-	"./Configuration",
 	"./EnabledPropagator",
 	"./Theming",
 	"sap/ui/core/util/_LocalizationHelper"
@@ -34,7 +33,6 @@ sap.ui.define([
 		jQuery,
 		F6Navigation,
 		RenderManager,
-		Configuration,
 		EnabledPropagator,
 		Theming,
 		_LocalizationHelper

@@ -5,7 +5,6 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/extend",
-	"sap/base/util/ObjectPath",
 	"sap/ui/VersionInfo",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability",
@@ -20,7 +19,6 @@ sap.ui.define([
 ], function(
 	Log,
 	extend,
-	ObjectPath,
 	VersionInfo,
 	Lib,
 	Supportability,

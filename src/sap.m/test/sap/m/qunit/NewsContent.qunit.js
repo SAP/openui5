@@ -1,11 +1,7 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/m/NewsContent",
-	"sap/m/MessageToast",
-	"sap/ui/core/TooltipBase",
-	"sap/m/library",
-	"sap/ui/core/Core"
-], function(NewsContent, MessageToast, TooltipBase, library, oCore) {
+	"sap/m/library"
+], function(library) {
 	"use strict";
 
 

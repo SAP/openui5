@@ -3,9 +3,8 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/util/serializer/Serializer',
-	'sap/ui/core/util/serializer/delegate/HTML',
 	'sap/ui/core/util/serializer/delegate/XML'
-], function(Control, Serializer, HTMLDelegate, XMLDelegate) {
+], function(Control, Serializer, XMLDelegate) {
 	"use strict";
 
 	var TestControl = Control.extend("sap.test.TestControl", {

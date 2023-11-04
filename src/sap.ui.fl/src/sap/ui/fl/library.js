@@ -3,24 +3,22 @@
  */
 
 sap.ui.define([
-	"sap/ui/core/Lib",
-	"sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
-	"sap/ui/fl/initial/_internal/FlexConfiguration",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/Layer",
-	"sap/ui/fl/Scenario",
-	"sap/ui/fl/changeHandler/condenser/Classification",
-	// library dependencies
-	"sap/ui/core/library",
-	"sap/m/library"
+ "sap/ui/core/Lib",
+ "sap/ui/fl/apply/_internal/preprocessors/RegistrationDelegator",
+ "sap/ui/fl/initial/_internal/FlexConfiguration",
+ "sap/ui/fl/Utils",
+ "sap/ui/fl/Layer",
+ "sap/ui/fl/Scenario",
+ // library dependencies
+ "sap/ui/core/library",
+ "sap/m/library"
 ], function(
-	Lib,
-	RegistrationDelegator,
-	FlexConfiguration,
-	Utils,
-	Layer,
-	Scenario,
-	CondenserClassification
+ Lib,
+ RegistrationDelegator,
+ FlexConfiguration,
+ Utils,
+ Layer,
+ Scenario
 ) {
  "use strict";
 

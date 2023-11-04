@@ -12,7 +12,6 @@ sap.ui.define([
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
-	'sap/base/util/ObjectPath',
 	'sap/base/Log'
 ],
 	function(
@@ -24,7 +23,6 @@ sap.ui.define([
 		UIComponentMetadata,
 		Controller,
 		View,
-		ObjectPath,
 		Log
 	) {
 	"use strict";

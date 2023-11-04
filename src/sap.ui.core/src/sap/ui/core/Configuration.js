@@ -10,15 +10,13 @@ sap.ui.define([
 	"sap/base/i18n/Formatting",
 	"sap/base/i18n/Localization",
 	"sap/base/util/Version",
-	"sap/ui/base/DesignTime",
 	"sap/ui/base/Object",
 	"sap/ui/core/AnimationMode",
 	"sap/ui/core/ControlBehavior",
 	"sap/ui/core/getCompatibilityVersion",
 	"sap/ui/core/Locale",
 	"sap/ui/core/Supportability",
-	"sap/ui/core/Theming",
-	"sap/ui/security/Security"
+	"sap/ui/core/Theming"
 ], function(
 	assert,
 	BaseConfig,
@@ -27,15 +25,13 @@ sap.ui.define([
 	Formatting,
 	Localization,
 	Version,
-	DesignTime,
 	BaseObject,
 	AnimationMode,
 	ControlBehavior,
 	getCompatibilityVersion,
 	Locale,
 	Supportability,
-	Theming,
-	Security
+	Theming
 ) {
 	"use strict";
 

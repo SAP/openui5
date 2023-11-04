@@ -51,7 +51,6 @@ function(
 	OverflowToolbar,
 	ObjectPageAccessibleLandmarkInfo
 ) {
-
 	"use strict";
 
 	var TitleLevel = coreLib.TitleLevel;
@@ -3565,7 +3564,7 @@ function(
 		helpers.renderObject(oObjectPage);
 	});
 
-    QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
+	QUnit.test("ObjectPage _updateMedia: Call with falsy value should not take action", function (assert) {
         // setup
         var oObjectPage = new ObjectPageLayout({}),
             oToggleStyleClassSpy = this.spy(oObjectPage, "toggleStyleClass");
@@ -3620,7 +3619,7 @@ function(
     });
 
 
-    QUnit.module("Header DOM changes", {
+	QUnit.module("Header DOM changes", {
 		beforeEach: function () {
 			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
 			this.oObjectPage.addHeaderContent(oFactory.getHeaderContent());
@@ -3859,40 +3858,6 @@ function(
 	});
 
 
-	QUnit.module("ObjectPageComponentContainer", {
-		beforeEach: function (assert) {
-			var done = assert.async();
-			XMLView.create({
-				id: "UxAP-27_ObjectPageConfig",
-				viewName: "view.UxAP-27_ObjectPageConfig"
-			}).then(function (oView) {
-				this.oView = oView;
-				this.oComponentContainer = this.oView.byId("objectPageContainer");
-				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				this.oComponentContainer.attachEventOnce("componentCreated", function () {
-					done();
-				});
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oView.destroy();
-		}
-	});
-
-	QUnit.test("component instance", function (assert) {
-		var oComponent = this.oComponentContainer._oComponent;
-
-		// assert init state
-		assert.ok(oComponent, "component is created");
-
-		// Act: mock rerendering of the component container
-		this.oComponentContainer.onBeforeRendering();
-
-		// Check
-		assert.strictEqual(this.oComponentContainer._oComponent, oComponent, "component instance is not changed");
-	});
-
 	QUnit.module("ObjectPageLayout - API - headerContentPinned property", {
 		beforeEach: function () {
 
@@ -4008,5 +3973,4 @@ function(
 	function isTolerableDifference(iPos, iPos2, iTolerance) {
 		return Math.abs(iPos - iPos2) <= iTolerance;
 	}
-
 });

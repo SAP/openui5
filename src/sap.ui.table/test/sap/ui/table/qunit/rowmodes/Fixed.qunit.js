@@ -7,9 +7,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/utils/TableUtils"
+	"sap/ui/table/Column"
 ], function(
 	TableQUnitUtils,
 	FixedRowHeightTest,
@@ -17,9 +15,7 @@ sap.ui.define([
 	RowsUpdatedTest,
 	FixedRowMode,
 	Table,
-	Column,
-	RowAction,
-	TableUtils
+	Column
 ) {
 	"use strict";
 

@@ -7,7 +7,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	"sap/m/MessageBox",
 	"sap/ui/unified/FileUploader",
 	"sap/ui/base/Event",
-	"sap/ui/Device",
 	"sap/base/Log",
 	"sap/m/library",
 	"sap/ui/core/Core",
@@ -21,7 +20,6 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	MessageBox,
 	FileUploader,
 	Event,
-	Device,
 	Log,
 	library,
 	oCore

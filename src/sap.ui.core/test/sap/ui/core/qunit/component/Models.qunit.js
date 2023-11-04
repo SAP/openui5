@@ -41,9 +41,6 @@ sap.ui.define([
 	sap.ui.define("sap/ui/model/json/JSONModel", ["sap/ui/originalmodel/json/JSONModel"], function(OrigJSONModel) {
 		return sinon.spy(OrigJSONModel);
 	});
-	sap.ui.define("sap/ui/model/odata/ODataModel", ["sap/ui/originalmodel/odata/ODataModel"], function(OrigODataModel) {
-		return sinon.spy(OrigODataModel);
-	});
 	sap.ui.define("sap/ui/model/odata/v2/ODataModel", ["sap/ui/originalmodel/odata/v2/ODataModel"], function(OrigODataModel) {
 		return sinon.spy(OrigODataModel);
 	});
@@ -64,7 +61,6 @@ sap.ui.define([
 		return new Promise((resolve, reject) => {
 			sap.ui.require([
 				"sap/ui/model/json/JSONModel",
-				"sap/ui/model/odata/ODataModel",
 				"sap/ui/model/odata/v2/ODataModel",
 				"sap/ui/model/odata/v4/ODataModel",
 				"sap/ui/model/resource/ResourceModel",
@@ -72,12 +68,15 @@ sap.ui.define([
 				"sap/ui/test/v2models/parent/CustomModel"
 			], function(
 				JSONModel,
-				ODataModelV1,
 				ODataModelV2,
 				ODataModelV4,
 				ResourceModel,
 				XMLModel,
-				CustomModel
+				CustomModel,
+				/**
+				 * @deprecated As of version 1.48
+				 */
+				ODataModelV1
 			) {
 				const spies = {
 					json: JSONModel,

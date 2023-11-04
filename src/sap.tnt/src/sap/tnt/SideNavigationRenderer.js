@@ -4,138 +4,128 @@
 
 sap.ui.define([
 	"sap/ui/core/Lib"
-], function (Library) {
+], function (Lib) {
 	"use strict";
 
 	/**
 	 * SideNavigation renderer.
 	 * @namespace
 	 */
-	var SideNavigationRenderer = {
+	const SideNavigationRenderer = {
 		apiVersion: 2
 	};
 
 	// load resource bundle
-	var oRB = Library.getResourceBundleFor("sap.tnt");
+	const oRB = Lib.getResourceBundleFor("sap.tnt");
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the render output buffer
-	 * @param {sap.tnt.SideNavigation} control an object representation of the control that should be rendered
+	 * @param {sap.ui.core.RenderManager} oRM the RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.tnt.SideNavigation} oControl an object representation of the control that should be rendered
 	 */
-	SideNavigationRenderer.render = function (rm, control) {
-		this.startSideNavigation(rm, control);
+	SideNavigationRenderer.render = function (oRM, oControl) {
+		this.startSideNavigation(oRM, oControl);
 
-		this.renderItem(rm, control);
-		this.renderFixedItem(rm, control);
+		this.renderFlexibleList(oRM, oControl);
+		this.renderFixedList(oRM, oControl);
 
-		this.renderFooter(rm, control);
+		this.renderFooter(oRM, oControl);
 
-		this.endSideNavigation(rm, control);
+		this.endSideNavigation(oRM);
 	};
 
-	SideNavigationRenderer.startSideNavigation = function (rm, control) {
-		var itemAggregation = control.getAggregation('item');
-		var fixedItemAggregation = control.getAggregation('fixedItem');
-		var isExpanded = control.getExpanded();
-		var sAriaLabel = control.getAriaLabel();
+	SideNavigationRenderer.startSideNavigation = function (oRM, oControl) {
+		const bExpanded = oControl.getExpanded(),
+			sAriaLabel = oControl.getAriaLabel();
 
-		rm.openStart('div', control);
-
-		const width = control.getWidth();
-		if (width && isExpanded) {
-			rm.style("width", width);
-		}
-
-		rm.attr("role", 'navigation');
-		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION"));
+		oRM.openStart("nav", oControl)
+			.class("sapTntSideNavigation")
+			.class("sapContrast")
+			.class("sapContrastPlus")
+			.accessibilityState(oControl, {
+				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION")
+			})
+			.attr("data-sap-ui-fastnavgroup", "true"); // Define group for F6 handling
 
 		if (sAriaLabel) {
-			rm.accessibilityState(control, {
+			oRM.accessibilityState(oControl, {
 				label: sAriaLabel
 			});
 		}
 
-		rm.class('sapTntSideNavigation');
-		rm.class("sapContrast");
-		rm.class("sapContrastPlus");
-
-		if (!isExpanded) {
-			rm.class('sapTntSideNavigationNotExpanded');
-			rm.class('sapTntSideNavigationNotExpandedWidth');
+		if (!bExpanded) {
+			oRM.class("sapTntSideNavigationNotExpanded")
+				.class("sapTntSideNavigationNotExpandedWidth");
 		}
 
-		if (!isExpanded && itemAggregation) {
-			itemAggregation.setExpanded(false);
+		const sWidth = oControl.getWidth();
+		if (sWidth && bExpanded) {
+			oRM.style("width", sWidth);
 		}
 
-		if (!isExpanded && fixedItemAggregation) {
-			fixedItemAggregation.setExpanded(false);
-		}
-
-		rm.openEnd();
+		oRM.openEnd();
 	};
 
-	SideNavigationRenderer.endSideNavigation = function (rm, control) {
-		rm.close('div');
+	SideNavigationRenderer.endSideNavigation = function (oRM) {
+		oRM.close("nav");
 	};
 
-	SideNavigationRenderer.renderItem = function (rm, control) {
-		var itemAggregation = control.getAggregation('item');
+	SideNavigationRenderer.renderFlexibleList = function (oRM, oControl) {
+		var oFlexibleList = oControl.getItem();
 
-		rm.openStart('div', control.getId() + '-Flexible');
-		rm.attr('tabindex', '-1');
-		rm.class('sapTntSideNavigationFlexible');
-		rm.openEnd();
+		oRM.openStart("div", `${oControl.getId()}-Flexible`)
+			.class("sapTntSideNavigationFlexible")
+			.openEnd();
 
-		rm.openStart('div', control.getId() + '-Flexible-Content');
-		rm.class('sapTntSideNavigationFlexibleContent');
-		rm.openEnd();
+		oRM.openStart("div", `${oControl.getId()}-Flexible-Content`)
+			.class("sapTntSideNavigationFlexibleContent")
+			.openEnd();
 
-		rm.renderControl(itemAggregation);
+		oRM.renderControl(oFlexibleList);
 
-		rm.close('div');
-		rm.close('div');
+		oRM.close("div")
+			.close("div");
 	};
 
-	SideNavigationRenderer.renderFixedItem = function (rm, control) {
-		var fixedItemAggregation = control.getAggregation('fixedItem');
+	SideNavigationRenderer.renderFixedList = function (oRM, oControl) {
+		var oFixedList = oControl.getFixedItem();
 
-		if (fixedItemAggregation === null) {
+		if (!oFixedList) {
 			return;
 		}
 
-		if (fixedItemAggregation.getExpanded() === false) {
-			fixedItemAggregation.setExpanded(false);
-		}
+		oRM.openStart("div")
+			.class("sapTntSideNavigationSeparator")
+			.accessibilityState({
+				role: "separator",
+				roledescription: oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION_SEPARATOR"),
+				orientation: "horizontal"
+			})
+			.openEnd()
+			.close("div");
 
-		rm.openStart('div');
-		rm.attr('role', 'separator');
-		rm.attr('aria-roledescription', oRB.getText("SIDENAVIGATION_ROLE_DESCRIPTION_SEPARATOR"));
-		rm.attr('aria-orientation', 'horizontal');
-		rm.class('sapTntSideNavigationSeparator');
-		rm.openEnd();
-		rm.close('div');
+		oRM.openStart("div")
+			.class("sapTntSideNavigationFixed")
+			.openEnd();
 
-		rm.openStart('div');
-		rm.class('sapTntSideNavigationFixed');
-		rm.openEnd();
+		oRM.renderControl(oFixedList);
 
-		rm.renderControl(fixedItemAggregation);
-		rm.close('div');
+		oRM.close("div");
 	};
 
-	SideNavigationRenderer.renderFooter = function (rm, control) {
-		if (control.getAggregation('footer')) {
-			rm.openStart('footer');
-			rm.class('sapTntSideNavigationFooter');
-			rm.openEnd();
-			rm.renderControl(control.getAggregation('footer'));
-			rm.close('footer');
+	SideNavigationRenderer.renderFooter = function (oRM, oControl) {
+		const oFooter = oControl.getAggregation("footer");
+		if (oFooter) {
+			return;
 		}
+
+		oRM.openStart("footer")
+			.class("sapTntSideNavigationFooter")
+			.openEnd()
+			.renderControl(oFooter)
+			.close("footer");
 	};
 
 	return SideNavigationRenderer;
-
 }, /* bExport= */ true);

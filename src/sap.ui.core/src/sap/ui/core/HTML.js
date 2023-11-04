@@ -65,6 +65,8 @@ sap.ui.define([
 				 * <li>if the content contains script tags, they will be executed but they will not appear in the
 				 *     resulting DOM tree. When the contained code tries to find the corresponding script tag,
 				 *     it will fail.</li>
+				 * <li>if the control is used in an {@link sap/ui/core/mvc/XMLView XMLView}, ensure proper escaping as described
+				 *     in {@link topic:5ee3be4727864bb08b991414e0428e38 Control Properties and Associations in XML Views}</li>
 				 * </ul>
 				 *
 				 * Please consider to consult the jQuery documentation as well.

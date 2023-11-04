@@ -199,7 +199,7 @@
 								<ToolbarSpacer />
 								<Button
 									id="sapUiRtaAddIFrameDialog_PreviewButton"
-									enabled="{=${/previewUrl/value} !== ${/frameUrl/value} || ${/previewUseLegacyNavigation/value} !== ${/useLegacyNavigation/value}}"
+									enabled="{= ${/validFrameUrl/value} &amp;&amp; ${/previousFrameUrl/value} !== ${/frameUrl/value} || ${/previewUseLegacyNavigation/value} !== ${/useLegacyNavigation/value}}"
 									text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }"
 									press="onShowPreview"
 									class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
@@ -293,7 +293,7 @@
 				type="Emphasized"
 				text="{/text/saveText}"
 				press="onSavePress"
-				enabled="{= !!${/frameUrl/value} }"
+				enabled="{=!!${/frameUrl/value} &amp;&amp; ${/validFrameUrl/value}}"
 			/>
 		</beginButton>
 		<endButton>

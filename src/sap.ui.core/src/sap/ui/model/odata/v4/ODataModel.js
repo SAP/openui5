@@ -30,7 +30,6 @@ sap.ui.define([
 	"./lib/_MetadataRequestor",
 	"./lib/_Parser",
 	"./lib/_Requestor",
-	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/i18n/Localization",
 	"sap/ui/base/SyncPromise",
@@ -45,10 +44,7 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI"
-], function (ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding,
-		SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, assert, Log,
-		Localization, SyncPromise, coreLibrary, Messaging, Rendering, Supportability,
-		CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
+], function(ODataContextBinding, ODataListBinding, ODataMetaModel, ODataPropertyBinding, SubmitMode, _GroupLock, _Helper, _MetadataRequestor, _Parser, _Requestor, Log, Localization, SyncPromise, coreLibrary, Messaging, Rendering, Supportability, CacheManager, Message, BindingMode, BaseContext, Model, OperationMode, URI) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataModel",

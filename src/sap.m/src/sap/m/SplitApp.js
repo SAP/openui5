@@ -6,12 +6,11 @@
 sap.ui.define([
 	'./SplitContainer',
 	'./library',
-	'sap/ui/Device',
 	'./SplitAppRenderer',
 	"sap/ui/util/Mobile",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(SplitContainer, library, Device, SplitAppRenderer, Mobile, jQuery) {
+	function(SplitContainer, library, SplitAppRenderer, Mobile, jQuery) {
 	"use strict";
 
 	/**

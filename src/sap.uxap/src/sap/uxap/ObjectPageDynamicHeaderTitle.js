@@ -4,14 +4,12 @@
 
 // Provides control sap.uxap.ObjectPageDynamicHeaderTitle.
 sap.ui.define([
-	'./library',
 	'sap/uxap/ObjectPageDynamicHeaderContent',
 	"./ObjectPageDynamicHeaderTitleRenderer",
 	"sap/base/Log",
 	"sap/f/DynamicPageTitle"
 ],
 	function(
-		library,
 		ObjectPageDynamicHeaderContent,
 		ObjectPageDynamicHeaderTitleRenderer,
 		Log,

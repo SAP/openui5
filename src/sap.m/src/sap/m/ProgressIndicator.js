@@ -6,7 +6,6 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
-	"sap/ui/Device",
 	'sap/ui/core/Icon',
 	"sap/ui/core/Lib",
 	'sap/ui/core/ResizeHandler',
@@ -20,7 +19,6 @@ sap.ui.define([
 	function(
 		library,
 		Control,
-		Device,
 		Icon,
 		Library,
 		ResizeHandler,

@@ -7,10 +7,8 @@
 // ---------------------------------------------------------------------------------------
 
 sap.ui.define([
-	"sap/ui/mdc/field/FieldBaseDelegate",
 	'sap/ui/mdc/odata/v4/TypeMap'
 ], function(
-	FieldBaseDelegate,
 	ODataV4TypeMap
 ) {
 	"use strict";

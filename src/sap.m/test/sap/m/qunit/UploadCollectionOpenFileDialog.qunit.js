@@ -4,11 +4,10 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/base/Event",
-	"sap/ui/Device",
 	"sap/m/ObjectMarker",
 	"sap/base/Log",
 	"sap/ui/core/Core"
-], function(jQuery, JSONModel, Event, Device, ObjectMarker, Log, oCore) {
+], function(jQuery, JSONModel, Event, ObjectMarker, Log, oCore) {
 	"use strict";
 
 	var IMAGE_PATH = "test-resources/sap/m/images/";

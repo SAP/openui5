@@ -7,7 +7,6 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/layout/Grid",
 	"sap/ui/layout/GridData",
-	"sap/ui/layout/library",
 	"sap/ui/core/Core",
 	"sap/ui/thirdparty/jquery"
 ],
@@ -18,7 +17,6 @@ function(
 	Element,
 	Grid,
 	GridData,
-	Library,
 	Core,
 	jQuery
 ) {

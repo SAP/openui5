@@ -18,19 +18,18 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', [
 	"sap/base/strings/camelize",
 	"sap/base/strings/capitalize",
 	"sap/base/util/extend",
-	"sap/base/util/ObjectPath",
 	"sap/ui/base/DataType",
 	"sap/ui/core/Element",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
+	// jQuery Plugin "control"
+	"sap/ui/dom/jquery/control"
 ],
 	function(
 		Log,
 		camelize,
 		capitalize,
 		extend,
-		ObjectPath,
 		DataType,
 		Element,
 		KeyCodes,

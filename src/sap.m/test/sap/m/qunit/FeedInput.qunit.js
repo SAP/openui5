@@ -402,21 +402,4 @@ sap.ui.define([
 		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.A);
 		qutils.triggerKeyup("input-button", KeyCodes.A);
 	});
-
-	QUnit.test("Post - fired via pressing Tab key and then pressing the Enter key", function (assert) {
-        assert.expect(2); //verifies the event handler was executed
-		function onPost(oEvt) {
-			assert.strictEqual(oEvt.getParameter("value"), "firedValue", "Post event was fired");
-		}
-		this.oFeedInput.attachPost(onPost);
-		this.oFeedInput.setValue("firedValue");
-		this.oFeedInput.setEnabled(true);
-		qutils.triggerKeydown("input-button", KeyCodes.TAB);
-		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.TAB);
-		qutils.triggerKeyup("input-button", KeyCodes.TAB);
-		qutils.triggerKeydown("input-button", KeyCodes.ENTER);
-		qutils.triggerKeyEvent("keypress", "input-button", KeyCodes.ENTER);
-		qutils.triggerKeyup("input-button", KeyCodes.ENTER);
-		assert.strictEqual(this.oFeedInput.getPlaceholder(), oCore.getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
-	});
 });

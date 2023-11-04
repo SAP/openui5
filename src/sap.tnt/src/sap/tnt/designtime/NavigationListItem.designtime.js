@@ -15,7 +15,7 @@ sap.ui.define([],
 				rename: {
 					changeType: "rename",
 					domRef: function (oControl) {
-						return oControl.$().find(".sapTntNavLIText")[0];
+						return oControl.$().find(".sapTntNLText")[0];
 					}
 				}
 			},

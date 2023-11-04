@@ -6,10 +6,11 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Label",
 	"sap/m/library",
-	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/m/Title",
 	"sap/m/VBox",
+	"sap/m/Page",
+	"sap/m/App",
 	"sap/ui/core/library"
 ], function(
 	Button,
@@ -19,10 +20,11 @@ sap.ui.define([
 	Input,
 	Label,
 	mobileLibrary,
-	MessageBox,
 	MessageToast,
 	Title,
 	VBox,
+	Page,
+	App,
 	coreLibrary
 ) {
 	"use strict";
@@ -33,35 +35,10 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
 
-	//As Popover
-	new VBox({
-		items: [
-			new Title({
-				text: "Color Palette samples where the palette is wrapped in a Popover(desktop)/Dialog (mobile)",
-				level: TitleLevel.H1,
-				titleStyle: TitleLevel.H1,
-				wrapping: true
-			}),
-			generateColorPalettePopoverElements()
-		]
-	}).placeAt("content");
-
-	//Default Color Palette in standalone mode
-	new VBox({
-		items: [
-			new Title({
-				text: "Color Palette in standalone mode with default settings",
-				level: TitleLevel.H1,
-				titleStyle: TitleLevel.H1,
-				wrapping: true
-			}),
-			new Input({placeholder: "An interactive control before Color Palette"}),
-			new ColorPalette({
-				colorSelect: handleColorSelect
-			}),
-			new Input({placeholder: "An interactive control after Color Palette"})
-		]
-	}).placeAt("content");
+	function handleColorSelect(oEvent) {
+		MessageToast.show("value: " + oEvent.getParameter("value") +
+			", \n defaultAction: " + oEvent.getParameter("defaultAction"));
+	}
 
 	function generateColorPalettePopoverElements() {
 		var oCPPop, oCPPop2Colors, oCPPop7Colors;
@@ -150,8 +127,47 @@ sap.ui.define([
 		];
 	}
 
-	function handleColorSelect(oEvent) {
-		MessageToast.show("value: " + oEvent.getParameter("value") +
-			", \n defaultAction: " + oEvent.getParameter("defaultAction"));
-	}
+	var app = new App("myApp");
+	var page1 = new Page("page1", {
+		title: "Color Palette Test page",
+		titleLevel: TitleLevel.H1,
+		content: [
+			//As Popover
+			new VBox({
+				items: [
+					new Title({
+						text: "Color Palette samples where the palette is wrapped in a Popover(desktop)/Dialog (mobile)",
+						level: TitleLevel.H2,
+						titleStyle: TitleLevel.H2,
+						wrapping: true
+					}),
+					generateColorPalettePopoverElements()
+				]
+			}),
+
+			//Default Color Palette in standalone mode
+			new VBox({
+				items: [
+					new Title({
+						text: "Color Palette in standalone mode with default settings",
+						level: TitleLevel.H2,
+						titleStyle: TitleLevel.H2,
+						wrapping: true
+					}),
+					new Label({text: "Before: ", labelFor: "before"}),
+					new Input("before", {placeholder: "An interactive control before Color Palette"}),
+					new ColorPalette({
+						colorSelect: handleColorSelect
+					}),
+					new Label({text: "After: ", labelFor: "after"}),
+					new Input("after", {placeholder: "An interactive control after Color Palette"})
+				]
+			})
+		]
+	});
+
+	app.addPage(page1);
+
+	app.placeAt("content");
+
 });

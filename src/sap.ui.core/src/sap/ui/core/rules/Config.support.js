@@ -7,13 +7,11 @@
 sap.ui.define([
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/support/library",
-	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Lib",
 	"sap/ui/core/Supportability"
 ], function(
 	LoaderExtensions,
 	SupportLib,
-	XMLView,
 	Library,
 	Supportability
 ) {

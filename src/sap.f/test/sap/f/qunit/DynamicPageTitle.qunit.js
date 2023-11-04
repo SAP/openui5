@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/f/DynamicPage",
 	"sap/f/DynamicPageTitle",
-	"sap/f/library",
 	"./DynamicPageUtil",
 	"sap/ui/core/Core",
 	"sap/m/Link",
@@ -14,12 +13,11 @@ sap.ui.define([
 	"sap/m/OverflowToolbarLayoutData",
 	"sap/m/Button"
 ],
-function(
+function (
 	$,
 	Device,
 	DynamicPage,
 	DynamicPageTitle,
-	fioriLibrary,
 	DynamicPageUtil,
 	Core,
 	Link,

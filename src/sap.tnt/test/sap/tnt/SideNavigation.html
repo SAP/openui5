@@ -9,14 +9,6 @@
 				data-sap-ui-libs="sap.tnt, sap.m">
 		</script>
 		<script>
-			var oToggleBtnCompact = new sap.m.ToggleButton("toggleCompact", {
-					text: "Compact Mode",
-					pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
-					press: function () {
-					jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
-					jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
-					}
-				});
 			var model = new sap.ui.model.json.JSONModel();
 			var data = {
 				navigation: [{
@@ -245,6 +237,67 @@
 			};
 			model.setData(data);
 
+			const sideNavWithGroups = sap.tnt.SideNavigation("sideNavWithGroups", {
+				item: new sap.tnt.NavigationList({
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: "Item 1",
+							icon: "sap-icon://employee"
+						}),
+						new sap.tnt.NavigationListGroup({
+							text: "Group 1 Group 1 Group 1 Group 1 Group 1",
+							items: [
+								new sap.tnt.NavigationListItem({
+									text: "Child Item 1",
+									icon: "sap-icon://card"
+								}),
+								new sap.tnt.NavigationListItem({
+									text: "Child Item 2",
+									icon: "sap-icon://building"
+								})
+							]
+						}),
+						new sap.tnt.NavigationListGroup({
+							text: "Group 2 Group 2 Group 2 Group 2 Group 2",
+							items: [
+								new sap.tnt.NavigationListItem({
+									text: "Child Item",
+									icon: "sap-icon://card"
+								}),
+								new sap.tnt.NavigationListItem({
+									text: "Child Item",
+									icon: "sap-icon://building"
+								})
+							]
+						})
+					]
+				})
+			}).placeAt("col-0-content");
+
+			var sideNavigationWithBinding = new sap.tnt.SideNavigation({
+				item: new sap.tnt.NavigationList({
+					items: [
+						new sap.tnt.NavigationListItem({
+							text: "Item 1",
+							icon: "sap-icon://employee"
+						}),
+						new sap.tnt.NavigationListGroup({
+							text: "Group 1 Group 1 Group 1 Group 1 Group 1",
+							items: [
+								new sap.tnt.NavigationListItem({
+									text: "Child Item 1",
+									icon: "sap-icon://card"
+								}),
+								new sap.tnt.NavigationListItem({
+									text: "Child Item 2",
+									icon: "sap-icon://building"
+								})
+							]
+						})
+					]
+				})
+			}).placeAt("col-1-content");
+
 			var sideNavigationWithBinding = new sap.tnt.SideNavigation({
 				item: new sap.tnt.NavigationList({
 					items: {
@@ -337,10 +390,17 @@
 				text: "Compact Mode",
 				pressed: !sap.ui.Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
 				press: function () {
-				jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
-				jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+					jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+					jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
 				}
-			}).placeAt('col-1-header')
+			}).placeAt('col-0-header')
+
+			new sap.m.Button({
+				text: 'toggle expanded property',
+				press: function () {
+					sideNavWithGroups.setExpanded(!sideNavWithGroups.getExpanded());
+				}
+			}).placeAt('col-0-header');
 
 			new sap.m.Button({
 				text: 'toggle expanded property',
@@ -366,6 +426,10 @@
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
+		<div>
+			<div id="col-0-header"></div>
+			<div id="col-0-content"></div>
+		</div>
 		<div>
 			<div id="col-1-header"></div>
 			<div id="col-1-content" class="col-1-content"></div>

@@ -49,18 +49,17 @@ sap.ui.define([
 
 		this.clock.tick(1000);
 
-		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains('sapTntSideNavigationNotExpanded'), false, 'should not has "sapTntSideNavigationNotExpanded" class');
+		assert.strictEqual(this.sideNavigation.getDomRef().classList.contains("sapTntSideNavigationNotExpanded"), false, 'should not have "sapTntSideNavigationNotExpanded" class');
 		assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), true, 'should not collapse the NavigationList in item aggregation');
 		assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), true, 'should not collapse the NavigationList in fixedItem aggregation');
 
-		this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+		this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
 			assert.strictEqual(item.getAttribute('role'), 'tree', 'ul should have role "tree"');
 			assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE"), 'ul should have aria-roledescription "Navigation list tree"');
 		});
 
-		this.sideNavigation.$().find('.sapTntNavLIGroup.sapTntNavLIItem').each(function (index, item) {
+		this.sideNavigation.$().find('.sapTntNLIFirstLevel.sapTntNLI a').each(function (index, item) {
 			assert.strictEqual(item.getAttribute('role'), 'treeitem', 'li should have role "treeitem"');
-			assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_TREE_ITEM"), 'li should have aria-roledescription "Navigation list tree item"');
 		});
 	});
 
@@ -81,20 +80,20 @@ sap.ui.define([
 			assert.strictEqual(this.sideNavigation.getAggregation('item').getExpanded(), false, 'should collapse the NavigationList in item aggregation');
 			assert.strictEqual(this.sideNavigation.getAggregation('fixedItem').getExpanded(), false, 'should collapse the NavigationList in fixedItem aggregation');
 
-			this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+			this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
 				assert.strictEqual(item.getAttribute('role'), 'menubar', 'ul should have role "menubar"');
 				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUBAR"), 'ul should have aria-roledescription "Navigation list menu bar"');
 			});
 
-			this.sideNavigation.$().find('li:not(.sapTnTNavLIOverflow)').each(function (index, item) {
+			this.sideNavigation.$().find("li:not(.sapTntNLOverflow) a").each(function (index, item) {
 				assert.strictEqual(item.getAttribute('role'), 'menuitemradio', 'li should have role "menuitemradio"');
 				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
 			});
 
-			this.sideNavigation.$().find('li.sapTnTNavLIOverflow').each(function (index, item) {
-				assert.strictEqual(item.getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
-				assert.strictEqual(item.getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
-				assert.ok(item.classList.contains("sapTnTNavLIHiddenItem"), 'overflow item is hidden');
+			this.sideNavigation.$().find(".sapTntNLOverflow").each(function (index, item) {
+				assert.strictEqual(item.querySelector("a").getAttribute('role'), 'menuitem', 'li should have role "menuitem"');
+				assert.strictEqual(item.querySelector("a").getAttribute('aria-roledescription'), oRB.getText("NAVIGATION_LIST_ITEM_ROLE_DESCRIPTION_MENUITEM"), 'li should have aria-roledescription "Navigation list menu item"');
+				assert.ok(item.classList.contains("sapTntNLIHidden"), 'overflow item is hidden');
 			});
 
 			done();
@@ -117,8 +116,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
-		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
+		assert.strictEqual(listItem.$().find('.sapTntNLIFirstLevel').hasClass('sapTntNLISelected'), true, 'The item should have class "sapTntNLISelected"');
+		assert.strictEqual(fixedListItem.$().hasClass('sapTntNLISelected'), false, 'The class "sapTntNLISelected" should be removed from the deselected item');
 	});
 
 	QUnit.test("Switch Between active items without fixedItem aggregation", function(assert) {
@@ -139,8 +138,8 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
-		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
+		assert.strictEqual(listItem.$().find('.sapTntNLIFirstLevel').hasClass('sapTntNLISelected'), true, 'The item should have class "sapTntNLISelected"');
+		assert.strictEqual(listItem.$().find('.sapTntNLIFirstLevel').hasClass('sapTntNLISelected'), true, 'The class "sapTntNLISelected" should be removed from the deselected item');
 	});
 
 	QUnit.test('Passing null should deselect the selected item', function (assert) {
@@ -156,19 +155,19 @@ sap.ui.define([
 		// assert
 		this.sideNavigation.setSelectedItem(listItem);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(listItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().find('.sapTntNLIFirstLevel').hasClass('sapTntNLISelected'), true, 'The item should have class "sapTntNLISelected"');
 
 		this.sideNavigation.setSelectedItem(null);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), null, 'The item should be deselected');
-		assert.strictEqual(listItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(listItem.$().hasClass('sapTntNLISelected'), false, 'The item should have class "sapTntNLISelected"');
 
 		this.sideNavigation.setSelectedItem(fixedListItem);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), fixedListItem.getId(), 'The correct item should be selected');
-		assert.strictEqual(fixedListItem.$().find('.sapTntNavLIGroup').hasClass('sapTntNavLIItemSelected'), true, 'The item should have class "sapTntNavLIItemSelected"');
+		assert.strictEqual(fixedListItem.$().find('.sapTntNLIFirstLevel').hasClass('sapTntNLISelected'), true, 'The item should have class "sapTntNLISelected"');
 
 		this.sideNavigation.setSelectedItem(null);
 		assert.strictEqual(this.sideNavigation.getSelectedItem(), null, 'The item should be deselected');
-		assert.strictEqual(fixedListItem.$().hasClass('sapTntNavLIItemSelected'), false, 'The class "sapTntNavLIItemSelected" should be removed from the deselected item');
+		assert.strictEqual(fixedListItem.$().hasClass('sapTntNLISelected'), false, 'The class "sapTntNLISelected" should be removed from the deselected item');
 	});
 
 	QUnit.test('Passing null on empty control (empty aggregations) should not throw error', function (assert) {
@@ -185,7 +184,8 @@ sap.ui.define([
 	QUnit.module('Events', {
 		beforeEach: function () {
 			this.sideNavigation = new SideNavigation({
-				item: new NavigationList(),
+				item: new NavigationList({
+				}),
 				fixedItem: new NavigationList()
 			});
 			this.sideNavigation.placeAt(DOM_RENDER_LOCATION);
@@ -197,6 +197,8 @@ sap.ui.define([
 	});
 
 	QUnit.test('Select group item', function (assert) {
+		var oItem = new NavigationListItem({ text: "item" });
+
 		var eventMock = {
 			getSource: function () {
 				return this;
@@ -205,9 +207,10 @@ sap.ui.define([
 				return 'mock';
 			},
 			getParameter: function () {
-				return 'mockId';
+				return oItem;
 			}
 		};
+
 		var eventSpy = sinon.spy(function (oEvent) {
 		});
 
@@ -367,15 +370,15 @@ sap.ui.define([
 			this.sideNavigation.destroy();
 			this.sideNavigation = null;
 
+			Core.applyChanges();
 			sinon.config.useFakeTimers = true;
 		}
 	});
 
 	QUnit.test('collapsed - hidden - expanded - visible', function (assert) {
-
 		var done = assert.async();
 
-		assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be initially expanded');
+		assert.strictEqual(this.sideNavigation.$().find('.sapTntNL').attr('role'), 'tree', 'control should be initially expanded');
 
 		this.sideNavigation.setExpanded(false);
 		Core.applyChanges();
@@ -391,7 +394,7 @@ sap.ui.define([
 			this.sideNavigation.setVisible(true);
 			Core.applyChanges();
 
-			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'tree', 'control should be expanded');
+			assert.strictEqual(this.sideNavigation.$().find('.sapTntNL').attr('role'), 'tree', 'control should be expanded');
 
 			done();
 
@@ -413,7 +416,7 @@ sap.ui.define([
 			this.sideNavigation.setVisible(true);
 			Core.applyChanges();
 
-			assert.strictEqual(this.sideNavigation.$().find('.sapTntNavLI').attr('role'), 'menubar', 'control should be collapsed');
+			assert.strictEqual(this.sideNavigation.$().find('.sapTntNL').attr('role'), 'menubar', 'control should be collapsed');
 
 			done();
 
@@ -476,7 +479,7 @@ sap.ui.define([
 		this.sideNavigation.setExpanded(true);
 		this.clock.tick(1000);
 
-		this.sideNavigation.$().find('.sapTntNavLI').each(function (index, item) {
+		this.sideNavigation.$().find('.sapTntNL').each(function (index, item) {
 			assert.strictEqual(item.getAttribute('aria-roledescription'), sExpectedAriaRoleDescription, 'aria-roledescription is as expected');
 		});
 	});

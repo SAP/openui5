@@ -11,7 +11,7 @@ sap.ui.define([
 		"hideControl": "default",
 		"rename": BaseRename.createRenameChangeHandler({
 			propertyName: "text",
-			translationTextType: "XBUT"
+			translationTextType: "XTIT"
 		}),
 		"unhideControl": "default"
 	};

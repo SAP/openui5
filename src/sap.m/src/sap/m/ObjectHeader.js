@@ -16,7 +16,6 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/ui/events/KeyCodes',
 	'./ObjectHeaderRenderer',
-	'./ObjectMarker',
 	'./ObjectNumber',
 	"sap/ui/thirdparty/jquery",
 	"sap/m/ImageHelper"
@@ -34,7 +33,6 @@ sap.ui.define([
 		Text,
 		KeyCodes,
 		ObjectHeaderRenderer,
-		ObjectMarker,
 		ObjectNumber,
 		jQuery,
 		ImageHelper

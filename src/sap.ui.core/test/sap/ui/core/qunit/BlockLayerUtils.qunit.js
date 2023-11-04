@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
-	"sap/base/Log",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/m/Button"
-], function (Log, nextUIUpdate, Button) {
+], function(nextUIUpdate, Button) {
 	"use strict";
 
 	// create content div

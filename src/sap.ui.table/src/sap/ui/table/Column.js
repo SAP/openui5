@@ -14,8 +14,6 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Type",
 	"sap/ui/model/type/String",
-	// TODO: Remove in UI5 2.0
-	"sap/base/util/ObjectPath",
 	"sap/base/util/JSTokenizer",
 	"sap/base/Log"
 ], function(
@@ -29,8 +27,6 @@ sap.ui.define([
 	Sorter,
 	Type,
 	StringType,
-	// TODO: Remove in UI5 2.0
-	ObjectPath,
 	JSTokenizer,
 	Log
 ) {

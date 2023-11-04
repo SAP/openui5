@@ -2,8 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/IllustrationPool"
 ],
-	function(IllustrationPool) {
+	function() {
 		"use strict";
 	}, /* bExport= */ true);

@@ -6,9 +6,6 @@ sap.ui.define([
 	"sap/ui/table/qunit/rowmodes/sets/RowCountConstraints",
 	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
 	"sap/ui/table/Table",
-	"sap/ui/table/Column",
-	"sap/ui/table/RowAction",
-	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"
@@ -18,9 +15,6 @@ sap.ui.define([
 	RowCountConstraintsTest,
 	RowsUpdatedTest,
 	Table,
-	Column,
-	RowAction,
-	TableUtils,
 	Core,
 	qutils,
 	jQuery

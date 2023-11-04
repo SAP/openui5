@@ -6,15 +6,15 @@
  * Initialization Code and shared classes of library sap.ui.table.
  */
 sap.ui.define([
-	"sap/ui/core/Core",
-	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
-	"sap/ui/table/rowmodes/Type",
-	"sap/ui/core/library", // library dependency
-	"sap/ui/unified/library" // library dependency
+ "sap/ui/core/Core",
+ "sap/ui/table/rowmodes/Type",
+ // library dependency
+ "sap/ui/core/library",
+ // library dependency
+ "sap/ui/unified/library"
 ], function(
-	Core,
-	TreeAutoExpandMode, // TODO: Remove in UI5 2.0
-	RowModeType
+ Core,
+ RowModeType
 ) {
  "use strict";
 

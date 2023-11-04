@@ -6,18 +6,17 @@ sap.ui.define([
 	"sap/ui/unified/MenuItem",
 	"sap/m/Menu",
 	"sap/m/MenuItem",
-	"sap/ui/Device",
 	"sap/ui/core/Control",
 	"sap/ui/core/Popup",
 	"sap/ui/core/Core",
-	"sap/ui/table/qunit/TableQUnitUtils" // implicitly used via globals (e.g. createTables)
+	// implicitly used via globals (e.g. createTables)
+	"sap/ui/table/qunit/TableQUnitUtils"
 ], function(
 	TableUtils,
 	MenuUnified,
 	MenuItemUnified,
 	MenuM,
 	MenuItemM,
-	Device,
 	Control,
 	Popup,
 	oCore

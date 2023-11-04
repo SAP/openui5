@@ -209,6 +209,8 @@ describe('sap.m.MultiComboBox', function() {
 		browser.actions().sendKeys(protractor.Key.SPACE).perform();
 
 		expect(takeScreenshot()).toLookAs("long_vsh_text");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
 	});
 
 	//MultiComboBox Compact Mode

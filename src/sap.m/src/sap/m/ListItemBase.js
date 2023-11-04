@@ -1106,6 +1106,7 @@ function(
 
 			// support old bug and mimic space key handling and
 			// do not fire item's press event when item is included into selection
+			oEvent.type = "sapspace";
 			this.onsapspace(oEvent);
 
 		} else if (this.hasActiveType()) {

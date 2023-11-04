@@ -1,7 +1,6 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/table/extensions/Pointer",
@@ -9,7 +8,7 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(TableQUnitUtils, qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery, oCore) {
+], function(qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery, oCore) {
 	"use strict";
 
 	// mapping of global function calls

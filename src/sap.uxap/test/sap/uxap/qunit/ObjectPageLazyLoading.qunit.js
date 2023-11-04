@@ -1,11 +1,6 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/thirdparty/jquery",
-               "sap/ui/core/Core",
-               "sap/ui/model/json/JSONModel",
-			   "sap/uxap/ObjectPageDynamicHeaderTitle",
-               "sap/uxap/ObjectPageLayout",
-               "sap/ui/core/mvc/XMLView"],
-function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout"],
+function(jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout) {
 	"use strict";
 
 	// utility function that will be used in these tests
@@ -55,189 +50,8 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		});
 	};
 
-	var iLoadingDelay = 1000;
 	var oConfigModel = new JSONModel();
 	oConfigModel.loadData("test-resources/sap/uxap/qunit/model/ObjectPageConfig.json", {}, false);
-
-	// @deprecated Since version 1.120
-	QUnit.module("ObjectPageConfig", {
-		beforeEach: function (assert) {
-			var done = assert.async();
-			XMLView.create({
-				id: "UxAP-27_ObjectPageConfig",
-				viewName: "view.UxAP-27_ObjectPageConfig"
-			}).then(function (oView) {
-				this.oView = oView;
-				this.oComponentContainer = this.oView.byId("objectPageContainer");
-				this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
-				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				this.oComponentContainer.attachEventOnce("componentCreated", function () {
-					done();
-				});
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oView.destroy();
-		}
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("load first visible sections", function (assert) {
-		var oObjectPageLayout = this.oComponentContainer
-			.getObjectPageLayoutInstance();
-
-		var oData = oConfigModel.getData();
-		_loadBlocksData(oData);
-
-		oConfigModel.setData(oData);
-		Core.applyChanges();
-
-		var done = assert.async();
-
-		setTimeout(function() {
-			var oFirstSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
-			assert.strictEqual(oFirstSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
-
-			var oSecondSubSection = oObjectPageLayout.getSections()[0].getSubSections()[0];
-			assert.strictEqual(oSecondSubSection.getBlocks()[0]._bConnected, true, "block data loaded successfully");
-
-			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
-			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
-			done();
-		}, iLoadingDelay);
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("load first visible sections is relative to selectedSection", function (assert) {
-
-		var oObjectPageLayout = this.oComponentContainer
-			.getObjectPageLayoutInstance(),
-			secondSection;
-
-		secondSection = oObjectPageLayout.getSections()[1];
-		oObjectPageLayout.setSelectedSection(secondSection);
-
-		var aSectionBases = oObjectPageLayout._getSectionsToPreloadOnBeforeFirstRendering();
-		assert.strictEqual(aSectionBases[0].getParent(), secondSection, "first visible subSection is within the currently selectedSection");
-
-		this.oView.destroy();
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("load scrolled sections", function (assert) {
-
-		var oObjectPageLayout = this.oComponentContainer
-			.getObjectPageLayoutInstance(),
-			oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
-
-		assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded yet");
-
-		//act
-		oObjectPageLayout.scrollToSection(oObjectPageLayout.getSections()[5].getId());
-		Core.applyChanges();
-
-		var done = assert.async();
-
-		setTimeout(function() {
-
-			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport still not loaded");
-
-			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
-			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, true, "block data if target section loaded");
-			done();
-		}, iLoadingDelay);
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("model mapping for scrolled sections", function (assert) {
-
-		var oObjectPageLayout = this.oComponentContainer
-			.getObjectPageLayoutInstance();
-
-		var oDataModel = new JSONModel();
-		oDataModel.loadData("test-resources/sap/uxap/qunit/model/HRData.json", {}, false);
-
-		this.oView.setModel(oDataModel, "objectPageData");
-
-		Core.applyChanges();
-
-		var done = assert.async();
-
-		setTimeout(function() {
-
-			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
-			assert.strictEqual(oThirdSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of disconnected blocks is not loaded");
-
-			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
-			assert.strictEqual(oLastSubSection.$().find(".sapUxAPBlockBase .sapMImg").length > 0, false, "data of last connected blocks is loaded"); // TODO Verify this is correct since these tests were disabled (changed from true)
-			done();
-		}, iLoadingDelay);
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("scrollToSection with animation does not load intermediate sections", function (assert) {
-			var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
-			oData = oConfigModel.getData(),
-			done = assert.async(),
-			that = this;
-
-		_loadBlocksData(oData);
-
-		oConfigModel.setData(oData);
-		Core.applyChanges();
-
-		assert.expect(1);
-
-		function checkOnDomReady() {
-			var iSectionsCount = oObjectPageLayout.getSections().length,
-				oLastSection = oObjectPageLayout.getSections()[iSectionsCount - 1],
-				oSectionBeforeLast = oObjectPageLayout.getSections()[iSectionsCount - 2],
-				iSectionBeforeLastPositionTo = oObjectPageLayout._computeScrollPosition(oSectionBeforeLast);
-
-			// Setup: mock scrollTop of a section before the target section
-			that.stub(oObjectPageLayout, "_getHeightRelatedParameters").callsFake(function() {
-				return {
-					// mock a scrollTop where an intermediate [before the target] section is in the viewport
-					iScrollTop: iSectionBeforeLastPositionTo,
-					iScreenHeight: oObjectPageLayout.iScreenHeight
-				};
-			});
-
-			// Act: scroll with animation
-			oObjectPageLayout.scrollToSection(oLastSection.getId());
-
-			// Act: mock lazyLoading call *during animated scroll*
-			oObjectPageLayout._oLazyLoading.doLazyLoading();
-
-			// Check the intermediate [before the target] section is not loaded despite being in the viewport
-			assert.strictEqual(oSectionBeforeLast.getSubSections()[0].getBlocks()[0]._bConnected, false, "section above the target section is not loaded");
-			done();
-		}
-
-		if (oObjectPageLayout._bDomReady) {
-			checkOnDomReady();
-		} else {
-			oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", checkOnDomReady);
-		}
-	});
-
-	// @deprecated Since version 1.120
-	QUnit.test("BCP: 1970115549 - _grepCurrentTabSectionBases should always return a value", function (assert) {
-			var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
-			aSectionBases = oObjectPageLayout._aSectionBases,
-			fnCustomGetParent = function () {
-				return undefined;
-			};
-
-		oObjectPageLayout.setSelectedSection(aSectionBases[0].getId());
-
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 3, "_grepCurrentTabSectionBases returns 3 filtered sections + subsections initially");
-
-		aSectionBases[1].getParent = fnCustomGetParent;
-
-		assert.equal(oObjectPageLayout._grepCurrentTabSectionBases().length, 2, "_grepCurrentTabSectionBases returns a valid value if some of the sections parent is undefined");
-	});
 
 	QUnit.module("ObjectPageAfterRendering");
 
@@ -513,5 +327,4 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 			oObjectPageLayout.destroy();
 		}, oLazyLoading.LAZY_LOADING_EXTRA_SUBSECTION);
 	});
-
 });

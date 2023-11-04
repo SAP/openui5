@@ -1,9 +1,8 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Item",
-	"sap/ui/core/search/OpenSearchProvider",
 	"./MockServer"
-], function (Controller, Item, OpenSearchProvider, MockServer) {
+], function(Controller, Item, MockServer) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.InputSuggestionsOpenSearch.C", {
@@ -15,7 +14,7 @@ sap.ui.define([
 		onInit: function () {
 			MockServer.connectToMockProductSearchService().then(function (oService) {
 				this._oServer = oService;
-				this._oOpenSearchProvider = new OpenSearchProvider();
+				this._oOpenSearchProvider = new undefined/*OpenSearchProvider*/();
 				this._oOpenSearchProvider.setSuggestUrl(this._oServer.getRootUri() + "/{searchTerms}");
 			}.bind(this));
 		},

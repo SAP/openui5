@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/mvc/XMLView"],
-function (Core, JSONModel, XMLView) {
+	"sap/ui/model/json/JSONModel"
+],
+function(Core, JSONModel) {
 	"use strict";
 
 	// global vars
@@ -87,108 +87,4 @@ function (Core, JSONModel, XMLView) {
 			testContext.clock.tick(iLoadingDelay);
 			fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
 		};
-
-
-	QUnit.module("ObjectPage with tabs - lazy loading", {
-		beforeEach: function (assert) {
-			var done = assert.async();
-			this.clock = sinon.useFakeTimers();
-			XMLView.create({
-				id: "UxAP-27_ObjectPageConfig",
-				viewName: "view.UxAP-27_ObjectPageConfig"
-			}).then(function (oView) {
-				this.oView = oView;
-				this.oComponentContainer = this.oView.byId("objectPageContainer");
-				this.oView.setModel(oConfigModel, "objectPageLayoutMetadata");
-				this.oView.placeAt("qunit-fixture");
-				Core.applyChanges();
-				this.oComponentContainer.attachEventOnce("componentCreated", function () {
-					done();
-				});
-			}.bind(this));
-		},
-		afterEach: function () {
-			this.oView.destroy();
-			this.clock.restore();
-		}
-	});
-	QUnit.test("loading the selected section/tab", function (assert) {
-		var oObjectPageLayout = this.oComponentContainer.getObjectPageLayoutInstance(),
-			oData = oConfigModel.getData(),
-			aSections = oObjectPageLayout.getSections(),
-			aLoadedSections = [0];
-
-		fnLoadMoreBlocks(oData);
-		oConfigModel.setData(oData);
-
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-
-		// Expect the first section to be loaded by default
-		fnAssertTabsAreLoaded(assert, aSections, aLoadedSections);
-
-		// expect each section to load when selected
-		for (var i = 1; i < aSections.length; i++) {
-			fnTestSection(oObjectPageLayout, i, aLoadedSections, assert, this);
-		}
-
-		// cleanup
-		oObjectPageLayout.destroy();
-	});
-
-	QUnit.test("loading only the selected section/tab", function (assert) {
-		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
-			oData = oConfigModel.getData(),
-			aSections = oObjectPageLayout.getSections();
-
-		fnLoadMoreBlocks(oData);
-		oConfigModel.setData(oData);
-
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-
-		// load some tab > bottom subSection
-		var targetSubSection = aSections[2].getSubSections()[1],
-			precedingSubSection = aSections[2].getSubSections()[0];
-		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-		assert.ok(fnSubSectionIsloaded(targetSubSection), "target subsection is loaded");
-		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is not loaded");
-
-		// load next tab > top subSection
-		targetSubSection = aSections[3].getSubSections()[0];
-		oObjectPageLayout.scrollToSection(targetSubSection.getId(), 0);
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-		assert.ok(fnSubSectionIsloaded(targetSubSection),"target subsection is loaded");
-		assert.ok(!fnSubSectionIsloaded(precedingSubSection), "preceding subsection is still not loaded");
-	});
-
-	QUnit.test("loading in IconTab mode", function (assert) {
-		// Arrange
-		var oObjectPageLayout = this.oView.byId("objectPageContainer").getObjectPageLayoutInstance(),
-			oData = oConfigModelNoTitles.getData(),
-			aSections = oObjectPageLayout.getSections(),
-			oTargetSection;
-
-		fnLoadMoreBlocks(oData);
-		oConfigModel.setData(oData);
-
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-
-		// Act
-		oTargetSection = aSections[6];
-		oObjectPageLayout.scrollToSection(oTargetSection.getId(), 0, undefined, true); // Simulate click on IconTabBar
-		Core.applyChanges();
-		this.clock.tick(iLoadingDelay);
-
-		// Assert
-		assert.ok(fnSubSectionIsloaded(oTargetSection.getSubSections()[0]),"target subsection is loaded");
-		assert.ok(oObjectPageLayout._grepCurrentTabSectionBases().length === 2, "Section and SubSection are returned");
-
-		// Cleanup
-		oObjectPageLayout.destroy();
-	});
 });

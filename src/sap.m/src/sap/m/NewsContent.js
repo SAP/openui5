@@ -6,11 +6,10 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
 	'sap/m/FormattedText',
-	'sap/ui/Device',
 	'./NewsContentRenderer',
 	"sap/ui/events/KeyCodes"
 ],
-	function(library, Control, FormattedText, Device, NewsContentRenderer, KeyCodes) {
+	function(library, Control, FormattedText, NewsContentRenderer, KeyCodes) {
 	"use strict";
 
 	/**

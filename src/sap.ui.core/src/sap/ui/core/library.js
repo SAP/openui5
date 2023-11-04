@@ -129,8 +129,6 @@ sap.ui.define([
 		  "sap.ui.core.dnd.DragInfo",
 		  "sap.ui.core.dnd.DropInfo",
 		  "sap.ui.core.dnd.DragDropInfo",
-		  "sap.ui.core.search.OpenSearchProvider",
-		  "sap.ui.core.search.SearchProvider",
 		  "sap.ui.core.InvisibleMessage"
 		 ],
 		 extensions: {
