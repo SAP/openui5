@@ -64,7 +64,6 @@ sap.ui.define([
 
 	var oModel = new JSONModel();
 	oModel.setData({ exampleData: aData, markerTypes: aMarkerTypes });
-	sap.ui.getCore().setModel(oModel);
 
 	var oActiveMarkerHandler = function(oEvent) {
 		MessageToast.show(oEvent.getParameter("type") + " marker pressed!");
@@ -258,6 +257,7 @@ sap.ui.define([
 
 	new App({
 		initialPage: "page",
-		pages: oPage
+		pages: oPage,
+		models: oModel
 	}).placeAt("body");
 });

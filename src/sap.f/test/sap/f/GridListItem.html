@@ -61,7 +61,6 @@
 
 					var	oModel = new JSONModel();
 					oModel.setData(oData);
-					sap.ui.getCore().setModel(oModel);
 
 					var oGridList = new GridList("gridList", {
 						mode: "None",
@@ -100,7 +99,7 @@
 
 					var oApp = new App({
 						pages: [ oPage ]
-					}).placeAt("body");
+					}).setModel(oModel).placeAt("body");
 				});
 			});
 		</script>

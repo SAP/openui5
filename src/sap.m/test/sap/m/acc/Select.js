@@ -388,7 +388,6 @@ sap.ui.define([
 	]};
 
 	oModel.setData(mData);
-	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new ListItem({
 		key: "{key}",
@@ -579,5 +578,5 @@ sap.ui.define([
 			oSelectBusy,
 			new HTML({ content: "<hr>" })
 		]
-	}).addStyleClass("sapUiContentPadding")).placeAt("body");
+	}).addStyleClass("sapUiContentPadding")).setModel(oModel).placeAt("body");
 });

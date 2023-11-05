@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/core/UIArea",
 	"sap/ui/core/date/UI5Date"
 ], function(
 	qutils,
@@ -26,6 +27,7 @@ sap.ui.define([
 	jQuery,
 	KeyCodes,
 	oCore,
+	UIArea,
 	UI5Date
 ) {
 	"use strict";
@@ -95,7 +97,6 @@ sap.ui.define([
 
 
 	var oNow = UI5Date.getInstance(),
-		oCore = sap.ui.getCore(),
 		sValueFormat = "yyyy-MM-dd",
 		sDateValue1 = "2012-05-29",
 		sDateValue2 = "1984-03-26",
@@ -108,7 +109,6 @@ sap.ui.define([
 	oModel.setData({
 		dateVal : UI5Date.getInstance(+oNow)
 	});
-	oCore.setModel(oModel);
 
 	var sValue = "";
 	var bValid = false;
@@ -152,6 +152,9 @@ sap.ui.define([
 			change: handleChange
 		}).placeAt("content");
 
+	// Note: UIArea only exists after first placerAt call
+	const oUIArea = UIArea.registry.get("content");
+	oUIArea.setModel(oModel);
 
 
 	QUnit.module("Properties");

@@ -308,9 +308,6 @@ sap.ui.define([
 		// set the data for the model
 		oModel.setData(data);
 
-		// set the model to the core
-		Core.setModel(oModel);
-
 		// define the template
 		var oItemTemplate = new ColumnListItem({
 			cells : [
@@ -341,6 +338,7 @@ sap.ui.define([
 		];
 
 		var oTable = new Table({ columns : aColumns});
+		oTable.setModel(oModel);
 		oTable.bindItems("/modelData", oItemTemplate);
 		oTable.placeAt("qunit-fixture");
 

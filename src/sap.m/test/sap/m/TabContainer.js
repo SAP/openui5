@@ -114,8 +114,6 @@ sap.ui.define([
 		]
 	});
 
-	sap.ui.getCore().setModel(oProductModel);
-
 	var oTemplate = new TabContainerItem({
 		name: "{Name}",
 		additionalText: "{SupplierName}",
@@ -344,6 +342,7 @@ sap.ui.define([
 				destroyTabStripButton,
 				destroyTabContainer
 			]
-		})
+		}),
+		models: oProductModel
 	})).placeAt("body");
 });

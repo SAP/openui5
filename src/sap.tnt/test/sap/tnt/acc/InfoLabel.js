@@ -17,14 +17,11 @@ sap.ui.define([
 			{text: "color scheme 4", colorScheme: 4, icon: "sap-icon://key"},
 			{colorScheme: 6, icon: "sap-icon://add"},
 			{colorScheme: 7, icon: "sap-icon://key", tooltip: "Custom tooltip of key icon"}
-
 		]
 	};
 
 	var oModel = new JSONModel();
 	oModel.setData(oData);
-
-	sap.ui.getCore().setModel(oModel);
 
 	var oInfoLabelTemplate = new InfoLabel({
 		text: "{text}",
@@ -47,6 +44,7 @@ sap.ui.define([
 	});
 
 	var app = new App("myApp", {initialPage: "infoLabelPage"});
-	app.placeAt("body");
 	app.addPage(initialPage);
+	app.setModel(oModel);
+	app.placeAt("body");
 });

@@ -107,7 +107,6 @@ sap.ui.define([
 	]};
 
 	oModel.setData(mData);
-	sap.ui.getCore().setModel(oModel);
 
 	var oItemTemplate = new Item({
 			key: "{key}",
@@ -269,5 +268,5 @@ sap.ui.define([
 				oCompactMode
 			]
 		})
-	}).addStyleClass("sapUiContentPadding")).placeAt("body");
+	}).addStyleClass("sapUiContentPadding")).setModel(oModel).placeAt("body");
 });

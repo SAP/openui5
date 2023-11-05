@@ -1828,7 +1828,6 @@ sap.ui.define([
 		var oModel = new JSONModel({
 			value : sInitValue
 		});
-		oCore.setModel(oModel);
 
 		// arrange
 		var oInput = new InputBase({
@@ -1837,6 +1836,7 @@ sap.ui.define([
 				type: new TypeSmile()
 			}
 		});
+		oInput.setModel(oModel);
 		oInput.placeAt("content");
 		oCore.applyChanges();
 
@@ -2401,7 +2401,7 @@ sap.ui.define([
 			this.oInput._setPreferUserInteraction(true);
 			this.oInput.bindProperty("value", {path: "/value"});
 			this.oModel.setData({"value": 'Initial Value'});
-			oCore.setModel(this.oModel);
+			this.oInput.setModel(this.oModel);
 			this.oInput.placeAt("content");
 			oCore.applyChanges();
 			this.oInputFocusDomRef = this.oInput.getFocusDomRef();

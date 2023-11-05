@@ -18,7 +18,7 @@ sap.ui.define([
 		{name: "uppercaseLettersOnlyRule", rule: new MaskInputRule("uppercaseLettersOnlyRule", { maskFormatSymbol: "A", regex: "[A-Z]"})},
 		{name: "uppercaseAndNumericOnlyRule", rule: new MaskInputRule("uppercaseAndNumericOnlyRule", { maskFormatSymbol: "C", regex: "[A-Z0-9]"})}
 	];
-	sap.ui.getCore().setModel(new JSONModel({"ruleCollection": ruleCollection}));
+	var oRulesModel = new JSONModel({"ruleCollection": ruleCollection});
 	function addMask(sMaskLabelText, sMask, sMaskPlaceholder, cPlaceholderSymbol, aRules) {
 		if ( aRules ) {
 			aRules = Array.isArray(aRules) ? aRules : [aRules];
@@ -102,6 +102,7 @@ sap.ui.define([
 					})
 				]
 			})
-		]
+		],
+		models: oRulesModel
 	}).placeAt("body");
 });

@@ -51,8 +51,6 @@ sap.ui.define([
 		Localization.setLanguage("en-US");
 	});
 
-	var app = new App("myApp");
-
 	function createFooter(){
 		return new Bar({
 			contentMiddle: [new Button({
@@ -80,31 +78,29 @@ sap.ui.define([
 		}
 	}
 
-	oCore.attachParseError(
-			function(oEvent) {
-				var oElement = oEvent.getParameter("element");
-				var oValue = oEvent.getParameter('newValue');
+	function parseError(oEvent) {
+		var oElement = oEvent.getParameter("element");
+		var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
-				oInput.setValue( "ParseError: Entered value: " + oValue);
+		var oInput = Element.getElementById("I2");
+		oInput.setValue( "ParseError: Entered value: " + oValue);
 
-				if (oElement.setValueState) {
-					oElement.setValueState(ValueState.Error);
-				}
-			});
+		if (oElement.setValueState) {
+			oElement.setValueState(ValueState.Error);
+		}
+	}
 
-	oCore.attachValidationSuccess(
-			function(oEvent) {
-				var oElement = oEvent.getParameter("element");
-				var oValue = oEvent.getParameter('newValue');
+	function validationSuccess(oEvent) {
+		var oElement = oEvent.getParameter("element");
+		var oValue = oEvent.getParameter('newValue');
 
-				var oInput = oCore.byId("I2");
-				oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
+		var oInput = Element.getElementById("I2");
+		oInput.setValue( "ValidationSuccess: Entered value: " + oValue);
 
-				if (oElement.setValueState) {
-					oElement.setValueState(ValueState.None);
-				}
-			});
+		if (oElement.setValueState) {
+			oElement.setValueState(ValueState.None);
+		}
+	}
 
 	var handleFieldGroupValidation = function (oEvent) {
 		var oDTP = oEvent.getSource();
@@ -151,7 +147,6 @@ sap.ui.define([
 	oModel.setData({
 		dateValue: UI5Date.getInstance()
 	});
-	oCore.setModel(oModel);
 
 	var page1 = new Page("page1", {
 		title:"Mobile DateTimePicker",
@@ -193,7 +188,10 @@ sap.ui.define([
 		footer: createFooter()
 	});
 
-	app.addPage(page1);
-
-	app.placeAt("body");
+	var app = new App("myApp", {
+		pages: page1,
+		models: oModel,
+		parseError,
+		validationSuccess
+	}).placeAt("body");
 });

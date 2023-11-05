@@ -88,7 +88,6 @@ sap.ui.define([
 			checkbox_label : "lorem ipsum checkbox label"
 		}
 	});
-	oCore.setModel(model);
 
 	var oVsdConfig = {
 		// Factory for the 'content' aggregation for custom tabs - with or without items in it.
@@ -261,6 +260,7 @@ sap.ui.define([
 		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
+			this.oVSD.setModel(model);
 			oCore.applyChanges();
 		},
 		afterEach : function () {

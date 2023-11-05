@@ -2257,7 +2257,7 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		Core.setModel(oModel);
+		oSelectList.setModel(oModel);
 		oSelectList.placeAt("content");
 		Core.applyChanges();
 
@@ -2324,7 +2324,7 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		Core.setModel(oModel);
+		oSelectList.setModel(oModel);
 
 		oSelectList.placeAt("content");
 		Core.applyChanges();

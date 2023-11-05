@@ -291,13 +291,13 @@ sap.ui.define([
 					title: "Title",
 					text: "text with braces {{}}"
 				});
-			oCore.setModel(oModel);
 
 			this.oMessagePage = new MessagePage(messagePageId, {
 				title: "{/title}",
 				text: "{/text}",
 				description: "{/text}"
 			});
+			this.oMessagePage.setModel(oModel);
 
 			this.oMessagePage.placeAt('content');
 			oCore.applyChanges();

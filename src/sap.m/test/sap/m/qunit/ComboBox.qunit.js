@@ -215,7 +215,7 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		oCore.setModel(oModel);
+		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/rebum"));
 		oComboBox.placeAt("content");
 		oCore.applyChanges();
@@ -2502,7 +2502,7 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		oCore.setModel(oModel);
+		oComboBox.setModel(oModel);
 		oComboBox.placeAt("content");
 
 		var oSelectedItem = oComboBox.getItemByKey("8");
@@ -2587,7 +2587,7 @@ sap.ui.define([
 		};
 
 		oModel.setData(mData);
-		oCore.setModel(oModel);
+		oComboBox.setModel(oModel);
 
 		oComboBox.placeAt("content");
 		oCore.applyChanges();
@@ -3982,7 +3982,7 @@ sap.ui.define([
 		]);
 
 		oModel.setDefaultBindingMode("OneWay");
-		oCore.setModel(oModel);
+		oComboBox.setModel(oModel);
 		oComboBox.setBindingContext(oModel.getContext("/1"));
 		oComboBox.placeAt("content");
 		oCore.applyChanges();

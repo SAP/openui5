@@ -236,8 +236,7 @@ sap.ui.define([
 		initialPage: "myPage"
 	});
 
-	oCore.setModel(oModel);
-
 	oApp.addPage(oPage);
+	oApp.setModel(oModel);
 	oApp.placeAt("content");
 });

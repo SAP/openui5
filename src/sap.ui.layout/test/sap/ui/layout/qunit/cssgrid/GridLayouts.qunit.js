@@ -415,9 +415,8 @@ sap.ui.define([
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
 			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
-			var model = new JSONModel();
-			model.setData(data);
-			Core.setModel(model);
+		var model = new JSONModel();
+		model.setData(data);
 		var oGridList = new GridList("gListGrouping", {
 			customLayout: oGridBoxLayout,
 			items: {
@@ -428,7 +427,8 @@ sap.ui.define([
 						new Text({text: "{subtitle}"})
 					]
 				})
-			}
+			},
+			models: model
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
@@ -447,9 +447,9 @@ sap.ui.define([
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
 			{ title: "Grid item title 2", subtitle: "Subtitle 2", group: "Group B" }];
-			var model = new JSONModel();
-			model.setData(data);
-			Core.setModel(model);
+		var model = new JSONModel();
+		model.setData(data);
+
 		var oGridList = new GridList("gListNoGrouping", {
 			customLayout: oGridBoxLayout,
 			items: {
@@ -459,7 +459,8 @@ sap.ui.define([
 								new Text({text: "{subtitle}"})
 					]
 				})
-			}
+			},
+			models: model
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
@@ -492,11 +493,10 @@ sap.ui.define([
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
 			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
-			var model = new JSONModel();
-			model.setData(data);
-			Core.setModel(model);
+		var model = new JSONModel();
+		model.setData(data);
 
-			var oGridList = new GridList("gListGrowing", {
+		var oGridList = new GridList("gListGrowing", {
 			customLayout: oGridBoxLayout,
 			growing: true,
 			growingThreshold: 1,
@@ -507,7 +507,8 @@ sap.ui.define([
 								new Text({text:"{subtitle}"})
 					]
 				})
-			}
+			},
+			models: model
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);
@@ -524,11 +525,10 @@ sap.ui.define([
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
 			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
-			var model = new JSONModel();
-			model.setData(data);
-			Core.setModel(model);
+		var model = new JSONModel();
+		model.setData(data);
 
-			var oGridList = new GridList("gListResizing", {
+		var oGridList = new GridList("gListResizing", {
 			customLayout: new GridBoxLayout({boxWidth: "100px"}),
 			growing: true,
 			width: "500px",
@@ -539,7 +539,8 @@ sap.ui.define([
 						new Text({text: "{subtitle}"})
 					]
 				})
-			}
+			},
+			models: model
 		});
 
 		oGridList.placeAt(DOM_RENDER_LOCATION);

@@ -638,11 +638,9 @@ sap.ui.define([
 	];
 	var oModel = new JSONModel();
 	oModel.setData({modelData: aAppointments});
-	sap.ui.getCore().setModel(oModel);
 
 	var oStateModel = new JSONModel();
 	oStateModel.setData({legendShown: false});
-	sap.ui.getCore().setModel(oStateModel, "stateModel");
 
 	var oDayView = new SinglePlanningCalendarDayView({
 			key: "DayView",
@@ -982,6 +980,10 @@ sap.ui.define([
 		footer: new Bar()
 	});
 	new App({
-		pages: oPage
+		pages: oPage,
+		models: {
+			"undefined": oModel,
+			"stateModel": oStateModel
+		}
 	}).placeAt("body");
 });

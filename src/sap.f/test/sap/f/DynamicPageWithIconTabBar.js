@@ -35,7 +35,6 @@ sap.ui.define([
 			{id: 4572, name: "Magna Aliqua", amount: 5, price: 23.45, status: "Open"}
 		]
 	});
-	sap.ui.getCore().setModel(oModel);
 
 	var aTabItems = [];
 	for (var i = 1; i <= 30; i++) {
@@ -174,5 +173,5 @@ sap.ui.define([
 	var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter).addStyleClass("sapUiNoContentPadding");
 
 	var oApp = new App();
-	oApp.addPage(oPage).placeAt("body");
+	oApp.addPage(oPage).setModel(oModel).placeAt("body");
 });
