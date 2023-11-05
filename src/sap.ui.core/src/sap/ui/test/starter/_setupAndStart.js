@@ -423,8 +423,8 @@ sap.ui.define([
 			pTestEnv = pTestEnv.then(function() {
 				return new Promise(function(resolve, reject) {
 					sap.ui.require(["sap/ui/core/Core"], function(core) {
-						core.boot();
-						core.attachInit(resolve);
+						core.boot?.(); // method no longer exists with new bootstrap
+						core.ready(resolve);
 					}, reject);
 				});
 			});
