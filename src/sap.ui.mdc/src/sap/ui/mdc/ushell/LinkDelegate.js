@@ -253,7 +253,7 @@ sap.ui.define([
 					SapBaseLog.error("LinkDelegate: Service 'Navigation' or 'URLParsing' could not be obtained");
 					return Promise.resolve(oNavigationTargets.availableActions, oNavigationTargets.ownNavigation);
 				}
-				const oControl = sap.ui.getCore().byId(sSourceControlId);
+				const oControl = Element.getElementById(sSourceControlId);
 				const oAppComponent = Utils.getAppComponentForControl(oControl);
 				const aParams = aSemanticObjects.map(function(sSemanticObject) {
 					return {

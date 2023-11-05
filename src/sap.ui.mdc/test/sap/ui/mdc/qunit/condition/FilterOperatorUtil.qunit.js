@@ -6,6 +6,7 @@
 /*eslint no-warning-comments: 0 */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/condition/RangeOperator",
@@ -26,9 +27,9 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
-	"sap/ui/mdc/enums/OperatorOverwrite",
-	"sap/ui/core/Core"
+	"sap/ui/mdc/enums/OperatorOverwrite"
 ], function(
+	Library,
 	FilterOperatorUtil,
 	Operator,
 	RangeOperator,
@@ -49,12 +50,11 @@ sap.ui.define([
 	UniversalDateUtils,
 	UI5Date,
 	mLibrary,
-	OperatorOverwrite,
-	Core
+	OperatorOverwrite
 ) {
 	"use strict";
 
-	const mdcMessageBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+	const mdcMessageBundle = Library.getResourceBundleFor("sap.ui.mdc");
 
 	QUnit.module("Operator", {
 		beforeEach: function() {

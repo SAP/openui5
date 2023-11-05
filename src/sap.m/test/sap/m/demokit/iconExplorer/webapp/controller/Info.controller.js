@@ -1,9 +1,9 @@
 sap.ui.define([
+	"sap/ui/core/Theming",
 	"sap/ui/demo/iconexplorer/controller/BaseController",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/library",
-	"sap/ui/core/Core"
-], function (BaseController, JSONModel, mobileLibrary, Core) {
+	"sap/m/library"
+], function (Theming, BaseController, JSONModel, mobileLibrary) {
 	"use strict";
 
 	var SUPPORTED_FONTS = {
@@ -59,7 +59,7 @@ sap.ui.define([
 			var oConfigs = this.getOwnerComponent()._oFontConfigs;
 			var sDownloadURI = oConfigs[sFontName].downloadURI || oConfigs[sFontName].fontURI;
 
-			if (Core.getConfiguration().getTheme().startsWith("sap_horizon")) {
+			if (Theming.getTheme().startsWith("sap_horizon")) {
 				sDownloadURI = oConfigs[sFontName].downloadURIForHorizon || sDownloadURI;
 			}
 

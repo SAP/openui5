@@ -73,7 +73,7 @@ sap.ui.define([
 
 		assert.notStrictEqual(oCore.createRenderManager, undefined, "function createRenderManager on sap.ui.core.Core instance must be defined");
 
-		var oCoreRenderManager = oCore.createRenderManager();
+		var oCoreRenderManager = new RenderManager().getInterface();
 		assert.deepEqual(Object.keys(oCoreRenderManager), Object.keys(oRenderManager.getInterface()), "calling createRenderManager on Core instance must deliver the RenderManager interface");
 		oCoreRenderManager.destroy();
 	});
@@ -139,7 +139,7 @@ sap.ui.define([
 		oCore.attachThemeChanged(handler);
 
 		//call to #notifyContentDensityChanged
-		oCore.notifyContentDensityChanged();
+		Theming.notifyContentDensityChanged();
 	});
 
 	QUnit.test("testSetThemeRoot", function(assert) {

@@ -1,7 +1,10 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	'sap/ui/core/CalendarType',
 	'sap/ui/core/Configuration',
+	"sap/ui/core/ControlBehavior",
 	'sap/ui/core/Core',
 	'sap/ui/core/Lib',
 	'sap/ui/core/date/CalendarWeekNumbering',
@@ -13,9 +16,9 @@ sap.ui.define([
 	"sap/base/config/GlobalConfigurationProvider",
 	'../routing/HistoryUtils',
 	'sap/ui/base/config/URLConfigurationProvider',
-	'sap/ui/core/LocaleData' // only used indirectly via Configuration.getCalendarType
-], function(CalendarType, Configuration, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log,
-		GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
+	// only used indirectly via Configuration.getCalendarType
+	'sap/ui/core/LocaleData'
+], function(Formatting, Localization, CalendarType, Configuration, ControlBehavior, Core, Library, CalendarWeekNumbering, TimezoneUtil, Theming, Security, BaseConfig, Log, GlobalConfigurationProvider, HistoryUtils, URLConfigurationProvider/*, LocaleData*/) {
 	"use strict";
 
 	var browserUrl = {
@@ -168,13 +171,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("getter and setter for option calendarWeekNumbering", function(assert) {
-		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
+		assert.strictEqual(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.Default);
 
-		assert.ok(Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), Configuration);
-		assert.strictEqual(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
+		assert.ok(Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.ISO_8601), Configuration);
+		assert.strictEqual(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601);
 
 		assert.throws(function() {
-			Configuration.setCalendarWeekNumbering("invalid");
+			Formatting.setCalendarWeekNumbering("invalid");
 		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
@@ -193,10 +196,10 @@ sap.ui.define([
 					this.changes.push(changes);
 				}.bind(this)
 			};
-			Configuration.setRTL(null);
-			Configuration.setLanguage("en");
-			Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
-			Configuration.setCalendarType("Gregorian");
+			Localization.setRTL(null);
+			Localization.setLanguage("en");
+			Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+			Formatting.setCalendarType("Gregorian");
 			this.oConfig = Configuration;
 		}
 	});
@@ -505,7 +508,7 @@ sap.ui.define([
 			}.bind(this));
 
 			// verify results
-			assert.equal(Configuration.getFormatSettings().getLegacyNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
+			assert.equal(Formatting.getABAPNumberFormat(), data.expected, "Value of number format must be '" + data.expected + "'.");
 		}.bind(this));
 		oStub.restore();
 	});
@@ -549,7 +552,7 @@ sap.ui.define([
 				return oBaseStub.wrappedMethod.call(this, mParameters);
 			}.bind(this));
 
-			assert.equal(Configuration.getFormatSettings().getLegacyDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
+			assert.equal(Formatting.getABAPDateFormat(), data.expected, "Value of date format must be '" + data.expected + "'.");
 		});
 		oStub.restore();
 		oBaseStub.restore();
@@ -585,7 +588,7 @@ sap.ui.define([
 				return oBaseStub.wrappedMethod.call(this, mParameters);
 			}.bind(this));
 
-			assert.equal(Configuration.getFormatSettings().getLegacyTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
+			assert.equal(Formatting.getABAPTimeFormat(), data.expected, "Value of time format must be '" + data.expected + "'.");
 		});
 		oStub.restore();
 		oBaseStub.restore();
@@ -612,7 +615,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// verify results
-		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
+		assert.equal(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.ISO_8601,
 			'calendarWeekNumbering set via URL');
 		oStub.restore();
 		oBaseStub.restore();
@@ -637,7 +640,7 @@ sap.ui.define([
 		}.bind(this));
 
 		// verify results
-		assert.equal(Configuration.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
+		assert.equal(Formatting.getCalendarWeekNumbering(), CalendarWeekNumbering.Default,
 			'no value in URL leads to default value');
 		oStub.restore();
 		oBaseStub.restore();
@@ -645,14 +648,14 @@ sap.ui.define([
 
 	QUnit.test("Read calendarWeekNumbering from URL - invalid value", function(assert) {
 		assert.throws(function() {
-			Configuration.setCalendarWeekNumbering("invalid");
+			Formatting.setCalendarWeekNumbering("invalid");
 		}, new TypeError("Unsupported Enumeration value for calendarWeekNumbering, valid values are: "
 				+ "Default, ISO_8601, MiddleEastern, WesternTraditional"));
 	});
 
 	QUnit.module("Timezone", {
 		beforeEach: function(assert) {
-			Configuration.setLanguage("en");
+			Localization.setLanguage("en");
 			BaseConfig._.invalidate();
 		}
 	});
@@ -669,7 +672,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		assert.equal(Localization.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 		oStub.restore();
 	});
 
@@ -684,7 +687,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(Configuration.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
+		assert.equal(Localization.getTimezone(), 'America/Los_Angeles', 'America/Los_Angeles is set');
 		oStub.restore();
 	});
 
@@ -700,7 +703,7 @@ sap.ui.define([
 		});
 
 		// verify results
-		assert.equal(Configuration.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
+		assert.equal(Localization.getTimezone(), sLocalTimezone, "fallback to '" + sLocalTimezone + "'");
 		oStub.restore();
 	});
 
@@ -731,7 +734,7 @@ sap.ui.define([
 	QUnit.test("Invalid animation mode", function(assert) {
 		this.mParams.sapUiAnimationMode = "someuUnsupportedStringValue";
 		assert.throws(
-			function() { Configuration.getAnimationMode(); },
+			function() { ControlBehavior.getAnimationMode(); },
 			new TypeError("Unsupported Enumeration value for sapUiAnimationMode, valid values are: full, basic, minimal, none"),
 			"Unsupported value for animation mode should throw an error."
 		);
@@ -743,7 +746,7 @@ sap.ui.define([
 				BaseConfig._.invalidate();
 				var sAnimationMode = AnimationMode[sAnimationModeKey];
 				this.mParams.sapUiAnimationMode = sAnimationMode;
-				assert.equal(Configuration.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
+				assert.equal(ControlBehavior.getAnimationMode(), sAnimationMode, "Test for animation mode: " + sAnimationMode);
 			}
 		}
 	});
@@ -756,10 +759,10 @@ sap.ui.define([
 		},
 		beforeEach: function() {
 			// Restore default animation mode
-			Configuration.setAnimationMode(AnimationMode.full);
+			ControlBehavior.setAnimationMode(AnimationMode.full);
 		},
 		afterEach: function() {
-			Configuration.setAnimationMode(AnimationMode.minimal);
+			ControlBehavior.setAnimationMode(AnimationMode.minimal);
 		}
 	});
 

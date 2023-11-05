@@ -3,6 +3,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/config",
 	"sap/base/config/GlobalConfigurationProvider",
+	"sap/base/i18n/Formatting",
+	"sap/base/i18n/Localization",
 	"sap/ui/base/config/URLConfigurationProvider",
 	"sap/ui/core/Configuration",
 	"sap/ui/core/Locale",
@@ -11,6 +13,8 @@ sap.ui.define([
 	Log,
 	BaseConfig,
 	GlobalConfigurationProvider,
+	Formatting,
+	Localization,
 	URLConfigurationProvider,
 	Configuration,
 	Locale,
@@ -49,7 +53,7 @@ sap.ui.define([
 				});
 
 				// reset sapLogonLanguage
-				Configuration.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
+				Formatting.setCalendarWeekNumbering(CalendarWeekNumbering.Default);
 				BaseConfig._.invalidate();
 				return Configuration;
 			};
@@ -78,30 +82,30 @@ sap.ui.define([
 	].forEach((data) => {
 		QUnit.test(data[4], (assert) => {
 			this.setupConfig("de", data[0]);
-			assert.equal(Configuration.getLanguage(), data[1], "the effective language should be '" + data[1] + "'");
-			assert.equal(Configuration.getLanguageTag(), data[2], "the effective language tag should be '" + data[2] + "'");
-			assert.equal(Configuration.getSAPLogonLanguage(), data[3], "the SAP Logon language should be '" + data[3] + "'");
+			assert.equal(Localization.getLanguage(), data[1], "the effective language should be '" + data[1] + "'");
+			assert.equal(Localization.getLanguageTag().toString(), data[2], "the effective language tag should be '" + data[2] + "'");
+			assert.equal(Localization.getSAPLogonLanguage(), data[3], "the SAP Logon language should be '" + data[3] + "'");
 		});
 	});
 
 	QUnit.test("error reporting", (assert) => {
 		sinon.stub(Log, 'warning').callThrough();
 		this.setupConfig("de", {"sap-language":"1E", "sap-locale": "en-GB"});
-		Configuration.getLanguage();
+		Localization.getLanguage();
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-locale");
 		this.setupConfig("de", {"sap-language":"1E", "sap-ui-language":"en-GB"});
-		Configuration.getLanguage();
+		Localization.getLanguage();
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
 		this.setupConfig(null, {"sap-language" :"1E"});
-		Configuration.getLanguage();
+		Localization.getLanguage();
 		assert.ok(Log.warning.calledWith(sinon.match(/1E/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
 		assert.throws(() => {
 			this.setupConfig("de", {"sap-locale":"1E","sap-language":"1E"});
-			Configuration.getLanguage();
+			Localization.getLanguage();
 		}, "setting an invalid (non-BCP-47) sap-locale should cause an error");
 		assert.throws(() => {
 			this.setupConfig("de", {"sap-ui-language":"1E", "sap-language":"1E"});
-			Configuration.getLanguage();
+			Localization.getLanguage();
 		}, "setting an invalid (non-BCP-47) sap-ui-language should cause an error");
 	});
 
@@ -130,44 +134,44 @@ sap.ui.define([
 
 		//window['sap-ui-config'].formatlocale = 'fr-CH'; // Note: Configuration expects sap-ui-config names converted to lowercase (done by bootstrap)
 		this.setupConfig("fr-FR", {});
-		Configuration.setFormatLocale("fr-CH");
-		assert.equal(Configuration.getLanguageTag(), "fr-FR", "language should be fr-FR");
-		assert.equal(Configuration.getFormatLocale(), "fr-CH", "format locale string should be fr-CH");
-		assert.ok(Configuration.getFormatSettings().getFormatLocale(), "format locale should exist");
-		assertCoreLocale(Configuration.getFormatSettings().getFormatLocale());
-		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "fr-CH", "format locale should be fr-CH");
+		Formatting.setLanguageTag("fr-CH");
+		assert.equal(Localization.getLanguageTag().toString(), "fr-FR", "language should be fr-FR");
+		assert.equal(new Locale(Formatting.getLanguageTag()), "fr-CH", "format locale string should be fr-CH");
+		assert.ok(new Locale(Formatting.getLanguageTag()), "format locale should exist");
+		assertCoreLocale(new Locale(Formatting.getLanguageTag()));
+		assert.equal(new Locale(Formatting.getLanguageTag()).toString(), "fr-CH", "format locale should be fr-CH");
 
 		//window['sap-ui-config'].formatlocale = null;
 		this.setupConfig("fr-FR", {});
-		Configuration.setFormatLocale(null);
-		assert.equal(Configuration.getLanguageTag(), "fr-FR", "language should be fr-FR");
-		assert.equal(Configuration.getFormatLocale(), "fr-FR", "format locale string should be fr-CH");
-		assert.ok(Configuration.getFormatSettings().getFormatLocale(), "format locale should exist");
-		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "fr-FR", "format locale should be fr-CH");
+		Formatting.setLanguageTag(null);
+		assert.equal(Localization.getLanguageTag().toString(), "fr-FR", "language should be fr-FR");
+		assert.equal(new Locale(Formatting.getLanguageTag()), "fr-FR", "format locale string should be fr-CH");
+		assert.ok(new Locale(Formatting.getLanguageTag()), "format locale should exist");
+		assert.equal(new Locale(Formatting.getLanguageTag()).toString(), "fr-FR", "format locale should be fr-CH");
 
 		this.setupConfig("de", {"sap-language": "EN", "sap-ui-formatLocale": "en-AU"});
-		assert.equal(Configuration.getLanguageTag(), "en", "language should be en");
-		assert.equal(Configuration.getFormatLocale(), "en-AU", "format locale string should be en-AU");
-		assert.ok(Configuration.getFormatSettings().getFormatLocale(), "format locale should exist");
-		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "en-AU", "format locale should be en-AU");
+		assert.equal(Localization.getLanguageTag().toString(), "en", "language should be en");
+		assert.equal(new Locale(Formatting.getLanguageTag()), "en-AU", "format locale string should be en-AU");
+		assert.ok(new Locale(Formatting.getLanguageTag()), "format locale should exist");
+		assert.equal(new Locale(Formatting.getLanguageTag()).toString(), "en-AU", "format locale should be en-AU");
 
 		this.setupConfig();
-		Configuration.setFormatLocale("en-CA");
-		assert.equal(Configuration.getFormatLocale(), "en-CA", "format locale string should be en-CA");
-		assert.ok(Configuration.getFormatSettings().getFormatLocale(), "format locale should exist");
-		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "en-CA", "format locale should be en-CA");
+		Formatting.setLanguageTag("en-CA");
+		assert.equal(new Locale(Formatting.getLanguageTag()), "en-CA", "format locale string should be en-CA");
+		assert.ok(new Locale(Formatting.getLanguageTag()), "format locale should exist");
+		assert.equal(new Locale(Formatting.getLanguageTag()).toString(), "en-CA", "format locale should be en-CA");
 
 		this.setupConfig("de", {"sap-language": "EN"});
-		Configuration.setFormatLocale();
-		assert.equal(Configuration.getFormatLocale(), "en", "format locale string should be en");
-		assert.ok(Configuration.getFormatSettings().getFormatLocale(), "format locale should exist");
-		assert.equal(Configuration.getFormatSettings().getFormatLocale().toString(), "en", "format locale should be en");
+		Formatting.setLanguageTag();
+		assert.equal(new Locale(Formatting.getLanguageTag()), "en", "format locale string should be en");
+		assert.ok(new Locale(Formatting.getLanguageTag()), "format locale should exist");
+		assert.equal(new Locale(Formatting.getLanguageTag()).toString(), "en", "format locale should be en");
 
 		assert.throws(() => {
-			Configuration.setFormatLocale('6N');
+			Formatting.setLanguageTag('6N');
 		}, "setting an invalid (non-BCP-47) format locale should cause an error");
 		assert.throws(() => {
-			Configuration.setFormatLocale(new Date());
+			Formatting.setLanguageTag(new Date());
 		}, "setting a non-string value as format locale should cause an error");
 	});
 
@@ -179,29 +183,29 @@ sap.ui.define([
 
 	QUnit.test("language via url, locale+language via API", (assert) => {
 		this.setupConfig("de", {"sap-language": "6N"});
-		assert.equal(Configuration.getLanguage(), "en-GB", "the effective language still should be 'en-GB'");
-		assert.equal(Configuration.getLanguageTag(), "en-GB", "the effective language tag still should be 'en-GB'");
-		assert.equal(Configuration.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
+		assert.equal(Localization.getLanguage(), "en-GB", "the effective language still should be 'en-GB'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-GB", "the effective language tag still should be 'en-GB'");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
 		this.setupConfig("de", {"sap-language":"1E"});
-		assert.equal(Configuration.getLanguage(), "de", "the effective language still should be 'de'");
-		assert.equal(Configuration.getLanguageTag(), "de", "the effective language tag still should be 'de'");
-		assert.equal(Configuration.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '6N' already");
+		assert.equal(Localization.getLanguage(), "de", "the effective language still should be 'de'");
+		assert.equal(Localization.getLanguageTag().toString(), "de", "the effective language tag still should be 'de'");
+		assert.equal(Localization.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '6N' already");
 
 		// without the second parameter, the sap language now would be 'EN' only
-		Configuration.setLanguage("en-GB");
-		assert.equal(Configuration.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(Configuration.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(Configuration.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
+		Localization.setLanguage("en-GB");
+		assert.equal(Localization.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
 
 		// but with the second parameter, everything should be fine
-		Configuration.setLanguage("en-GB", "6N");
-		assert.equal(Configuration.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(Configuration.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(Configuration.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
+		Localization.setLanguage("en-GB", "6N");
+		assert.equal(Localization.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(Localization.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
 
-		Configuration.setLanguage("en-GB", "1E");
-		assert.equal(Configuration.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
-		assert.equal(Configuration.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(Configuration.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '1E'");
+		Localization.setLanguage("en-GB", "1E");
+		assert.equal(Localization.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(Localization.getLanguageTag().toString(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(Localization.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '1E'");
 	});
 });

@@ -1,10 +1,12 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/integration/cards/filters/ComboBoxFilter",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core"
-], function (
+], function(
+	Element,
 	ComboBoxFilter,
 	Card,
 	Core
@@ -212,7 +214,7 @@ sap.ui.define([
 		var oCBF = new ComboBoxFilter({
 			config: oConfig
 		});
-		var oLabel = Core.byId(oCBF.getField().getAriaLabelledBy()[0]);
+		var oLabel = Element.getElementById(oCBF.getField().getAriaLabelledBy()[0]);
 
 		// Assert
 		assert.ok(oLabel.getDomRef(), "Hidden label is created and added");

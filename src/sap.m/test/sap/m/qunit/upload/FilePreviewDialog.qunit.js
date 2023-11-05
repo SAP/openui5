@@ -1,12 +1,13 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/m/upload/UploadSetwithTable",
+	"sap/ui/core/Element",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/m/upload/FilePreviewDialog",
 	"./UploadSetwithTableTestUtils",
 	"sap/ui/thirdparty/jquery"
-], function (UploadSetwithTable, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
+], function(UploadSetwithTable, Element, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
 	"use strict";
 
 
@@ -34,7 +35,7 @@ sap.ui.define([
 
 		this.oUploadSetwithTable.setPreviewDialog(associatedControl);
 
-		const oAssociatedControlRef = oCore.byId(this.oUploadSetwithTable.getPreviewDialog());
+		const oAssociatedControlRef = Element.getElementById(this.oUploadSetwithTable.getPreviewDialog());
 		assert.ok(oAssociatedControlRef, "FilePreviewDialog Instance created successfully");
 	});
 
@@ -43,7 +44,7 @@ sap.ui.define([
 
 		this.oUploadSetwithTable.setPreviewDialog(associatedControl);
 
-		const oAssociatedControlRef = oCore.byId(this.oUploadSetwithTable.getPreviewDialog());
+		const oAssociatedControlRef = Element.getElementById(this.oUploadSetwithTable.getPreviewDialog());
 		assert.equal(oAssociatedControlRef.getShowCarouselArrows(), true, "showCarouselArrows is true by default");
 		oAssociatedControlRef.setShowCarouselArrows(false);
 		assert.equal(oAssociatedControlRef.getShowCarouselArrows(), false, "showCarouselArrows is set to false");

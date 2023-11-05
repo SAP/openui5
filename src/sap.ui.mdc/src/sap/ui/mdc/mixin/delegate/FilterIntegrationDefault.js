@@ -4,12 +4,12 @@
 
 // module:sap/ui/mdc/mixin/delegate/FilterIntegrationDefault
 sap.ui.define([
+	"sap/ui/core/Element",
 	"sap/ui/mdc/util/FilterUtil",
-	"sap/ui/core/Core",
 	"sap/ui/model/Filter"
 ], (
+	Element,
 	FilterUtil,
-	Core,
 	Filter) => {
 	"use strict";
 
@@ -23,7 +23,7 @@ sap.ui.define([
 
 	function _createOuterFilter (oControl, oTypeMap) {
 		const sFilter = oControl.getFilter();
-		const oFilter = sFilter && Core.byId(sFilter);
+		const oFilter = sFilter && Element.getElementById(sFilter);
 		return _createFilterFromExternalConditions(oFilter, oTypeMap);
 	}
 
