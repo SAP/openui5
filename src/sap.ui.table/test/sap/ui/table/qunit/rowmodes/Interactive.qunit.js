@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
+	"sap/ui/table/rowmodes/Interactive",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
@@ -20,6 +21,7 @@ sap.ui.define([
 	Table,
 	Column,
 	RowAction,
+	InteractiveRowMode,
 	TableUtils,
 	Core,
 	qutils,
@@ -31,7 +33,7 @@ sap.ui.define([
 	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Interactive"},
+		rowMode: new InteractiveRowMode(),
 		rows: {path: "/"}
 	});
 

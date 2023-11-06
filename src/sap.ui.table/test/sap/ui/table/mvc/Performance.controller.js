@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/table/Table",
 	"sap/ui/table/Column",
+	"sap/ui/table/rowmodes/Auto",
 	"sap/m/Text",
 	"sap/m/Label",
 	"sap/ui/core/mvc/Controller",
@@ -14,6 +15,7 @@ sap.ui.define([
 ], function(
 	Table,
 	Column,
+	AutoRowMode,
 	Text,
 	Label,
 	Controller,
@@ -43,7 +45,7 @@ sap.ui.define([
 
 			if (!oSettings) {
 				oSettings = {
-					rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
+					rowMode: new AutoRowMode(),
 					jsonModel: true,
 					testSequence: ["bindTable", "renderTable"],
 					dataLength: 200,

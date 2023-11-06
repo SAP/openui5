@@ -33,7 +33,7 @@ sap.ui.define([
 	var aDensities = ["sapUiSizeCozy", "sapUiSizeCompact", "sapUiSizeCondensed", undefined];
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
+		rowMode: new AutoRowMode(),
 		rows: {path: "/"}
 	});
 

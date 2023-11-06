@@ -3,16 +3,18 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated.ODataV2",
-	"sap/ui/table/Table"
+	"sap/ui/table/Table",
+	"sap/ui/table/rowmodes/Interactive"
 ], function(
 	TableQUnitUtils,
 	RowsUpdatedTest,
-	Table
+	Table,
+	InteractiveRowMode
 ) {
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Interactive"},
+		rowMode: new InteractiveRowMode(),
 		rows: {path: "/Products"}
 	});
 
