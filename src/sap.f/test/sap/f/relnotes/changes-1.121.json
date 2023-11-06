@@ -1,7 +1,34 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "4a16709820f3ebc0d65886d8087fa6b279363924",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: fix not visible column",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126866"
+          }
+        ]
+      },
+      {
+        "id": "14eed81026df8c27714e3e6705273fb883d8fa92",
+        "type": "FIX",
+        "text": " sap.f.FlexibleColumnLayout: Reveal/conceal mechanism fixed"
+      },
+      {
+        "id": "eb065ab90e63a40aae5aa1f0a1aa7104cd3e5a39",
+        "type": "FIX",
+        "text": " sap.f.SidePanel: actionBarExpanded now works when there is only one action item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370132714"
+          }
+        ]
+      },
       {
         "id": "b7a62857a6efe6760afc17d6469d6d5e3172b426",
         "type": "FIX",
@@ -10,6 +37,17 @@
           {
             "type": "BCP",
             "reference": "2370115780"
+          }
+        ]
+      },
+      {
+        "id": "1904bb6ffe08b6d5f54fa45b06d9cdd044d965d2",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix RTA for content of DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008317072023"
           }
         ]
       },

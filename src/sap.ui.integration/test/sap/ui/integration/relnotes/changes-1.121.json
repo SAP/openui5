@@ -1,7 +1,12 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "58fc4a9ef32501eaa5d6ab467d9a9389d5386b84",
+        "type": "FEATURE",
+        "text": " Integration Cards: Search filter is no longer experimental"
+      },
       {
         "id": "58b5765cb4dba75bb868ab22369bc5b3c09e1741",
         "type": "FEATURE",

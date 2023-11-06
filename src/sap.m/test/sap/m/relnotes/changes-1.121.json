@@ -1,7 +1,122 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "a08755a292aaabc2cc8f5a4db7825ae80e0cd500",
+        "type": "FIX",
+        "text": " m.Table: Enter should fire selectionChange in SingleSelectMaster",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370133922"
+          }
+        ]
+      },
+      {
+        "id": "ff48633ed3c974b8b29f1b2ec3a10e3f466b9774",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: Add reveal configuration in designtime",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380093723"
+          }
+        ]
+      },
+      {
+        "id": "1c87cb623d5b9591458bda6e66f2df865999a896",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: remove excess spacing in popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2280175248"
+          }
+        ]
+      },
+      {
+        "id": "c6299f7c5a1d316ec0b226d6b10a13c651e421d0",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Truncate one long token on rerendering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370134050"
+          }
+        ]
+      },
+      {
+        "id": "bdfa50f428ddaf962314732b8579590f9415265c",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: large images as icons don't break the control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004379492023"
+          }
+        ]
+      },
+      {
+        "id": "cbfc474488f5d176a1f0ec3baf614811311a0fe9",
+        "type": "FIX",
+        "text": " sap.m.Popover: Scroll overlapping is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380127693"
+          }
+        ]
+      },
+      {
+        "id": "7e01539f3fe3020413fe3ca1d359609e2881d918",
+        "type": "FIX",
+        "text": " sap.m.Input: Tabular suggestions are now always highlighted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370106962"
+          }
+        ]
+      },
+      {
+        "id": "db27660cbbff99d90db82a87c0a043d1d5d4ef9d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      },
+      {
+        "id": "f61c987c2e2f75d4bbcaf18594396a862de47afc",
+        "type": "FIX",
+        "text": " sap.m.WizardProgressNavigator: onsapspace handling corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126272"
+          }
+        ]
+      },
+      {
+        "id": "f8cbff5768e506c6316ca1c9847e63d54a3dde16",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust accessibility semantics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129616"
+          }
+        ]
+      },
+      {
+        "id": "b210a3d9a5609a4942d90666a56e3d409df402a1",
+        "type": "FEATURE",
+        "text": " sap.m.SinglePlanningCalendar: Visualise overflowing appointments"
+      },
       {
         "id": "ec9f967440c83e73eb9cf479e7222d8f6c2a6374",
         "type": "FIX",

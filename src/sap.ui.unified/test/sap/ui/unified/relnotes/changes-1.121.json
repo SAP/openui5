@@ -1,7 +1,29 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "a69121e57bb0995f9385f6662f99b36d6f23ebf7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Align focus high contrast style",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380104931"
+          }
+        ]
+      },
+      {
+        "id": "f8cbff5768e506c6316ca1c9847e63d54a3dde16",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: adjust accessibility semantics",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370129616"
+          }
+        ]
+      },
       {
         "id": "41a889685707129482a9fc63cf4929d985aced56",
         "type": "FIX",

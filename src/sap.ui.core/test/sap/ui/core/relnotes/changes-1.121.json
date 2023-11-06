@@ -1,7 +1,71 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "1743ae8028c12030e1ce534bb6230d4919abdb5a",
+        "type": "FIX",
+        "text": " Revert \"sap.base.util.now: Migrate performance.timing\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370137732"
+          }
+        ]
+      },
+      {
+        "id": "35c2e0470ef71c90f767e5d51184240a63cb31eb",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Enabled support for grouping items"
+      },
+      {
+        "id": "10069c7654902dfb252f268ef1b3b35452a2aa74",
+        "type": "FIX",
+        "text": " sap.base.util.now: Migrate performance.timing"
+      },
+      {
+        "id": "fc8a68c5ddd9f990ae6fc6b461b0ad3c43f18a01",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" after the current call stack finishes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "00dd177503c5f23fb4e4bfc7f79785e829fda9a2",
+        "type": "FIX",
+        "text": " sap.ui.core - MockSever Head Request not catched on ABAP",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370120554"
+          }
+        ]
+      },
+      {
+        "id": "ac04fe2e25020135c0da04c2bfcb47ff08b25640",
+        "type": "FEATURE",
+        "text": " Rename sap/ui/base/Formatting.(get|set)LegacyDateCalendarCustomizing to sap/ui/base/Formatting.(get|set)CustomIslamicCalendarData"
+      },
+      {
+        "id": "42ad51dbdf02c768e3cf034720e82a4ce2377ee8",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/search classes"
+      },
+      {
+        "id": "cb218ef35e4c8e59d4f9c045813b55b3c79f08ea",
+        "type": "FIX",
+        "text": " ManagedObjectMetadata: Introduce missing 'defaultClass' setting for aggregations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
       {
         "id": "5033f63bc90b221699dfbf7ed86bd07f15853ead",
         "type": "FIX",

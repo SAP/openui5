@@ -1,7 +1,18 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "2b111cd674060686dea41483d6760c5fc040200a",
+        "type": "FIX",
+        "text": " ValueHelp: first item shown as selected too when other item is selected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127159"
+          }
+        ]
+      },
       {
         "id": "f4d7fd6a9aedf1546eced885b0ae2665f3968a78",
         "type": "FIX",

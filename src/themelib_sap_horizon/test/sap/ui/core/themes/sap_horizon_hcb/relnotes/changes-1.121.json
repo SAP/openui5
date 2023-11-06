@@ -1,7 +1,45 @@
 {
   "1.121.0": {
-    "date": "October 2023",
+    "date": "November 2023",
     "notes": [
+      {
+        "id": "e143ada2b110b78caabcc2082ebc6320c0477501",
+        "type": "FIX",
+        "text": " sap.m.Select: Visual alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380105200"
+          }
+        ]
+      },
+      {
+        "id": "35c2e0470ef71c90f767e5d51184240a63cb31eb",
+        "type": "FEATURE",
+        "text": " sap.tnt.SideNavigation: Enabled support for grouping items"
+      },
+      {
+        "id": "00d8186f6a164892a85ea3d24d53d4bdb119d201",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Align focus to spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380123660"
+          }
+        ]
+      },
+      {
+        "id": "db27660cbbff99d90db82a87c0a043d1d5d4ef9d",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      },
       {
         "id": "ea257a3e8df77e523256a6ad79987d7b3f56468b",
         "type": "FIX",
