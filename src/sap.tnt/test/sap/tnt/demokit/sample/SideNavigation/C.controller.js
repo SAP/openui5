@@ -5,15 +5,15 @@ sap.ui.define([
 
 	return Controller.extend("sap.tnt.sample.SideNavigation.C", {
 
-		onCollapseExpandPress: function () {
-			var oSideNavigation = this.byId("sideNavigation");
-			var bExpanded = oSideNavigation.getExpanded();
+		onCollapseExpandPress() {
+			const oSideNavigation = this.byId("sideNavigation"),
+				bExpanded = oSideNavigation.getExpanded();
 
 			oSideNavigation.setExpanded(!bExpanded);
 		},
 
-		onHideShowSubItemPress: function () {
-			var oNavListItem = this.byId("subItem3");
+		onHideShowWalkedPress() {
+			const oNavListItem = this.byId("walked");
 			oNavListItem.setVisible(!oNavListItem.getVisible());
 		}
 
