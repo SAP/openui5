@@ -1322,6 +1322,18 @@ var FrameType = library.FrameType;
 		assert.ok(spy.notCalled, "Function _setAriaDescriptor not called");
 	});
 
+	QUnit.test("Focus on the slide tile when it has one tile inside it", function(assert){
+		//Arrange
+		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
+		oCore.applyChanges();
+		//Action
+		this.oSlideTile.getTiles()[0].destroy();
+		this.oSlideTile.getTiles()[1].destroy();
+		oCore.applyChanges();
+		//Assert
+		assert.equal(this.oSlideTile.getDomRef().getAttribute("tabindex"),"0","Focus is present on the SlideTile");
+	});
+
 	// Checks whether the given DomRef is contained or equals (in) one of the given container
 	function isContained(aContainers, oRef) {
 		for (var i = 0; i < aContainers.length; i++) {

@@ -52,9 +52,7 @@ sap.ui.define(['./library', "sap/base/security/encodeCSS"],
 			oRm.attr("title", sTooltip);
 		}
 		iLength = oControl.getTiles().length;
-		if (iLength > 1) {
-			oRm.attr("tabindex", "0");
-		}
+		oRm.attr("tabindex", "0");
 		oRm.attr("role", "application");
 		oRm.attr("aria-roledescription", oControl._oRb.getText("SLIDETILE"));
 		oRm.openEnd();
