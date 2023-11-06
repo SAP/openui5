@@ -175,7 +175,7 @@ function (VersionInfo, supportLibrary, History, IssueManager, RuleSetLoader) {
 			this.oGetIssuesModel = sinon.stub(IssueManager, "getIssuesModel", function () {
 				return createMultipleIssues(9);
 			});
-			this.oGetRulesViewModel = sinon.stub(IssueManager, "getRulesViewModel", function (mRules, mSelectedRules, mIssues) {
+			this.oGetRulesViewModel = sinon.stub(IssueManager, "getRulesViewModel", function (mRuleLibs, mSelectedRules, mIssues) {
 				return {
 					"sap.m": {
 						breadcrumbsInOverflowToolbar: createValidRule(),
@@ -184,7 +184,7 @@ function (VersionInfo, supportLibrary, History, IssueManager, RuleSetLoader) {
 					}
 				};
 			});
-			this.oGetRuleSets = sinon.stub(RuleSetLoader, "getRuleSets", function () {
+			this.oGetRuleSets = sinon.stub(RuleSetLoader, "getRuleLibs", function () {
 				return {};
 			});
 			this.oContext = {

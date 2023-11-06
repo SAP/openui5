@@ -105,24 +105,24 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/core/El
 			/**
 			 * Gets rules and issues, and converts each rule to a ruleViewModel - parameters should be converted as specified beforehand.
 			 * @public
-			 * @param {object} rules All the rules from _mRulesets
+			 * @param {object} ruleLibs All rule libraries
 			 * @param {array} selectedRulesIDs The rule ID's of the selected rules.
 			 * @param {array} issues The issues to map to the rulesViewModel
 			 * The issues passes should be grouped and in ViewModel format.
 			 * @returns {object} rulesViewModel All the rules with issues, selected flag and issueCount properties
 			 * The issues are in ViewModel format.
 			 */
-			getRulesViewModel: function (rules, selectedRulesIDs, issues) {
+			getRulesViewModel: function (ruleLibs, selectedRulesIDs, issues) {
 				var rulesViewModel = {},
 					issueCount = 0,
 					group = {},
 					library = {},
 					rule = {},
-					rulesCopy = deepExtend({}, rules),
+					ruleLibsCopy = deepExtend({}, ruleLibs),
 					issuesCopy = deepExtend({}, issues);
 
-				for (group in rulesCopy) {
-					rulesViewModel[group] = deepExtend({}, rulesCopy[group].ruleset._mRules);
+				for (group in ruleLibsCopy) {
+					rulesViewModel[group] = deepExtend({}, ruleLibsCopy[group].ruleset._mRules);
 					library = rulesViewModel[group];
 
 					// Create non-enumerable properties
@@ -139,7 +139,7 @@ sap.ui.define(["sap/base/util/deepExtend", "sap/ui/base/Object", "sap/ui/core/El
 						value: 0
 					});
 
-					for (rule in rulesCopy[group].ruleset._mRules) {
+					for (rule in ruleLibsCopy[group].ruleset._mRules) {
 						library[rule] = deepExtend([], library[rule]);
 
 						// Create non-enumerable properties
