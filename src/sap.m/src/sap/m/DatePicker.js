@@ -1341,7 +1341,7 @@ sap.ui.define([
 			this._getCalendar().addSelectedDate(this._oDateRange);
 			this._getCalendar()._setSpecialDatesControlOrigin(this);
 			this._getCalendar().attachCancel(_cancel, this);
-			if (this.$().closest(".sapUiSizeCompact").length > 0) {
+			if (this.getDomRef()?.closest(".sapUiSizeCompact")) {
 				this._getCalendar().addStyleClass("sapUiSizeCompact");
 			}
 			if (this._bSecondaryCalendarTypeSet) {
