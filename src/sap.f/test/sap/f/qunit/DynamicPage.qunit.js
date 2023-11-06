@@ -394,6 +394,16 @@ function (
 		}
 	});
 
+	QUnit.test("DynamicPageTitle and DynamicPageHeader z-index (RTA)", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			oDynamicPageHeader = oDynamicPage.getHeader();
+
+		assert.strictEqual(this.oDynamicPage.$("header").css("z-index"), "3", "z-index of DynamicPageTitleWrapper is bigger than all FCL columns - begin, mid, end");
+		assert.strictEqual(oDynamicPageTitle.$().css("z-index"), "4", "z-index of DynamicPageTitle is bigger than all FCL columns - begin, mid, end");
+		assert.strictEqual(oDynamicPageHeader.$().css("z-index"), "3", "z-index of DynamicPageHeader is bigger than all FCL columns - begin, mid, end");
+	});
+
 	QUnit.test("DynamicPage Page, Title and Header rendered", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oDynamicPageTitle = oDynamicPage.getTitle(),
