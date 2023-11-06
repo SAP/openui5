@@ -373,9 +373,6 @@ sap.ui.define([
 	function storeInfoInSession(sReference, mResponse) {
 		var oResponse = mResponse && mResponse.changes || {};
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-		if (oFlexInfoSession === null) {
-			oFlexInfoSession = {};
-		}
 		if (oResponse.info !== undefined) {
 			oFlexInfoSession = Object.assign(oFlexInfoSession, oResponse.info);
 		}

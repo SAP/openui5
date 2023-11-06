@@ -128,8 +128,8 @@ sap.ui.define([
 				draftAvailable: bBackendDraft,
 				activateEnabled: bBackendDraft,
 				activeVersion: sActiveVersion,
-				persistedVersion: oFlexInfoSession?.version || sPersistedBasisForDisplayedVersion,
-				displayedVersion: oFlexInfoSession?.version || sPersistedBasisForDisplayedVersion,
+				persistedVersion: oFlexInfoSession.version || sPersistedBasisForDisplayedVersion,
+				displayedVersion: oFlexInfoSession.version || sPersistedBasisForDisplayedVersion,
 				draftFilenames: aDraftFilenames
 			});
 		}

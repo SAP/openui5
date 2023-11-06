@@ -181,7 +181,7 @@ sap.ui.define([
 		 */
 		isLayerFilteringRequired(sReference) {
 			var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-			var sMaxLayer = oFlexInfoSession && oFlexInfoSession.maxLayer ? oFlexInfoSession.maxLayer : LayerUtils._sTopLayer;
+			var sMaxLayer = oFlexInfoSession.maxLayer ? oFlexInfoSession.maxLayer : LayerUtils._sTopLayer;
 			return this._sTopLayer !== sMaxLayer;
 		},
 

@@ -140,7 +140,7 @@ sap.ui.define([
 			if (oFlexObject && oFlexObject.length !== 0) {
 				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
-					var oExistingFlexInfo = FlexInfoSession.get(mPropertyBag.selector) || {};
+					var oExistingFlexInfo = FlexInfoSession.get(mPropertyBag.selector);
 					FlexInfoSession.set(Object.assign(oExistingFlexInfo, oResult), mPropertyBag.selector);
 					return oFlexObject;
 				});

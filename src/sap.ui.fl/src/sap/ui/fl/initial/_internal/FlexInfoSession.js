@@ -23,7 +23,7 @@ sap.ui.define([
 	};
 
 	FlexInfoSession.getByReference = function(sReference) {
-		return JSON.parse(window.sessionStorage.getItem(getSessionStorageKey(sReference)));
+		return JSON.parse(window.sessionStorage.getItem(getSessionStorageKey(sReference))) || {};
 	};
 
 	FlexInfoSession.set = function(oInfo, oControl) {

@@ -106,7 +106,7 @@ sap.ui.define([
 		},
 
 		getFlexInfo(mPropertyBag) {
-			return FlexInfoSession.get(mPropertyBag.selector) || {};
+			return FlexInfoSession.get(mPropertyBag.selector);
 		}
 	});
 

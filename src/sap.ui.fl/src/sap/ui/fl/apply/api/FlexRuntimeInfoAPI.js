@@ -193,7 +193,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ushell
 		 */
 		getFlexVersion(mPropertyBag) {
-			return FlexInfoSession.getByReference(mPropertyBag.reference)?.version;
+			return FlexInfoSession.getByReference(mPropertyBag.reference).version;
 		}
 	};
 
