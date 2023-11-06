@@ -6,15 +6,14 @@
  * Initialization Code and shared classes of library sap.ui.table.
  */
 sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/model/TreeAutoExpandMode", // TODO: Remove in UI5 2.0
-	"sap/ui/table/rowmodes/Type",
-	"sap/ui/core/library", // library dependency
-	"sap/ui/unified/library" // library dependency
+	// library dependencies
+	"sap/ui/core/library",
+	"sap/ui/unified/library"
 ], function(
-	Core,
-	TreeAutoExpandMode, // TODO: Remove in UI5 2.0
-	RowModeType
+	Library,
+	TreeAutoExpandMode // TODO: Remove in UI5 2.0
 ) {
 	"use strict";
 
@@ -28,7 +27,7 @@ sap.ui.define([
 	 * @since 0.8
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name: "sap.ui.table",
 		version: "${version}",
 		dependencies: ["sap.ui.core", "sap.ui.unified"],
@@ -395,9 +394,6 @@ sap.ui.define([
 		 */
 		MultiToggle: "MultiToggle"
 	};
-
-	thisLib.rowmodes = thisLib.rowmodes || {};
-	thisLib.rowmodes.Type = RowModeType;
 
 	//factory for table to create labels and textviews to be overwritten by commons and mobile library
 	/**
