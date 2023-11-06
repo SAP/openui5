@@ -293,7 +293,6 @@ sap.ui.define([
 	 * Note: This method is subject to change.
 	 * @returns {{from: {rowIndex: int, colIndex: int}, to: {rowIndex: int, colIndex: int}}  The range of the selection
 	 * @private
-	 * @experimental Since 1.110
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.getSelectionRange = function () {
@@ -319,7 +318,6 @@ sap.ui.define([
 	 * Note: This method is subject to change.
 	 * @returns {sap.ui.model.Context[]} The binding context of selected rows
 	 * @private
-	 * @experimental Since 1.110
 	 * @ui5-restricted sap.m.plugins.CopyProvider
 	 */
 	CellSelector.prototype.getSelectedRowContexts = function () {
