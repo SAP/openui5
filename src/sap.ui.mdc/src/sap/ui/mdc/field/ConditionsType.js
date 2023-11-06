@@ -71,6 +71,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
 	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
 	 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
+	 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionsType
 	 */
@@ -279,7 +280,8 @@ sap.ui.define([
 
 		const aOperators = this.oFormatOptions.operators || [];
 		const bBetweenSupported = aOperators.indexOf(OperatorName.BT) >= 0 || aOperators.length === 0;
-		const aSeparatedText = splitValue(vValue, !bBetweenSupported);
+		const bMultipleLines = _getMultipleLines.call(this);
+		const aSeparatedText = bMultipleLines ? [vValue] : splitValue(vValue, !bBetweenSupported);
 
 		if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
 			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex);
@@ -553,6 +555,16 @@ sap.ui.define([
 
 	}
 
+	function _getMultipleLines() {
+
+
+		if (this.oFormatOptions.hasOwnProperty("multipleLines")) {
+			return this.oFormatOptions.multipleLines;
+		}
+
+		return false;
+
+	}
 
 	return ConditionsType;
 
