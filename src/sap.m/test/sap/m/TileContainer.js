@@ -5,9 +5,12 @@ sap.ui.define([
 	"sap/m/Page",
 	"sap/m/StandardTile",
 	"sap/m/TileContainer",
-	"sap/m/ToggleButton"
-], function(App, Bar, Button, Page, StandardTile, TileContainer, ToggleButton) {
+	"sap/m/ToggleButton",
+	"sap/ui/core/library"
+], function(App, Bar, Button, Page, StandardTile, TileContainer, ToggleButton, coreLibrary) {
 	"use strict";
+
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oTC = new TileContainer("tc",{
 		width: "100%",
@@ -143,6 +146,8 @@ sap.ui.define([
 	});
 
 	var page1 = new Page({
+		title: "TileContainer",
+		titleLevel: TitleLevel.H1,
 		content: oTC,
 		footer: new Bar({
 			contentRight: [
@@ -152,14 +157,6 @@ sap.ui.define([
 						var newValue = !oTC.getEditable();
 						evt.getSource().getPressed() ? evt.getSource().setText("Done") : evt.getSource().setText("Edit");
 						oTC.setEditable(newValue);
-					}
-				}),
-				new ToggleButton({
-					text: "Busy",
-					press: function (evt) {
-						var newValue = !oTC.getBusy();
-						evt.getSource().getPressed() ? evt.getSource().setText("Done") :  evt.getSource().setText("Busy state");
-						oTC.setBusy(newValue);
 					}
 				}),
 				new Button({
@@ -176,8 +173,9 @@ sap.ui.define([
 	});
 
 	var page2 = new Page({
-		showHeader: true,
-		title: "Add Tiles when height is 0"
+		title: "Add Tiles when height is 0",
+		titleLevel: TitleLevel.H1,
+		showHeader: true
 	});
 	var tc2 = new TileContainer({
 		height: '70%'

@@ -7,9 +7,13 @@ sap.ui.define([
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/DateRange",
-	"sap/ui/unified/DateTypeRange"
-], function(App, Label, Page, CalendarType, DateFormat, VerticalLayout, Calendar, DateRange, DateTypeRange) {
+	"sap/ui/unified/DateTypeRange",
+	"sap/ui/core/library"
+], function(App, Label, Page, CalendarType, DateFormat, VerticalLayout, Calendar, DateRange, DateTypeRange, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
@@ -127,6 +131,7 @@ sap.ui.define([
 	var oApp = new App();
 	var oPage = new Page({
 		title: "Calendar Accessibility Test Page",
+		titleLevel: TitleLevel.H1,
 		content: oPageLayout
 	});
 

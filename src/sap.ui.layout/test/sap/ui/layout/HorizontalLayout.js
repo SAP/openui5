@@ -4,14 +4,21 @@ sap.ui.define([
 	"sap/m/Input",
 	"sap/m/Page",
 	"sap/m/Panel",
+	"sap/m/Label",
 	"sap/ui/core/HTML",
+	"sap/ui/core/library",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/Splitter"
-], function(App, Button, Input, Page, Panel, HTML, HorizontalLayout, Splitter) {
+], function(App, Button, Input, Page, Panel, Label, HTML, coreLibrary, HorizontalLayout, Splitter) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
 		// create a HorizontalLayout with some initial content
-	var oDefaultLayout = new HorizontalLayout("myLayout", {content:[
+	var oDefaultLayout = new HorizontalLayout("myLayout", {
+		allowWrapping: true,
+		content:[
 			new Button({text:"Hello World 1"}),
 			new Button({text:"Hello World 2"}),
 			new Panel({width:"200px", headerText:"A Panel", content:[
@@ -36,15 +43,16 @@ sap.ui.define([
 			content: new HorizontalLayout({
 				allowWrapping: true,
 				content: [
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" }),
-					new Input({ width: "12rem" })
+					new Label({ labelFor: "input1", text: "First input"}),
+					new Input("input1", { width: "12rem" }),
+					new Label({ labelFor: "input2", text: "Second input"}),
+					new Input("input2", { width: "12rem" }),
+					new Label({ labelFor: "input3", text: "Third input"}),
+					new Input("input3", { width: "12rem" }),
+					new Label({ labelFor: "input4", text: "Fourth input"}),
+					new Input("input4", { width: "12rem" }),
+					new Label({ labelFor: "input5", text: "Fifth input"}),
+					new Input("input5", { width: "12rem" })
 				]
 			})
 		})
@@ -56,6 +64,7 @@ sap.ui.define([
 			new Page({
 				id: "area-default",
 				title: "HorizontalLayout",
+				titleLevel: TitleLevel.H1,
 				content: [oDefaultLayout, oSplitter]
 			})
 		],

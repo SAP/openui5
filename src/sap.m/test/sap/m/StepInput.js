@@ -2,6 +2,7 @@ sap.ui.define([
 	"sap/m/App",
 	"sap/m/Button",
 	"sap/m/Label",
+	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/m/MessageToast",
 	"sap/m/Page",
@@ -12,12 +13,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/model/json/JSONModel"
-], function(App, Button, Label, mobileLibrary, MessageToast, Page, StepInput, Toolbar, VBox, Element, Controller, XMLView, JSONModel) {
+], function(App, Button, Label, coreLibrary, mobileLibrary, MessageToast, Page, StepInput, Toolbar, VBox, Element, Controller, XMLView, JSONModel) {
 	"use strict";
 
 	// shortcut for sap.m.StepInputStepModeType
 	var StepInputStepModeType = mobileLibrary.StepInputStepModeType;
 
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var app = new App("myApp", {initialPage: "page1"}),
 		changeEventCounter = 0;
@@ -77,6 +80,7 @@ sap.ui.define([
 	});
 	var page1 = new Page("page1", {
 		title: "Input Types",
+		titleLevel: TitleLevel.H1,
 		content: [new VBox({
 			items: [
 				oLabel9,
@@ -258,6 +262,7 @@ sap.ui.define([
 	}).then(function(oView) {
 		page2 = new Page({
 			title: "StepMode",
+			titleLevel: TitleLevel.H1,
 			content: [
 				oView
 			],

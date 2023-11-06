@@ -11,19 +11,18 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Item",
 	"sap/ui/core/library",
-	"sap/ui/Device",
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/layout/form/ResponsiveGridLayout",
 	"sap/ui/layout/library",
-	"sap/ui/unified/Calendar",
-	"sap/ui/unified/CalendarLegend",
-	"sap/ui/unified/CalendarLegendItem",
 	"sap/ui/unified/CalendarMonthInterval",
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/DateTypeRange",
-	"sap/ui/unified/library",
+	"sap/ui/core/Title",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/ui/layout/VerticalLayout",
 	"sap/ui/core/date/UI5Date"
 ], function(
 		Button,
@@ -38,26 +37,25 @@ sap.ui.define([
 		DateFormat,
 		Item,
 		coreLibrary,
-		Device,
 		Form,
 		FormContainer,
 		FormElement,
 		ResponsiveGridLayout,
 		layoutLibrary,
-		Calendar,
-		CalendarLegend,
-		CalendarLegendItem,
 		CalendarMonthInterval,
 		DateRange,
 		DateTypeRange,
-		unifiedLibrary,
+		Title,
+		App,
+		Page,
+		VerticalLayout,
 		UI5Date
 	) {
 	"use strict";
 
 	var BackgroundDesign = layoutLibrary.BackgroundDesign;
-	var CalendarDayType = unifiedLibrary.CalendarDayType;
 	var ValueState = coreLibrary.ValueState;
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	var oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
@@ -108,8 +106,8 @@ sap.ui.define([
 		["20161101", undefined, "Type10", 10]
 	];
 
-	new CalendarMonthInterval("Cal1",{
-		width: Device.system.phone ? "340px" : "464px",
+	var oLabel1 = new Label("H-C1", {text: "Single day Selection"});
+	var oCalendar1 = new CalendarMonthInterval("Cal1",{
 		legend: "Legend1",
 		ariaLabelledBy: "H-C1",
 		select: function(oEvent){
@@ -133,10 +131,10 @@ sap.ui.define([
 			var oDate = oCalendar.getStartDate();
 			oTF.setValue(oFormatYyyymmdd.format(oDate));
 		}
-	}).placeAt("sample1");
+	});
 
 	var oForm = new Form("F1", {
-		title: "Actions for CalendarMonthInterval",
+		title: new Title({text: "Control's actions", level: TitleLevel.H2}),
 		layout: new ResponsiveGridLayout("L1", {
 			breakpointM: 350,
 			labelSpanL: 6,
@@ -144,7 +142,7 @@ sap.ui.define([
 			backgroundDesign: BackgroundDesign.Transparent
 		}),
 		width: "100%"
-	}).placeAt("event1");
+	});
 
 	var oFormContainer = new FormContainer("F1C1");
 	oForm.addFormContainer(oFormContainer);
@@ -152,12 +150,14 @@ sap.ui.define([
 	var oFormElement = new FormElement("F1E1", {
 		fields: [
 			new Button({
+				width: "9rem",
 				text: "focus now",
 				press: function(oEvent){
 					Element.getElementById("Cal1").focusDate(UI5Date.getInstance());
 				}
 			}),
 			new ToggleButton({
+				width: "9rem",
 				text: "special days",
 				press: function(oEvent){
 					var bPressed = oEvent.getParameter("pressed");
@@ -286,8 +286,9 @@ sap.ui.define([
 	var oStartDate = UI5Date.getInstance();
 	oStartDate.setDate(15);
 	oStartDate.setMonth(oStartDate.getMonth() - 1);
-	new CalendarMonthInterval("Cal2",{
-		width: Device.system.phone ? "340px" : "496px",
+
+	var oLabel2 = new Label("H-C2", {text: "Single interval Selection"});
+	var oCalendar2 = new CalendarMonthInterval("Cal2",{
 		startDate: oStartDate,
 		months: 6,
 		intervalSelection: true,
@@ -316,20 +317,21 @@ sap.ui.define([
 				oTF2.setValue("");
 			}
 		}
-	}).placeAt("sample2");
+	});
 
-	new Label({text: "selected date from: ", labelFor: "TF2-start"}).placeAt("event2");
-	new Input("TF2-start",{
+	var oStartDateLabel = new Label({text: "selected start date from: ", labelFor: "TF2-start"});
+	var oStartDateInput = new Input("TF2-start",{
 		width: "9rem",
 		editable: false
-	}).placeAt("event2");
-	new Label({text: "to: ", labelFor: "TF2-end"}).placeAt("event2");
-	new Input("TF2-end",{
+	});
+	var oEndDateLabel = new Label({text: "to end date: ", labelFor: "TF2-end"});
+	var oEndDateInput = new Input("TF2-end",{
 		width: "9rem",
 		editable: false
-	}).placeAt("event2");
+	});
 
-	new CalendarMonthInterval("Cal3",{
+	var oLabel3 = new Label("H-C3", {text: "multiple day Selection"});
+	var oCalendar3 = new CalendarMonthInterval("Cal3",{
 		months: 24,
 		intervalSelection: false,
 		singleSelection: false,
@@ -367,32 +369,45 @@ sap.ui.define([
 				oLB.destroyItems();
 			}
 		}
-	}).placeAt("sample3");
-
-	new Label({text: "selected dates", labelFor: "LB"}).placeAt("event3");
-	var oListBox = new SelectList("LB",{
-		width: "8rem"
 	});
 
-	new ScrollContainer({
+	var oSelectListLabel = new Label({text: "selected dates"});
+	var oScrollContainer = new ScrollContainer({
 		height: "9rem",
 		vertical: true,
-		content: [oListBox]
-	}).placeAt("event3");
+		content: [new SelectList("LB", {
+			width: "8rem",
+			ariaLabelledBy: [oSelectListLabel]
+		})]
+	});
 
-	// TODO not aggregated anywhere?
-	new CalendarLegend("Legend1", {
-		items: [
-			new CalendarLegendItem("T1", {type: CalendarDayType.Type01, text: "Typ 1"}),
-			new CalendarLegendItem("T2", {type: CalendarDayType.Type02, text: "Typ 2"}),
-			new CalendarLegendItem("T3", {type: CalendarDayType.Type03, text: "Typ 3"}),
-			new CalendarLegendItem("T4", {type: CalendarDayType.Type04, text: "Typ 4"}),
-			new CalendarLegendItem("T5", {type: CalendarDayType.Type05, text: "Typ 5"}),
-			new CalendarLegendItem("T6", {type: CalendarDayType.Type06, text: "Typ 6"}),
-			new CalendarLegendItem("T7", {type: CalendarDayType.Type07, text: "Typ 7"}),
-			new CalendarLegendItem("T8", {type: CalendarDayType.Type08, text: "Typ 8"}),
-			new CalendarLegendItem("T9", {type: CalendarDayType.Type09, text: "Typ 9"}),
-			new CalendarLegendItem("T10", {type: CalendarDayType.Type10, text: "Typ 10"})
+	var oLayout = new VerticalLayout({
+		content: [
+			oLabel1,
+			oCalendar1,
+			oForm,
+			oLabel2,
+			oCalendar2,
+			oStartDateLabel,
+			oStartDateInput,
+			oEndDateLabel,
+			oEndDateInput,
+			oLabel3,
+			oCalendar3,
+			oSelectListLabel,
+			oScrollContainer
 		]
 	});
+
+	var app = new App("myApp");
+	var page = new Page("page", {
+		title: "Test Page for sap.ui.unified.CalendarMonthInterval",
+		titleLevel: TitleLevel.H1,
+		content: [
+			oLayout
+		]
+	});
+
+	app.addPage(page);
+	app.placeAt("body");
 });

@@ -4,9 +4,15 @@ sap.ui.define([
 	"sap/m/ViewSettingsItem",
 	"sap/m/ViewSettingsFilterItem",
 	"sap/m/ViewSettingsCustomTab",
-	"sap/m/Button"
-], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, ViewSettingsCustomTab, Button) {
+	"sap/m/Button",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/ui/core/library"
+], function(MessageToast, ViewSettingsDialog, ViewSettingsItem, ViewSettingsFilterItem, ViewSettingsCustomTab, Button, App, Page, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 	function handleConfirm(oEvent) {
 		if (oEvent.getParameters().filterString) {
@@ -127,5 +133,16 @@ sap.ui.define([
 		press: handleViewSettingsButtonPress
 	});
 
-	oViewSettingsDialogButton.placeAt("content");
+	var app = new App();
+	var page = new Page({
+		title: "ViewSettingsDialog",
+		titleLevel: TitleLevel.H1,
+		content: [
+			oViewSettingsDialogButton
+		]
+	});
+	app.setInitialPage(page.getId());
+	app.addPage(page);
+
+	app.placeAt('body');
 });
