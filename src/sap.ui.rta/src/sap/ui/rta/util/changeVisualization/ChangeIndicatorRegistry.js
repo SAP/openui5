@@ -40,7 +40,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 */
-	const ChangeIndicatorRegistry = ManagedObject.extend("sap.ui.rta.util.changeVisualization.ChangeIndicatorRegistry", {
+	var ChangeIndicatorRegistry = ManagedObject.extend("sap.ui.rta.util.changeVisualization.ChangeIndicatorRegistry", {
 		metadata: {
 			properties: {
 				/**
@@ -111,8 +111,8 @@ sap.ui.define([
 	 * @returns {object} List of selectors with change indicator data.
 	 */
 	ChangeIndicatorRegistry.prototype.getSelectorsWithRegisteredChanges = function() {
-		const oChangeIndicators = {};
-		let sPreviousAffectedElementId;
+		var oChangeIndicators = {};
+		var sPreviousAffectedElementId;
 
 		function addSelector(sSelectorId, sAffectedElementId, oChangeIndicatorData, bDependent) {
 			if (oChangeIndicators[sSelectorId] === undefined) {
@@ -143,10 +143,10 @@ sap.ui.define([
 	};
 
 	ChangeIndicatorRegistry.prototype.getRelevantChangesWithSelector = function() {
-		const oSelectors = this.getSelectorsWithRegisteredChanges();
-		let aRelevantChanges = [];
+		var oSelectors = this.getSelectorsWithRegisteredChanges();
+		var aRelevantChanges = [];
 		Object.keys(oSelectors).forEach(function(sSelectorId) {
-			const aRelevantChangesForSelector = oSelectors[sSelectorId].filter(function(oChange) {
+			var aRelevantChangesForSelector = oSelectors[sSelectorId].filter(function(oChange) {
 				return !oChange.dependent;
 			});
 			aRelevantChanges = aRelevantChanges.concat(aRelevantChangesForSelector);
@@ -182,10 +182,10 @@ sap.ui.define([
 	 * @returns {Promise<undefined>} Resolves as soon as the change is registered
 	 */
 	ChangeIndicatorRegistry.prototype.registerChange = function(oChange, sCommandName, oVersionsModel) {
-		const oAppComponent = FlUtils.getAppComponentForControl(ElementUtil.getElementInstance(this.getRootControlId()));
+		var oAppComponent = FlUtils.getAppComponentForControl(ElementUtil.getElementInstance(this.getRootControlId()));
 		return getVisualizationInfo(oChange, oAppComponent).then(function(mChangeVisualizationInfo) {
-			const aCategories = this.getChangeCategories();
-			let sChangeCategory;
+			var aCategories = this.getChangeCategories();
+			var sChangeCategory;
 			// For "settings", the control developer can choose one of the existing categories
 			if (sCommandName === "settings" && includes(Object.keys(aCategories), mChangeVisualizationInfo.descriptionPayload.category)) {
 				sChangeCategory = mChangeVisualizationInfo.descriptionPayload.category;
@@ -195,8 +195,8 @@ sap.ui.define([
 				});
 				sChangeCategory ||= ChangeCategories.OTHER;
 			}
-			let aChangeStates;
-			let aDraftChangesList = [];
+			var aChangeStates;
+			var aDraftChangesList = [];
 			if (oVersionsModel) {
 				aDraftChangesList = oVersionsModel.getData().draftFilenames;
 			}
@@ -226,7 +226,7 @@ sap.ui.define([
 			}
 			return aSelectorList
 			.map(function(vSelector) {
-				const oElement = typeof vSelector.getId === "function"
+				var oElement = typeof vSelector.getId === "function"
 					? vSelector
 					: JsControlTreeModifier.bySelector(vSelector, oAppComponent);
 				return oElement && oElement.getId();
@@ -236,13 +236,13 @@ sap.ui.define([
 
 		return getInfoFromChangeHandler(oAppComponent, oChange)
 		.then(function(oInfoFromChangeHandler) {
-			const mVisualizationInfo = oInfoFromChangeHandler || {};
-			const aChangeSelectors = oChange.getSelector && oChange.getSelector() && [oChange.getSelector()];
-			const aAffectedElementSelectors = mVisualizationInfo.affectedControls || aChangeSelectors || [];
+			var mVisualizationInfo = oInfoFromChangeHandler || {};
+			var aChangeSelectors = oChange.getSelector && oChange.getSelector() && [oChange.getSelector()];
+			var aAffectedElementSelectors = mVisualizationInfo.affectedControls || aChangeSelectors || [];
 			// If there is an original selector (e.g. control is inside a template),
 			// the indicator should be displayed on the host control (change selector)
-			const oChangeOriginalSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
-			const aDisplayElementSelectors = oChangeOriginalSelector ? aChangeSelectors : aAffectedElementSelectors;
+			var oChangeOriginalSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
+			var aDisplayElementSelectors = oChangeOriginalSelector ? aChangeSelectors : aAffectedElementSelectors;
 
 			return {
 				affectedElementIds: getSelectorIds(aAffectedElementSelectors),
@@ -255,9 +255,9 @@ sap.ui.define([
 	}
 
 	function getInfoFromChangeHandler(oAppComponent, oChange) {
-		let oSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
+		var oSelector = oChange.getOriginalSelector && oChange.getOriginalSelector();
 		oSelector ||= oChange.getSelector && oChange.getSelector();
-		const oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 		if (oControl) {
 			return ChangesWriteAPI.getChangeHandler({
 				changeType: oChange.getChangeType(),
@@ -294,14 +294,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Waits for the registered indicators to be rendered.
-	 * @returns {Promise} Resolves when all registered indicators are rendered.
-	 */
-	ChangeIndicatorRegistry.prototype.waitForIndicatorRendering = function() {
-		return Promise.all(this.getChangeIndicators().map((oIndicator) => oIndicator.waitForRendering()));
-	};
-
-	/**
 	 * Resets the change and change indicator registries.
 	 */
 	ChangeIndicatorRegistry.prototype.reset = function() {
@@ -326,8 +318,7 @@ sap.ui.define([
 
 	/**
 	 * Removes changes with the updateRequired flag from the registry so the change can be re-registered and
-	 * the visualizationInfo is updated => if an element has an unstable id this updates the id information
-	 * in the registry (e.g simple forms)
+	 * the visualizationInfo is updated => if an element has an unstable id this updates the id information in the registry (e.g simple forms)
 	 */
 	ChangeIndicatorRegistry.prototype.removeOutdatedRegisteredChanges = function() {
 		this.getAllRegisteredChanges().forEach(function(oChange) {
