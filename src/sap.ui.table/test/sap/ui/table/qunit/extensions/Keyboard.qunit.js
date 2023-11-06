@@ -235,57 +235,62 @@ sap.ui.define([
 	});
 
 	QUnit.test("Action Mode", function(assert) {
-		var oTestArgs = {};
-		var bSkipActionMode = false;
-		var bTestArguments = true;
-		var bHandlerCalled = false;
-
-		function testHandler(oArgs) {
-			assert.ok(!!oArgs, "Arguments given");
-			if (bTestArguments) {
-				assert.strictEqual(oArgs, oTestArgs, "Arguments forwarded as expected");
-			}
-			bHandlerCalled = true;
-		}
-
 		var oControl = new TestControl();
 		var oExtension = ExtensionBase.enrich(oControl, KeyboardExtension);
+
 		oExtension._delegate = {
-			enterActionMode: function(oArgs) {
-				testHandler(oArgs);
-				return !bSkipActionMode;
-			},
-			leaveActionMode: testHandler
+			enterActionMode: sinon.stub(),
+			leaveActionMode: sinon.spy()
 		};
 
-		assert.ok(!oExtension.isInActionMode(), "Initially no action mode");
+		function resetSpies() {
+			oExtension._delegate.enterActionMode.resetHistory();
+			oExtension._delegate.leaveActionMode.resetHistory();
+		}
 
-		oExtension.setActionMode(true, oTestArgs);
-		assert.ok(bHandlerCalled, "enterActionMode called");
-		assert.ok(oExtension.isInActionMode(), "Switched to action mode");
-		bHandlerCalled = false;
+		assert.ok(!oExtension.isInActionMode(), "Initially not in action mode");
 
-		bTestArguments = false;
-		oExtension.setActionMode(true, oTestArgs);
-		assert.ok(!bHandlerCalled, "enterActionMode not called after duplicate setActionMode");
-		assert.ok(oExtension.isInActionMode(), "Still in action mode");
-		bTestArguments = true;
+		oExtension._delegate.enterActionMode.returns(false);
+		oExtension.setActionMode(true, true);
+		assert.ok(oExtension._delegate.enterActionMode.calledOnceWithExactly(), "enterActionMode called once with the correct arguments");
+		assert.ok(oExtension._delegate.leaveActionMode.notCalled, "leaveActionMode not called");
+		assert.notOk(oExtension.isInActionMode(), "Action mode state");
 
-		oExtension.setActionMode(false, oTestArgs);
-		assert.ok(bHandlerCalled, "leaveActionMode called");
-		assert.ok(!oExtension.isInActionMode(), "Switched off action mode");
-		bHandlerCalled = false;
+		resetSpies();
+		oExtension._delegate.enterActionMode.returns(true);
+		oExtension.setActionMode(true, "test");
+		assert.ok(oExtension._delegate.enterActionMode.calledOnceWithExactly(), "enterActionMode called once with the correct arguments");
+		assert.ok(oExtension.isInActionMode(), "Action mode state");
 
-		bTestArguments = false;
-		oExtension.setActionMode(false, oTestArgs);
-		assert.ok(!bHandlerCalled, "leaveActionMode not called after duplicate setActionMode");
-		assert.ok(!oExtension.isInActionMode(), "Still not in action mode");
-		bTestArguments = true;
+		resetSpies();
+		oExtension._delegate.enterActionMode.returns(false);
+		oExtension.setActionMode(true);
+		assert.ok(oExtension._delegate.enterActionMode.notCalled, "enterActionMode not called if already in action mode");
+		assert.ok(oExtension.isInActionMode(), "Action mode state");
 
-		bSkipActionMode = true;
-		oExtension.setActionMode(true, oTestArgs);
-		assert.ok(bHandlerCalled, "enterActionMode called");
-		assert.ok(!oExtension.isInActionMode(), "Still not in action mode");
+		resetSpies();
+		oExtension.setActionMode(false, true);
+		assert.ok(oExtension._delegate.leaveActionMode.calledOnceWithExactly(true), "leaveActionMode called once with the correct arguments");
+		assert.ok(oExtension._delegate.enterActionMode.notCalled, "enterActionMode not called");
+		assert.notOk(oExtension.isInActionMode(), "Action mode state");
+
+		resetSpies();
+		oExtension.setActionMode(false);
+		assert.ok(oExtension._delegate.leaveActionMode.notCalled, "leaveActionMode not called if already not in action mode");
+		assert.notOk(oExtension.isInActionMode(), "Action mode state");
+
+		resetSpies();
+		oExtension._delegate.enterActionMode.returns(true);
+		oExtension.setActionMode(true);
+		oExtension.setActionMode(false, false);
+		assert.ok(oExtension._delegate.leaveActionMode.calledOnceWithExactly(false), "leaveActionMode called once with the correct arguments");
+		assert.notOk(oExtension.isInActionMode(), "Action mode state");
+
+		resetSpies();
+		oExtension.setActionMode(true);
+		oExtension.setActionMode(false, "test");
+		assert.ok(oExtension._delegate.leaveActionMode.calledOnceWithExactly(false), "leaveActionMode called once with the correct arguments");
+		assert.notOk(oExtension.isInActionMode(), "Action mode state");
 
 		oControl.destroy();
 	});

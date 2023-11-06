@@ -411,7 +411,7 @@ sap.ui.define([
 		Device.os.macintosh = bIsMacintosh;
 	});
 
-	QUnit.test("_allowsToggleExpandedState", function(assert) {
+	QUnit.test("_allowsToggleExpandedState; Standard row", function(assert) {
 		initRowActions(oTable, 2, 2);
 
 		assert.ok(!KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 0)[0]),
@@ -428,14 +428,9 @@ sap.ui.define([
 			"Returned False: Pressing a key on the SelectAll cell can not toggle a group");
 	});
 
-	/**
-	 * @deprecated As of version 1.118.
-	 */
-	QUnit.test("_allowsToggleExpandedState with grouping", function(assert) {
+	QUnit.test("_allowsToggleExpandedState; Group row", async function(assert) {
 		initRowActions(oTable, 2, 2);
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		oCore.applyChanges();
+		await fakeGroupRow(0, oTable);
 
 		assert.ok(KeyboardDelegate._allowsToggleExpandedState(oTable, getCell(0, 1)[0]),
 			"Returned True: Pressing a key on a data cell in a grouping row can toggle a group");
@@ -445,7 +440,7 @@ sap.ui.define([
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
-	QUnit.test("_allowsToggleExpandedState - TreeTable", function(assert) {
+	QUnit.test("_allowsToggleExpandedState; Tree row", function(assert) {
 		initRowActions(oTreeTable, 2, 2);
 
 		var oTreeIconCell = getCell(0, 0, null, null, oTreeTable)[0];
@@ -4483,7 +4478,7 @@ sap.ui.define([
 			this.oTable.destroy();
 		},
 		assertSelection: function(assert, iIndex, bSelected) {
-			assert.equal(this.oTable.isIndexSelected(iIndex), bSelected, "Row " + (iIndex + 1) + ": " + (bSelected ? "" : "Not ") + "Selected");
+			assert.equal(this.oTable.isIndexSelected(iIndex), bSelected, `Row #${iIndex + 1}: Selected state`);
 		},
 		getCellOrRowHeader: function(bRowHeader, iRowIndex, iColumnIndex, bFocus) {
 			var oCell;
@@ -5678,16 +5673,14 @@ sap.ui.define([
 		this.assertSelection(assert, 1, false);
 	});
 
-	QUnit.test("On a Group Header Row", function(assert) {
+	QUnit.test("On a Group Header Row", async function(assert) {
 		var cellClickEventHandler = this.spy();
 		var oElem;
 		var oRowToggleExpandedState = this.spy(oTable.getRows()[0], "toggleExpandedState");
 
 		oTable.clearSelection();
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable._getVisibleColumns()[0]);
 		oTable.attachCellClick(cellClickEventHandler);
-		oCore.applyChanges();
+		await fakeGroupRow(0, oTable);
 
 		function test(assert) {
 			oRowToggleExpandedState.resetHistory();
@@ -5891,6 +5884,7 @@ sap.ui.define([
 	QUnit.test("On element that is not a cell", function(assert) {
 		oTable.addExtension(new TestInputControl());
 		oTable.setFooter(new TestInputControl());
+		/** @deprecated As of version 1.72 */
 		oTable.setTitle(new TestInputControl());
 		oTable.addEventDelegate({
 			onkeydown: function(oEvent) {
@@ -5906,9 +5900,7 @@ sap.ui.define([
 		var aTestElements = [
 			oTable.getExtension()[0].getDomRef(),
 			oTable.getFooter().getDomRef(),
-			/**
-			 * @deprecated As of version 1.72
-			 */
+			/** @deprecated As of version 1.72 */
 			oTable.getTitle().getDomRef(),
 			oCell,
 			oTable.getRows()[0].getCells()[0].getDomRef(),
@@ -6008,12 +6000,9 @@ sap.ui.define([
 		test(library.SelectionMode.MultiToggle, [0, 1, 2]);
 	});
 
-	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse Group)", {
+	QUnit.module("Interaction > Alt+ArrowUp & Alt+ArrowDown (Expand/Collapse)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6070,7 +6059,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table with grouping", function(assert) {
+	QUnit.test("Table with grouping", async function(assert) {
 		function testFocus(oCellElement) {
 			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
@@ -6081,8 +6070,7 @@ sap.ui.define([
 			checkFocus(oCellElement, assert);
 		}
 
-		oTable.invalidate();
-		oCore.applyChanges();
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getCell(0, 1));
 		this.testCollapseExpandAndFocus(assert, oTable, getRowHeader(0));
 		this.testNoCollapseExpand(assert, oTable, getColumnHeader(0));
@@ -6091,6 +6079,7 @@ sap.ui.define([
 		testFocus(getSelectAll());
 
 		initRowActions(oTable, 2, 2);
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
 
@@ -6101,12 +6090,9 @@ sap.ui.define([
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
 	});
 
-	QUnit.module("Interaction > F4 (Expand/Collapse Group)", {
+	QUnit.module("Interaction > F4 (Expand/Collapse)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6161,7 +6147,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table with grouping", function(assert) {
+	QUnit.test("Table with grouping", async function(assert) {
 		function testFocus(oCellElement) {
 			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
@@ -6170,6 +6156,7 @@ sap.ui.define([
 			checkFocus(oCellElement, assert);
 		}
 
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getCell(0, 1));
 		this.testCollapseExpandAndFocus(assert, oTable, getRowHeader(0));
 		this.testNoCollapseExpand(assert, oTable, getColumnHeader(0));
@@ -6178,6 +6165,7 @@ sap.ui.define([
 		testFocus(getSelectAll());
 
 		initRowActions(oTable, 2, 2);
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
 
@@ -6188,12 +6176,9 @@ sap.ui.define([
 		this.testNoCollapseExpand(assert, oTreeTable, getRowHeader(0, null, null, oTreeTable));
 	});
 
-	QUnit.module("Interaction > Plus & Minus (Expand/Collapse Group)", {
+	QUnit.module("Interaction > Plus & Minus (Expand/Collapse)", {
 		beforeEach: function() {
 			setupTest();
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
-			oCore.applyChanges();
 		},
 		afterEach: function() {
 			teardownTest();
@@ -6250,7 +6235,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table with grouping", function(assert) {
+	QUnit.test("Table with grouping", async function(assert) {
 		function testFocus(oCellElement) {
 			oCellElement.trigger("focus");
 			checkFocus(oCellElement, assert);
@@ -6261,6 +6246,7 @@ sap.ui.define([
 			checkFocus(oCellElement, assert);
 		}
 
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getCell(0, 1));
 		this.testCollapseExpandAndFocus(assert, oTable, getRowHeader(0));
 		this.testNoCollapseExpand(assert, oTable, getColumnHeader(0));
@@ -6269,6 +6255,7 @@ sap.ui.define([
 		testFocus(getSelectAll());
 
 		initRowActions(oTable, 2, 2);
+		await fakeGroupRow(0, oTable);
 		this.testCollapseExpandAndFocus(assert, oTable, getRowAction(0));
 	});
 
@@ -6406,7 +6393,8 @@ sap.ui.define([
 		 * @param {Function} fEventTriggerer The function which triggers the event.
 		 * @param {boolean} [bAllowsFocusCellContent=false] Whether the keyboard shortcut allows to focus interactive elements in column header cells.
 		 */
-		testOnHeaderCells: function(assert, key, sKeyName, bShift, bAlt, bCtrl, bTestLeaveActionMode, fEventTriggerer, bAllowsFocusCellContent) {
+		testOnHeaderCells: async function(assert, key, sKeyName, bShift, bAlt, bCtrl, bTestLeaveActionMode, fEventTriggerer,
+										  bAllowsFocusCellContent) {
 			bAllowsFocusCellContent = bAllowsFocusCellContent === true;
 
 			var sKeyCombination = (bShift ? "Shift+" : "") + (bAlt ? "Alt+" : "") + (bCtrl ? "Ctrl+" : "") + sKeyName;
@@ -6458,8 +6446,7 @@ sap.ui.define([
 			assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 			// Group header icon cell
-			oTable.setEnableGrouping(true);
-			oTable.setGroupBy(oTable.getColumns()[0]);
+			await fakeGroupRow(0, oTable);
 			oTable.getRows()[0].toggleExpandedState();
 			oCore.applyChanges();
 
@@ -6479,9 +6466,6 @@ sap.ui.define([
 				checkFocus(getRowHeader(0), assert);
 				assert.ok(!oTable._getKeyboardExtension().isInActionMode(), sKeyCombination + ": Table is in Navigation Mode");
 			}
-
-			oTable.setEnableGrouping(false);
-			oCore.applyChanges();
 		},
 
 		/**
@@ -6557,7 +6541,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Focus", function(assert) {
+	QUnit.test("Focus", async function(assert) {
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 
 		// Enter Action Mode: Focus a tabbable text control inside a data cell.
@@ -6595,9 +6579,7 @@ sap.ui.define([
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Focus row selector cell: Table is in Action Mode");
 
 		// Stay in Action Mode: Focus a group header icon cell.
-		oTable.setEnableGrouping(true);
-		oTable.setGroupBy(oTable.getColumns()[0]);
-		oCore.applyChanges();
+		await fakeGroupRow(0, oTable);
 
 		oElement = checkFocus(getRowHeader(0, true), assert)[0];
 		assert.ok(TableUtils.Grouping.isInGroupHeaderRow(oElement), "Cell to be tested is in a group header row");
@@ -6635,7 +6617,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("F2 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
-		this.testOnHeaderCells(assert, Key.F2, "F2", false, false, false, true, qutils.triggerKeydown, true);
+		return this.testOnHeaderCells(assert, Key.F2, "F2", false, false, false, true, qutils.triggerKeydown, true);
 	});
 
 	QUnit.test("F2 - On a Data Cell", function(assert) {
@@ -6693,9 +6675,9 @@ sap.ui.define([
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
-	QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
-		this.testOnHeaderCells(assert, Key.Arrow.UP, "Arrow Up", false, true, false, false, qutils.triggerKeydown);
-		this.testOnHeaderCells(assert, Key.Arrow.DOWN, "Arrow Down", false, true, false, false, qutils.triggerKeydown);
+	QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On Column/Row/GroupIcon/SelectAll Header Cells", async function(assert) {
+		await this.testOnHeaderCells(assert, Key.Arrow.UP, "Arrow Up", false, true, false, false, qutils.triggerKeydown);
+		await this.testOnHeaderCells(assert, Key.Arrow.DOWN, "Arrow Down", false, true, false, false, qutils.triggerKeydown);
 	});
 
 	QUnit.test("Alt+ArrowUp & Alt+ArrowDown - On a Data Cell", function(assert) {
@@ -6710,9 +6692,9 @@ sap.ui.define([
 		this.testOnDataCellWithoutInteractiveControls(assert, Key.Arrow.DOWN, "Arrow Down", true, false, false, qutils.triggerKeydown);
 	});
 
-	QUnit.test("F4 - On Column/Row/GroupIcon/SelectAll Header Cells", function(assert) {
-		this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
-		this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
+	QUnit.test("F4 - On Column/Row/GroupIcon/SelectAll Header Cells", async function(assert) {
+		await this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
+		await this.testOnHeaderCells(assert, Key.F4, "F4", false, false, false, false, qutils.triggerKeydown);
 	});
 
 	QUnit.test("F4 - On a Data Cell", function(assert) {
@@ -6727,9 +6709,9 @@ sap.ui.define([
 		this.testOnDataCellWithoutInteractiveControls(assert, Key.F4, "F4", false, false, false, qutils.triggerKeydown);
 	});
 
-	QUnit.test("Plus & Minus - On Column/Row/SelectAll Header Cells", function(assert) {
-		this.testOnHeaderCells(assert, Key.PLUS, "Plus", false, false, false, false, qutils.triggerKeypress);
-		this.testOnHeaderCells(assert, Key.MINUS, "Minus", false, false, false, false, qutils.triggerKeypress);
+	QUnit.test("Plus & Minus - On Column/Row/SelectAll Header Cells", async function(assert) {
+		await this.testOnHeaderCells(assert, Key.PLUS, "Plus", false, false, false, false, qutils.triggerKeypress);
+		await this.testOnHeaderCells(assert, Key.MINUS, "Minus", false, false, false, false, qutils.triggerKeypress);
 	});
 
 	QUnit.test("Plus & Minus - On a Data Cell", function(assert) {
