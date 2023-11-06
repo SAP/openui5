@@ -92,12 +92,21 @@ sap.ui.define([
 			return true;
 		}
 
-		if (oFrameWindow && oFrameWindow.sap && oFrameWindow.sap.ui && oFrameWindow.sap.ui.getCore) {
-			if (!bRegisteredToUI5Init) {
-				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+		if (!bRegisteredToUI5Init && oFrameWindow?.sap?.ui) {
+			if ( oFrameWindow.sap.ui.require ) {
+				// use the more modern Core.ready, if available
+				const oFrameCore = oFrameWindow.sap.ui.require("sap/ui/core/Core");
+				if (typeof oFrameCore?.ready === "function") {
+					oFrameCore.ready(handleUi5Loaded);
+					bRegisteredToUI5Init = true;
+					return bUi5Loaded;
+				}
 			}
-
-			bRegisteredToUI5Init = true;
+			// otherwise, fall back to the older sap.ui.getCore().attachInit
+			if (oFrameWindow.sap.ui.getCore) {
+				oFrameWindow.sap.ui.getCore().attachInit(handleUi5Loaded);
+				bRegisteredToUI5Init = true;
+			}
 		}
 
 		return bUi5Loaded;
