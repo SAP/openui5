@@ -260,7 +260,8 @@ sap.ui.define([
 						actions: [
 							MessageBox.Action.CLOSE
 						],
-						styleClass: that.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+						// styleClass: that.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+						styleClass: that.getDomRef().closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : ""
 					});
 				} else if (aWarningMessages.length) {
 					aWarningMessages.forEach(function(oMessage, iIndex, aMessages) {
@@ -283,7 +284,8 @@ sap.ui.define([
 								fCallbackIgnore();
 							}
 						},
-						styleClass: that.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+						// styleClass: that.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+						styleClass: that.getDomRef().closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : ""
 					});
 				}
 				resolve();

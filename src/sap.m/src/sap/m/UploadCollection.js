@@ -2382,11 +2382,7 @@ sap.ui.define([
 		// If the target of the click event is an editButton, then this case has already been processed
 		// in the _handleEdit (in particular, by executing the _handleOk function).
 		// Therefore, only the remaining cases of click event targets are handled.
-		var $Button = jQuery(event.target).closest("button");
-		var sId = "";
-		if ($Button.length) {
-			sId = $Button.prop("id");
-		}
+		var sId = event.target.closest("button").id || "";
 		if (sId.lastIndexOf("editButton") === -1) {
 			if (sId.lastIndexOf("cancelButton") !== -1) {
 				this._handleCancel(event, itemId);

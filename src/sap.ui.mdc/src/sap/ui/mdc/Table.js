@@ -2319,7 +2319,8 @@ sap.ui.define([
 			if (!aSheetColumns || !aSheetColumns.length) {
 				sap.ui.require(["sap/m/MessageBox"], function(MessageBox) {
 					MessageBox.error(Library.getResourceBundleFor("sap.ui.mdc").getText("table.NO_COLS_EXPORT"), {
-						styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
+						// styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : ""
+						styleClass: this.getDomRef && this.getDomRef()?.closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : ""
 					});
 				}.bind(that));
 				return;

@@ -619,11 +619,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadSet.prototype._handleClick = function (oEvent, item) {
-        var $Button = oEvent.target.closest("button");
-        var sId = "";
-        if ($Button) {
-            sId = $Button.id;
-        }
+        var sId = oEvent.target.closest("button").id || "";
         if (sId.lastIndexOf("editButton") === -1) {
             if (sId.lastIndexOf("cancelButton") !== -1) {
 				if (item) {

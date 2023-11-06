@@ -1455,7 +1455,7 @@ sap.ui.define([
 	 * @returns {sap.ui.core.Control} The page
 	 */
 	Carousel.prototype._getClosestPage = function (oElement) {
-		return Element.closestTo(jQuery(oElement).closest(".sapMCrsPage")[0]);
+		return Element.closestTo(oElement.getDomRef().closest(".sapMCrsPage"));
 	};
 
 	//================================================================================

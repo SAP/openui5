@@ -1345,7 +1345,8 @@ function(
 	SelectDialog.prototype._getListItemsEventDelegates = function () {
 		var fnEventDelegate = function (oEvent) {
 
-			var oListItem = Element.closestTo(jQuery(oEvent.target).closest(".sapMLIB")[0]);
+			// var oListItem = Element.closestTo(jQuery(oEvent.target).closest(".sapMLIB")[0]);
+			var oListItem = Element.closestTo(oEvent.target.closest(".sapMLIB"));
 
 			if (oListItem._eventHandledByControl) {
 				return;

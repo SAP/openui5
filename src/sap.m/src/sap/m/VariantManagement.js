@@ -1283,7 +1283,8 @@ sap.ui.define([
 		});
 
 		this.oVariantPopOver.addStyleClass("sapMVarMngmtPopover");
-		if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+		// if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+		if (this.oVariantLayout.getDomRef()?.closest(".sapUiSizeCompact")) {
 			this.oVariantPopOver.addStyleClass("sapUiSizeCompact");
 		}
 		this.addDependent(this.oVariantPopOver);
@@ -1498,7 +1499,8 @@ sap.ui.define([
 			this.oSaveAsDialog.addStyleClass("sapUiContentPadding");
 			this.oSaveAsDialog.addStyleClass("sapMVarMngmtSaveDialog");
 
-			if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+			// if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+			if (this.oVariantLayout.getDomRef()?.closest(".sapUiSizeCompact")) {
 				this.oSaveAsDialog.addStyleClass("sapUiSizeCompact");
 			}
 
@@ -2060,7 +2062,8 @@ sap.ui.define([
 
 			this.oManagementDialog.setInitialFocus(this._oSearchFieldOnMgmtDialog);
 
-			if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+			// if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
+			if (this.oVariantLayout.getDomRef().closest(".sapUiSizeCompact")) {
 				this.oManagementDialog.addStyleClass("sapUiSizeCompact");
 			}
 			this.addDependent(this.oManagementDialog);

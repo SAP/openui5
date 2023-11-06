@@ -107,7 +107,8 @@ sap.ui.define([
 		}
 
 		// check if there is an element up the DOM which enables compact density
-		return oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
+		// return oReferenceElement.$().closest(".sapUiSizeCompact").hasClass("sapUiSizeCompact");
+		return oReferenceElement.getDomRef().closest(".sapUiSizeCompact")?.classList.contains("sapUiSizeCompact");
 	};
 
 	return BaseContentRenderer;

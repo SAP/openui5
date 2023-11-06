@@ -74,7 +74,8 @@ sap.ui.define([
                         oPanel.getMetadata()._oClass.navigate(sHref);
                     }
                 },
-                styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+                // styleClass: this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
+                styleClass: this.getDomRef()?.closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : ""
             });
         }
     };

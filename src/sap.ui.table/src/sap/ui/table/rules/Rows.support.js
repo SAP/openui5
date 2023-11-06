@@ -24,7 +24,8 @@ sap.ui.define([
 	function checkDensity($Source, sTargetClass, sMessage, oIssueManager) {
 		var bFound = false;
 		$Source.each(function() {
-			if (jQuery(this).closest(sTargetClass).length) {
+			// if (jQuery(this).closest(sTargetClass).length) {
+			if (this.getDomRef()?.closest(sTargetClass)) {
 				bFound = true;
 			}
 		});

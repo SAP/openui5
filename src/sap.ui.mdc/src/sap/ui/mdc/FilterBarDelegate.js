@@ -157,7 +157,8 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 					 }
 					 oFilterBar._hasOpenMessageBox = true;
 					 MessageBox.error(sErrorMessage, {
-						 styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
+						 // styleClass: (this.$() && this.$().closest(".sapUiSizeCompact").length) ? "sapUiSizeCompact" : "",
+						 styleClass: this.getDomRef && this.getDomRef()?.closest(".sapUiSizeCompact") ? "sapUiSizeCompact" : "",
 						 onClose: function() {
 							 delete oFilterBar._hasOpenMessageBox;
 							 oFilterBar.setFocusOnFirstErroneousField();
