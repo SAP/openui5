@@ -555,5 +555,32 @@
         ]
       }
     ]
+  },
+  "1.117.3": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "425a0ab57c75f0f15315fe4ab678b847818f9856",
+        "type": "FIX",
+        "text": "sap.m.Carousel: f7 qunit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118746"
+          }
+        ]
+      },
+      {
+        "id": "34cf1af481fa14dac95b54fcce7ab05ba0086672",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      }
+    ]
   }
 }

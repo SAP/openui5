@@ -73,5 +73,21 @@
         "text": " Field with unit: unit part not announced if inside table"
       }
     ]
+  },
+  "1.117.3": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "2967b8dcb5a4b4c52d153cc2ca7963b5b840e811",
+        "type": "FIX",
+        "text": " MDC.Field: Prevent ValueHelp.shouldOpenOnFocus flow with programmatic focus",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380109591"
+          }
+        ]
+      }
+    ]
   }
 }

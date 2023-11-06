@@ -172,5 +172,43 @@
         ]
       }
     ]
+  },
+  "1.117.3": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "80b8a198488fa04923bbfe835ff31fe159b4d7e2",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      },
+      {
+        "id": "b7e444c6657e8768be7af233651cdb73e3dc03b2",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v2.ODataModel#resetChanges: do not remove persistent messages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370086388"
+          }
+        ]
+      },
+      {
+        "id": "ef142c77cae7d1c6cdc76853b925dafa6ed8c315",
+        "type": "FEATURE",
+        "text": " Prepare for upcoming 'unload' event deprecation and deprecate APIs 'onWindowBeforeUnload', 'onWindowUnload' and 'onWindowError' in 'sap/ui/core/Component'",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
