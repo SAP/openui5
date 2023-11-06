@@ -3778,5 +3778,47 @@
         ]
       }
     ]
+  },
+  "1.71.60": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "d9766471e0a36227b549676ddc03dcba763a4417",
+        "type": "FIX",
+        "text": " sap.m.SelectDialog: Add ARIA label to the items list",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007520392022"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007944252023"
+          }
+        ]
+      },
+      {
+        "id": "42326baab34e200714e2685ebb741b6b12898606",
+        "type": "FIX",
+        "text": " - sap.m.NumericContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007160152023"
+          }
+        ]
+      },
+      {
+        "id": "8aefd3fd9df7eeecdb5dca0977168e52528b9332",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem: fixed icon appearance",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370079966"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -320,5 +320,21 @@
         ]
       }
     ]
+  },
+  "1.71.60": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "c5e02e9b37551ecd7dfaf683ad65238e374246a8",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Button height corected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380091676"
+          }
+        ]
+      }
+    ]
   }
 }
