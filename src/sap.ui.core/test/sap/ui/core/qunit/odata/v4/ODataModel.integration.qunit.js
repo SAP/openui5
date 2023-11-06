@@ -128,14 +128,14 @@ sap.ui.define([
 		}
 
 		function visitElements(aElements, bSkipByPredicate = false, iLevelOffset = 0,
-				iIndexOffset = 0) {
+				iRankOffset = 0) {
 			aElements.forEach((oElement) => {
-				let iIndex = _Helper.getPrivateAnnotation(oElement, "index");
+				let iRank = _Helper.getPrivateAnnotation(oElement, "rank");
 				// Note: "@$ui5.node.level" is outdated after #move!
 				const iLevel = oElement["@$ui5.node.level"] + iLevelOffset;
 				const oParent = aParentByLevel[iLevel];
-				if (oParent === aParentByLevel[0] && iIndex !== undefined) {
-					iIndex += iIndexOffset;
+				if (oParent === aParentByLevel[0] && iRank !== undefined) {
+					iRank += iRankOffset;
 				}
 				const bPlaceholder = _Helper.hasPrivateAnnotation(oElement, "placeholder");
 
@@ -143,13 +143,13 @@ sap.ui.define([
 					strictEqual(_Helper.getPrivateAnnotation(oElement, "parent"), oParent,
 						`"parent" @ level ${iLevel}`, oElement);
 					if (_Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
-						strictEqual(iIndex, undefined,
+						strictEqual(iRank, undefined,
 							`created persisted @ level ${iLevel}`, oElement);
 					} else if (bPlaceholder) {
 						strictEqual(oParent.aElements.indexOf(oElement), -1,
 							`placeholder @ level ${iLevel}`, oElement);
 					} else {
-						strictEqual(iIndex,
+						strictEqual(iRank,
 							oParent.aElements.indexOf(oElement) - oParent.aElements.$created,
 							`$skip index @ level ${iLevel}`, oElement);
 					}
@@ -180,7 +180,7 @@ sap.ui.define([
 				const aSpliced = _Helper.getPrivateAnnotation(oElement, "spliced");
 				if (aSpliced) {
 					visitElements(aSpliced, true, iLevel + 1 - aSpliced[0]["@$ui5.node.level"],
-						iIndex - aSpliced.$index);
+						iRank - aSpliced.$rank);
 				}
 			});
 		}
@@ -26806,7 +26806,7 @@ sap.ui.define([
 	//
 	// A new child (Gimel) for 0 (Alpha) is created, then 0 (Alpha) is collapsed again to check
 	// that the internal "limited descendant count" has been updated correctly. Finally, 0 (Alpha)
-	// is expanded again to check that internal "index" handling is correct.
+	// is expanded again to check that internal "rank" handling is correct.
 	// JIRA: CPOUI5ODATAV4-2359
 	QUnit.test("Recursive Hierarchy: collapse nested initially expanded nodes", function (assert) {
 		var oAlpha,
