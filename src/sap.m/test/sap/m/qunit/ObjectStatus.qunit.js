@@ -511,7 +511,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Aria role attribute", function (assert) {
+	QUnit.test("Active Object Status aria role ", function (assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "test", active: true});
 
@@ -523,7 +523,24 @@ sap.ui.define([
 		assert.strictEqual(
 			oObjectStatus.getDomRef().getAttribute("aria-roledescription"),
 			Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS_ACTIVE"),
-			"Proper roledescription added");
+			"Roledescription added");
+
+		//Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Inactive Object Status aria role", function(assert) {
+		//Arrange
+		var oObjectStatus = new ObjectStatus({text: "text"});
+		oObjectStatus.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		//Act
+		//Assert
+		assert.strictEqual(
+			oObjectStatus.$("role").text(),
+			Library.getResourceBundleFor("sap.m").getText("OBJECT_STATUS"),
+			"Component description added");
 
 		//Cleanup
 		oObjectStatus.destroy();
