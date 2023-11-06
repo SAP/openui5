@@ -45,7 +45,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 */
-	const ChangeIndicator = Control.extend("sap.ui.rta.util.changeVisualization.ChangeIndicator", {
+	var ChangeIndicator = Control.extend("sap.ui.rta.util.changeVisualization.ChangeIndicator", {
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
@@ -119,7 +119,7 @@ sap.ui.define([
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiRtaChangeIndicator");
 				oRm.class("sapUiRtaChangeIndicatorChange");
-				const sTooltip = oControl.getTooltip_AsString();
+				var sTooltip = oControl.getTooltip_AsString();
 				if (sTooltip) {
 					oRm.attr("title", sTooltip);
 				}
@@ -151,9 +151,6 @@ sap.ui.define([
 			// is needed to prevent that multiple events listeners are attached
 			// to the same overlay because setVisible is called multiple times
 			this._bEventAttachedToElement = false;
-			this._oRenderPromise = new Promise((resolve) => {
-				this._fnRendered = resolve;
-			});
 		}
 	});
 
@@ -173,9 +170,9 @@ sap.ui.define([
 	}
 
 	function centerVertically(oIndicator) {
-		const oIndicatorDomRef = oIndicator.getDomRef();
-		const iOverlayHeight = Element.getElementById(oIndicator.getOverlayId()).getDomRef().offsetHeight;
-		const iIndicatorHeight = oIndicatorDomRef.offsetHeight;
+		var oIndicatorDomRef = oIndicator.getDomRef();
+		var iOverlayHeight = Element.getElementById(oIndicator.getOverlayId()).getDomRef().offsetHeight;
+		var iIndicatorHeight = oIndicatorDomRef.offsetHeight;
 		// the indicator should be centered only if the element has a small enough height to improve the design and visibility
 		if (iOverlayHeight < iIndicatorHeight * 5) {
 			oIndicator.addStyleClass("sapUiRtaChangeIndicatorVerticallyCentered");
@@ -185,25 +182,25 @@ sap.ui.define([
 	}
 
 	function getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId) {
-		const oAffectedElement = Element.getElementById(mChangeInformation.affectedElementId);
-		const mDescriptionPayload = Object.keys(mChangeInformation.descriptionPayload || {}).reduce(function(mDescriptionPayload, sKey) {
-			const vOriginalValue = mChangeInformation.descriptionPayload[sKey];
-			const bIsBinding = FlUtils.isBinding(vOriginalValue);
-			const vValue = bIsBinding
+		var oAffectedElement = Element.getElementById(mChangeInformation.affectedElementId);
+		var mDescriptionPayload = Object.keys(mChangeInformation.descriptionPayload || {}).reduce(function(mDescriptionPayload, sKey) {
+			var vOriginalValue = mChangeInformation.descriptionPayload[sKey];
+			var bIsBinding = FlUtils.isBinding(vOriginalValue);
+			var vValue = bIsBinding
 				? resolveBinding(vOriginalValue, oAffectedElement)
 				: vOriginalValue;
 			mDescriptionPayload[sKey] = vValue;
 			return mDescriptionPayload;
 		}, {});
 
-		const mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
-		const oOverlay = Element.getElementById(sOverlayId);
-		const sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
-		const oCommandVisualization = getCommandVisualization(mChangeInformation);
-		const oDescription = oCommandVisualization?.getDescription(mDescriptionPayload, sElementLabel, mPropertyBag) || {};
-		let sCommandName = mChangeInformation.commandName;
-		let sDescriptionText;
-		let sDescriptionTooltip;
+		var mPropertyBag = { appComponent: FlUtils.getAppComponentForControl(oAffectedElement) };
+		var oOverlay = Element.getElementById(sOverlayId);
+		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
+		var oCommandVisualization = getCommandVisualization(mChangeInformation);
+		var oDescription = oCommandVisualization && oCommandVisualization.getDescription(mDescriptionPayload, sElementLabel, mPropertyBag) || {};
+		var sCommandName = mChangeInformation.commandName;
+		var sDescriptionText;
+		var sDescriptionTooltip;
 
 		// 'Settings' with a custom description should overwrite the description from the CommandVisualization
 		if (sCommandName === "settings" && mDescriptionPayload.description) {
@@ -218,8 +215,8 @@ sap.ui.define([
 			sDescriptionText = oDescription.descriptionText;
 			sDescriptionTooltip = oDescription.descriptionTooltip || "";
 		} else {
-			const sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
-			const sChangeTextKey = (
+			var sShortenedElementLabel = ChangeVisualizationUtils.shortenString(sElementLabel);
+			var sChangeTextKey = (
 				`TXT_CHANGEVISUALIZATION_CHANGE_${
 				 sCommandName.toUpperCase()}`
 			);
@@ -227,8 +224,8 @@ sap.ui.define([
 			sDescriptionTooltip = oRtaResourceBundle.getText(sChangeTextKey, [sElementLabel]);
 		}
 		sDescriptionTooltip = sDescriptionText.length < sDescriptionTooltip.length ? sDescriptionTooltip : null;
-		const sDetailButtonText = oDescription && oDescription.buttonText;
-		const sIconTooltip = oRtaResourceBundle.getText(
+		var sDetailButtonText = oDescription && oDescription.buttonText;
+		var sIconTooltip = oRtaResourceBundle.getText(
 			`TXT_CHANGEVISUALIZATION_OVERVIEW_${
 			 mChangeInformation.changeCategory.toUpperCase()}`
 		);
@@ -242,9 +239,9 @@ sap.ui.define([
 	}
 
 	function getDates(mChangeInformation, oRtaResourceBundle) {
-		const sCreationDate = mChangeInformation.change.getCreation();
-		const oDate = new Date(sCreationDate);
-		const sFallbackDate = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
+		var sCreationDate = mChangeInformation.change.getCreation();
+		var oDate = new Date(sCreationDate);
+		var sFallbackDate = oRtaResourceBundle.getText("TXT_CHANGEVISUALIZATION_CREATED_IN_SESSION_DATE");
 
 		return {
 			fullDate: sCreationDate ? DateFormat.getDateTimeInstance().format(oDate) : sFallbackDate,
@@ -253,9 +250,9 @@ sap.ui.define([
 	}
 
 	function formatChangesModelItem(sOverlayId, mChangeInformation) {
-		const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
-		const oTexts = getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId);
-		const oDates = getDates(mChangeInformation, oRtaResourceBundle);
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		var oTexts = getTexts(mChangeInformation, oRtaResourceBundle, sOverlayId);
+		var oDates = getDates(mChangeInformation, oRtaResourceBundle);
 
 		return {
 			id: mChangeInformation.id,
@@ -278,7 +275,7 @@ sap.ui.define([
 	ChangeIndicator.prototype.setVisible = function(...aArgs) {
 		const [bVisible] = aArgs;
 		Control.prototype.setVisible.apply(this, aArgs);
-		const oOverlay = Element.getElementById(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		// needed because the change indicator cleanup is only triggered on save and exit
 		if (oOverlay) {
 			if (bVisible && !this._bEventAttachedToElement) {
@@ -291,10 +288,6 @@ sap.ui.define([
 				if (this.getAggregation("_popover")) {
 					this.getAggregation("_popover").destroy();
 				}
-				// Reset the render promise
-				this._oRenderPromise = new Promise((resolve) => {
-					this._fnRendered = resolve;
-				});
 			}
 		}
 		return this;
@@ -317,7 +310,7 @@ sap.ui.define([
 		// indicator is not rendered yet or that the old overlay and thus the nested indicator were destroyed
 		// To properly render it, the indicator must temporarily be placed in the static area
 		// Once it is rendered, it can move itself to the actual overlay dom ref (see onAfterRendering)
-		const oDomRef = this.getDomRef();
+		var oDomRef = this.getDomRef();
 		if (oDomRef) {
 			oDomRef.parentNode.removeChild(oDomRef);
 		}
@@ -328,7 +321,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.onAfterRendering = function() {
-		const oOverlay = Element.getElementById(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oOverlay) {
 			// Attach to the overlay
 			oOverlay.getDomRef().appendChild(this.getDomRef());
@@ -342,21 +335,11 @@ sap.ui.define([
 			this.focus();
 			this._setHoverStyleClasses(true);
 		}
-		// Resolve the rendering promise
-		this._fnRendered();
-	};
-
-	/**
-	 * Waits for the indicator to be rendered.
-	 * @returns {Promise} Resolves when the indicator is rendered
-	 */
-	ChangeIndicator.prototype.waitForRendering = function() {
-		return this._oRenderPromise;
 	};
 
 	ChangeIndicator.prototype.exit = function() {
-		const oDomRef = this.getDomRef();
-		const oOverlay = Element.getElementById(this.getOverlayId());
+		var oDomRef = this.getDomRef();
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oDomRef) {
 			oDomRef.parentNode.removeChild(oDomRef);
 		}
@@ -370,7 +353,7 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.setChanges = function(aChanges) {
-		const oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
+		var oRtaResourceBundle = Lib.getResourceBundleFor("sap.ui.rta");
 		this.setProperty("changes", aChanges);
 		this._oDetailModel.setData((aChanges || []).reverse().map(formatChangesModelItem.bind(this, this.getOverlayId())));
 		if (aChanges && aChanges.length === 1) {
@@ -409,11 +392,11 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype._setHoverStyleClasses = function(bAdd) {
-		const oOverlay = Element.getElementById(this.getOverlayId());
+		var oOverlay = Element.getElementById(this.getOverlayId());
 		if (oOverlay.getMetadata().getName() !== "sap.ui.dt.ElementOverlay") {
 			return;
 		}
-		const sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
+		var sFunctionName = bAdd ? "addStyleClass" : "removeStyleClass";
 		oOverlay[sFunctionName]("sapUiRtaChangeIndicatorHovered");
 		this[sFunctionName]("sapUiRtaHover");
 	};
@@ -445,7 +428,7 @@ sap.ui.define([
 
 	ChangeIndicator.prototype._showDependentElements = function(oEvent) {
 		this.getAggregation("_popover").close();
-		const sChangeId = this.getChanges().length > 1
+		var sChangeId = this.getChanges().length > 1
 			? oEvent.getSource().getBindingContext("details").getObject().id
 			: this.getChanges()[0].id;
 		this.fireSelectChange({
