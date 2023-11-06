@@ -536,6 +536,7 @@ sap.ui.define([
 		const oldSelectedItem = this.navigationList.getItems()[0];
 		const newSelectedItem = this.navigationList.getItems()[2];
 
+		this.stub(NavigationListItem.prototype, "_openUrl", function () { });
 		QUnitUtils.triggerEvent("tap", newSelectedItem.getDomRef());
 		Core.applyChanges();
 		this.clock.tick(500);
