@@ -1068,7 +1068,7 @@ sap.ui.define([
 		var Component = sap.ui.require("sap/ui/core/Component");
 		var oOwnerComponent;
 		if (Component && ManagedObject._sOwnerId) {
-			oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+			oOwnerComponent = Component.getComponentById(ManagedObject._sOwnerId);
 		}
 
 		function createView() {

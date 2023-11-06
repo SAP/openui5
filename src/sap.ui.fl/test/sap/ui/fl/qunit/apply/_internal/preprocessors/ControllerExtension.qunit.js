@@ -246,7 +246,7 @@ sap.ui.define([
 				name: "sap.ui.fl.ControllerExtension.testResources",
 				manifest: false
 			}).then(function(oComponent) {
-				sandbox.stub(Component, "get").returns(oComponent);
+				sandbox.stub(Component, "getComponentById").returns(oComponent);
 				var oCompCont = new ComponentContainer({
 					component: oComponent
 				});

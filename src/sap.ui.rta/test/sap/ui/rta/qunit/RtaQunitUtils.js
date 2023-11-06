@@ -45,7 +45,7 @@ sap.ui.define([
 	var RtaQunitUtils = {};
 
 	RtaQunitUtils.clear = function(oElement, bRevert) {
-		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.get("Comp1");
+		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || Component.getComponentById("Comp1");
 		var aCustomerChanges;
 
 		return FlexState.initialize({

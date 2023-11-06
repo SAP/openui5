@@ -126,7 +126,7 @@ sap.ui.define([
 
 			var oElement;
 			if (typeof mPropertyBag.element === "string") {
-				oElement = Component.get(mPropertyBag.element);
+				oElement = Component.getComponentById(mPropertyBag.element);
 				if (!(oElement instanceof Component)) {
 					oElement = Element.getElementById(mPropertyBag.element);
 

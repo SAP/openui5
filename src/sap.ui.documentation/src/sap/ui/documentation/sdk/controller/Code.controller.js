@@ -313,7 +313,7 @@ sap.ui.define(
 				var sCompId = 'sampleComp-' + this._sId;
 				var sCompName = this._sId;
 
-				var oComp = Component.get(sCompId);
+				var oComp = Component.getComponentById(sCompId);
 
 				if (oComp) {
 					oComp.destroy();

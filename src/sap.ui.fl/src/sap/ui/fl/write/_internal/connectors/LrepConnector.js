@@ -196,7 +196,7 @@ sap.ui.define([
 				aChanges = mPropertyBag.changes;
 				oTransportSelectionPromise = Settings.getInstance().then(function(oSettings) {
 					if (!oSettings.isProductiveSystem()) {
-						return new TransportSelection().setTransports(aChanges, Component.get(mPropertyBag.reference)).then(function() {
+						return new TransportSelection().setTransports(aChanges, Component.getComponentById(mPropertyBag.reference)).then(function() {
 							// Make sure we include one request in case of mixed changes (local and transported)
 							aChanges.some(function(oChange) {
 								if (oChange.getRequest()) {

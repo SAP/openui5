@@ -77,7 +77,7 @@ sap.ui.define([
 				return Promise.resolve([]);
 			}
 
-			var oComponent = Component.get(sComponentId);
+			var oComponent = Component.getComponentById(sComponentId);
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// In case an application of a component can not be identified, ex: FLP plugins components, return a promise of no extension
 			if (!oAppComponent) {

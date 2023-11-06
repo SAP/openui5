@@ -25,7 +25,7 @@ sap.ui.define([
 
 	QUnit.module("XmlPreprocessor.getCacheKey", {
 		beforeEach() {
-			sandbox.stub(Component, "get").returnsArg(0);
+			sandbox.stub(Component, "getComponentById").returnsArg(0);
 			sandbox.stub(Utils, "getAppComponentForControl")
 			.withArgs("invalidComponent").returns(undefined)
 			.withArgs("validComponent").returns("appComponent");
@@ -127,7 +127,7 @@ sap.ui.define([
 					return oComponentData;
 				}
 			};
-			sandbox.stub(Component, "get").returns(oMockedComponent);
+			sandbox.stub(Component, "getComponentById").returns(oMockedComponent);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
 
@@ -166,7 +166,7 @@ sap.ui.define([
 				}
 			};
 
-			sandbox.stub(Component, "get").returns(oMockedAppComponent);
+			sandbox.stub(Component, "getComponentById").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 			sandbox.stub(Utils, "isApplication").returns(true);
 			const oApplierStub = sandbox.stub(Applier, "applyAllChangesForXMLView");
