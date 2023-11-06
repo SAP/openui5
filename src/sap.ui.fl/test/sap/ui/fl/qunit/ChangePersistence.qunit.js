@@ -1189,7 +1189,7 @@ sap.ui.define([
 				name: "sap/ui/fl/qunit/integration/testComponentComplex"
 			}).then(function(oComponent) {
 				this._oAppComponentInstance = oComponent;
-				this._oComponentInstance = Component.get(oComponent.createId("sap.ui.fl.qunit.integration.testComponentReuse"));
+				this._oComponentInstance = Component.getComponentById(oComponent.createId("sap.ui.fl.qunit.integration.testComponentReuse"));
 				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 			}.bind(this));
 		},

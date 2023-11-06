@@ -51,7 +51,7 @@ sap.ui.define([
 	ElementUtil.getElementInstance = function(vElement) {
 		if (typeof vElement === "string") {
 			var oElement = Element.getElementById(vElement);
-			return oElement || Component.get(vElement);
+			return oElement || Component.getComponentById(vElement);
 		}
 		return vElement;
 	};

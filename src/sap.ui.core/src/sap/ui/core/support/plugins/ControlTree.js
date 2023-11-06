@@ -1430,7 +1430,7 @@ sap.ui.define([
 							oObj = Element.getElementById(mAssoc.id);
 							break;
 						case "component":
-							oObj = Component.get(mAssoc.id);
+							oObj = Component.getComponentById(mAssoc.id);
 							break;
 						default:
 							break;

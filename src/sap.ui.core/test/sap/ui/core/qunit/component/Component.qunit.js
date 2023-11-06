@@ -129,7 +129,7 @@ sap.ui.define([
 
 	QUnit.test("Factory Function", function(assert){
 		var oComp = this.oComp;
-		var oComponent = Component.get(oComp.getId());
+		var oComponent = Component.getComponentById(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 
 		return Component.create({
@@ -434,7 +434,7 @@ sap.ui.define([
 		// check the nested component having the ID of the parent component
 		var oNestedComponentContainer = this.oComp.byId("ContButton");
 		var sNestedComponentId = oNestedComponentContainer.getComponent();
-		var oNestedComponent = Component.get(sNestedComponentId);
+		var oNestedComponent = Component.getComponentById(sNestedComponentId);
 		assert.equal(sRefComponentId, Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
 		// check the control in the nested component to have the correct component context
 		var oNestedControl = oNestedComponent.byId("mybutn");
@@ -739,7 +739,7 @@ sap.ui.define([
 			manifest: "anylocation/manifest.json"
 		}).then(function(oComponent) {
 			assert.ok(true, "Component is loaded properly!");
-			assert.equal(oComponent, Component.get("myTestComp"), "Component.get returns right component");
+			assert.equal(oComponent, Component.getComponentById("myTestComp"), "Component.get returns right component");
 		}, function(oError) {
 			assert.ok(false, "Component should be loaded!");
 		});
