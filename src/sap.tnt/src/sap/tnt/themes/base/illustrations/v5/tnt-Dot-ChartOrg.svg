@@ -1,4 +1,4 @@
-<svg id="tnt-Dot-ChartOrg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+<svg width="45" height="45" id="tnt-Dot-ChartOrg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
     <path d="m6.08,30.75l15.18-18.41.77.64L6.85,31.39l-.77-.64Z" style="fill:var(--sapContent_Illustrative_Color4)" fill-rule="evenodd" />
     <path d="m38.95,30.75l-15.18-18.41-.77.64,15.18,18.41.77-.64Z" style="fill:var(--sapContent_Illustrative_Color4)" fill-rule="evenodd" />
     <path d="m31.18,9.37c0,4.52-3.67,8.19-8.19,8.19s-8.19-3.67-8.19-8.19S18.47,1.18,22.99,1.18s8.19,3.67,8.19,8.19Z" style="fill:var(--sapContent_Illustrative_Color3)" />
