@@ -162,7 +162,7 @@ sap.ui.define([
 		var sPath = oEvent.getSource().getBindingContext().getPath(),
 			oDeletePreset = this.oModel.getProperty(sPath),
 			aCustomPresets = this.oModel.getProperty("/customPresets"),
-			sDeletedItemId = oEvent.getSource().$().closest(".sapMLIB").attr("id");
+			sDeletedItemId = oEvent.getSource().getDomRef().closest(".sapMLIB").getAttribute("id");
 
 		// use the path to find and delete
 		var aPresets = this.oModel.getProperty("/selectionPresets");
