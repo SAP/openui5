@@ -4,7 +4,7 @@
 
 sap.ui.define([
 	"./BaseContentRenderer",
-	"sap/ui/core/IconPool",
+	"sap/ui/core/IconPool", // side effect: required when calling RenderManager#icon
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/Lib",
 	"sap/ui/unified/library",
@@ -12,7 +12,7 @@ sap.ui.define([
 ],
 	function(
 		BaseContentRenderer,
-		IconPool,
+		_IconPool,
 		InvisibleText,
 		Library,
 		unifiedLibrary,

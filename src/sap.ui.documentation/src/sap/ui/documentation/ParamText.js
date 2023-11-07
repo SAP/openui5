@@ -4,7 +4,8 @@
  */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/Device'
+	'sap/ui/Device',
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager.icon
 ], function(Control, Device) {
 	"use strict";
 

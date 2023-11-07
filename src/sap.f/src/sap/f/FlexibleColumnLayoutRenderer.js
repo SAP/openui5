@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Lib"],
-	function (Device, mobileLibrary, Library) {
+sap.ui.define([
+	"sap/ui/Device",
+	"sap/m/library",
+	"sap/ui/core/Lib",
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager#icon
+], function (Device, mobileLibrary, Library) {
 		"use strict";
 
 		var oResourceBundle = Library.getResourceBundleFor("sap.f");

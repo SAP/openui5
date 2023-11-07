@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/i18n/Localization", "sap/ui/core/Lib", "sap/ui/core/Locale"],
-	function(Localization, Library, Locale) {
+sap.ui.define([
+	"sap/base/i18n/Localization",
+	"sap/ui/core/Lib",
+	"sap/ui/core/Locale",
+	"sap/ui/core/IconPool" // side effect: required when calling RenderManager.icon
+], function(Localization, Library, Locale) {
 	"use strict";
 
 
