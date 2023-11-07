@@ -3071,7 +3071,7 @@ sap.ui.define([
 				oDataType = oContentFactory.getDataType();
 			}
 
-			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._sFilterValue, sFilterValue, oDataType, oContentFactory.getAdditionalDataType());
+			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._vLiveChangeValue || this._sFilterValue, sFilterValue, oDataType, oContentFactory.getAdditionalDataType());
 
 			if (oAutocomplete && oAutocomplete.text) { // only if something returned
 				this._oNavigateCondition = merge({}, oCondition); // to keep Payload

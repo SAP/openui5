@@ -5289,6 +5289,14 @@ sap.ui.define([
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
 
+							oContent._$input.val("Ite");
+							oContent.fireLiveChange({ value: "Ite" }); // don't wait for debounce
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // outdated
+							assert.equal(oContent._$input.val(), "Ite", "Output text");
+							assert.equal(oContent._$input.cursorPos(), 3, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 3, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 3, "Selection end");
+
 							oValueHelp.close(); // to be sure
 							fnDone();
 						}, 400);
