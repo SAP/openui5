@@ -25,7 +25,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Test main control functionality", function(assert) {
-		mobileLibrary.Support.open();
+		Support.open();
 		var done = assert.async();
 		var maxTries = 8; // ~ 2s
 
@@ -59,13 +59,13 @@ sap.ui.define([
 
 		var sEventName = "ontouchstart";
 		document[sEventName] = "alabala";
-		var oSupport = mobileLibrary.Support.on();
+		var oSupport = Support.on();
 		this.clock.tick(500);
 
 		assert.ok(oSupport, "Support dialog event should be registered already");
 		assert.equal(oSupport.isEventRegistered(), true, "Support dialog event should be registered already");
 
-		oSupport = mobileLibrary.Support.off();
+		oSupport = Support.off();
 
 		assert.ok(oSupport, "Support dialog event should be unregistered now");
 		assert.equal(oSupport.isEventRegistered(), false, "Support dialog event should be unregistered already");
