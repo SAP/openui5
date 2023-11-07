@@ -11,7 +11,6 @@ sap.ui.define(["sap/base/Log"],
 		 * A dummy implementation that does not really utilize the cache. Can be used when one wants to switch-off
 		 * the cache without changing its code
 		 * @private
-		 * @experimental
 		 * @since 1.37.0
 		 * @namespace
 		 * @alias sap.ui.core.cache.CacheManagerNOP
