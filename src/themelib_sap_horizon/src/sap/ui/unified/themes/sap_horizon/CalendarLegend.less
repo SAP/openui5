@@ -3,8 +3,15 @@
 /* Horizon theme                                  */
 /* ============================================== */
 
-.sapUiUnifiedLegend {
+.sapUiUnifiedLegend  {
 	border-radius: 0.5rem;
+}
+
+.sapUiCalLegDayTypeNonWorking,
+.sapUiUnifiedLegendNonWorkingDay {
+	& > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+		background: @sapUiLegendNonWorkingBackground;
+	}
 }
 
 .sapUiUnifiedLegendItem {
