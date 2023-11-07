@@ -135,8 +135,12 @@ sap.ui.define([
 			 * @public
 			 */
 			getControlInView : function (oOptions) {
-				var oView = this._getMatchingView(oOptions);
-				var bSearchForSingleControl = typeof oOptions.id === "string";
+				var bSearchForSingleControl = typeof oOptions.id === "string",
+					oView;
+
+				if (oOptions.viewName || oOptions.viewId) {
+					oView = this._getMatchingView(oOptions);
+				}
 
 				if (!oView) {
 					return bSearchForSingleControl ? null : [];
@@ -232,8 +236,12 @@ sap.ui.define([
 
 				if (oOptions.id) {
 					vControls = this._filterUniqueControlsByCondition(vControls, function (oControl) {
-						var sUnprefixedControlId = oControl.getId();
-						var oView = this._getMatchingView(oOptions);
+						var sUnprefixedControlId = oControl.getId(),
+							oView;
+
+						if (oOptions.viewName || oOptions.viewId) {
+							oView = this._getMatchingView(oOptions);
+						}
 
 						if (oView) {
 							// the view could be set globally or from page object. in this case, search inside open dialogs should take priority:
