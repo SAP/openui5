@@ -1384,6 +1384,12 @@ sap.ui.define([
 		// assert
 		assert.ok(oFileUploader.getAriaLabelledBy().length === 0, "All label IDs are removed from FileUploader 'ariaLabelledBy' association");
 		assert.ok(oBrowse.getAriaLabelledBy().length === 1, "Initial label ID remains in the 'Browse' button 'ariaLabelledBy' association");
+		try {
+			oFileUploader.removeAriaLabelledBy("labelledby2");
+			assert.ok(true, "If the method is called with an ariaLabel id already removed it should not throw an error");
+		} catch (error) {
+			assert.ok(false, "If the method is called with an ariaLabel id already removed it should not throw an error");
+		}
 
 		// cleanup
 		oLabel.destroy();
@@ -1431,6 +1437,12 @@ sap.ui.define([
 		// assert
 		assert.ok(oFileUploader.getAriaDescribedBy().length === 0, "All IDs are removed from FileUploader 'ariaDescribedBy' association");
 		assert.ok(oBrowse.getAriaDescribedBy().length === 1, "Initial description ID remains in the 'Browse' sap.m.Button 'ariaDescribedBy' association");
+		try {
+			oFileUploader.removeAriaDescribedBy("describedby2");
+			assert.ok(true, "If the method is called with an ariaDescribedBy id already removed it should not throw an error");
+		} catch (error) {
+			assert.ok(false, "If the method is called with an ariaDescribedBy id already removed it should not throw an error");
+		}
 
 		// cleanup
 		oLabel.destroy();
