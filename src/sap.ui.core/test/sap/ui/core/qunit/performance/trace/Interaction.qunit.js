@@ -25,7 +25,7 @@ sap.ui.define([
 		var oPendingInteraction = Interaction.getPending();
 		var iBusyDuration = oPendingInteraction.busyDuration;
 
-		assert.strictEqual(iBusyDuration, 0, "no busy duration shoudl have been added");
+		assert.strictEqual(iBusyDuration, 0, "no busy duration should have been added");
 
 		//busy indicator adds busy duration - everything is fine
 		Interaction.addBusyDuration(33);
@@ -79,10 +79,11 @@ sap.ui.define([
 
 	QUnit.module("Interaction API with fake timer", {
 		before: function() {
+			const oTiming = window.performance.timing;
 			this.clock = sinon.useFakeTimers();
 			window.performance.getEntriesByType = function() { return []; };
+			window.performance.timing = oTiming;
 			Interaction.setActive(true);
-			this.clock.runAll();
 		},
 		after: function() {
 			Interaction.setActive(false);
@@ -90,17 +91,13 @@ sap.ui.define([
 			// Run all pending setTimeout and restore the timer
 			this.clock.runAll();
 			delete window.performance.getEntriesByType;
+			delete window.performance.timing.fetchStart;
 			this.clock.restore();
 		}
 	});
 
 	QUnit.test("Semantic Stepname", function(assert) {
 		assert.expect(2);
-
-		 // Call setActive after activating fakeTimers again, in order to ensure setTimeout calls triggered
-		 // by setActive are also covered by fakeTimers
-		Interaction.setActive(true);
-		this.clock.runAll();
 
 		return XMLView.create({
 			definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:fesr="http://schemas.sap.com/sapui5/extension/sap.ui.core.FESR/1">'
