@@ -39,12 +39,12 @@
 	scroll-padding-bottom: ~"calc(@{_sap_uxap_ObjectPageLayout_FooterHeight_Compact} +  @{_sap_uxap_ObjectPageLayout_FooterMarginBottom} + 2px)";
 }
 
-.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone) .sapUxAPObjectPageSubSectionPromoted:not(.sapUxAPObjectPageSectionMultilineContent) .sapUxAPObjectPageSubSectionHeaderActions {
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone):not("sapUxAPObjectPageLayoutIconTabBar") .sapUxAPObjectPageSubSectionPromoted:not(.sapUxAPObjectPageSectionMultilineContent) .sapUxAPObjectPageSubSectionHeaderActions {
 	position: absolute;
 	top: 0;
 	right: 1rem;
 }
-.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone) .sapUxAPObjectPageSubSectionPromoted:not(.sapUxAPObjectPageSectionMultilineContent) .sapUxAPObjectPageSubSectionHeader {
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone):not("sapUxAPObjectPageLayoutIconTabBar") .sapUxAPObjectPageSubSectionPromoted:not(.sapUxAPObjectPageSectionMultilineContent) .sapUxAPObjectPageSubSectionHeader {
 	height: 0;
 	padding: 0;
 }
