@@ -65,8 +65,14 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
+<<<<<<< HEAD
 	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput value-property case)
 	 * @param {string} [oFormatOptions.keepValue] If noFormatting is set, this value is used as output (To keep typed value during value help selection)
+=======
+	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
+	 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
+	 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
+>>>>>>> 8855db58c16 ([FIX] Field: not possible to enter multiple lines)
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionsType
 	 */
@@ -275,7 +281,8 @@ sap.ui.define([
 
 		var aOperators = this.oFormatOptions.operators || [];
 		var bBetweenSupported = aOperators.indexOf("BT") >= 0 || aOperators.length === 0;
-		var aSeparatedText = splitValue(vValue, !bBetweenSupported);
+		const bMultipleLines = _getMultipleLines.call(this);
+		const aSeparatedText = bMultipleLines ? [vValue] : splitValue(vValue, !bBetweenSupported);
 
 		if (aSeparatedText.length > 1 || (bBetweenSupported && aSeparatedText.length === 1 && typeof aSeparatedText[0] === "string" && aSeparatedText[0].search(/\t/) >= 0)) {
 			return _parseMultipleValues.call(this, aSeparatedText, sSourceType, iIndex);
@@ -547,6 +554,16 @@ sap.ui.define([
 
 	}
 
+	function _getMultipleLines() {
+
+
+		if (this.oFormatOptions.hasOwnProperty("multipleLines")) {
+			return this.oFormatOptions.multipleLines;
+		}
+
+		return false;
+
+	}
 
 	return ConditionsType;
 

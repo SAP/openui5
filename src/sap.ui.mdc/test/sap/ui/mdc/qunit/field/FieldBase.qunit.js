@@ -927,6 +927,7 @@ sap.ui.define([
 		assert.deepEqual(oFormatOptions.payload, {}, "payload");
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.ok(oFormatOptions.convertWhitespaces, "convertWhitespaces set");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		oField.setEditMode(FieldEditMode.Editable);
@@ -950,6 +951,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 		oFormatOptions = oField.getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
@@ -969,6 +971,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 	});
 
@@ -1193,6 +1196,8 @@ sap.ui.define([
 			assert.ok(oContent instanceof TextArea, "TextArea rendered");
 			assert.equal(oContent.getValue && oContent.getValue(), "Test", "Text set on TextArea control");
 			assert.equal(oContent.getRows(), 4, "Number of rows");
+			const oFormatOptions = oFieldEditSingle.getFormatOptions();
+			assert.ok(oFormatOptions.multipleLines, "multipleLines set on FormatOptions");
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];

@@ -76,6 +76,9 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.defaultOperatorName] Name of the default <code>Operator</code>
 	 * @param {boolean} [oFormatOptions.convertWhitespaces] If set, whitespaces will be replaced by special characters to display whitespaces in HTML
 	 * @param {sap.ui.core.Control} [oFormatOptions.control] Instance of the calling control
+	 * @param {boolean} [oFormatOptions.noFormatting] If set, the conditions will not be formatted (MultiInput <code>value</code> property case)
+	 * @param {string} [oFormatOptions.keepValue] If <code>noFormatting</code> is set, this value is used as output to keep the typed value during value help selection
+	 * @param {boolean} [oFormatOptions.multipleLines] If set, the input and output might contain multiple lines
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */

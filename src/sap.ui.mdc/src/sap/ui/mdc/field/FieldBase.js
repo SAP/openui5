@@ -3272,7 +3272,8 @@ sap.ui.define([
 			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null,
 			getConditions: this.getConditions.bind(this), // to add condition in multi-value case
 			noFormatting: this.getContentFactory().getNoFormatting(),
-			keepValue: this._bIgnoreInputValue ? this._sFilterValue : null
+			keepValue: this._bIgnoreInputValue ? this._sFilterValue : null,
+			multipleLines: this.getMultipleLines()
 		};
 
 	};
@@ -3352,7 +3353,8 @@ sap.ui.define([
 			convertWhitespaces: this.getEditMode() === FieldEditMode.Display || this.getEditMode() === FieldEditMode.EditableDisplay,
 			control: this,
 			getConditions: this.getConditions.bind(this), // TODO: better solution to update unit in all conditions
-			noFormatting: false
+			noFormatting: false,
+			multipleLines: false
 		};
 
 	};

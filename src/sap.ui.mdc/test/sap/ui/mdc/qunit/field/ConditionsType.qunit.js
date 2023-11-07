@@ -360,11 +360,21 @@ sap.ui.define([
 		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
 		assert.ok(aConditions, "Result returned");
 		assert.ok(Array.isArray(aConditions), "Arry returned");
-		assert.equal(aConditions.length, 4, "3 condition returned");
+		assert.equal(aConditions.length, 4, "4 condition returned");
 		_checkCondition(assert, aConditions[0], "EQ", ["X"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[1], "EQ", ["I1"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[2], "NE", ["I2"], ConditionValidated.NotValidated);
 		_checkCondition(assert, aConditions[3], "BT", ["I3", "I5"], ConditionValidated.NotValidated);
+
+		// for multipleLines allow linebreaks
+		aConditions = [Condition.createCondition("EQ", ["X"], undefined, undefined, ConditionValidated.NotValidated, undefined)];
+		oConditionsType.setFormatOptions({operators: ["EQ"], maxConditions: -1, multipleLines: true, getConditions: function() {return aConditions;}, asyncParsing: fnAsync});
+		aConditions = oConditionsType.parseValue("I1\n!=I2\nI3	I5");
+		assert.ok(aConditions, "Result returned");
+		assert.ok(Array.isArray(aConditions), "Arry returned");
+		assert.equal(aConditions.length, 2, "2 condition returned");
+		_checkCondition(assert, aConditions[0], "EQ", ["X"], ConditionValidated.NotValidated);
+		_checkCondition(assert, aConditions[1], "EQ", ["I1\n!=I2\nI3	I5"], ConditionValidated.NotValidated);
 
 	});
 
