@@ -47,7 +47,6 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var fnOnBeforeCreated = FESR.onBeforeCreated;
 
 		FESR.setActive(true);
-		Interaction.notifyStepStart("startup", true);
 
 		// implement hook
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
@@ -96,7 +95,6 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		Interaction.end(true);
 		Interaction.clear();
-		FESR.onBeforeCreated = fnOnBeforeCreated;
 		FESR.setActive(false);
 		FESR.onBeforeCreated = fnOnBeforeCreated;
 		oHeaderSpy.restore();
@@ -234,8 +232,10 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 	QUnit.test("Beacon strategy", function(assert) {
 		assert.expect(9);
+		const oTiming = window.performance.timing;
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+		window.performance.timing = oTiming;
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 		var fileReader = new FileReader();
 		var done = assert.async();
@@ -279,6 +279,9 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		fileReader.readAsText(blobToSend);
 
+		// cleanup
+		delete window.performance.getEntriesByType;
+		delete window.performance.timing;
 		FESR.setActive(false);
 		sendBeaconStub.restore();
 		this.clock.restore();
@@ -286,9 +289,11 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 	QUnit.test("Beacon timeout", function(assert) {
 		assert.expect(9);
+		const oTiming = window.performance.timing;
 		this.clock = sinon.useFakeTimers();
 		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 		window.performance.getEntriesByType = function() { return []; };
+		window.performance.timing = oTiming;
 		var addFakeProcessingTime = function () {
 			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
 			var notifyAsyncStepCallback;
@@ -341,14 +346,17 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		// cleanup
 		delete window.performance.getEntriesByType;
+		delete window.performance.timing;
 		sendBeaconStub.restore();
 		this.clock.restore();
 	});
 
 	QUnit.test("Semantic Stepname", function(assert) {
 		assert.expect(3);
+		const oTiming = window.performance.timing;
 		this.clock = sinon.useFakeTimers();
 		window.performance.getEntriesByType = function() { return []; };
+		window.performance.timing = oTiming;
 		var addFakeProcessingTime = function () {
 			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
 			var notifyAsyncStepCallback;
@@ -379,6 +387,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		// cleanup
 		delete window.performance.getEntriesByType;
+		delete window.performance.timing;
 		this.clock.restore();
 	});
 
