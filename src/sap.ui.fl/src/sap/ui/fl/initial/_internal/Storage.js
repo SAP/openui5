@@ -39,17 +39,17 @@ sap.ui.define([
 				delete oConnectorSpecificPropertyBag.version;
 			} else {
 				// a sign that we are in the RTA mode and allContexts query parameter should be set for flex/data request
-				if (oFlexInfoSession?.initialAllContexts) {
+				if (oFlexInfoSession.initialAllContexts) {
 					oConnectorSpecificPropertyBag.allContexts = true;
 				}
-				if (!oConnectorSpecificPropertyBag.version && oFlexInfoSession?.version) {
+				if (!oConnectorSpecificPropertyBag.version && oFlexInfoSession.version) {
 					oConnectorSpecificPropertyBag.version = oFlexInfoSession.version;
 				}
 			}
 			var bIsRtaStarting = !!window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
 			if (!bIsRtaStarting) {
-				delete oFlexInfoSession?.version;
-				delete oFlexInfoSession?.maxLayer;
+				delete oFlexInfoSession.version;
+				delete oFlexInfoSession.maxLayer;
 				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
 			}
 

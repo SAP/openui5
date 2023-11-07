@@ -33,7 +33,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @private
 	 * @since 1.76
-	 * @experimental
+	 * @ui5-restricted sap.ui.mdc
 	 * @alias sap.ui.table.plugins.V4Aggregation
 	 */
 	var V4Aggregation = PluginBase.extend("sap.ui.table.plugins.V4Aggregation", /** @lends sap.ui.table.plugins.V4Aggregation.prototype */ {

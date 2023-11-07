@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Fixed"},
+		rowMode: new FixedRowMode(),
 		rows: {path: "/Products"}
 	});
 

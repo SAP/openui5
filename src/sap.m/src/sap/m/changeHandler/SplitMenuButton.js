@@ -255,7 +255,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} mParameters.menu
 	 */
 	SplitMenuButton.pressHandler = function (oEvent, mParameters) {
-		var oMenuItem = JsControlTreeModifier.bySelector(mParameters.selector, Component.get(mParameters.appComponentId));
+		var oMenuItem = JsControlTreeModifier.bySelector(mParameters.selector, Component.getComponentById(mParameters.appComponentId));
 		oMenuItem.firePress();
 
 		mParameters.menu.fireItemSelected({ item: oMenuItem });

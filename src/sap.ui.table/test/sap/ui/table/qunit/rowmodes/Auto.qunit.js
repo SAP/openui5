@@ -30,7 +30,7 @@ sap.ui.define([
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Auto"},
+		rowMode: new AutoRowMode(),
 		rows: {path: "/"}
 	});
 

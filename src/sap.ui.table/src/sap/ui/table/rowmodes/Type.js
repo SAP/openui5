@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(function() {
+sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 	"use strict";
 
 	/**
@@ -33,5 +33,7 @@ sap.ui.define(function() {
 		Interactive: "Interactive"
 	};
 
+	DataType.registerEnum("sap.ui.table.rowmodes.Type", Type);
+
 	return Type;
-}, /* bExport= */ true);
+});

@@ -474,7 +474,7 @@ sap.ui.define([
 		}
 
 		if (sComponentId) {
-			oComponent = Component.get(sComponentId);
+			oComponent = Component.getComponentById(sComponentId);
 		}
 
 		if (oComponent) {
@@ -725,7 +725,7 @@ sap.ui.define([
 	 * @since 1.25.1
 	 */
 	Component.getOwnerComponentFor = function(oObject) {
-		return Component.get(Component.getOwnerIdFor(oObject));
+		return Component.getComponentById(Component.getOwnerIdFor(oObject));
 	};
 
 	/**
@@ -2410,7 +2410,7 @@ sap.ui.define([
 	 * Part of the old sap.ui.component implementation than can be re-used by the new factory
 	 */
 	function componentFactory(vConfig, bLegacy) {
-		var oOwnerComponent = Component.get(ManagedObject._sOwnerId);
+		var oOwnerComponent = Component.getComponentById(ManagedObject._sOwnerId);
 
 		if (Array.isArray(vConfig.activeTerminologies) && vConfig.activeTerminologies.length &&
 			Array.isArray(Localization.getActiveTerminologies()) && Localization.getActiveTerminologies().length) {
@@ -2676,12 +2676,11 @@ sap.ui.define([
 	 * @param {string} sId ID of the component.
 	 * @returns {sap.ui.core.Component|undefined} Component instance or <code>undefined</code> when no component
 	 *     with the given ID exists.
-	 * @since 1.56.0
+	 * @since 1.120
 	 * @static
 	 * @public
 	 */
-	Component.get = function (sId) {
-		// lookup and return the component
+	Component.getComponentById = function(sId) {
 		return Component.registry.get(sId);
 	};
 

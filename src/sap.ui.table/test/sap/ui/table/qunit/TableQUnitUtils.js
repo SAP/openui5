@@ -909,7 +909,7 @@ sap.ui.define([
 			fnBeforePlaceAt = mSettings;
 			mSettings = undefined;
 		}
-		mSettings = Object.assign({}, deepCloneSettings(mDefaultSettings), mSettings);
+		mSettings = Object.assign({}, deepCloneSettings(this.getDefaultSettings()), mSettings);
 		TableClass = TableClass == null ? Table : TableClass;
 
 		var oHelperPlugin = new HelperPlugin();

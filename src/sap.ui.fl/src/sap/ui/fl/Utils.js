@@ -151,7 +151,7 @@ sap.ui.define([
 			if (oControl) {
 				const sComponentId = getComponentIdForControl(oControl);
 				if (sComponentId) {
-					return Component.get(sComponentId);
+					return Component.getComponentById(sComponentId);
 				}
 			}
 		},

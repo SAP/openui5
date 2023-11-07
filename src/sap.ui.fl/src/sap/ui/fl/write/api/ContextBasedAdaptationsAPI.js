@@ -124,7 +124,7 @@ sap.ui.define([
 			// Determine displayed adaptation
 			// Flex Info Session returns currently shown one based on Flex Data response
 			// If no longer available switch to highest ranked one
-			var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control) || {};
+			var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.control);
 			var oDisplayedAdaptation = oAdaptations.adaptations[0];
 			if (oFlexInfoSession.adaptationId) {
 				oDisplayedAdaptation = oAdaptations.adaptations.find(function(oAdaptation) {

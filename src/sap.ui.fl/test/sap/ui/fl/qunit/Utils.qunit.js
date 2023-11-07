@@ -203,7 +203,7 @@ sap.ui.define([
 				}
 			};
 			sandbox.stub(Component, "getOwnerIdFor").returns("testId");
-			sandbox.stub(Component, "get").returns(oComponentMock);
+			sandbox.stub(Component, "getComponentById").returns(oComponentMock);
 
 			assert.equal(Utils.getAppDescriptor(oControl), oAppDescriptor);
 		});

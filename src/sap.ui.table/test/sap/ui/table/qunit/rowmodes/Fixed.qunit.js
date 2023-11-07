@@ -22,7 +22,7 @@ sap.ui.define([
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Fixed"},
+		rowMode: new FixedRowMode(),
 		rows: {path: "/"}
 	});
 

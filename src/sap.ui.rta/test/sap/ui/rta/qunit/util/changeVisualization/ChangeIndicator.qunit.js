@@ -636,19 +636,10 @@ sap.ui.define([
 
 			return oOpenPopoverPromise
 			.then(function() {
-				const oPreviousRenderPromise = this.oChangeIndicator.waitForRendering();
 				this.oChangeIndicator.setVisible(false);
 				assert.notOk(this.oChangeIndicator.getVisible(), "then the indicator is not visible");
-				assert.notStrictEqual(
-					oPreviousRenderPromise,
-					this.oChangeIndicator.waitForRendering(),
-					"and the render promise was reset"
-				);
 				this.oChangeIndicator.setVisible(true);
-				return this.oChangeIndicator.waitForRendering()
-				.then(() => {
-					assert.ok(this.oChangeIndicator.getVisible(), "then the indicator finished rendering and is visible");
-				});
+				assert.ok(this.oChangeIndicator.getVisible(), "then the indicator is visible");
 			}.bind(this));
 		});
 	});

@@ -6,15 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.table.
  */
 sap.ui.define([
- "sap/ui/core/Core",
- "sap/ui/table/rowmodes/Type",
- // library dependency
+ "sap/ui/core/Lib",
+ // library dependencies
  "sap/ui/core/library",
- // library dependency
  "sap/ui/unified/library"
 ], function(
- Core,
- RowModeType
+ Library
 ) {
  "use strict";
 
@@ -28,7 +25,7 @@ sap.ui.define([
   * @since 0.8
   * @public
   */
- var thisLib = sap.ui.getCore().initLibrary({
+ var thisLib = Library.init({
 	 name: "sap.ui.table",
 	 version: "${version}",
 	 dependencies: ["sap.ui.core", "sap.ui.unified"],
@@ -303,9 +300,6 @@ sap.ui.define([
 	  */
 	 MultiToggle: "MultiToggle"
  };
-
- thisLib.rowmodes = thisLib.rowmodes || {};
- thisLib.rowmodes.Type = RowModeType;
 
  //factory for table to create labels and textviews to be overwritten by commons and mobile library
  /* -------------------------------------- */

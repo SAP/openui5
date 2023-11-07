@@ -1,4 +1,4 @@
-<svg id="tnt-Dot-NoApplications-alternate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
+<svg width="45" height="45" id="tnt-Dot-NoApplications-alternate" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45">
     <rect x=".06" y="14.6" width="35.61" height="23.78" rx="2.76" ry="2.76" style="fill:var(--sapContent_Illustrative_Color6)" />
     <path d="m2.22,15.92c0-1.27,1.03-2.3,2.3-2.3h29.38c1.27,0,2.3,1.03,2.3,2.3v18.16c0,1.27-1.03,2.3-2.3,2.3H4.52c-1.27,0-2.3-1.03-2.3-2.3V15.92Z" style="fill:var(--sapContent_Illustrative_Color8)" />
     <path d="m4.52,12.63h29.38c1.82,0,3.3,1.48,3.3,3.3v18.16c0,1.82-1.48,3.3-3.3,3.3H4.52c-1.82,0-3.3-1.48-3.3-3.3V15.92c0-1.82,1.48-3.3,3.3-3.3Zm0,1c-1.27,0-2.3,1.03-2.3,2.3v18.16c0,1.27,1.03,2.3,2.3,2.3h29.38c1.27,0,2.3-1.03,2.3-2.3V15.92c0-1.27-1.03-2.3-2.3-2.3H4.52Z" style="fill:var(--sapContent_Illustrative_Color4)" fill-rule="evenodd" />

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/rowmodes/sets/RowCountConstraints",
 	"sap/ui/table/qunit/rowmodes/sets/RowsUpdated",
 	"sap/ui/table/Table",
+	"sap/ui/table/rowmodes/Interactive",
 	"sap/ui/core/Core",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/thirdparty/jquery"
@@ -15,6 +16,7 @@ sap.ui.define([
 	RowCountConstraintsTest,
 	RowsUpdatedTest,
 	Table,
+	InteractiveRowMode,
 	Core,
 	qutils,
 	jQuery
@@ -24,7 +26,7 @@ sap.ui.define([
 	var HeightTestControl = TableQUnitUtils.HeightTestControl;
 
 	TableQUnitUtils.setDefaultSettings({
-		rowMode: {Type: "sap.ui.table.rowmodes.Interactive"},
+		rowMode: new InteractiveRowMode(),
 		rows: {path: "/"}
 	});
 

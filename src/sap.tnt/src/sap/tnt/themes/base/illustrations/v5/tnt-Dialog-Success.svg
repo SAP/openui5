@@ -1,4 +1,4 @@
-<svg id="tnt-Dialog-Success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+<svg width="160" height="160" id="tnt-Dialog-Success" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
     <circle cx="80" cy="80" r="80" style="fill:var(--sapContent_Illustrative_Color7)" />
     <path d="m1.18,66.26c3.33-19.22,13.51-36.09,27.95-48,7.25,5.03,12,13.41,12,22.91,0,15.38-12.47,27.85-27.85,27.85-4.33,0-8.44-.99-12.1-2.76Z" style="fill:var(--sapContent_Illustrative_Color19)" fill-rule="evenodd" />
     <path d="m28.5,43.25c-.1.27-2.22-.94-4.24,0-2.41,1.12-2.65,4.35-3.18,4.24-.61-.13-1.47-4.66.94-6.24,2.6-1.71,6.6,1.61,6.48,2Z" style="fill:var(--sapContent_Illustrative_Color20)" />

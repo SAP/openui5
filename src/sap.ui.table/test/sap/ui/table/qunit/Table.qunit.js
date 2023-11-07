@@ -3135,9 +3135,17 @@ sap.ui.define([
 	QUnit.test("Lazy row creation; RowMode = Fixed & Interactive", function(assert) {
 		destroyTable();
 
+		function createRowMode(bFixedMode) {
+			if (bFixedMode) {
+				return new FixedRowMode({rowCount: 5});
+			} else {
+				return new InteractiveRowMode({rowCount: 5});
+			}
+		}
+
 		function test(sRowMode) {
 			var oTable = TableQUnitUtils.createTable({
-				rowMode: {Type: "sap.ui.table.rowmodes." + sRowMode, rowCount: 5}
+				rowMode: createRowMode(sRowMode === RowModeType.Fixed)
 			}, function(oTable) {
 				assert.strictEqual(oTable.getRows().length, 0, "Before rendering without binding: The table has no rows");
 			});
@@ -3148,7 +3156,7 @@ sap.ui.define([
 				oTable.destroy();
 
 				oTable = TableQUnitUtils.createTable({
-					rowMode: {Type: "sap.ui.table.rowmodes." + sRowMode, rowCount: 5},
+					rowMode: createRowMode(sRowMode === RowModeType.Fixed),
 					rows: {path: "/"},
 					models: TableQUnitUtils.createJSONModelWithEmptyRows(100)
 				}, function(oTable) {
@@ -3170,7 +3178,7 @@ sap.ui.define([
 				oTable.destroy();
 
 				oTable = TableQUnitUtils.createTable({
-					rowMode: {Type: "sap.ui.table.rowmodes." + sRowMode, rowCount: 5},
+					rowMode: createRowMode(sRowMode === RowModeType.Fixed),
 					rows: {path: "/"},
 					models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
 					placeAt: false

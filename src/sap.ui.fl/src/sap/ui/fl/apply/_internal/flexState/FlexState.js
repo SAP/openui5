@@ -156,7 +156,7 @@ sap.ui.define([
 	}
 
 	function enhancePropertyBag(mPropertyBag) {
-		var oComponent = Component.get(mPropertyBag.componentId);
+		var oComponent = Component.getComponentById(mPropertyBag.componentId);
 		mPropertyBag.componentData ||= (oComponent && oComponent.getComponentData()) || {};
 		mPropertyBag.manifest ||= mPropertyBag.rawManifest || (oComponent && oComponent.getManifestObject()) || {};
 		mPropertyBag.reference ||= ManifestUtils.getFlexReference(mPropertyBag);
@@ -302,7 +302,7 @@ sap.ui.define([
 		var sReference = mPropertyBag.reference;
 		var bDataUpdated = false;
 		if (!_mInstances[sReference].componentData) {
-			var oComponent = Component.get(mPropertyBag.componentId);
+			var oComponent = Component.getComponentById(mPropertyBag.componentId);
 			_mInstances[sReference].componentData = oComponent ? oComponent.getComponentData() : mPropertyBag.componentData;
 			bDataUpdated = true;
 		}
@@ -373,9 +373,6 @@ sap.ui.define([
 	function storeInfoInSession(sReference, mResponse) {
 		var oResponse = mResponse && mResponse.changes || {};
 		var oFlexInfoSession = FlexInfoSession.getByReference(sReference);
-		if (oFlexInfoSession === null) {
-			oFlexInfoSession = {};
-		}
 		if (oResponse.info !== undefined) {
 			oFlexInfoSession = Object.assign(oFlexInfoSession, oResponse.info);
 		}
