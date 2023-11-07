@@ -3216,9 +3216,10 @@ sap.ui.define([
 				if (oChanges) {
 					var aKeys = Object.keys(oChanges);
 					for (var j = 0; j < aKeys.length; j++) {
-						var vValue = oChanges[aKeys[j]];
-						if (typeof vValue === "object") {
-							// if vValue is a object type
+						var sPath = aKeys[j],
+							vValue = oChanges[sPath];
+						if (!sPath.endsWith("/pageAdminValues") && typeof vValue === "object") {
+							// if vValue is a object type and not from pageAdminValues
 							if (vValue.configuration && vValue.configuration.parameterFromDestination) {
 								//if it is a parameter transformed from destination, add it into form/items as new parameter for this layer
 								var oNewParameterConfig = vValue.configuration;
@@ -3253,8 +3254,8 @@ sap.ui.define([
 					var sPath = aKeys[j],
 						vValue = oChanges[sPath];
 						sNext = sPath.substring(0, sPath.lastIndexOf("/") + 1) + "_next";
-					if (typeof vValue === "object") {
-						// if the value of design time is object type and not a parameter transformed from destination, it should for the object field/object list field
+					if (!sPath.endsWith("/pageAdminValues") && typeof vValue === "object") {
+						// if the value of design time is object type and not from pageAdminValues or a parameter transformed from destination, it should for the object field/object list field
 						// add it into designtime of settings, else add it into _next property
 						if (!vValue.configuration || !vValue.configuration.parameterFromDestination) {
 							oDesigntime[sPath] = merge(oDesigntime[sPath], vValue);
