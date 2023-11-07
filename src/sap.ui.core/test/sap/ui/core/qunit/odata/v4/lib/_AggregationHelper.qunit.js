@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, null, oCache, 41);
-		}, new Error("Wrong placeholder"), "index");
+		}, new Error("Wrong placeholder"), "rank");
 
 		assert.throws(function () {
 			// code under test
@@ -1856,7 +1856,7 @@ sap.ui.define([
 			oPlaceholder = _AggregationHelper.createPlaceholder(3, 5, oParentCache);
 
 		assert.strictEqual(oPlaceholder["@$ui5.node.level"], 3);
-		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "rank"), 5);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "placeholder"), true);
 	});
