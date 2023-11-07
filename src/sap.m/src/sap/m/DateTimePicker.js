@@ -1074,13 +1074,13 @@ sap.ui.define([
 				oDate = UI5Date.getInstance();
 				this._oCalendar.removeAllSelectedDates();
 			}
-
-			if (oDate.getTime() < this._oMinDate.getTime()) {
-				oDate = this._oMinDate;
-			} else if (oDate.getTime() > this._oMaxDate.getTime()) {
-				oDate = this._oMaxDate;
-			}
 			this._oOKButton.setEnabled(false);
+		}
+
+		if (oDate.getTime() < this._oMinDate.getTime()) {
+			oDate = this._oMinDate;
+		} else if (oDate.getTime() > this._oMaxDate.getTime()) {
+			oDate = this._oMaxDate;
 		}
 
 		// convert the date to local date for the calendar and the clocks if binding is used
