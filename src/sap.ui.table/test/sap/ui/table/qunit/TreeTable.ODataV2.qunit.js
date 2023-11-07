@@ -1,7 +1,6 @@
 /*global QUnit */
 
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/Column",
@@ -10,9 +9,9 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	Element,
 	TableQUnitUtils,
 	TreeTable,
 	Column,
@@ -21,6 +20,7 @@ sap.ui.define([
 	Filter,
 	MockServer,
 	Core,
+	Element,
 	jQuery
 ) {
 	"use strict";
@@ -202,7 +202,7 @@ sap.ui.define([
 		var fnHandler6 = function() {
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): Test that two nodes are expanded");
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): Test that 8 nodes are collapsed");
-			this.oTable.setCollapseRecursive(false);
+			this.oTable.getBinding().setCollapseRecursive(false);
 			attachRowsUpdatedOnce(this.oTable, fnHandler7, this);
 			this.oTable.collapse(0);
 		};
@@ -254,7 +254,7 @@ sap.ui.define([
 			// also check a node which is not in the visible area of the table
 			assert.ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
 
-			this.oTable.setCollapseRecursive(true);
+			this.oTable.getBinding().setCollapseRecursive(true);
 			attachRowsUpdatedOnce(this.oTable, fnHandler9, this);
 			this.oTable.collapseAll();
 		};
@@ -435,12 +435,15 @@ sap.ui.define([
 			// the selection is already handled by the ODataTreeBindingAdapter.qunit.html
 			// just do some basic check to ensure the API is called correctly
 			this.oTable.setSelectedIndex(1);
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectedIndex OK");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel .sapUiTableRowSelectionCell").length, 1, "Only one row selected");
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 			this.oTable.setSelectionInterval(2, 4);
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Selection Interval: SelectedIndex OK");
+			/** @deprecated As of version 1.69 */
 			assert.equal(this.oTable.getSelectedIndex(), 4, "Selection Interval: SelectedIndex 4");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [2, 3, 4], "Selection Interval: SelectedIndices Values OK");
@@ -448,7 +451,9 @@ sap.ui.define([
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 6, "Row and RowHeader are selected");
 
 			this.oTable.addSelectionInterval(5, 0);
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Add Selection Interval: SelectedIndex OK");
+			/** @deprecated As of version 1.69 */
 			assert.equal(this.oTable.getSelectedIndex(), 5, "Add Selection Interval: SelectedIndex 5");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Add Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Add Selection Interval: SelectedIndices Values OK");
@@ -456,7 +461,9 @@ sap.ui.define([
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 12, "Row and RowHeader are selected");
 
 			this.oTable.removeSelectionInterval(1, 1);
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
+			/** @deprecated As of version 1.69 */
 			assert.equal(this.oTable.getSelectedIndex(), 5, "Remove Selection Interval: SelectedIndex 5");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4, 5], "Remove Selection Interval: SelectedIndices Values OK");
@@ -471,7 +478,9 @@ sap.ui.define([
 
 			// remove leadSelection
 			this.oTable.removeSelectionInterval(5, 5);
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "Remove Selection Interval: SelectedIndex OK");
+			/** @deprecated As of version 1.69 */
 			assert.equal(this.oTable.getSelectedIndex(), -1, "Remove Selection Interval: SelectedIndex -1");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "Remove Selection Interval: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 2, 3, 4], "Remove Selection Interval: SelectedIndices Values OK");
@@ -502,12 +511,14 @@ sap.ui.define([
 			assert.equal(this.oTable.$().find(".sapUiTableRowSel").length, 2, "Row and RowHeader are selected");
 
 			this.oTable.selectAll();
+			/** @deprecated As of version 1.69 */
 			assert.equal(oBinding.getSelectedIndex(), this.oTable.getSelectedIndex(), "SelectAll: SelectedIndex OK");
+			/** @deprecated As of version 1.69 */
 			assert.equal(this.oTable.getSelectedIndex(), 9, "SelectAll: SelectedIndex 9");
 			assert.deepEqual(oBinding.getSelectedIndices(), this.oTable.getSelectedIndices(), "SelectAll: SelectedIndices OK");
 			assert.deepEqual(this.oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], "SelectAll: SelectedIndices Values OK");
 
-			this.oTable.setCollapseRecursive(false);
+			this.oTable.getBinding().setCollapseRecursive(false);
 			attachRowsUpdatedOnce(this.oTable, fnHandler4, this);
 			this.oTable.collapse(0);
 		};
@@ -795,12 +806,16 @@ sap.ui.define([
 			this.oDataModel = new ODataModel("/metadata/", {useBatch: true});
 
 			TableQUnitUtils.setDefaultSettings({
-				rows: {path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result"},
+				rows: {
+					path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+					parameters: {
+						rootLevel: 1
+					}
+				},
 				columns: [
 					TableQUnitUtils.createTextColumn()
 				],
-				models: this.oDataModel,
-				rootLevel: 1
+				models: this.oDataModel
 			});
 
 			return this.oDataModel.metadataLoaded();
