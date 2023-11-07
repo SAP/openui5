@@ -160,8 +160,8 @@ sap.ui.define([
 					iIndex = oDeleted.index;
 					const iDeletedIndex = vCacheData.$deleted.indexOf(oDeleted);
 					if (iIndex !== undefined) {
-						that.restoreElement(vCacheData, iIndex, oEntity, sParentPath,
-							iDeletedIndex);
+						that.restoreElement(iIndex, oEntity, iDeletedIndex, undefined, vCacheData,
+							sParentPath);
 					}
 					vCacheData.$deleted.splice(iDeletedIndex, 1);
 				}
@@ -1919,22 +1919,22 @@ sap.ui.define([
 	 * <code>$byPredicate</code>, <code>$created</code> and <code>$count</code>, and a collection
 	 * cache's limit and number of active elements (if applicable).
 	 *
-	 * @param {object[]} [aElements] - The array of elements
 	 * @param {number} iIndex - The index to restore at
 	 * @param {object} oElement - The element to restore
-	 * @param {string} sPath
-	 *   The element collection's path within this cache (as used by change listeners), may be
-	 *   <code>""</code> (only in a CollectionCache)
 	 * @param {int} [iDeletedIndex]
 	 *   The index of the entry in <code>aElements.$deleted</code> if any
 	 * @param {string} [sTransientPredicate]
-	 *  The element's (future) transient predicate
+	 *  The element's (future) transient predicate, defaults to its current one
+	 * @param {object[]} [aElements]
+	 *   The array of elements, defaults to a collection cache's own elements
+	 * @param {string} [sPath=""]
+	 *   The element collection's path within this cache (as used by change listeners), may be
+	 *   <code>""</code> (only in a CollectionCache)
 	 * @protected
 	 */
-	// eslint-disable-next-line default-param-last
-	_Cache.prototype.restoreElement = function (aElements = this.aElements, iIndex, oElement, sPath,
-			iDeletedIndex,
-			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate")) {
+	_Cache.prototype.restoreElement = function (iIndex, oElement, iDeletedIndex,
+			sTransientPredicate = _Helper.getPrivateAnnotation(oElement, "transientPredicate"),
+			aElements = this.aElements, sPath = "") {
 		this.adjustIndexes(sPath, aElements, iIndex, 1, iDeletedIndex);
 		if (sTransientPredicate) {
 			aElements.$created += 1;
