@@ -455,7 +455,7 @@ sap.ui.define([
 	QUnit.test("", async function(assert) {
 		let oErrorLogSpy;
 
-		assert.expect(3);
+		assert.expect(6);
 
 		sap.ui.predefine('testing/pseudo/modules/deprecation/library', ["sap/ui/core/Lib"], function(Library) {
 			const oThisLib = Library.init({
@@ -474,12 +474,29 @@ sap.ui.define([
 			name: "testing.pseudo.modules.deprecation"
 		});
 
+		const sExpectedErrorMessage = "Deprecation: Importing the type 'testing.pseudo.modules.deprecation.Type1' as a module is deprecated. Please require the corresponding 'library.js' containing the type directly. You can then reference the type via the library's module export.";
+
+		// Anonymous require: Log does not contain the requesting module
 		await new Promise((resolve, reject) => {
 			oErrorLogSpy = this.spy(Log, "error");
-			const sExpectedErrorMessage = "Deprecation: Import the type 'testing.pseudo.modules.deprecation.Type1' as a module is deprecated. Please require the corresponding 'library.js' containing the type directly. You can then reference the type via the library's module export.";
 
 			sap.ui.require(["testing/pseudo/modules/deprecation/Type1"], (Type1) => {
 				assert.ok(oErrorLogSpy.calledWith(sExpectedErrorMessage), "Error Message for pseudo module deprecation logged.");
+				assert.ok(Type1.A, "A", "pseudo type module export is correct (A).");
+				assert.ok(Type1.B, "B", "pseudo type module export is correct (B).");
+				resolve();
+			}, reject);
+		}).finally(() => {
+			oErrorLogSpy.restore();
+		});
+
+		// Anonymous require: Log does not contain the requesting module
+		await new Promise((resolve, reject) => {
+			oErrorLogSpy = this.spy(Log, "error");
+			const sModuleSpecificErrorMessage = `(dependency of 'my/old/Module.js') ${sExpectedErrorMessage}`;
+
+			sap.ui.define("my/old/Module", ["testing/pseudo/modules/deprecation/Type1"], (Type1) => {
+				assert.ok(oErrorLogSpy.calledWith(sModuleSpecificErrorMessage), "Error Message for pseudo module deprecation logged.");
 				assert.ok(Type1.A, "A", "pseudo type module export is correct (A).");
 				assert.ok(Type1.B, "B", "pseudo type module export is correct (B).");
 				resolve();

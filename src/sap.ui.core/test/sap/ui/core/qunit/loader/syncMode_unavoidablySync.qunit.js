@@ -7,7 +7,7 @@ sap.ui.require([
 ], function(Log, ObjectPath) {
 	"use strict";
 
-
+	const privateLoaderAPI = sap.ui.loader._;
 
 	//****************************************************
 	// module loading (require/declare/define)
@@ -53,6 +53,59 @@ sap.ui.require([
 		assert.equal(ObjectPath.get("my.first.module"), "1st", "addtl. require of 'first' shouldn't touch globals");
 		assert.equal(ObjectPath.get("my.second.module"), "2nd", "addtl. require of 'first' shouldn't touch globals");
 
+	});
+
+	QUnit.test("jQuery.sap.require, mismatch in jQuery.sap.declare", function (assert) {
+
+		const SCENARIO = "mismatchOfDeclare";
+		const MODULE_A = `${SCENARIO}/moduleA`;
+		const MODULE_B = `${SCENARIO}/moduleB`;
+		const MODULE_C = `${SCENARIO}/moduleC`;
+		const toDot = (mod) => mod.replace(/\//g, "."); // create dot notation
+
+		// 'moduleA' has a dependency to 'moduleB', but 'moduleB' declares itself as 'moduleC'
+		// After loading 'moduleA', 'moduleB' and 'moduleC' both should be READY. This is loader specific behavior.
+		//
+		// As 'moduleB/C' only writes to the global name 'moduleC', 'moduleB' has an export of `undefined`.
+		// This is module specific behavior, not related to the loader.
+		this.server.respondWith(/moduleA/, `
+jQuery.sap.declare("${toDot(MODULE_A)}");
+jQuery.sap.require("${toDot(MODULE_B)}");
+${toDot(MODULE_A)} = "A";
+`);
+		this.server.respondWith(/moduleB/, `
+jQuery.sap.declare("${toDot(MODULE_C)}");
+${toDot(MODULE_C)} = "C";
+`);
+
+		assert.equal(ObjectPath.get(`${toDot(MODULE_A)}`), undefined, "global property for 'moduleA' should be undefined");
+		assert.ok(!sap.ui.require(MODULE_A), "'moduleA' should not be declared");
+		assert.equal(ObjectPath.get(`${toDot(MODULE_B)}`), undefined, "global property for 'moduleB' should be undefined");
+		assert.ok(!sap.ui.require(MODULE_B), "'moduleB' should not be declared");
+		assert.equal(ObjectPath.get(`${toDot(MODULE_B)}`), undefined, "global property for 'moduleC' should be undefined");
+		assert.ok(!sap.ui.require(MODULE_C), "'moduleC' should not be declared");
+
+		jQuery.sap.require(`${toDot(MODULE_A)}`);
+		assert.equal(ObjectPath.get(`${toDot(MODULE_A)}`), "A", "require of 'moduleA' should have loaded 'moduleA'");
+		assert.ok(sap.ui.require(MODULE_A), "'moduleA' should be declared");
+		assert.equal(privateLoaderAPI.getModuleState(MODULE_B + ".js"), 4, "'moduleB' should be READY");
+		assert.equal(ObjectPath.get(`${toDot(MODULE_B)}`), undefined, "require of 'moduleA' should have loaded 'moduleB' (transitively)");
+		assert.equal(sap.ui.require(MODULE_B), undefined, "'moduleB' should have the expected export");
+		assert.equal(privateLoaderAPI.getModuleState(MODULE_C + ".js"), 4, "'moduleC' should be READY");
+		assert.equal(ObjectPath.get(`${toDot(MODULE_C)}`), "C", "require of 'moduleA' should have loaded 'moduleC' (transitively)");
+		assert.equal(sap.ui.require(MODULE_C), "C", "'moduleC' should have the expected export ('C')");
+
+		const done = assert.async();
+		sap.ui.require([
+			MODULE_B,
+			MODULE_C
+		], function(moduleB, moduleC) {
+			assert.strictEqual(moduleB, undefined, "export of 'moduleB' should be the expected one (undefined)");
+			assert.strictEqual(moduleC, "C", "export of 'moduleC' should be the expected one ('C')");
+			done();
+		}, function() {
+			assert.ok(false, "requring 'moduleB' and 'moduleC' should not fail");
+		});
 	});
 
 	QUnit.test("jQuery.sap.require, nested + cyclic", function (assert) {
