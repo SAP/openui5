@@ -4,8 +4,9 @@
 
 sap.ui.define([
 	"sap/ui/layout/cssgrid/GridLayoutBase",
-	"sap/ui/Device"
-], function (GridLayoutBase, Device) {
+	"sap/ui/Device",
+	"sap/ui/layout/cssgrid/GridSettings"
+], function (GridLayoutBase, Device, GridSettings) {
 	"use strict";
 
 	/**
@@ -44,27 +45,27 @@ sap.ui.define([
 				/**
 				 * The sap.ui.layout.cssgrid.GridSettings applied if no settings are provided for a specific size
 				 */
-				layout: { type: "sap.ui.layout.cssgrid.GridSettings", multiple: false },
+				layout: { type: "sap.ui.layout.cssgrid.GridSettings", defaultClass: GridSettings, multiple: false },
 
 				/**
 				 * The sap.ui.layout.cssgrid.GridSettings applied for size "S"
 				 */
-				layoutS: { type: "sap.ui.layout.cssgrid.GridSettings", multiple: false },
+				layoutS: { type: "sap.ui.layout.cssgrid.GridSettings", defaultClass: GridSettings, multiple: false },
 
 				/**
 				 * The sap.ui.layout.cssgrid.GridSettings applied for size "M"
 				 */
-				layoutM: { type: "sap.ui.layout.cssgrid.GridSettings", multiple: false },
+				layoutM: { type: "sap.ui.layout.cssgrid.GridSettings", defaultClass: GridSettings, multiple: false },
 
 				/**
 				 * The sap.ui.layout.cssgrid.GridSettings applied for size "L"
 				 */
-				layoutL: { type: "sap.ui.layout.cssgrid.GridSettings", multiple: false },
+				layoutL: { type: "sap.ui.layout.cssgrid.GridSettings", defaultClass: GridSettings, multiple: false },
 
 				/**
 				 * The sap.ui.layout.cssgrid.GridSettings applied for size "XL"
 				 */
-				layoutXL: { type: "sap.ui.layout.cssgrid.GridSettings", multiple: false }
+				layoutXL: { type: "sap.ui.layout.cssgrid.GridSettings", defaultClass: GridSettings, multiple: false }
 			},
 			events: {
 
