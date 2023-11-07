@@ -1020,7 +1020,7 @@ sap.ui.define([
 
 			var adminchanges = {
 				":designtime": {
-					"/form/items/1stringWithStaticList/editable": true
+					"/form/items/stringWithStaticList/editable": true
 				},
 				":layer": 0,
 				":errors": false
@@ -1089,9 +1089,83 @@ sap.ui.define([
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(false);
 
+			this.oEditor.setJson({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "../i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/1stringWithStaticList",
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"stringWithStaticList": {
+									"value": "key1"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				EditorQunitUtils.isReady(this.oEditor).then(function () {
+					var oEditor = this.oEditor;
+					assert.ok(oEditor.isReady(), "Editor is ready");
+					var oLabel = oEditor.getAggregation("_formContent")[1];
+					var oField = oEditor.getAggregation("_formContent")[2];
+					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.equal(oLabel.getText(), "stringWithStaticList", "Label: Has label text");
+					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
+					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
+					//settings button
+					var oButton = oField._settingsButton;
+					assert.ok(oButton.isA("sap.m.Button"), "Settings: Button available");
+					oButton.firePress();
+					oButton.focus();
+					EditorQunitUtils.wait().then(function () {
+						assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon");
+						//popup is opened
+						assert.deepEqual(oField._oSettingsPanel._oOpener, oField, "Settings: Has correct owner");
+						var settingsClass = oField._oSettingsPanel.getMetadata().getClass();
+						var testInterface = settingsClass._private();
+						var oTable = testInterface.oSettingsPanel.getItems()[1].getContent()[0];
+						assert.deepEqual(testInterface.oCurrentInstance, oField._oSettingsPanel, "Settings: Points to right settings panel");
+						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
+						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel initially visible");
+						assert.ok(oTable.isA("sap.m.Table"), "Settings: page admin values table exists.");
+						assert.equal(oTable.getSelectedItems().length, 6, "Settings: all 6 records are selected by default.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
+						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: true });
+						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
+						assert.equal(oTable.getSelectedItems().length, 0, "Settings: 0 record is selected.");
+						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
+						assert.equal(oTable.getSelectedItems().length, 6, "Settings: all 6 records are selected.");
+						testInterface.oPopover.getFooter().getContent()[2].firePress();
+						EditorQunitUtils.wait().then(function () {
+							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
+							resolve();
+						});
+					});
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("check page admin values with admin change display correctly in settings page in admin mode", function (assert) {
+			this.oEditor.setMode("admin");
+			this.oEditor.setAllowSettings(true);
+			this.oEditor.setAllowDynamicValues(false);
+
 			var adminchanges = {
 				":designtime": {
-					"/form/items/1stringWithStaticList/editable": true
+					"/form/items/stringWithStaticList/pageAdminValues": ["key2", "key3"]
 				},
 				":layer": 0,
 				":errors": false
@@ -1145,35 +1219,21 @@ sap.ui.define([
 						assert.ok(testInterface.oPopover.isA("sap.m.Popover"), "Settings: Has a Popover instance");
 						assert.ok(testInterface.oSettingsPanel.getVisible() === true, "Settings: Settings Panel initially visible");
 						assert.ok(oTable.isA("sap.m.Table"), "Settings: page admin values table exists.");
-						assert.equal(oTable.getSelectedItems().length, 6, "Settings: all 6 records are selected by default.");
-						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: false });
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
-						testInterface.oSettingsPanel.getItems()[0].getItems()[1].getItems()[1].fireSelect({ selected: true });
-						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: false });
-						assert.ok(testInterface.oSettingsPanel.getItems()[1].getVisible() === false, "Settings: page admin values list is invisible.");
-						testInterface.oSettingsPanel.getItems()[0].getItems()[2].getItems()[1].fireSelect({ selected: true });
-						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
-						assert.equal(oTable.getSelectedItems().length, 0, "Settings: 0 record is selected.");
-						testInterface.oSettingsPanel.getItems()[0].getItems()[4].getItems()[1].firePress();
-						assert.equal(oTable.getSelectedItems().length, 6, "Settings: all 6 records are selected.");
-						testInterface.oPopover.getFooter().getContent()[2].firePress();
-						EditorQunitUtils.wait().then(function () {
-							assert.equal(oButton.getIcon(), "sap-icon://enter-more", "Settings: Shows enter-more Icon after visible button was selected");
-							resolve();
-						});
+						assert.equal(oTable.getSelectedItems().length, 2, "Settings: 2 records are selected from admin change.");
+						resolve();
 					});
 				}.bind(this));
 			}.bind(this));
 		});
 
-		QUnit.test("check page admin values display correctly in content mode", function (assert) {
+		QUnit.test("check page admin values with admin change display correctly in content mode", function (assert) {
 			this.oEditor.setMode("content");
 			this.oEditor.setAllowSettings(true);
 			this.oEditor.setAllowDynamicValues(false);
 
 			var adminchanges = {
 				":designtime": {
-					"/form/items/1stringWithStaticList/pageAdminValues": ["key2", "key3"]
+					"/form/items/stringWithStaticList/pageAdminValues": ["key2", "key3"]
 				},
 				":layer": 0,
 				":errors": false
@@ -1209,9 +1269,19 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.equal(oLabel.getText(), "stringWithStaticList", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
-					assert.ok(oField.getAggregation("_field").getEditable() === true, "Field: Is editable");
-					resolve();
+					var oControl = oField.getAggregation("_field");
+					assert.ok(oControl.isA("sap.m.ComboBox"), "Field: Filed contains a comboBox");
+					assert.ok(oControl.getEditable() === true, "Field: Is editable");
+					EditorQunitUtils.wait(500).then(function () {
+						assert.ok(!oControl.getSelectedItem(), "Field: No selected item");
+						var aItems = oControl.getItems();
+						assert.equal(aItems.length, 2, "Field: Select items lenght is OK");
+						assert.equal(aItems[0].getKey(), "key2", "Field: Select item 1 Key is OK");
+						assert.equal(aItems[0].getText(), "text2", "Field: Select item 1 Text is OK");
+						assert.equal(aItems[1].getKey(), "key3", "Field: Select item 1 Key is OK");
+						assert.equal(aItems[1].getText(), "text3", "Field: Select item 1 Text is OK");
+						resolve();
+					});
 				}.bind(this));
 			}.bind(this));
 		});
