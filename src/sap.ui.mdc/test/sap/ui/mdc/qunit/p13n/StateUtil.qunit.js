@@ -1450,13 +1450,14 @@ sap.ui.define([
 						position: 0,
 						name: "String"
 					}
-				]
+				],
+				aggregations: {}
 			};
 		},
 		before: function(){
-			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group"></mdc:Table></mvc:View>';
+			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable2" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 			TableDelegate.getSupportedP13nModes = function() {
-				return ["Column","Sort","Filter","Group"];
+				return ["Column","Sort","Filter","Group", "Aggregate"];
 			};
 			return createAppEnvironment(sTableView, "StateDiff").then(function(mCreatedApp){
 				TableDelegate.fetchProperties = fetchProperties;
@@ -1506,7 +1507,7 @@ sap.ui.define([
 			assert.equal(oStateDiff.groupLevels.length, 0, "No group changes found");
 			assert.deepEqual(oStateDiff.supplementaryConfig, {}, "No supplementaryConfig changes found");
 			assert.deepEqual(oStateDiff.filter, {}, "No filter changes found");
-
+			assert.deepEqual(oStateDiff.aggregations, {}, "No aggregate changes found");
 			done();
 		});
 
@@ -1662,6 +1663,52 @@ sap.ui.define([
 
 			assert.equal(oStateDiff.sorters.length, 0, "No sorter diffed in state");
 			assert.equal(oStateDiff.groupLevels.length, 0, "No grouping diffed in state");
+			done();
+		});
+
+	});
+
+	QUnit.test("Ceck diff for aggregate changes", function(assert) {
+
+		const done = assert.async();
+
+		StateUtil.diffState(this.oTable, {
+			aggregations: {}
+		}, {
+			aggregations: {
+				"String": {}
+			}
+		})
+		.then(function(oStateDiff){
+
+			const aAggregateDiff = Object.entries(oStateDiff.aggregations);
+
+			assert.equal(aAggregateDiff[0][0], "String", "The state diff includes the added aggregation key");
+			assert.deepEqual(aAggregateDiff[0][1], {}, "The state diff includes the correct aggregation value");
+			assert.equal(aAggregateDiff.length, 1, "Correct diff created");
+			done();
+		});
+
+	});
+
+	QUnit.test("Ceck diff for aggregate changes", function(assert) {
+
+		const done = assert.async();
+
+		StateUtil.diffState(this.oTable, {
+			aggregations: {
+				"String": {}
+			}
+		}, {
+			aggregations: {
+			}
+		})
+		.then(function(oStateDiff){
+
+			const aAggregateDiff = Object.entries(oStateDiff.aggregations);
+			assert.equal(aAggregateDiff[0][0], "String", "The state diff includes the added aggregation key");
+			assert.deepEqual(aAggregateDiff[0][1], {aggregated: false}, "The state diff includes the correct aggregation value");
+			assert.equal(aAggregateDiff.length, 1, "Correct diff created");
 			done();
 		});
 
