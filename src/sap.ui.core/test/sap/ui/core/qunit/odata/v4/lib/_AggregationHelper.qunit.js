@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.throws(function () {
 			// code under test
 			_AggregationHelper.beforeOverwritePlaceholder(oPlaceholder, null, oCache, 41);
-		}, new Error("Wrong placeholder"), "index");
+		}, new Error("Wrong placeholder"), "rank");
 
 		assert.throws(function () {
 			// code under test
@@ -1188,11 +1188,8 @@ sap.ui.define([
 			oAggregationMock = this.mock(oAggregation),
 			oExpectedAggregation = iExpandTo > 1 ? {
 				$DistanceFromRootProperty : "DistFromRoot",
-				$DrillStateProperty : "myDrillState",
 				$LimitedDescendantCountProperty : "LtdDescendant_Count"
-			} : {
-				$DrillStateProperty : "myDrillState"
-			},
+			} : {},
 			iExpectedLevels = iExpandTo || 1,
 			aExpectedSelect = iExpandTo > 1
 			? ["ID", "SomeNodeID", "DistFromRoot", "LtdDescendant_Count", "myDrillState"]
@@ -1859,7 +1856,7 @@ sap.ui.define([
 			oPlaceholder = _AggregationHelper.createPlaceholder(3, 5, oParentCache);
 
 		assert.strictEqual(oPlaceholder["@$ui5.node.level"], 3);
-		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "index"), 5);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "rank"), 5);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "parent"), oParentCache);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oPlaceholder, "placeholder"), true);
 	});

@@ -172,7 +172,7 @@ sap.ui.define([
 			iIndex = _Cache.getElementIndex(this.aElements, sPredicate, iIndex);
 			// remove in parent cache
 			const iIndexInParentCache = oParentCache.removeElement(
-				_Helper.getPrivateAnnotation(oElement, "index", 0), sPredicate);
+				_Helper.getPrivateAnnotation(oElement, "rank", 0), sPredicate);
 			// remove the descendants in the parent cache (if any)
 			const iDescendants = _Helper.getPrivateAnnotation(oElement, "descendants", 0);
 			for (let i = 0; i < iDescendants; i += 1) {
@@ -185,9 +185,7 @@ sap.ui.define([
 				// make parent a leaf (the direct predecessor)
 				this.makeLeaf(this.aElements[iIndex - 1]);
 			}
-			if (!("@$ui5.context.isTransient" in oElement)) {
-				this.shiftIndex(iIndex, -iOffset);
-			}
+			this.shiftRank(iIndex, -iOffset);
 			// remove in this cache
 			this.removeElement(iIndex, sPredicate);
 			// notify caller
@@ -206,8 +204,9 @@ sap.ui.define([
 	 *   The group level cache which the given elements have been read from; omit it only for grand
 	 *   totals or separate subtotals
 	 * @param {number} [iStart]
-	 *   The $skip index of the first given element within the cache's collection; omit it only if
-	 *   no group level cache is given or for a single created element (where it is always unknown)
+	 *   The rank (aka. $skip index) of the first given element within the cache's collection; omit
+	 *   it only if no group level cache is given or for a single created element (where it may be
+	 *   unknown)
 	 * @throws {Error}
 	 *   In case an unexpected element or placeholder would be overwritten, if the given offset is
 	 *   negative, if a resulting array index is out of bounds, in case of a duplicate predicate, or
@@ -266,9 +265,9 @@ sap.ui.define([
 			}
 
 			if (sTransientPredicate) { // created
-				iStart -= 1; // "shift" index of non-created elements behind this one
+				iStart -= 1; // "shift" rank of non-created elements behind this one
 			} else {
-				_Helper.setPrivateAnnotation(oElement, "index", iStart + i);
+				_Helper.setPrivateAnnotation(oElement, "rank", iStart + i);
 			}
 		}
 
@@ -393,7 +392,7 @@ sap.ui.define([
 				_Helper.getPrivateAnnotation(aElements[i], "transientPredicate")];
 		}
 		const aSpliced = aElements.splice(iIndex + 1, iCount);
-		aSpliced.$index = _Helper.getPrivateAnnotation(oGroupNode, "index");
+		aSpliced.$rank = _Helper.getPrivateAnnotation(oGroupNode, "rank");
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aSpliced);
 		aElements.$count -= iCount;
 
@@ -510,8 +509,7 @@ sap.ui.define([
 					this.adjustDescendantCount(oEntityData, iIndex, -1);
 				}
 				aElements.$count -= 1;
-				delete aElements.$byPredicate[
-					_Helper.getPrivateAnnotation(oEntityData, "transientPredicate")];
+				delete aElements.$byPredicate[sTransientPredicate];
 				aElements.splice(iIndex, 1);
 			});
 
@@ -523,17 +521,29 @@ sap.ui.define([
 		oEntityData["@$ui5.node.level"] = iLevel; // do not send via POST!
 
 		aElements.splice(iIndex, 0, null); // create a gap
-		this.addElements(oEntityData, iIndex, oCache); // $skip index is undefined!
+		this.addElements(oEntityData, iIndex, oCache); // rank is undefined!
 		aElements.$count += 1;
 		if (oCache === this.oFirstLevel) {
 			this.adjustDescendantCount(oEntityData, iIndex, +1);
 		}
 
-		return oPromise.then(function () {
+		return oPromise.then(async () => {
 			aElements.$byPredicate[_Helper.getPrivateAnnotation(oEntityData, "predicate")]
 				= oEntityData;
 			// Note: #calculateKeyPredicateRH doesn't know better :-(
 			oEntityData["@$ui5.node.level"] = iLevel;
+
+			if (this.oAggregation.expandTo >= Number.MAX_SAFE_INTEGER) { // "expand all"
+				const iRank = await this.requestRank(oEntityData, oGroupLock.getUnlockedCopy());
+
+				this.oFirstLevel.removeElement(0, sTransientPredicate);
+				_Helper.deletePrivateAnnotation(oEntityData, "transientPredicate");
+				this.oFirstLevel.restoreElement(iRank, oEntityData);
+
+				delete this.aElements.$byPredicate[sTransientPredicate];
+				_Helper.setPrivateAnnotation(oEntityData, "rank", iRank);
+				this.shiftRank(iIndex, +1);
+			}
 
 			return oEntityData;
 		});
@@ -637,15 +647,15 @@ sap.ui.define([
 			iCount = aSpliced.length;
 			this.aElements.$count = aOldElements.$count + iCount;
 			const iLevelDiff = oGroupNode["@$ui5.node.level"] + 1 - aSpliced[0]["@$ui5.node.level"];
-			const iIndexDiff = _Helper.getPrivateAnnotation(oGroupNode, "index") - aSpliced.$index;
+			const iRankDiff = _Helper.getPrivateAnnotation(oGroupNode, "rank") - aSpliced.$rank;
 			aSpliced.forEach(function (oElement) {
 				var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
 				oElement["@$ui5.node.level"] += iLevelDiff;
 				if (_Helper.getPrivateAnnotation(oElement, "parent") === that.oFirstLevel) {
-					const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
-					if (iIndex !== undefined) {
-						_Helper.setPrivateAnnotation(oElement, "index", iIndex + iIndexDiff);
+					const iRank = _Helper.getPrivateAnnotation(oElement, "rank");
+					if (iRank !== undefined) {
+						_Helper.setPrivateAnnotation(oElement, "rank", iRank + iRankDiff);
 					}
 				}
 				if (!_Helper.hasPrivateAnnotation(oElement, "placeholder")) {
@@ -1028,7 +1038,7 @@ sap.ui.define([
 		if (!oCache && oParentNode["@$ui5.node.isExpanded"] === false) {
 			oCache = this.createGroupLevelCache(oParentNode);
 			// @see #getExclusiveFilter
-			oCache.restoreElement(undefined, 0, oChildNode, "", undefined, sTransientPredicate);
+			oCache.restoreElement(0, oChildNode, undefined, sTransientPredicate);
 			// prefetch from the group level cache
 			oReadPromise = oCache.read(0, this.iReadLength, 0, oGroupLock.getUnlockedCopy());
 		}
@@ -1050,7 +1060,7 @@ sap.ui.define([
 
 			// remove original element from its cache's collection
 			const oOldParentCache = _Helper.getPrivateAnnotation(oChildNode, "parent");
-			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "index", 0),
+			oOldParentCache.removeElement(_Helper.getPrivateAnnotation(oChildNode, "rank", 0),
 				sChildPredicate);
 			if (oOldParentCache.getValue("$count") === 0) { // last child has gone
 				const oOldParent = this.aElements[iOldIndex - 1];
@@ -1060,15 +1070,15 @@ sap.ui.define([
 			}
 
 			// once oChildNode has moved, it should look 'created' because of its new position
-			_Helper.deletePrivateAnnotation(oChildNode, "index");
 			if (!_Helper.hasPrivateAnnotation(oChildNode, "transientPredicate")) {
 				_Helper.setPrivateAnnotation(oChildNode, "transientPredicate",
 					sTransientPredicate);
 				this.aElements.$byPredicate[sTransientPredicate] = oChildNode;
 				_Helper.updateAll(this.mChangeListeners, sChildPredicate, oChildNode,
 					{"@$ui5.context.isTransient" : false});
-				this.shiftIndex(iOldIndex, -1); // only shift indices after non-created ones
+				this.shiftRank(iOldIndex, -1); // only shift indices after non-created ones
 			}
+			_Helper.deletePrivateAnnotation(oChildNode, "rank");
 			this.aElements.splice(iOldIndex, 1);
 
 			let iResult = 1;
@@ -1079,7 +1089,7 @@ sap.ui.define([
 				// Note: oChildNode already belongs to oCache!
 				this.aElements.$count -= 1; // #expand adjusts $count incl. oChildNode!
 				iResult = this.expand(_GroupLock.$cached, sParentPredicate).unwrap();
-				// Note: "index" created OK by #expand for oChildNode's siblings
+				// Note: "rank" created OK by #expand for oChildNode's siblings
 			} else {
 				if (!oCache) {
 					oCache = this.createGroupLevelCache(oParentNode);
@@ -1089,7 +1099,7 @@ sap.ui.define([
 						{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
 				}
 				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
-				oCache.restoreElement(undefined, 0, oChildNode, "");
+				oCache.restoreElement(0, oChildNode);
 
 				const iNewIndex = this.aElements.indexOf(oParentNode) + 1;
 				const aSpliced = _Helper.getPrivateAnnotation(oParentNode, "spliced");
@@ -1205,10 +1215,10 @@ sap.ui.define([
 						oGapParent = oCurrentParent;
 					}
 				} else if (iGapStart !== undefined
-						&& _Helper.getPrivateAnnotation(oElement, "index")
-							!== _Helper.getPrivateAnnotation(this.aElements[i - 1], "index") + 1) {
-					// Note: w/ side effect, indices might not be consecutive => split gap
-					// Note: an undefined "index" causes a split gap, which is important!
+						&& _Helper.getPrivateAnnotation(oElement, "rank")
+							!== _Helper.getPrivateAnnotation(this.aElements[i - 1], "rank") + 1) {
+					// Note: w/ side effect, ranks might not be consecutive => split gap
+					// Note: an undefined "rank" causes a split gap, which is important!
 					readGap(iGapStart, i);
 					iGapStart = i;
 				}
@@ -1376,8 +1386,8 @@ sap.ui.define([
 	_AggregationCache.prototype.readGap = function (oCache, iStart, iEnd, oGroupLock,
 			fnDataRequested) {
 		const oStartElement = this.aElements[iStart];
-		const iIndex = _Helper.getPrivateAnnotation(oStartElement, "index");
-		if (iIndex === undefined) {
+		const iRank = _Helper.getPrivateAnnotation(oStartElement, "rank");
+		if (iRank === undefined) {
 			if (iEnd - iStart !== 1) {
 				throw new Error("Not just a single created persisted");
 			}
@@ -1399,7 +1409,7 @@ sap.ui.define([
 			oCache.setQueryOptions(mQueryOptions, true);
 		}
 
-		const oPromise = oCache.read(iIndex, iEnd - iStart, 0, oGroupLock, fnDataRequested, true)
+		const oPromise = oCache.read(iRank, iEnd - iStart, 0, oGroupLock, fnDataRequested, true)
 			.then((oResult) => {
 				// Note: this code must be idempotent, it might well run twice!
 				var bGapHasMoved = false,
@@ -1421,7 +1431,7 @@ sap.ui.define([
 					}
 				}
 
-				this.addElements(oResult.value, iStart, oCache, iIndex);
+				this.addElements(oResult.value, iStart, oCache, iRank);
 
 				if (bGapHasMoved) {
 					oError = new Error("Collapse or expand before read has finished");
@@ -1449,6 +1459,40 @@ sap.ui.define([
 	_AggregationCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
 		// "super" call (like @borrows ...)
 		return this.oFirstLevel.refreshKeptElements.call(this, oGroupLock, fnOnRemove, true);
+	};
+
+	/**
+	 * Requests the (limited preorder) rank of the given element which must belong to
+	 * <code>this.oFirstLevel</code>.
+	 *
+	 * @param {object} oElement - The element
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the GET request
+	 * @returns {Promise<number>}
+	 *   A promise which is resolved with the (limited preorder) rank of the given element, or
+	 *   rejected in case of an error
+	 *
+	 * @private
+	 */
+	_AggregationCache.prototype.requestRank = async function (oElement, oGroupLock) {
+		const sMetaPath = this.oAggregation.$metaPath;
+		const sLimitedRankProperty = this.oAggregation.$DrillStateProperty.slice(0,
+				this.oAggregation.$DrillStateProperty.lastIndexOf("/") + 1)
+			+ "LimitedRank";
+		const {$apply, $orderby} = this.oFirstLevel.getQueryOptions();
+		const mQueryOptions = {
+			$apply,
+			$filter : _Helper.getKeyFilter(oElement, sMetaPath, this.getTypes()),
+			$select : sLimitedRankProperty
+		};
+		if ($orderby) {
+			mQueryOptions.$orderby = $orderby;
+		}
+		const sResourcePath = this.sResourcePath
+			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
+		const oResult = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
+
+		return parseInt(_Helper.drillDown(oResult, sLimitedRankProperty));
 	};
 
 	/**
@@ -1516,27 +1560,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Shifts the $skip "index" of all siblings (nodes or placeholders) after the node at the given
-	 * index by the given offset, except for created elements (where it is always
-	 * <code>undefined</code>).
+	 * Shifts the rank (aka. $skip index) of all siblings (nodes or placeholders) after the node at
+	 * the given array index by the given offset, except for elements where it is
+	 * <code>undefined</code> or lower than the node's own rank. If the node at the given index
+	 * itself has an <code>undefined</code> rank, nothing is shifted. Note that inside
+	 * <code>this.oFirstLevel</code> not only siblings are affected.
 	 *
 	 * @param {number} iIndex
 	 *   Index in <code>this.aElements</code> of a node
 	 * @param {number} iOffset
-	 *   Offset to add to "index"
+	 *   Offset to add to rank
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.shiftIndex = function (iIndex, iOffset) {
-		const aElements = this.aElements;
-		const oNode = aElements[iIndex];
+	_AggregationCache.prototype.shiftRank = function (iIndex, iOffset) {
+		const oNode = this.aElements[iIndex];
+		const iMinRank = _Helper.getPrivateAnnotation(oNode, "rank");
+		if (iMinRank === undefined) {
+			return;
+		}
+
 		const oCache = _Helper.getPrivateAnnotation(oNode, "parent");
-		for (let i = iIndex + 1; i < aElements.length; i += 1) {
-			const oSibling = aElements[i];
+		for (let i = iIndex + 1; i < this.aElements.length; i += 1) {
+			const oSibling = this.aElements[i];
 			if (_Helper.getPrivateAnnotation(oSibling, "parent") === oCache) {
-				const iIndex = _Helper.getPrivateAnnotation(oSibling, "index");
-				if (iIndex !== undefined) {
-					_Helper.setPrivateAnnotation(oSibling, "index", iIndex + iOffset);
+				const iRank = _Helper.getPrivateAnnotation(oSibling, "rank");
+				if (iRank >= iMinRank) { // Note: undefined >= ... is false
+					_Helper.setPrivateAnnotation(oSibling, "rank", iRank + iOffset);
 				}
 			}
 			if (oCache !== this.oFirstLevel
@@ -1580,9 +1630,9 @@ sap.ui.define([
 		_AggregationHelper.markSplicedStale(oElement);
 		delete this.aElements.$byPredicate[sPredicate];
 		// drop original element from its cache's collection
-		const iIndex = _Helper.getPrivateAnnotation(oElement, "index");
-		if (iIndex !== undefined) {
-			_Helper.getPrivateAnnotation(oElement, "parent").drop(iIndex, sPredicate, true);
+		const iRank = _Helper.getPrivateAnnotation(oElement, "rank");
+		if (iRank !== undefined) {
+			_Helper.getPrivateAnnotation(oElement, "parent").drop(iRank, sPredicate, true);
 		} // else: special handling inside #readGap
 	};
 

@@ -335,7 +335,13 @@
 				},
 				"path": "/values"
 			},
-			"allowAdd": true
+			"allowAdd": true,
+			"item": {
+				"text": "{text}",
+				"key": "{key}",
+				"additionalText": "{additionalText}",
+				"icon": "{icon}"
+			}
 		},
 		"properties": {
 			"key": {

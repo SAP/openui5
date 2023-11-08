@@ -940,6 +940,7 @@ sap.ui.define([
 		assert.deepEqual(oFormatOptions.payload, {}, "payload");
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.ok(oFormatOptions.convertWhitespaces, "convertWhitespaces set");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 		oField.setDataType("sap.ui.model.type.Currency");
 		oField.setEditMode(FieldEditMode.Editable);
@@ -963,6 +964,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 		oFormatOptions = oField.getUnitFormatOptions();
 		assert.ok(oFormatOptions, "FormatOptions returned");
@@ -982,6 +984,7 @@ sap.ui.define([
 		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
 		assert.notOk(oFormatOptions.convertWhitespaces, "convertWhitespaces not set");
 		assert.equal(oFormatOptions.control, oField, "control");
+		assert.notOk(oFormatOptions.multipleLines, "multipleLines not set");
 
 	});
 
@@ -1206,6 +1209,8 @@ sap.ui.define([
 			assert.ok(oContent instanceof TextArea, "TextArea rendered");
 			assert.equal(oContent.getValue && oContent.getValue(), "Test", "Text set on TextArea control");
 			assert.equal(oContent.getRows(), 4, "Number of rows");
+			const oFormatOptions = oFieldEditSingle.getFormatOptions();
+			assert.ok(oFormatOptions.multipleLines, "multipleLines set on FormatOptions");
 
 			aContent = oFieldDisplay.getAggregation("_content");
 			oContent = aContent && aContent.length > 0 && aContent[0];
@@ -5297,6 +5302,15 @@ sap.ui.define([
 							assert.equal(oContent._$input.cursorPos(), 2, "CursorPosition");
 							assert.equal(oContent.getFocusDomRef().selectionStart, 2, "Selection start");
 							assert.equal(oContent.getFocusDomRef().selectionEnd, 5, "Selection end");
+
+							oContent._$input.val("Ite");
+							oContent.fireLiveChange({ value: "Ite" }); // don't wait for debounce
+							oValueHelp.fireTypeaheadSuggested({condition: oCondition, filterValue: "It", itemId: "myItem"}); // outdated
+							assert.equal(oContent._$input.val(), "Ite", "Output text");
+							// jQuery Plugin "cursorPos"
+							assert.equal(oContent._$input.cursorPos(), 3, "CursorPosition");
+							assert.equal(oContent.getFocusDomRef().selectionStart, 3, "Selection start");
+							assert.equal(oContent.getFocusDomRef().selectionEnd, 3, "Selection end");
 
 							oValueHelp.close(); // to be sure
 							fnDone();

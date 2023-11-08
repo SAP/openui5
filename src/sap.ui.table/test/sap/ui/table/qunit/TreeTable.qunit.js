@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/model/json/JSONModel",
 	"sap/ui/table/library",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
 ], function(
@@ -16,14 +16,13 @@ sap.ui.define([
 	Column,
 	FixedRowMode,
 	TableUtils,
-	JSONModel,
 	library,
+	JSONModel,
 	jQuery,
 	oCore
 ) {
 	"use strict";
 
-	// Shortcuts
 	var SelectionMode = library.SelectionMode;
 
 	function getData() {
@@ -425,13 +424,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeTable + JSONModel: Select entries synchronously", function(assert) {
-		assert.expect(6);
-		var oModel;
 		var oTable = this.table;
 
-		oModel = new JSONModel();
-		oModel.setData(getData());
-		oTable.setModel(oModel);
+		oTable.setModel(new JSONModel(getData()));
 		oTable.bindRows("/root");
 
 		// synchronously select one entry after setting the model & binding the table

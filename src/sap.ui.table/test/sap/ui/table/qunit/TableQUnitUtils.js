@@ -1235,7 +1235,7 @@ sap.ui.define([
 	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
 		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
 
-		assert.strictEqual(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visible");
+		assert.strictEqual(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visibility");
 
 		if (!bVisible) {
 			// If the NoData element is not visible, the table must have focusable elements (cells).

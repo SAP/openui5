@@ -964,35 +964,35 @@ sap.ui.define([
 	/**
 	 * Hook which is called by the keyboard extension when the table leaves the action mode.
 	 *
-	 * @param {boolean} [bAdjustFocus=true] If set to <code>false</code>, the focus will not be changed.
+	 * @param {boolean} [bKeepFocus=false] Whether to keep the focus unchanged.
 	 * @see sap.ui.table.extensions.Keyboard#setActionMode
 	 */
-	KeyboardDelegate.prototype.leaveActionMode = function(bAdjustFocus) {
-		bAdjustFocus = bAdjustFocus == null ? true : bAdjustFocus;
-
+	KeyboardDelegate.prototype.leaveActionMode = function(bKeepFocus) {
 		var oKeyboardExtension = this._getKeyboardExtension();
 		var oActiveElement = document.activeElement;
 		var $Cell = TableUtils.getParentCell(this, oActiveElement);
 
 		oKeyboardExtension.resumeItemNavigation();
 
-		if (bAdjustFocus) {
-			if ($Cell) {
-				KeyboardDelegate._focusElement(this, $Cell[0], true);
-			} else {
-				var oItemNavigation = this._getItemNavigation();
+		if (bKeepFocus) {
+			return;
+		}
 
-				if (oItemNavigation) {
-					var aItemDomRefs = oItemNavigation.aItemDomRefs;
-					var iFocusedIndex = aItemDomRefs.indexOf(oActiveElement);
+		if ($Cell) {
+			KeyboardDelegate._focusElement(this, $Cell[0], true);
+		} else {
+			var oItemNavigation = this._getItemNavigation();
 
-					if (iFocusedIndex > -1) {
-						oItemNavigation.setFocusedIndex(iFocusedIndex);
-					}
+			if (oItemNavigation) {
+				var aItemDomRefs = oItemNavigation.aItemDomRefs;
+				var iFocusedIndex = aItemDomRefs.indexOf(oActiveElement);
+
+				if (iFocusedIndex > -1) {
+					oItemNavigation.setFocusedIndex(iFocusedIndex);
 				}
-
-				oKeyboardExtension.setSilentFocus(oActiveElement);
 			}
+
+			oKeyboardExtension.setSilentFocus(oActiveElement);
 		}
 	};
 
@@ -1045,7 +1045,7 @@ sap.ui.define([
 		}
 
 		// Enter or leave the action mode silently (onfocusin will be skipped).
-		this._getKeyboardExtension().setActionMode(bShouldBeInActionMode, false);
+		this._getKeyboardExtension().setActionMode(bShouldBeInActionMode, true);
 	};
 
 	/*

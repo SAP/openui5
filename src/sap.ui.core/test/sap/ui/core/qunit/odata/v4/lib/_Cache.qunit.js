@@ -424,8 +424,8 @@ sap.ui.define([
 				.withExactArgs(undefined, oFixture.iStatus < 0
 					? [oMessage1, oMessage2] : [oMessage1]);
 			oRestoreExpectation = that.mock(oCache).expects("restoreElement").exactly(iOnFailure)
-				.withExactArgs(sinon.match.same(aCacheData), "~insert~",
-					sinon.match.same(aCacheData[1]), sPath, 2)
+				.withExactArgs("~insert~", sinon.match.same(aCacheData[1]), 2, undefined,
+					sinon.match.same(aCacheData), sPath)
 				.callsFake(() => {
 					assert.deepEqual(aCacheData.$deleted.length, 4);
 				});
@@ -1041,7 +1041,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-["", "~path~"].forEach(function (sPath) {
+[undefined, "~path~"].forEach(function (sPath) {
 	[false, true].forEach(function (bTransient) {
 		[false, true].forEach(function (bDefault) {
 			const sTitle = `_Cache#restoreElement, path=${sPath}, transient=${bTransient},
@@ -1057,22 +1057,24 @@ sap.ui.define([
 		if (bDefault) {
 			oCache.aElements = aElements;
 		}
+		const sPath0 = sPath || ""; // to test defaulting
 		this.mock(oCache).expects("adjustIndexes")
-			.withExactArgs(sPath, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
+			.withExactArgs(sPath0, sinon.match.same(aElements), 42, 1, "~iDeletedIndex~");
 		const oHelperMock = this.mock(_Helper);
 		oHelperMock.expects("getPrivateAnnotation").exactly(bDefault && bTransient ? 0 : 1)
 			.withExactArgs("~oElement~", "transientPredicate")
 			.returns(bTransient ? "($uid=id-1-23)" : undefined);
 		oHelperMock.expects("addToCount")
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath,
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPath0,
 				sinon.match.same(aElements), 1);
 		this.mock(aElements).expects("splice").withExactArgs(42, 0, "~oElement~");
 		oHelperMock.expects("getPrivateAnnotation").withExactArgs("~oElement~", "predicate")
 			.returns("~predicate~");
 
 		// code under test
-		oCache.restoreElement(bDefault ? undefined : aElements, 42, "~oElement~", sPath,
-			"~iDeletedIndex~", bDefault && bTransient ? "($uid=id-1-23)" : undefined);
+		oCache.restoreElement(42, "~oElement~", "~iDeletedIndex~",
+			bDefault && bTransient ? "($uid=id-1-23)" : undefined, bDefault ? undefined : aElements,
+			sPath);
 
 		assert.strictEqual(oCache.iLimit, bTransient || sPath ? 234 : 235);
 		assert.strictEqual(aElements.$created, bTransient ? 3 : 2);

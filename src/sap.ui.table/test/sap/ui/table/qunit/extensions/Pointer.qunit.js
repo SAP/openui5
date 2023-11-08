@@ -1,6 +1,7 @@
 /*global QUnit, oTable, oTreeTable */
 
 sap.ui.define([
+	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/table/extensions/Pointer",
@@ -8,10 +9,18 @@ sap.ui.define([
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core"
-], function(qutils, Device, PointerExtension, TableUtils, tableLibrary, jQuery, oCore) {
+], function(
+	TableQUnitUtils,
+	qutils,
+	Device,
+	PointerExtension,
+	TableUtils,
+	tableLibrary,
+	jQuery,
+	oCore
+) {
 	"use strict";
 
-	// mapping of global function calls
 	var oModel = window.oModel;
 	var aFields = window.aFields;
 	var createTables = window.createTables;
@@ -32,26 +41,36 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.module("Initialization", {
+	QUnit.module("Lifecycle", {
 		beforeEach: function() {
-			createTables();
+			this.oTable = TableQUnitUtils.createTable();
 		},
 		afterEach: function() {
-			destroyTables();
+			this.oTable.destroy();
 		}
 	});
 
-	QUnit.test("init()", function(assert) {
-		var oExtension = oTable._getPointerExtension();
-		assert.ok(!!oExtension, "Pointer Extension available");
+	QUnit.test("initialization", function(assert) {
+		var oExtension = this.oTable._getPointerExtension();
+		var iDelegateCount = 0;
 
-		var iCount = 0;
-		for (var i = 0; i < oTable.aDelegates.length; i++) {
-			if (oTable.aDelegates[i].oDelegate === oExtension._delegate) {
-				iCount++;
+		assert.ok(oExtension, "Pointer Extension available");
+
+		for (var i = 0; i < this.oTable.aDelegates.length; i++) {
+			if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
+				iDelegateCount++;
 			}
 		}
-		assert.ok(iCount == 1, "Pointer Delegate registered");
+
+		assert.equal(iDelegateCount, 1, "Pointer delegate registered");
+	});
+
+	QUnit.test("destruction", function(assert) {
+		var oExtension = this.oTable._getPointerExtension();
+
+		this.oTable.destroy();
+		assert.ok(!oExtension.getTable(), "Table cleared");
+		assert.ok(!oExtension._delegate, "Delegate cleared");
 	});
 
 	QUnit.module("Column Resizing", {
@@ -1032,19 +1051,5 @@ sap.ui.define([
 		oPos = oExtensionHelper._getEventPosition(oEvent, oTable);
 		assert.equal(oPos.x, x, "TouchEvent (wrapped) - X");
 		assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
-	});
-
-	QUnit.module("Destruction", {
-		beforeEach: function() {
-			createTables();
-		}
-	});
-
-	QUnit.test("destroy()", function(assert) {
-		var oExtension = oTable._getPointerExtension();
-		oTable.destroy();
-		assert.ok(!oExtension.getTable(), "Table cleared");
-		assert.ok(!oExtension._delegate, "Delegate cleared");
-		oTreeTable.destroy();
 	});
 });

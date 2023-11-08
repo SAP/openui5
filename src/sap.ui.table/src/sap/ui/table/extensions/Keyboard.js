@@ -361,23 +361,23 @@ sap.ui.define([
 	 * Hooks:
 	 * <code>enterActionMode()</code> - Called when trying to enter the action mode. The action mode will only be entered if this hook returns
 	 * <code>true</code>.
-	 * <code>leaveActionMode()</code> - Called when leaving the action mode.
+	 * <code>leaveActionMode(bKeepFocus: boolean)</code> - Called when leaving the action mode.
 	 * Additional parameters passed after <code>bEnter</code> will be forwarded to the calls of the hooks.
 	 *
 	 * In the action mode the user can navigate through the interactive controls of the table.
 	 *
-	 * @param {boolean} bEnter If set to <code>true</code>, the table will try to enter the action mode, otherwise the table will leave the action
-	 *     mode.
+	 * @param {boolean} bEnter Whether to enter or leave the action mode.
+	 * @param {boolean} [bKeepFocus=false] Whether to keep the focus unchanged.
 	 */
-	KeyboardExtension.prototype.setActionMode = function(bEnter) {
+	KeyboardExtension.prototype.setActionMode = function(bEnter, bKeepFocus) {
 		if (!this._delegate) {
 			return;
 		}
 		if (bEnter === true && !this._actionMode && this._delegate.enterActionMode) {
-			this._actionMode = this._delegate.enterActionMode.apply(this.getTable(), Array.prototype.slice.call(arguments, 1)) === true;
+			this._actionMode = this._delegate.enterActionMode.call(this.getTable()) === true;
 		} else if (bEnter === false && this._actionMode && this._delegate.leaveActionMode) {
 			this._actionMode = false;
-			this._delegate.leaveActionMode.apply(this.getTable(), Array.prototype.slice.call(arguments, 1));
+			this._delegate.leaveActionMode.call(this.getTable(), bKeepFocus === true);
 		}
 	};
 

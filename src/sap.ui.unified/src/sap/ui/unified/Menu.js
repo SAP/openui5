@@ -864,6 +864,19 @@ sap.ui.define([
 		if (this.oOpenedSubMenu || !this.isOpen()) {
 			return;
 		}
+
+		// Button resets the focus manually to the button in Firefox
+		// but we need the focus to remain in the menu
+		if (Device.browser.firefox && this.isOpen()) {
+			var sControlId = oEvent.relatedControlId,
+				oRelatedControl = sControlId ? Element.getElementById(sControlId) : null,
+				bMenuItem = oRelatedControl && oRelatedControl instanceof MenuItemBase;
+			if (oRelatedControl && !bMenuItem) {
+				this.getItems()[0].focus();
+				return;
+			}
+		}
+
 		this.getRootMenu().handleOuterEvent(this.getId(), oEvent); //TBD: standard popup autoclose
 	};
 

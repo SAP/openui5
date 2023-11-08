@@ -815,7 +815,7 @@ sap.ui.define([
 			aDiffCreation.push(this.createChanges({
 				control: oControl,
 				stateBefore: oOld[sKey],
-				state: oNew[sKey],
+				state: this.getController(oControl, sKey).sanityCheck(oNew[sKey]),
 				applyAbsolute: ProcessingStrategy.FullReplace,
 				key: sKey,
 				suppressAppliance: true
