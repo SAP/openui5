@@ -44,7 +44,8 @@
 		"rootView": {
 			"viewName": "sap.ui.demo.toolpageapp.view.App",
 			"type": "XML",
-			"id": "app"
+			"id": "app",
+			"async": true
 		},
 		"dependencies": {
 			"minUI5Version": "1.30",
@@ -143,7 +144,8 @@
 				"controlId": "mainContents",
 				"viewType": "XML",
 				"controlAggregation": "pages",
-				"viewPath": "sap.ui.demo.toolpageapp.view"
+				"viewPath": "sap.ui.demo.toolpageapp.view",
+				"async": true
 			},
 			"routes": [
 				{
