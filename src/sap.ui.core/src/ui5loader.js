@@ -1163,7 +1163,7 @@
 		return error;
 	}
 
-	function declareModule(sModuleName) {
+	function declareModule(sModuleName, sDeprecationMessage) {
 		// sModuleName must be a unified resource name of type .js
 		assert(/\.js$/.test(sModuleName), "must be a Javascript module");
 
@@ -1179,6 +1179,10 @@
 
 		// avoid cycles
 		oModule.state = EXECUTING;
+		if (sDeprecationMessage) {
+			oModule.deprecation = sDeprecationMessage;
+			oModule.state = READY;
+		}
 
 		return oModule;
 	}
@@ -1509,6 +1513,10 @@
 
 		const oModule = Module.get(sModuleName);
 		const oShim = mShims[sModuleName];
+
+		if (oModule.deprecation) {
+			log.error((oRequestingModule ? "(dependency of '" + oRequestingModule.name + "') " : "") + oModule.deprecation);
+		}
 
 		// when there's a shim with dependencies for the module
 		// resolve them first before requiring the module again with bSkipShimDeps = true
@@ -2548,8 +2556,8 @@
 		amdDefine,
 		amdRequire,
 		config: ui5Config,
-		declareModule(sResourceName) {
-			/* void */ declareModule( normalize(sResourceName) );
+		declareModule(sResourceName, sDeprecationMessage) {
+			/* void */ declareModule(normalize(sResourceName), sDeprecationMessage);
 		},
 		defineModuleSync,
 		dump: dumpInternals,
