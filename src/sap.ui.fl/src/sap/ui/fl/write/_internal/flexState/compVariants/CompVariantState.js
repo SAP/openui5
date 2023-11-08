@@ -955,7 +955,9 @@ sap.ui.define([
 			}
 		}
 		return aEntities.some(function(oFlexObject) {
-			return oFlexObject.getState() !== States.LifecycleState.PERSISTED && !(oFlexObject.getVariantId && oFlexObject.getVariantId() === "*standard*");
+			return oFlexObject.getLayer() // oData variants do not have a layer and must not be identified as dirty
+				&& oFlexObject.getState() !== States.LifecycleState.PERSISTED
+				&& oFlexObject.getVariantId?.() !== "*standard*";
 		});
 	};
 

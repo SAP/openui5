@@ -868,10 +868,11 @@ sap.ui.define([
 					ui5: {
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
+							"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						},
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+						flexibilityServices: '[{"loadConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning", "writeConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning"}]'
 					}
 				},
 				"RuntimeAuthoring-2": {
@@ -955,10 +956,11 @@ sap.ui.define([
 					ui5: {
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
+							"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						},
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+						flexibilityServices: '[{"loadConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning", "writeConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning"}]'
 					}
 				},
 				"plugin/additionalElements/AdditionalElementsAnalyzer": {
@@ -1015,10 +1017,11 @@ sap.ui.define([
 					ui5: {
 						resourceroots: {
 							qunit: "test-resources/sap/ui/rta/qunit/",
+							"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/",
 							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						},
-						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+						flexibilityServices: '[{"loadConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning", "writeConnector": "my/connectors/TestSessionStorageConnectorWithoutVersioning"}]'
 					}
 				},
 				"util/BindingsExtractor": {

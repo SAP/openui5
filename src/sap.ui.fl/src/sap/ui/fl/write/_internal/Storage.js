@@ -125,6 +125,7 @@ sap.ui.define([
 
 	async function prepareCondensingForConnector(mPropertyBag) {
 		var mCondense;
+
 		if (
 			mPropertyBag.allChanges
 			&& mPropertyBag.allChanges.length
@@ -138,6 +139,7 @@ sap.ui.define([
 
 			var iOffset = 0;
 			var bAlreadyReordered = false;
+			mPropertyBag.reference ||= mPropertyBag.allChanges[0].convertToFileContent().reference;
 			mPropertyBag.allChanges.forEach(function(oChange, index) {
 				var sFileType = oChange.getFileType();
 				var iChangeCreateIndex = findChangeCreateIndex(oChange, mPropertyBag.condensedChanges);

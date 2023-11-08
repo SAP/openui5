@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
 	ManifestUtils,
@@ -23,6 +24,7 @@ sap.ui.define([
 	VersionsAPI,
 	Layer,
 	LayerUtils,
+	Settings,
 	Utils
 ) {
 	"use strict";
@@ -103,7 +105,11 @@ sap.ui.define([
 		return !oFlexInfoSession.allContextsProvided;
 	}
 
-	function isAllContextsAvailable(oControl) {
+	function isAllContextsAvailable(oControl, sLayer) {
+		if (!Settings.getInstanceOrUndef().isContextSharingEnabled(sLayer)) {
+			return false;
+		}
+
 		return FlexInfoSession.get(oControl).allContextsProvided === false;
 	}
 
@@ -144,7 +150,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the the version is the given value in FlexInfoSession.
+		 * Checks if the version is the given value in FlexInfoSession.
 		 *
 		 * @param {object} oParameter - Object containing the parameter value to be checked
 		 * @param {string} oParameter.value - Parameter value to be checked
@@ -313,7 +319,7 @@ sap.ui.define([
 			if (oReloadInfo.initialDraftGotActivated) {
 				oReloadInfo.isDraftAvailable = false;
 			}
-			oReloadInfo.allContexts = isAllContextsAvailable(oReloadInfo.selector);
+			oReloadInfo.allContexts = isAllContextsAvailable(oReloadInfo.selector, oReloadInfo.layer);
 			oReloadInfo.switchEndUserAdaptation = needAdaptationReloadOnExit(oReloadInfo.selector);
 			if (oReloadInfo.changesNeedReload
 				|| oReloadInfo.isDraftAvailable

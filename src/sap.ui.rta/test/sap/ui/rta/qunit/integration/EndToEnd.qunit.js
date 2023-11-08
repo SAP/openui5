@@ -1,6 +1,8 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/Layer",
+	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
@@ -14,6 +16,8 @@ sap.ui.define([
 	"sap/ui/core/EventBus",
 	"sap/ui/core/LabelEnablement"
 ], function(
+	Layer,
+	VersionsAPI,
 	RuntimeAuthoring,
 	RtaUtils,
 	OverlayRegistry,
@@ -48,31 +52,27 @@ sap.ui.define([
 			oCompCont.destroy();
 			oView.destroy();
 		},
-		beforeEach() {
-			return RtaQunitUtils.clear(oView, true).then(function() {
-				this.oVictim = Element.getElementById("Comp1---idMain1--Victim");
-				this.oCompanyCodeField = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
-				this.oBoundButton35Field = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
-				this.oDatesGroup = Element.getElementById("Comp1---idMain1--Dates");
-				this.oGeneralGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
-				this.oForm = Element.getElementById("Comp1---idMain1--MainForm");
+		async beforeEach() {
+			await RtaQunitUtils.clear(oView, true);
 
-				this.oRta = new RuntimeAuthoring({
-					rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
-				});
-				return Promise.all([
-					this.oRta.start(),
-					new Promise(function(fnResolve) {
-						this.oRta.attachStart(function() {
-							this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
-							this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
-							this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
-							this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
-							fnResolve();
-						}.bind(this));
-					}.bind(this))
-				]);
-			}.bind(this));
+			this.oVictim = Element.getElementById("Comp1---idMain1--Victim");
+			this.oCompanyCodeField = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
+			this.oBoundButton35Field = Element.getElementById("Comp1---idMain1--Dates.BoundButton35");
+			this.oDatesGroup = Element.getElementById("Comp1---idMain1--Dates");
+			this.oGeneralGroup = Element.getElementById("Comp1---idMain1--GeneralLedgerDocument");
+			this.oForm = Element.getElementById("Comp1---idMain1--MainForm");
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+
+			this.oRta = new RuntimeAuthoring({
+				rootControl: this.oRootControl
+			});
+
+			await this.oRta.start();
+
+			this.oVictimOverlay = OverlayRegistry.getOverlay(this.oVictim);
+			this.oCompanyCodeFieldOverlay = OverlayRegistry.getOverlay(this.oCompanyCodeField);
+			this.oDatesGroupOverlay = OverlayRegistry.getOverlay(this.oDatesGroup);
+			this.oBoundButton35FieldOverlay = OverlayRegistry.getOverlay(this.oBoundButton35Field);
 		},
 		afterEach() {
 			this.oRta.destroy();
@@ -206,13 +206,13 @@ sap.ui.define([
 									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 									assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
 									stubShowMessageBoxOnRtaClose(this.oRta);
-									return this.oRta.stop()
-									.then(RtaQunitUtils.getNumberOfChangesForTestApp)
-									.then(function(iNumberOfChanges) {
-										// hide and unhide get condensed, so only the add is saved
-										assert.equal(iNumberOfChanges, 1);
-										fnDone();
-									});
+									await this.oRta.stop();
+									const iNumberOfChanges = await RtaQunitUtils.getNumberOfChangesForTestApp();
+
+									// hide and unhide get condensed, so only the add is saved
+									assert.equal(iNumberOfChanges, 1);
+
+									fnDone();
 								}
 								return undefined;
 							}.bind(this));

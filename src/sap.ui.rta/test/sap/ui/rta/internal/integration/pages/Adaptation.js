@@ -1,6 +1,7 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function(
 	Opa5,
 	PropertyStrictEquals,
+	EnterText,
 	Press,
 	Drag,
 	Drop,
@@ -294,24 +296,77 @@ sap.ui.define([
 						errorMessage: "OK Button not found"
 					});
 				},
-				iExitRtaMode(bDontSaveOnExit, bNoChanges) {
-					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
+				iActivateAVersion(sVersionName) {
+					sVersionName ||= "Version X";
 					return this.waitFor({
 						controlType: "sap.m.Button",
 						matchers(oButton) {
-							return oButton.getDomRef().closest(".sapUiRtaToolbar")
-								&& oButton.getId().includes("sapUiRta_exit");
+							return oButton.getId().includes("sapUiRta_activate");
+						},
+						actions: new Press(),
+						success(aButtons) {
+							Opa5.assert.equal(aButtons.length, 1, "'Activate Version' button found");
+							return this.waitFor({
+								controlType: "sap.m.Input",
+								matchers(oInput) {
+									return oInput.getId().includes("sapUiRta_activateVersionDialog--versionTitleInput");
+								},
+								actions: new EnterText({
+									text: sVersionName
+								}),
+								success(aInputs) {
+									Opa5.assert.equal(aInputs.length, 1, "'Version Name' input found in the activate version dialog");
+									return this.waitFor({
+										controlType: "sap.m.Button",
+										matchers(oButton) {
+											return oButton.getId().includes("sapUiRta_activateVersionDialog--confirmVersionTitleButton");
+										},
+										actions: new Press(),
+										success(aButtons) {
+											Opa5.assert.ok(aButtons.length > 0,
+												`Dialog closed with click on 'Confirm' and a version name of ${sVersionName}' `);
+
+											// await the version activation by waiting for the versions model update after the activation
+											return this.waitFor({
+												controlType: "sap.m.Button",
+												matchers(oButton) {
+													return oButton.getId().includes("sapUiRta_versionButton")
+														&& oButton.getText() === sVersionName;
+												},
+												success() {
+													Opa5.assert.ok(true,
+														`The version '${sVersionName}' is activated.`);
+												}
+											});
+										}
+									});
+								}
+							});
+						}
+					});
+				},
+				iExitRtaMode(bDontSaveOnExit, bNoChanges, bActivateVersion = true) {
+					if (bActivateVersion && !bDontSaveOnExit && !bNoChanges) {
+						this.iActivateAVersion();
+					}
+
+					const oResources = Lib.getResourceBundleFor("sap.ui.rta");
+
+					return this.waitFor({
+						controlType: "sap.m.Button",
+						matchers(oButton) {
+							return oButton.getId().includes("sapUiRta_exit");
 						},
 						actions: new Press(),
 						success(aButtons) {
 							Opa5.assert.equal(aButtons.length, 1, "'Exit' button found");
-							// If no changes were done, the "save changes" pop-up doesn't come up
-							if (bNoChanges) {
-								return undefined;
+							// If a version was just activated or no changes were done, the "save changes" pop-up doesn't come up
+							if (bActivateVersion || bNoChanges) {
+								return true;
 							}
 							const sButtonTextKey = bDontSaveOnExit
 								? "BTN_UNSAVED_CHANGES_ON_CLOSE_DONT_SAVE"
-								: "BTN_UNSAVED_CHANGES_ON_CLOSE_SAVE";
+								: "BTN_UNSAVED_DRAFT_CHANGES_ON_CLOSE_SAVE";
 							return this.waitFor({
 								controlType: "sap.m.Button",
 								matchers(oButton) {
