@@ -776,10 +776,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getParent", function (assert) {
-		const oBinding = {getParent : mustBeMocked};
+		const oBinding = {fetchOrGetParent : mustBeMocked};
 		const oNode = Context.create({/*oModel*/}, oBinding, "/foo");
 
-		this.mock(oBinding).expects("getParent").withExactArgs(sinon.match.same(oNode))
+		this.mock(oBinding).expects("fetchOrGetParent").withExactArgs(sinon.match.same(oNode))
 			.returns("~oParentNode~");
 
 		// code under test
@@ -797,15 +797,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestParent", function (assert) {
-		const oBinding = {requestParent : mustBeMocked};
+	QUnit.test("requestParent", async function (assert) {
+		const oBinding = {fetchOrGetParent : mustBeMocked};
 		const oNode = Context.create({/*oModel*/}, oBinding, "/foo");
 
-		this.mock(oBinding).expects("requestParent").withExactArgs(sinon.match.same(oNode))
-			.returns("~oParentNodePromise~");
+		this.mock(oBinding).expects("fetchOrGetParent").withExactArgs(sinon.match.same(oNode), true)
+			.returns("~oParentNode~");
 
 		// code under test
-		assert.strictEqual(oNode.requestParent(), "~oParentNodePromise~");
+		const oPromise = oNode.requestParent();
+
+		assert.ok(oPromise instanceof Promise);
+		assert.strictEqual(await oPromise, "~oParentNode~");
 	});
 
 	//*********************************************************************************************

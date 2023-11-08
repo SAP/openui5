@@ -1860,6 +1860,59 @@ sap.ui.define([
 	};
 
 	/**
+	 * Fetches (<code>bAllowRequest</code> must be set to <code>true</code>) or gets the parent node
+	 * of a given child node (in case of a recursive hierarchy; see {@link #setAggregation}).
+	 *
+	 * @param {sap.ui.model.odata.v4.Context} oNode
+	 *   Some node which could have a parent
+	  * @param {boolean} [bAllowRequest]
+	 *   Whether it is allowed to send a GET request to fetch the parent node's data
+	 * @returns {sap.ui.model.odata.v4.Context|null|undefined|
+	 *     Promise<sap.ui.model.odata.v4.Context>|sap.ui.base.SyncPromise}
+	 *   <ul>
+	 *     <li> The parent node if already known,
+	 *     <li> <code>null</code> if the given node is a root node and thus has no parent,
+	 *     <li> <code>undefined</code> if the parent node hasn't been read yet and it is not
+	 *       allowed to send a request (see <code>bAllowRequest</code>),
+	 *     <li> a promise (if a request was sent) which resolves with the parent node or rejects
+	 *       with an <code>Error</code> instance.
+	 *   </ul>
+	 * @throws {Error} If the given node is not part of a recursive hierarchy
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.fetchOrGetParent = function (oNode, bAllowRequest) {
+		const oAggregation = this.mParameters.$$aggregation;
+
+		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (this.aContexts[oNode.iIndex] !== oNode) {
+			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
+		}
+
+		const iParentIndex = this.oCache.getParentIndex(oNode.iIndex);
+		if (iParentIndex < 0) {
+			return null;
+		}
+
+		if (iParentIndex === undefined && bAllowRequest) {
+			return this.oCache.fetchParent(oNode.iIndex, this.lockGroup()).then((oResult) => {
+				const sPath = this.getResolvedPath()
+					+ _Helper.getPrivateAnnotation(oResult, "predicate");
+				const oParentContext = Context.create(this.oModel, this, sPath);
+				this.mPreviousContextsByPath[sPath] = oParentContext;
+
+				return oParentContext;
+			});
+		}
+
+		return bAllowRequest
+			? this.requestContexts(iParentIndex, 1).then((aResult) => aResult[0])
+			: this.aContexts[iParentIndex];
+	};
+
+	/**
 	 * Requests the value for the given path and index; the value is requested from this binding's
 	 * cache or from its context in case it has no cache.
 	 *
@@ -2843,35 +2896,6 @@ sap.ui.define([
 			aOrderbyOptions.push(sOrderbyQueryOption);
 		}
 		return aOrderbyOptions.join(",");
-	};
-
-	/**
-	 * Returns the parent node (in case of a recursive hierarchy; see {@link #setAggregation}) or
-	 * <code>undefined</code> if the parent of this node hasn't been read yet; it can then be
-	 * requested via {@link #requestParent}.
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oNode
-	 *   Some node which could have a parent
-	 * @returns {sap.ui.model.odata.v4.Context|null|undefined}
-	 *   The parent node, or <code>null</code> if the given node is a root node and thus has no
-	 *   parent, or <code>undefined</code> if the parent node hasn't been read yet
-	* @throws {Error} If the given node is not part of a recursive hierarchy
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.getParent = function (oNode) {
-		const oAggregation = this.mParameters.$$aggregation;
-
-		if (!oAggregation || !oAggregation.hierarchyQualifier) {
-			throw new Error("Missing recursive hierarchy");
-		}
-		if (this.aContexts[oNode.iIndex] !== oNode) {
-			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
-		}
-		const iParentIndex = this.oCache.getParentIndex(oNode.iIndex);
-
-		// Note: if (iParentIndex === undefined) => return undefined;
-		return iParentIndex < 0 ? null : this.aContexts[iParentIndex];
 	};
 
 	/**
@@ -3886,50 +3910,6 @@ sap.ui.define([
 			}
 
 			return aFilters.length === 1 ? aFilters[0] : new Filter({filters : aFilters});
-		});
-	};
-
-	/**
-	 * Requests the parent node of a given child node (in case of a recursive hierarchy, see
-	 * {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}, where
-	 * <code>oAggregation.expandTo</code> must be equal to one).
-	 *
-	 * @param {sap.ui.model.odata.v4.Context} oNode
-	 *   Some node which could have a parent
-	 * @returns {Promise<sap.ui.model.odata.v4.Context|null>} A promise which:
-	 *   <ul>
-	 *     <li> Resolves if successful with either the parent node or <code>null</code> for a root
-	 *       node that has no parent</li>
-	 *     <li> Rejects with an <code>Error</code> instance otherwise</li>
-	 *   </ul>
-	 * @throws {Error} If
-	 *   <ul>
-	 *     <li> the given node is not part of a recursive hierarchy,
-	 *     <li> <code>oAggregation.expandTo</code> is greater than one.
-	 *    </ul>
-	 *
-	 * @private
-	 * @see #getParent
-	 */
-	ODataListBinding.prototype.requestParent = function (oNode) {
-		const oAggregation = this.mParameters.$$aggregation;
-
-		if (!oAggregation || !oAggregation.hierarchyQualifier) {
-			throw new Error("Missing recursive hierarchy");
-		}
-		if (oAggregation.expandTo > 1) {
-			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
-		}
-		if (this.aContexts[oNode.iIndex] !== oNode) {
-			throw new Error("Not currently part of a recursive hierarchy: " + oNode);
-		}
-
-		const iParentIndex = this.oCache.getParentIndex(oNode.iIndex);
-		if (iParentIndex < 0) {
-			return Promise.resolve(null);
-		}
-		return this.requestContexts(iParentIndex, 1).then(function (aResult) {
-			return aResult[0];
 		});
 	};
 
