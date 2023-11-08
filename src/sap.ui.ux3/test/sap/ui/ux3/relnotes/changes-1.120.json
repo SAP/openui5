@@ -1,0 +1,18 @@
+{
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "3bbc19c93a586b7709845dab0d0ebf064981aff0",
+        "type": "FIX",
+        "text": " Interaction: Fix start time determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140056"
+          }
+        ]
+      }
+    ]
+  }
+}

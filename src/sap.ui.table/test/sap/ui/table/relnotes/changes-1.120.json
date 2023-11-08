@@ -23,5 +23,21 @@
         "text": " DataType, Library: Enable enum type registration without globals"
       }
     ]
+  },
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "a36bbebb8765411a33e62e1468879fa81e9d411a",
+        "type": "FIX",
+        "text": " onlocalizationEvent not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127742"
+          }
+        ]
+      }
+    ]
   }
 }

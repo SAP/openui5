@@ -356,5 +356,87 @@
         "text": " Introduce new sap/ui/core/Security facade and deprecate APIs 'setSecurityTokenHandlers', 'getSecurityTokenHandlers', 'getFrameOptions' and 'getAllowlistService' on sap.ui.core.Configuration."
       }
     ]
+  },
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "3bbc19c93a586b7709845dab0d0ebf064981aff0",
+        "type": "FIX",
+        "text": " Interaction: Fix start time determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140056"
+          }
+        ]
+      },
+      {
+        "id": "13505e606cc13296e78a3bb69b9a2f45248758fb",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component#get to sap/ui/core/Component#getComponentById",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "224900a11628b50318b9f112a0ef092fb69a93db",
+        "type": "FEATURE",
+        "text": " Deprecation of sap/ui/core/search classes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "cccc04332e026bf2e74789d1f70619e8f58d370a",
+        "type": "FIX",
+        "text": " Rename sap/ui/base/Formatting.(get|set)LegacyDateCalendarCustomizing to sap/ui/base/Formatting.(get|set)CustomIslamicCalendarData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "a36bbebb8765411a33e62e1468879fa81e9d411a",
+        "type": "FIX",
+        "text": " onlocalizationEvent not fired",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127742"
+          }
+        ]
+      },
+      {
+        "id": "3a0057ee6707726c4523dfa6a76377d478242f22",
+        "type": "FIX",
+        "text": " ManagedObjectMetadata: Introduce missing 'defaultClass' setting for aggregations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "07c96430374a9677583d4fc394fe7f543ed36c56",
+        "type": "FIX",
+        "text": " core/Component: skip the sync processing of i18n before resources are loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007495122023"
+          }
+        ]
+      }
+    ]
   }
 }

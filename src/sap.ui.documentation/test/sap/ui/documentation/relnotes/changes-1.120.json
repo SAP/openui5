@@ -18,5 +18,32 @@
         "text": " DemoKit: Aligned the notification badge in the header"
       }
     ]
+  },
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "13505e606cc13296e78a3bb69b9a2f45248758fb",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component#get to sap/ui/core/Component#getComponentById",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "81bda245d5f18f07d07a9077ad31d5be105ab00f",
+        "type": "FIX",
+        "text": " sap.ui.documentation: replace UI5 URLs correctly when samples are downloaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

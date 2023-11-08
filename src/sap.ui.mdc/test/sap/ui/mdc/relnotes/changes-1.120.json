@@ -83,5 +83,32 @@
         ]
       }
     ]
+  },
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "be1db0e8cb596bd3c59d5b03f8d3003a47f20445",
+        "type": "FIX",
+        "text": " Field: not possible to enter multiple lines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370128724"
+          }
+        ]
+      },
+      {
+        "id": "c7a5289219cc9fb4057e56af6df51cb7c0f830ef",
+        "type": "FIX",
+        "text": " Field: Autocomplete shows wrong value if backend slow",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370136431"
+          }
+        ]
+      }
+    ]
   }
 }

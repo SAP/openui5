@@ -427,5 +427,32 @@
         ]
       }
     ]
+  },
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "13505e606cc13296e78a3bb69b9a2f45248758fb",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component#get to sap/ui/core/Component#getComponentById",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "c5e593813dcd69a20622a80132f67726605bfa4f",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: using a stable date in a test scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370125750"
+          }
+        ]
+      }
+    ]
   }
 }

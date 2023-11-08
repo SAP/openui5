@@ -1,0 +1,18 @@
+{
+  "1.120.1": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "cccc04332e026bf2e74789d1f70619e8f58d370a",
+        "type": "FIX",
+        "text": " Rename sap/ui/base/Formatting.(get|set)LegacyDateCalendarCustomizing to sap/ui/base/Formatting.(get|set)CustomIslamicCalendarData",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
+  }
+}
