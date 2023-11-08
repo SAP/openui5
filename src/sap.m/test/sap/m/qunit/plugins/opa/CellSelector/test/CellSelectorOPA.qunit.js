@@ -326,13 +326,13 @@ sap.ui.define([
 			When.Keyboard.iRemoveSelection(true);
 			Then.iSeeCellsSelected();
 
-			// Trying to clear with 2x CTRL + A with Select All => clears selection
+			// Trying to clear with 2x CTRL + A with Select All => clears selection, also clears cells
 			Given.iChangeSelectAllState(true);
 
 			selectBlock();
 			When.iFocusCell(1, 1);
 			When.Keyboard.iSelectAll();
-			Then.iSeeCellsSelected({ rowIndex: 1, colIndex: 1 }, { rowIndex: 1, colIndex: 3 });
+			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected(0, 114);
 
 			When.Keyboard.iSelectAll();
@@ -462,13 +462,13 @@ sap.ui.define([
 			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 1 }, { rowIndex: 4, colIndex: 1 });
 			Then.iSeeRowsSelected(1, 4);
 
-			// Focus selected row with cell selection block, but focus is outside of block => extend row selection
+			// Focus selected row with cell selection block, but focus is outside of block => extend row selection and clear cells
 			When.iFocusCell(4, 2);
 			When.Keyboard.iSelectNextCell(false, true);
 			When.Keyboard.iSelectNextCell(false, true);
 
 			Then.iSeeCellFocused({ rowIndex: 6, colIndex: 2 });
-			Then.iSeeCellsSelected({ rowIndex: 2, colIndex: 1 }, { rowIndex: 4, colIndex: 1 });
+			Then.iSeeCellsSelected();
 			Then.iSeeRowsSelected(1, 6);
 
 			// Focus outside any selection => new selection block
