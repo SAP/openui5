@@ -782,8 +782,8 @@ sap.ui.define([
 			if (sFormat.indexOf("a") !== -1) {
 				this.addAggregation("_columns", new TimePickerSlider(this.getId() + "-listFormat", {
 					items: [
-						{ key: "am", text: this._sAM },
-						{ key: "pm", text: this._sPM }
+						new VisibleItem({ key: "am", text: this._sAM }),
+						new VisibleItem({ key: "pm", text: this._sPM })
 					],
 					expanded: this._onSliderExpanded,
 					collapsed: this._onSliderCollapsed,
