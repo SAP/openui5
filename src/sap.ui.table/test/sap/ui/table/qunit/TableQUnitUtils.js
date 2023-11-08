@@ -1604,7 +1604,9 @@ sap.ui.define([
 
 		oTable = new Table({
 			rows: "{/rows}",
-			title: "Grid Table",
+			extension: [
+				new TestControl({text: "Grid Table"})
+			],
 			selectionMode: "MultiToggle",
 			rowMode: new FixedRowMode({
 				rowCount: 3
@@ -1619,7 +1621,9 @@ sap.ui.define([
 				path: "/tree",
 				parameters: {arrayNames: ["rows"]}
 			},
-			title: "Tree Table",
+			extension: [
+				new TestControl({text: "Tree Table"})
+			],
 			selectionMode: "Single",
 			rowMode: new FixedRowMode({
 				rowCount: 3

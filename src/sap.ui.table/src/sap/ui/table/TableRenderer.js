@@ -224,6 +224,7 @@ sap.ui.define([
 	// BASIC AREAS OF THE TABLE
 	// =============================================================================
 
+	/** @deprecated As of version 1.72 */
 	TableRenderer.renderHeader = function(rm, oTable, oTitle) {
 		rm.openStart("div");
 		rm.class("sapUiTableHdr");
