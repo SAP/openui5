@@ -251,38 +251,38 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> It is not possible to reuse the same instance of <code>GridContainerSettings</code> for several layouts. New instance has to be created for each of them. This is caused by the fact that one object can exist in only a single aggregation.
 				 */
-				layout: { type: "sap.f.GridContainerSettings", multiple: false },
+				layout: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "XS". Range: up to 374px.
 				 * @experimental As of version 1.71 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
 				 */
-				layoutXS: { type: "sap.f.GridContainerSettings", multiple: false },
+				layoutXS: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "S". Range: 375px - 599px.
 				 */
-				layoutS: { type: "sap.f.GridContainerSettings", multiple: false },
+				layoutS: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "M". Range: 600px - 1023px.
 				 */
-				layoutM: { type: "sap.f.GridContainerSettings", multiple: false },
+				layoutM: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "L". Range: 1023px - 1439px.
 				 */
-				layoutL: { type: "sap.f.GridContainerSettings", multiple: false },
+				layoutL: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * The sap.f.GridContainerSettings applied for size "XL". Range: from 1440px.
 				 */
-				layoutXL: { type: "sap.f.GridContainerSettings", multiple: false },
+				layoutXL: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false },
 
 				/**
 				 * Default sap.f.GridContainerSettings
 				 */
-				_defaultLayout: { type: "sap.f.GridContainerSettings", multiple: false, visibility: "hidden" }
+				_defaultLayout: { type: "sap.f.GridContainerSettings", defaulClass: GridContainerSettings, multiple: false, visibility: "hidden" }
 			},
 			associations : {
 
