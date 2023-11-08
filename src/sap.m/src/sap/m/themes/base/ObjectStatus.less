@@ -965,6 +965,10 @@ html.sap-desktop .sapMListTblHasPopin .sapMObjStatusActive:focus {
 	.sapMObjStatus.sapMObjStatusInverted {
 		display: inline-table;
 
+		&:not(.sapMObjectStatusLongText):not(:has(.sapMObjStatusIcon)) {
+			width: min-content;
+		}
+
 		.sapMObjStatusText {
 			line-height: 1rem;
 			vertical-align: middle;
