@@ -109,24 +109,25 @@ sap.ui.define([
 				oStaticAreaDomRef.appendChild(oSpan);
 
 				// switch the focus after the current call stack because some input device (e.g. Barcode scanner) fires
-				// both "keydown" and "keyup" event in the same call stack. We need to make sure that the element can
+				// the "keyup" event in a 0 timeout after the 'keydown' event. We need to make sure that the element can
 				// receive both of the events before we switch the focus to the "span"
-				Promise.resolve().then(function() {
+				setTimeout(function() {
 					// set focus on span to enforce blur - e.g. data of input field needs to get persisted
 					oSpan.focus();
+
+					// setting back the focus async ensures that also a fieldGroupChange happens
+					setTimeout(function() {
+						// restore old focus
+						oFocusedElement.focus();
+
+						// cleanup DOM
+						oStaticAreaDomRef.removeChild(oSpan);
+
+						// trigger callback
+						fnCallback.apply(null, args);
+					});
 				});
 
-				// setting back the focus async ensures that also a fieldGroupChange happens
-				setTimeout(function() {
-					// restore old focus
-					oFocusedElement.focus();
-
-					// cleanup DOM
-					oStaticAreaDomRef.removeChild(oSpan);
-
-					// trigger callback
-					fnCallback.apply(null, args);
-				});
 			}
 
 			var oDelegate = {};
