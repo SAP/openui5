@@ -2581,6 +2581,7 @@ sap.ui.define([
 		this.aElements.$count = undefined; // see _Helper.setCount
 		// number of all (client-side) created elements (active or inactive)
 		this.aElements.$created = 0;
+		// this.aElements.$deleted = []; // only created on demand
 		this.aElements.$tail = undefined; // promise for a read w/o $top
 		// upper limit for @odata.count, maybe sharp; assumes #getQueryString can $filter out all
 		// created elements
@@ -3623,6 +3624,7 @@ sap.ui.define([
 		this.aElements.length = this.aElements.$created = iCreated;
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined; // needed for _Helper.setCount
+		// Note: this.aElements.$deleted must remain unchanged
 		this.iLimit = Infinity;
 
 		Object.keys(mChangeListeners).forEach(function (sPath) {
