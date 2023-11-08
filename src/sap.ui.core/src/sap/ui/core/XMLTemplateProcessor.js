@@ -778,19 +778,27 @@ function(
 					sClassName = oLibrary.name + "." + ((oLibrary.tagNames && oLibrary.tagNames[sLocalName]) || sLocalName);
 				}
 			});
-			// TODO guess library from sNamespaceURI and load corresponding lib!?
+
 			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
-			// ensure that control and library are loaded
+			/**
+			 * Ensure that control class is available. Control class is either already given as module content, or
+			 * is retrieved via globals.
+			 * @param {sap.ui.core.Control|undefined} oClassObject control class or undefined if not returned as module content for its sap.ui.define factory
+			 * @return {sap.ui.core.Control|undefined} the resolved class.
+			 * @deprecated since 1.120
+			 */
 			function getObjectFallback(oClassObject) {
 				// some modules might not return a class definition, so we fallback to the global
 				// this is against the AMD definition, but is required for backward compatibility
 				if (!oClassObject) {
-					Log.error("Control '" + sClassName + "' did not return a class definition from sap.ui.define.", "", "XMLTemplateProcessor");
 					oClassObject = ObjectPath.get(sClassName);
+					if (oClassObject) {
+						Log.error(`The control class '${sClassName}' was retrieved via globals, because it did not return a class definition from sap.ui.define.`, "", "XMLTemplateProcessor");
+					}
 				}
 				if (!oClassObject) {
-					Log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor");
+					Log.error(`Control '${sClassName}' did not return a class definition from sap.ui.define and did not export into the global namespace.`, "", "XMLTemplateProcessor");
 				}
 				return oClassObject;
 			}
@@ -798,17 +806,22 @@ function(
 			var sResourceName = sClassName.replace(/\./g, "/");
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
-				if (bAsync) {
-					return new Promise(function(resolve, reject) {
-						sap.ui.require([sResourceName], function(oClassObject) {
-							oClassObject = getObjectFallback(oClassObject);
-							resolve(oClassObject);
-						}, reject);
-					});
-				} else {
+				/**
+				 * Synchronous loading of control class
+				 * @deprecated since 1.120
+				 */
+				if (!bAsync) {
 					oClassObject = sap.ui.requireSync(sResourceName); // legacy-relevant: Sync path
 					oClassObject = getObjectFallback(oClassObject);
+					return oClassObject;
 				}
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([sResourceName], function(oClassObject) {
+						/** @deprecated since 1.120 */
+						oClassObject = getObjectFallback(oClassObject);
+						resolve(oClassObject);
+					}, reject);
+				});
 			}
 			return oClassObject;
 		}
