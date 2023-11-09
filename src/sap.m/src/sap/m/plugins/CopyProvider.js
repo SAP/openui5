@@ -177,24 +177,25 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	};
 
 	CopyProvider.prototype.onActivate = function(oControl) {
-		this._oDelegate = { onkeydown: this.onkeydown };
+		this._oDelegate = { onkeydown: this.onkeydown, onBeforeRendering: this.onBeforeRendering };
 		oControl.addEventDelegate(this._oDelegate, this);
 
-		this._oCopyButton && this._oCopyButton.setEnabled(true);
+		this._oCopyButton?.setEnabled(true);
 		this._shouldManageExtractData() && this.setExtractData(this._extractData.bind(this));
+		this._bCellsAreSelectable = this.getPlugin("sap.m.plugins.CellSelector")?.isSelectable();
 	};
 
 	CopyProvider.prototype.onDeactivate = function(oControl) {
 		oControl.removeEventDelegate(this._oDelegate, this);
 		this._oDelegate = null;
 
-		this._oCopyButton && this._oCopyButton.setEnabled(false);
+		this._oCopyButton?.setEnabled(false);
 		this._shouldManageExtractData() && this.setExtractData();
 	};
 
 	CopyProvider.prototype.setVisible = function(bVisible) {
 		this.setProperty("visible", bVisible, true);
-		this._oCopyButton && this._oCopyButton.setVisible(this.getVisible());
+		this._updateCopyButtonVisibility();
 		return this;
 	};
 
@@ -209,6 +210,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	/**
 	 * Creates and returns a Copy button that can be used to trigger a copy action, for example, from the table toolbar.
 	 *
+	 * <b>Note:</b> The <code>visible</code> and <code>enabled</code> properties of the Copy button must be managed
+	 * through this plugin's own <code>visible</code> and <code>enabled</code> properties.
+	 *
 	 * @param {object} [mSettings] The settings of the button control
 	 * @returns {sap.m.OverflowToolbarButton} The button instance
 	 * @since 1.114
@@ -216,12 +220,14 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 	 */
 	CopyProvider.prototype.getCopyButton = function(mSettings) {
 		if (!this._oCopyButton) {
-			this._oCopyButton = new OverflowToolbarButton(Object.assign({
+			this._oCopyButton = new OverflowToolbarButton({
 				icon: "sap-icon://copy",
-				visible: this.getVisible(),
+				enabled: this.getEnabled(),
+				visible: this._getEffectiveVisible(),
 				tooltip: Core.getLibraryResourceBundle("sap.m").getText("COPYPROVIDER_COPY"),
-				press: this.copySelectionData.bind(this, true)
-			}, mSettings));
+				press: this.copySelectionData.bind(this, true),
+				...mSettings
+			});
 		}
 		return this._oCopyButton;
 	};
@@ -331,17 +337,46 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 		return copyMatrixForSpreadSheet(this, aSelectionData);
 	};
 
+	/**
+	 * This hook gets called by the CellSelector when the selectable state is changed.
+	 *
+	 * @param {boolean} bSelectable Whether cells are selectable or not
+	 * @private
+	 * @ui5-restricted sap.m.plugins.CellSelector
+	 */
+	CopyProvider.prototype.onCellSelectorSelectableChange = function(bSelectable) {
+		this._bCellsAreSelectable = bSelectable;
+		this._updateCopyButtonVisibility();
+	};
+
+	CopyProvider.prototype.onBeforeRendering = function() {
+		this._updateCopyButtonVisibility();
+	};
+
 	CopyProvider.prototype.onkeydown = function(oEvent) {
 		if (oEvent.isMarked() ||
 			oEvent.code != "KeyC" ||
 			!(oEvent.ctrlKey || oEvent.metaKey) ||
-			!oEvent.target.matches(this.getConfig("allowForCopySelector"))) {
+			!oEvent.target.matches(this.getConfig("allowForCopySelector")) ||
+			!this._isControlSelectable()) {
 			return;
 		}
 
 		oEvent.setMarked();
 		oEvent.preventDefault();
 		this.copySelectionData(true);
+	};
+
+	CopyProvider.prototype._isControlSelectable = function() {
+		return Boolean(this.getConfig("isSelectable", this.getControl()) || this._bCellsAreSelectable);
+	};
+
+	CopyProvider.prototype._getEffectiveVisible = function() {
+		return this.getVisible() ? this._isControlSelectable() : false;
+	};
+
+	CopyProvider.prototype._updateCopyButtonVisibility = function() {
+		this._oCopyButton?.setVisible(this._getEffectiveVisible());
 	};
 
 	CopyProvider.prototype._extractData = function(oRowContext, oColumn) {
@@ -402,6 +437,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 			},
 			selectableColumns: function(oTable) {
 				return oTable.getRenderedColumns();
+			},
+			isSelectable: function(oTable) {
+				return oTable.getMode().includes("Select");
 			}
 		},
 		"sap.ui.table.Table": {
@@ -426,6 +464,9 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/ui/core/Core", "sap/base/str
 				return oTable.getColumns().filter(function(oColumn) {
 					return oColumn.getDomRef();
 				});
+			},
+			isSelectable: function(oTable) {
+				return oTable.getSelectionMode() != "None";
 			}
 		}
 	}, CopyProvider);

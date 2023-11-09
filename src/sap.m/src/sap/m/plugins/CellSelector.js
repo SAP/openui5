@@ -213,6 +213,7 @@ sap.ui.define([
 
 		// Register Events, as adding dependent does not trigger rerendering
 		this._registerEvents();
+		this._onSelectableChange();
 	};
 
 	CellSelector.prototype.onDeactivate = function (oControl) {
@@ -226,6 +227,7 @@ sap.ui.define([
 		}
 
 		this._deregisterEvents();
+		this._onSelectableChange();
 	};
 
 	CellSelector.prototype.exit = function() {
@@ -237,6 +239,21 @@ sap.ui.define([
 		this._mTimeouts = null;
 
 		PluginBase.prototype.exit.call(this);
+	};
+
+	/**
+	 * Determines whether cells are selectable or not.
+	 *
+	 * @private
+	 * @ui5-restricted sap.m.plugins.CopyProvider
+	 */
+	CellSelector.prototype.isSelectable = function() {
+		return this.isActive() ? this.getConfig("isSupported", this.getControl()) : false;
+	};
+
+	CellSelector.prototype._onSelectableChange = function() {
+		const oCopyProvider = this.getPlugin("sap.m.plugins.CopyProvider");
+		oCopyProvider?.onCellSelectorSelectableChange(this.isSelectable());
 	};
 
 	CellSelector.prototype._registerEvents = function() {
@@ -802,6 +819,20 @@ sap.ui.define([
 			scrollArea: "sapUiTableCtrlScr",
 			scrollEvent: "_rowsUpdated",
 			eventClearedAll: "sapUiTableClearAll",
+			onActivate: function(oTable, oPlugin) {
+				oTable.attachEvent("_change", oPlugin, this._onPropertyChange);
+				oTable.attachEvent("EventHandlerChange", oPlugin, this._onEventHandlerChange);
+			},
+			onDeactivate: function(oTable, oPlugin) {
+				oTable.detachEvent("_change", this._onPropertyChange);
+				oTable.detachEvent("EventHandlerChange", this._onEventHandlerChange);
+			},
+			_onPropertyChange: function(oEvent, oPlugin) {
+				oEvent.getParameter("name") == "selectionBehavior" && oPlugin._onSelectableChange();
+			},
+			_onEventHandlerChange: function(oEvent, oPlugin) {
+				oEvent.getParameter("EventId") == "cellClick" && oPlugin._onSelectableChange();
+			},
 			/**
 			 * Checks if the table is compatible with cell selection.
 			 * @param {sap.ui.table.Table} oTable table instance
