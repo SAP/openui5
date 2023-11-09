@@ -1,6 +1,9 @@
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {
+sap.ui.define([
+	'sap/ui/core/Lib',
+	'sap/ui/core/library'
+], function(Library) {
 	"use strict";
-	return Core.initLibrary({
+	return Library.init({
 		name: 'testlibs.themeParameters.lib17',
 		dependencies: [
 		]

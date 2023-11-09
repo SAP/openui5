@@ -1,9 +1,9 @@
 sap.ui.predefine("testlibs/scenario14/lib7/library",[
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library"
-], function(oCore) {
+], function(Library) {
 	"use strict";
-	return oCore.initLibrary({
+	return Library.init({
 		name: "testlibs.scenario14.lib7",
 		dependencies: [
 		],

@@ -1,9 +1,11 @@
-sap.ui.define(['sap/ui/core/Core', 'sap/ui/core/library'], function(Core, coreLib) {
+sap.ui.define([
+	'sap/ui/core/Lib',
+	'sap/ui/core/library'
+], function(Library) {
 	"use strict";
-	sap.ui.getCore().initLibrary({
+	return Library.init({
 		name: 'testlibs.themeParameters.lib10',
 		dependencies: [
 		]
 	});
-	return testlibs.themeParameters.lib10; // eslint-disable-line no-undef
 });
