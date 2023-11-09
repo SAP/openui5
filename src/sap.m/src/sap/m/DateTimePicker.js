@@ -894,7 +894,11 @@ sap.ui.define([
 	DateTimePicker.prototype._parseValue = function(sValue, bDisplayFormat, sTimezone) {
 
 		if (this._isTimezoneBinding()) {
-			return this._getFormatterWithTimezoneInstance().parse(sValue, sTimezone || this._getTimezone(true))[0];
+			var aParsedDate = this._getFormatterWithTimezoneInstance().parse(sValue, sTimezone || this._getTimezone(true));
+			if (aParsedDate) {
+				return aParsedDate[0];
+			}
+			return null;
 		}
 
 		return DatePicker.prototype._parseValue.apply(this, arguments);

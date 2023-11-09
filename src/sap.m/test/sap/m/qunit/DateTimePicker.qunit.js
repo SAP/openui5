@@ -1494,7 +1494,62 @@ sap.ui.define([
 
 		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
 		assert.equal(oDTP._getInputValue(), "Mar 31, 2023, 6:32:00\u202fPM", "correct displayed value");
-		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct displayed value");
+		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct value is set");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("DateTimePicker parseValue with timezone binding", function(assert) {
+		// arrange
+		Localization.setTimezone("Europe/London");
+
+		var oDate = UI5Date.getInstance(2023, 2, 31, 10, 32), // 8 hour time difference because of DST
+			oSecondDate = UI5Date.getInstance(2023, 1, 14), // 9 hour time difference
+			oModel = new JSONModel({
+			timezoneDTP:"Asia/Tokyo",
+			valueDTP: oDate
+			}),
+			oDTP = new DateTimePicker("dtp-parse", {
+				value: {
+					parts: [{
+							path: '/valueDTP',
+							type: 'sap.ui.model.odata.type.DateTimeOffset'
+						},
+						{
+							path: '/timezoneDTP',
+							type: 'sap.ui.model.odata.type.String'
+						}
+					],
+					type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}
+			}).setModel(oModel),
+			oInputRef;
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		assert.strictEqual(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct value is set");
+
+		// act - type invalid date into input
+		oInputRef.val("Feb 14, 2023");
+		qutils.triggerKeydown("dtp-parse-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.strictEqual(oDTP.getValue(), "Feb 14, 2023", "invalid date is parsed with no issues");
+		assert.strictEqual(oDTP.getDateValue().getTime(), oDate.getTime(), "date value remains set to the last valid date");
+
+		// act - type valid date into input
+		oInputRef.val("Feb 14, 2023, 9:00:00 AM");
+		qutils.triggerKeydown("dtp-parse-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.strictEqual(oDTP.getValue(), "Feb 14, 2023, 9:00:00\u202fAM Asia, Tokyo", "valid date is parsed");
+		assert.strictEqual(oDTP.getDateValue().getTime(), oSecondDate.getTime(), "date value is set to new date");
 
 		// clean
 		oDTP.destroy();
