@@ -66,6 +66,18 @@ sap.ui.define(function() {
 					theme: "sap_hcb"
 				}
 			},
+			DuplicateIds: {
+				title: "sap.ui.core: Duplicate ID checks"
+			},
+			/**
+			 * @deprecated As of Version 1.120
+			 */
+			DuplicateIds_noError: {
+				title: "sap.ui.core: Duplicate ID checks (with errors disabled)",
+				ui5: {
+					noDuplicateIds: false
+				}
+			},
 			Element: {
 				title: "sap.ui.core.Element",
 				loader:{
