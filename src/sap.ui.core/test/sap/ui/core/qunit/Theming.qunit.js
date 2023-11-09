@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/config",
 	"sap/base/Event",
 	"sap/ui/base/config/URLConfigurationProvider",
+	"sap/ui/core/Control",
 	"sap/ui/core/Theming",
 	"sap/ui/core/theming/ThemeHelper",
 	"sap/ui/qunit/utils/waitForThemeApplied"
@@ -11,6 +12,7 @@ sap.ui.define([
 	BaseConfig,
 	BaseEvent,
 	URLConfigurationProvider,
+	Control,
 	Theming,
 	ThemeHelper,
 	themeApplied
@@ -280,6 +282,42 @@ sap.ui.define([
 		await themeApplied();
 
 		assert.ok(isApplied(), "Theming should be applied.");
+	});
+
+	QUnit.module("others");
+
+	/**
+	 * Tests that <code>Theming.notifyContentDensityChanged()</code> calls each control's #onThemeChanged method
+	 */
+	QUnit.test(".notifyContentDensityChanged", function(assert) {
+		const done = assert.async();
+		assert.expect(4);
+
+		const oCtrl = new Control();
+		oCtrl.onThemeChanged = function(oEvent) {
+			assert.ok(oEvent, "TestButton#onThemeChanged is called");
+			assert.equal(oEvent.theme, Theming.getTheme(), "Current theme is passed along 'themeChanged' event");
+		};
+
+		let ignoreEvent = true;
+
+		function handler(oEvent) {
+			if ( ignoreEvent ) {
+				return;
+			}
+			assert.ok(oEvent, "listener for 'applied' event is called");
+			assert.equal(oEvent.theme, Theming.getTheme(), "Current theme is passed along 'applied' event");
+
+			// cleanup
+			Theming.detachApplied(handler);
+			oCtrl.destroy();
+
+			done();
+		}
+		Theming.attachApplied(handler); // immediately might call listener
+
+		ignoreEvent = false;
+		Theming.notifyContentDensityChanged();
 	});
 
 });
