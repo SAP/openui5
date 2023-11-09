@@ -1500,12 +1500,21 @@ sap.ui.define([
 		assert.equal(oField.setConditions.getCalls().length, 0, "condition not changed");
 		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
 
+		oField.setProperty.reset();
 		oField.setValue([undefined, undefined, oCurrencyCodeList]);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 0, "No condition");
 		assert.equal(oField.setConditions.getCalls().length, 0, "condition not changed");
-		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 2, "value only updated once");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
 
+		oField.setProperty.reset();
+		oField.setValue([null, "", oCurrencyCodeList]);
+		aConditions = oField.getConditions();
+		assert.equal(aConditions.length, 0, "No condition");
+		assert.equal(oField.setConditions.getCalls().length, 0, "condition not changed");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
+
+		oField.setProperty.reset();
 		oField.setValue([123.45, "USD", oCurrencyCodeList]);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
@@ -1513,8 +1522,9 @@ sap.ui.define([
 		assert.deepEqual(aConditions[0].values[0], [123.45, "USD", oCurrencyCodeList], "condition value");
 		assert.equal(aConditions[0].values[1], null, "condition description");
 		assert.equal(oField.setConditions.getCalls().length, 1, "condition changed once");
-		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 3, "value only updated once");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
 
+		oField.setProperty.reset();
 		oField.setValue([1, "USD", oCurrencyCodeList]);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
@@ -1522,13 +1532,14 @@ sap.ui.define([
 		assert.equal(aConditions[0].operator, OperatorName.EQ, "condition operator");
 		assert.deepEqual(aConditions[0].values[0], [1, "USD", oCurrencyCodeList], "condition value");
 		assert.equal(aConditions[0].values[1], null, "condition description");
-		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 4, "value only updated once");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
 
+		oField.setProperty.reset();
 		oField.setValue([1, "USD"]);
 		aConditions = oField.getConditions();
 		assert.equal(aConditions.length, 1, "One condition");
 		assert.equal(oField.setConditions.getCalls().length, 2, "condition not changed");
-		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 5, "value only updated once");
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated once");
 
 	});
 
@@ -1584,6 +1595,44 @@ sap.ui.define([
 			assert.deepEqual(oField.getValue(), [3, "EUR"], "Field value");
 			fnDone();
 		});
+
+	});
+
+	QUnit.test("update of user input for initial condition", function(assert) {
+
+		oField.setValue([null, null, oCurrencyCodeList]);
+		oField.placeAt("content");
+		oCore.applyChanges();
+
+		sinon.spy(oField, "setProperty");
+
+		oField.setConditions([Condition.createItemCondition([2, null])]); // fake user Input with parsing
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+
+		let oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		oField.fireChangeEvent(oField.getConditions(), true, undefined, oPromise); // fake change event
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
+		assert.deepEqual(oField.getValue(), [2, null], "Field value");
+
+		oField.setValue([null, "", oCurrencyCodeList]);
+		oField.setProperty.reset();
+		oField.setConditions([Condition.createItemCondition([2, null])]); // fake user Input with parsing
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+
+		oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		oField.fireChangeEvent(oField.getConditions(), true, undefined, oPromise); // fake change event
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
+		assert.deepEqual(oField.getValue(), [2, ""], "Field value");
+
+		oField.setValue([null, "", oCurrencyCodeList]);
+		oField.setProperty.reset();
+		oField.setConditions([Condition.createItemCondition([null, "USD"])]); // fake user Input with parsing
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
+
+		oPromise = Promise.resolve(oField.getResultForChangePromise(oField.getConditions()));
+		oField.fireChangeEvent(oField.getConditions(), true, undefined, oPromise); // fake change event
+		assert.equal(oField.setProperty.withArgs("value").getCalls().length, 1, "value only updated with change event");
+		assert.deepEqual(oField.getValue(), [null, "USD"], "Field value");
 
 	});
 
