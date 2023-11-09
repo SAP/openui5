@@ -286,4 +286,4 @@ sap.ui.define([
 
 	return Renderer;
 
-}, /* bExport= */ true);
+});

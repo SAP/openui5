@@ -31,4 +31,4 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	};
 
 	return AnalyticalVersionInfo;
-}, true);
+});

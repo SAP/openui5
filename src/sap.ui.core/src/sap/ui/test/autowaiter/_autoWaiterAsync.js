@@ -89,4 +89,4 @@ sap.ui.define([
 		extendConfig: extendConfig,
 		waitAsync: waitAsync
 	};
-}, true);
+});

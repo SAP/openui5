@@ -171,4 +171,4 @@ sap.ui.define([
 	};
 
 	return BaseAddXml;
-}, /* bExport= */true);
+});

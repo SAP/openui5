@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/write/_internal/connectors/LocalStorageConnector",
 	"sap/ui/fl/write/_internal/connectors/SessionStorageConnector",
+	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
@@ -16,6 +17,7 @@ sap.ui.define([
 	ChangesWriteAPI,
 	LocalStorageConnector,
 	SessionStorageConnector,
+	Versions,
 	VariantModel,
 	ChangePersistenceFactory,
 	FlexControllerFactory,
@@ -35,11 +37,12 @@ sap.ui.define([
 	var FL_PREFIX = "sap.ui.fl";
 
 	/**
-	 * Clears the instance cache of FlexController and ChangePersistence and the FlexState
+	 * Clears the instance cache of FlexController, ChangePersistence and Versions as well as the FlexState
 	 */
 	FlexTestAPI.reset = function() {
 		ChangePersistenceFactory._instanceCache = {};
 		FlexControllerFactory._instanceCache = {};
+		Versions.clearInstances();
 		FlexState.clearState();
 	};
 
@@ -142,7 +145,7 @@ sap.ui.define([
 				return;
 			}
 			var oFlexObject = JSON.parse(oStorage.getItem(sKey));
-			if (oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference) {
+			if (oFlexObject.reference === sReference || `${oFlexObject.reference}.Component` === sReference && oFlexObject.fileType !== "version") {
 				iCount++;
 			}
 		});
@@ -167,6 +170,8 @@ sap.ui.define([
 		};
 
 		Object.keys(oStorage).map(fnRemoveItem);
+
+		Versions.clearInstances();
 	};
 
 	return FlexTestAPI;

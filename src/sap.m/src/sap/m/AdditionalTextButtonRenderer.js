@@ -55,4 +55,4 @@ sap.ui.define([
     };
 
     return AdditionalTextButtonRenderer;
-}, /* bExport= */ true);
+});

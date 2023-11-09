@@ -94,4 +94,4 @@ sap.ui.define([], function() {
 
 	return IndexPickerRenderer;
 
-}, true);
+});

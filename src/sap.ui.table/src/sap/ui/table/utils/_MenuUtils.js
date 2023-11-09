@@ -300,4 +300,4 @@ sap.ui.define([
 
 	return MenuUtils;
 
-}, /* bExport= */ true);
+});

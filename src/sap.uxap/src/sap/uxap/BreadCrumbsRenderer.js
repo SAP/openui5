@@ -72,4 +72,4 @@ sap.ui.define(function () {
 
 	return BreadCrumbsRenderer;
 
-}, /* bExport= */ true);
+});

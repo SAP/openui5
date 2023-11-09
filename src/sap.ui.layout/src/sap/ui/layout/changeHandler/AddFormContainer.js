@@ -164,5 +164,4 @@ sap.ui.define([
 	};
 
 	return AddGroup;
-},
-/* bExport= */true);
+});

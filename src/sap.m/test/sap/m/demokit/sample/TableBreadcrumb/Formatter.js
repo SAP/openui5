@@ -69,4 +69,4 @@ sap.ui.define(function() {
 
 	return Formatter;
 
-}, /* bExport= */ true);
+});

@@ -625,5 +625,4 @@ sap.ui.define([
 		BaseTreeModifier,
 		JsControlTreeModifier
 	);
-},
-/* bExport= */true);
+});

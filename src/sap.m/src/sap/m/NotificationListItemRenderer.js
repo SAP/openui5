@@ -229,4 +229,4 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer"], function
 	};
 
 	return NotificationListItemRenderer;
-}, /* bExport= */ true);
+});

@@ -193,5 +193,4 @@ sap.ui.define([
 	};
 
 	return AddSimpleFormField;
-},
-/* bExport= */true);
+});

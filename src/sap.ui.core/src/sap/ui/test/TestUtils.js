@@ -1064,4 +1064,4 @@ sap.ui.define([
 	};
 
 	return TestUtils;
-}, /* bExport= */ true);
+});

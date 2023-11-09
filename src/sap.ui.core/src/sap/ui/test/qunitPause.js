@@ -248,4 +248,4 @@ sap.ui.define("sap/ui/test/qunitPause", [
 		emitResume: emitResume,
 		pollForQUnitDone: pollForQUnitDone
 	};
-}, true);
+});

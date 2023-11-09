@@ -3,8 +3,7 @@
  */
 
 sap.ui.define([
-],
-function() {
+], function() {
 	"use strict";
 
 	var module = {};
@@ -38,4 +37,4 @@ function() {
 	};
 
 	return module;
-}, true);
+});

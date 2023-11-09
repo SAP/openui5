@@ -79,4 +79,4 @@ sap.ui.define(function() {
 
 	return ChangeReason;
 
-}, /* bExport= */ true);
+});

@@ -1071,4 +1071,4 @@ sap.ui.define([
 	};
 
 	return MessageBox;
-}, /* bExport= */ true);
+});

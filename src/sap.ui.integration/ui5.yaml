@@ -57,9 +57,10 @@ builder:
               - sap/ui/layout/manifest.json
             resolve: true
             renderer: true
-          - mode: require
+          - mode: raw
             filters:
               - sap/ui/integration/library-bootstrap.js
+            declareRawModules: false
           - mode: bundleInfo
             name: sap-ui-integration-ext.js
             filters:
@@ -186,9 +187,10 @@ builder:
               - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
-          - mode: require
+          - mode: raw
             filters:
               - sap/ui/integration/library-bootstrap.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -233,9 +235,10 @@ builder:
               - sap/ui/integration/designtime/editor/
             resolve: true
             renderer: true
-          - mode: require
+          - mode: raw
             filters:
               - sap/ui/integration/customElements/CustomElementCardEditor.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -319,9 +322,10 @@ builder:
               - sap/ui/integration/editor/
             resolve: true
             renderer: true
-          - mode: require
+          - mode: raw
             filters:
               - sap/ui/integration/customElements/CustomElementEditor.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -366,9 +370,10 @@ builder:
               - "!sap/ui/integration/designtime/thirdparty/"
             resolve: true
             renderer: true
-          - mode: require
+          - mode: raw
             filters:
               - sap/ui/integration/library-bootstrap.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true

@@ -24,4 +24,4 @@ sap.ui.define([
 	};
 
 	return AccButtonRenderer;
-}, /* bExport= */ true);
+});

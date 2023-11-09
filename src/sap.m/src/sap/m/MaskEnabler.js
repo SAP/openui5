@@ -1644,4 +1644,4 @@ sap.ui.define([
 	};
 
 	return MaskEnabler;
-}, /* bExport= */ true);
+});

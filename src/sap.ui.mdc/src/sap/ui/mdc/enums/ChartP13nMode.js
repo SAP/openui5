@@ -45,4 +45,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
     return ChartP13nMode;
 
-}, /* bExport= */ true);
+});

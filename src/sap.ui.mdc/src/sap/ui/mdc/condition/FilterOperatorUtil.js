@@ -21,9 +21,7 @@ sap.ui.define([
 	'sap/ui/core/StaticArea',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/type/Integer'
-],
-
-function(
+], function(
 	Library,
 	ModelOperator,
 	Filter,
@@ -2101,4 +2099,4 @@ function(
 
 		return FilterOperatorUtil;
 
-}, /* bExport= */ true);
+});

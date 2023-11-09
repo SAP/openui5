@@ -156,4 +156,4 @@ sap.ui.define([], function() {
 	};
 
 	return GridKeyboardDnD;
-}, /* bExport= */ true);
+});

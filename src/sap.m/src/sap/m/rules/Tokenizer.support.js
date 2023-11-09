@@ -4,8 +4,7 @@
 /**
  * Defines support rules of the Tokenizer control of sap.m library.
  */
-sap.ui.define(["sap/ui/support/library"],
-function(SupportLib) {
+sap.ui.define(["sap/ui/support/library"], function(SupportLib) {
 	"use strict";
 
 	// shortcuts
@@ -46,4 +45,4 @@ function(SupportLib) {
 		};
 
 	return [oTokenizerParentRule];
-}, true);
+});

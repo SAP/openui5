@@ -71,4 +71,4 @@ sap.ui.define([
 	};
 
 	return Base;
-}, /* bExport= */true);
+});

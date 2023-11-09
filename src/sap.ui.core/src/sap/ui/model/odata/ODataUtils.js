@@ -944,4 +944,4 @@ sap.ui.define([
 
 	return ODataUtils;
 
-}, /* bExport= */ true);
+});

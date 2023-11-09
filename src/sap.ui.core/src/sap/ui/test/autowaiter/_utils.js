@@ -73,4 +73,4 @@ sap.ui.define([
 		onElementAvailable: onElementAvailable
 	};
 
-}, true);
+});

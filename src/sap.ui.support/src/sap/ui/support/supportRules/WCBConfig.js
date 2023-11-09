@@ -4,8 +4,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/URI"
-],
-function (URI) {
+], function (URI) {
 	"use strict";
 
 	var DEFAULT_FRAME_ID = '_unnamed_frame_-_use_message_origin_';
@@ -62,4 +61,4 @@ function (URI) {
 	};
 
 	return WCBConfig;
-}, true);
+});

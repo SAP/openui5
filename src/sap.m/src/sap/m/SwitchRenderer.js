@@ -224,4 +224,4 @@ sap.ui.define(["sap/ui/Device", "sap/m/library", "sap/ui/core/Configuration", "s
 
 		return SwitchRenderer;
 
-	}, /* bExport= */ true);
+	});

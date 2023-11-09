@@ -195,4 +195,4 @@ sap.ui.define([
 	window.Promise = WrappedPromise;
 
 	return oPromiseWaiter;
-}, true);
+});

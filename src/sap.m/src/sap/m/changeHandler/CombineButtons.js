@@ -407,4 +407,4 @@ sap.ui.define([
 	};
 
 	return CombineButtons;
-}, /* bExport= */true);
+});

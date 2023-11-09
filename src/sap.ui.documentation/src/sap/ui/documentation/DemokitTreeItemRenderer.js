@@ -1,8 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Renderer'],
-function(TreeItemBaseRenderer, Core, Renderer) {
+sap.ui.define(['sap/m/TreeItemBaseRenderer','sap/ui/core/Core', 'sap/ui/core/Renderer'], function(TreeItemBaseRenderer, Core, Renderer) {
 	"use strict";
 
 	var DemokitTreeItemRender = Renderer.extend(TreeItemBaseRenderer);
@@ -64,4 +63,4 @@ function(TreeItemBaseRenderer, Core, Renderer) {
 	};
 
 	return DemokitTreeItemRender;
-}, /* bExport= */ true);
+});

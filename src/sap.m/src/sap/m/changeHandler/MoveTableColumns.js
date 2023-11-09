@@ -244,4 +244,4 @@ sap.ui.define(["sap/base/Log"], function(Log) {
 	};
 
 	return MoveTableColumns;
-}, /* bExport= */ true);
+});

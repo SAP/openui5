@@ -308,4 +308,4 @@ sap.ui.define([
 
 	return Suggest;
 
-}, /* bExport= */ true);
+});

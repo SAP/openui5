@@ -80,4 +80,4 @@ sap.ui.define([
 
 	return oRecorder;
 
-}, true);
+});

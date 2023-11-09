@@ -125,4 +125,4 @@ sap.ui.define([
 			this.server.restore();
 		}
 	});
-}, true);
+});

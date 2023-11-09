@@ -18,4 +18,4 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/ColumnListItemRenderer", "sap/m/Li
 	};
     // enable in-place DOM patching
 	return UploadSetwithTableItemRenderer;
-}, /* bExport= */ true);
+});

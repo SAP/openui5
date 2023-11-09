@@ -94,4 +94,4 @@ sap.ui.define([
 	};
 
 	return qUnitTestHarness;
-}, /* bExport= */ true);
+});

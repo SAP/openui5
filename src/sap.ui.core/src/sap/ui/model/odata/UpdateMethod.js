@@ -31,4 +31,4 @@ sap.ui.define(function() {
 
 	return UpdateMethod;
 
-}, /* bExport= */ true);
+});

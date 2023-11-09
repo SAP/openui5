@@ -1597,4 +1597,4 @@ sap.ui.define([
 	});
 
 	return asODataParentBinding;
-}, /* bExport= */ false);
+});

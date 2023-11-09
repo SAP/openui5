@@ -620,4 +620,4 @@ sap.ui.define([
 		AnnotationHelper.simplePath.requiresIContext = true;
 
 		return AnnotationHelper;
-	}, /* bExport= */ true);
+	});

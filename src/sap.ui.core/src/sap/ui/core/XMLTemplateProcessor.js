@@ -16,7 +16,6 @@ sap.ui.define([
 	'./StashedControlSupport',
 	'sap/ui/base/SyncPromise',
 	'sap/base/Log',
-	'sap/base/util/ObjectPath',
 	'sap/base/assert',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/JSTokenizer',
@@ -24,8 +23,7 @@ sap.ui.define([
 	'sap/base/util/isEmptyObject',
 	'sap/ui/base/DesignTime',
 	'sap/ui/core/Lib'
-],
-function(
+], function(
 	DataType,
 	BindingInfo,
 	CustomData,
@@ -37,7 +35,6 @@ function(
 	StashedControlSupport,
 	SyncPromise,
 	Log,
-	ObjectPath,
 	assert,
 	LoaderExtensions,
 	JSTokenizer,
@@ -776,37 +773,17 @@ function(
 					sClassName = oLibrary.name + "." + ((oLibrary.tagNames && oLibrary.tagNames[sLocalName]) || sLocalName);
 				}
 			});
-			// TODO guess library from sNamespaceURI and load corresponding lib!?
-			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
-			// ensure that control and library are loaded
-			function getObjectFallback(oClassObject) {
-				// some modules might not return a class definition, so we fallback to the global
-				// this is against the AMD definition, but is required for backward compatibility
-				if (!oClassObject) {
-					Log.error("Control '" + sClassName + "' did not return a class definition from sap.ui.define.", "", "XMLTemplateProcessor");
-					oClassObject = ObjectPath.get(sClassName);
-				}
-				if (!oClassObject) {
-					Log.error("Can't find object class '" + sClassName + "' for XML-view", "", "XMLTemplateProcessor");
-				}
-				return oClassObject;
-			}
+			sClassName = sClassName || sNamespaceURI + "." + sLocalName;
 
 			var sResourceName = sClassName.replace(/\./g, "/");
 			var oClassObject = sap.ui.require(sResourceName);
 			if (!oClassObject) {
-				if (bAsync) {
-					return new Promise(function(resolve, reject) {
-						sap.ui.require([sResourceName], function(oClassObject) {
-							oClassObject = getObjectFallback(oClassObject);
-							resolve(oClassObject);
-						}, reject);
-					});
-				} else {
-					oClassObject = sap.ui.requireSync(sResourceName); // legacy-relevant: Sync path
-					oClassObject = getObjectFallback(oClassObject);
-				}
+				return new Promise(function(resolve, reject) {
+					sap.ui.require([sResourceName], function(oClassObject) {
+						resolve(oClassObject);
+					}, reject);
+				});
 			}
 			return oClassObject;
 		}
@@ -1848,4 +1825,4 @@ function(
 
 	return XMLTemplateProcessor;
 
-}, /* bExport= */ true);
+});

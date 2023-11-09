@@ -1259,7 +1259,7 @@
 		{
 		"id": "sap.m.p13n.Popup",
 			"name": "Personalization Popup",
-			"category": "Popup",
+			"category": "Personalization",
 			"since": "1.96",
 			"samples": [
 				"sap.m.sample.p13n.Popup"
@@ -1268,7 +1268,7 @@
 		{
 		"id": "sap.m.p13n.SelectionPanel",
 			"name": "SelectionPanel",
-			"category": "Popup",
+			"category": "Personalization",
 			"since": "1.96",
 			"samples": [
 				"sap.m.sample.p13n.Popup"
@@ -1277,7 +1277,7 @@
 		{
 		"id": "sap.m.p13n.SortPanel",
 			"name": "SortPanel",
-			"category": "Popup",
+			"category": "Personalization",
 			"since": "1.96",
 			"samples": [
 				"sap.m.sample.p13n.Popup"
@@ -1286,7 +1286,7 @@
 		{
 		"id": "sap.m.p13n.GroupPanel",
 			"name": "GroupPanel",
-			"category": "Popup",
+			"category": "Personalization",
 			"since": "1.96",
 			"samples": [
 				"sap.m.sample.p13n.Popup"
@@ -1295,7 +1295,7 @@
 		{
 		"id": "sap.m.p13n.Engine",
 			"name": "Personalization Engine",
-			"category": "Popup",
+			"category": "Personalization",
 			"since": "1.104",
 			"samples": [
 				"sap.m.sample.p13n.Engine",
@@ -1306,7 +1306,7 @@
 		{
 		  "id": "sap.m.P13nDialog",
 		  "name": "Personalization Dialog",
-		  "category": "Popup",
+		  "category": "Personalization",
 		  "since": "1.26",
 		  "samples": [
 			"sap.m.sample.P13nDialog",

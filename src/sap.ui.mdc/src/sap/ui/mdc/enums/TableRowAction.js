@@ -27,4 +27,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
     return TableRowAction;
 
-}, /* bExport= */ true);
+});

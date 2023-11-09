@@ -438,4 +438,4 @@ sap.ui.define([
 		oModelPreloading,
 		oModelPreloadAndEarlyRequests
 	];
-}, true);
+});

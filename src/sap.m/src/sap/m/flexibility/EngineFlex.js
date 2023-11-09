@@ -48,4 +48,4 @@ sap.ui.define([
 			property: "width"
 		})
 	};
-}, /* bExport= */ true);
+});

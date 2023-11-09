@@ -425,4 +425,4 @@ sap.ui.define([
 
 	return GroupingUtils;
 
-}, /* bExport= */ true);
+});

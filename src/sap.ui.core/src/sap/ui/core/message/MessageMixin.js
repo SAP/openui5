@@ -102,4 +102,4 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/base/Log", "sa
 	}
 
 	return MessageMixin;
-}, /* bExport= */ true);
+});

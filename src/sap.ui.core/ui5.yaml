@@ -147,9 +147,10 @@ builder:
             filters:
               - sap/ui/core/Core.js
             resolve: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/core/Core.js
+              - sap/ui/core/_bootCore.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -164,9 +165,10 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/core/Core.js
+              - sap/ui/core/_bootCore.js
+            declareRawModules: false
       bundleOptions:
         optimize: false
         usePredefineCalls: true
@@ -192,9 +194,10 @@ builder:
             filters:
               - sap/ui/core/Core.js
             resolve: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/core/Core.js
+              - sap/ui/core/_bootCore.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -217,9 +220,10 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/core/Core.js
+              - sap/ui/core/_bootCore.js
+            declareRawModules: false
       bundleOptions:
         optimize: false
         usePredefineCalls: true
@@ -232,9 +236,10 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/core/Core.js
+              - sap/ui/core/_bootCore.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -296,9 +301,10 @@ builder:
               - sap/ui/thirdparty/sinon*
               - sap/ui/core/Core.js
             resolve: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/test/starter/_setupAndStart.js
+              - sap/ui/test/starter/_requireSetupAndStart.js
+            declareRawModules: false
       bundleOptions:
         optimize: true
         usePredefineCalls: true
@@ -319,9 +325,10 @@ builder:
             declareRawModules: false
             resolve: true
             sort: true
-          - mode: require
+          - mode: raw
             filters:
-              - sap/ui/test/starter/_setupAndStart.js
+              - sap/ui/test/starter/_requireSetupAndStart.js
+            declareRawModules: false
       bundleOptions:
         optimize: false
         usePredefineCalls: true

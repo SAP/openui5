@@ -19,4 +19,4 @@ sap.ui.define([
 			"changeHandler": AddIFrameObjectPageLayout
 		}
 	};
-}, /* bExport= */ true);
+});

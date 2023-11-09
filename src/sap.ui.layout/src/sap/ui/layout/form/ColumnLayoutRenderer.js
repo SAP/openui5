@@ -253,4 +253,4 @@ sap.ui.define([
 
 	return ColumnLayoutRenderer;
 
-}, /* bExport= */ true);
+});

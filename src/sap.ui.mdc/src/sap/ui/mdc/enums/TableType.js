@@ -40,4 +40,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
     return TableType;
 
-}, /* bExport= */ true);
+});

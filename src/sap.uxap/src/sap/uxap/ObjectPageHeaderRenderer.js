@@ -368,4 +368,4 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 
 	return ObjectPageHeaderRenderer;
 
-}, /* bExport= */ true);
+});

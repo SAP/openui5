@@ -163,4 +163,4 @@ sap.ui.define([
 		oErrorLogs,
 		oMissingEmbeddedByLibrary
 	];
-}, true);
+});

@@ -283,6 +283,5 @@ sap.ui.define(
 		};
 
 		return RatingIndicatorRenderer;
-	},
-	/* bExport= */ true
+	}
 );

@@ -1379,7 +1379,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector"}
+				{loadConnector: "someConnector", writeConnector: "my/connectors/BaseConnector"}
 			]);
 
 			return Storage.versions.load(mPropertyBag).catch(function(sRejectionMessage) {
@@ -1419,7 +1419,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector"}
+				{loadConnector: "someConnector", writeConnector: "my/connectors/BaseConnector"}
 			]);
 
 			return Storage.versions.activate(mPropertyBag).catch(function(sRejectionMessage) {
@@ -1458,7 +1458,7 @@ sap.ui.define([
 			};
 
 			sandbox.stub(FlexConfiguration, "getFlexibilityServices").returns([
-				{connector: "JsObjectConnector"}
+				{loadConnector: "someConnector", writeConnector: "my/connectors/BaseConnector"}
 			]);
 
 			return Storage.versions.discardDraft(mPropertyBag).catch(function(sRejectionMessage) {

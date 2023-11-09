@@ -93,4 +93,4 @@ sap.ui.define([
 		formatParts : formatParts,
 		id : id
 	};
-}, /* bExport= */ true);
+});

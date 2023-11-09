@@ -459,4 +459,4 @@ sap.ui.define([
 	};
 
 	return DOMUtil;
-}, /* bExport= */ true);
+});

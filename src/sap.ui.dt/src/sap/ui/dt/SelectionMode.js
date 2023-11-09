@@ -31,4 +31,4 @@ sap.ui.define(function() {
 		Single: "Single"
 
 	};
-}, /* bExport= */ true);
+});

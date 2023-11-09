@@ -226,4 +226,4 @@ sap.ui.define([
 	}
 
 	return oTimeoutWaiter;
-}, true);
+});

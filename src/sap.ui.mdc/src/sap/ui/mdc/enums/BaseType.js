@@ -69,4 +69,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return BaseType;
 
-}, /* bExport= */ true);
+});

@@ -62,4 +62,4 @@ sap.ui.define([], function() {
 
 	return RSUtil;
 
-}, /* bExport= */ true);
+});

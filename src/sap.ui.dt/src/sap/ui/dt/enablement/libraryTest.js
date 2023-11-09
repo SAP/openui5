@@ -288,4 +288,4 @@ sap.ui.define([
 		});
 	}
 	return LibraryTest;
-}, true);
+});

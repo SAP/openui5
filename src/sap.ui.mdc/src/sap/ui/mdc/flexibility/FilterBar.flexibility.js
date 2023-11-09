@@ -21,4 +21,4 @@ sap.ui.define(['./FilterItemFlex', './ConditionFlex', './PropertyInfoFlex'], fun
 		"removeCondition": ConditionFlex.removeCondition,
 		"addPropertyInfo": PropertyInfoFlex.addPropertyInfo
 	};
-}, /* bExport= */true);
+});

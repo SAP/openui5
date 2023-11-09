@@ -156,4 +156,4 @@ sap.ui.define([
 
 	return EnabledPropagator;
 
-}, /* bExport= */ true);
+});

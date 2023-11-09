@@ -40,4 +40,4 @@ sap.ui.define(function() {
 
 	return OverrideExecution;
 
-}, /* bExport= */ true);
+});

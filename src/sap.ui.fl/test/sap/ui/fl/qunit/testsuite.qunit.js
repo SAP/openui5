@@ -701,6 +701,11 @@ sap.ui.define([
 				group: "Write Internal",
 				coverage: {
 					only: ["sap/ui/fl/write/_internal/Storage"]
+				},
+				ui5: {
+					resourceroots: {
+						"my.connectors": "./test-resources/sap/ui/fl/qunit/testConnectors/"
+					}
 				}
 			},
 

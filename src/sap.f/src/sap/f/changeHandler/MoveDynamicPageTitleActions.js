@@ -155,5 +155,4 @@ sap.ui.define([
 		};
 
 		return MoveActions;
-	},
-	/* bExport= */true);
+	});

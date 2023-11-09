@@ -949,5 +949,4 @@ sap.ui.define([
 	});
 
 	return XmlTreeModifier;
-},
-/* bExport= */true);
+});

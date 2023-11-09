@@ -142,5 +142,4 @@ sap.ui.define([
 		}
 	};
 	return BaseRename;
-},
-/* bExport= */true);
+});

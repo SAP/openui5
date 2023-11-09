@@ -51,4 +51,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
     return TableP13nMode;
 
-}, /* bExport= */ true);
+});

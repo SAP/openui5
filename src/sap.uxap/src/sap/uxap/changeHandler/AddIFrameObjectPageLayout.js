@@ -133,4 +133,4 @@ sap.ui.define([
 	};
 
 	return AddIFrameObjectPageLayout;
-}, /* bExport= */true);
+});

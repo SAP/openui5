@@ -40,4 +40,4 @@ sap.ui.define(function() {
 
 	return Exception;
 
-}, /* bExport= */ true);
+});

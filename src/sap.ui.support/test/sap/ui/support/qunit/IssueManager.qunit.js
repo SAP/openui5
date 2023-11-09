@@ -159,7 +159,7 @@ sap.ui.define([
 					wizardBranchingAssociations:true,
 					wizardStepParent:true
 				},
-				oRuleSets = {
+				mRuleLibs = {
 					temporary: {
 						lib: {
 							name: 'temporary'
@@ -172,7 +172,7 @@ sap.ui.define([
 						}
 					}
 				},
-				rulesViewModel = this.IssueManager.getRulesViewModel(oRuleSets, oRuleIds, oIssues);
+				rulesViewModel = this.IssueManager.getRulesViewModel(mRuleLibs, oRuleIds, oIssues);
 
 			assert.strictEqual((rulesViewModel instanceof Object), true, 'The rulesViewModel is returned successfully !');
 

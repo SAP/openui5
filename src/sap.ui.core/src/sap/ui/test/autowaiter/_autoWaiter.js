@@ -126,4 +126,4 @@ sap.ui.define([
 
 	return oAutoWaiter;
 
-}, true);
+});

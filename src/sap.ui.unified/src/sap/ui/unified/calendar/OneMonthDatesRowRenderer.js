@@ -2,39 +2,38 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', './MonthRenderer', './DatesRowRenderer'],
-	function(Renderer, MonthRenderer, DatesRowRenderer) {
-		"use strict";
+sap.ui.define(['sap/ui/core/Renderer', './MonthRenderer', './DatesRowRenderer'], function(Renderer, MonthRenderer, DatesRowRenderer) {
+	"use strict";
 
-		/**
-		 * OneMonthDatesRowRenderer renderer.
-		 * @namespace
-		 */
-		var OneMonthDatesRowRenderer = Renderer.extend(DatesRowRenderer);
+	/**
+	 * OneMonthDatesRowRenderer renderer.
+	 * @namespace
+	 */
+	var OneMonthDatesRowRenderer = Renderer.extend(DatesRowRenderer);
 
-		OneMonthDatesRowRenderer.apiVersion = 2;
+	OneMonthDatesRowRenderer.apiVersion = 2;
 
-		["getClass", "renderMonth", "renderDays", "renderHeader"].forEach(function(sHelperMethod) {
-			OneMonthDatesRowRenderer[sHelperMethod] = function(oRm, oDatesRow) {
-				if (oDatesRow.iMode < 2) {
-					return MonthRenderer[sHelperMethod].apply(MonthRenderer, arguments);
-				} else {
-					if (sHelperMethod === "getClass") {
-						var aClasses = ["sapUiCalDatesRow", "sapUiCalRow", "sapUiCalOneMonthDatesRow"];
+	["getClass", "renderMonth", "renderDays", "renderHeader"].forEach(function(sHelperMethod) {
+		OneMonthDatesRowRenderer[sHelperMethod] = function(oRm, oDatesRow) {
+			if (oDatesRow.iMode < 2) {
+				return MonthRenderer[sHelperMethod].apply(MonthRenderer, arguments);
+			} else {
+				if (sHelperMethod === "getClass") {
+					var aClasses = ["sapUiCalDatesRow", "sapUiCalRow", "sapUiCalOneMonthDatesRow"];
 
-						if (!oDatesRow.getShowDayNamesLine()) {
-							aClasses.push("sapUiCalNoNameLine");
-						}
-
-						return aClasses;
+					if (!oDatesRow.getShowDayNamesLine()) {
+						aClasses.push("sapUiCalNoNameLine");
 					}
-					return DatesRowRenderer[sHelperMethod].apply(DatesRowRenderer, arguments);
+
+					return aClasses;
 				}
-			};
-		});
+				return DatesRowRenderer[sHelperMethod].apply(DatesRowRenderer, arguments);
+			}
+		};
+	});
 
 
 
-		return OneMonthDatesRowRenderer;
+	return OneMonthDatesRowRenderer;
 
-	}, /* bExport=  */ true);
+});

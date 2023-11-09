@@ -54,4 +54,4 @@ sap.ui.define(['./ItemBaseFlex'], function(ItemBaseFlex) {
 	oFilterItemFlex.moveFilter = oFilterItemFlex.createMoveChangeHandler();
 
 	return oFilterItemFlex;
-}, /* bExport= */true);
+});

@@ -52,4 +52,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return FieldEditMode;
 
-}, /* bExport= */ true);
+});

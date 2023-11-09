@@ -225,4 +225,4 @@ sap.ui.define([
 	};
 
 	return NumericContentRenderer;
-}, /* bExport= */true);
+});

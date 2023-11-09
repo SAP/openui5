@@ -147,5 +147,4 @@ sap.ui.define([
 	});
 
 	return AddTableColumn;
-},
-/* bExport= */true);
+});

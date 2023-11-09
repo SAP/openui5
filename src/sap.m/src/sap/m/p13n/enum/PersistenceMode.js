@@ -52,4 +52,4 @@ sap.ui.define(["sap/ui/base/DataType"], function (DataType) {
     DataType.registerEnum("sap.m.p13n.enum.PersistenceMode", PersistenceMode);
 
     return PersistenceMode;
-}, /* bExport= */ true);
+});

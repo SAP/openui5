@@ -799,4 +799,4 @@ sap.ui.define([
 
 	return ColumnUtils;
 
-}, /* bExport= */ true);
+});

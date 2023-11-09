@@ -41,4 +41,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return OperatorValueType;
 
-}, /* bExport= */ true);
+});

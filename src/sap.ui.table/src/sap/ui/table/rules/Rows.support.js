@@ -197,4 +197,4 @@ sap.ui.define([
 
 	return [oContentDensity, oRowHeights, oDynamicPageConfiguration];
 
-}, true);
+});

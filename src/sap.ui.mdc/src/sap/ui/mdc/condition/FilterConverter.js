@@ -6,9 +6,7 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log"
-],
-
-function(
+], function(
 	FilterOperatorUtil,
 	Filter,
 	FilterOperator,
@@ -289,4 +287,4 @@ function(
 
 	return FilterConverter;
 
-}, /* bExport= */ true);
+});

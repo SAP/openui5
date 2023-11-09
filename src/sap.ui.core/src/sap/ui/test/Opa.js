@@ -721,4 +721,4 @@ sap.ui.define([
 
 
 	return Opa;
-},  /* export= */ true);
+});

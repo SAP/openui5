@@ -25,4 +25,4 @@ sap.ui.define([
         "addSimpleFormGroup": AddSimpleFormGroup,
         "addSimpleFormField" : AddSimpleFormField
     };
-}, /* bExport= */true);
+});

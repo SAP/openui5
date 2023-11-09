@@ -539,4 +539,4 @@ sap.ui.define(["sap/ui/base/DataType", "sap/ui/model/ChangeReason"], function(Da
 	}
 
 	return HookUtils;
-}, /* bExport= */ true);
+});

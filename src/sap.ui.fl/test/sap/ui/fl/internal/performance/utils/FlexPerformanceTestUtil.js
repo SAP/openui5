@@ -263,4 +263,4 @@ sap.ui.define([
 	window.runPerformanceTests = FlexPerformanceTestUtil.runPerformanceTests;
 
 	return FlexPerformanceTestUtil;
-}, true);
+});

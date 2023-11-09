@@ -71,4 +71,4 @@ sap.ui.define([], function () {
 
 	return DynamicPageHeaderRenderer;
 
-}, /* bExport= */ true);
+});

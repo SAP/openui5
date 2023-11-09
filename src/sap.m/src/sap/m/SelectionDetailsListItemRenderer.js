@@ -164,4 +164,4 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"], function(R
 
 	return SelectionDetailsListItemRenderer;
 
-}, /* bExport= */ true);
+});

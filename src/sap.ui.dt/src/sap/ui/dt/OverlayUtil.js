@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/dt/DOMUtil",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry"
-],
-function(
+], function(
 	UIArea,
 	DOMUtil,
 	ElementUtil,
@@ -728,4 +727,4 @@ function(
 	};
 
 	return OverlayUtil;
-}, /* bExport= */true);
+});

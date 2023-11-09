@@ -37,4 +37,4 @@ sap.ui.define(function () {
 	};
 
 	return SubmitMode;
-}, /* bExport= */ true);
+});

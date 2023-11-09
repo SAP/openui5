@@ -311,4 +311,4 @@ sap.ui.define([
 
 	return FormLayoutRenderer;
 
-}, /* bExport= */ true);
+});

@@ -3,8 +3,7 @@
  */
 
 sap.ui.define([
-],
-function () {
+], function () {
 	"use strict";
 
 	/**
@@ -291,4 +290,4 @@ function () {
 		 */
 		CURRENT_LOADING_PROGRESS:   "CURRENT_LOADING_PROGRESS"
 	};
-}, true);
+});

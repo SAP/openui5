@@ -1163,7 +1163,7 @@
 		return error;
 	}
 
-	function declareModule(sModuleName) {
+	function declareModule(sModuleName, sDeprecationMessage) {
 		// sModuleName must be a unified resource name of type .js
 		assert(/\.js$/.test(sModuleName), "must be a Javascript module");
 
@@ -1179,6 +1179,10 @@
 
 		// avoid cycles
 		oModule.state = EXECUTING;
+		if (sDeprecationMessage) {
+			oModule.deprecation = sDeprecationMessage;
+			oModule.state = READY;
+		}
 
 		return oModule;
 	}
@@ -1509,6 +1513,10 @@
 
 		const oModule = Module.get(sModuleName);
 		const oShim = mShims[sModuleName];
+
+		if (oModule.deprecation) {
+			log.error((oRequestingModule ? "(dependency of '" + oRequestingModule.name + "') " : "") + oModule.deprecation);
+		}
 
 		// when there's a shim with dependencies for the module
 		// resolve them first before requiring the module again with bSkipShimDeps = true
@@ -1910,6 +1918,9 @@
 				log.debug(sLogPrefix + "define('" + sResourceName + "'): dependencies resolved, calling factory " + typeof vFactory);
 			}
 
+			/**
+			 * @deprecated
+			 */
 			if ( bExport && syncCallBehavior !== 2 ) {
 				// ensure parent namespace
 				const aPackages = sResourceName.split('/');
@@ -1943,7 +1954,10 @@
 				oModule.content = vFactory;
 			}
 
-			// HACK: global export
+			/**
+			 * HACK: global export
+			 * @deprecated
+			 */
 			if ( bExport && syncCallBehavior !== 2 ) {
 				if ( oModule.content == null ) {
 					log.error(`Module '${sResourceName}' returned no content, but should export to global?`);
@@ -2153,14 +2167,6 @@
 	 * - amdRequire("my/module"), throws an error if the module was not loaded yet
 	 */
 	const amdRequire = createContextualRequire(null, true);
-
-	function requireSync(sModuleName) {
-		sModuleName = getMappedName(sModuleName + '.js');
-		if ( log.isLoggable() ) {
-			log.warning(`sync require of '${sModuleName}'`);
-		}
-		return unwrapExport(requireModule(null, sModuleName, /* bAsync = */ false));
-	}
 
 	function predefine(sModuleName, aDependencies, vFactory, bExport) {
 		if ( typeof sModuleName !== 'string' ) {
@@ -2525,9 +2531,17 @@
 		set measure(v) {
 			measure = v;
 		},
+		/**
+		 * @deprecated As of version 1.119, sync loading is deprecated without replacement due to the deprecation of
+		 *   XMLHttpRequest in the web standard.
+		 */
 		get translate() {
 			return translate;
 		},
+		/**
+		 * @deprecated As of version 1.119, sync loading is deprecated without replacement due to the deprecation of
+		 *   XMLHttpRequest in the web standard.
+		 */
 		set translate(v) {
 			translate = v;
 		},
@@ -2548,8 +2562,8 @@
 		amdDefine,
 		amdRequire,
 		config: ui5Config,
-		declareModule(sResourceName) {
-			/* void */ declareModule( normalize(sResourceName) );
+		declareModule(sResourceName, sDeprecationMessage) {
+			/* void */ declareModule(normalize(sResourceName), sDeprecationMessage);
 		},
 		defineModuleSync,
 		dump: dumpInternals,
@@ -3215,34 +3229,5 @@
 	 * @function
 	 * @ui5-global-only
 	 */
-
-	/**
-	 * Load a single module synchronously and return its module value.
-	 *
-	 * Basically, this method is a combination of {@link jQuery.sap.require} and {@link sap.ui.require}.
-	 * Its main purpose is to simplify the migration of modules to AMD style in those cases where some dependencies
-	 * have to be loaded late (lazy) and synchronously.
-	 *
-	 * The method accepts a single module name in the same syntax that {@link sap.ui.define} and {@link sap.ui.require}
-	 * already use (a simplified variation of the {@link jQuery.sap.getResourcePath unified resource name}:
-	 * slash separated names without the implicit extension '.js'). As for <code>sap.ui.require</code>,
-	 * relative names (using <code>./</code> or <code>../</code>) are not supported.
-	 * If not loaded yet, the named module will be loaded synchronously and the export value of the module will be returned.
-	 * While a module is executing, a value of <code>undefined</code> will be returned in case it is required again during
-	 * that period of time (e.g. in case of cyclic dependencies).
-	 *
-	 * <b>Note:</b> the scope of this method is limited to the sap.ui.core library. Callers are strongly encouraged to use
-	 * this method only when synchronous loading is unavoidable. Any code that uses this method won't benefit from future
-	 * performance improvements that require asynchronous module loading (e.g. HTTP/2). And such code never can comply with
-	 * a content security policies (CSP) that forbids 'eval'.
-	 *
-	 * @param {string} sModuleName Module name in requireJS syntax
-	 * @returns {any} Export value of the loaded module (can be <code>undefined</code>)
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 * @function
-	 * @ui5-global-only
-	 */
-	sap.ui.requireSync = requireSync;
 
 }(globalThis));

@@ -176,4 +176,4 @@ sap.ui.define([
 
 		return TextRenderer;
 
-	}, /* bExport= */ true);
+	});

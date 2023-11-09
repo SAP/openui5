@@ -105,4 +105,4 @@ sap.ui.define(["sap/ui/core/ControlBehavior"], function (ControlBehavior) {
 
 	return ObjectPageSectionRenderer;
 
-}, /* bExport= */ true);
+});

@@ -2,81 +2,80 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Lib", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./library"],
-	function(ToolbarRenderer, Library, Renderer, BarInPageEnabler, library) {
-		"use strict";
+sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Lib", "sap/ui/core/Renderer", "sap/m/BarInPageEnabler", "./library"], function(ToolbarRenderer, Library, Renderer, BarInPageEnabler, library) {
+	"use strict";
 
-		/**
-		 * ObjectPageRenderer renderer.
-		 * @namespace
-		 */
-		var AnchorBarRenderer = Renderer.extend(ToolbarRenderer);
+	/**
+	 * ObjectPageRenderer renderer.
+	 * @namespace
+	 */
+	var AnchorBarRenderer = Renderer.extend(ToolbarRenderer);
 
-		AnchorBarRenderer.apiVersion = 2;
+	AnchorBarRenderer.apiVersion = 2;
 
-		var _AnchorBarHierarchicalSelectMode = AnchorBarRenderer._AnchorBarHierarchicalSelectMode = {
-			Icon: "icon",
-			Text: "text"
-		};
+	var _AnchorBarHierarchicalSelectMode = AnchorBarRenderer._AnchorBarHierarchicalSelectMode = {
+		Icon: "icon",
+		Text: "text"
+	};
 
-		AnchorBarRenderer.renderBarContent = function (rm, oToolbar) {
-			if (oToolbar._bHasButtonsBar) {
+	AnchorBarRenderer.renderBarContent = function (rm, oToolbar) {
+		if (oToolbar._bHasButtonsBar) {
 
-				rm.renderControl(oToolbar._getScrollArrowLeft());
+			rm.renderControl(oToolbar._getScrollArrowLeft());
 
-				rm.openStart("div", oToolbar.getId() + "-scrollContainer");
-				// ARIA attributes
-				rm.class("sapUxAPAnchorBarScrollContainer")
-					.openEnd();
+			rm.openStart("div", oToolbar.getId() + "-scrollContainer");
+			// ARIA attributes
+			rm.class("sapUxAPAnchorBarScrollContainer")
+				.openEnd();
 
-				rm.openStart("div", oToolbar.getId() + "-scroll")
-					.attr("role", "listbox")
-					.attr("aria-describedby", oToolbar.getId() + "-desc")
-					.attr("aria-label", Library.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
-					.openEnd();
+			rm.openStart("div", oToolbar.getId() + "-scroll")
+				.attr("role", "listbox")
+				.attr("aria-describedby", oToolbar.getId() + "-desc")
+				.attr("aria-label", Library.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
+				.openEnd();
 
-				AnchorBarRenderer.renderBarItems(rm, oToolbar);
+			AnchorBarRenderer.renderBarItems(rm, oToolbar);
 
-				rm.close("div");
+			rm.close("div");
 
-				rm.openStart("span", oToolbar.getId() + "-desc")
-					.class("sapUiPseudoInvisibleText")
-					.openEnd();
-				rm.text(Library.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL_DESC"));
-				rm.close("span");
+			rm.openStart("span", oToolbar.getId() + "-desc")
+				.class("sapUiPseudoInvisibleText")
+				.openEnd();
+			rm.text(Library.getResourceBundleFor("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL_DESC"));
+			rm.close("span");
 
-				rm.close("div");
+			rm.close("div");
 
-				rm.renderControl(oToolbar._getScrollArrowRight());
+			rm.renderControl(oToolbar._getScrollArrowRight());
+		}
+
+		BarInPageEnabler.addChildClassTo(oToolbar._oSelect, oToolbar);
+		rm.renderControl(oToolbar._oSelect);
+	};
+
+	AnchorBarRenderer.renderBarItems = function (rm, oToolbar) {
+
+		var sSelectedItemId = oToolbar.getSelectedButton();
+		oToolbar.getContent().forEach(function(oControl) {
+			BarInPageEnabler.addChildClassTo(oControl, oToolbar);
+			if (oControl.getId() === sSelectedItemId) {
+				oControl.addStyleClass("sapUxAPAnchorBarButtonSelected");
 			}
+			rm.renderControl(oControl);
+		});
+	};
 
-			BarInPageEnabler.addChildClassTo(oToolbar._oSelect, oToolbar);
-			rm.renderControl(oToolbar._oSelect);
-		};
+	AnchorBarRenderer.decorateRootElement = function (rm, oToolbar) {
+		ToolbarRenderer.decorateRootElement.apply(this, arguments);
+		if (oToolbar._sHierarchicalSelectMode === _AnchorBarHierarchicalSelectMode.Icon) {
+			rm.class("sapUxAPAnchorBarOverflow");
+		}
 
-		AnchorBarRenderer.renderBarItems = function (rm, oToolbar) {
+		if (oToolbar.getBackgroundDesign()) {
+			rm.class("sapUxAPAnchorBar" + oToolbar.getBackgroundDesign());
+		}
+	};
 
-			var sSelectedItemId = oToolbar.getSelectedButton();
-			oToolbar.getContent().forEach(function(oControl) {
-				BarInPageEnabler.addChildClassTo(oControl, oToolbar);
-				if (oControl.getId() === sSelectedItemId) {
-					oControl.addStyleClass("sapUxAPAnchorBarButtonSelected");
-				}
-				rm.renderControl(oControl);
-			});
-		};
+	return AnchorBarRenderer;
 
-		AnchorBarRenderer.decorateRootElement = function (rm, oToolbar) {
-			ToolbarRenderer.decorateRootElement.apply(this, arguments);
-			if (oToolbar._sHierarchicalSelectMode === _AnchorBarHierarchicalSelectMode.Icon) {
-				rm.class("sapUxAPAnchorBarOverflow");
-			}
-
-			if (oToolbar.getBackgroundDesign()) {
-				rm.class("sapUxAPAnchorBar" + oToolbar.getBackgroundDesign());
-			}
-		};
-
-		return AnchorBarRenderer;
-
-	}, /* bExport= */ true);
+});

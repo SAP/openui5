@@ -28,4 +28,4 @@ sap.ui.define([
 	DataType.registerEnum("sap.ui.core.CalendarType", CalendarType);
 
 	return CalendarType;
-}, /* bExport= */ true);
+});

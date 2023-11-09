@@ -103,4 +103,4 @@ sap.ui.define([], function() {
 	};
 
 	return TimePickerClocksRenderer;
-}, /* bExport= */ true);
+});

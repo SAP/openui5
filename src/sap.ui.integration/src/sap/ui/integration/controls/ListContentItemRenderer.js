@@ -196,4 +196,4 @@ sap.ui.define([
 	};
 
 	return ListContentItemRenderer;
-}, /* bExport= */ true);
+});

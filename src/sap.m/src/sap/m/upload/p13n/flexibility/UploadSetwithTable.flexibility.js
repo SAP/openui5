@@ -25,6 +25,5 @@ sap.ui.define(
 			uploadSetTableGroupStateChange: ChangeHandler.create(GroupStateChangeHandler),
 			uploadSetTableFilterStateChange: ChangeHandler.create(FilterStateChangeHandler)
 		};
-	},
-	/* bExport= */ true
+	}
 );

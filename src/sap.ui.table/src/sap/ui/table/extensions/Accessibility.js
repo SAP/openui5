@@ -1085,7 +1085,7 @@ sap.ui.define([
 		CONTAINER: "CONTAINER",					// The table container
 		CONTENT: "CONTENT",						// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
 		TABLE: "TABLE",							// The "real" table element(s)
-		TABLEHEADER: "TABLEHEADER", 			// The table header area
+		TABLEHEADER: "TABLEHEADER", 			// TODO: Delete in UI5 2
 		TABLEFOOTER: "TABLEFOOTER", 			// The table footer area
 		TABLESUBHEADER: "TABLESUBHEADER", 		// The table toolbar and extension areas
 		COLUMNHEADER_TBL: "COLUMNHEADER_TABLE", // The table with the column headers
@@ -1323,12 +1323,6 @@ sap.ui.define([
 
 		var oDomRefs = oRow.getDomRefs(true);
 		var $TreeIcon = oDomRefs.row.find(".sapUiTableTreeIcon");
-
-		if (oDomRefs.rowHeaderPart) {
-			oDomRefs.rowHeaderPart.attr({
-				"aria-haspopup": oRow.isGroupHeader() ? "menu" : null
-			});
-		}
 
 		oDomRefs.row.not(oDomRefs.rowHeaderPart).not(oDomRefs.rowActionPart).attr({
 			"aria-expanded": oRow.isExpandable() ? oRow.isExpanded() + "" : null,

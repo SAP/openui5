@@ -63,4 +63,4 @@ sap.ui.define([], function () {
 	};
 
 	return BaseHeaderRenderer;
-}, /* bExport= */ true);
+});

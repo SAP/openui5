@@ -29,4 +29,4 @@ sap.ui.define(function() {
 
 	return OperatorOverwrite;
 
-}, /* bExport= */ true);
+});

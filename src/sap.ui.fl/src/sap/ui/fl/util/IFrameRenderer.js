@@ -58,4 +58,4 @@ sap.ui.define([
 	};
 
 	return IFrameRenderer;
-}, /* bExport= */ true);
+});

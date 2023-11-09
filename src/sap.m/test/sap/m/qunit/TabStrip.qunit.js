@@ -381,12 +381,12 @@ sap.ui.define([
 
 
 	QUnit.test("TabStripSelectList rendering", function (assert) {
-		var oItem,
-			oCSList = new mobileLibrary.internal.TabStripSelectList({
-				items: [
-					oItem = new TabStripItem("tab1", {text: "Tab 1"})
-				]
-			});
+		var oItem = new TabStripItem("tab1", {text: "Tab 1"}),
+			oTabStrip = new TabStrip(),
+			oTabStripSelect = oTabStrip._createSelect([oItem]),
+			oCSList = oTabStripSelect.createList();
+
+		oCSList.addItem(oItem);
 
 		oCSList.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -398,11 +398,15 @@ sap.ui.define([
 		assert.strictEqual(oItem.$().attr("tabindex"), "0", "TabStripSelectList has tabindex 0 set");
 
 		// clean up
+		oTabStrip.destroy();
+		oTabStripSelect.destroy();
+		oItem.destroy();
 		oCSList.destroy();
 	});
 
 	QUnit.test("TabStripSelectList _getValueIcon returns null", function (assert) {
-		var oCustomSelect = new mobileLibrary.internal.TabStripSelect({}),
+		var oTabStrip = new TabStrip(),
+			oCustomSelect = oTabStrip._createSelect([]),
 			oSpy = this.spy(oCustomSelect, "_getValueIcon");
 
 		// act
@@ -412,6 +416,7 @@ sap.ui.define([
 		assert.strictEqual(oSpy.callCount, 1, "overwritten function is called on set Value");
 
 		// clean up
+		oTabStrip.destroy();
 		oCustomSelect.destroy();
 	});
 

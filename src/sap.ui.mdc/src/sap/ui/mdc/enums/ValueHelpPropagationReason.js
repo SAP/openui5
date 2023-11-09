@@ -33,4 +33,4 @@ sap.ui.define(function () {
     };
 
     return ValueHelpPropagationReason;
-}, /* bExport= */ true);
+});

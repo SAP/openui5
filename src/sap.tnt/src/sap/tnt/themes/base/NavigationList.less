@@ -107,11 +107,11 @@
 	}
 
 	&.sapTntNLIDisabled {
-		cursor: auto;
+		cursor: default;
 		opacity: @sapUiContentDisabledOpacity;
 
 		span {
-			cursor: auto;
+			cursor: default;
 		}
 	}
 
@@ -440,6 +440,10 @@
 
 .sapTntNLSeparator {
 	min-height: 0.75rem;
+}
+
+.sapTntNL > .sapTntNLSeparator:last-child {
+	display: none;
 }
 
 .sapTntNL [tabindex]:focus::after {

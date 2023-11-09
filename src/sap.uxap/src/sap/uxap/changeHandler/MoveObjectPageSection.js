@@ -172,5 +172,4 @@ sap.ui.define([
 	};
 
 	return MoveObjectPageSection;
-},
-/* bExport= */true);
+});

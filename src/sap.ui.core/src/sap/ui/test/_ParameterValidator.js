@@ -178,4 +178,4 @@ sap.ui.define([
 	}
 
 	return _ParameterValidator;
-},  /* export= */ true);
+});

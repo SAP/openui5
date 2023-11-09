@@ -148,4 +148,4 @@ sap.ui.define([
 	};
 
 	return XmlPreprocessor;
-}, /* bExport= */true);
+});

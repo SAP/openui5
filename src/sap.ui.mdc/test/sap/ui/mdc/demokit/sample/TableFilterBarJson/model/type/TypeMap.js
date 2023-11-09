@@ -12,4 +12,4 @@ sap.ui.define([
 
 	return TypeMap;
 
-}, /* bExport= */false);
+});

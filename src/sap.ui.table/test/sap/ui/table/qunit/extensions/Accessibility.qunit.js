@@ -3,51 +3,45 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Control",
+	"sap/ui/table/TreeTable",
     "sap/ui/table/AnalyticalTable",
 	"sap/ui/table/Column",
     "sap/ui/table/RowAction",
 	"sap/ui/table/RowSettings",
-    "sap/ui/table/TreeTable",
 	"sap/ui/table/library",
-    "sap/ui/model/json/JSONModel",
-	"sap/ui/Device",
-	"sap/ui/core/library",
-	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core",
 	"sap/m/IllustratedMessage",
 	"sap/m/Label",
-	"sap/ui/core/ControlBehavior"
+	"sap/ui/core/Control",
+	"sap/ui/core/Core",
+	"sap/ui/core/ControlBehavior",
+	"sap/ui/core/library",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
+	"sap/ui/thirdparty/jquery"
 ], function(
 	TableQUnitUtils,
 	TableUtils,
-	ManagedObject,
-	Control,
+	TreeTable,
 	AnalyticalTable,
 	Column,
 	RowAction,
 	RowSettings,
-	TreeTable,
-	Library,
-	JSONModel,
-	Device,
-	coreLibrary,
-	Filter,
-	FilterOperator,
-	jQuery,
-	oCore,
+	library,
 	IllustratedMessage,
 	Label,
-	ControlBehavior
+	Control,
+	oCore,
+	ControlBehavior,
+	coreLibrary,
+	JSONModel,
+	Filter,
+	FilterOperator,
+	jQuery
 ) {
 	"use strict";
 
-	var SelectionMode = Library.SelectionMode;
-
-	// mapping of global function calls
+	var SelectionMode = library.SelectionMode;
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var getCell = window.getCell;
@@ -60,11 +54,7 @@ sap.ui.define([
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
 
-	//************************************************************************
-	// Preparation Code
-	//************************************************************************
-
-	var TextControl = ManagedObject.extend("sap.ui.table.test.TextControl", {
+	var TextControl = Control.extend("sap.ui.table.test.TextControl", {
 		metadata: {
 			properties: {
 				text: {
@@ -122,9 +112,17 @@ sap.ui.define([
 	};
 	TestInputControl.prototype.getAccessibilityInfo = TestControl.prototype.getAccessibilityInfo;
 
+	var TestContextMenu = Control.extend("sap.ui.table.test.TestContextMenu", {
+		metadata: {
+			interfaces: ["sap.ui.core.IColumnHeaderMenu"]
+		},
+		openBy: sinon.stub(),
+		getAriaHasPopupType: sinon.stub().returns(coreLibrary.aria.HasPopup.None)
+	});
+
 	function _modifyTables() {
 		[oTable, oTreeTable].forEach(function(_oTable) {
-			_oTable.removeAllColumns();
+			_oTable.destroyColumns();
 			TableQUnitUtils.addColumn(_oTable, "A Label", "A", false, true, true);
 			TableQUnitUtils.addColumn(_oTable, "B Label", "B").setTooltip("B Label");
 			TableQUnitUtils.addColumn(_oTable, "C Label", "C", true).setTooltip("tooltip");
@@ -156,10 +154,6 @@ sap.ui.define([
 			assert.ok(sPropertyValue === "false" || !sPropertyValue, "aria-selected");
 		}
 	}
-
-	//************************************************************************
-	// Test Code
-	//************************************************************************
 
 	QUnit.module("Data Cells", {
 		beforeEach: function() {
@@ -798,15 +792,43 @@ sap.ui.define([
 		assert.ok($Cell.attr("aria-labelledby").includes(sTableId + "-ariarequired"), "aria-required");
 	});
 
+	QUnit.test("aria-haspopup", function(assert) {
+		var oColumn = oTable.getColumns()[0];
+		var oHeaderMenu = new TestContextMenu();
+
+		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
+
+		oColumn.setHeaderMenu(oHeaderMenu); // getAriaHasPopupType returns "None"
+		oCore.applyChanges();
+		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
+
+		Object.values(coreLibrary.aria.HasPopup).forEach((sPopupType) => {
+			if (sPopupType === coreLibrary.aria.HasPopup.None) {
+				return;
+			}
+
+			oHeaderMenu.getAriaHasPopupType.returns(sPopupType);
+			oColumn.focus();
+
+			assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), sPopupType.toLowerCase());
+		});
+
+		oColumn.setHeaderMenu();
+		oCore.applyChanges();
+		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
+
+		oHeaderMenu.destroy();
+	});
+
 	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
-		var $Elem = oTable.getColumns()[0].$();
-		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
-		assert.ok(!$Elem.attr("aria-haspopup"), "aria-haspopup");
-		assert.ok(!$Elem.attr("aria-sort"), "aria-sort");
-		$Elem = oTable.getColumns()[1].$();
-		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
-		assert.strictEqual($Elem.attr("aria-haspopup"), "menu", "aria-haspopup");
-		assert.strictEqual($Elem.attr("aria-sort"), "ascending", "aria-sort");
+		var oDomRef = oTable.getColumns()[0].getDomRef();
+
+		assert.strictEqual(oDomRef.getAttribute("role"), "columnheader", "role");
+		assert.strictEqual(oDomRef.getAttribute("aria-sort"), "none", "aria-sort");
+
+		oDomRef = oTable.getColumns()[1].getDomRef();
+		assert.strictEqual(oDomRef.getAttribute("role"), "columnheader", "role");
+		assert.strictEqual(oDomRef.getAttribute("aria-sort"), "ascending", "aria-sort");
 	});
 
 	QUnit.module("Row Header", {
@@ -929,7 +951,6 @@ sap.ui.define([
 
 			assert.notOk(oRefs.hdr.attr("aria-expanded"), "aria-expanded is not set on group row header");
 			assert.notOk(oRefs.hdr.attr("aria-level"), "aria-level is not set on group row header");
-			assert.strictEqual(oRefs.hdr.attr("aria-haspopup"), "menu", "aria-haspopup set on group row header");
 
 			$Cell = getRowHeader(1, false, assert);
 			that.testAriaLabels($Cell, 1, assert, {group: true});
@@ -1500,7 +1521,11 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
-		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy().toString(), "aria-labelledby");
+
+		oTable.addAriaLabelledBy("test");
+		oCore.applyChanges();
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy().join(" "), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
@@ -1510,9 +1535,9 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
-			oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
+			oTable.removeAllAriaLabelledBy();
 			oCore.applyChanges();
-			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
+			assert.notOk($Elem.attr("aria-labelledby"), "aria-labelledby when ariaLabelledBy association is empty array");
 			done();
 		});
 
@@ -1529,7 +1554,6 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
-		assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getAriaLabelledBy() + " " + oTreeTable.getTitle().getId(), "aria-labelledby");
 
 		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
@@ -1539,9 +1563,6 @@ sap.ui.define([
 			oCore.applyChanges();
 
 			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
-			oTreeTable.removeAriaLabelledBy(oTreeTable.getAriaLabelledBy()[0]);
-			oCore.applyChanges();
-			assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
 
 			var oAnalyticalTable = new AnalyticalTable();
 			oAnalyticalTable.placeAt("qunit-fixture");
@@ -1742,8 +1763,7 @@ sap.ui.define([
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 		});
 		var $Elem = jQuery(document.getElementById(sTableId + "-overlay"));
-		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
+		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + sTableId + "-ariainvalid", "aria-labelledby");
 		oTable.invalidate();
 		oCore.applyChanges();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
@@ -1756,11 +1776,11 @@ sap.ui.define([
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
 
-		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
+		oTable.removeAllAriaLabelledBy();
 		oCore.applyChanges();
 		$Elem = jQuery(document.getElementById(sTableId + "-overlay"));
-		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
+		assert.strictEqual($Elem.attr("aria-labelledby"), sTableId + "-ariainvalid",
+			"aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA for NoData", function(assert) {

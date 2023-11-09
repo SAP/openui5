@@ -2,39 +2,38 @@
  * ${copyright}
  */
 // Provides the Design Time Metadata for the sap.m.Slider control
-sap.ui.define([],
-	function () {
-		"use strict";
+sap.ui.define([], function () {
+	"use strict";
 
-		return {
-			name: {
-				singular: "SLIDER_NAME",
-				plural: "SLIDER_NAME_PLURAL"
-			},
-			palette: {
-				group: "INPUT",
-				icons: {
-					svg: "sap/m/designtime/Slider.icon.svg"
-				}
-			},
-			actions: {
-				remove: {
-					changeType: "hideControl"
-				},
-				reveal: {
-					changeType: "unhideControl"
-				}
-			},
-			aggregations: {
-				scale: {
-					domRef: ":sap-domref .sapMSliderTickmarks"
-				},
-				customTooltips: {
-					ignore: true
-				}
-			},
-			templates: {
-				create: "sap/m/designtime/Slider.create.fragment.xml"
+	return {
+		name: {
+			singular: "SLIDER_NAME",
+			plural: "SLIDER_NAME_PLURAL"
+		},
+		palette: {
+			group: "INPUT",
+			icons: {
+				svg: "sap/m/designtime/Slider.icon.svg"
 			}
-		};
-	}, /* bExport= */ true);
+		},
+		actions: {
+			remove: {
+				changeType: "hideControl"
+			},
+			reveal: {
+				changeType: "unhideControl"
+			}
+		},
+		aggregations: {
+			scale: {
+				domRef: ":sap-domref .sapMSliderTickmarks"
+			},
+			customTooltips: {
+				ignore: true
+			}
+		},
+		templates: {
+			create: "sap/m/designtime/Slider.create.fragment.xml"
+		}
+	};
+});

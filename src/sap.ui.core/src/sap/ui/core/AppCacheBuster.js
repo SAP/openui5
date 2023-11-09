@@ -640,4 +640,4 @@ sap.ui.define([
 
 	return AppCacheBuster;
 
-}, /* bExport= */ true);
+});

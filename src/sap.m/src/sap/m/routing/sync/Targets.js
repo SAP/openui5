@@ -52,4 +52,4 @@ sap.ui.define([], function() {
 			return this._super._displaySingleTarget.apply(this, arguments);
 		}
 	};
-}, /* bExport= */ true);
+});

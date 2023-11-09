@@ -336,4 +336,4 @@ sap.ui.define([
 
 		return IconPool;
 
-	}, /* bExport= */ true);
+	});

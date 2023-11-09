@@ -5666,4 +5666,4 @@ sap.ui.define([
 	 */
 
 	return odata4analytics;
-}, /* bExport= */ true);
+});

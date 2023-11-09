@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/report/StringHistoryFormatter",
 	"sap/ui/support/supportRules/report/AbapHistoryFormatter",
 	"sap/ui/core/date/UI5Date"
-],
-function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter, UI5Date) {
+], function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHistoryFormatter, UI5Date) {
 	"use strict";
 
 	/**
@@ -149,7 +148,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 			return oContext._oDataCollector.getTechInfoJSON().then(function (oTechData) {
 				var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
 					aIssues = IssueManager.getIssues(),
-					mRules = RuleSetLoader.getRuleSets(),
+					mRuleLibs = RuleSetLoader.getRuleLibs(),
 					mSelectedRules = oContext._oSelectedRulesIds,
 					oSelectedRulePreset = oContext._oSelectedRulePreset;
 
@@ -159,7 +158,7 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 					onlyIssues: aIssues,
 					application: oContext._oDataCollector.getAppInfo(),
 					technical: oTechData,
-					rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+					rules: IssueManager.getRulesViewModel(mRuleLibs, mSelectedRules, mIssues),
 					rulePreset: oSelectedRulePreset,
 					scope: {
 						executionScope: {
@@ -233,4 +232,4 @@ function (library, IssueManager, RuleSetLoader, StringHistoryFormatter, AbapHist
 
 	return History;
 
-}, true);
+});

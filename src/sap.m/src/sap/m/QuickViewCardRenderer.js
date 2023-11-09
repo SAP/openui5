@@ -37,4 +37,4 @@ sap.ui.define([
 	};
 
 	return QuickViewCardRenderer;
-}, /* bExport= */ true);
+});

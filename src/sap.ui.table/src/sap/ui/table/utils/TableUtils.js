@@ -1580,4 +1580,4 @@ sap.ui.define([
 
 	return TableUtils;
 
-}, /* bExport= */ true);
+});

@@ -215,4 +215,4 @@ sap.ui.define([
 
 	return ObjectPageHeaderContentRenderer;
 
-}, /* bExport= */ true);
+});

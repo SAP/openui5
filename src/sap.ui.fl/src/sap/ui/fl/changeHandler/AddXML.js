@@ -87,4 +87,4 @@ sap.ui.define([
 	};
 
 	return AddXML;
-}, /* bExport= */true);
+});

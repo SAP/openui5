@@ -46,4 +46,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return FieldDisplay;
 
-}, /* bExport= */ true);
+});

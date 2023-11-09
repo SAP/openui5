@@ -262,4 +262,4 @@ sap.ui.define([
 	};
 
 	return SampleChartDelegate;
-}, /* bExport= */ true);
+});

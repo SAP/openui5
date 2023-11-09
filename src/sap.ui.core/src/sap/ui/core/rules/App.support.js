@@ -124,4 +124,4 @@ sap.ui.define([
 		oMissingSuperConstructorRule,
 		oControllerExtensionRule
 	];
-}, true);
+});

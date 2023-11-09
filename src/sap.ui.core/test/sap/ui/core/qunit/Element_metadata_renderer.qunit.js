@@ -1,9 +1,8 @@
 /*global QUnit, sinon */
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/Renderer',
-	'sap/base/util/ObjectPath'
-], function(Control, Renderer, ObjectPath) {
+	'sap/ui/core/Renderer'
+], async function(Control, Renderer) {
 	"use strict";
 
 	/*
@@ -60,9 +59,9 @@ sap.ui.define([
 	 * renderer. The name of the class will be composed from the given prefix and the
 	 * sDefinition and sExtensionMethod.
 	 */
-	function makeControlClass(sPrefix, sDefinition, sExtensionMethod, Base) {
+	async function makeControlClass(sPrefix, sDefinition, sExtensionMethod, Base) {
 
-		var sControlName = sPrefix + sDefinition + sExtensionMethod;
+		var sControlName = sPrefix + sDefinition + sExtensionMethod + (Base ? Base.getMetadata().getName() : "");
 		var sRendererName = sControlName + "Renderer";
 
 		if ( sExtensionMethod === "NoParent" ) {
@@ -85,37 +84,44 @@ sap.ui.define([
 		renderFunction.id = sControlName;
 
 		function createRenderer() {
+			const sPath = sRendererName.replace(/\./g, "/");
+			let oRenderer;
 			switch (sExtensionMethod) {
-			case "NoParent":
-				var oRenderer = oResult.renderer = {
-					render: renderFunction
-				};
-				ObjectPath.set(sRendererName, oRenderer);
-				return oRenderer;
-			case "LegacyExtend":
-				var BaseRenderer = Base === Control ? Renderer : Base.getMetadata().getRenderer();
-				var oRenderer = oResult.renderer = Renderer.extend(BaseRenderer);
-				oRenderer.render = renderFunction;
-				ObjectPath.set(sRendererName, oRenderer);
-				return oRenderer;
-			case "ModernExtend":
-				var BaseRenderer = Base === Control ? Renderer : Base.getMetadata().getRenderer();
-				if ( typeof BaseRenderer.extend === "function" ) {
-					oResult.renderer = BaseRenderer.extend(sRendererName, {
+				case "NoParent":
+					oRenderer = oResult.renderer = {
 						render: renderFunction
-					});
-				} else {
-					oResult.renderer = Renderer.extend.call(BaseRenderer, sRendererName, {
-						render: renderFunction
-					});
-				}
-				return oResult.renderer;
-			default:
-				throw new Error("unknown extension mechanism " + sExtensionMethod);
+					};
+					break;
+				case "LegacyExtend":
+					var BaseRenderer = Base === Control ? Renderer : Base.getMetadata().getRenderer();
+					oRenderer = oResult.renderer = Renderer.extend(BaseRenderer);
+					oRenderer.render = renderFunction;
+					break;
+				case "ModernExtend":
+					var BaseRenderer = Base === Control ? Renderer : Base.getMetadata().getRenderer();
+					if ( typeof BaseRenderer.extend === "function" ) {
+						oResult.renderer = BaseRenderer.extend(sRendererName, {
+							render: renderFunction
+						});
+					} else {
+						oResult.renderer = Renderer.extend.call(BaseRenderer, sRendererName, {
+							render: renderFunction
+						});
+					}
+					oRenderer = oResult.renderer;
+					break;
+				default:
+					throw new Error("unknown extension mechanism " + sExtensionMethod);
 			}
+
+			sap.ui.define(sPath, [], () => oRenderer);
+
+			return new Promise((resolve, reject) => {
+				sap.ui.require([sPath], (renderer) => resolve(renderer), reject);
+			});
 		}
 
-		function createClassInfo() {
+		async function createClassInfo() {
 			switch (sDefinition) {
 			case "RenderFunction":
 				return {
@@ -128,21 +134,25 @@ sap.ui.define([
 					}
 				};
 			case "ImplicitlyNamedRenderer":
-				createRenderer();
+				await createRenderer();
 				return {};
 			case "ExplicitlyNamedRenderer":
-				createRenderer();
+				await createRenderer();
 				return {
 					renderer: sRendererName
 				};
 			case "ImportedRenderer":
 				return {
-					renderer: createRenderer()
+					renderer: await createRenderer()
 				};
+			default:
+				// do nothing
 			}
 		}
 
-		oResult.controlClass = Base.extend(sControlName, createClassInfo());
+		const oClassInfo = await createClassInfo();
+
+		oResult.controlClass = Base.extend(sControlName, oClassInfo);
 		return oResult;
 
 	}
@@ -153,7 +163,7 @@ sap.ui.define([
 
 	// Create base classes
 	// (combinations D0(E0,E2),D1(E0,E2),D2(E0,E1,E2),D3(E0,E1,E2),D4(E0,E1,E2))
-	var aBaseClasses = [
+	var aBaseClasses = await Promise.all([
 		["RenderFunction", "NoParent"],
 		["RenderFunction", "ModernExtend"],
 		["PlainRenderObject", "NoParent"],
@@ -167,9 +177,10 @@ sap.ui.define([
 		["ImportedRenderer", "NoParent"],
 		["ImportedRenderer", "LegacyExtend"],
 		["ImportedRenderer", "ModernExtend"]
-	].map(function(oConfig) {
-		return makeControlClass("BaseControl", oConfig[0], oConfig[1], Grandparent).controlClass;
-	});
+	].map(async function(oConfig) {
+		const oClassInfo = await makeControlClass("BaseControl", oConfig[0], oConfig[1], Grandparent);
+		return oClassInfo.controlClass;
+	}));
 
 	QUnit.module("Renderer Definition");
 
@@ -191,8 +202,8 @@ sap.ui.define([
 		var sDefinition = oConfig[0];
 		var sExtensionMethod = oConfig[1];
 		if ( sExtensionMethod === "NoParent" ) {
-			QUnit.test("Define Renderer as " + sDefinition + ", " + sExtensionMethod, function(assert) {
-				var oClassInfo = makeControlClass("TestControl", sDefinition, sExtensionMethod);
+			QUnit.test("Define Renderer as " + sDefinition + ", " + sExtensionMethod, async function(assert) {
+				var oClassInfo = await makeControlClass("TestControl", sDefinition, sExtensionMethod);
 				var FNClass = oClassInfo.controlClass;
 				assert.ok(!!FNClass, "Creating the class succeeded");
 				var oRenderer = FNClass.getMetadata().getRenderer();
@@ -211,8 +222,8 @@ sap.ui.define([
 			});
 		} else {
 			aBaseClasses.forEach(function(FNBaseClass) {
-				QUnit.test("Define Renderer as " + sDefinition + ", " + sExtensionMethod + " from " + FNBaseClass.getMetadata().getName(), function(assert) {
-					var oClassInfo = makeControlClass("TestControl", sDefinition, sExtensionMethod, FNBaseClass);
+				QUnit.test("Define Renderer as " + sDefinition + ", " + sExtensionMethod + " from " + FNBaseClass.getMetadata().getName(), async function(assert) {
+					var oClassInfo = await makeControlClass("TestControl", sDefinition, sExtensionMethod, FNBaseClass);
 					var FNClass = oClassInfo.controlClass;
 					assert.ok(!!FNClass, "Creating the class succeeded");
 					var oRenderer = FNClass.getMetadata().getRenderer();

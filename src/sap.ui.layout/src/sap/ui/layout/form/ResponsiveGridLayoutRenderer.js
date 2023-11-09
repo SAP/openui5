@@ -44,4 +44,4 @@ sap.ui.define([
 
 	return ResponsiveGridLayoutRenderer;
 
-}, /* bExport= */ true);
+});

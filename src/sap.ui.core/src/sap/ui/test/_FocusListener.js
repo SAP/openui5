@@ -44,4 +44,4 @@ sap.ui.define(["./autowaiter/_utils"
 			return oLastBlurredElement;
 		}
 	};
-}, true);
+});

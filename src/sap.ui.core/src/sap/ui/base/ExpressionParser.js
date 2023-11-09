@@ -908,4 +908,4 @@ sap.ui.define([
 			};
 		}
 	};
-}, /* bExport= */ true);
+});

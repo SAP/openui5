@@ -10,8 +10,7 @@ sap.ui.define([
 	"sap/base/util/Version",
 	"sap/ui/support/library",
 	"sap/ui/support/supportRules/Storage"
-],
-function (Log, Version, library, storage) {
+], function (Log, Version, library, storage) {
 	"use strict";
 
 	/**
@@ -308,4 +307,4 @@ function (Log, Version, library, storage) {
 	};
 
 	return RuleSet;
-}, true);
+});

@@ -101,8 +101,8 @@ sap.ui.define(
 		RuleSetLoader._fetchSupportRuleSets(null, mLibrariesToLoad).then(function() {
 			QUnit.start();
 
-			Object.keys(RuleSetLoader._mRuleSets).map(function(sKey) {
-				var oLibrary = RuleSetLoader._mRuleSets[sKey];
+			Object.keys(RuleSetLoader._mRuleLibs).map(function(sKey) {
+				var oLibrary = RuleSetLoader._mRuleLibs[sKey];
 
 				var arr = [];
 

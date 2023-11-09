@@ -417,4 +417,4 @@ sap.ui.define([
 			return oAutoWaiter;
 		}
 	};
-}, /* export= */ true);
+});

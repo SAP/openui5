@@ -570,4 +570,4 @@ sap.ui.define([
 
 	return History;
 
-}, /* bExport= */ true);
+});

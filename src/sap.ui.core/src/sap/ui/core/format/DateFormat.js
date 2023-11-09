@@ -3474,4 +3474,4 @@ sap.ui.define([
 
 	return DateFormat;
 
-}, /* bExport= */ true);
+});

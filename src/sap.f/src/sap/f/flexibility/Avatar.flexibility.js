@@ -9,4 +9,4 @@ sap.ui.define([
 	"use strict";
 
 	return jQuery.extend(mAvatarFlexibility, {});
-}, /* bExport= */ true);
+});

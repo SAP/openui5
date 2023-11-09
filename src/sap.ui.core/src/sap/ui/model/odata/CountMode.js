@@ -50,4 +50,4 @@ sap.ui.define(function() {
 
 	return CountMode;
 
-}, /* bExport= */ true);
+});

@@ -50,4 +50,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return ReasonMode;
 
-}, /* bExport= */ true);
+});

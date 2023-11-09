@@ -142,4 +142,4 @@ sap.ui.define([
 			return aTransportData;
 		}
 	};
-}, true);
+});

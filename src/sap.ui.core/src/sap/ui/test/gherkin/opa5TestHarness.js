@@ -199,4 +199,4 @@ sap.ui.define([
 	};
 
 	return opa5TestHarness;
-}, /* bExport= */ true);
+});

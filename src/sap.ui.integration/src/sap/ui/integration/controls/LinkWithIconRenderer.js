@@ -33,4 +33,4 @@ sap.ui.define([
 
 	return LinkWithIconRenderer;
 
-}, /* bExport= */ true);
+});

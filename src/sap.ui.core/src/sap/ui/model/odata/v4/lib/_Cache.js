@@ -4512,4 +4512,4 @@ sap.ui.define([
 	};
 
 	return _Cache;
-}, /* bExport= */false);
+});

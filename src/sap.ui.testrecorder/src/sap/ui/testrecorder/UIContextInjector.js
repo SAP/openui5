@@ -387,4 +387,4 @@ sap.ui.define([
 
 	return oUIContextInjector;
 
-}, true);
+});

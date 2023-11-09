@@ -71,4 +71,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return ContentMode;
 
-}, /* bExport= */ true);
+});

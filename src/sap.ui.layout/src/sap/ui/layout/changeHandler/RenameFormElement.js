@@ -86,4 +86,4 @@ sap.ui.define([
 	};
 
 	return RenameFormElement;
-}, /* bExport= */true);
+});

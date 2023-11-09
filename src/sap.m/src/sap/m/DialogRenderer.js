@@ -259,4 +259,4 @@ sap.ui.define([
 
 	return DialogRenderer;
 
-}, /* bExport= */ true);
+});

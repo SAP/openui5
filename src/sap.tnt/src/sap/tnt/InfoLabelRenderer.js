@@ -125,4 +125,4 @@ sap.ui.define([
 	};
 
 	return InfoLabelRenderer;
-}, /* bExport= */ true);
+});

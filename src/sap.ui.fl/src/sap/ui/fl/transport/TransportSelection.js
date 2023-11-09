@@ -7,4 +7,4 @@ sap.ui.define([
 
 ) {
 	"use strict";
-}, true);
+});

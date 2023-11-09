@@ -114,4 +114,4 @@ sap.ui.define([
 
 	return BlockBaseMetadata;
 
-}, /* bExport= */ true);
+});

@@ -224,4 +224,4 @@ sap.ui.define([
 	_GroupLock.$cached.unlock = function () {};
 
 	return _GroupLock;
-}, /* bExport= */false);
+});

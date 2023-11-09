@@ -60,4 +60,4 @@ sap.ui.define([], function () {
 	};
 
 	return NumericSideIndicatorRenderer;
-}, /* bExport= */ true);
+});

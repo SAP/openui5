@@ -136,4 +136,4 @@ sap.ui.define([
 	};
 
 	return FormHelper;
-}, /* bExport= */ false);
+});

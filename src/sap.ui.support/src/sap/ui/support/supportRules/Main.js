@@ -211,7 +211,7 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(channelNames.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
 			var oTempRule = RuleSerializer.deserialize(tempRuleSerialized),
-				oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
+				oTempRuleSet = RuleSetLoader.getRuleLib(constants.TEMP_RULESETS_NAME).ruleset,
 				sResult = oTempRuleSet.addRule(oTempRule);
 
 			CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
@@ -223,7 +223,7 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(channelNames.VERIFY_UPDATE_RULE, function (data) {
 			var oTempRule = RuleSerializer.deserialize(data.updateObj),
-				oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset,
+				oTempRuleSet = RuleSetLoader.getRuleLib(constants.TEMP_RULESETS_NAME).ruleset,
 				sResult = oTempRuleSet.updateRule(data.oldId, oTempRule);
 
 			CommunicationBus.publish(channelNames.VERIFY_RULE_UPDATE_RESULT, {
@@ -234,7 +234,7 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(channelNames.DELETE_RULE, function (data) {
 			var oTempRule = RuleSerializer.deserialize(data),
-				oTempRuleSet = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset;
+				oTempRuleSet = RuleSetLoader.getRuleLib(constants.TEMP_RULESETS_NAME).ruleset;
 
 			oTempRuleSet.removeRule(oTempRule);
 		}, this);
@@ -487,7 +487,7 @@ sap.ui.define([
 				return;
 			}
 
-			oRuleset = RuleSetLoader.getRuleSet(oRuleDescriptor.libName);
+			oRuleset = RuleSetLoader.getRuleLib(oRuleDescriptor.libName);
 
 			if (!oRuleset || !oRuleset.ruleset) {
 				Log.error("[" + constants.SUPPORT_ASSISTANT_NAME + "] Could not find Ruleset for library " + oRuleDescriptor.libName);
@@ -676,7 +676,7 @@ sap.ui.define([
 	Main.prototype._getReportData = function (oReportConstants) {
 		return this._oDataCollector.getTechInfoJSON().then(function (oTechData) {
 			var mIssues = IssueManager.groupIssues(IssueManager.getIssuesModel()),
-				mRules = RuleSetLoader.getRuleSets(),
+				mRuleLibs = RuleSetLoader.getRuleLibs(),
 				mSelectedRules = this._oSelectedRulesIds,
 				oSelectedRulePreset = this._oSelectedRulePreset || null;
 
@@ -684,7 +684,7 @@ sap.ui.define([
 				issues: mIssues,
 				technical: oTechData,
 				application: this._oDataCollector.getAppInfo(),
-				rules: IssueManager.getRulesViewModel(mRules, mSelectedRules, mIssues),
+				rules: IssueManager.getRulesViewModel(mRuleLibs, mSelectedRules, mIssues),
 				rulePreset: oSelectedRulePreset,
 				scope: {
 					executionScope: this._oExecutionScope,
@@ -760,7 +760,7 @@ sap.ui.define([
 		oRule.selected = oRule.selected !== undefined ? oRule.selected : true;
 		oRule.async = oRule.async || false;
 
-		var sResult = RuleSetLoader.getRuleSet(constants.TEMP_RULESETS_NAME).ruleset.addRule(oRule);
+		var sResult = RuleSetLoader.getRuleLib(constants.TEMP_RULESETS_NAME).ruleset.addRule(oRule);
 
 		CommunicationBus.publish(channelNames.VERIFY_RULE_CREATE_RESULT, {
 			result: sResult,
@@ -774,4 +774,4 @@ sap.ui.define([
 
 	return oMain;
 
-}, true);
+});

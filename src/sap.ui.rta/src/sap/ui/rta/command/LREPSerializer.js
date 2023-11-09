@@ -184,7 +184,7 @@ sap.ui.define([
 			});
 		}.bind(this))
 		.then(function() {
-			Log.info("UI adaptation successfully transfered changes to layered repository");
+			Log.info("UI adaptation successfully wrote changes to the persistence");
 			this.getCommandStack().setSaved(true);
 			this.getCommandStack().removeAllCommands();
 		}.bind(this));

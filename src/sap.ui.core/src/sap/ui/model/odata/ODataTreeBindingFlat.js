@@ -5018,4 +5018,4 @@ sap.ui.define([
 	};
 
 	return ODataTreeBindingFlat;
-}, /* bExport= */ true);
+});

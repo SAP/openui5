@@ -111,4 +111,4 @@ sap.ui.define([
 	}).catch(pReady.reject);
 
 	return boot;
-}, true);
+});

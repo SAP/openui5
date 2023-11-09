@@ -83,5 +83,4 @@ sap.ui.define([
 		supportsDefault: true
 	});
 	return AddFormField;
-},
-/* bExport= */true);
+});

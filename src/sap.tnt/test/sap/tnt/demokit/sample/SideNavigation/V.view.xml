@@ -3,40 +3,46 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:tnt="sap.tnt"
-	height="100%"
-	class="side-navigation-demo">
-	<Button
-		text="Toggle Collapse/Expand"
-		icon="sap-icon://menu2"
-		press=".onCollapseExpandPress" />
-	<Button
-		text="Show/Hide Sub Item 3"
-		icon="sap-icon://menu2"
-		press=".onHideShowSubItemPress" />
-	<tnt:SideNavigation id="sideNavigation" selectedKey="subItem3" collapsed="true">
-		<tnt:NavigationList>
-			<tnt:NavigationListItem text="Home" icon="sap-icon://home" />
-			<tnt:NavigationListGroup text="Group 1">
-				<tnt:NavigationListItem text="Item 1" icon="sap-icon://employee">
-					<tnt:NavigationListItem text="Sub Item 1" />
-					<tnt:NavigationListItem text="Sub Item 2" />
-					<tnt:NavigationListItem text="Sub Item 3" id="subItem3" key="subItem3" />
-					<tnt:NavigationListItem text="Sub Item 4" />
-				</tnt:NavigationListItem>
-				<tnt:NavigationListItem text="Item 2" icon="sap-icon://building">
-					<tnt:NavigationListItem text="Sub Item 1" />
-					<tnt:NavigationListItem text="Sub Item 2" />
-					<tnt:NavigationListItem text="Sub Item 3" />
-					<tnt:NavigationListItem text="Sub Item 4" />
-				</tnt:NavigationListItem>
-			</tnt:NavigationListGroup>
-		</tnt:NavigationList>
-		<tnt:fixedItem>
+	height="100%">
+	<VBox renderType="Bare" alignItems="Start" height="100%">
+		<Button
+			text="Toggle Collapse/Expand"
+			icon="sap-icon://menu2"
+			press=".onCollapseExpandPress" />
+		<Button
+			text="Show/Hide &quot;Walked&quot;"
+			icon="sap-icon://menu2"
+			press=".onHideShowWalkedPress" />
+
+		<tnt:SideNavigation id="sideNavigation" selectedKey="subItem3" collapsed="true">
 			<tnt:NavigationList>
-				<tnt:NavigationListItem text="Item 1" icon="sap-icon://employee" />
-				<tnt:NavigationListItem text="Item 2" icon="sap-icon://building" />
-				<tnt:NavigationListItem text="Item 3" icon="sap-icon://card" />
+				<tnt:NavigationListItem text="Home" icon="sap-icon://home" />
+				<tnt:NavigationListGroup text="New">
+					<tnt:NavigationListItem text="People" icon="sap-icon://people-connected" />
+					<tnt:NavigationListItem text="Building" icon="sap-icon://building" />
+					<tnt:NavigationListItem text="Mileage" icon="sap-icon://mileage">
+						<tnt:NavigationListItem text="Driven" />
+						<tnt:NavigationListItem text="Walked" id="walked" />
+					</tnt:NavigationListItem>
+				</tnt:NavigationListGroup>
+				<tnt:NavigationListGroup text="Recently used">
+					<tnt:NavigationListItem text="Managing My Area" icon="sap-icon://kpi-managing-my-area" />
+					<tnt:NavigationListItem text="Flight" icon="sap-icon://flight" />
+					<tnt:NavigationListItem text="Map" icon="sap-icon://map-2" />
+				</tnt:NavigationListGroup>
+				<tnt:NavigationListGroup text="Restricted" enabled="false">
+					<tnt:NavigationListItem text="Running" icon="sap-icon://physical-activity" />
+					<tnt:NavigationListItem text="Scissors" icon="sap-icon://scissors" />
+				</tnt:NavigationListGroup>
+				<tnt:NavigationListItem text="Transport" icon="sap-icon://passenger-train" />
 			</tnt:NavigationList>
-		</tnt:fixedItem>
-	</tnt:SideNavigation>
+			<tnt:fixedItem>
+				<tnt:NavigationList>
+					<tnt:NavigationListItem text="Bar Chart" icon="sap-icon://bar-chart" />
+					<tnt:NavigationListItem selectable="false" href="https://sap.com" target="_blank" text="External Link" icon="sap-icon://attachment" />
+					<tnt:NavigationListItem text="Compare" icon="sap-icon://compare" />
+				</tnt:NavigationList>
+			</tnt:fixedItem>
+		</tnt:SideNavigation>
+	</VBox>
 </mvc:View>

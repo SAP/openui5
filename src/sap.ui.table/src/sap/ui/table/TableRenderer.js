@@ -193,21 +193,6 @@ sap.ui.define([
 		rm.close("div");
 	};
 
-	// =============================================================================
-	// BASIC AREAS OF THE TABLE
-	// =============================================================================
-
-	TableRenderer.renderHeader = function(rm, oTable, oTitle) {
-		rm.openStart("div");
-		rm.class("sapUiTableHdr");
-		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "TABLEHEADER");
-		rm.openEnd();
-
-		rm.renderControl(oTitle);
-
-		rm.close("div");
-	};
-
 	TableRenderer.renderToolbar = function(rm, oTable, oToolbar) {
 		if (!TableUtils.isA(oToolbar, "sap.ui.core.Toolbar")) {
 			return;
@@ -1335,5 +1320,4 @@ sap.ui.define([
 	};
 
 	return TableRenderer;
-
-}, /* bExport= */ true);
+});

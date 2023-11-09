@@ -43,4 +43,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return ValueHelpSelectionType;
 
-}, /* bExport= */ true);
+});

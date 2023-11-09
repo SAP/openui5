@@ -994,4 +994,4 @@ sap.ui.define([
 	asV2Requestor._setDateTimeFormatter();
 
 	return asV2Requestor;
-}, /* bExport= */ false);
+});

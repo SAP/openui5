@@ -427,4 +427,4 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/Log', 'sap/base/security/en
 		downloadReportZip: downloadReportZip,
 		openReport: openReport
 	};
-}, true);
+});

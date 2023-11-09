@@ -43,4 +43,4 @@ sap.ui.define(function() {
 
 	return ViewRenderer;
 
-}, /* bExport= */ true);
+});

@@ -853,4 +853,4 @@ sap.ui.define([
 
 	return AnalyticalTreeBindingAdapter;
 
-}, /* bExport= */ true);
+});

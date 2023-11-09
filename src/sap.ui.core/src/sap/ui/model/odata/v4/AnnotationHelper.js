@@ -822,4 +822,4 @@ sap.ui.define([
 		};
 
 	return AnnotationHelper;
-}, /* bExport= */ true);
+});

@@ -74,4 +74,4 @@ sap.ui.define(["sap/ui/core/Lib"], function(Library) {
 
 	return PlaceholderBaseRenderer;
 
-}, /* bExport= */ true);
+});

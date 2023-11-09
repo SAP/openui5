@@ -166,4 +166,4 @@ sap.ui.define([
 
 	return XMLViewRenderer;
 
-}, /* bExport= */ true);
+});

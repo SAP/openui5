@@ -162,4 +162,4 @@ sap.ui.define([
 
 	return GenericTagRenderer;
 
-}, /* bExport= */true);
+});

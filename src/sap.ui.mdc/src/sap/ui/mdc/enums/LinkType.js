@@ -35,4 +35,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
 	return LinkType;
 
-}, /* bExport= */ true);
+});

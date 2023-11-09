@@ -59,4 +59,4 @@ sap.ui.define([
 		"randomSalesOrders": oRandomSalesOrdersFactory,
 		"randomRevenue": oRandomRevenueFactory
 	};
-}, true);
+});

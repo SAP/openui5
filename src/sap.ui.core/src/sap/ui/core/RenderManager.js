@@ -2289,4 +2289,4 @@ sap.ui.define([
 	}
 
 	return RenderManager;
-}, true);
+});

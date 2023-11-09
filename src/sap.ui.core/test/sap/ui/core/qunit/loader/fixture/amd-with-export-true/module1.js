@@ -7,4 +7,4 @@ sap.ui.define(['sap/base/util/ObjectPath'], function(ObjectPath) {
 
 	return result;
 
-}, /* bExport = */true);
+});

@@ -9,4 +9,4 @@ sap.ui.define([
 			return sinon.stub.callsFake ? sinon.stub(oObject, sMethod).callsFake(fnFake) : sinon.stub(oObject, sMethod, fnFake);
 		}
 	};
-}, true);
+});

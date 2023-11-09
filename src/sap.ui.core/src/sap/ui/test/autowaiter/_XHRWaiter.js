@@ -144,4 +144,4 @@ sap.ui.define([
 	}
 
 	return oXHRWaiter;
-}, true);
+});

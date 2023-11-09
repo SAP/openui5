@@ -33,4 +33,4 @@ sap.ui.define(["sap/ui/base/DataType"], function(DataType) {
 
     return FilterBarP13nMode;
 
-}, /* bExport= */ true);
+});

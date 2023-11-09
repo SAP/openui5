@@ -111,4 +111,4 @@ sap.ui.define([
 
 	return FakeUShellConnector;
 
-}, true);
+});

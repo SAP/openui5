@@ -65,4 +65,4 @@ sap.ui.define([], function() {
 		};
 
 		return AJAXUtils;
-	}, /* bExport= */ true);
+	});

@@ -2314,4 +2314,4 @@ sap.ui.define([
 	};
 
 	return _Requestor;
-}, /* bExport= */false);
+});

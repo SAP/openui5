@@ -5,4 +5,4 @@ sap.ui.define(['sap/ui/core/UIComponent'], function(UIComponent) {
 			includes : [ "style1.css" ]
 		}
 	});
-}, true);
+});

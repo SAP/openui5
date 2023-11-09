@@ -242,7 +242,7 @@ sap.ui.define([
 			 *
 			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
-			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment"},
+			appointments : {type : "sap.ui.unified.CalendarAppointment", defaultClass: CalendarAppointment, multiple : true, singularName : "appointment"},
 
 			/**
 			 * Appointments to be displayed in the top of the intervals. The <code>intervalHeaders</code> are used to visualize

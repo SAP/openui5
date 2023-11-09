@@ -11,4 +11,4 @@ sap.ui.define([
 			return undefined/*FakeLrepConnectorLocalStorage*/.forTesting.synchronous.clearAll();
 		}
 	};
-}, /* bExport= */ true);
+});

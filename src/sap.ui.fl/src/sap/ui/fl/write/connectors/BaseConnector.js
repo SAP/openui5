@@ -46,6 +46,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag Property bag
 		 * @param {object[]} mPropertyBag.flexObjects Map of condensed changes
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer in which the data should be stored
+		 * @param {string} mPropertyBag.reference Flex reference of the application
 		 * @param {string} [mPropertyBag.transport] The transport ID
 		 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
 		 * @param {string} [mPropertyBag.url] Configured url for the connector

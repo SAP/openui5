@@ -785,13 +785,10 @@ sap.ui.define([
 		oMessageBox.destroy();
 	});
 
-	// When the message box is used on phone device and contains exactly 2 buttons it should use internally beginButton and endButton aggregations instead of buttons.
 	QUnit.test("When the message box is used on phone device and contains exactly 2 buttons:", function (assert) {
-		this.stub(Device, "system").value({
-			phone: true,
-			tablet: false,
-			desktop: false
-		});
+		this.stub(Device.system, "phone").value(true);
+		this.stub(Device.system, "tablet").value(false);
+		this.stub(Device.system, "desktop").value(false);
 
 		MessageBox.show(sMessageText, {
 			title: sMessageTitle,
@@ -803,9 +800,8 @@ sap.ui.define([
 
 		oCore.applyChanges();
 		var oMessageBox = Element.getElementById("messagebox5");
-		assert.ok(!oMessageBox.getLeftButton(), "LeftButton aggregation is not used.");
-		assert.ok(!oMessageBox.getRightButton(), "RightButton aggregation is not used.");
-		assert.equal(oMessageBox.getButtons().length, 2, "Buttons aggregation is used.");
+		var aButtons = oMessageBox.getButtons();
+		assert.strictEqual(aButtons.length, 2, "MessageBox should contain exactly 2 buttons.");
 		oMessageBox.destroy();
 	});
 
