@@ -8918,10 +8918,9 @@ sap.ui.define([
 			return this.createView(assert, sView, oModel).then(function () {
 				var oTable = that.oView.byId("table");
 
-				that.expectChange("note", ["bar", "foo"])
+				that.expectChange("note", ["baz", "foo"]) // "bar" overtaken by update
 					.expectChange("companyName", ["", "SAP"])
-					.expectChange("buyerID", ["24", "23"])
-					.expectChange("note", ["baz"]);
+					.expectChange("buyerID", ["24", "23"]);
 
 				oCreatedContext = oTable.getBinding("items")
 					.create({BuyerID : "24", Note : "bar"}, bSkipRefresh);
@@ -43226,6 +43225,10 @@ sap.ui.define([
 	// not is async.
 	// Resetting pending changes works synchronously.
 	// JIRA: CPOUI5UISERVICESV3-1981, CPOUI5UISERVICESV3-1994
+	//
+	// CPOUI5UISERVICESV3-1994 is obsolete now because the cache promise remains resolved and
+	// resetChangesForPath can always run synchronously
+	// BCP: 2370141835
 [
 	// late dependent binding does not influence hasPendingChanges for a parent list binding with a
 	// persisted created entity.
@@ -43241,14 +43244,12 @@ sap.ui.define([
 		return this.waitForChanges(assert);
 	},
 	// modify a persisted created entity; hasPendingChanges is not influenced by late properties;
-	// resetChanges reverts changes asynchronously
+	// resetChanges reverts changes synchronously (BCP: 2370141835)
 	function (assert, oModel, oBinding, oCreatedContext) {
 		var oPropertyBinding = oModel.bindProperty("Note", oCreatedContext);
 
-		this.expectChange("note", "Modified");
-
 		oPropertyBinding.initialize();
-		oPropertyBinding.setValue("Modified"); // change event; reset is done asynchronously
+		oPropertyBinding.setValue("Modified"); // no change event; reset is done synchronously
 		this.oView.byId("form").setBindingContext(oCreatedContext);
 
 		// code under test
@@ -46179,6 +46180,50 @@ sap.ui.define([
 				]);
 			});
 		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: List binding with a navigation property using a context binding. Create three rows
+	// at once. See that the third context is not destroyed during this process.
+	// BCP: 2370141835
+	QUnit.test("BCP: 2370141835", async function (assert) {
+		const oModel = this.createTeaBusiModel({autoExpandSelect : true});
+		const sView = `
+<Table id="table" items="{/EMPLOYEES}">
+	<Text text="{ID}"/>
+	<Text binding="{EMPLOYEE_2_MANAGER}" id="managerId" text="{ID}"/>
+</Table>`;
+
+		this.expectRequest("EMPLOYEES?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)"
+				+ "&$skip=0&$top=100", {value : []})
+			.expectChange("managerId", []);
+
+		await this.createView(assert, sView, oModel);
+
+		this.expectChange("managerId", ["", "", ""])
+			.expectRequest({method : "POST", url : "EMPLOYEES", payload : {}}, {ID : "0"})
+			.expectRequest({method : "POST", url : "EMPLOYEES", payload : {}}, {ID : "1"})
+			.expectRequest({method : "POST", url : "EMPLOYEES", payload : {}}, {ID : "2"})
+			.expectRequest("EMPLOYEES('0')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
+				{ID : "0", EMPLOYEE_2_MANAGER : {ID : "10"}})
+			.expectRequest("EMPLOYEES('1')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
+				{ID : "1", EMPLOYEE_2_MANAGER : {ID : "11"}})
+			.expectRequest("EMPLOYEES('2')?$select=ID&$expand=EMPLOYEE_2_MANAGER($select=ID)",
+				{ID : "2", EMPLOYEE_2_MANAGER : {ID : "12"}})
+			.expectChange("managerId", ["12", "11", "10"]);
+
+		const oBinding = this.oView.byId("table").getBinding("items");
+		// code under test
+		const oContext0 = oBinding.create();
+		const oContext1 = oBinding.create();
+		const oContext2 = oBinding.create();
+
+		await Promise.all([
+			oContext0.created(),
+			oContext1.created(),
+			oContext2.created(),
+			this.waitForChanges(assert, "create")
+		]);
 	});
 
 	//*********************************************************************************************
