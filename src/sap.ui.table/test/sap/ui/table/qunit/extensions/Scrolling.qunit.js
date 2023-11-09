@@ -49,9 +49,7 @@ sap.ui.define([
 		PAGE: 2
 	};
 
-	//*******************************************************************
-
-	QUnit.module("Initialization", {
+	QUnit.module("Lifecycle", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable();
 		},
@@ -60,21 +58,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_init", function(assert) {
+	QUnit.test("Initialization", function(assert) {
 		var oExtension = this.oTable._getScrollExtension();
-		assert.ok(!!oExtension, "Extension available in table");
+		assert.ok(oExtension, "Extension available in table");
 	});
 
-	QUnit.module("Destruction", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
-		},
-		afterEach: function() {
-			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("destroy", function(assert) {
+	QUnit.test("Destruction", function(assert) {
 		var oExtension = this.oTable._getScrollExtension();
 
 		this.oTable.destroy();
@@ -5751,14 +5740,15 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("MouseWheel, scroll TextArea inside a cell", function(assert) {
+	QUnit.test("MouseWheel; textarea element inside a cell", function(assert) {
 		var oTable = this.oTable;
+		var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
+		var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
+
 		oTable.insertColumn(new Column({template: new TextArea({value: "A\nB\nC\nD\nE"})}), 0);
 		oCore.applyChanges();
 
-		var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
-		var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
-		var oTargetElement = oTable.qunit.getDataCell(0, 0).querySelectorAll('textarea')[0];
+		var oTargetElement = oTable.qunit.getDataCell(0, 0).querySelector("textarea");
 		oTargetElement.dispatchEvent(oWheelEvent);
 
 		return TableQUnitUtils.wait(100).then(function() {
@@ -5768,27 +5758,21 @@ sap.ui.define([
 
 			oTargetElement.scrollTop = 70;
 			oTargetElement.dispatchEvent(oWheelEvent);
-
-			return TableQUnitUtils.wait(100);
-		}).then(function() {
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "TextArea is scrolled to bottom, Table did not scroll");
 			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
 			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
 
 			oWheelEvent = TableQUnitUtils.createMouseWheelEvent(-20, MouseWheelDeltaMode.PIXEL, false);
 			oTargetElement.dispatchEvent(oWheelEvent);
-
-			return TableQUnitUtils.wait(100);
-		}).then(function() {
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "Table did not scroll");
 			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
 			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");
 
 			oTargetElement.scrollTop = 0;
 			oTargetElement.dispatchEvent(oWheelEvent);
-
-			return TableQUnitUtils.wait(100);
-		}).then(function() {
+		}).then(TableQUnitUtils.$wait(100)).then(function() {
 			assert.ok(oTable._getScrollExtension().getVerticalScrollbar().scrollTop === 0, "TextArea is scrolled to top, Table did not scroll");
 			assert.ok(!oWheelEvent.defaultPrevented, "Default action was not prevented");
 			assert.ok(oStopPropagationSpy.notCalled, "Propagation was not stopped");

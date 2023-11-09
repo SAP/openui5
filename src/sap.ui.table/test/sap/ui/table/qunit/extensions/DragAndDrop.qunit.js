@@ -12,7 +12,6 @@ sap.ui.define([
 ], function(TableQUnitUtils, TableUtils, DragDropInfo, CoreLibrary, Control, Device, jQuery, oCore) {
 	"use strict";
 
-	// mapping of globals
 	var createTables = window.createTables;
 	var destroyTables = window.destroyTables;
 	var initRowActions = window.initRowActions;
@@ -21,7 +20,6 @@ sap.ui.define([
 	var getRowAction = window.getRowAction;
 	var fakeGroupRow = window.fakeGroupRow;
 	var fakeSumRow = window.fakeSumRow;
-
 	var DropPosition = CoreLibrary.dnd.DropPosition;
 
 	function createDragEvent(sDragEventType) {
@@ -62,6 +60,27 @@ sap.ui.define([
 			jQuery(oDomRef).trigger(oEvent);
 		}
 	}
+
+	QUnit.module("Lifecycle", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oExtension = this.oTable._getDragAndDropExtension();
+		assert.ok(oExtension, "Extension available in table");
+	});
+
+	QUnit.test("Destruction", function(assert) {
+		var oExtension = this.oTable._getDragAndDropExtension();
+
+		this.oTable.destroy();
+		assert.ok(!oExtension.getTable(), "Reference to table removed");
+	});
 
 	QUnit.module("Common", {
 		beforeEach: function() {
