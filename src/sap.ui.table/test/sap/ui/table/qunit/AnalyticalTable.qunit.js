@@ -375,7 +375,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * deprecated As of version 1.76
+	 * @deprecated As of version 1.76
 	 */
 	QUnit.test("CollapseRecursive property", function(assert) {
 		assert.expect(7);
@@ -463,7 +463,6 @@ sap.ui.define([
 
 	QUnit.test("BindRows - Update columns", function(assert) {
 		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
-		var done = assert.async();
 
 		function testRun(mTestSettings) {
 			return new Promise(function(resolve) {
@@ -506,7 +505,7 @@ sap.ui.define([
 			});
 		}
 
-		test({
+		return test({
 			bindingInfo: oBindingInfo,
 			metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 				assert.ok(oUpdateColumnsSpy.notCalled, "No Model -> Columns not updated");
@@ -567,7 +566,79 @@ sap.ui.define([
 					}
 				}
 			});
-		}).then(done);
+		});
+	});
+
+	/** @deprecated As of version 1.48 */
+	QUnit.test("BindRows - Update columns with ODataModel V1 (legacy)", function(assert) {
+		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
+
+		function testRun(mTestSettings) {
+			return new Promise(function(resolve) {
+				var oTable = new AnalyticalTable({
+					columns: [new AnalyticalColumn()]
+				});
+
+				if (mTestSettings.renderTable) {
+					oTable.placeAt("qunit-fixture");
+					Core.applyChanges();
+				}
+
+				var oUpdateColumnsSpy = sinon.spy(oTable, "_updateColumns");
+				var oInvalidateSpy = sinon.spy(oTable, "invalidate");
+
+				oTable.setModel(mTestSettings.model);
+				if (mTestSettings.bindingInfo != null) {
+					oTable.bindRows(mTestSettings.bindingInfo);
+				}
+
+				TableUtils.Binding.metadataLoaded(oTable).then(function() {
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+					oTable.destroy();
+					resolve();
+				}).catch(function() {
+					mTestSettings.metadataLoaded(oUpdateColumnsSpy, oInvalidateSpy, mTestSettings.renderTable);
+					oTable.destroy();
+					resolve();
+				});
+			});
+		}
+
+		function test(mTestSettings) {
+			return new Promise(function(resolve) {
+				mTestSettings.renderTable = true;
+				testRun(mTestSettings).then(function() {
+					mTestSettings.renderTable = false;
+					return testRun(mTestSettings);
+				}).then(resolve);
+			});
+		}
+
+		return test({
+			bindingInfo: oBindingInfo,
+			model: new ODataModel(sServiceURI, {loadMetadataAsync: false}),
+			metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
+				assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
+				if (bTableIsRendered) {
+					assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
+				} else {
+					assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+				}
+			}
+		}).then(function() {
+			return test({
+				bindingInfo: oBindingInfo,
+				model: new ODataModel(sServiceURI, {loadMetadataAsync: true}),
+				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
+					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
+					if (bTableIsRendered) {
+						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
+					} else {
+						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
+					}
+				}
+			});
+		});
 	});
 
 	QUnit.test("Binding events", function(assert) {
@@ -879,6 +950,7 @@ sap.ui.define([
 			var fnHandler1 = function() {
 				var oBinding = this.oTable.getBinding();
 
+				/** @deprecated As of Version 1.44 */
 				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 
 				var oContext = this.oTable.getContextByIndex(0);
