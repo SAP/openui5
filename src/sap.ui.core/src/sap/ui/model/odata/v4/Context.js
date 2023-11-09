@@ -1036,7 +1036,7 @@ sap.ui.define([
 	 * Tells whether this node is an ancestor of (or the same as) the given node (in case of a
 	 * recursive hierarchy, see {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}).
 	 *
-	 * @param {sap.ui.model.odata.v4.Context} oNode - Some node which may be a descendant
+	 * @param {sap.ui.model.odata.v4.Context} [oNode] - Some node which may be a descendant
 	 * @returns {boolean} Whether the assumed ancestor relation holds
 	 * @throws {Error} If either context does not represent a node in a recursive hierarchy
 	 *   according to the hierarchy's current {@link #isExpanded expanded state}
@@ -1189,25 +1189,26 @@ sap.ui.define([
 	 * <code>Number.MAX_SAFE_INTEGER</code>). No other
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#create creation}, {@link #delete deletion}, or
 	 * move must be pending, and no other modification (including collapse of some ancestor node)
-	 * must happen while this move is pending!
+	 * must happen while this move is pending! Omitting a new parent turns this node into a root
+	 * node (since 1.121.0).
 	 *
 	 * This context's {@link #getIndex index} may change and it becomes "created persisted", with
 	 * {@link #isTransient} returning <code>false</code> etc.
 	 *
-	 * @param {object} oParameters - A parameter object
-	 * @param {sap.ui.model.odata.v4.Context} oParameters.parent - The new parent's context
+	 * @param {object} [oParameters] - A parameter object
+	 * @param {sap.ui.model.odata.v4.Context} [oParameters.parent=null] - The new parent's context
 	 * @returns {Promise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
 	 * @throws (Error)
-	 *   If the parent is missing or (a descendant of) this node, or if
-	 *   <code>oAggregation.expandTo</code> is unsupported.
+	 *   If the parent is (a descendant of) this node, or if <code>oAggregation.expandTo</code> is
+	 *   unsupported.
 	 *
 	 * @experimental As of version 1.119.0
 	 * @public
 	 */
-	Context.prototype.move = function ({parent : oParent}) {
-		if (!oParent || this.isAncestorOf(oParent)) {
+	Context.prototype.move = function ({parent : oParent = null} = {}) {
+		if (this.isAncestorOf(oParent)) {
 			throw new Error("Unsupported parent context: " + oParent);
 		}
 

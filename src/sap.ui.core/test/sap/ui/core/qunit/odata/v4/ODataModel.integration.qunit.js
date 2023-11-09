@@ -26283,6 +26283,10 @@ sap.ui.define([
 
 			assert.throws(function () {
 				// code under test
+				oCollapsed.move();
+			}, new Error("Unsupported $$aggregation.expandTo: 2"));
+			assert.throws(function () {
+				// code under test
 				oCollapsed.move({parent : oRoot});
 			}, new Error("Unsupported $$aggregation.expandTo: 2"));
 
@@ -29579,6 +29583,7 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2226
 	//
 	// Create a new root via "@$ui5.node.parent" : null (JIRA: CPOUI5ODATAV4-2355)
+	// Move "Beta" to make it a root node (JIRA: CPOUI5ODATAV4-2399)
 	//
 	// "Refresh single" for stale elements; keep same context instance for created nodes throughout
 	// collapse and side effects.
@@ -30158,6 +30163,38 @@ sap.ui.define([
 			]);
 			assert.strictEqual(oBeta, oListBinding.getCurrentContexts()[2], "same instance");
 			checkCreatedPersisted(assert, oBeta, oBetaCreated);
+
+			that.expectRequest({
+					headers : {
+						"If-Match" : "etag1.5",
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)",
+					payload : {
+						"BestFriend@odata.bind" : null
+					}
+				}, null, {ETag : "etag1.6"}) // 204 No Content
+				.expectChange("etag", [,,, "etag1.6"])
+				.expectChange("etag", [, "etag9.1", "etag0.2", "etag2.4"])
+				.expectChange("name", [, "Aleph #2", "Alpha #2", "Gamma #2"]);
+
+			return Promise.all([
+				// code under test
+				oBeta.move(),
+				that.waitForChanges(assert, "move Beta to make it a root node")
+			]);
+		}).then(function () {
+			checkCreatedPersisted(assert, oBeta, oBetaCreated);
+
+			return that.checkAllContexts("after move Beta to make it a root node", assert,
+				oListBinding, ["@$ui5.context.isTransient", "@$ui5.node.isExpanded",
+					"@$ui5.node.level", "@odata.etag", "Name"], [
+					[false, undefined, 1, "etag1.6", "Beta #2"],
+					[false, undefined, 1, "etag9.1", "Aleph #2"],
+					[undefined, true, 1, "etag0.2", "Alpha #2"],
+					[false, undefined, 2, "etag2.4", "Gamma #2"]
+				]);
 		});
 	});
 
@@ -30168,7 +30205,12 @@ sap.ui.define([
 	// a sibling is collapsed and after creation it is expanded again. The root is collapsed and
 	// immediately expanded again. Finally, the new node is deleted again.
 	// JIRA: CPOUI5ODATAV4-2393
-	QUnit.test("Recursive Hierarchy: expand all and create", async function (assert) {
+	//
+	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
+[false, true].forEach((bMakeRoot) => {
+	const sTitle = `Recursive Hierarchy: expand all and create; make root = ${bMakeRoot}`;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?$apply=ancestors"
@@ -30479,6 +30521,50 @@ sap.ui.define([
 				[undefined, 2, "7", "Kappa"]
 			]);
 
+		if (bMakeRoot) {
+			this.expectRequest({
+					batchNo : 7,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "Artists(ArtistID='9',IsActiveEntity=false)",
+					payload : {
+						"BestFriend@odata.bind" : null
+					}
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 7,
+					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
+						+ "&$select=_/LimitedRank"
+				}, {
+					_ : {
+						LimitedRank : "10" // Edm.Int64
+					}
+				});
+
+			await Promise.all([
+				// code under test
+				oNewChild.move(),
+				this.waitForChanges(assert, "make New a root node")
+			]);
+
+			await this.checkAllContexts("after make New a root node", assert, oListBinding,
+				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+					[undefined, 1, "9", "New"],
+					[true, 1, "0", "Alpha"],
+					[undefined, 2, "1", "Beta"],
+					[undefined, 2, "2", "Gamma"],
+					[undefined, 2, "3", "Delta"],
+					[undefined, 2, "4", "Epsilon"],
+					[true, 2, "5", "Zeta"],
+					[undefined, 3, "5.1", "Eta"],
+					[undefined, 3, "5.2", "Theta"],
+					[undefined, 2, "6", "Iota"],
+					[undefined, 2, "7", "Kappa"]
+				]);
+		}
+
 		this.expectRequest("DELETE Artists(ArtistID='9',IsActiveEntity=false)");
 
 		await Promise.all([
@@ -30501,6 +30587,7 @@ sap.ui.define([
 				[undefined, 2, "7", "Kappa"]
 			]);
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".
@@ -30858,7 +30945,12 @@ sap.ui.define([
 	// Gimel is moved to collapsed Alpha, thus expanding it again. Expand "the new parent" (Eta, see
 	// above) again. Delete all moved nodes again in a single $batch.
 	// JIRA: CPOUI5ODATAV4-2360
-	QUnit.test("Recursive Hierarchy: expand all and move", async function (assert) {
+	//
+	// Before deletion, Beta is maybe is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
+[false, true].forEach((bMakeRoot) => {
+	const sTitle = `Recursive Hierarchy: expand all and move; make root = ${bMakeRoot}`;
+
+	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?$apply=orderby(ArtistID)"
@@ -31451,18 +31543,67 @@ sap.ui.define([
 
 		oBeta = oListBinding.getAllCurrentContexts()[4];
 
+		if (bMakeRoot) {
+			this.expectRequest({
+					batchNo : 13,
+					headers : {
+						Prefer : "return=minimal"
+					},
+					method : "PATCH",
+					url : "Artists(ArtistID='1',IsActiveEntity=false)",
+					payload : {
+						"BestFriend@odata.bind" : null
+					}
+				}) // 204 No Content
+				.expectRequest({
+					batchNo : 13,
+					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
+						+ "&$select=_/LimitedRank"
+				}, {
+					_ : { // Note: 0, 8, or 10
+						LimitedRank : "0" // Edm.Int64
+					}
+				});
+
+			await Promise.all([
+				// code under test
+				oBeta.move(),
+				this.waitForChanges(assert, "move Beta to make it a root node")
+			]);
+
+			await this.checkAllContexts("after move Beta to make it a root node", assert,
+				oListBinding,
+				["@$ui5.node.isExpanded", "@$ui5.node.level", "ArtistID", "Name"], [
+					[true, 1, "1", "Beta"],
+					[true, 2, "1.1", "Gamma"],
+					[undefined, 3, "1.1.1", "Delta"],
+					[undefined, 3, "1.1.2", "Epsilon"],
+					[true, 1, "0", "Alpha"],
+					[undefined, 2, "10.1", "Gimel"],
+					[undefined, 2, "2", "Zeta"],
+					[true, 2, "3", "Eta"],
+					[undefined, 3, "3.1", "Theta"],
+					[undefined, 3, "3.2", "Iota"],
+					[undefined, 3, "3.3", "Kappa"],
+					[undefined, 2, "4", "Lambda"],
+					[true, 1, "9", "Aleph"],
+					[undefined, 2, "10", "Beth"]
+				]);
+		}
+
+		const iBatchNo = this.iBatchNo + 1; // don't care about exact no., but use thrice below
 		this.expectRequest({
-				batchNo : 13,
+				batchNo : iBatchNo,
 				method : "DELETE",
 				url : "Artists(ArtistID='1',IsActiveEntity=false)"
 			})
 			.expectRequest({
-				batchNo : 13,
+				batchNo : iBatchNo,
 				method : "DELETE",
 				url : "Artists(ArtistID='10',IsActiveEntity=false)"
 			})
 			.expectRequest({
-				batchNo : 13,
+				batchNo : iBatchNo,
 				method : "DELETE",
 				url : "Artists(ArtistID='10.1',IsActiveEntity=false)"
 			});
@@ -31489,6 +31630,7 @@ sap.ui.define([
 				[undefined, 1, "9", "Aleph"]
 			]);
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Show the first level of a recursive hierarchy ("Alpha", "Omega"), expand "Alpha".

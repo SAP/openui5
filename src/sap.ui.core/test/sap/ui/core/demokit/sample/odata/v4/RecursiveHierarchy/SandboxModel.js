@@ -392,10 +392,12 @@ sap.ui.define([
 				}
 
 				const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
-					.slice("EMPLOYEES('".length, -"')".length);
-				for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
-					if (sId === oChild.ID) { // cycle detected
-						throw new Error("Parent must not be a descendant of moved node");
+					?.slice("EMPLOYEES('".length, -"')".length);
+				if (sParentId) {
+					for (let sId = sParentId; sId; sId = mNodeById[sId].MANAGER_ID) {
+						if (sId === oChild.ID) { // cycle detected
+							throw new Error("Parent must not be a descendant of moved node");
+						}
 					}
 				}
 
@@ -409,18 +411,27 @@ sap.ui.define([
 					adjustDescendantCount(oChild.MANAGER_ID, -(oChild.DescendantCount + 1));
 				} // else: cannot really happen w/ a single root and no cycles!
 
-				if (!(sParentId in mChildrenByParentId)) { // new parent not a leaf anymore
-					mNodeById[sParentId].DrillState = "collapsed"; // @see #reset
+				if (sParentId) {
+					if (!(sParentId in mChildrenByParentId)) {
+						// new parent not a leaf anymore
+						mNodeById[sParentId].DrillState = "collapsed"; // @see #reset
+					}
+					//TODO Note: "AGE determines sibling order (ascending)"
+					(mChildrenByParentId[sParentId] ??= []).push(oChild);
+					adjustDescendantCount(sParentId, oChild.DescendantCount + 1);
 				}
-				//TODO Note: "AGE determines sibling order (ascending)"
-				(mChildrenByParentId[sParentId] ??= []).push(oChild);
 				oChild.MANAGER_ID = sParentId;
-				adjustDescendantCount(sParentId, oChild.DescendantCount + 1);
+				const iParentDistanceFromRoot = sParentId
+					? mNodeById[sParentId].DistanceFromRoot
+					: 0;
 				adjustDistanceFromRoot(oChild,
-					mNodeById[sParentId].DistanceFromRoot + 1 - oChild.DistanceFromRoot);
+					iParentDistanceFromRoot + 1 - oChild.DistanceFromRoot);
 				const aSpliced
 					= aAllNodes.splice(aAllNodes.indexOf(oChild), oChild.DescendantCount + 1);
-				aAllNodes.splice(aAllNodes.indexOf(mNodeById[sParentId]) + 1, 0, ...aSpliced);
+				const iNewIndex = sParentId
+					? aAllNodes.indexOf(mNodeById[sParentId]) + 1
+					: 0;
+				aAllNodes.splice(iNewIndex, 0, ...aSpliced);
 				break;
 			}
 
