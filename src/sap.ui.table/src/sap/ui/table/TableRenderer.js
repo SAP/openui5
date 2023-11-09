@@ -553,7 +553,7 @@ sap.ui.define([
 		rm.class("sapUiTableHeaderDataCell");
 
 		var oColumnHeaderMenu = oColumn.getHeaderMenuInstance();
-		if (oTable.getEnableColumnReordering() || oTable.hasListeners("columnSelect") || oColumnHeaderMenu && oColumnHeaderMenu.getAriaHasPopupType() !== "None") {
+		if (oTable.getEnableColumnReordering() || oColumnHeaderMenu && oColumnHeaderMenu.getAriaHasPopupType() !== "None") {
 			rm.class("sapUiTableHeaderCellActive");
 		}
 		/**

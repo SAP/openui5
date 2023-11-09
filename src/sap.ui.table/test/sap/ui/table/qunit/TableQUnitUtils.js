@@ -1,5 +1,4 @@
 sap.ui.define([
-	"sap/base/i18n/Localization",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
 	"sap/ui/table/AnalyticalTable",
@@ -9,16 +8,17 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
-	"sap/ui/Device",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
-	"sap/base/util/merge",
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/util/merge",
+	"sap/base/i18n/Localization",
 	// provides jQuery.fn.scrollLeftRTL
 	"sap/ui/dom/jquery/scrollLeftRTL"
 ], function(
-	Localization,
 	Table,
 	TreeTable,
 	AnalyticalTable,
@@ -28,12 +28,14 @@ sap.ui.define([
 	FixedRowMode,
 	PluginBase,
 	TableUtils,
-	Device,
 	JSONModel,
 	Control,
-	merge,
+	oCore,
+	CoreLibrary,
+	Device,
 	jQuery,
-	oCore
+	merge,
+	Localization
 ) {
 	"use strict";
 
@@ -887,6 +889,13 @@ sap.ui.define([
 	TableQUnitUtils.TestControl = TestControl;
 	TableQUnitUtils.TestInputControl = TestInputControl;
 	TableQUnitUtils.HeightTestControl = HeightTestControl;
+	TableQUnitUtils.ColumnHeaderMenu = Control.extend("sap.ui.table.test.TestContextMenu", {
+		metadata: {
+			interfaces: ["sap.ui.core.IColumnHeaderMenu"]
+		},
+		openBy: () => {},
+		getAriaHasPopupType: () => { return CoreLibrary.aria.HasPopup.Menu; }
+	});
 	TableQUnitUtils.TimeoutError = TimeoutError;
 
 	TableQUnitUtils.setDefaultSettings = function(mSettings) {
