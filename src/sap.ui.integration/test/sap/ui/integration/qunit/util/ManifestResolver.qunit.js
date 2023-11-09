@@ -1775,6 +1775,89 @@ sap.ui.define([
 			});
 	});
 
+	QUnit.test("ComboBox filter", function (assert) {
+		const done = assert.async();
+
+		const oManifest = {
+			"sap.app": {
+				"id": "manifestResolver.test.card.comboBox",
+				"type": "card"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"filters": {
+						"country": {
+							"type": "ComboBox",
+							"label": "Country",
+							"selectedKey": "FR",
+							"placeholder": "Enter a country",
+							"data": {
+								"json": [
+									{
+										"text": "Austria",
+										"key": "AT"
+									},
+									{
+										"text": "Germany",
+										"key": "DE"
+									},
+									{
+										"text": "France",
+										"key": "FR"
+									}
+								]
+							},
+							"item": {
+								"path": "/",
+								"template": {
+									"key": "{key}",
+									"title": "{text}",
+									"additionalText": "{key}"
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+
+		const oCard = new SkeletonCard({
+			manifest: oManifest,
+			baseUrl: "test-resources/sap/ui/integration/qunit/testResources/manifestResolver/"
+		});
+
+		// Act
+		oCard.attachEventOnce("stateChanged", async () => {
+			// Assert
+			const oRes = await ManifestResolver.resolveCard(oCard);
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.items.length, 3, "Items are resolved.");
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.items[0].title, "Austria", "First item title is resolved.");
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.items[0].key, "AT", "First item key is resolved.");
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.items[0].additionalText, "AT", "First item additionalText is resolved.");
+
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.value, "France", "Initial value is resolved.");
+			assert.strictEqual(oRes["sap.card"].configuration.filters.country.selectedKey, "FR", "Initial selectedKey is resolved.");
+
+			oCard.setFilterValue("country", { selectedKey: "DE" });
+
+			const oRes2 = await ManifestResolver.resolveCard(oCard);
+			assert.strictEqual(oRes2["sap.card"].configuration.filters.country.value, "Germany", "Changed value is resolved correctly.");
+			assert.strictEqual(oRes2["sap.card"].configuration.filters.country.selectedKey, "DE", "Changed selectedKey is resolved correctly.");
+
+			oCard.setFilterValue("country", { value: "Italy" });
+
+			const oRes3 = await ManifestResolver.resolveCard(oCard);
+			assert.strictEqual(oRes3["sap.card"].configuration.filters.country.value, "Italy", "Changed value second time is resolved correctly.");
+			assert.strictEqual(oRes3["sap.card"].configuration.filters.country.selectedKey, undefined, "Changed selectedKey second time is resolved correctly.");
+
+			oCard.destroy();
+			done();
+		});
+
+		oCard.startManifestProcessing();
+	});
+
 	QUnit.module("Resolving formatters");
 
 	QUnit.test("Predefined formatters", function (assert) {
