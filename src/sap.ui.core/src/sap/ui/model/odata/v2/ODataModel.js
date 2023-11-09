@@ -7773,11 +7773,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Sets the <code>MessageParser</code> that is invoked upon every back-end request.
+	 * Sets the {@link sap.ui.core.message.MessageParser} that is invoked upon every back-end request.
 	 *
-	 * This message parser analyzes the response and notifies the <code>Messaging</code> about added and deleted messages.
+	 * This message parser analyzes the response and notifies {@link sap.ui.core.Messaging} about added and deleted messages.
 	 *
-	 * @param {object|null} [oParser] The <code>MessageParser</code> instance that parses the responses and adds messages to the <code>MessageManager</code>
+	 * @param {object|null} [oParser] The {@link sap.ui.core.message.MessageParser} instance that parses the responses and adds messages to {@link sap.ui.core.Messaging}
 	 * @return {this} Model instance for method chaining
 	 */
 	ODataModel.prototype.setMessageParser = function(oParser) {
