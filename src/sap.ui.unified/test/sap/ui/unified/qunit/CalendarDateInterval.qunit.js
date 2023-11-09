@@ -145,6 +145,18 @@ sap.ui.define([
 		assert.ok(oYearRangePicker.getYears(), 2, "YearRangePicker has display correct nubmer of year ranges");
 	});
 
+	QUnit.test("Week numbers are rendered when no primaryCalendarType is set", function (assert) {
+		// Prepare
+		var oCal = new CalendarDateInterval().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Assert
+		assert.ok(oCal.getDomRef().querySelector(".sapUiCalRowWeekNumbers"), "Weeks are rendered bvelow the dates");
+
+		// Clean
+		oCal.destroy();
+	});
+
 	QUnit.module("initialize", {
 		beforeEach: function () {
 			this.oCal = new CalendarDateInterval("myCal", {
