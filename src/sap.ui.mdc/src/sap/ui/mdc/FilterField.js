@@ -71,6 +71,10 @@ sap.ui.define([
 				 *
 				 * If empty, default operators depending on used data type are taken. The standard operators are mentioned in {@link sap.ui.mdc.enums.OperatorName OperatorName}.
 				 *
+				 * <b>Note:</b> If a custom control is used as {@link sap.ui.mdc.field.FieldBase#setContent Content}, {@link sap.ui.mdc.field.FieldBase#setContentEdit ContentEdit},
+				 * or {@link sap.ui.mdc.field.FieldBase#setContentDisplay ContentDisplay}, and the custom control only supports one operator (as no operator can be shown), only the required
+				 * operator must be set. So the user input into the custom control creates a condition with the set operator, and a condition with this operator provides the value
+				 * the custom control needs.
 				 * @since 1.73.0
 				 */
 				operators: {
