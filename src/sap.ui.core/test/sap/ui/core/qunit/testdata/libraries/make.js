@@ -55,11 +55,11 @@ function makeLib(lib, dependencies) {
 
 	const code =
 `sap.ui.define([
-	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library"
-], function(oCore) {
+], function(Library) {
 	"use strict";
-	return oCore.initLibrary({
+	return Library.init({
 		name: "${makeName(lib)}",
 		dependencies: [${deps.map((dep) => `
 			"${makeName(dep)}"`).join(",")}
