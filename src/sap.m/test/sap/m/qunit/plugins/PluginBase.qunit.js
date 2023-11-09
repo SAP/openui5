@@ -18,8 +18,14 @@ sap.ui.define([
 	}, TestPlugin);
 
 	QUnit.module("Activation & Deactivation", {
-		beforeEach: function() {
+		beforeEach: function(assert) {
 			this.oPlugin = new TestPlugin();
+			this.oPlugin.onActivate = function() {
+				assert.ok(this.isActive(), "In onActivate hook, isActive method returns true");
+			};
+			this.oPlugin.onDeactivate = function() {
+				assert.notOk(this.isActive(), "In onDeactivate hook, isActive method returns false");
+			};
 			this.oPluginMock = this.mock(this.oPlugin);
 			this.oControl = new TestControl();
 		},
