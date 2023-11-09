@@ -1,17 +1,16 @@
 sap.ui.define([
-	"sap/ui/core/library",
 	"sap/ui/core/UIComponent",
 	"./model/models",
 	"sap/ui/core/routing/History",
 	"sap/ui/Device",
 	"sap/ui/model/resource/ResourceModel"
-], function(library, UIComponent, models, History, Device) {
+], function(UIComponent, models, History, Device) {
 	"use strict";
 
 	return UIComponent.extend("sap.ui.demo.toolpageapp.Component", {
 		metadata: {
 			manifest: "json",
-			interfaces: [library.IAsyncContentCreation]
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
 
 		init: function () {
