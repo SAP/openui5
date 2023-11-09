@@ -1178,11 +1178,8 @@
 		}
 
 		// avoid cycles
-		oModule.state = EXECUTING;
-		if (sDeprecationMessage) {
-			oModule.deprecation = sDeprecationMessage;
-			oModule.state = READY;
-		}
+		oModule.state = READY;
+		oModule.deprecation = sDeprecationMessage || undefined;
 
 		return oModule;
 	}
