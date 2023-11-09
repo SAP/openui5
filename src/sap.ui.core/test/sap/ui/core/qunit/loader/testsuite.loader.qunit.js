@@ -73,9 +73,9 @@ sap.ui.define(function() {
 			 * without using the loader itself to setup the test.
 			 * (The generic starter Test.qunit.html and runTest.js script both use the loader internally)
 			 */
-			"asyncMode_unavoidablySync": {
+			"asyncMode_legacyAPIs": {
 				/* separate test page as it only wants the loader, no core */
-				page: "test-resources/sap/ui/core/qunit/loader/asyncMode_unavoidablySync.qunit.html",
+				page: "test-resources/sap/ui/core/qunit/loader/asyncMode_legacyAPIs.qunit.html",
 				title: "Test Page for Module Loading (ui5loader)",
 				loader: {
 					paths: {

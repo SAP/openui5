@@ -93,9 +93,11 @@
 			caption: "an AMD module with a dependency to a failing AMD module",
 			module: 'amd/module-with-dependency-to-failing-amd-module'
 		},
-		{ // sync
+		{ // sync & async
 			caption: "an AMD module with a dependency to a failing UI5 legacy module",
-			module: 'amd/module-with-dependency-to-failing-ui5-legacy-module'
+			module: 'amd/module-with-dependency-to-failing-ui5-legacy-module',
+			testAsync: true,
+			skip: SKIP_ASYNC_ERROR_HANDLING
 		},
 		{ // sync & async
 			caption: "a UI5 legacy module with a dependency to a failing AMD module",
@@ -114,10 +116,12 @@
 			module: 'amd/module-with-dependency-to-failed-amd-module',
 			requireFirst: 'amd/failing-module1'
 		},
-		{	// sync
+		{	// sync & async
 			caption: "an AMD module with a dependency to an already failed UI5 legacy module",
 			module: 'amd/module-with-dependency-to-failed-ui5-legacy-module',
-			requireFirst: 'ui5-legacy/failing-module1'
+			requireFirst: 'ui5-legacy/failing-module1',
+			testAsync: true,
+			skip: SKIP_ASYNC_ERROR_HANDLING
 		},
 		{	// sync & async
 			caption: "a UI5 legacy module with a dependency to an already failed AMD module",
@@ -460,6 +464,31 @@
 		// Assert
 		assert.equal(sap.ui.require("fixture/async-sync-conflict_legacyAPIs/SomeControlRenderer").someProperty, "some value", "property should have the expected value after sync loading");
 	});
+
+
+
+	// ========================================================================================
+	// Automatic Export to Global
+	// ========================================================================================
+
+	QUnit.module("Export to Global");
+
+	QUnit.test("basic support", function(assert) {
+		var done = assert.async();
+
+		function getModule1() {
+			return window.fixture && window.fixture["amd-with-export-true"] && window.fixture["amd-with-export-true"].module1;
+		}
+
+		assert.strictEqual(getModule1(), undefined, "before module execution, the namespace should not exist");
+		sap.ui.require(['fixture/amd-with-export-true/module1'], function(module1) {
+			assert.strictEqual(typeof module1.parentNamespace, 'object', "during module execution, the namespace should already exist");
+			assert.strictEqual(module1.parentNamespace.module1, module1, "namespace member should equal the export");
+			assert.strictEqual(getModule1(), module1, "after module execution, the global object should equal the export");
+			done();
+		});
+	});
+
 
 
 	// ========================================================================================
