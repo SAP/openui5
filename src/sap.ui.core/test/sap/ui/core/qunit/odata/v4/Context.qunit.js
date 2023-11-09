@@ -2084,6 +2084,7 @@ sap.ui.define([
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
 		let bResolved = false;
+		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
 		this.mock(oBinding).expects("move").withExactArgs(sinon.match.same(oContext), "~oParent~")
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
@@ -2118,11 +2119,15 @@ sap.ui.define([
 			oContext.move({parent : null});
 		}, new Error("Unsupported parent context: null"));
 
+		const oContextMock = this.mock(oContext);
+		oContextMock.expects("isAncestorOf").withExactArgs("~oParent~").returns(true);
+
 		assert.throws(function () {
 			// code under test
-			oContext.move({parent : oContext});
-		}, new Error("Unsupported parent context: " + oContext));
+			oContext.move({parent : "~oParent~"});
+		}, new Error("Unsupported parent context: ~oParent~"));
 
+		oContextMock.expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
 		this.mock(oBinding).expects("move").withExactArgs(sinon.match.same(oContext), "~oParent~")
 			.returns(SyncPromise.reject("~error~"));
 

@@ -4253,6 +4253,7 @@ sap.ui.define([
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES('B')", 99),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES('C')", 1),
 			oContext3 = {},
+			oContext4 = {},
 			oContextMock = this.mock(Context);
 
 		// must be mocked here, so that later bind grabs the mock
@@ -4278,14 +4279,18 @@ sap.ui.define([
 			"@$ui5._" : {predicate : "('B')"}
 		}, {
 			"@$ui5._" : {predicate : "('C')"}
+		}, {
+			"@$ui5._" : {context : oContext4, predicate : "('E')"}
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[2], oContext1);
 		assert.strictEqual(oBinding.aContexts[3], oContext2);
+		assert.strictEqual(oBinding.aContexts[4], oContext4);
 		assert.strictEqual(oContext1.getModelIndex(), 2);
 		assert.strictEqual(oContext2.getModelIndex(), 3);
 		assert.strictEqual(oContext1.iIndex, 0);
 		assert.strictEqual(oContext2.iIndex, 1);
+		assert.strictEqual(oContext4.iIndex, 2);
 		assert.strictEqual(Object.keys(oBinding.mPreviousContextsByPath).length, 2);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('A')"], oContext0);
 		assert.strictEqual(oBinding.mPreviousContextsByPath["/EMPLOYEES('D')"], oContext3);
@@ -4378,11 +4383,13 @@ sap.ui.define([
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 
-		oBinding.createContexts(0, [{
+		// code under test
+		oBinding.createContexts(42, [{
 			"@$ui5._" : {context : oNewContext, predicate : "('1')"}
 		}]);
 
-		assert.strictEqual(oBinding.aContexts[0], oNewContext);
+		assert.strictEqual(oBinding.aContexts[42], oNewContext);
+		assert.strictEqual(oNewContext.iIndex, 42);
 	});
 
 	//*********************************************************************************************
@@ -10773,8 +10780,9 @@ sap.ui.define([
 	[-1, +1, 0].forEach((iDirection) => { // child is before or after parent (or right in place)
 		[false, true].forEach((bIsExpanded) => {
 			[1, 4].forEach((iCount) => {
-				const sTitle = `move: created=${bCreated}, direction=${iDirection},
- expanded=${bIsExpanded}, child nodes added=${iCount}`;
+				[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
+					const sTitle = `move: created=${bCreated}, direction=${iDirection},
+ expanded=${bIsExpanded}, child nodes added=${iCount}, expandTo=${iExpandTo}`;
 
 	QUnit.test(sTitle, function (assert) {
 		const iParentIndex = 42;
@@ -10800,6 +10808,12 @@ sap.ui.define([
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
+		if (iExpandTo !== undefined) {
+			oBinding.mParameters.$$aggregation.expandTo = iExpandTo;
+		}
 		const oCollapseExpectation = this.mock(oBinding).expects("collapse")
 			.exactly(bIsExpanded ? 1 : 0).withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
@@ -10827,7 +10841,7 @@ sap.ui.define([
 					this.mock(oChildContext).expects("created").withExactArgs()
 						.returns(bCreated ? {/*Promise*/} : undefined);
 					this.mock(oChildContext).expects("setCreatedPersisted")
-						.exactly(bCreated ? 0 : 1).withExactArgs();
+						.exactly(bCreated || iExpandTo > 1 ? 0 : 1).withExactArgs();
 					this.mock(oBinding).expects("expand").exactly(bIsExpanded ? 1 : 0)
 						.withExactArgs(sinon.match.same(oChildContext))
 						.returns(SyncPromise.resolve());
@@ -10859,6 +10873,7 @@ sap.ui.define([
 			}
 		});
 	});
+				});
 			});
 		});
 	});
@@ -10885,6 +10900,9 @@ sap.ui.define([
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
 		this.mock(oBinding).expects("collapse").exactly(bIsExpanded ? 1 : 0)
 			.withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
@@ -10927,6 +10945,9 @@ sap.ui.define([
 		};
 		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
 		const oBinding = this.bindList("/EMPLOYEES");
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {hierarchyQualifier : "X"};
 		this.mock(oBinding).expects("collapse")
 			.withExactArgs(sinon.match.same(oChildContext), true);
 		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("~group~");
@@ -10954,6 +10975,32 @@ sap.ui.define([
 		assert.strictEqual(oSyncPromise.getResult(), "~error~");
 
 		oSyncPromise.caught(); // avoid "Uncaught (in promise)"
+	});
+
+	//*********************************************************************************************
+	QUnit.test("move: throws", function (assert) {
+		const oBinding = this.bindList("/EMPLOYEES");
+
+		assert.throws(function () {
+			// code under test
+			oBinding.move();
+		}, new Error("Missing recursive hierarchy"));
+
+		oBinding.setAggregation({group : {dimension : {}}});
+
+		assert.throws(function () {
+			// code under test
+			oBinding.move();
+		}, new Error("Missing recursive hierarchy"));
+
+		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
+		// too far :-(
+		oBinding.mParameters.$$aggregation = {expandTo : 2, hierarchyQualifier : "X"};
+
+		assert.throws(function () {
+			// code under test
+			oBinding.move();
+		}, new Error("Unsupported $$aggregation.expandTo: 2"));
 	});
 
 	//*********************************************************************************************

@@ -418,6 +418,7 @@ sap.ui.define([
 	 *   The meta path for the entity
 	 * @returns {string|undefined}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
+	 *
 	 * @protected
 	 */
 	// Note: overridden by _AggregationCache.calculateKeyPredicate
@@ -1930,6 +1931,7 @@ sap.ui.define([
 	 * @param {string} [sPath=""]
 	 *   The element collection's path within this cache (as used by change listeners), may be
 	 *   <code>""</code> (only in a CollectionCache)
+	 *
 	 * @protected
 	 */
 	_Cache.prototype.restoreElement = function (iIndex, oElement, iDeletedIndex,
@@ -3108,6 +3110,48 @@ sap.ui.define([
 		});
 
 		return aElements;
+	};
+
+	/**
+	 * Moves the given number of elements from the given old to the given new position within this
+	 * cache's collection.
+	 *
+	 * @param {number} iOldFrom - Old position before the move
+	 * @param {number} iNewTo - New position after the move
+	 * @param {number} iCount - Number of elements to move
+	 *
+	 * @protected
+	 */
+	_CollectionCache.prototype.move = function (iOldFrom, iNewTo, iCount) {
+		// Note: do not change reference to this.aElements! It's kept in closures :-(
+		// @see #restore
+		const aElements = this.aElements;
+
+		// reverse content of [iFirst, iLast]
+		function reverse(iFirst, iLast) {
+			while (iFirst < iLast) {
+				const vSwap = aElements[iFirst];
+				aElements[iFirst] = aElements[iLast];
+				aElements[iLast] = vSwap;
+				iFirst += 1;
+				iLast -= 1;
+			}
+		}
+
+		// inplace block swap of adjacent [iStart, iMiddle[ and [iMiddle, iEnd[
+		function swap(iStart, iMiddle, iEnd) {
+			reverse(iStart, iMiddle - 1);
+			reverse(iMiddle, iEnd - 1);
+			reverse(iStart, iEnd - 1);
+		}
+
+		if (iCount > 0) {
+			if (iOldFrom < iNewTo) {
+				swap(iOldFrom, iOldFrom + iCount, iNewTo + iCount);
+			} else if (iOldFrom > iNewTo) {
+				swap(iNewTo, iOldFrom, iOldFrom + iCount);
+			} // else: nothing to do
+		}
 	};
 
 	/**
