@@ -112,14 +112,6 @@ sap.ui.define([
 	};
 	TestInputControl.prototype.getAccessibilityInfo = TestControl.prototype.getAccessibilityInfo;
 
-	var TestContextMenu = Control.extend("sap.ui.table.test.TestContextMenu", {
-		metadata: {
-			interfaces: ["sap.ui.core.IColumnHeaderMenu"]
-		},
-		openBy: sinon.stub(),
-		getAriaHasPopupType: sinon.stub().returns(coreLibrary.aria.HasPopup.None)
-	});
-
 	function _modifyTables() {
 		[oTable, oTreeTable].forEach(function(_oTable) {
 			_oTable.destroyColumns();
@@ -796,28 +788,17 @@ sap.ui.define([
 
 	QUnit.test("aria-haspopup", function(assert) {
 		var oColumn = oTable.getColumns()[0];
-		var oHeaderMenu = new TestContextMenu();
+		var oHeaderMenu = new TableQUnitUtils.ColumnHeaderMenu();
 
-		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
+		assert.ok(!oColumn.getDomRef().hasAttribute("aria-haspopup"), "Not set after rendering without header menu");
 
-		oColumn.setHeaderMenu(oHeaderMenu); // getAriaHasPopupType returns "None"
+		oColumn.setHeaderMenu(oHeaderMenu);
 		oCore.applyChanges();
-		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
-
-		Object.values(coreLibrary.aria.HasPopup).forEach((sPopupType) => {
-			if (sPopupType === coreLibrary.aria.HasPopup.None) {
-				return;
-			}
-
-			oHeaderMenu.getAriaHasPopupType.returns(sPopupType);
-			oColumn.focus();
-
-			assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), sPopupType.toLowerCase());
-		});
+		assert.equal(oColumn.getDomRef().getAttribute("aria-haspopup"), "menu", "Set after rendering with header menu that returns HasPopup.Menu");
 
 		oColumn.setHeaderMenu();
 		oCore.applyChanges();
-		assert.notOk(oColumn.getDomRef().hasAttribute("aria-haspopup"), "none");
+		assert.ok(!oColumn.getDomRef().hasAttribute("aria-haspopup"), "Not set after the header menu is removed");
 
 		oHeaderMenu.destroy();
 	});
