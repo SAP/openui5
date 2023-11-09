@@ -72,6 +72,12 @@
 				<m:Button id="delete" icon="sap-icon://delete" press=".onDelete" tooltip="Delete"/>
 			</template>
 		</Column>
+		<Column width="4em">
+			<template>
+				<m:Button enabled="{= %{@$ui5.node.level} > 1}" icon="sap-icon://back-to-top"
+					press=".onMakeRoot" tooltip="Make Root"/>
+			</template>
+		</Column>
 	</TreeTable>
 
 	<mvc:dependents>
