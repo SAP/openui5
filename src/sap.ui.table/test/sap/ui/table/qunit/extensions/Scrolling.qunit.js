@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/RowActionItem",
 	"sap/ui/table/rowmodes/Type",
@@ -9,17 +10,17 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/TableRenderer",
-	"sap/ui/Device",
 	"sap/ui/table/library",
-	"sap/ui/table/Column",
+	"sap/m/TextArea",
+	"sap/ui/Device",
 	"sap/ui/core/Control",
+	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Context",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/core/Core",
-	"sap/m/TextArea"
+	"sap/ui/model/ChangeReason"
 ], function(
 	TableQUnitUtils,
+	Column,
 	RowAction,
 	RowActionItem,
 	RowModeType,
@@ -27,21 +28,18 @@ sap.ui.define([
 	AutoRowMode,
 	TableUtils,
 	TableRenderer,
+	library,
+	TextArea,
 	Device,
-	tableLibrary,
-	Column,
 	Control,
+	oCore,
 	JSONModel,
 	Context,
-	ChangeReason,
-	oCore,
-	TextArea
+	ChangeReason
 ) {
 	"use strict";
 
-	// mapping of global function calls
 	var initRowActions = window.initRowActions;
-
 	var HeightControl = TableQUnitUtils.HeightTestControl;
 	var MouseWheelDeltaMode = {
 		PIXEL: 0,
@@ -112,7 +110,7 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.ok(oHSb.offsetWidth === 0 && oHSb.offsetHeight === 0, "Table content does fit: Horizontal scrollbar is not visible");
 
-		oTable.setSelectionMode(tableLibrary.SelectionMode.None);
+		oTable.setSelectionMode(library.SelectionMode.None);
 		oTable.getRowMode().setRowCount(6);
 		oTable.getColumns()[0].setWidth("495px");
 		oCore.applyChanges();
@@ -156,7 +154,7 @@ sap.ui.define([
 		oTable.insertColumn(TableQUnitUtils.createTextColumn().setWidth("40px"), 0);
 		oTable.setFixedColumnCount(1);
 		oTable.setRowActionCount(2);
-		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]}));
+		oTable.setRowActionTemplate(new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]}));
 		oCore.applyChanges();
 		assert.strictEqual(oHSbComputedStyle.marginLeft, "88px", "Fixed columns and row actions: Left margin");
 		assert.strictEqual(oHSbComputedStyle.marginRight, "107px", "Fixed columns and row actions: Right margin");
@@ -391,7 +389,7 @@ sap.ui.define([
 	QUnit.test("getHorizontalScrollbar", function(assert) {
 		var oScrollExtension = this.oTable._getScrollExtension();
 
-		assert.strictEqual(oScrollExtension.getHorizontalScrollbar(), this.oTable.getDomRef(tableLibrary.SharedDomRef.HorizontalScrollBar),
+		assert.strictEqual(oScrollExtension.getHorizontalScrollbar(), this.oTable.getDomRef(library.SharedDomRef.HorizontalScrollBar),
 			"Returned: Horizontal scrollbar element");
 
 		oScrollExtension.destroy();
@@ -404,7 +402,7 @@ sap.ui.define([
 		var oScrollbar = oScrollExtension.getVerticalScrollbar();
 		var oScrollbarParent = oScrollbar.parentNode;
 
-		assert.strictEqual(oScrollExtension.getVerticalScrollbar(), this.oTable.getDomRef(tableLibrary.SharedDomRef.VerticalScrollBar),
+		assert.strictEqual(oScrollExtension.getVerticalScrollbar(), this.oTable.getDomRef(library.SharedDomRef.VerticalScrollBar),
 			"Returned the vertical scrollbar");
 
 		oScrollbarParent.removeChild(oScrollbar);
@@ -3083,7 +3081,7 @@ sap.ui.define([
 			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]})
+			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3134,7 +3132,7 @@ sap.ui.define([
 			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]})
+			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3162,10 +3160,12 @@ sap.ui.define([
 			var aTestConfigs = [
 				{name: "Horizontal scrollbar", element: oTable._getScrollExtension().getHorizontalScrollbar()},
 				{name: "Column header container", element: oDomRef.querySelector(".sapUiTableColHdrCnt")},
-				{name: "Title container", element: oDomRef.querySelector(".sapUiTableHdr")},
 				{name: "Extension container", element: oDomRef.querySelector(".sapUiTableExt")},
 				{name: "Footer container", element: oDomRef.querySelector(".sapUiTableFtr")}
 			];
+
+			/** @deprecated As of version 1.72 */
+			aTestConfigs.push({name: "Title container", element: oDomRef.querySelector(".sapUiTableHdr")});
 
 			aTestConfigs.forEach(function(mConfig) {
 				pTestSequence = pTestSequence.then(function() {
@@ -3401,7 +3401,7 @@ sap.ui.define([
 			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]})
+			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -3490,7 +3490,7 @@ sap.ui.define([
 			footer: new HeightControl(),
 			fixedColumnCount: 1,
 			rowActionCount: 1,
-			rowActionTemplate: new RowAction({items: [new RowActionItem({type: tableLibrary.RowActionType.Navigation})]})
+			rowActionTemplate: new RowAction({items: [new RowActionItem({type: library.RowActionType.Navigation})]})
 		}, function(oTable) {
 			oTable.addColumn(new Column({template: new HeightControl()}));
 		});
@@ -5664,10 +5664,12 @@ sap.ui.define([
 			});
 		}
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(() => {
 			return test("Fixed column", 0);
-		}).then(function() {
+		}).then(() => {
 			return test("Scrollable column", 1);
+		}).finally(() => {
+			oTable.destroy();
 		});
 	});
 
