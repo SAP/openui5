@@ -38,8 +38,8 @@ sap.ui.define([
 		 *   <code>Default</code> the returned calendar week configuration is derived from the given
 		 *   <code>oLocale</code>.
 		 * @param {sap.ui.core.Locale} [oLocale]
-		 *   The locale to use; if not provided, this falls back to the format locale from the
-		 *   Configuration; see {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale}.
+		 *   The locale to use; if no locale is given, a locale for the currently configured language is used; see
+		 *   {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}.
 		 *   Is only used when <code>sCalendarWeekNumbering</code> is set to <code>Default</code>.
 		 * @returns {{firstDayOfWeek: int, minimalDaysInFirstWeek: int}|undefined}
 		 *   The calendar week configuration, or <code>undefined<code> for an invalid value of
