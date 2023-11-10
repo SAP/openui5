@@ -10,12 +10,20 @@ sap.ui.define([
 
 	// custom assertion
 	QUnit.assert.isLibLoaded = function(libName) {
-		var isLoaded = ObjectPath.get(libName) && Library.all()[libName];
+		var isLoaded = Library.isLoaded(libName) && sap.ui.require(libName.replace(/\./g, "/") + "/library");
+		/**
+		 * @deprecated
+		 */
+		isLoaded &&= ObjectPath.get(libName);
 		this.ok(isLoaded, "library '" + libName + "' should have been loaded");
 		if ( !isLoaded ) {
 			// provide more details in QUnit report
+			/**
+			 * @deprecated
+			 */
 			this.ok(ObjectPath.get(libName), "namespace for " + libName + " should exist");
-			this.ok(Library.all()[libName], "Core should know and list " + libName + " as 'loaded'");
+			this.ok(sap.ui.require(libName.replace(/\./g, "/") + "/library"), "library module should have been required");
+			this.ok(Library.isLoaded(libName), "Core should know and list " + libName + " as 'loaded'");
 		}
 	};
 
