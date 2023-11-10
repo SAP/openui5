@@ -1,16 +1,20 @@
-/*global QUnit */
+
+/* global QUnit */
 sap.ui.define([
 	"sap/ui/core/Rendering",
-	"sap/ui/testlib/TestButton",
-	"sap/ui/qunit/utils/nextUIUpdate"
-], function(Rendering, TestButton, nextUIUpdate) {
+	"sap/ui/core/UIArea",
+	"sap/ui/qunit/utils/nextUIUpdate",
+	"sap/ui/testlib/TestButton"
+], function(Rendering, UIArea, nextUIUpdate, TestButton) {
 	"use strict";
 
 	QUnit.test("UI dirty state - initial", function(assert) {
 		assert.equal(Rendering.isPending(), false, "UI should not be dirty initially");
 	});
 
-	QUnit.module("Basics", {
+
+
+	QUnit.module("Invalidation and Rendering", {
 		beforeEach: function(assert) {
 			this.handler = function() {
 				assert.ok(true, "(UIUpdated event is fired)");
@@ -38,7 +42,6 @@ sap.ui.define([
 		assert.equal(Rendering.isPending(), false, "UI should no longer be dirty after calling flush");
 	});
 
-
 	QUnit.test("UI dirty on control modification", async function(assert) {
 		assert.expect(6);
 
@@ -58,6 +61,64 @@ sap.ui.define([
 			assert.equal(Rendering.isPending(), false, "UI should not be dirty after setting the button text and some timeout");
 			done();
 		}, 500);
+	});
+
+
+
+	QUnit.module("Prerendering Tasks");
+
+	QUnit.test("in standard order", async function (assert) {
+		var bCalled1 = false,
+			bCalled2 = false;
+
+		function task1 () {
+			bCalled1 = true;
+			assert.ok(!bCalled2, "not yet called");
+		}
+
+		function task2 () {
+			bCalled2 = true;
+		}
+
+		Rendering.addPrerenderingTask(task1);
+		Rendering.addPrerenderingTask(task2);
+
+		assert.ok(!bCalled1, "not yet called");
+		assert.ok(!bCalled2, "not yet called");
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
+
+		assert.ok(bCalled1, "first task called");
+		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
+	});
+
+	QUnit.test("in reverse order", async function (assert) {
+		var bCalled1 = false,
+			bCalled2 = false;
+
+		function task1 () {
+			bCalled1 = true;
+			assert.ok(!bCalled2, "not yet called");
+		}
+
+		function task2 () {
+			bCalled2 = true;
+		}
+
+		Rendering.addPrerenderingTask(task2);
+		Rendering.addPrerenderingTask(task1, true);
+
+		assert.ok(!bCalled1, "not yet called");
+		assert.ok(!bCalled2, "not yet called");
+		var oMyArea = UIArea.create("qunit-fixture");
+		oMyArea.invalidate();
+		await nextUIUpdate();
+
+		assert.ok(bCalled1, "first task called");
+		assert.ok(bCalled2, "second task called");
+		oMyArea.destroy();
 	});
 
 });

@@ -10,17 +10,6 @@ sap.ui.define(function() {
 			module: "test-resources/sap/ui/core/qunit/{name}.qunit"
 		},
 		tests: {
-			CoreEvents: {
-				title: "Test Page for the SAPUI5 Core Events [sap.ui.core.Core]",
-				ui5: {
-					libs: "sap.ui.testlib"
-				},
-				loader: {
-					paths: {
-						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
-					}
-				}
-			},
 			CustomFastNavigation: {
 				autostart: false
 			},

@@ -144,6 +144,20 @@ sap.ui.define(function() {
 					reorder: false
 				}
 			},
+			Rendering: {
+				title: "sap.ui.core.Rendering",
+				loader: {
+					paths: {
+						"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/"
+					}
+				},
+				qunit: {
+					"reorder": false // one test expects to run without any previous rendering action
+				},
+				ui5: {
+					libs: "sap.ui.testlib"
+				}
+			},
 			RenderManager: {
 				title: "sap.ui.core.RenderManager"
 			},

@@ -1,7 +1,8 @@
 /*global QUnit, sinon, testlibs */
 sap.ui.define([
-	'sap/base/i18n/ResourceBundle',
 	'sap/base/Log',
+	'sap/base/i18n/Localization',
+	'sap/base/i18n/ResourceBundle',
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
@@ -13,13 +14,12 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/Configuration',
 	'sap/ui/core/Lib',
-	'sap/ui/core/Rendering',
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
+], function(Log, Localization, ResourceBundle, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;
@@ -92,6 +92,9 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * @deprecated Since 1.119
+	 */
 	QUnit.test("CreateRenderManager", function(assert) {
 		var oRenderManager = new RenderManager();
 
@@ -102,11 +105,17 @@ sap.ui.define([
 		oCoreRenderManager.destroy();
 	});
 
+	/**
+	 * @deprecated As of Version 1.120.
+	 */
 	QUnit.test("GetConfiguration", function(assert) {
 		assert.notStrictEqual(oCore.getConfiguration, undefined, "function getConfiguration on sap.ui.core.Core instance must be defined");
 		assert.ok(oCore.getConfiguration() === Configuration, "calling getConfiguration on Core instance must deliver the Configuration singleton");
 	});
 
+	/**
+	 * @deprecated Since 1.118, sap.ui.getCore and the  constructor are deprecated
+	 */
 	QUnit.test("repeated instantiation", function(assert) {
 		this.spy(Log, 'error');
 
@@ -114,6 +123,9 @@ sap.ui.define([
 		sinon.assert.calledWith(Log.error, sinon.match(/Only.*must create an instance of .*Core/).and(sinon.match(/use the module export directly without using 'new'/)));
 	});
 
+	/**
+	 * @deprecated Since 1.119, loadLibrary is deprecated
+	 */
 	QUnit.test("loadLibrary", function(assert) {
 		assert.equal(typeof oCore.loadLibrary, "function", "Core has method loadLibrary");
 		assert.ok(privateLoaderAPI.getModuleState("sap/ui/testlib/library.js") === 0, "testlib lib has not been loaded yet");
@@ -178,6 +190,7 @@ sap.ui.define([
 
 	/**
 	 * Tests that <code>sap.ui.getCore().notifyContentDensityChanged()</code> calls each control's #onThemeChanged method
+	 * @deprecated since 1.119, notifyContentDensityChanged is deprecated
 	 */
 	QUnit.test("test #notifyContentDensityChanged", function(assert) {
 		var done = assert.async();
@@ -217,6 +230,9 @@ sap.ui.define([
 		assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 	});
 
+	/**
+	 * @deprecated since 1.119
+	 */
 	QUnit.test("testSetThemeRoot", function(assert) {
 		var corePath, mobilePath, otherPath, oCoreLink;
 
@@ -263,6 +279,9 @@ sap.ui.define([
 	});
 
 	// now check the location of the preconfigured themes
+	/**
+	 * @deprecated since 1.119
+	 */
 	QUnit.test("themeRoot configuration", function(assert) {
 		var corePath = ThemeManager._getThemePath("sap.ui.core", "my_preconfigured_theme");
 		var mobilePath = ThemeManager._getThemePath("sap.m", "my_preconfigured_theme");
@@ -317,7 +336,10 @@ sap.ui.define([
 	});
 
 	// now check the locale configuration to be applied as lang attribute
-	QUnit.test("Locale configuration", function(assert) {
+	/**
+	 * @deprecated As of Version 1.120.
+	 */
+	QUnit.test("Locale configuration (via Configuration)", function(assert) {
 		var oHtml = document.documentElement;
 		var oConfig = oCore.getConfiguration();
 		var oLocale = oConfig.getLocale();
@@ -330,61 +352,20 @@ sap.ui.define([
 		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 	});
 
-	QUnit.test("prerendering tasks", async function (assert) {
-		var bCalled1 = false,
-			bCalled2 = false;
+	QUnit.test("Locale configuration (via Localization)", function(assert) {
+		var oHtml = document.documentElement;
+		var sLocale = Localization.getLanguageTag().toString();
 
-		function task1 () {
-			bCalled1 = true;
-			assert.ok(!bCalled2, "not yet called");
-		}
+		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 
-		function task2 () {
-			bCalled2 = true;
-		}
-
-		Rendering.addPrerenderingTask(task1);
-		Rendering.addPrerenderingTask(task2);
-
-		assert.ok(!bCalled1, "not yet called");
-		assert.ok(!bCalled2, "not yet called");
-		var oMyArea = UIArea.create("qunit-fixture");
-		oMyArea.invalidate();
-		await nextUIUpdate();
-
-		assert.ok(bCalled1, "first task called");
-		assert.ok(bCalled2, "second task called");
-		oMyArea.destroy();
+		sLocale = "de";
+		Localization.setLanguage(sLocale);
+		assert.equal(oHtml.getAttribute("lang"), sLocale, "lang attribute matches locale");
 	});
 
-	QUnit.test("prerendering tasks: reverse order", async function (assert) {
-		var bCalled1 = false,
-			bCalled2 = false;
-
-		function task1 () {
-			bCalled1 = true;
-			assert.ok(!bCalled2, "not yet called");
-		}
-
-		function task2 () {
-			bCalled2 = true;
-		}
-
-		Rendering.addPrerenderingTask(task2);
-		Rendering.addPrerenderingTask(task1, true);
-
-		assert.ok(!bCalled1, "not yet called");
-		assert.ok(!bCalled2, "not yet called");
-		var oMyArea = UIArea.create("qunit-fixture");
-		oMyArea.invalidate();
-		await nextUIUpdate();
-
-		assert.ok(bCalled1, "first task called");
-		assert.ok(bCalled2, "second task called");
-		oMyArea.destroy();
-	});
-
-
+	/**
+	 * @deprecated Since 1.119.
+	 */
 	QUnit.module('getLibraryResourceBundle');
 
 	QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
@@ -597,6 +578,9 @@ sap.ui.define([
 	// loadLibrary
 	// ---------------------------------------------------------------------------
 
+	/**
+	 * @deprecated Since 1.119.
+	 */
 	QUnit.module("loadLibrary", {
 		beforeEach: function(assert) {
 			assert.notOk(Supportability.isDebugModeEnabled(), "debug mode must be deactivated to properly test library loading");
