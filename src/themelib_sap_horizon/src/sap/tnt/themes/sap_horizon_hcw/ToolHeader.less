@@ -63,7 +63,8 @@
 .sapTntToolHeader {
 	.sapMBarChild:not(.sapMMenuBtn) {
 		&.sapMBtn {
-			padding-top: 0.125rem;
+			padding: 0.125rem 0;
+			min-width: 2.5rem;
 		}
 
 		&.sapMBtn .sapMBtnTransparent,
@@ -71,19 +72,15 @@
 		&.sapMBtn .sapMBtnBack,
 		&.sapMBtn .sapMBtnUp {
 			color: @sapContent_IconColor;
-			border-radius: 0.375rem;
 			background-color: @sapButton_Lite_Background;
 			height: 2.5rem;
-			min-width: 2.5rem;
 
 			.sapUiIcon {
 				color: @sapContent_IconColor;
 				line-height: 2.5rem;
-				width: 2.5rem;
-				height: 2.5rem;
 			}
 
-			bdi {
+			.sapMBtnContent {
 				line-height: 2.5rem;
 			}
 		}
@@ -127,7 +124,8 @@
 	.sapTntToolHeader {
 		.sapMBarChild:not(.sapMMenuBtn) {
 			&.sapMBtn {
-				padding-top: 0;
+				padding: 0;
+				min-width: 2rem;
 
 				.sapMBadgeTopRight.sapMBadge .sapMBadgeIndicator {
 					position: absolute;
@@ -142,21 +140,16 @@
 			}
 
 			&.sapMBtn .sapMBtnTransparent,
-			&.sapMBtn .sapMBtnTransparent,
 			&.sapMBtn .sapMBtnDefault,
 			&.sapMBtn .sapMBtnBack,
 			&.sapMBtn .sapMBtnUp {
 				height: 2rem;
-				min-width: 2rem;
 
 				.sapUiIcon {
-					width: 2rem;
-					max-height: 2rem;
-					height: 2rem;
 					line-height: 2rem;
 				}
 
-				bdi {
+				.sapMBtnContent {
 					line-height: 2rem;
 				}
 			}
