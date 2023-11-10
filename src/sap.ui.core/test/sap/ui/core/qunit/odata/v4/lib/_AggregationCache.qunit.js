@@ -859,7 +859,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, 0, 7].forEach(function (iDistanceFromRoot) {
-	// Note: null means no $LimitedDescendantCountProperty, undefined means not $select'ed
+	// Note: null means no $LimitedDescendantCount, undefined means not $select'ed
 	[null, undefined, 0, 42].forEach(function (iLimitedDescendantCount) {
 		["collapsed", "expanded", "leaf"].forEach(function (sDrillState) {
 			[undefined, {"@$ui5.node.level" : 41}].forEach(function (oGroupNode) {
@@ -877,9 +877,9 @@ sap.ui.define([
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {
-				$DistanceFromRootProperty : "A/DistFromRoot",
-				$DrillStateProperty : "B/myDrillState",
-				$LimitedDescendantCountProperty : "C/LtdDescendant_Count",
+				$DistanceFromRoot : "A/DistFromRoot",
+				$DrillState : "B/myDrillState",
+				$LimitedDescendantCount : "C/LtdDescendant_Count",
 				$metaPath : "/meta/path",
 				$path : "n/a"
 			},
@@ -905,7 +905,7 @@ sap.ui.define([
 			// oElement.A = {DistFromRoot : sDistanceFromRoot};
 		}
 		if (iLimitedDescendantCount === null) {
-			delete oAggregation.$LimitedDescendantCountProperty;
+			delete oAggregation.$LimitedDescendantCount;
 		} else {
 			sLimitedDescendantCount = iLimitedDescendantCount === undefined
 				? undefined
@@ -996,9 +996,9 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("calculateKeyPredicateRH: related entity", function (assert) {
 		var oAggregation = {
-				$DistanceFromRootProperty : "DistFromRoot",
-				$DrillStateProperty : "myDrillState",
-				$LimitedDescendantCountProperty : "LtdDescendant_Count",
+				$DistanceFromRoot : "DistFromRoot",
+				$DrillState : "myDrillState",
+				$LimitedDescendantCount : "LtdDescendant_Count",
 				$metaPath : "/Artists",
 				$path : "n/a"
 			},
@@ -4665,12 +4665,11 @@ make root = ${bMakeRoot}`;
 });
 
 	//*********************************************************************************************
-["myDrillState", "path/to/myDrillState"].forEach((sDrillStateProperty) => {
-	["TEAM_ID desc", undefined].forEach((sOrderBy) => {
-	QUnit.test(`requestRank: ${sDrillStateProperty}, ${sOrderBy}`, async function (assert) {
+["TEAM_ID desc", undefined].forEach((sOrderBy) => {
+	QUnit.test(`requestRank: ${sOrderBy}`, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 			hierarchyQualifier : "X",
-			$DrillStateProperty : sDrillStateProperty,
+			$LimitedRank : "~LimitedRank~",
 			$metaPath : "/meta/path"
 		});
 		this.mock(oCache.oFirstLevel).expects("getQueryOptions").withExactArgs()
@@ -4689,31 +4688,27 @@ make root = ${bMakeRoot}`;
 		this.mock(oCache).expects("getTypes").withExactArgs().returns("~getTypes~");
 		this.mock(_Helper).expects("getKeyFilter")
 			.withExactArgs("~oElement~", "/meta/path", "~getTypes~").returns("~filter~");
-		const sLimitedRankProperty = sDrillStateProperty.includes("/")
-			? "path/to/LimitedRank"
-			: "LimitedRank";
 		this.mock(oCache.oRequestor).expects("buildQueryString")
 			.withExactArgs("/meta/path", sOrderBy ? {
 				$apply : "A.P.P.L.E.",
 				$filter : "~filter~",
 				$orderby : sOrderBy,
-				$select : sLimitedRankProperty
+				$select : "~LimitedRank~"
 			} : {
 				$apply : "A.P.P.L.E.",
 				$filter : "~filter~",
-				$select : sLimitedRankProperty
+				$select : "~LimitedRank~"
 			}, false, true)
 			.returns("~queryString~");
 		this.mock(oCache.oRequestor).expects("request")
 			.withExactArgs("GET", "Foo~queryString~", "~oGroupLock~").resolves("~oResult~");
-		this.mock(_Helper).expects("drillDown").withExactArgs("~oResult~", sLimitedRankProperty)
+		this.mock(_Helper).expects("drillDown").withExactArgs("~oResult~", "~LimitedRank~")
 			.returns("42");
 
 		assert.strictEqual(
 			// code under test
 			await oCache.requestRank("~oElement~", "~oGroupLock~"),
 			42);
-	});
 	});
 });
 
