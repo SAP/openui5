@@ -1,4 +1,4 @@
-/*global QUnit, sinon, my */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Component",
@@ -445,7 +445,7 @@ sap.ui.define([
 
 	QUnit.module("Component Usage", {
 
-		beforeEach : function(assert) {
+		beforeEach : async function(assert) {
 
 			// define the manifest for the Component test
 			var oManifest = this.oManifest = {
@@ -507,17 +507,20 @@ sap.ui.define([
 			this.oLogSpy = this.spy(Log, "error");
 
 			// register the Service Factories before component creation
-			ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new my.ServiceFactory());
-			ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new ServiceFactory());
-			ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new my.ServiceFactory());
-			ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new my.ServiceFactory());
+			await new Promise((resolve, reject) => {
+				sap.ui.require(["my/ServiceFactory"], function(MyServiceFactory) {
+					ServiceFactoryRegistry.register("my.ServiceFactoryAlias", new MyServiceFactory());
+					ServiceFactoryRegistry.register("invalid.ServiceFactoryAlias", new ServiceFactory());
+					ServiceFactoryRegistry.register("lazy.ServiceFactoryAlias", new MyServiceFactory());
+					ServiceFactoryRegistry.register("settings.ServiceFactoryAlias", new MyServiceFactory());
+					resolve();
+				}, reject);
+			});
 
 			// create the component
-			return Component.create({
+			this.oComponent = await Component.create({
 				manifest: "/anylocation/manifest.json"
-			}).then(function(oComponent) {
-				this.oComponent = oComponent;
-			}.bind(this));
+			});
 		},
 
 		afterEach : function() {
