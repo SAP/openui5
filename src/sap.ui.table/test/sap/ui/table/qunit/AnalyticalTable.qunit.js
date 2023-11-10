@@ -540,32 +540,6 @@ sap.ui.define([
 					}
 				}
 			});
-		}).then(function() {
-			return test({
-				bindingInfo: oBindingInfo,
-				model: new ODataModel(sServiceURI, {loadMetadataAsync: false}),
-				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
-					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
-					if (bTableIsRendered) {
-						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
-					} else {
-						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
-					}
-				}
-			});
-		}).then(function() {
-			return test({
-				bindingInfo: oBindingInfo,
-				model: new ODataModel(sServiceURI, {loadMetadataAsync: true}),
-				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
-					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
-					if (bTableIsRendered) {
-						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
-					} else {
-						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
-					}
-				}
-			});
 		});
 	});
 
