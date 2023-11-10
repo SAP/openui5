@@ -177,17 +177,15 @@ sap.ui.define([
 		 * @public
 		 */
 		writeAccRowSelectorText: function(oRm, oTable, oRow) {
-			if (!oTable._getAccExtension().getAccMode()) {
+			if (!oTable._getAccExtension().getAccMode() || oRow.isGroupHeader() || oRow.isSummary()) {
 				return;
 			}
 
 			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
-			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
-			var sText = mTooltipTexts.keyboard[bIsSelected ? "rowDeselect" : "rowSelect"];
+			var mKeyboardTexts = oTable._getAccExtension().getKeyboardTexts();
+			var sText = bIsSelected ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
 
-			if (!oRow.isGroupHeader() && !oRow.isSummary()) {
-				_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow.isEmpty() ? "" : sText, ["sapUiTableAriaRowSel"]);
-			}
+			_writeAccText(oRm, oRow.getId(), "rowselecttext", oRow.isEmpty() ? "" : sText, ["sapUiTableAriaRowSel"]);
 		},
 
 		/**

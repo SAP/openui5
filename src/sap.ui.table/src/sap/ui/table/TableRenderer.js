@@ -931,9 +931,6 @@ sap.ui.define([
 				this.renderColumnHeaderRow(rm, oTable, row, bFixedTable, iStartColumn, iEndColumn, bRenderDummyColumn, row === count - 1);
 			}
 		} else {
-			// retrieve tooltip and aria texts only once and pass them to the rows _updateSelection function
-			var mTooltipTexts = oTable._getAccExtension().getAriaTextsForSelectionMode(true);
-
 			// check whether the row can be clicked to change the selection
 			var bSelectOnCellsAllowed = TableUtils.isRowSelectionAllowed(oTable);
 			var bRowsDraggable = oTable.getDragDropConfig().some(function(oDragDropInfo) {
@@ -943,7 +940,7 @@ sap.ui.define([
 			var iLastFixedColumnIndex = this.getLastFixedColumnIndex(oTable);
 
 			for (row = iStartRow, count = iEndRow; row < count; row++) {
-				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, iLastFixedColumnIndex, bRenderDummyColumn, mTooltipTexts, bSelectOnCellsAllowed, bRowsDraggable);
+				this.renderTableRow(rm, oTable, aRows[row], row, bFixedTable, iStartColumn, iEndColumn, false, aVisibleColumns, iLastFixedColumnIndex, bRenderDummyColumn, bSelectOnCellsAllowed, bRowsDraggable);
 			}
 		}
 		rm.close("tbody");
@@ -1082,7 +1079,7 @@ sap.ui.define([
 		rm.close("tr");
 	};
 
-	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, iLastFixedColumnIndex, bHasOnlyFixedColumns, mTooltipTexts, bSelectOnCellsAllowed, bDraggable) {
+	TableRenderer.renderTableRow = function(rm, oTable, oRow, iRowIndex, bFixedTable, iStartColumn, iEndColumn, bFixedRow, aVisibleColumns, iLastFixedColumnIndex, bHasOnlyFixedColumns, bSelectOnCellsAllowed, bDraggable) {
 		if (!oRow) {
 			return;
 		}

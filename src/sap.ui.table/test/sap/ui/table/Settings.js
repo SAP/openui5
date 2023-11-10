@@ -1065,17 +1065,6 @@ sap.ui.define("test-resources/sap/ui/table/Settings", [
 				}
 			}
 		},
-		TOOLTIPS: {
-			text: "Hide Standard Tooltips (private)",
-			value: function(oTable) {
-				return oTable._getHideStandardTooltips();
-			},
-			input: "boolean",
-			action: function(oTable, bValue) {
-				oTable._setHideStandardTooltips(bValue);
-				oTable.invalidate();
-			}
-		},
 		COLUMNFREEZE: {
 			text: "Column freeze",
 			value: function(oTable) {
