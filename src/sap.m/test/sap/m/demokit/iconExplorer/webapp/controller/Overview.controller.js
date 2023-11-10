@@ -3,6 +3,7 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/ToggleButton",
 	"sap/ui/Device",
+	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/IconPool",
@@ -19,6 +20,7 @@ sap.ui.define([
 	MessageToast,
 	ToggleButton,
 	Device,
+	Core,
 	Element,
 	Fragment,
 	IconPool,
@@ -30,7 +32,7 @@ sap.ui.define([
 	FilterOperator,
 	JSONModel,
 	ThemePicker
-) {
+	) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms

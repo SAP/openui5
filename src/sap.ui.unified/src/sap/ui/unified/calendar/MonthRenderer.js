@@ -78,12 +78,12 @@ MonthRenderer.render = function(oRm, oMonth){
 	}
 
 	if (oMonth._getShowHeader()) {
-		oAriaLabel.value = oAriaLabel.value + " " + sId + "-Head";
+		oAriaLabel.value = sId + "-Head";
 	}
 
 	if (oMonth._bCalendar) {
-		sDescribedBy += " " + InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_MONTH_PICKER_OPEN_HINT") +
-			" " + InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT");
+		sDescribedBy = InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_MONTH_PICKER_OPEN_HINT")
+				+ " " + InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_YEAR_PICKER_OPEN_HINT");
 	}
 
 	if (sWidth) {

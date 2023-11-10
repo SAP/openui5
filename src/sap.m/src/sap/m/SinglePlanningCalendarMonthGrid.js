@@ -20,6 +20,7 @@ sap.ui.define([
 	'sap/ui/core/CustomData',
 	'sap/ui/events/KeyCodes',
 	'sap/base/Log',
+	'sap/ui/core/Core',
 	'./Link',
 	'./library',
 	'./PlanningCalendarLegend',
@@ -29,6 +30,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	"sap/ui/core/date/CalendarWeekNumbering",
 	"sap/ui/core/date/CalendarUtils",
+	"sap/ui/core/Configuration",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/unified/DateRange"
 ],
@@ -49,6 +51,7 @@ sap.ui.define([
 		CustomData,
 		KeyCodes,
 		Log,
+		Core,
 		Link,
 		library,
 		PlanningCalendarLegend,
@@ -58,6 +61,7 @@ sap.ui.define([
 		coreLibrary,
 		CalendarWeekNumbering,
 		CalendarDateUtils,
+		Configuration,
 		UI5Date,
 		DateRange
 	) {
@@ -510,24 +514,50 @@ sap.ui.define([
 			}
 		};
 
-		SinglePlanningCalendarMonthGrid.prototype._findSrcControl = function (oEvent) {
+		SinglePlanningCalendarMonthGrid.prototype._isSelectAppointment = function (oEvent) {
+			return oEvent.target.classList.contains("sapUiCalendarRowApps") || (oEvent.target.parentElement && oEvent.target.parentElement.classList.contains("sapUiCalendarRowApps"));
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._findSelectedAppointment = function (oTarget) {
 			// data-sap-ui-related - This is a relation to appointment object.
 			// This is the connection between the DOM Element and the Object representing an appointment.
-			var oTargetElement = oEvent.target,
-				oTargetsParentElement = oTargetElement.parentElement,
+			var oParentElement = oTarget.parentElement,
 				sAppointmentId;
-			if (!oTargetsParentElement || oTargetsParentElement.classList.contains("sapMSPCMonthDays")) {
-				return oEvent.srcControl;
-			} else if (oTargetsParentElement.classList.contains("sapUiCalendarRowApps")) {
-				sAppointmentId = oTargetsParentElement.getAttribute("data-sap-ui-related") || oTargetsParentElement.id;
+
+			if (oParentElement.classList.contains("sapUiCalendarRowApps")) {
+				sAppointmentId = oParentElement.getAttribute("data-sap-ui-related") || oParentElement.id;
 			} else {
-				sAppointmentId = oTargetElement.getAttribute("data-sap-ui-related") || oTargetElement.id;
+				sAppointmentId = oTarget.getAttribute("data-sap-ui-related") || oTarget.id;
 			}
 
 			// finding the appointment
 			return this.getAppointments().find(function (oAppointment) {
 				return oAppointment.sId === sAppointmentId;
 			});
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._findSelectedRow = function (oEvent) {
+			var oSelectedCell = this._findSelectCell(oEvent.target),
+				oRow = oSelectedCell.parentElement;
+			if (!oRow || oRow.classList.contains("sapMSPCMonthDays")) {
+				return oEvent.srcControl;
+			}
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._findSelectCell = function (target) {
+			if (target.classList.contains("sapMSPCMonthDayNumber") || target.classList.contains("specialDateIndicator")){
+				return target.parentElement;
+			}
+			return target;
+		};
+
+		SinglePlanningCalendarMonthGrid.prototype._findSrcControl = function (oEvent) {
+			var oTarget = oEvent.target;
+
+			if (this._isSelectAppointment(oEvent)) {
+				return this._findSelectedAppointment(oTarget);
+			}
+			return this._findSelectedRow(oEvent);
 		};
 
 		SinglePlanningCalendarMonthGrid.prototype._handelMultiDateSelection = function (oTarget, oStartDate,  oEndDate, oEvent) {
@@ -590,7 +620,8 @@ sap.ui.define([
 		SinglePlanningCalendarMonthGrid.prototype._fireSelectionEvent = function (oEvent) {
 			var oSrcControl = this._findSrcControl(oEvent),
 				oTarget = oEvent.target,
-				bIsCell = oTarget && oTarget.classList.contains("sapMSPCMonthDay"),
+				oSelectedCell = this._findSelectCell(oEvent.target),
+				bIsCell = oTarget && !!oSelectedCell,
 				bIsLink = oTarget && oTarget.classList.contains("sapMLnk"),
 				bWeekNumberSelect = oTarget && oTarget.classList.contains("sapMSPCMonthWeekNumber"),
 				oFirstSiblingElement = bWeekNumberSelect && oEvent.originalEvent.target.nextSibling.children[0],
@@ -599,7 +630,7 @@ sap.ui.define([
 				oEndDate;
 
 			if (oSrcControl && oSrcControl.isA("sap.m.SinglePlanningCalendarMonthGrid") && bIsCell && !bIsLink) {
-				iTimestamp = parseInt(oTarget.getAttribute("sap-ui-date"));
+				iTimestamp = parseInt(oSelectedCell.getAttribute("sap-ui-date"));
 
 				oStartDate = UI5Date.getInstance(iTimestamp);
 				oStartDate = UI5Date.getInstance(oStartDate.getUTCFullYear(), oStartDate.getUTCMonth(), oStartDate.getUTCDate());
@@ -607,7 +638,7 @@ sap.ui.define([
 				oEndDate = UI5Date.getInstance(oStartDate);
 				oEndDate.setDate(oEndDate.getDate() + 1);
 				if (this._bMultiDateSelect || this._bCurrentWeekSelection || this._bMultiDateSelectWithArrow) {
-					this._handelMultiDateSelection(oTarget, oStartDate, oEndDate, oEvent);
+					this._handelMultiDateSelection(oSelectedCell, oStartDate, oEndDate, oEvent);
 					this.fireEvent("selectDate", {startDate: oStartDate, endDate: oEndDate});
 				}
 
@@ -626,7 +657,7 @@ sap.ui.define([
 
 				this._bCurrentWeekSelection = true;
 				this._bMultiDateSelect = false;
-				this._handelMultiDateSelection(oTarget, oStartDate, oEndDate, oEvent);
+				this._handelMultiDateSelection(oSelectedCell, oStartDate, oEndDate, oEvent);
 				this.fireEvent("selectDate", {startDate: oStartDate, endDate: oEndDate});
 
 			} else if (oSrcControl && oSrcControl.isA("sap.ui.unified.CalendarAppointment")) {

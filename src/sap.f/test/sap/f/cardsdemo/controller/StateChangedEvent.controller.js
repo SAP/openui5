@@ -25,8 +25,8 @@ sap.ui.define([
 			oHost.getContextValue = function (sPath) {
 				return new Promise(function (resolve, reject) {
 					setTimeout(function () {
-						if (sPath === "cardExplorer/stateChangedEvent/country") {
-							resolve("France");
+						if (sPath === "cardExplorer/stateChangedEvent/contextTest") {
+							resolve("Context test");
 							return;
 						}
 						reject("Host context parameter " + sPath + " doesn't exist");
@@ -66,12 +66,12 @@ sap.ui.define([
 
 			this._setModel({
 				manifests: aManifests,
-				selectedKey: aManifests[1].key,
-				selectedManifest: aManifests[1].path,
+				selectedKey: aManifests[0].key,
+				selectedManifest: aManifests[0].path,
 				messageStripVisible: false
 			});
 
-			this._oSkeletonCard.setManifest(aManifests[1].path);
+			this._oSkeletonCard.setManifest(aManifests[0].path);
 			this._oSkeletonCard.startManifestProcessing();
 		},
 
@@ -221,11 +221,23 @@ sap.ui.define([
 		onChangeSelectFilter: function () {
 			this._oSkeletonCard.setFilterValue("shipper", "2");
 			this.byId("demoCard").setFilterValue("shipper", "2");
+
+			this._oSkeletonCard.setFilterValue("country", { value: "Germany" });
+			this.byId("demoCard").setFilterValue("country", { value: "Germany" });
+
+			this._oSkeletonCard.setFilterValue("city", "Berlin");
+			this.byId("demoCard").setFilterValue("city", "Berlin");
 		},
 
 		onInitialSelectFilter: function () {
 			this._oSkeletonCard.setFilterValue("shipper", "3");
 			this.byId("demoCard").setFilterValue("shipper", "3");
+
+			this._oSkeletonCard.setFilterValue("country", { selectedKey: "FR" });
+			this.byId("demoCard").setFilterValue("country", { selectedKey: "FR" });
+
+			this._oSkeletonCard.setFilterValue("city", "Toulouse");
+			this.byId("demoCard").setFilterValue("city", "Toulouse");
 		},
 
 		onSimulateLiveInput: function () {

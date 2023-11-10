@@ -6,8 +6,10 @@
  */
 sap.ui.define([
 	"sap/ui/support/library",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/Controller",
 	"sap/ui/thirdparty/jquery"
-], function(SupportLib, jQuery) {
+], function(SupportLib, View, Controller, jQuery) {
 	"use strict";
 
 	// shortcuts

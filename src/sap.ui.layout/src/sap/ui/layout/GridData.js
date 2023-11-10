@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.GridData.
-sap.ui.define(['sap/ui/core/LayoutData', './library'],
-	function(LayoutData, library) {
+sap.ui.define(['sap/ui/core/LayoutData', './library', "sap/base/Log"],
+	function(LayoutData, library, Log) {
 	"use strict";
 
 

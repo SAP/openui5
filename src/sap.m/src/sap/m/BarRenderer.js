@@ -3,7 +3,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['./BarInPageEnabler', "sap/base/i18n/Localization", "sap/base/Log"], function(BarInPageEnabler, Localization, Log) {
+sap.ui.define(['./BarInPageEnabler', "sap/base/i18n/Localization", 'sap/ui/Device', "sap/base/Log", 'sap/m/HBox'], function(BarInPageEnabler, Localization, Device, Log, HBox) {
 "use strict";
 
 

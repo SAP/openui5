@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/core/date/UniversalDateUtils",
 	"sap/ui/core/date/UI5Date",
 	"sap/m/library",
-	"sap/ui/mdc/enums/OperatorOverwrite"
+	"sap/ui/mdc/enums/OperatorOverwrite",
+	"sap/ui/core/Core"
 ], function(
 	Library,
 	FilterOperatorUtil,
@@ -50,7 +51,8 @@ sap.ui.define([
 	UniversalDateUtils,
 	UI5Date,
 	mLibrary,
-	OperatorOverwrite
+	OperatorOverwrite,
+	Core
 ) {
 	"use strict";
 

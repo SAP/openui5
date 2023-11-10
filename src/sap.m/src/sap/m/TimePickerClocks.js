@@ -12,9 +12,10 @@ sap.ui.define([
 	"./ToggleButtonRenderer",
 	"sap/ui/core/Renderer",
 	"sap/ui/events/KeyCodes",
+	'sap/ui/Device',
 	'sap/ui/core/library',
 	"sap/ui/thirdparty/jquery",
-	'sap/ui/core/date/UI5Date'
+    'sap/ui/core/date/UI5Date'
 ],
 	function(
 		TimePickerInternals,
@@ -26,9 +27,10 @@ sap.ui.define([
 		ToggleButtonRenderer,
 		Renderer,
 		KeyCodes,
+		Device,
 		coreLibrary,
 		jQuery,
-		UI5Date
+        UI5Date
 	) {
 		"use strict";
 

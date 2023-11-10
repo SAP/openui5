@@ -1,6 +1,11 @@
 /*global QUnit, */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/ui/core/Core", "sap/ui/model/json/JSONModel", "sap/uxap/ObjectPageDynamicHeaderTitle", "sap/uxap/ObjectPageLayout"],
-function(jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout) {
+sap.ui.define(["sap/ui/thirdparty/jquery",
+               "sap/ui/core/Core",
+               "sap/ui/model/json/JSONModel",
+			   "sap/uxap/ObjectPageDynamicHeaderTitle",
+               "sap/uxap/ObjectPageLayout",
+               "sap/ui/core/mvc/XMLView"],
+function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayout, XMLView) {
 	"use strict";
 
 	// utility function that will be used in these tests

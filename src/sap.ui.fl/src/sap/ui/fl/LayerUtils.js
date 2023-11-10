@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
+	"sap/ui/thirdparty/hasher",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/initial/_internal/FlexInfoSession"
 ], function(
+	hasher,
 	Layer,
 	FlexInfoSession
 ) {

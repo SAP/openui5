@@ -6,11 +6,14 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/core/Core",
 	"sap/ui/model/Filter"
 ], (
 	Element,
 	FilterUtil,
-	Filter) => {
+	Core,
+	Filter
+) => {
 	"use strict";
 
 	function _createFilterFromExternalConditions (oControl, oTypeMap) {

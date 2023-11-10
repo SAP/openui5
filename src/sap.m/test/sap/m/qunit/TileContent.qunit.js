@@ -1,10 +1,12 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/m/TileContent",
+	"sap/m/NewsContent",
+	"sap/m/FeedContent",
 	"sap/m/Text",
 	"sap/m/library",
 	"sap/ui/core/Core"
-], function(TileContent, Text, library, oCore) {
+], function(TileContent, NewsContent, FeedContent, Text, library, oCore) {
 	"use strict";
 
 

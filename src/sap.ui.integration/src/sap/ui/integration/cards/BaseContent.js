@@ -420,6 +420,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {Object} The static configuration for the blocking message
+	 */
+	BaseContent.prototype.getBlockingMessageStaticConfiguration = function () {
+		return this.getAggregation("_blockingMessage")?.getStaticConfiguration();
+	};
+
+	/**
 	 * Show 'No Data' blocking message in the content. If there is configuration in the manifest, it will be applied.
 	 * @protected
 	 * @param {object} oSettings 'No Data' settings

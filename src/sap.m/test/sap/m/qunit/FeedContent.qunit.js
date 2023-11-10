@@ -1,7 +1,10 @@
 /*global QUnit */
 sap.ui.define([
-	"sap/m/library"
-], function(library) {
+	"sap/m/FeedContent",
+	"sap/ui/core/TooltipBase",
+	"sap/m/library",
+	"sap/ui/core/Core"
+], function(FeedContent, TooltipBase, library, oCore) {
 	"use strict";
 
 	// shortcut for sap.m.ValueColor

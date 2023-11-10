@@ -5,6 +5,7 @@ sap.ui.define([
 	'sap/base/util/LoaderExtensions',
 	'sap/base/util/ObjectPath',
 	'sap/ui/Device',
+	'sap/ui/base/Interface',
 	'sap/ui/VersionInfo',
 	'sap/ui/core/Core',
 	"sap/ui/core/Supportability",
@@ -16,8 +17,9 @@ sap.ui.define([
 	'sap/ui/core/RenderManager',
 	'sap/ui/core/Theming',
 	'sap/ui/core/theming/ThemeManager',
+	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, nextUIUpdate) {
+], function(ResourceBundle, Log, LoaderExtensions, ObjectPath, Device, Interface, VersionInfo, oCore, Supportability, UIArea, Element, Configuration, Library, Rendering, RenderManager, Theming, ThemeManager, createAndAppendDiv, nextUIUpdate) {
 	"use strict";
 
 	var privateLoaderAPI = sap.ui.loader._;

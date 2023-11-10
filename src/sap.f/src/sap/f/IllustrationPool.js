@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-], function() {
+	"sap/m/IllustrationPool"
+], function(IllustrationPool) {
 	"use strict";
 });

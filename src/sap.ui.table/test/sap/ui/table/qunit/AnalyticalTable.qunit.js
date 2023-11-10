@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
+	"sap/ui/model/TreeAutoExpandMode",
 	"sap/ui/table/AnalyticalColumn",
 	"sap/ui/model/Filter",
 	"sap/ui/model/type/Float",
@@ -28,6 +29,7 @@ sap.ui.define([
 	TableUtils,
 	ODataModelV2,
 	o4aFakeService,
+	TreeAutoExpandMode,
 	AnalyticalColumn,
 	Filter,
 	FloatType,
@@ -332,34 +334,6 @@ sap.ui.define([
 		performTestAfterTableIsUpdated.call(this, doTest);
 	});
 
-	/**
-	 * deprecated As of version 1.76
-	 */
-	QUnit.test("CollapseRecursive property", function(assert) {
-		assert.expect(7);
-		var done = assert.async();
-
-		function doTest(oTable) {
-			var oBinding = oTable.getBinding();
-			var bCollapseRecursive = false;
-			oBinding.setCollapseRecursive = function(bParam) {
-				assert.equal(bParam, bCollapseRecursive, "setCollapseRecursive on Binding called");
-			};
-
-			assert.ok(oTable === oTable, "Call on Binding");
-			assert.equal(true, bCollapseRecursive, "Property");
-			bCollapseRecursive = true;
-			assert.ok(oTable === oTable, "Call of Binding");
-			assert.equal(true, bCollapseRecursive, "Property");
-			oTable.unbindRows();
-			bCollapseRecursive = false;
-			assert.equal(true, bCollapseRecursive, "Property");
-			done();
-		}
-
-		performTestAfterTableIsUpdated.call(this, doTest);
-	});
-
 	QUnit.test("collapseAll", function(assert) {
 		assert.expect(6);
 		var done = assert.async();
@@ -420,7 +394,6 @@ sap.ui.define([
 
 	QUnit.test("BindRows - Update columns", function(assert) {
 		var oBindingInfo = {path: "/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results"};
-		var done = assert.async();
 
 		function testRun(mTestSettings) {
 			return new Promise(function(resolve) {
@@ -463,7 +436,7 @@ sap.ui.define([
 			});
 		}
 
-		test({
+		return test({
 			bindingInfo: oBindingInfo,
 			metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
 				assert.ok(oUpdateColumnsSpy.notCalled, "No Model -> Columns not updated");
@@ -524,7 +497,7 @@ sap.ui.define([
 					}
 				}
 			});
-		}).then(done);
+		});
 	});
 
 	QUnit.test("Binding events", function(assert) {
@@ -719,8 +692,6 @@ sap.ui.define([
 
 			var fnHandler1 = function() {
 				var oBinding = this.oTable.getBinding();
-
-				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 
 				var oContext = this.oTable.getContextByIndex(0);
 				assert.equal(oContext.getProperty("ActualCosts"), "1588416", "First row data is correct");

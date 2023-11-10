@@ -431,7 +431,7 @@ sap.ui.define([
 	 *   The context for the created entity
 	 * @param {boolean} oEvent.getParameters.success
 	 *   Whether the POST was successfully processed; in case of an error, the error is already
-	 *   reported to the {@link sap.ui.core.message.MessageManager}
+	 *   reported to {@link sap.ui.core.Messaging}
 	 *
 	 * @event sap.ui.model.odata.v4.ODataListBinding#createCompleted
 	 * @public
@@ -1073,6 +1073,8 @@ sap.ui.define([
 					// created persisted contexts can be restored from their data, for example in
 					// case of Recursive Hierarchy maintenance
 					oContext = _Helper.getPrivateAnnotation(aResults[i], "context");
+					oContext.iIndex = i$skipIndex;
+					// oContext.checkUpdate(); // Note: no changes expected here
 				} else {
 					oContext = Context.create(oModel, this, sContextPath, i$skipIndex);
 				}
@@ -3162,6 +3164,9 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
+	 * @throws (Error)
+	 *   If <code>oAggregation.expandTo</code> is unsupported (neither one nor at least
+	 *   <code>Number.MAX_SAFE_INTEGER</code>).
 	 *
 	 * @private
 	 */
@@ -3179,6 +3184,14 @@ sap.ui.define([
 				}
 			}
 		};
+
+		const oAggregation = this.mParameters.$$aggregation;
+		if (!oAggregation || !oAggregation.hierarchyQualifier) {
+			throw new Error("Missing recursive hierarchy");
+		}
+		if (oAggregation.expandTo > 1 && oAggregation.expandTo < Number.MAX_SAFE_INTEGER) {
+			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
+		} // Note: undefined is well allowed!
 
 		const bExpanded = oChildContext.isExpanded();
 		if (bExpanded) {
@@ -3206,9 +3219,11 @@ sap.ui.define([
 				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);
 				setIndices(iParentIndex + 1, iChildIndex);
 			} // else: iChildIndex === iParentIndex + 1 => nothing to do
-			if (!oChildContext.created()) {
+
+			if (!oChildContext.created() && !(oAggregation.expandTo > 1)) {
 				oChildContext.setCreatedPersisted();
 			}
+
 			if (bExpanded) {
 				this.expand(oChildContext).unwrap(); // guaranteed to be sync! incl. _fireChange
 			} else {
@@ -4172,7 +4187,8 @@ sap.ui.define([
 	 *   available for read-only hierarchies since 1.117.0), supported only if a
 	 *   <code>hierarchyQualifier</code> is given. Root nodes are on the first level. By default,
 	 *   only root nodes are available; they are not yet expanded. Since 1.120.0,
-	 *   <code>Number.MAX_SAFE_INTEGER</code> can be used to expand all levels.
+	 *   <code>expandTo >= Number.MAX_SAFE_INTEGER</code> can be used to expand all levels
+	 *   (<code>1E16</code> is recommended inside XML views for simplicity).
 	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
 	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,

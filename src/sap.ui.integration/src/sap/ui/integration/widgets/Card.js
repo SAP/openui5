@@ -1291,7 +1291,6 @@ sap.ui.define([
 		this._oContentFactory = null;
 		this._oIntegrationRb = null;
 		this._aActiveLoadingProviders = null;
-		this._oContentMessage = null;
 		this._oMessage = null;
 		clearTimeout(this._iFireStateChangedCallId);
 
@@ -2206,7 +2205,7 @@ sap.ui.define([
 	 * @returns {object} The content message if any.
 	 */
 	Card.prototype.getContentMessage = function () {
-		return this._oContentMessage;
+		return this.getCardContent()?.getBlockingMessageStaticConfiguration();
 	};
 
 	/**

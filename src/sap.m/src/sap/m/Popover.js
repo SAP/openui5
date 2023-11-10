@@ -5,6 +5,7 @@
 // Provides control sap.m.Popover.
 sap.ui.define([
 	'./Bar',
+	'./Button',
 	'./InstanceManager',
 	'./library',
 	'./Title',
@@ -25,13 +26,12 @@ sap.ui.define([
 	"sap/ui/dom/getScrollbarSize",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
-	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
-	"sap/ui/dom/jquery/Focusable",
-	// jQuery Plugin "rect"
-	"sap/ui/dom/jquery/rect"
+	"sap/ui/dom/jquery/Focusable", // jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
+	"sap/ui/dom/jquery/rect" // jQuery Plugin "rect"
 ],
 	function(
 		Bar,
+		Button,
 		InstanceManager,
 		library,
 		Title,

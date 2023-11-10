@@ -5,6 +5,7 @@
 // Provides the real core class sap.ui.core.Core of SAPUI5
 sap.ui.define([
 	"./AnimationMode",
+	"./Component",
 	"./Configuration",
 	"./ControlBehavior",
 	"./Element",
@@ -54,6 +55,7 @@ sap.ui.define([
 ],
 	function(
 		AnimationMode,
+		Component,
 		Configuration,
 		ControlBehavior,
 		Element,

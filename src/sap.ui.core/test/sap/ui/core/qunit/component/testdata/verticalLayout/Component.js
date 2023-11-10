@@ -3,7 +3,6 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/library',
 	'sap/m/Button',
 	'sap/m/Text',
 	'sap/m/Toolbar',
@@ -11,14 +10,14 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/layout/VerticalLayout',
 	'sap/ui/core/Component'
-], function(coreLib, Button, Text, Toolbar, ComponentContainer, UIComponent, VerticalLayout, BaseComponent) {
+], function(Button, Text, Toolbar, ComponentContainer, UIComponent, VerticalLayout, BaseComponent) {
 	"use strict";
 
 	// new Component
 	var Component = UIComponent.extend("sap.ui.test.verticalLayout.Component", {
 		metadata : {
 			"abstract": true,
-			interfaces: [coreLib.IAsyncContentCreation],
+			interfaces: ["sap.ui.core.IAsyncContentCreation"],
 			version : "1.0",
 			includes : [
 				"css/vlayout.css",

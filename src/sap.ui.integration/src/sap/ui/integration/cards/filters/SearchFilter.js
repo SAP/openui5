@@ -3,10 +3,12 @@
  */
 sap.ui.define([
 	"./BaseFilter",
-	"sap/m/SearchField"
+	"sap/m/SearchField",
+	"sap/base/util/merge"
 ], function (
 	BaseFilter,
-	SearchField
+	SearchField,
+	merge
 ) {
 	"use strict";
 
@@ -65,6 +67,17 @@ sap.ui.define([
 		return {
 			value: this._escapeDoubleQuotes(this._getSearchField().getValue())
 		};
+	};
+
+	/**
+	 * @returns {object} Filter configuration with static items
+	 */
+	SearchFilter.prototype.getStaticConfiguration = function () {
+		const oStaticConfiguration = merge({}, this.getConfig());
+
+		oStaticConfiguration.value = this.getValueForModel().value;
+
+		return oStaticConfiguration;
 	};
 
 	SearchFilter.prototype._getSearchField = function () {

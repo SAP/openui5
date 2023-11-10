@@ -11,7 +11,7 @@
  */
 
 // Provides class sap.ui.base.Object
-sap.ui.define(['./Metadata'], function(Metadata) {
+sap.ui.define(['./Metadata', "sap/base/Log"], function(Metadata, Log) {
 	"use strict";
 
 

@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
+	"sap/ui/table/Table",
 	"sap/ui/table/rowmodes/Fixed",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
 ], function(
 	Element,
 	TableQUnitUtils,
+	Table,
 	FixedRowMode,
 	Filter,
 	Core

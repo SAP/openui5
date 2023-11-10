@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.Locale
-sap.ui.define(['sap/base/assert', 'sap/ui/base/Object', "sap/base/i18n/LanguageTag"],
-	function(assert, BaseObject, LanguageTag) {
+sap.ui.define(['sap/base/assert', 'sap/ui/base/Object', "sap/base/i18n/Localization", "sap/base/i18n/LanguageTag"],
+	function(assert, BaseObject, Localization, LanguageTag) {
 	"use strict";
 
 	var mCache = Object.create(null);

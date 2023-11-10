@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/m/Slider",
 	"sap/m/StandardListItem",
 	"sap/m/VBox",
+	"sap/ui/core/Control",
 	"sap/ui/core/Element",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
@@ -14,7 +15,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/nextUIUpdate",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors"
-], function(BusyDialog, Button, List, Slider, StandardListItem, VBox, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
+], function(BusyDialog, Button, List, Slider, StandardListItem, VBox, Control, Element, XMLView, KeyCodes, jQuery, qutils, nextUIUpdate) {
 	"use strict";
 
 	// Checks whether the given DomRef is contained or equals (in) one of the given container

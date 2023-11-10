@@ -2,8 +2,9 @@
 sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger",
-	"sap/ui/test/autowaiter/_moduleWaiter"
-], function(_LogCollector, _OpaLogger, _moduleWaiter) {
+	"sap/ui/test/autowaiter/_moduleWaiter",
+	"sap/ui/test/autowaiter/_XHRWaiter"
+], function (_LogCollector, _OpaLogger, _moduleWaiter, _XHRWaiter) {
 	"use strict";
 
 	var oLogCollector = _LogCollector.getInstance();

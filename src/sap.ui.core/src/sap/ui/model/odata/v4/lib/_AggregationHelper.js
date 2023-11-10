@@ -132,7 +132,7 @@ sap.ui.define([
 		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache
 		 *   The group level cache which the given element has been read from
 		 * @param {number|undefined} [iRank]
-		 *   The rank (aka. $skip index) of the given element within the cache's collectionn, or
+		 *   The rank (aka. $skip index) of the given element within the cache's collection, or
 		 *   <code>undefined</code> for created elements (where it may be unknown)
 		 * @param {string} [sNodeProperty]
 		 *   Optional property path to the hierarchy node value

@@ -1,13 +1,18 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	"sap/base/i18n/Localization",
 	"sap/ui/core/Element",
 	"sap/ui/core/Lib",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/m/SegmentedButton",
 	"sap/m/SegmentedButtonItem",
 	"sap/m/Button",
 	"sap/m/library",
+	"sap/m/Bar",
 	"sap/ui/core/library",
+	"sap/ui/core/IconPool",
 	"sap/m/OverflowToolbar",
+	"sap/m/Dialog",
 	"sap/m/Label",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ChangeReason",
@@ -17,16 +22,22 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/events/KeyCodes",
+	"sap/base/Log",
 	"sap/ui/core/Core"
 ], function(
+	Localization,
 	Element,
 	Library,
+	qutils,
 	SegmentedButton,
 	SegmentedButtonItem,
 	Button,
 	mobileLibrary,
+	Bar,
 	coreLibrary,
+	IconPool,
 	OverflowToolbar,
+	Dialog,
 	Label,
 	JSONModel,
 	ChangeReason,
@@ -36,6 +47,7 @@ sap.ui.define([
 	InvisibleText,
 	XMLView,
 	KeyCodes,
+	Log,
 	oCore
 ) {
 	"use strict";

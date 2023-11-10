@@ -5,11 +5,12 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	'sap/ui/core/date/UniversalDate',
+	'sap/ui/core/Configuration',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/base/assert'
 ],
-	function(Formatting, UniversalDate, Locale, LocaleData, assert) {
+	function (Formatting, UniversalDate, Configuration, Locale, LocaleData, assert) {
 		"use strict";
 
 		function clone(oUniversalDate) {

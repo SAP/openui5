@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/m/Image',
 	'sap/ui/core/IconPool',
+	'sap/ui/Device',
 	'./ImageContentRenderer',
 	"sap/ui/events/KeyCodes"
 ], function(
@@ -14,6 +15,7 @@ sap.ui.define([
 	Control,
 	Image,
 	IconPool,
+	Device,
 	ImageContentRenderer,
 	KeyCodes
 ) {

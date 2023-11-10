@@ -2274,7 +2274,7 @@ sap.ui.define([
 	 * @param {function} oModelInterface.reportTransitionMessages
 	 *   A function to report OData transition messages
 	 * @param {function(sap.ui.core.message.Message[],sap.ui.core.message.Message[]):void} oModelInterface.updateMessages
-	 *   A function to report messages to the MessageManager, expecting two arrays of
+	 *   A function to report messages to {@link sap.ui.core.Messaging}, expecting two arrays of
 	 *   {sap.ui.core.message.Message} as parameters. The first array should be the old messages and
 	 *   the second array the new messages.
 	 * @param {object} [mHeaders={}]

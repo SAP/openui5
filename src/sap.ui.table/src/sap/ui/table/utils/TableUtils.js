@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/ui/core/Lib",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/util/restricted/_throttle"
+	"sap/base/util/restricted/_throttle",
+	"sap/base/Log"
 ], function(
 	GroupingUtils,
 	ColumnUtils,
@@ -36,7 +37,8 @@ sap.ui.define([
 	Lib,
 	ChangeReason,
 	jQuery,
-	throttle
+	throttle,
+	Log
 ) {
 	"use strict";
 

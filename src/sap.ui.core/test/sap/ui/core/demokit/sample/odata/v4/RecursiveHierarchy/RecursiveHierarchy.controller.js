@@ -111,9 +111,10 @@ sap.ui.define([
 		},
 
 		onMove : function (oEvent) {
-			this.oNode = oEvent.getSource().getBindingContext();
+			this._bInTreeTable = false;
+			this._oNode = oEvent.getSource().getBindingContext();
 			const oSelectDialog = this.byId("moveDialog");
-			oSelectDialog.setBindingContext(this.oNode);
+			oSelectDialog.setBindingContext(this._oNode);
 			const oListBinding = oSelectDialog.getBinding("items");
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
@@ -126,14 +127,28 @@ sap.ui.define([
 				this.getView().setBusy(true);
 				const sParentId = oEvent.getParameter("selectedItem").getBindingContext()
 					.getProperty("ID");
-				const oParent = this.oNode.getBinding().getAllCurrentContexts()
+				const oParent = this._oNode.getBinding().getAllCurrentContexts()
 					.find((oNode) => oNode.getProperty("ID") === sParentId);
-				await this.oNode.move({parent : oParent});
+				await this._oNode.move({parent : oParent});
+
+				const oTable = this.byId(this._bInTreeTable ? "treeTable" : "table");
+				const iParentIndex = oParent.getIndex();
+				if (iParentIndex < oTable.getFirstVisibleRow()
+					|| iParentIndex + 1
+						>= oTable.getFirstVisibleRow() + oTable.getRowMode().getRowCount()) {
+					// make sure parent & child are visible
+					oTable.setFirstVisibleRow(iParentIndex);
+				}
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
 			} finally {
 				this.getView().setBusy(false);
 			}
+		},
+
+		onMoveInTreeTable : function (oEvent) {
+			this.onMove(oEvent);
+			this._bInTreeTable = true;
 		},
 
 		onNameChanged : function (oEvent) {

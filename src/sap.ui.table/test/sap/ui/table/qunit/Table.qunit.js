@@ -1,8 +1,6 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
-	"sap/ui/core/Element",
-	"sap/ui/core/RenderManager",
 	"sap/ui/table/qunit/TableQUnitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
@@ -17,16 +15,8 @@ sap.ui.define([
 	"sap/ui/table/rowmodes/Auto",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
+	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/plugins/SelectionPlugin",
-	"sap/ui/core/library",
-	"sap/ui/core/Control",
-	"sap/ui/core/util/PasteHelper",
-	"sap/ui/Device",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/Sorter",
-	"sap/ui/model/Filter",
-	"sap/ui/model/ChangeReason",
-	"sap/ui/model/type/Float",
 	"sap/m/Text",
 	"sap/m/Input",
 	"sap/m/Label",
@@ -37,19 +27,26 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/m/Title",
 	"sap/m/Toolbar",
+	"sap/m/IllustratedMessage",
 	"sap/m/library",
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
-	"sap/base/Log",
-	"sap/ui/thirdparty/jquery",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/Filter",
+	"sap/ui/model/ChangeReason",
+	"sap/ui/model/type/Float",
 	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/ui/core/Control",
+	"sap/ui/core/RenderManager",
 	"sap/ui/core/message/Message",
-	"sap/m/IllustratedMessage",
-	"sap/ui/table/TreeTableRenderer",
-	"sap/ui/table/AnalyticalTableRenderer"
+	"sap/ui/core/util/PasteHelper",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/thirdparty/jquery",
+	"sap/base/Log"
 ], function(
-	Element,
-	RenderManager,
 	TableQUnitUtils,
 	qutils,
 	Table,
@@ -64,16 +61,8 @@ sap.ui.define([
 	AutoRowMode,
 	TableUtils,
 	library,
+	PluginBase,
 	SelectionPlugin,
-	CoreLibrary,
-	Control,
-	PasteHelper,
-	Device,
-	JSONModel,
-	Sorter,
-	Filter,
-	ChangeReason,
-	FloatType,
 	Text,
 	Input,
 	Label,
@@ -84,16 +73,25 @@ sap.ui.define([
 	Image,
 	Title,
 	Toolbar,
+	IllustratedMessage,
 	MLibrary,
 	Menu,
 	MenuItem,
-	Log,
-	jQuery,
+	JSONModel,
+	Sorter,
+	Filter,
+	ChangeReason,
+	FloatType,
 	oCore,
+	Element,
+	Control,
+	RenderManager,
 	Message,
-	IllustratedMessage,
-	TreeTableRenderer,
-	AnalyticalTableRenderer
+	PasteHelper,
+	CoreLibrary,
+	Device,
+	jQuery,
+	Log
 ) {
 	"use strict";
 
@@ -552,18 +550,25 @@ sap.ui.define([
 	});
 
 	QUnit.test("Column headers active state styling", function(assert) {
-		var aColumns = oTable.getColumns();
+		var oColumn = oTable.getColumns()[4];
+		var oHeaderMenu = new TableQUnitUtils.ColumnHeaderMenu();
+
 		oTable.setEnableColumnReordering(false);
 		oCore.applyChanges();
-		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"),
-			"Column has active state styling because of the column header popup");
-		assert.ok(!aColumns[4].$().hasClass("sapUiTableHeaderCellActive"),
-			"Column has no active state styling because the reordering is disabled and the column doesn't have a column header popup");
+		assert.notOk(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Reordering disabled and the column doesn't have a header menu");
+
+		oColumn.setHeaderMenu(oHeaderMenu);
+		oCore.applyChanges();
+		assert.ok(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Column has a header menu that returns HasPopup.Menu");
+
+		oHeaderMenu.getAriaHasPopupType = () => { return CoreLibrary.aria.HasPopup.None; };
+		oTable.invalidate();
+		oCore.applyChanges();
+		assert.notOk(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Column has a header menu that returns HasPopup.None");
 
 		oTable.setEnableColumnReordering(true);
 		oCore.applyChanges();
-		assert.ok(aColumns[3].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
-		assert.ok(aColumns[4].$().hasClass("sapUiTableHeaderCellActive"), "Column has active state styling");
+		assert.ok(oColumn.$().hasClass("sapUiTableHeaderCellActive"), "Reordering is enabled");
 	});
 
 	QUnit.test("Skip _updateTableSizes if table has no width", function(assert) {
@@ -720,7 +725,6 @@ sap.ui.define([
 	QUnit.test("Localization Change", function(assert) {
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var pAdaptLocalization;
-		var done = assert.async();
 
 		oTable.getColumns().slice(1).forEach(function(oColumn) {
 			oTable.removeColumn(oColumn);
@@ -788,6 +792,18 @@ sap.ui.define([
 				return pAssert;
 			});
 		}
+
+		// RTL + Language
+		return test(true, true).then(function() {
+			// RTL
+			return test(true, false);
+		}).then(function() {
+			// Language
+			return test(false, true);
+		}).then(function() {
+			// Other localization event
+			return test(false, false);
+		});
 	});
 
 	QUnit.test("AlternateRowColors", function(assert) {
@@ -2736,44 +2752,6 @@ sap.ui.define([
 		PasteHelper.getPastedDataAs2DArray.returns([[]]);
 		this.test(assert, "Element that allows paste on table", getCell(0, 1, null, null, oTable)[0], false);
 		PasteHelper.getPastedDataAs2DArray.restore();
-	});
-
-	QUnit.module("Legacy Modules", {});
-
-	QUnit.test("ColumnMenuRenderer", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/table/ColumnMenuRenderer", "sap/ui/table/ColumnMenu"], function(oRenderer, oMenu) {
-			assert.ok(oRenderer === undefined/*ColumnMenuRenderer*/, "Global Namespace");
-			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
-			done();
-		});
-	});
-
-	QUnit.test("AnalyticalColumnMenuRenderer", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/table/AnalyticalColumnMenuRenderer", "sap/ui/table/AnalyticalColumnMenu"], function(oRenderer, oMenu) {
-			assert.ok(oRenderer === undefined/*AnalyticalColumnMenuRenderer*/, "Global Namespace");
-			assert.ok(oRenderer === oMenu.getMetadata().getRenderer(), "Metadata");
-			done();
-		});
-	});
-
-	QUnit.test("TreeTableRenderer", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/table/TreeTableRenderer", "sap/ui/table/TreeTable"], function(oRenderer, oTable) {
-			assert.ok(oRenderer === TreeTableRenderer, "Global Namespace");
-			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
-			done();
-		});
-	});
-
-	QUnit.test("AnalyticalTableRenderer", function(assert) {
-		var done = assert.async();
-		sap.ui.require(["sap/ui/table/AnalyticalTableRenderer", "sap/ui/table/AnalyticalTable"], function(oRenderer, oTable) {
-			assert.ok(oRenderer === AnalyticalTableRenderer, "Global Namespace");
-			assert.ok(oRenderer === oTable.getMetadata().getRenderer(), "Metadata");
-			done();
-		});
 	});
 
 	QUnit.module("Functions (public/private), mouse/touch events, properties", {

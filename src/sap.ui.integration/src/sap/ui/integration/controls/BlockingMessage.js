@@ -93,6 +93,10 @@ sap.ui.define([
 				httpResponse: {
 					type: "object",
 					defaultValue: null
+				},
+				showAdditionalContent: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			aggregations: {
@@ -156,15 +160,6 @@ sap.ui.define([
 			sIllustratedMessageType = sIllustratedMessageType || IllustratedMessageType.NoData;
 		}
 
-		oCard._oContentMessage = {
-			type: mSettings.type === CardBlockingMessageType.NoData ? "noData" : "error",
-			illustrationType: sIllustratedMessageType,
-			illustrationSize: sIllustratedMessageSize,
-			title: sTitle,
-			description: sDescription,
-			details: sDetails
-		};
-
 		if (oCard.getCardContent() && oCard.getCardContent().getDomRef()) {
 			sBoxHeight = oCard.getCardContent().getDomRef().offsetHeight + "px";
 		}
@@ -179,10 +174,11 @@ sap.ui.define([
 			httpResponse: mSettings.httpResponse
 		});
 
-		if (sDetails && Supportability.isDebugModeEnabled()) {
+		if (sDetails) {
 			oBlockingMessage.setDetails(sDetails);
-		} else if (sDetails) {
-			Log.error(sDetails);
+			oBlockingMessage.setShowAdditionalContent(Supportability.isDebugModeEnabled());
+
+			Log.error(sDetails); // @todo logging should happen at different place
 		}
 
 		return oBlockingMessage;
@@ -205,9 +201,25 @@ sap.ui.define([
 			.setDescription(this.getDescription())
 			.destroyAdditionalContent();
 
-		if (this.getDetails()) {
+		if (this.getShowAdditionalContent()) {
 			oIllustratedMessage.addAdditionalContent(this._getAdditionalContent());
 		}
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted sap.ui.integration
+	 * @returns {Object} The static configuration for the blocking message
+	 */
+	BlockingMessage.prototype.getStaticConfiguration = function () {
+		return {
+			type: this.getType() === CardBlockingMessageType.NoData ? "noData" : "error",
+			illustrationType: this.getIllustrationType(),
+			illustrationSize: this.getIllustrationSize(),
+			title: this.getTitle(),
+			description: this.getDescription() ? this.getDescription() : undefined,
+			details: this.getDetails() ? this.getDetails() : undefined
+		};
 	};
 
 	BlockingMessage.prototype._getAdditionalContent = function () {

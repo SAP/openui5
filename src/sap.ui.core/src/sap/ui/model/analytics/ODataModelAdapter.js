@@ -11,7 +11,7 @@
  */
 
 // Provides class ODataModelAdapter
-sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata4analytics'], function(AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics) {
+sap.ui.define(['./AnalyticalBinding', "./AnalyticalTreeBindingAdapter", './odata4analytics', "sap/base/Log"], function(AnalyticalBinding, AnalyticalTreeBindingAdapter, odata4analytics, Log) {
 "use strict";
 
 /**

@@ -2,9 +2,9 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
-	"sap/ui/model/json/JSONModel"
-],
-function(Core, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/mvc/XMLView"],
+function (Core, JSONModel, XMLView) {
 	"use strict";
 
 	// global vars

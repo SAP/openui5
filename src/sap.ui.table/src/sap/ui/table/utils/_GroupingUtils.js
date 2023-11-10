@@ -4,8 +4,10 @@
 
 // Provides helper sap.ui.table.utils._GroupingUtils.
 sap.ui.define([
+	"sap/ui/core/Element",
+	"sap/ui/model/Sorter",
 	"sap/ui/Device"
-], function(Device) {
+], function(Element, Sorter, Device) {
 	"use strict";
 
 	/**
