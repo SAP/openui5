@@ -2,6 +2,13 @@
 <html>
 <head>
 	<title>ToolHeader - sap.tnt</title>
+
+	<style>
+		#logo {
+			margin-left: 0.75rem;
+		}
+	</style>
+
 	<script src="shared-config.js"></script>
 	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
 		data-sap-ui-libs="sap.m, sap.ui.layout,sap.tnt">
@@ -26,7 +33,7 @@
 				}
 			});
 
-			// There are specific controls with specific order, that should be included in the ToolHeader
+			// There are specific controls with specific order that should be included in the ToolHeader
 			// in the time when theme Horizon is the default theme of UI5.
 			// This is checked by UXC-016 Shell requirement, which is valid for the ToolHeader as well:
 			// "Products must provide a shell bar that follows a defined structure and responsive behavior."
@@ -140,6 +147,42 @@
 					})
 				]
 			});
+
+			// There are specific controls with specific order that should be included in the ToolHeader
+			// in the time when theme Horizon is the default theme of UI5.
+			// This is checked by UXC-016 Shell requirement, which is valid for the ToolHeader as well:
+			// "Products must provide a shell bar that follows a defined structure and responsive behavior."
+			// Mandatory/required are logo, product name, avatar
+			var toolHeaderHorizonMand = new sap.tnt.ToolHeader("horizonToolHeaderOnlyMandatoryControls", {
+				content: [
+					new sap.m.Image({
+						id: "logo",
+						src: "./images/SAP_Logo.png",
+						tooltip: "SAP logo",
+						press: function () {},
+						decorative: false,
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					}),
+					new sap.m.Title({
+						text: "Product name",
+						wrapping: false
+					}),
+					new sap.m.ToolbarSpacer(),
+					new sap.m.Avatar({
+						tooltip: "Profile",
+						src: "images/Woman_avatar_01.png",
+						initials: "UI",
+						displaySize: "XS",
+						press: function () {},
+						layoutData: new sap.m.OverflowToolbarLayoutData({
+							priority: sap.m.OverflowToolbarPriority.NeverOverflow
+						})
+					})
+				]
+			}).addStyleClass("sapUiLargeMarginTop");
+
 
 			// This is the content and structure of the ToolHeader, which was required with Fiori 3 theme
 			var toolHeader = new sap.tnt.ToolHeader("shellLike", {
@@ -719,6 +762,7 @@
 				content: [
 					oToggleBtnCompact,
 					toolHeaderHorizon,
+					toolHeaderHorizonMand,
 					toolHeader,
 					toolHeaderIcons,
 					toolHeaderButtons,
