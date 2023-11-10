@@ -4631,11 +4631,12 @@ sap.ui.define([
 		};
 	};
 
-	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+	PlanningCalendar.prototype._calcCreateNewAppHours = function(oRowStartDate, iFirstIndex, iSecondIndex) {
+		var [iStartIndex, iEndIndex] = [iFirstIndex, iSecondIndex].sort((iIndexA, iIndexB) => iIndexA - iIndexB),
+			oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
 			iMinutesStep = 30 * 60 * 1000,  // 30 min
-			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
+			iStartAddon = iStartIndex,
+			iEndAddon = iEndIndex + 1,
 			oRowStartDateTimeUTC = UI5Date.getInstance(oRowStartUTC.setUTCMinutes(0, 0, 0)),
 			oAppStartUTC = UI5Date.getInstance(oRowStartDateTimeUTC.getTime() + iStartAddon * iMinutesStep),
 			oAppEndUTC = UI5Date.getInstance(oRowStartDateTimeUTC.getTime() + iEndAddon * iMinutesStep);
@@ -4646,10 +4647,12 @@ sap.ui.define([
 		};
 	};
 
-	PlanningCalendar.prototype._calcCreateNewAppDays = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
-			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
+	PlanningCalendar.prototype._calcCreateNewAppDays = function(oRowStartDate, iFirstIndex, iSecondIndex) {
+
+		var [iStartIndex, iEndIndex] = [iFirstIndex, iSecondIndex].sort((iIndexA, iIndexB) => iIndexA - iIndexB),
+			oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			iStartAddon = iStartIndex,
+			iEndAddon = iEndIndex + 1,
 			oAppStartUTC = UI5Date.getInstance(oRowStartUTC.getTime()),
 			oAppEndUTC = UI5Date.getInstance(oRowStartUTC.getTime());
 
@@ -4659,10 +4662,11 @@ sap.ui.define([
 		};
 	};
 
-	PlanningCalendar.prototype._calcCreateNewAppMonths = function(oRowStartDate, iStartIndex, iEndIndex) {
-		var oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
-			iStartAddon = (iStartIndex <= iEndIndex) ? iStartIndex : iEndIndex,
-			iEndAddon = (iStartIndex <= iEndIndex) ? iEndIndex + 1 : iStartIndex + 1,
+	PlanningCalendar.prototype._calcCreateNewAppMonths = function(oRowStartDate, iFirstIndex, iSecondIndex) {
+		var [iStartIndex, iEndIndex] = [iFirstIndex, iSecondIndex].sort((iIndexA, iIndexB) => iIndexA - iIndexB),
+			oRowStartUTC = CalendarUtils._createUniversalUTCDate(oRowStartDate, null, true),
+			iStartAddon = iStartIndex,
+			iEndAddon = iEndIndex + 1,
 			oAppStartUTC = UI5Date.getInstance(oRowStartUTC.getTime()),
 			oAppEndUTC = UI5Date.getInstance(oRowStartUTC.getTime());
 
