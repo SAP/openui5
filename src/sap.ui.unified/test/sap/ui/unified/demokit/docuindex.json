@@ -76,24 +76,6 @@
 				"samples": [
 					"sap.ui.unified.sample.CalendarDateIntervalBasic"
 				]
-			},
-			{
-				"id": "sap.ui.unified.Shell",
-				"name": "Unified Shell",
-				"category": "Container",
-				"since": "1.22",
-				"samples": [
-					"sap.ui.unified.sample.ShellBasic"
-				]
-			},
-			{
-				"id": "sap.ui.unified.SplitContainer",
-				"name": "Unified Split Container",
-				"category": "Container",
-				"since": "1.22",
-				"samples": [
-					"sap.ui.unified.sample.SplitContainer"
-				]
 			}
 		],
 		"samples": [
@@ -196,16 +178,6 @@
 				"id": "sap.ui.unified.sample.CalendarDateIntervalBasic",
 				"name": "simple example",
 				"description": "CalendarDateInterval with 14 days and single day selection"
-			},
-			{
-				"id": "sap.ui.unified.sample.ShellBasic",
-				"name": "Basic",
-				"description": "Basic Shell Example"
-			},
-			{
-				"id": "sap.ui.unified.sample.SplitContainer",
-				"name": "Basic",
-				"description": "Basic Split Container Example"
 			}
 		]
 	}
