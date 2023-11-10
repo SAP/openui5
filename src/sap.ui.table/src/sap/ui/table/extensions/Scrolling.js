@@ -2139,7 +2139,7 @@ sap.ui.define([
 
 			if (oRowContainer && oHSb && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
 				var $HSb = jQuery(oHSb);
-				var oCell = oCellInfo.cell[0];
+				var oCell = oCellInfo.cell;
 				var iCurrentScrollLeft = this._bRtlMode ? $HSb.scrollLeftRTL() : oHSb.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
 				var iCellLeft = oCell.offsetLeft;

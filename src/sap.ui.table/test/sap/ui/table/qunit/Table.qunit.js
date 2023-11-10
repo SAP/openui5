@@ -993,7 +993,7 @@ sap.ui.define([
 			assert.strictEqual(oTable._bRtlMode !== null, bRTLChanged,
 				"The flag _bRtlMode of the table was " + (bRTLChanged ? "" : " not") + " updated");
 
-			assert.strictEqual(oTable._oCellContextMenu === null, bLanguageChanged,
+			assert.strictEqual(oTable._oCellContextMenu == null, bLanguageChanged,
 				"The cell context menu was " + (bLanguageChanged ? "" : " not") + " reset");
 		}
 
