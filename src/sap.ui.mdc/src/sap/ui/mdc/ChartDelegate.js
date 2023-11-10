@@ -38,6 +38,7 @@ sap.ui.define([
 
 	/**
 	 * Notifies the inner chart to zoom in.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 *
 	 * @public
@@ -47,6 +48,7 @@ sap.ui.define([
 
 	/**
 	 * Notifies the inner chart to zoom out.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 *
 	 * @public
@@ -66,13 +68,13 @@ sap.ui.define([
 
 	/**
 	 * Gets the current zooming information for the inner chart.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {sap.ui.mdc.chart.ZoomState} Current <code>ZoomState</code> of the inner chart
 	 *
 	 * @public
 	 */
 	ChartDelegate.getZoomState = function (oChart) {
-		// return { enable: false, currentZoomLevel: 1 };
 	};
 
 	/**
@@ -145,6 +147,7 @@ sap.ui.define([
 	 * Creates a new chart item for a given property name and updates the inner chart.<br>
 	 * <b>Note:</b> This does <b>not</b> add the chart item to the <code>Items</code> aggregation of the chart.
 	 * Called and used by <code>p13n</code>.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart to add the property to
 	 * @param {string} sPropertyName The name of the property added
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
@@ -154,12 +157,13 @@ sap.ui.define([
 	 * @public
 	 */
 	ChartDelegate.addItem = function (oChart, sPropertyName, mPropertyBag, sRole) {
-		return Promise.resolve(null);
+		return Promise.resolve();
 	};
 
 	/**
 	 * Removes an existing chart item for a given property name and updates the inner chart.
 	 * Called and used by <code>p13n</code>.
+	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the MDC chart from which property is removed
 	 * @param {sap.ui.mdc.chart.Item} oItem The <code>item</code> that is removed from the chart
 	 * @param {object} mPropertyBag The property bag containing useful information about the change
@@ -232,7 +236,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Loads the required libraries and creates the inner chart.
+	 * Loads the required libraries and creates the inner chart.<br>
+	 * By default, the method returns <code>Promise.reject()</code>.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @returns {Promise} Resolved once the inner chart has been initialized
@@ -439,7 +444,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the binding info with the relevant filters.
+	 * Updates the binding info with the relevant filters.<br>
+	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link sap.ui.mdc.ValueHelpDelegate#getFilters getFilters}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart
@@ -500,6 +506,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ChartDelegate.fetchProperties = function (oChart) {
+		return Promise.resolve([]);
 	};
 
 	/**
