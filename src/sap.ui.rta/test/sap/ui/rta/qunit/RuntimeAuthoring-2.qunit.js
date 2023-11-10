@@ -61,9 +61,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var sandbox = sinon.createSandbox();
-	var oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
-	var oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
+	const sandbox = sinon.createSandbox();
+	const oTextResources = Lib.getResourceBundleFor("sap.ui.rta");
+	const oComp = RtaQunitUtils.createAndStubAppComponent(sinon, "someId", {
 		"sap.app": {
 			id: "someId"
 		}
@@ -81,7 +81,7 @@ sap.ui.define([
 						return "Action-somestring";
 					},
 					parseShellHash() {
-						var mHash = {
+						const mHash = {
 							semanticObject: "Action",
 							action: "somestring"
 						};
@@ -116,7 +116,7 @@ sap.ui.define([
 	}
 
 	function cleanInfoSessionStorage() {
-		var sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
+		const sFlexReference = FlexRuntimeInfoAPI.getFlexReference({element: oComp});
 		window.sessionStorage.removeItem(`sap.ui.fl.info.${sFlexReference}`);
 	}
 
@@ -135,6 +135,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			this.oRta.destroy();
+			VersionsAPI.clearInstances();
 			RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
 			RuntimeAuthoring.disableRestart(Layer.VENDOR);
 			sandbox.restore();
@@ -143,8 +144,8 @@ sap.ui.define([
 		QUnit.test("when RTA is started and _determineReload returns true", function(assert) {
 			assert.expect(4);
 			sandbox.stub(ReloadManager, "handleReloadOnStart").resolves(true);
-			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
-			var fnRemovePopupFilterStub = sandbox.spy(ZIndexManager, "removePopupFilter");
+			const oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			const fnRemovePopupFilterStub = sandbox.spy(ZIndexManager, "removePopupFilter");
 			return this.oRta.start()
 			.catch(function(oError) {
 				assert.ok(true, "then the start promise rejects");
@@ -161,7 +162,7 @@ sap.ui.define([
 					this.fireSyncFailed({error: "DesignTime failed"});
 				}.bind(this), 0);
 			});
-			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			const oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
 			return this.oRta.start()
 			.catch(function(oError) {
 				assert.ok(true, "the start function rejects the promise");
@@ -182,30 +183,23 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and started without ATO in prod system", function(assert) {
-			var oSettings = {
+		QUnit.test("and started without ATO in prod system", async function(assert) {
+			const oSettings = {
 				isAtoAvailable: false,
 				isKeyUser: true,
 				isProductiveSystem: true,
 				versioning: {}
 			};
-			var oSettingsInstance = new Settings(oSettings);
-			this.oRta = new RuntimeAuthoring({
-				rootControl: oComp
-			});
+			const oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
 
-			return this.oRta.start()
-			.then(function() {
-				return RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
-			}.bind(this))
-			.then(function() {
-				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
-			}.bind(this));
+			await this.oRta.start();
+			await RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
+			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is still visible");
 		});
 
-		QUnit.test("and started with ATO in non prod system", function(assert) {
-			var oSettings = {
+		QUnit.test("and started with ATO in non prod system", async function(assert) {
+			const oSettings = {
 				isAtoAvailable: true,
 				isKeyUser: true,
 				isProductiveSystem: false,
@@ -213,33 +207,28 @@ sap.ui.define([
 				system: "someSystemId",
 				client: "someClient"
 			};
-			var oSettingsInstance = new Settings(oSettings);
+			const oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
-			return this.oRta.start()
-			.then(function() {
-				return RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
-			}.bind(this))
-			.then(function() {
-				assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is visible");
-			}.bind(this));
+			await this.oRta.start();
+			await RtaQunitUtils.showActionsMenu(this.oRta.getToolbar());
+			assert.equal(this.oRta.getToolbar().getControl("restore").getVisible(), true, "then the Reset Button is visible");
 		});
 
-		QUnit.test("when RTA is created with custom plugins and start is triggered", function(assert) {
-			var oStretchPlugin = new Stretch("nonDefaultStretch");
-			var oTabHandlingPlugin = new TabHandling("nonDefaultRemovePlugin");
+		QUnit.test("when RTA is created with custom plugins and start is triggered", async function(assert) {
+			const oStretchPlugin = new Stretch("nonDefaultStretch");
+			const oTabHandlingPlugin = new TabHandling("nonDefaultRemovePlugin");
 
 			this.oRta.setPlugins({
 				tabHandling: oTabHandlingPlugin,
 				stretch: oStretchPlugin
 			});
-			var oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
+			const oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
 
-			return this.oRta.start().then(function() {
-				assert.equal(this.oRta.getPlugins().stretch.getId(), oStretchPlugin.getId(), " then the custom stretch is set");
-				assert.equal(this.oRta.getPlugins().tabHandling.getId(), oTabHandlingPlugin.getId(), " then the custom tabHandling is set");
-				assert.equal(Object.keys(this.oRta.getPlugins()).length, 2, " and the default plugins are not loaded");
-				assert.equal(oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called once on oRta.start()");
-			}.bind(this));
+			await this.oRta.start();
+			assert.equal(this.oRta.getPlugins().stretch.getId(), oStretchPlugin.getId(), " then the custom stretch is set");
+			assert.equal(this.oRta.getPlugins().tabHandling.getId(), oTabHandlingPlugin.getId(), " then the custom tabHandling is set");
+			assert.equal(Object.keys(this.oRta.getPlugins()).length, 2, " and the default plugins are not loaded");
+			assert.equal(oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called once on oRta.start()");
 		});
 
 		function createCommandstackStub(oRta, bCanSave, bCanRedo) {
@@ -255,26 +244,26 @@ sap.ui.define([
 
 		QUnit.test("when _onUnload is called with changes", function(assert) {
 			createCommandstackStub(this.oRta, true, true);
-			var sMessage = this.oRta._onUnload();
+			const sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, this.oRta._getTextResources().getText("MSG_UNSAVED_CHANGES"), "then the function returns the correct message");
 		});
 
 		QUnit.test("when _onUnload is called with changes but 'showWindowUnloadDialog' set to false", function(assert) {
 			createCommandstackStub(this.oRta, true, true);
 			this.oRta.setShowWindowUnloadDialog(false);
-			var sMessage = this.oRta._onUnload();
+			const sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
 
 		QUnit.test("when _onUnload is called without changes", function(assert) {
 			createCommandstackStub(this.oRta, false, false);
-			var sMessage = this.oRta._onUnload();
+			const sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
 
 		QUnit.test("when _onUnload is called after all changes were undone", function(assert) {
 			createCommandstackStub(this.oRta, false, true);
-			var sMessage = this.oRta._onUnload();
+			const sMessage = this.oRta._onUnload();
 			assert.equal(sMessage, undefined, "then the function returns no message");
 		});
 
@@ -314,12 +303,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when a new commandstack is being set", function(assert) {
-			var oInitialCommandStack = this.oRta.getCommandStack();
-			var oDetachSpy = sandbox.spy(oInitialCommandStack, "detachModified");
+			const oInitialCommandStack = this.oRta.getCommandStack();
+			const oDetachSpy = sandbox.spy(oInitialCommandStack, "detachModified");
 			assert.ok(oInitialCommandStack, "the command stack is automatically created");
 
-			var oNewStack = new Stack();
-			var oAttachSpy = sandbox.spy(oNewStack, "attachModified");
+			const oNewStack = new Stack();
+			const oAttachSpy = sandbox.spy(oNewStack, "attachModified");
 			this.oRta.setCommandStack(oNewStack);
 
 			assert.strictEqual(oAttachSpy.callCount, 1, "the new stack was attached to");
@@ -327,7 +316,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when RTA is stopped and destroyed, the default plugins get created and destroyed", function(assert) {
-			var done = assert.async();
+			const done = assert.async();
 
 			assert.equal(this.oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called 1 time on oRta.start()");
 			assert.ok(!isEmptyObject(this.oRta.getPlugins()), "then plugins are created on start");
@@ -346,21 +335,21 @@ sap.ui.define([
 
 		QUnit.test("when RTA is stopped it waits for pending actions", function(assert) {
 			assert.expect(3);
-			var done = assert.async();
-			var fnResolve;
-			var fnResolve2;
-			var fnResolve3;
-			var pPromise = new Promise(function(resolve) {
+			const done = assert.async();
+			let fnResolve;
+			let fnResolve2;
+			let fnResolve3;
+			const pPromise = new Promise(function(resolve) {
 				fnResolve = resolve;
 			});
 
-			var oPushAndExecuteStub = sandbox.stub(this.oRta.getCommandStack(), "pushAndExecute").callsFake(function() {
+			const oPushAndExecuteStub = sandbox.stub(this.oRta.getCommandStack(), "pushAndExecute").callsFake(function() {
 				return new Promise(function(resolve) {
 					fnResolve3 = resolve;
 				});
 			});
 
-			var oWaitForBusyStub = sandbox.stub(this.oRta._oDesignTime, "waitForBusyPlugins").callsFake(function() {
+			const oWaitForBusyStub = sandbox.stub(this.oRta._oDesignTime, "waitForBusyPlugins").callsFake(function() {
 				return new Promise(function(resolve) {
 					fnResolve2 = resolve;
 
@@ -386,13 +375,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when Mode is changed from adaptation to navigation and back to adaptation", function(assert) {
-			var oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
-			var oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
+			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
+			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
+			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
 
 			this.oRta.setMode("navigation");
 			assert.notOk(this.oRta._oDesignTime.getEnabled(), " in navigation mode the designTime property enabled is false");
@@ -414,13 +403,13 @@ sap.ui.define([
 
 		QUnit.test("when Mode is changed from adaptation to visualization and back to adaptation", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
-			var oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
-			var oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
+			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
+			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
+			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oStopCutPasteStub = sandbox.stub(this.oRta.getPluginManager(), "handleStopCutPaste");
 
 			this.oRta.setMode("visualization");
 			assert.ok(this.oRta._oDesignTime.getEnabled(), "in visualization mode the designTime property enabled is true");
@@ -446,12 +435,12 @@ sap.ui.define([
 		QUnit.test("when Mode is changed from visualization to navigation and back to visualization", function(assert) {
 			oComp.getRootControl().addStyleClass("sapUiDtOverlayMovable");
 			this.oRta.setMode("visualization");
-			var oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
-			var oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
-			var oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
-			var oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
-			var oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
-			var oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
+			const oTabHandlingPlugin = this.oRta.getPlugins().tabHandling;
+			const oTabHandlingRemoveSpy = sandbox.spy(oTabHandlingPlugin, "removeTabIndex");
+			const oTabHandlingRestoreSpy = sandbox.spy(oTabHandlingPlugin, "restoreTabIndex");
+			const oTabHandlingRemoveOverlaySpy = sandbox.spy(oTabHandlingPlugin, "removeOverlayTabIndex");
+			const oTabHandlingRestoreOverlaySpy = sandbox.spy(oTabHandlingPlugin, "restoreOverlayTabIndex");
+			const oFireModeChangedSpy = sandbox.stub(this.oRta, "fireModeChanged");
 			assert.equal(getComputedStyle(document.querySelector(".sapUiDtOverlayMovable")).cursor, "default", "the movable overlays switched to the default cursor");
 
 			this.oRta.setMode("navigation");
@@ -473,23 +462,24 @@ sap.ui.define([
 			oComp.getRootControl().removeStyleClass("sapUiDtOverlayMovable");
 		});
 
-		QUnit.test("when personalization changes are created in navigation mode", function(assert) {
-			var oMessageToastSpy = sandbox.stub(MessageToast, "show");
+		QUnit.test("when personalization changes are created in navigation mode", async function(assert) {
+			const oMessageToastSpy = sandbox.stub(MessageToast, "show");
 			this.oRta.setMode("navigation");
-			return ControlPersonalizationWriteAPI.add({changes: [{
-				selectorElement: oComp
-			}]})
-			.then(function() {
-				var sExpectedErrorMessage = oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
-				assert.ok(oMessageToastSpy.calledOnceWith(sExpectedErrorMessage), "then a warning is shown");
-				oMessageToastSpy.resetHistory();
-				return ControlPersonalizationWriteAPI.add({changes: [{
+			await ControlPersonalizationWriteAPI.add({
+				changes: [{
 					selectorElement: oComp
-				}]})
-				.then(function() {
-					assert.ok(oMessageToastSpy.notCalled, "then the toast is only shown once");
-				});
+				}]
 			});
+			const sExpectedErrorMessage = oTextResources.getText("MSG_NAVIGATION_MODE_CHANGES_WARNING");
+			assert.ok(oMessageToastSpy.calledOnceWith(sExpectedErrorMessage), "then a warning is shown");
+			oMessageToastSpy.resetHistory();
+
+			await ControlPersonalizationWriteAPI.add({
+				changes: [{
+					selectorElement: oComp
+				}]
+			});
+			assert.ok(oMessageToastSpy.notCalled, "then the toast is only shown once");
 		});
 	});
 
@@ -510,93 +500,87 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when RTA gets started", function(assert) {
-			return this.oRta.start().then(function() {
-				assert.equal(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
+		QUnit.test("when RTA gets started", async function(assert) {
+			await this.oRta.start();
+			assert.equal(document.querySelectorAll(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
-				assert.equal(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/modeSwitcher"), "adaptation", "then the mode is initially set to 'Adaptation'");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/redo/enabled"), false, "then the redo is disabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/undo/enabled"), false, "then the undo is disabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/restore/enabled"), false, "then the restore is disabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the translation button is disabled");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), false, "then the translation button is not visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/visualizationButton/visible"), true, "then the visualization button is visible");
+			assert.equal(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
 
-				var oExpectedSettings = {
-					flexSettings: this.oFlexSettings,
-					rootControl: this.oRta.getRootControlInstance(),
-					commandStack: this.oRta.getCommandStack()
-				};
-				assert.deepEqual(this.oRta.getToolbar().getRtaInformation(), oExpectedSettings, "the rta settings were passed to the toolbar");
-			}.bind(this));
+			const oExpectedSettings = {
+				flexSettings: this.oFlexSettings,
+				rootControl: this.oRta.getRootControlInstance(),
+				commandStack: this.oRta.getCommandStack()
+			};
+			assert.deepEqual(this.oRta.getToolbar().getRtaInformation(), oExpectedSettings, "the rta settings were passed to the toolbar");
 		});
 
-		QUnit.test("when RTA gets started with an enabled key user translation", function(assert) {
-			var oSettings = {
+		QUnit.test("when RTA gets started with an enabled key user translation", async function(assert) {
+			const oSettings = {
 				isKeyUserTranslationEnabled: true,
 				isKeyUser: true,
 				versioning: {}
 			};
-			var oSettingsInstance = new Settings(oSettings);
+			const oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves([]);
 
-			return this.oRta.start().then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the Translate Button is disabled");
-			}.bind(this));
+			await this.oRta.start();
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), false, "then the Translate Button is disabled");
 		});
 
-		QUnit.test("when RTA gets started with an enabled key user translation and already translatable changes", function(assert) {
-			var oSettings = {
+		QUnit.test("when RTA gets started with an enabled key user translation and already translatable changes", async function(assert) {
+			const oSettings = {
 				isKeyUserTranslationEnabled: true,
 				isKeyUser: true,
 				versioning: {}
 			};
-			var oSettingsInstance = new Settings(oSettings);
+			const oSettingsInstance = new Settings(oSettings);
 			sandbox.stub(Settings, "getInstance").resolves(oSettingsInstance);
 			sandbox.stub(TranslationAPI, "getSourceLanguages").resolves(["en"]);
 
-			return this.oRta.start().then(function() {
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
-				assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
-			}.bind(this));
+			await this.oRta.start();
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/visible"), true, "then the Translate Button is visible");
+			assert.equal(this.oRta._oToolbarControlsModel.getProperty("/translation/enabled"), true, "then the Translate Button is enabled");
 		});
 
-		QUnit.test("when the URL parameter set by Fiori tools is set to 'true'", function(assert) {
+		QUnit.test("when the URL parameter set by Fiori tools is set to 'true'", async function(assert) {
 			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(true);
 			sandbox.stub(URLSearchParams.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("true");
 
-			return this.oRta.start().then(function() {
-				var oToolbar = this.oRta.getToolbar();
-				assert.notOk(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			const oToolbar = this.oRta.getToolbar();
+			assert.notOk(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is not visible");
 		});
 
-		QUnit.test("when the URL parameter set by Fiori tools is set to 'false'", function(assert) {
+		QUnit.test("when the URL parameter set by Fiori tools is set to 'false'", async function(assert) {
 			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(true);
 			sandbox.stub(URLSearchParams.prototype, "get").callThrough().withArgs("fiori-tools-rta-mode").returns("false");
 
-			return this.oRta.start().then(function() {
-				var oToolbar = this.oRta.getToolbar();
-				assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
-			}.bind(this));
+			await this.oRta.start();
+			const oToolbar = this.oRta.getToolbar();
+			assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
 		});
 
-		QUnit.test("when the URL parameter used by Fiori tools is not set", function(assert) {
+		QUnit.test("when the URL parameter used by Fiori tools is not set", async function(assert) {
 			sandbox.stub(URLSearchParams.prototype, "has").callThrough().withArgs("fiori-tools-rta-mode").returns(false);
 
-			return this.oRta.start().then(function() {
-				var oToolbar = this.oRta.getToolbar();
-				assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
-			}.bind(this));
+			await this.oRta.start();
+			const oToolbar = this.oRta.getToolbar();
+			assert.ok(oToolbar.getControl("visualizationSwitcherButton").getVisible(), "then the 'Visualization' tab is visible");
 		});
 
 		function stubToolbarButtonsVisibility(bPublish, bSaveAs) {
@@ -604,64 +588,60 @@ sap.ui.define([
 			sandbox.stub(AppVariantFeature, "isSaveAsAvailable").returns(bSaveAs);
 		}
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the manifest of an app is not supported", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(false);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
-				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), true, "then the publish version button is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), true, "then the publish version button is not visible");
 		});
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but the manifest of an app is not supported", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but the manifest of an app is not supported", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(false);
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(false);
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
 		});
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but uses a pseudo sap-app-id", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for an (SAP) developer but uses a pseudo sap-app-id", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(AppVariantFeature, "isManifestSupported").resolves(true);
 			sandbox.stub(FlexUtils, "isVariantByStartupParameter").returns(true);
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), true, "then the 'AppVariant Overview' Menu Button is visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
 		});
 
-		QUnit.test("when RTA is started without versioning", function(assert) {
+		QUnit.test("when RTA is started without versioning", async function(assert) {
 			stubToolbarButtonsVisibility(false, true);
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
-				assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionEnabled"), false, "then the publish version button is not enabled");
+			assert.strictEqual(this.oRta._oVersionsModel.getProperty("/publishVersionVisible"), false, "then the publish version button is not visible");
 		});
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app is a home page", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app is a home page", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
@@ -676,17 +656,16 @@ sap.ui.define([
 				}
 			});
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
 		});
 
-		var DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
+		const DEFAULT_ADAPTATION = { id: "DEFAULT", type: "DEFAULT" };
 		function stubCBA() {
 			ContextBasedAdaptationsAPI.clearInstances();
 			stubToolbarButtonsVisibility(true, true);
@@ -701,65 +680,57 @@ sap.ui.define([
 				}
 			});
 		}
-		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user)", async function(assert) {
 			stubCBA.call(this);
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), true, "then the 'Context Based Adaptation' Menu Button is visible");
-				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is load");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), true, "then the 'Context Based Adaptation' Menu Button is enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), true, "then the 'Context Based Adaptation' Menu Button is visible");
+			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is load");
 		});
 
-		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, context based adaptation feature is available for a (key user) but the current app is an overview page", async function(assert) {
 			stubCBA.call(this);
 			this.oFlexUtilsGetAppDescriptor.returns({"sap.app": {id: "1"}, "sap.ovp": {}});
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), false, "then the 'Context Based Adaptation' Menu Button is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/enabled"), false, "then the 'Context Based Adaptation' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/contextBasedAdaptation/visible"), false, "then the 'Context Based Adaptation' Menu Button is not visible");
 		});
 
-		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", function(assert) {
+		QUnit.test("when RTA is started a 2nd time, context based adaptation feature is available and data has changed on the backend and another adaptation has been shown by end user", async function(assert) {
 			stubCBA.call(this);
 
 			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
-			return ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"}).then(function() {
-				this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
-				this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
+			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
+			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
+			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
 
-				return this.oRta.start();
-			}.bind(this)).then(function() {
-				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 2, "CBA Model is loaded again");
-				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}, {id: "67890", rank: 2}], "then the adaptations are up to date");
-				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "67890", "then the displayed adaptation is correct");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 2, "CBA Model is loaded again");
+			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}, {id: "67890", rank: 2}], "then the adaptations are up to date");
+			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "67890", "then the displayed adaptation is correct");
 		});
 
-		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", function(assert) {
+		QUnit.test("when RTA is doing a restart during switch, context based adaptation feature is available", async function(assert) {
 			stubCBA.call(this);
 
 			this.oFlexInfoSessionStub = sandbox.stub(FlexInfoSession, "get").returns({adaptationId: "12345" });
-			return ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"}).then(function() {
-				this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
-				this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
-				sandbox.stub(ReloadManager, "needsAutomaticStart").resolves(true);
+			await ContextBasedAdaptationsAPI.initialize({control: oComp, layer: "CUSTOMER"});
+			this.oContextBasedAdaptationsAPILoadStub.resolves({adaptations: [{id: "12345"}, {id: "67890"}, DEFAULT_ADAPTATION]});
+			this.oFlexInfoSessionStub.returns({adaptationId: "67890" });
+			sandbox.stub(ReloadManager, "needsAutomaticStart").resolves(true);
 
-				return this.oRta.start();
-			}.bind(this)).then(function() {
-				assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is not loaded again");
-				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}], "then the adaptations are still the same");
-				assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "12345", "then the displayed adaptation is correct");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oContextBasedAdaptationsAPILoadStub.callCount, 1, "CBA Model is not loaded again");
+			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/adaptations"), [{id: "12345", rank: 1}], "then the adaptations are still the same");
+			assert.deepEqual(this.oRta._oContextBasedAdaptationsModel.getProperty("/displayedAdaptation/id"), "12345", "then the displayed adaptation is correct");
 		});
 
-		QUnit.test("when RTA is started without any buttons on the actions menu", function(assert) {
-			sandbox.stub(VersionsAPI, "initialize").callsFake(function(...aArgs) {
-				return VersionsAPI.initialize.wrappedMethod.apply(this, aArgs)
-				.then(function(oModel) {
-					oModel.setProperty("/versioningEnabled", true);
-					return oModel;
-				});
+		QUnit.test("when RTA is started without any buttons on the actions menu", async function(assert) {
+			sandbox.stub(VersionsAPI, "initialize").callsFake(async function(...aArgs) {
+				const oModel = await VersionsAPI.initialize.wrappedMethod.apply(this, aArgs);
+				oModel.setProperty("/versioningEnabled", true);
+				return oModel;
 			});
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
@@ -775,18 +746,17 @@ sap.ui.define([
 				}
 			});
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
-				assert.strictEqual(this.oRta.getToolbar().getControl("actionsMenu").getVisible(), false, "then the actions menu button is not visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), false, "then the 'AppVariant Overview' Menu Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), false, "then the 'AppVariant Overview' Icon Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), false, "then the 'AppVariant Overview' Icon Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), false, "then the saveAs Button is not enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), false, "then the saveAs Button is not visible");
+			assert.strictEqual(this.oRta.getToolbar().getControl("actionsMenu").getVisible(), false, "then the actions menu button is not visible");
 		});
 
-		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", function(assert) {
+		QUnit.test("when RTA is started in the customer layer, app variant feature is available for a (key user) but the current app cannot be detected for home page check", async function(assert) {
 			stubToolbarButtonsVisibility(true, true);
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").resolves(true);
 			sandbox.stub(FlexUtils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
@@ -800,39 +770,34 @@ sap.ui.define([
 				}
 			});
 
-			return this.oRta.start().then(function() {
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), true, "then the saveAs Button is enabled");
-				assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
-			}.bind(this));
+			await this.oRta.start();
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/enabled"), true, "then the 'AppVariant Overview' Menu Button is enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/overview/visible"), false, "then the 'AppVariant Overview' Menu Button is not visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/enabled"), true, "then the 'AppVariant Overview' Icon Button is enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/manageApps/visible"), true, "then the 'AppVariant Overview' Icon Button is visible");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/enabled"), true, "then the saveAs Button is enabled");
+			assert.strictEqual(this.oRta._oToolbarControlsModel.getProperty("/appVariantMenu/saveAs/visible"), true, "then the saveAs Button is visible");
 		});
 
-		QUnit.test("when save is triggered via the toolbar with an appdescriptor change", function(assert) {
-			var fnResolve;
-			var oPromise = new Promise(function(resolve) {
+		QUnit.test("when save is triggered via the toolbar with an appdescriptor change", async function(assert) {
+			let fnResolve;
+			const oPromise = new Promise(function(resolve) {
 				fnResolve = resolve;
 			});
-			var oCallbackStub = sandbox.stub().callsFake(function() {
+			const oCallbackStub = sandbox.stub().callsFake(function() {
 				fnResolve();
 			});
-			var oSerializeStub;
 
-			return this.oRta.start().then(function() {
-				oSerializeStub = sandbox.stub(this.oRta._oSerializer, "saveCommands").resolves();
-				sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
-				this.oRta.getToolbar().fireSave({
-					callback: oCallbackStub
-				});
-				return oPromise;
-			}.bind(this))
-			.then(function() {
-				assert.ok(this.oRta._bSavedChangesNeedReload, "the flag was set");
-				assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
-				assert.strictEqual(oCallbackStub.callCount, 1, "the callback function was called once");
-			}.bind(this));
+			await this.oRta.start();
+			const oSerializeStub = sandbox.stub(this.oRta._oSerializer, "saveCommands").resolves();
+			sandbox.stub(this.oRta._oSerializer, "needsReload").resolves(true);
+			this.oRta.getToolbar().fireSave({
+				callback: oCallbackStub
+			});
+			await oPromise;
+			assert.ok(this.oRta._bSavedChangesNeedReload, "the flag was set");
+			assert.strictEqual(oSerializeStub.callCount, 1, "the serialize function was called once");
+			assert.strictEqual(oCallbackStub.callCount, 1, "the callback function was called once");
 		});
 
 		QUnit.test("when save is triggered via the toolbar with a translatable change", function(assert) {
