@@ -65,10 +65,18 @@ sap.ui.define([
 		});
 
 		QUnit.test("Preparation - View requirements", function(assert) {
+			const done = assert.async();
 			assert.expect(2);
-			var view = ObjectPath.get("sap.ui.core.mvc." + oConfig.type + "View");
-			assert.ok(view.asyncSupport, "View type supports asynchronous loading");
-			assert.ok(view.prototype.loaded, "View type supports Promises via loaded method");
+			sap.ui.require([
+				"sap/ui/core/mvc/" + oConfig.type + "View"
+			], function(FNViewClass) {
+				assert.ok(FNViewClass.asyncSupport, "View type supports asynchronous loading");
+				assert.ok(FNViewClass.prototype.loaded, "View type supports Promises via loaded method");
+				done();
+			}, function(oErr) {
+				assert.strictEqual(oErr, {}, `couldn't load view type ${oConfig.type}`);
+				done();
+			});
 		});
 
 		QUnit.test("Preparation - View source preload", function(assert) {
