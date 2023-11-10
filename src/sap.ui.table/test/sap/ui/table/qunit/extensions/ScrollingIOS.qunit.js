@@ -17,7 +17,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Initialization and Destruction", {
+	QUnit.module("Lifecycle", {
 		before: function() {
 			Device.os.ios = true;
 		},
@@ -33,12 +33,12 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_init", function(assert) {
+	QUnit.test("Initialization", function(assert) {
 		var oExtension = this.oTable._getScrollIOSExtension();
-		assert.ok(!!oExtension, "Extension available in table");
+		assert.ok(oExtension, "Extension available in table");
 	});
 
-	QUnit.test("destroy", function(assert) {
+	QUnit.test("Destruction", function(assert) {
 		var oExtension = this.oTable._getScrollIOSExtension();
 
 		this.oTable.destroy();

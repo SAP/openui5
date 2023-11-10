@@ -718,7 +718,7 @@ sap.ui.define([
 		 * Focuses an element. If no focus events are fired, for example because the tab or browser window is in the background,
 		 * artificial focus events are dispatched to the focused element.
 		 *
-		 * <b>Do not use this method is you need to check whether an element is focusable!</b>
+		 * <b>Do not use this method if you need to check whether an element is focusable!</b>
 		 *
 		 * @param {HTMLElement} oElement The element to focus.
 		 * @returns {Promise} A Promise that resolves after the focus events are fired and processed.
@@ -735,8 +735,8 @@ sap.ui.define([
 				if (oError instanceof TimeoutError) {
 					// If the tab or browser are in the background, or the focus is in the dev tools, the are no focus events. To be able to continue
 					// with the test execution, fake the focus events.
-					oElement.dispatchEvent(new FocusEvent("focusin"));
 					oElement.dispatchEvent(new FocusEvent("focus"));
+					oElement.dispatchEvent(new FocusEvent("focusin"));
 					oEventListener.remove();
 					return oHelperPlugin.whenFocusHandlingFinished();
 				}

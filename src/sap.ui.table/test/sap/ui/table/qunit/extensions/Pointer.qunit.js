@@ -50,11 +50,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("initialization", function(assert) {
+	QUnit.test("Initialization", function(assert) {
 		var oExtension = this.oTable._getPointerExtension();
 		var iDelegateCount = 0;
 
-		assert.ok(oExtension, "Pointer Extension available");
+		assert.ok(oExtension, "Extension available in table");
 
 		for (var i = 0; i < this.oTable.aDelegates.length; i++) {
 			if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
@@ -65,11 +65,11 @@ sap.ui.define([
 		assert.equal(iDelegateCount, 1, "Pointer delegate registered");
 	});
 
-	QUnit.test("destruction", function(assert) {
+	QUnit.test("Destruction", function(assert) {
 		var oExtension = this.oTable._getPointerExtension();
 
 		this.oTable.destroy();
-		assert.ok(!oExtension.getTable(), "Table cleared");
+		assert.ok(!oExtension.getTable(), "Reference to table removed");
 		assert.ok(!oExtension._delegate, "Delegate cleared");
 	});
 
