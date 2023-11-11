@@ -2737,6 +2737,9 @@ sap.ui.define([
 				componentData: oComponentData,
 				_cacheTokens: vConfig.asyncHints && vConfig.asyncHints.cacheTokens,
 				_activeTerminologies: aActiveTerminologies,
+				/**
+				 * @deprecated since 1.120
+				 */
 				_syncCreation: !vConfig.async
 			}));
 			assert(oInstance instanceof Component, "The specified component \"" + sController + "\" must be an instance of sap.ui.core.Component!");
