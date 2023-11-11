@@ -562,7 +562,9 @@ sap.ui.define([
 			},
 
 			/**
-			 * Fired when the user requests the context menu for a table cell.
+			 * Fired when the {@link sap.ui.table.Table#setContextMenu context menu} is opened.
+			 * When the context menu is opened, the binding context of the row is set to the context menu.
+			 *
 			 * @since 1.54
 			 */
 			beforeOpenContextMenu: {

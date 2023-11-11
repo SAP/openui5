@@ -955,5 +955,43 @@
    * @public
    */
 
+  /**
+   * Map-like configuration object for filter creation.<br/>
+   * The keys for this object must be aligned with any {@link sap.ui.mdc.util.FilterTypeConfig} the <code>FilterConditionMap</code> is combined with during filter creation.<br/>
+   *
+   *
+   * <b>Structure:</b> Object.&lt;string, {@link sap.ui.mdc.condition.ConditionObject sap.ui.mdc.condition.ConditionObject[]}&gt;
+   *
+   * @typedef sap.ui.mdc.util.FilterConditionMap
+   * @type {Object.<string, sap.ui.mdc.condition.ConditionObject[]>}
+   * @public
+   * @since 1.121.0
+   */
+
+  /**
+   * Configuration object for filter creation.
+   *
+   * @typedef {object} sap.ui.mdc.util.FilterTypeConfigEntry
+   * @property {sap.ui.model.Type} type Type instance
+   * @property {boolean} [caseSensitive] Indicates if a created filter is case-sensitive
+   * @property {sap.ui.mdc.enums.BaseType} [baseType] BaseType configuration for the given type useful for externalization/internalization of filter values
+   * @public
+   * @since 1.121.0
+   */
+
+  /**
+   * Map-like configuration object for filter creation.<br/>
+   * The keys for this object must be aligned with any {@link sap.ui.mdc.util.FilterConditionMap} the <code>FilterTypeConfig</code> is combined with during filter creation.
+   *
+   *
+   * <b>Structure:</b> Object.&lt;string, {@link sap.ui.mdc.util.FilterTypeConfigEntry}&gt;
+   *
+   * @typedef sap.ui.mdc.util.FilterTypeConfig
+   * @type {Object.<string, sap.ui.mdc.util.FilterTypeConfigEntry>}
+   * @public
+   * @since 1.121.0
+   */
+
+
   return thisLib;
  });

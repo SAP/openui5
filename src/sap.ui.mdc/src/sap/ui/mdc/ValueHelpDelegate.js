@@ -24,7 +24,8 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Delegate for {@link sap.ui.mdc.ValueHelp ValueHelp}.<br>
+	 * Delegate for {@link sap.ui.mdc.ValueHelp}.
+	 *
 	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @namespace
@@ -37,18 +38,17 @@ sap.ui.define([
 	const ValueHelpDelegate = Object.assign({}, BaseDelegate);
 
 	/**
-	 * Requests the content of the value help.
+	 * Requests additional content for the value help.
 	 *
 	 * This function is called when the value help is opened or a key or description is requested.
 	 *
-	 * So depending on the value help content used, all content controls and data need to be assigned.
+	 * So depending on the value help {@link sap.ui.mdc.valuehelp.base.Content Content} used, all content controls and data need to be assigned.
 	 * Once they are assigned and the data is set, the returned <code>Promise</code> needs to be resolved.
-	 * Only then does the value help continue opening or reading data.
+	 * Only then does the value help continue opening or reading data.<br/>By default, this method returns a <code>Promise</code> that resolves into <code>undefined</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Container} oContainer Container instance
 	 * @param {string} sContentId ID of the content shown after this call to retrieve content
-	 *
 	 * @returns {Promise} <code>Promise</code> that is resolved if all content is available
 	 * @public
 	 */
@@ -57,7 +57,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if a <code>ListBinding</code> supports <code>$search</code>.
+	 * Checks if a <code>ListBinding</code> supports <code>$search</code>.<br/>By default, this method returns <code>false</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent Content element
@@ -70,12 +70,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Controls if a type-ahead is opened or closed.
-	 *
+	 * Controls if a type-ahead is opened or closed.<br/>By default, this method returns <code>false</code> if a given content is a {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent} but no (truthy) <code>filterValue</code> is applied. Otherwise, if the given content is either a {@link sap.ui.mdc.valuehelp.base.ListContent ListContent} with available contexts or any other type of {@link sap.ui.mdc.valuehelp.base.Content Content}, <code>true</code> is returned.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.Content} oContent <code>ValueHelp</code> Content requesting conditions configuration
- 	 * @returns {Promise|boolean} Boolean or <code>Promise</code> resolving into a boolean indicating the desired behavior
+ 	 * @returns {Promise|boolean} Boolean or <code>Promise</code> that resolves into a <code>boolean</code> indicating the desired behavior
 	 * @since 1.110.0
 	 * @public
 	 */
@@ -91,7 +90,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adjustable filtering for list-based contents.
+	 * Adjustable filtering for list-based contents.<br/>By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link sap.ui.mdc.ValueHelpDelegate#getFilters getFilters}.
+	 *
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
@@ -105,7 +105,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns filters that are used when updating the <code>ValueHelp</code>'s binding.
+	 * Returns filters that are used when updating the binding of the <code>ValueHelp</code>.<br/>By default, this method returns a set of {@link sap.ui.model.Filter Filters} originating from an available {@link sap.ui.mdc.FilterBar FilterBar}, the delegate's own {@link #getFilterConditions}, and/or the {@link sap.ui.mdc.valuehelp.base.FilterableListContent#getFilterFields filterFields} configuration of the given {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent}.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content requesting conditions configuration
@@ -132,7 +132,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes a filter in a <code>ListBinding</code> and resumes it, if suspended.
+	 * Executes a filter in a <code>ListBinding</code> and resumes it, if suspended.<br/>By default, this method applies <code>filters</code> found in the given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} to the given {@link sap.ui.model.ListBinding ListBinding}. A suspended <code>ListBinding</code> is also resumed afterwards.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
@@ -149,7 +149,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes a filter in a <code>ListBinding</code>.
+	 * Executes a filter in a <code>ListBinding</code>.<br/>By default, this method returns a <code>Promise</code> that resolves into the given <code>ListBinding</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
@@ -163,8 +163,7 @@ sap.ui.define([
 
 	/**
 	 * Checks if the <code>ListBinding</code> is waiting for an update.
-	 * As long as the context has not been set for <code>ListBinding</code>,
-	 * <code>ValueHelp</code> needs to wait.
+	 * As long as the context has not been set for <code>ListBinding</code>, the <code>ValueHelp</code> needs to wait.<br/>By default, this method returns <code>false</code> if no {@link sap.ui.model.ListBinding ListBinding} is available or the given <code>ListBinding</code> is suspended. Otherwise, it returns a <code>Promise</code> that resolves into a <code>boolean</code> value indicating that at least one context is available after retrieval.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.model.ListBinding} oListBinding <code>ListBinding</code> to check
@@ -185,7 +184,7 @@ sap.ui.define([
 
 	/**
 	 * Callback invoked every time a {@link sap.ui.mdc.ValueHelp ValueHelp} fires a <code>select</code> event or the value of the corresponding field changes.
-	 * This callback can be used to update external fields.
+	 * This callback can be used to update external fields.<br/>By default, this method is empty.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.enums.ValueHelpPropagationReason} sReason Reason why the method was invoked
@@ -198,10 +197,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Find all conditions, which are represented by the given context for 'Select from list' scenarios.
-	 * By default, only condition keys are considered. This may be extended with payload dependent filters.
+	 * Finds all conditions that are represented by the given context for 'Select from list' scenarios.<br/>By default, this method only takes {@link sap.ui.mdc.condition.ConditionObject Condition} keys into consideration. This can be extended with payload-dependent filters.
 	 *
-	 * Note: this method replaces the former <code>isFilterableListItemSelected</code>
+	 * <b>Note:</b> This method replaces the former <code>isFilterableListItemSelected</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
@@ -221,7 +219,7 @@ sap.ui.define([
 
 	/**
 	 * Provides the possibility to customize selection events in 'Select from list' scenarios.
-	 * This enables an application to reuse conditions in collective search scenarios, instead of always creating new ones.
+	 * This enables an application to reuse conditions in collective search scenarios, instead of always creating new ones.<br/>By default, this method returns given changes without modification.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
  	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
@@ -240,7 +238,7 @@ sap.ui.define([
 
 	/**
 	 * Provides the possibility to convey custom data in conditions.
-	 * This enables an application to enhance conditions with data relevant for combined key or out parameter scenarios.
+	 * This enables an application to enhance conditions with data relevant for combined key or out parameter scenarios.<br/>By default, this method returns <code>undefined</code>.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
@@ -255,12 +253,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides type information for list content filtering.
+	 * Provides type information for list content filtering.<br/>By default, this method returns an object of types per binding path, extracted from a binding template of the given {@link sap.ui.mdc.valuehelp.base.FilterableListContent FilterableListContent}.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
 	 * @param {object} oConditions Set of conditions to create filters for
-	 * @returns {object} Returns a type map for property paths
+	 * @returns {sap.ui.mdc.util.FilterTypeConfig} Returns a type map for property paths
 	 * @public
 	 * @since 1.101.0
 	 */
@@ -282,11 +280,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Provides a map of conditions for the following situations:
-	 * <ul>
-	 * <li> Initial set of conditions applied every time value help content is shown for the first time since opening its container.</li>
-	 * <li> Detailed set of conditions in <code>getItemForValue</code> scenarios that allow you to find a specific value help item (indicated by oConfig availability).</li>
-	 * </ul>
+	 * Provides an object of conditions per binding path.<br/>By default, this method returns an empty <code>object</code>.
+	 *
+	 * This method provides the initial set of conditions applied every time value help content is shown for the first time after opening its container.
+	 * It is also relevant for <code>getItemForValue</code> scenarios that allow you to find a specific value help item (indicated by the availability of the <code>oConfig</code> argument).
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.FilterableListContent} oContent <code>ValueHelp</code> content instance
@@ -301,7 +298,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} [oConfig.bindingContext] <code>BindingContext</code> of the checked field. Inside a table, the <code>ValueHelp</code> element might be connected to a different row.
 	 * @param {boolean} oConfig.checkKey If set, the value help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} oConfig.checkDescription If set, the value help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
-	 * @returns {Promise<object>|object} Returns a map of conditions
+	 * @returns {Promise<sap.ui.mdc.util.FilterConditionMap>|sap.ui.mdc.util.FilterConditionMap} Returns a map-like object containing conditions suitable for <code>Filter</code> creation
 	 * @public
 	 * @since 1.106.0
 	 */
@@ -314,7 +311,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the content that is used for the autocomplete feature and for user input, if the entered text
-	 * leads to more than one filter result.
+	 * leads to more than one filter result.<br/>By default, this method returns the first entry of a set of relevant contexts of the given {@link sap.ui.mdc.valuehelp.base.ListContent ListContent}.
 	 *
 	 * @param {sap.ui.mdc.ValueHelp} oValueHelp The <code>ValueHelp</code> control instance
 	 * @param {sap.ui.mdc.valuehelp.base.ListContent} oContent <code>ValueHelp</code> content instance

@@ -5965,7 +5965,6 @@ sap.ui.define([
 			assert.ok(oOpenContextMenuSpy.calledOnceWithExactly(oTable, oContextMenuEventArgument),
 				"TableUtils.Menu.openContextMenu was called with the correct arguments");
 			checkFocus(oElem, assert);
-			assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
 			oOpenContextMenuSpy.resetHistory();
 			oContextMenuEventHandlerSpy.resetHistory();

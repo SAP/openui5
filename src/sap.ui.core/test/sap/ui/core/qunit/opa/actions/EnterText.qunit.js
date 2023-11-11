@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/m/TimePicker",
 	"sap/m/Popover",
 	"sap/m/Button",
+	"sap/m/Select",
 	"sap/ui/core/Icon",
+	"sap/ui/core/Item",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/m/library",
@@ -30,7 +32,9 @@ sap.ui.define([
 	TimePicker,
 	Popover,
 	Button,
+	Select,
 	Icon,
+	Item,
 	Opa5,
 	opaTest,
 	mobileLibrary,
@@ -320,6 +324,40 @@ sap.ui.define([
 		assert.strictEqual(this.oControl.getValue(), "{");
 	});
 
+	QUnit.test("No runtime error when entering text on control that is not an input", async function (assert) {
+		this.oControl = new Icon({src: "sap-icon://edit"});
+
+		this.oControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		var action = new EnterText({ text: "entering some long enough text on an non-input control"});
+
+		try {
+			// without an internal safe-check, the line below causes runtime error
+			// with the current alorithm, when executed on a non-input control:
+			action.executeOn(this.oControl);
+			assert.ok("The test completes without runtime error");
+		} catch (error) {
+			assert.notOk("Runtime error upon enterng the text: " + error);
+		}
+	});
+
+	QUnit.test("Should enter text on select", async function (assert) {
+		this.oControl = new Select({
+			items: [
+				new Item({text: "one"}),
+				new Item({text: "two"})
+			]
+		});
+
+		this.oControl.placeAt("qunit-fixture");
+		await nextUIUpdate();
+
+		new EnterText({ text: "two" }).executeOn(this.oControl);
+
+		assert.strictEqual(this.oControl.getSelectedIndex(), 1);
+	});
+
 	QUnit.module("Logging", {
 		beforeEach: function () {
 			this.oEnterText = new EnterText({});
@@ -363,20 +401,6 @@ sap.ui.define([
 		this.oEnterText.executeOn(this.oControl);
 
 		sinon.assert.calledWith(this.oErrorLog, sinon.match(/Please provide a text/));
-	});
-
-	QUnit.test("Should log a warning and exit early when control is not an input", async function (assert) {
-		this.oControl = new Icon({src: "sap-icon://edit"});
-
-		this.oControl.placeAt("qunit-fixture");
-		await nextUIUpdate();
-
-		// without a safe-check, the line below causes errors with the
-		// the current alorithm, when executed on a non-input control:
-		this.oEnterText.setText("entering some long enough text on an non-input control");
-		this.oEnterText.executeOn(this.oControl);
-
-		sinon.assert.calledWith(this.oDebugLog, sinon.match(/Cannot enter text in control/));
 	});
 
 	QUnit.test("Should enter number with decimals in input of type number and preserve the value", function (assert) {

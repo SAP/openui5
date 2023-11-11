@@ -147,6 +147,27 @@ sap.ui.define([
 		}
 	}
 
+	QUnit.module("Lifecycle", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Initialization", function(assert) {
+		var oExtension = this.oTable._getAccExtension();
+		assert.ok(oExtension, "Extension available in table");
+	});
+
+	QUnit.test("Destruction", function(assert) {
+		var oExtension = this.oTable._getAccExtension();
+
+		this.oTable.destroy();
+		assert.ok(!oExtension.getTable(), "Reference to table removed");
+	});
+
 	QUnit.module("Data Cells", {
 		beforeEach: function() {
 			createTables();
@@ -2148,18 +2169,5 @@ sap.ui.define([
 		assert.strictEqual(oTable.$().find(".sapUiTableHiddenTexts").length, 0, "No Hidden Texts");
 
 		oConfigStub.restore();
-	});
-
-	QUnit.module("Destruction", {
-		beforeEach: function() {
-			createTables();
-		}
-	});
-
-	QUnit.test("destroy()", function(assert) {
-		var oExtension = oTable._getAccExtension();
-		oTable.destroy();
-		oTreeTable.destroy();
-		assert.ok(!oExtension._table, "Table cleared");
 	});
 });

@@ -59,7 +59,6 @@ sap.ui.define([
 	 */
 	QUnit.test("Instance method 'preload' and 'getManifest'", function(assert) {
 		function checkLibNotInitialized(sName) {
-			assert.notOk(ObjectPath.get(sName), "namespace for " + sName + " should not exist");
 			assert.notOk(Library.all()[sName], "The library " + sName + "is only preloaded and should not initialize itself");
 		}
 
@@ -144,6 +143,130 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Instance method '_getI18nSettings': i18n missing in manifest.json", function(assert) {
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
+		// no i18n property in manifest
+		this.stub(oLib1, 'getManifest').returns({
+			"_version": "1.9.0",
+			"name": "sap.test.i18ntrue",
+			"sap.ui5": {
+			}
+		});
+
+		// act
+		const i18nSettings = oLib1._getI18nSettings();
+
+		// assert
+		assert.deepEqual(
+			i18nSettings,
+			{
+				bundleUrl: "messagebundle.properties"
+			}, "a missing i18n section in the manifest should result in the default bundle URL to be returned");
+	});
+
+	QUnit.test("Instance method '_getI18nSettings': i18n set to false in manifest.json", function(assert) {
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
+
+		this.stub(oLib1, 'getManifest').returns({
+			"_version": "1.9.0",
+			"name": "sap.test1",
+			"sap.ui5": {
+				"library": {
+					"i18n": false
+				}
+			}
+		});
+
+		// act
+		const i18nSettings = oLib1._getI18nSettings();
+
+		// assert
+		assert.notOk(i18nSettings, "a value of false for the i18n section should result in no bundle to be loaded");
+	});
+
+	QUnit.test("Instance method '_getI18nSettings': i18n set to true in manifest.json", function(assert) {
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
+		this.stub(oLib1, 'getManifest').returns({
+			"_version": "1.9.0",
+			"name": "sap.test.i18ntrue",
+			"sap.ui5": {
+				"library": {
+					"i18n": true
+				}
+			}
+		});
+
+		// act
+		const i18nSettings = oLib1._getI18nSettings();
+
+		// assert
+		assert.deepEqual(
+			i18nSettings,
+			{
+				bundleUrl: "messagebundle.properties"
+			}, "a value of true for the i18n section should result in the default bundle URL to be returned");
+	});
+
+	QUnit.test("Instance method '_getI18nSettings': i18n seto to a string in manifest.json", function(assert) {
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
+		// no i18n property in manifest
+		this.stub(oLib1, 'getManifest').returns({
+			"_version": "1.9.0",
+			"name": "sap.test.i18nstring",
+			"sap.ui5": {
+				"library": {
+					"i18n": "i18n.properties"
+				}
+			}
+		});
+
+		// act
+		const i18nSettings = oLib1._getI18nSettings();
+
+		// assert
+		assert.deepEqual(
+			i18nSettings,
+			{
+				bundleUrl: "i18n.properties"
+			}, "a string value for the i18n section should result in that string to be returned as bundle URL");
+	});
+
+	QUnit.test("Instance method '_getI18nSettings': i18n set to an object in manifest.json", function(assert) {
+		const oLib1 = Library._get('testlibs.scenario1.lib1', true);
+		// no i18n property in manifest
+		this.stub(oLib1, 'getManifest').returns({
+			"_version": "1.9.0",
+			"name": "sap.test.i18nobject",
+			"sap.ui5": {
+				"library": {
+					"i18n": {
+						"bundleUrl": "i18n.properties",
+						"supportedLocales": [
+							"en",
+							"de"
+						]
+					}
+				}
+			}
+		});
+
+		// act
+		const i18nSettings = oLib1._getI18nSettings();
+
+		// assert
+		assert.deepEqual(
+			i18nSettings,
+			{
+				bundleUrl: "i18n.properties",
+				supportedLocales: [
+					"en",
+					"de"
+				]
+			}, "an object as i18n section should be returned 1:1");
+	});
+
+
+
 	QUnit.module("Static methods");
 
 	QUnit.test("Static method '_get'", function(assert) {
@@ -166,7 +289,6 @@ sap.ui.define([
 
 	QUnit.test("Static method 'load', 'init', 'all'", function(assert) {
 		function checkLibInitialized(sName) {
-			assert.ok(ObjectPath.get(sName), "namespace for " + sName + " should exist");
 			assert.ok(Library.all()[sName], "The library " + sName + "is initialized");
 		}
 

@@ -399,7 +399,7 @@ sap.ui.define([
 			var oTable = this.getTable();
 			var sTableId = oTable.getId();
 			var oIN = oTable._getItemNavigation();
-			var $Cell = oCellInfo.cell;
+			var $Cell = jQuery(oCellInfo.cell);
 
 			if (!oIN) {
 				return;
@@ -482,7 +482,7 @@ sap.ui.define([
 		modifyAccOfROWHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
 			var sTableId = oTable.getId();
-			var $Cell = oCellInfo.cell;
+			var $Cell = jQuery(oCellInfo.cell);
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
 			var sRowId = oRow.getId();
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
@@ -517,7 +517,7 @@ sap.ui.define([
 		 */
 		modifyAccOfCOLUMNHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
-			var $Cell = oCellInfo.cell;
+			var $Cell = jQuery(oCellInfo.cell);
 			var oColumn = Element.getElementById($Cell.attr("data-sap-ui-colid"));
 			var oColumnLabel = TableUtils.Column.getHeaderLabel(oColumn);
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.COLUMNHEADER, {
@@ -558,7 +558,7 @@ sap.ui.define([
 		 */
 		modifyAccOfCOLUMNROWHEADER: function(oCellInfo) {
 			var oTable = this.getTable();
-			var $Cell = oCellInfo.cell;
+			var $Cell = jQuery(oCellInfo.cell);
 			var bEnabled = $Cell.hasClass("sapUiTableSelAllVisible");
 
 			var mAttributes = ExtensionHelper.getAriaAttributesFor(
@@ -578,7 +578,7 @@ sap.ui.define([
 		modifyAccOfROWACTION: function(oCellInfo) {
 			var oTable = this.getTable();
 			var sTableId = oTable.getId();
-			var $Cell = oCellInfo.cell;
+			var $Cell = jQuery(oCellInfo.cell);
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
 			var sRowId = oRow.getId();
 			var bHidden = ExtensionHelper.isHiddenCell($Cell);
@@ -1187,8 +1187,8 @@ sap.ui.define([
 			// when the focus stays on the same cell and only the content is replaced (e.g. on scroll or expand),
 			// to force screenreader announcements
 			if (oInfo.isOfType(CellType.ANYCONTENTCELL)) {
-				oInfo.cell.attr("role", "status");
-				oInfo.cell.attr("role", "gridcell");
+				oInfo.cell.setAttribute("role", "status");
+				oInfo.cell.setAttribute("role", "gridcell");
 			} else {
 				return;
 			}

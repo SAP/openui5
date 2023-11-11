@@ -23,7 +23,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	QUnit.module("Initialization", {
+	QUnit.module("Lifecycle", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable();
 		},
@@ -32,63 +32,38 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_init", function(assert) {
-		var oTable = this.oTable;
-		var done = assert.async();
+	QUnit.test("Initialization", function(assert) {
+		// The synchronization extension should be loaded asynchronously on demand.
+		assert.strictEqual(undefined, this.oTable._getSyncExtension, "Before initialization, the extension getter does not exist");
+		assert.ok(!ExtensionBase.isEnrichedWith(this.oTable, "sap.ui.table.extensions.Synchronization"),
+			"Before initialization, the table is not enriched with the synchronization extension");
 
-		assert.expect(6);
+		return this.oTable._enableSynchronization().then((oSyncInterface) => {
+			var oExtension = this.oTable._getSyncExtension();
+			var iDelegateCount = 0;
 
-		oTable._enableSynchronization().then(function(oSyncInterface) {
-			var oExtension = oTable._getSyncExtension();
-
-			assert.ok(oExtension != null, "Synchronization extension available");
+			assert.ok(oExtension, "Extension available in table");
 			assert.ok(oSyncInterface != null && oExtension.getInterface() === oSyncInterface,
 				"Promise resolved with the synchronization extension interface");
 			assert.notStrictEqual(oSyncInterface, oExtension, "The interface is not the extension itself");
 
-			var iCount = 0;
-			for (var i = 0; i < oTable.aDelegates.length; i++) {
-				if (oTable.aDelegates[i].oDelegate === oExtension._delegate) {
-					iCount++;
+			for (var i = 0; i < this.oTable.aDelegates.length; i++) {
+				if (this.oTable.aDelegates[i].oDelegate === oExtension._delegate) {
+					iDelegateCount++;
 				}
 			}
-			assert.ok(iCount == 1, "Sync Delegate registered");
 
-			done();
-		});
-
-		// The synchronization extension should be loaded asynchronously on demand.
-		assert.strictEqual(undefined, oTable._getSyncExtension, "Before initialization, the extension getter does not exist");
-		assert.ok(!ExtensionBase.isEnrichedWith(oTable, "sap.ui.table.extensions.Synchronization"),
-			"Before initialization, the table is not enriched with the synchronization extension");
-	});
-
-	QUnit.test("_debug", function(assert) {
-		var oTable = this.oTable;
-
-		return oTable._enableSynchronization().then(function() {
-			var oSyncExtension = oTable._getSyncExtension();
-			assert.strictEqual(oSyncExtension._debug, undefined, "The synchronization extension has no _debug method");
+			assert.equal(iDelegateCount, 1, "Sync Delegate registered");
 		});
 	});
 
-	QUnit.module("Destruction", {
-		beforeEach: function() {
-			this.oTable = TableQUnitUtils.createTable();
-		},
-		afterEach: function() {
+	QUnit.test("Destruction", function(assert) {
+		return this.oTable._enableSynchronization().then(() => {
+			var oExtension = this.oTable._getSyncExtension();
+
 			this.oTable.destroy();
-		}
-	});
-
-	QUnit.test("destroy", function(assert) {
-		var oTable = this.oTable;
-
-		return oTable._enableSynchronization().then(function() {
-			var oExtension = oTable._getSyncExtension();
-			oTable.destroy();
-			assert.equal(oExtension.getTable(), null, "Table cleared");
-			assert.equal(oExtension._delegate, null, "Delegate cleared");
+			assert.ok(!oExtension.getTable(), "Reference to table removed");
+			assert.ok(!oExtension._delegate, "Delegate cleared");
 		});
 	});
 

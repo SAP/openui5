@@ -811,7 +811,7 @@ sap.ui.define([
 
 			// Set the cell object for easier access to the cell for the caller.
 			if (oCellInfo.type !== 0) {
-				oCellInfo.cell = $Cell;
+				oCellInfo.cell = $Cell[0];
 			}
 
 			/**

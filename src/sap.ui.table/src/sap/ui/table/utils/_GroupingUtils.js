@@ -193,7 +193,7 @@ sap.ui.define([
 			var oInfo = GroupingUtils.TableUtils.getCellInfo(oCellRef);
 
 			if (oInfo.isOfType(GroupingUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
-				return oInfo.cell.parent().hasClass("sapUiTableGroupHeaderRow");
+				return oInfo.cell.parentElement.classList.contains("sapUiTableGroupHeaderRow");
 			}
 
 			return false;
@@ -209,7 +209,7 @@ sap.ui.define([
 			var oInfo = GroupingUtils.TableUtils.getCellInfo(oCellRef);
 
 			if (oInfo.isOfType(GroupingUtils.TableUtils.CELLTYPE.ANYCONTENTCELL)) {
-				return oInfo.cell.parent().hasClass("sapUiTableSummaryRow");
+				return oInfo.cell.parentElement.classList.contains("sapUiTableSummaryRow");
 			}
 
 			return false;

@@ -12,10 +12,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/ui/util/openWindow",
 	"sap/ui/util/defaultLinkTypes",
-	"./NavigationListItemBase",
-	// jQuery Plugin "addAriaLabelledBy"
-	"sap/ui/dom/jquery/Aria"
-], function(
+	"./NavigationListItemBase"
+], function (
 	library,
 	Element,
 	InvisibleText,
@@ -625,7 +623,7 @@ sap.ui.define([
 			} else {
 				// Items on Second Level do not get rendered in a collapsed list, so they don't have DomRefs
 
-				const oParentMainRef = this.getParent().getDomRef().querySelector(".sapTntNLIFirstLevel");
+				const oParentMainRef = this.getParent().getDomRef()?.querySelector(".sapTntNLIFirstLevel");
 				oParentMainRef?.classList.toggle("sapTntNLISelected", bSelected);
 				if (bSelected) {
 					oParentMainRef?.classList.toggle("sapTntNLINoHoverEffect", bSelected);

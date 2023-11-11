@@ -746,6 +746,38 @@ sap.ui.define([
 		Log.warning.restore();
 	});
 
+	QUnit.test('Calling setSelectedItem before the NavigationList is rendered', function (assert) {
+		// arrange
+		const navigationList = new NavigationList({
+			expanded: false
+		});
+
+		navigationList.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		const item = new NavigationListItem({ key: "itemKey" });
+		const parentItem = new NavigationListItem({
+			items: [item]
+		});
+		navigationList.addItem(parentItem);
+
+		// act
+		navigationList.setSelectedItem(item);
+
+		// assert
+		assert.ok(true, "There is no error");
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(navigationList.getSelectedItem() , item, "selectedItem is successfully set");
+		assert.strictEqual(navigationList.getSelectedKey() , "itemKey", "selectedKey is successfully set");
+
+		// clean up
+		navigationList.destroy();
+	});
+
 	QUnit.module('selectedKey property', {
 		beforeEach: function () {
 		},

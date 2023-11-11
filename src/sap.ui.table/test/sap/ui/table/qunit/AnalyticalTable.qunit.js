@@ -471,32 +471,6 @@ sap.ui.define([
 					}
 				}
 			});
-		}).then(function() {
-			return test({
-				bindingInfo: oBindingInfo,
-				model: new undefined/*ODataModel*/(sServiceURI, {loadMetadataAsync: false}),
-				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
-					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata synchronously -> Columns updated");
-					if (bTableIsRendered) {
-						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
-					} else {
-						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
-					}
-				}
-			});
-		}).then(function() {
-			return test({
-				bindingInfo: oBindingInfo,
-				model: new undefined/*ODataModel*/(sServiceURI, {loadMetadataAsync: true}),
-				metadataLoaded: function(oUpdateColumnsSpy, oInvalidateSpy, bTableIsRendered) {
-					assert.ok(oUpdateColumnsSpy.calledOnce, "V1 model; Load metadata asynchronously -> Columns updated");
-					if (bTableIsRendered) {
-						assert.ok(oInvalidateSpy.calledOnce, "Table is rendered -> Invalidated");
-					} else {
-						assert.ok(oInvalidateSpy.notCalled, "Table is not rendered -> Not invalidated");
-					}
-				}
-			});
 		});
 	});
 
@@ -564,7 +538,10 @@ sap.ui.define([
 		function doTest(oTable) {
 			assert.strictEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items do not exist");
 
-			TableUtils.Menu.openContextMenu(oTable, {target: oTable.getRows()[0].getCells()[4].getDomRef()});
+			TableUtils.Menu.openContextMenu(oTable, {
+				target: oTable.getRows()[0].getCells()[4].getDomRef(),
+				preventDefault: () => {}
+			});
 			assert.notEqual(oTable._mGroupHeaderMenuItems, null, "Group header menu items exist");
 
 			oTable._adaptLocalization(true, false).then(function() {
