@@ -131,7 +131,7 @@ sap.ui.define([
 			await this.render(
 				new HBox({
 					renderType: "Bare",
-					items: pView
+					items: oView
 				})
 			);
 			// check if the order in which the aggregations are written to the respective map is stable
@@ -298,6 +298,7 @@ sap.ui.define([
 
 	/**
 	 * Tests parsing of a control which is not properly defined (does not return its class)
+	 * TODO @deprecated As the fallback lookup for such controls relies on global names
 	 */
 	QUnit.test("Bad control processing", function(assert) {
 
