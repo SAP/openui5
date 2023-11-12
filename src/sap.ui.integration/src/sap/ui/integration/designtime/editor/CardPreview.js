@@ -115,7 +115,7 @@ sap.ui.define([
 				oRm.close("div");
 				// TODO unsupported DOM structure: button is not a child of the root element
 				var sModes = oControl._getModes();
-				if (sModes.indexOf("Abstract") > -1 && (sModes.indexOf("Live") > -1 || sModes.indexOf("Mock") > -1 || sModes.indexOf("MockData") > -1)) {
+				if (sModes.indexOf("Abstract") > -1 && (sModes.indexOf("Live") > -1 || sModes.indexOf("MockData") > -1)) {
 					oRm.renderControl(oControl._getModeToggleButton());
 				}
 
@@ -176,7 +176,7 @@ sap.ui.define([
 	CardPreview.prototype.onAfterRendering = function () {
 		var oPreview = this.getAggregation("cardPreview"),
 		    sModes = this._getModes();
-		if ((sModes.indexOf("Live") > -1 || sModes.indexOf("Mock") > -1 || sModes.indexOf("MockData") > -1) && oPreview && oPreview.getDomRef() && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
+		if ((sModes.indexOf("Live") > -1 || sModes.indexOf("MockData") > -1) && oPreview && oPreview.getDomRef() && oPreview.getDomRef().getElementsByClassName("sapVizFrame")) {
 			window.setTimeout(function() {
 				try {
 					var vizFrameId = oPreview.getDomRef().getElementsByClassName("sapVizFrame")[0].id;
@@ -348,7 +348,6 @@ sap.ui.define([
 		var sType = this.getCard().getManifestEntry("/sap.card/type");
 		if (sType !== "Component") {
 			mSettings.preview.modes = mSettings.preview.modes.replace("MockData", "Live");
-			mSettings.preview.modes = mSettings.preview.modes.replace("Mock", "Live");
 		}
 		return mSettings.preview.modes;
 	};
@@ -362,14 +361,11 @@ sap.ui.define([
 			switch (sModes) {
 				case "Abstract":
 				case "AbstractLive":
-				case "AbstractMock":
 				case "AbstractMockData":
 					this._currentMode = "Abstract"; break;
 				case "Live":
 				case "LiveAbstract":
 					this._currentMode = "Live"; break;
-				case "Mock":
-				case "MockAbstract":
 				case "MockData":
 				case "MockDataAbstract":
 					this._currentMode = "MockData"; break;
@@ -387,7 +383,7 @@ sap.ui.define([
 		if (sModes.indexOf("Abstract") > -1) {
 			if (sModes.indexOf("Live") > -1) {
 				this._currentMode = this._getCurrentMode() === "Abstract" ? "Live" : "Abstract";
-			} else if (sModes.indexOf("Mock") > -1 || sModes.indexOf("MockData") > -1) {
+			} else if (sModes.indexOf("MockData") > -1) {
 				this._currentMode = this._getCurrentMode() === "Abstract" ? "MockData" : "Abstract";
 			}
 		}
@@ -443,7 +439,7 @@ sap.ui.define([
 		if (currentMode === "Abstract") {
 			tb.setIcon("sap-icon://media-play");
 			tb.setPressed(false);
-			if (this._getModes().indexOf("Mock") > -1 || this._getModes().indexOf("MockData") > -1) {
+			if (this._getModes().indexOf("MockData") > -1) {
 				tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_MOCKDATAPREVIEW"));
 			} else {
 				tb.setTooltip(oBundle.getText("CARDEDITOR_PREVIEW_BTN_LIVEPREVIEW"));
@@ -507,7 +503,7 @@ sap.ui.define([
 		this._oSizeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlyFull");
 		this._oSizeToggleButton.removeStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlyFullSpec");
 		var sLanguge = Core.getConfiguration().getLanguage().replaceAll('_', '-');
-		if (this._getModes() === "Mock" || this._getModes() === "MockData" || this._getModes() === "Live") {
+		if (this._getModes() === "MockData" || this._getModes() === "Live") {
 			if (this._getCurrentSize() === "Full") {
 				if (sLanguge.startsWith("ar") || sLanguge.startsWith("he")) {
 					this._oSizeToggleButton.addStyleClass("sapUiIntegrationDTPreviewResizeButtonOnlyFullSpec");
