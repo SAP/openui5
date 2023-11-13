@@ -224,6 +224,7 @@ sap.ui.define([
 		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
+	/** @deprecated since 1.120, reason ManagedObject does not support retrieval of class c'tor via global in 2.0 */
 	QUnit.test("ListBinding with Template (constructor, json)", function(assert) {
 		setup();
 		control.destroy();
