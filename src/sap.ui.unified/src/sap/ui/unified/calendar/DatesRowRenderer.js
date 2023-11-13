@@ -101,7 +101,7 @@ sap.ui.define(["sap/ui/core/Lib", 'sap/ui/core/Renderer', 'sap/ui/unified/calend
 			iDaysWidth,
 			aWeekNumbers;
 
-		if (oDatesRow.getShowWeekNumbers() && oDatesRow.getPrimaryCalendarType() === CalendarType.Gregorian) {
+		if (oDatesRow.getShowWeekNumbers() && oDatesRow._getPrimaryCalendarType() === CalendarType.Gregorian) {
 			oResourceBundle = Library.getResourceBundleFor("sap.ui.unified");
 
 			oRm.openStart("div", oDatesRow.getId() + "-weeks");
