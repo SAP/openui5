@@ -1,23 +1,25 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-		"sap/base/Log",
-		"sap/ui/integration/widgets/Card",
-		"sap/ui/integration/util/RequestDataProvider",
-		"sap/ui/core/Core",
-		"sap/ui/integration/cards/BaseContent",
-		"sap/ui/integration/cards/AnalyticalContent",
-		"sap/ui/integration/cards/Header",
-		"sap/ui/integration/cards/filters/SelectFilter",
-		"sap/ui/core/ComponentContainer",
-		"sap/ui/base/Event",
-		"sap/ui/core/UIComponent",
-		"sap/ui/integration/library",
-		"sap/ui/thirdparty/jquery",
-		"sap/ui/integration/library"
-	],
-	function (
+	"sap/base/Log",
+	"sap/ui/core/Lib",
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/core/Core",
+	"sap/ui/integration/cards/BaseContent",
+	"sap/ui/integration/cards/AnalyticalContent",
+	"sap/ui/integration/cards/Header",
+	"sap/ui/integration/cards/filters/SelectFilter",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/base/Event",
+	"sap/ui/core/UIComponent",
+	"sap/ui/integration/library",
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/integration/library"
+],
+	function(
 		Log,
+		Lib,
 		Card,
 		RequestDataProvider,
 		Core,
@@ -2407,7 +2409,7 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
-		var oPromiseVizModule =  Core.loadLibrary("sap.viz", { async: true }).then(function () {
+		var oPromiseVizModule =  Lib.load("sap.viz").then(function () {
 			QUnit.module("Analytical Loading", {
 				beforeEach: function () {
 					this.oCard = new Card({
@@ -2454,7 +2456,7 @@ sap.ui.define([
 			});
 		});
 
-		var oPromiseSuiteUiCommonsModule = Core.loadLibrary("sap.suite.ui.commons", { async: true }).then(function () {
+		var oPromiseSuiteUiCommonsModule = Lib.load("sap.suite.ui.commons").then(function () {
 			QUnit.module("Timeline Loading", {
 				beforeEach: function () {
 					this.oCard = new Card({

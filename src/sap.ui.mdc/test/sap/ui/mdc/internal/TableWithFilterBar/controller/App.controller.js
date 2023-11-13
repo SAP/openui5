@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/Messaging",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/mdc/condition/ConditionModel",
@@ -13,14 +14,14 @@ sap.ui.define([
 	"../Operators",
 	"sap/ui/model/Filter",
 	"sap/ui/core/Core"
-], function(Messaging, Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter, oCore) {
+], function(Lib, Messaging, Controller, ConditionModel, JSONModel, Dialog, Button, Text, MessageToast, UIComponent, SelectDialog, StandardListItem, Operators, Filter, oCore) {
 	"use strict";
 
 	return Controller.extend("sap.ui.v4demo.controller.App", {
 
 		onStartRTA: function () {
 			var oOwnerComponent = this.getOwnerComponent();
-			oCore.loadLibrary("sap/ui/rta", { async: true }).then(function () {
+			Lib.load("sap/ui/rta").then(function () {
 				sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
 					startKeyUserAdaptation({
 						rootControl: oOwnerComponent.getAggregation("rootControl")

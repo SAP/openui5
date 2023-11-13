@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/base/DataType",
 	"sap/ui/Device",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/Object",
 	// library dependency
@@ -19,7 +20,7 @@ sap.ui.define([
 	"sap/m/library",
 	// library dependency
 	"sap/ui/layout/library"
-], function(Core, DataType, Device, jQuery, BaseObject) {
+], function(Core, DataType, Device, Library, jQuery, BaseObject) {
 	"use strict";
 
 	/**
@@ -32,7 +33,7 @@ sap.ui.define([
 	 * @since 1.36
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name: "sap.uxap",
 		dependencies: ["sap.ui.core", "sap.f", "sap.m", "sap.ui.layout"],
 		designtime: "sap/uxap/designtime/library.designtime",

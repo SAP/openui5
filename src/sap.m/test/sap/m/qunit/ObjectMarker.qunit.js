@@ -39,7 +39,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering");
 
-	QUnit.test("Creating control should add it in the DOM", function (assert) {
+	QUnit.test("Creating control should add it in the DOM", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Draft
@@ -56,7 +56,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Creating control w/o setting type property", function (assert) {
+	QUnit.test("Creating control w/o setting type property", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 		});
@@ -72,7 +72,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Creating an interactive control", function(assert) {
+	QUnit.test("Creating an interactive control", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Draft,
@@ -90,7 +90,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Creating an non-interactive control", function(assert) {
+	QUnit.test("Creating an non-interactive control", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Draft
@@ -109,7 +109,7 @@ sap.ui.define([
 
 	QUnit.module("Default rendering of different types");
 
-	QUnit.test("Flagged", function (assert) {
+	QUnit.test("Flagged", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Flagged
@@ -127,7 +127,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Favorite", function (assert) {
+	QUnit.test("Favorite", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Favorite
@@ -145,7 +145,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Draft", function (assert) {
+	QUnit.test("Draft", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Draft
@@ -163,7 +163,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Locked", function (assert) {
+	QUnit.test("Locked", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Locked
@@ -181,7 +181,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Locked By", function (assert) {
+	QUnit.test("Locked By", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.LockedBy
@@ -199,7 +199,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Unsaved", function (assert) {
+	QUnit.test("Unsaved", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Unsaved
@@ -217,7 +217,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("UnsavedBy", function (assert) {
+	QUnit.test("UnsavedBy", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.UnsavedBy
@@ -237,7 +237,7 @@ sap.ui.define([
 
 	QUnit.module("Visibility");
 
-	QUnit.test("Resize control to change the device size", function(assert) {
+	QUnit.test("Resize control to change the device size", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Locked
@@ -260,7 +260,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Explicitly set visibility", function(assert) {
+	QUnit.test("Explicitly set visibility", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Locked
@@ -301,7 +301,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Switch interactive/non-interactive mode", function(assert) {
+	QUnit.test("Switch interactive/non-interactive mode", async function(assert) {
 		var fn = function () {};
 
 		// Arrange
@@ -335,7 +335,7 @@ sap.ui.define([
 
 	QUnit.module("Eventing");
 
-	QUnit.test("Fire 'press' event when an inner link control is clicked", function(assert) {
+	QUnit.test("Fire 'press' event when an inner link control is clicked", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.Draft,
@@ -359,7 +359,7 @@ sap.ui.define([
 
 	QUnit.module("Binding");
 
-	QUnit.test("Binding - standalone", function(assert) {
+	QUnit.test("Binding - standalone", async function(assert) {
 		// Arrange
 		var oModel = new JSONModel();
 		oModel.setData({ modelData: { type: ObjectMarkerType.Locked }});
@@ -393,7 +393,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Binding - table", function(assert) {
+	QUnit.test("Binding - table", async function(assert) {
 		// Arrange
 		var oModel = new JSONModel();
 		oModel.setData({ modelData: [{ lastName: "Dente", name: "Al", type: ObjectMarkerType.Locked }] });
@@ -432,7 +432,7 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Rendering of ObjectMarket inside Table, does not invalidate the Table", function(assert) {
+	QUnit.test("Rendering of ObjectMarket inside Table, does not invalidate the Table", async function(assert) {
 		// Arrange
 		var oData = {
 			items: [
@@ -519,7 +519,7 @@ sap.ui.define([
 		assert.strictEqual(oMarker.getAdditionalInfo(), "by John Doe", "Previously set additional info should be retrieved");
 	});
 
-	QUnit.test("Rendering", function (assert) {
+	QUnit.test("Rendering", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			additionalInfo: "by John Doe"
@@ -541,7 +541,7 @@ sap.ui.define([
 				"include the text representation of the status set concatenated with the additional info");
 	});
 
-	QUnit.test("Rendering when the type is LockedBy", function (assert) {
+	QUnit.test("Rendering when the type is LockedBy", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.LockedBy,
@@ -557,7 +557,7 @@ sap.ui.define([
 		assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 	});
 
-	QUnit.test("Rendering when the type is LockedBy but no additionalInfo is provided", function (assert) {
+	QUnit.test("Rendering when the type is LockedBy but no additionalInfo is provided", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.LockedBy
@@ -572,7 +572,7 @@ sap.ui.define([
 		assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be 'Locked by another user' taken from messagebundle");
 	});
 
-	QUnit.test("Rendering when the type is UnsavedBy", function (assert) {
+	QUnit.test("Rendering when the type is UnsavedBy", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.UnsavedBy,
@@ -588,7 +588,7 @@ sap.ui.define([
 		assert.strictEqual(oMarker.$().text(), sExpectedText, "The rendered text in the element should be get from the message bundle and the additional info passed as a parameter");
 	});
 
-	QUnit.test("Rendering when the type is UnsavedBy but no additionalInfo is provided", function (assert) {
+	QUnit.test("Rendering when the type is UnsavedBy but no additionalInfo is provided", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 			type: ObjectMarkerType.UnsavedBy
@@ -604,7 +604,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.marker = new ObjectMarker();
 			this.marker.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -614,7 +614,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("ariaLabelledBy, ariaDescribedBy are propagated to the internal control that has them defined", function(assert) {
+	QUnit.test("ariaLabelledBy, ariaDescribedBy are propagated to the internal control that has them defined", async function(assert) {
 		var sLabelId,
 			aLabels;
 		// act
@@ -676,7 +676,7 @@ sap.ui.define([
 		assert.strictEqual(this.marker._getInnerControl().getAriaLabelledBy().length, 0, "internal control's ariaLabelledBy has no ids");
 	});
 
-	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the control has no 'type' set", function(assert) {
+	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the control has no 'type' set", async function(assert) {
 		// arrange
 		this.marker.attachPress(function(e) {});
 
@@ -696,7 +696,7 @@ sap.ui.define([
 		assert.ok(this.marker.getAriaDescribedBy(), "ariaDescribedBy is save in ObjectMarker");
 	});
 
-	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the internal control has not defined them", function(assert) {
+	QUnit.test("ariaLabelledBy, ariaDescribedBy are not set when the internal control has not defined them", async function(assert) {
 		// arrange
 		this.marker.setType(ObjectMarkerType.Locked);
 
@@ -731,7 +731,7 @@ sap.ui.define([
 		assert.strictEqual(oResult.enabled, oExpected.enabled, "acc info.enabled is the same as in the internal control");
 	});
 
-	QUnit.test("tabindex=0 for ObjectMarker of 'Favorite' type", function (assert) {
+	QUnit.test("tabindex=0 for ObjectMarker of 'Favorite' type", async function(assert) {
 		// Act
 		this.marker.setType(ObjectMarkerType.Favorite);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
@@ -741,7 +741,7 @@ sap.ui.define([
 		assert.strictEqual(this.marker._getInnerControl()._getIconAggregation().$().attr("tabindex"), "0", "tabindex is set to '0'");
 	});
 
-	QUnit.test("tabindex=0 for ObjectMarker of 'Flagged' type", function (assert) {
+	QUnit.test("tabindex=0 for ObjectMarker of 'Flagged' type", async function(assert) {
 		// Act
 		this.marker.setType(ObjectMarkerType.Flagged);
 		this.marker.attachPress(function () {}); // Make ObjectMarker interactive
@@ -751,7 +751,7 @@ sap.ui.define([
 		assert.strictEqual(this.marker._getInnerControl()._getIconAggregation().$().attr("tabindex"), "0", "tabindex is set to '0'");
 	});
 
-	QUnit.test("Icon changing its decorative state", function (assert) {
+	QUnit.test("Icon changing its decorative state", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				type: ObjectMarkerType.Locked
@@ -786,7 +786,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("aria-label of the icon - IconOnly", function (assert) {
+	QUnit.test("aria-label of the icon - IconOnly", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				visibility: ObjectMarkerVisibility.IconOnly
@@ -811,7 +811,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("aria-label of the icon - IconAndText", function (assert) {
+	QUnit.test("aria-label of the icon - IconAndText", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				visibility: ObjectMarkerVisibility.IconAndText
@@ -836,7 +836,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("aria-label of the active icon - IconAndText", function (assert) {
+	QUnit.test("aria-label of the active icon - IconAndText", async function(assert) {
 		// Arrange
 		var oLabel = new Label("labelInTable", {
 				text : "Object Marker (active)"
@@ -864,7 +864,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("Tooltips appearance", function (assert) {
+	QUnit.test("Tooltips appearance", async function(assert) {
 		// Arrange
 		var oMarker = new ObjectMarker({
 				type: ObjectMarkerType.Locked
@@ -899,7 +899,7 @@ sap.ui.define([
 		oMarker.destroy();
 	});
 
-	QUnit.test("Setting custom tooltips", function (assert) {
+	QUnit.test("Setting custom tooltips", async function(assert) {
 		// Arrange
 		var sCustomTooltip = "CUSTOM",
 			oMarker = new ObjectMarker({

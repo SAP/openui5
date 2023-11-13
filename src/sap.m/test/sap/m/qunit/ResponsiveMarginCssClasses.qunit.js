@@ -60,7 +60,7 @@ sap.ui.define([
 
 		return Component.create({
 			name: "margin.qunit"
-		}).then(function(oComponent) {
+		}).then(async function(oComponent) {
 
 			var oComponentContainer = new ComponentContainer();
 			oComponentContainer.setComponent(oComponent);

@@ -366,7 +366,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("Mousedown on SVG element should not throw exception", function (assert) {
+	QUnit.test("Mousedown on SVG element should not throw exception", async function(assert) {
 		var done = assert.async();
 		var oSvgCircle = new HTML({
 			content: '<svg id="svg-circle" height="100" width="100">' +

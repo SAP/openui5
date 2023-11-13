@@ -108,7 +108,7 @@ sap.ui.define([
 			Promise.all([
 				new Promise((resolve) => { oSnackCard.attachEventOnce("_ready", resolve); }),
 				new Promise((resolve) => { oDialog.attachAfterOpen(resolve); })
-			]).then(() => {
+			]).then(async () => {
 				Core.applyChanges();
 
 				//Assert

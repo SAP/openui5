@@ -5,8 +5,9 @@ sap.ui.define([
     "./ModificationHandler",
     "sap/m/p13n/FlexUtil",
     "sap/m/p13n/enum/PersistenceMode",
-    "sap/ui/core/Core"
-], function(ModificationHandler, FlexUtil, mode, Core) {
+    "sap/ui/core/Core",
+    "sap/ui/core/Lib"
+], function(ModificationHandler, FlexUtil, mode, Core, Lib) {
 	"use strict";
 
     var oFlexModificationHandler, pInitialize, pRuntimeAPI, pWriteAPI;
@@ -130,9 +131,7 @@ sap.ui.define([
 
     FlexModificationHandler.prototype.initialize = function() {
         if (!pInitialize) {
-            pInitialize = Core.loadLibrary('sap.ui.fl', {
-                async: true
-            });
+            pInitialize = Lib.load('sap.ui.fl');
         }
         return pInitialize;
     };

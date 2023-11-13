@@ -45,7 +45,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleBoolean").then(async function(aPropertyEditor) {
 				this.oBooleanEditor = aPropertyEditor[0];
 				this.oBooleanEditor.setValue(true);
 				oCore.applyChanges();

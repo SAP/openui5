@@ -6,9 +6,12 @@
  * Initialization Code and shared classes of library sap.ui.codeeditor.
  */
 sap.ui.define([
-	"sap/ui/core/Core", // provides sap.ui.getCore()
-	"sap/ui/core/library" // library dependency
-], function () {
+	"sap/ui/core/Lib",
+	// provides sap.ui.getCore()
+	"sap/ui/core/Core",
+	// library dependency
+	"sap/ui/core/library"
+], function(Library) {
 	"use strict";
 
 	/**
@@ -21,7 +24,7 @@ sap.ui.define([
 	 * @since 1.48
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.codeeditor",
 		dependencies : ["sap.ui.core"],
 		types: [],

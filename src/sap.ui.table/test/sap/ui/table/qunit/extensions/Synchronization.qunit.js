@@ -110,7 +110,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oSyncInterface;
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(async function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowCount = sinon.spy();
 
@@ -128,7 +128,7 @@ sap.ui.define([
 			oTable.setRowMode(RowModeType.Auto);
 			oCore.applyChanges();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(async function() {
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(0),
 				"Switched to row mode Auto: A count of 0 was synced");
 			assert.ok(oSyncInterface.rowCount.calledWithExactly(oTable.getRows().length),
@@ -278,7 +278,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oSyncInterface;
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(async function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.rowHeights = sinon.spy();
 
@@ -303,7 +303,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oSyncInterface;
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(async function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.innerVerticalScrollPosition = sinon.spy();
 
@@ -334,7 +334,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oSyncInterface;
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(async function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 			oSyncInterface.layout = sinon.spy();
 
@@ -562,7 +562,7 @@ sap.ui.define([
 		Div.appendChild(document.createElement("div"));
 		document.getElementById("qunit-fixture").appendChild(Div);
 
-		return oTable._enableSynchronization().then(function(_oSyncInterface) {
+		return oTable._enableSynchronization().then(async function(_oSyncInterface) {
 			oSyncInterface = _oSyncInterface;
 
 			// The table will be invalidated.
@@ -575,7 +575,7 @@ sap.ui.define([
 
 			oCore.applyChanges();
 
-		}).then(oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(oTable.qunit.whenRenderingFinished).then(async function() {
 			var oExternalVSb = oTable._getScrollExtension().getVerticalScrollbar();
 			var sExternalVSbId = oExternalVSb.getAttribute("id");
 			var oDomRef = oTable.getDomRef();

@@ -6,13 +6,15 @@
  * Initialization Code and shared classes of library sap.ui.testlib
  */
 sap.ui.define([
-	"sap/ui/core/library", // library dependencies
+	"sap/ui/core/Lib",
+	// library dependencies
+	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(coreLib, Core) {
+], function(Library, coreLib, Core) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
-	return Core.initLibrary({
+	return Library.init({
 		name : "sap.ui.testlib",
 		dependencies : ["sap.ui.core"],
 		types: [

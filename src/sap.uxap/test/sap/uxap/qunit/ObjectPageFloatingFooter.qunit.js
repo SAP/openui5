@@ -9,7 +9,7 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 			XMLView.create({
 				id: "UxAP-162_ObjectPageSample",
 				viewName: "view.UxAP-162_ObjectPageSample"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -175,7 +175,7 @@ function(ControlBehavior, Core, Configuration, XMLView, OverflowToolbar, HBox, O
 
 	QUnit.module("ObjectPage - Setter");
 
-	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", function (assert) {
+	QUnit.test("Setting 'footer' aggregation and 'showFooter' property", async function(assert) {
 		// Arrange
 		var oObjectPage = new ObjectPageLayout({
 			sections: [new ObjectPageSection({

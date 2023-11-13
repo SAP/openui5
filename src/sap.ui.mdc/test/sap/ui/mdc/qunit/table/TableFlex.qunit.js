@@ -91,7 +91,7 @@ sap.ui.define([
 
 			const sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" propertyKey="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" propertyKey="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>';
 
-			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+			return createAppEnvironment(sTableView, "Table").then(async function(mCreatedApp) {
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");

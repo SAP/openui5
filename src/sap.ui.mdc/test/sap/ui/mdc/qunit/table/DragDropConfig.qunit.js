@@ -48,7 +48,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basics", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTable = createMDCTable();
 			this.oDragDropConfig = new DragDropConfig();
 			this.oTable.addDragDropConfig(this.oDragDropConfig);
@@ -62,7 +62,7 @@ sap.ui.define([
 	QUnit.test("Properties", function(assert) {
 		return this.oTable._fullyInitialized().then(() => {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}).then(() => {
+		}).then(async () => {
 			const oInnerTable = this.oTable._oTable;
 
 			this.oDragDropConfig.setDraggable(true);
@@ -183,7 +183,7 @@ sap.ui.define([
 
 		return this.oTable._fullyInitialized().then(() => {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}).then(() => {
+		}).then(async () => {
 			this.oDragDropConfig.attachDragOver((oEvent) => {
 				assert.equal(oEvent.getParameter("bindingContext"), this.oDroppedRow.getBindingContext(), "dragOver event bindingContext parameter is correct");
 				assert.equal(oEvent.getParameter("dragSource"), this.oDraggedRow.getBindingContext(), "dragOver event dragSource parameter is correct");

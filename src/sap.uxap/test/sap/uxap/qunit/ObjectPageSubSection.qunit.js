@@ -818,7 +818,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		oSubSection.destroy();
 	});
 
-	QUnit.test("Layout is updated when visibility of a Block is changed", function (assert) {
+	QUnit.test("Layout is updated when visibility of a Block is changed", async function(assert) {
 		var oSubSection = oHelpers.getSubSection(),
 			oObjectPageLayout = new ObjectPageLayout({
 				sections: new ObjectPageSection({
@@ -875,7 +875,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		XMLView.create({
 			id: "UxAP-12-ObjectPageSubSectionStashing",
 			viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
-		}).then(function (oView) {
+		}).then(async function(oView) {
 			this.objectPageSampleView = oView;
 			this.objectPageSampleView.placeAt('qunit-fixture');
 			Core.applyChanges();
@@ -948,7 +948,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 		return XMLView.create({
 			definition: sXmlView
-		}).then(function(oView) {
+		}).then(async function(oView) {
 
 			var oSubSection = oView.byId("subSection"),
 				oButton = oView.byId("buttonToRemove");
@@ -969,7 +969,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		});
 	});
 
-	QUnit.test("addAggregation", function (assert) {
+	QUnit.test("addAggregation", async function(assert) {
 		var oSubSection = new ObjectPageSubSectionClass({
 				blocks: [new Text({text: "sample"})]
 			}),
@@ -1077,7 +1077,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 	QUnit.module("Object Page SubSection - subSectionLayout prop");
 
-	QUnit.test("SubSection Header is with title on the LEFT", function (assert) {
+	QUnit.test("SubSection Header is with title on the LEFT", async function(assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
 				subSectionLayout: Lib.ObjectPageSubSectionLayout.TitleOnLeft,
 				sections: [
@@ -1108,7 +1108,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("SubSection Header is with title on TOP", function (assert) {
+	QUnit.test("SubSection Header is with title on TOP", async function(assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
 					sections: [
 						new ObjectPageSection({
@@ -1138,7 +1138,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("SubSection action buttons visibility", function (assert) {
+	QUnit.test("SubSection action buttons visibility", async function(assert) {
 		var oActionButton1 = new Button({text: "Invisible", visible: false}),
 			oActionButton2 = new Button({text: "Invisible", visible: false}),
 			oObjectPageLayout = new ObjectPageLayout({
@@ -1182,7 +1182,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.module("Object Page SubSection media classes", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oObjectPageLayout = new ObjectPageLayout({
 				selectedSection: "section2",
 				sections: [
@@ -1242,7 +1242,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 			"Visibility of children with .sapUxAPSubSectionSeeMoreContainer is not toggled when there is no change in visibility");
 	});
 
-	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", function(assert) {
+	QUnit.test(".sapUxAPObjectPageSubSectionWithSeeMore is applied to SubSections correctly", async function(assert) {
 		// Arrange
 		var oSubSection = this.oObjectPageLayout.getSections()[1].getSubSections()[0];
 
@@ -1292,7 +1292,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.module("SubSection access to parent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oObjectPageLayout = new ObjectPageLayout({
 				sections: [
 					new ObjectPageSection("section1", {
@@ -1339,7 +1339,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 			return XMLView.create({
 				id: "UxAP-13_objectPageSection",
 				viewName: "view.UxAP-13_ObjectPageSection"
-			}).then(function(oView) {
+			}).then(async function(oView) {
 				this.ObjectPageSectionView = oView;
 				this.ObjectPageSectionView.placeAt('qunit-fixture');
 				Core.applyChanges();
@@ -1350,7 +1350,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		}
 	});
 
-    QUnit.test("Test aria-labelledby attribute", function(assert) {
+    QUnit.test("Test aria-labelledby attribute", async function(assert) {
 		// Arrange
 		var oObjectPage = this.ObjectPageSectionView.byId("ObjectPageLayout"),
 			oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
@@ -1439,7 +1439,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.module("Content fit container", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: [ new ObjectPageSection({
 					subSections: [new ObjectPageSubSectionClass({
@@ -1478,7 +1478,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		}, this);
 	});
 
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection tab to fit the container", function (assert) {
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection tab to fit the container", async function(assert) {
 		var oPage = this.oObjectPage,
 			oSection = this.oObjectPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
@@ -1506,7 +1506,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		}, this);
 	});
 
-	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection when header in title area", function (assert) {
+	QUnit.test("sapUxAPObjectPageSubSectionFitContainer expands the subSection when header in title area", async function(assert) {
 		var oPage = this.oObjectPage,
 			oSection = oPage.getSections()[0],
 			oSubSection = oSection.getSubSections()[0],
@@ -1850,7 +1850,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 		}
 	});
 
-	QUnit.test("applyUxRules", function (assert) {
+	QUnit.test("applyUxRules", async function(assert) {
 
 		// Setup
 		var oSubSection = this.oObjectPageLayout.getSections()[0].getSubSections()[0],
@@ -1872,7 +1872,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.module("SubSection title visibility", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
@@ -1919,7 +1919,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 	QUnit.module("SubSection internalTitle");
 
-	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", function (assert) {
+	QUnit.test("Subsection _setInternalTitleLevel should invalidate control", async function(assert) {
 		// arrange
 		var oSubSection = new ObjectPageSubSectionClass({
 				title: "Title",
@@ -1954,7 +1954,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 
 
 	QUnit.module("See more / see less", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [
@@ -2015,7 +2015,7 @@ function(Element, $, Core, Control, coreLibrary, XMLView, Log, Lib, ObjectPageDy
 	});
 
 	QUnit.module("Column span", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [

@@ -132,7 +132,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Initialize with items aggregation", function(assert) {
+	QUnit.test("Initialize with items aggregation", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -163,7 +163,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Items aggregation tooltip", function(assert) {
+	QUnit.test("Items aggregation tooltip", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -196,7 +196,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Items aggregation visible property", function(assert) {
+	QUnit.test("Items aggregation visible property", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("selectedKey is set correctly for invisible items and removes the selection from other items", function(assert) {
+	QUnit.test("selectedKey is set correctly for invisible items and removes the selection from other items", async function(assert) {
 
 		//Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -301,7 +301,7 @@ sap.ui.define([
 
 		return XMLView.create({
 			definition: xmlData
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			var oSegmentedButton = oView.byId("XMLSegmentedButton");
 
 			// System under Test
@@ -320,7 +320,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ID's of internal elements properly set/rendered", function(assert) {
+	QUnit.test("ID's of internal elements properly set/rendered", async function(assert) {
 
 		var sItemIdComponent = "segmentedButtonItem-",
 			aButtons,
@@ -381,7 +381,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", function (assert) {
+	QUnit.test("Using the .sapMSegmentedButtonNoAutoWidth CSS class", async function(assert) {
 
 		// Arrange
 		var oSB,
@@ -428,7 +428,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Too long SegmentedButton inside the OveflowToolbar", function (assert) {
+	QUnit.test("Too long SegmentedButton inside the OveflowToolbar", async function(assert) {
 
 		// Arrange
 		var oSB,
@@ -468,7 +468,7 @@ sap.ui.define([
 	QUnit.module("Event");
 
 	//BCP: 1770067241
-	QUnit.test("SegmentedItem press", function(assert) {
+	QUnit.test("SegmentedItem press", async function(assert) {
 		//arrange
 		var fnOnPress = function(oEvent) {
 				sSelectedKeyInsidePressHandler = oSB.getSelectedKey();
@@ -524,7 +524,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("SegmentedButton setSelectedItem API call", function(assert) {
+	QUnit.test("SegmentedButton setSelectedItem API call", async function(assert) {
 
 		// Arrange
 		var oButton1 = new SegmentedButtonItem({text : "first button"}),
@@ -605,7 +605,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("getSelectedKey()", function(assert) {
+	QUnit.test("getSelectedKey()", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -667,7 +667,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("setSelectedKey()", function(assert) {
+	QUnit.test("setSelectedKey()", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -718,7 +718,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("selectedKey property on button press", function(assert) {
+	QUnit.test("selectedKey property on button press", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -751,7 +751,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("sap.m.SegmentedButtonItem property update", function (assert) {
+	QUnit.test("sap.m.SegmentedButtonItem property update", async function(assert) {
 
 		// Arrange
 		var oSBI = new SegmentedButtonItem({
@@ -1064,7 +1064,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("_clearAutoWidthAppliedToControl private method", function (assert) {
+	QUnit.test("_clearAutoWidthAppliedToControl private method", async function(assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -1140,7 +1140,7 @@ sap.ui.define([
 		oSB = null;
 	});
 
-	QUnit.test("_updateWidth private method", function (assert) {
+	QUnit.test("_updateWidth private method", async function(assert) {
 		// Arrange
 		var oSB,
 			aButtons,
@@ -1189,7 +1189,7 @@ sap.ui.define([
 		oSB = null;
 	});
 
-	QUnit.test("_updateWidth - sum of buttons width is greater than parent element width", function (assert) {
+	QUnit.test("_updateWidth - sum of buttons width is greater than parent element width", async function(assert) {
 		// Arrange
 		var that = this,
 			oSB = new SegmentedButton({
@@ -1229,7 +1229,7 @@ sap.ui.define([
 		this._ojQueryInnerWidthMethod = null;
 	});
 
-	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", function (assert) {
+	QUnit.test("_handleContainerResize fires _containerWidthChanged event when width is changed", async function(assert) {
 		// Arrange
 		var oSB = new SegmentedButton({
 			items: [
@@ -1283,7 +1283,7 @@ sap.ui.define([
 
 	QUnit.module("Data binding");
 
-	QUnit.test("Data binding items aggregation", function(assert) {
+	QUnit.test("Data binding items aggregation", async function(assert) {
 		// Arrange
 		var mData = {
 			selectedKey: "b7",
@@ -1357,7 +1357,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Data binding items aggregation live model change", function(assert) {
+	QUnit.test("Data binding items aggregation live model change", async function(assert) {
 		var mDataInitial,
 			mDataSecond,
 			oSegmentedButton,
@@ -1443,7 +1443,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard handling");
 
-	QUnit.test("alt/meta key + right/left or + home/end is not handled", function(assert) {
+	QUnit.test("alt/meta key + right/left or + home/end is not handled", async function(assert) {
 		var oSegmentedButton = new SegmentedButton({
 			items: [
 				new SegmentedButtonItem({ text: 'a'}),
@@ -1503,7 +1503,7 @@ sap.ui.define([
 
 	QUnit.module('ARIA');
 
-	QUnit.test("Root's general ARIA attributes", function (assert) {
+	QUnit.test("Root's general ARIA attributes", async function(assert) {
 		var oFirstButton = new SegmentedButtonItem({ text: "First" }),
 			oSecondButton = new SegmentedButtonItem({ text: "Second" }),
 			oSegmentedButton = new SegmentedButton({
@@ -1526,7 +1526,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Inner buttons' general ARIA attributes", function (assert) {
+	QUnit.test("Inner buttons' general ARIA attributes", async function(assert) {
 		var oInnerButton = new SegmentedButtonItem({ text: "First" }),
 			oInnerDisabledButton = new SegmentedButtonItem({ text: "Second", enabled: false }),
 			oSegmentedButton = new SegmentedButton({
@@ -1555,7 +1555,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Text-only SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Text-only SegmentedButtonItem's ARIA", async function(assert) {
 		var oItem = new SegmentedButtonItem({ text: "Something" }),
 			oSegmentedButton = new SegmentedButton({ items: oItem }),
 			oItemDomRef;
@@ -1570,7 +1570,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Icon-only SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Icon-only SegmentedButtonItem's ARIA", async function(assert) {
 		var oDefaultItem = new SegmentedButtonItem({
 				icon: "sap-icon://list"
 			}),
@@ -1601,7 +1601,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Combined(text + icon) SegmentedButtonItem's ARIA", function (assert) {
+	QUnit.test("Combined(text + icon) SegmentedButtonItem's ARIA", async function(assert) {
 		var oItem = new SegmentedButtonItem({ text: "Something", icon: "sap-icon://list" }),
 			oSegmentedButton = new SegmentedButton({ items: oItem }),
 			oItemDomRef;
@@ -1616,7 +1616,7 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
+	QUnit.test("getAccessibilityInfo", async function(assert) {
 		// Arrange
 		var SegmentedItem = new SegmentedButtonItem({
 				tooltip: "Tooltip",
@@ -1646,7 +1646,7 @@ sap.ui.define([
 
 	QUnit.module('Select Mode');
 
-	QUnit.test("Can work with special characters in the ID", function(assert) {
+	QUnit.test("Can work with special characters in the ID", async function(assert) {
 
 		// Arrange
 		var oSegmentedButton = new SegmentedButton({
@@ -1676,7 +1676,7 @@ sap.ui.define([
 	QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
 
 
-	QUnit.test("Changing the text property aggregated items", function (assert) {
+	QUnit.test("Changing the text property aggregated items", async function(assert) {
 		// Arrange
 		var oTestItem = new SegmentedButtonItem({text: "Button 1"}),
 			oSegmentedButton = new SegmentedButton({items: [oTestItem]}),
@@ -1892,7 +1892,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("sap.ui.core.CustomData and 'items' aggregation", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			// Create the control
 			this.oSB = new SegmentedButton({
 				items: [
@@ -1944,7 +1944,7 @@ sap.ui.define([
 		assert.strictEqual(aBtn[2].$().data("my"), undefined, "There is no CustomData rendered on the third button");
 	});
 
-	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData Value property must be reflected in the SegmentedButton", async function(assert) {
 		// Act - change the CustomData value of the item
 		this.oCD.setValue("2222");
 		oCore.applyChanges();
@@ -1953,7 +1953,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSB.getButtons()[0].$().data("my"), 2222, "The rendered CustomData on the first button should be updated");
 	});
 
-	QUnit.test("Update of item's CustomData Key property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData Key property must be reflected in the SegmentedButton", async function(assert) {
 		// Arrange
 		var oFirstButton;
 
@@ -1971,7 +1971,7 @@ sap.ui.define([
 			"There should be new CustomData with key 'yours' rendered on the first button");
 	});
 
-	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", function (assert) {
+	QUnit.test("Update of item's CustomData writeToDom property must be reflected in the SegmentedButton", async function(assert) {
 		// Act - change the CustomData writeToDom property
 		this.oCD.setWriteToDom(false);
 		oCore.applyChanges();

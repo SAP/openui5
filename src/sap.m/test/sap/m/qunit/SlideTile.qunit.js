@@ -132,7 +132,7 @@ sap.ui.define([
 	var oResBundle = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Rendering - sap.m.SlideTile", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -158,7 +158,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getDomRef().getAttribute("role"), "application", "Application has been set as the default role");
 	});
 
-	QUnit.test("Test ARIA label for single content in Display scope", function(assert) {
+	QUnit.test("Test ARIA label for single content in Display scope", async function(assert) {
 		//Arrange
 		var sExpectedText = this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,1])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2" + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
-	QUnit.test("Test ARIA label for single content in Actions scope", function(assert) {
+	QUnit.test("Test ARIA label for single content in Actions scope", async function(assert) {
 		//Arrange
 		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,1])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
@@ -210,7 +210,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getAggregation("_invisibleText").getText(), sExpectedText, "SlideTile contains expected ARIA-label attribute");
 	});
 
-	QUnit.test("Test ARIA label for multiple content in Actions scope", function(assert) {
+	QUnit.test("Test ARIA label for multiple content in Actions scope", async function(assert) {
 		//Arrange
 		var sExpectedText = this.oSlideTile._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + "\n" + this.oSlideTile._oRb.getText("SLIDETILE_INSTANCE_FOCUS_SCROLL",[1,3])  + "Tile 1 10 Neutral Footer 1 20 Neutral Footer 2"  + "\n" +
 			this.oSlideTile._oRb.getText("SLIDETILE_ACTIVATE");
@@ -237,7 +237,7 @@ sap.ui.define([
 		assert.ok(spy.calledOnce, "Function _toggleAnimation called once");
 	});
 
-	QUnit.test("In Action Scope toggle sliding is not allowed", function(assert) {
+	QUnit.test("In Action Scope toggle sliding is not allowed", async function(assert) {
 		//Arrange
 		this.oSlideTile.setScope("Actions");
 		oCore.applyChanges();
@@ -260,7 +260,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getTiles()[1].$().attr("tabindex"), "-1","Focus is removed from second GenericTile");
 	});
 
-	QUnit.test("SlideTile in Actions scope", function(assert) {
+	QUnit.test("SlideTile in Actions scope", async function(assert) {
 		//Arrange
 		var spyScrollToTile = sinon.spy(this.oSlideTile, "_scrollToTile");
 		var spyStartAnimation = sinon.spy(this.oSlideTile, "_startAnimation");
@@ -276,7 +276,7 @@ sap.ui.define([
 		assert.notOk(document.getElementById("st-tilesIndicator"), "The indicator is hidden");
 	});
 
-	QUnit.test("GenericTile view in SlideTile Actions scope", function(assert) {
+	QUnit.test("GenericTile view in SlideTile Actions scope", async function(assert) {
 		//Arrange
 		var spy = [],
 			oTiles = this.oSlideTile.getTiles();
@@ -292,7 +292,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Correct Height and Width are rendered", function(assert) {
+	QUnit.test("Correct Height and Width are rendered", async function(assert) {
 		this.oSlideTile.setWidth("100%");
 		this.oSlideTile.getTiles()[0].setFrameType("Stretch");
 		this.oSlideTile.getTiles()[0].setMode("ArticleMode");
@@ -306,7 +306,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetHeight, this.oSlideTile.getDomRef().offsetHeight, "Slide tile and Generic Tile inside it has the same height");
 	});
 
-	QUnit.test("When GenericTile frametype is not Stretch", function(assert) {
+	QUnit.test("When GenericTile frametype is not Stretch", async function(assert) {
 		this.oSlideTile.setWidth("100%");
 		oCore.applyChanges();
 
@@ -317,7 +317,7 @@ sap.ui.define([
 		assert.equal(this.oSlideTile.getTiles()[0].getDomRef().offsetWidth, 360, "Generic Tile inside Slide tile has the default width");
 	});
 
-	QUnit.test("Button created in Place of action more icon", function(assert) {
+	QUnit.test("Button created in Place of action more icon", async function(assert) {
 		//Arrange
 		this.oSlideTile.setScope("Actions");
 		oCore.applyChanges();
@@ -325,7 +325,7 @@ sap.ui.define([
 		assert.ok(this.oSlideTile._oMoreIcon.isA("sap.m.Button"),"Button has been rendered");
 	});
 	QUnit.module("Events - sap.m.SlideTile", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.fnPressHandler = function() {
 			};
 			this.fnSecondPressHandler = function() {
@@ -394,7 +394,7 @@ sap.ui.define([
 			assert.ok(spy.notCalled, "No backward scrolling by using key B if the Tile is sliding");
 		});
 
-		QUnit.test("In Action Scope keyboard button B is ignored", function(assert) {
+		QUnit.test("In Action Scope keyboard button B is ignored", async function(assert) {
 			//Arrange
 			this.oSlideTile.setScope("Actions");
 			oCore.applyChanges();
@@ -432,7 +432,7 @@ sap.ui.define([
 			assert.ok(spy.notCalled, "No forward scrolling by using key F if the Tile is sliding");
 		});
 
-		QUnit.test("In Action Scope keyboard button F is ignored", function(assert) {
+		QUnit.test("In Action Scope keyboard button F is ignored", async function(assert) {
 			//Arrange
 			this.oSlideTile.setScope("Actions");
 			oCore.applyChanges();
@@ -489,7 +489,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Methods - sap.m.SlideTile", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -611,7 +611,7 @@ sap.ui.define([
 		assert.ok($indicator.length > 0, "Multiple tiles indicator displayed when there are more tiles");
 	});
 
-	QUnit.test("Tests if multiple tiles indicator not displayed when there is only one tile", function(assert) {
+	QUnit.test("Tests if multiple tiles indicator not displayed when there is only one tile", async function(assert) {
 		//Arrange
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[2].getId());
 		this.oSlideTile.removeTile(this.oSlideTile.getTiles()[1].getId());
@@ -667,7 +667,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("SlideTile has GenericTile with NewsContent", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			var oNewsTileContent = new TileContent({
 				content: new NewsContent()
 			});
@@ -691,7 +691,7 @@ sap.ui.define([
 		assert.ok(this.oSlideTile._hasNewsContent(0), "The GenericTile in SlideTile has NewsContent");
 	});
 
-	QUnit.test("Icon color is adapted to NewsContent", function(assert) {
+	QUnit.test("Icon color is adapted to NewsContent", async function(assert) {
 		//Act
 		this.oSlideTile.setScope("Actions");
 		oCore.applyChanges();
@@ -700,7 +700,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering - EmptyTile", {
-		beforeEach : function() {
+		beforeEach : async function() {
 
 			//One empty tile
 			this.oEmptySlideTile = new SlideTile("st-empty", {
@@ -724,7 +724,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Play/pause button", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -753,7 +753,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Event Tests", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			fnCreateSlideTile.call(this);
 			this.oSlideTile.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -793,7 +793,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Press event of inner GenericTile on 'tap' in Actions scope", function(assert) {
+	QUnit.test("Press event of inner GenericTile on 'tap' in Actions scope", async function(assert) {
 		//Arrange
 		var bEventNotTriggered = true,
 			oGenericTile = this.oSlideTile.getTiles()[0];
@@ -811,7 +811,7 @@ sap.ui.define([
 		assert.ok(bEventNotTriggered, "Press event of GenericTile is not triggered on mouse click.");
 	});
 
-	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", function(assert) {
+	QUnit.test("Press event on 'tap' with correct parameters in Actions scope", async function(assert) {
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
@@ -829,7 +829,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard key 'Enter' fires press event with correct parameters in Actions scope", function(assert) {
+	QUnit.test("Keyboard key 'Enter' fires press event with correct parameters in Actions scope", async function(assert) {
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
@@ -851,7 +851,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard key 'Space' fires press event with correct parameters in Actions scope", function(assert) {
+	QUnit.test("Keyboard key 'Space' fires press event with correct parameters in Actions scope", async function(assert) {
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
@@ -873,7 +873,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard key 'DELETE' fires press event with correct parameters in Actions scope", function(assert) {
+	QUnit.test("Keyboard key 'DELETE' fires press event with correct parameters in Actions scope", async function(assert) {
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
@@ -895,7 +895,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Keyboard key 'BACKSPACE' fires press event with correct parameters in Actions scope", function(assert) {
+	QUnit.test("Keyboard key 'BACKSPACE' fires press event with correct parameters in Actions scope", async function(assert) {
 		//Arrange
 		var oSlideTile = this.oSlideTile;
 		this.oSlideTile.setScope(GenericTileScope.Actions);
@@ -1100,7 +1100,7 @@ var FrameType = library.FrameType;
 		}
 	});
 
-	QUnit.test("Slide Tile should get paused when the it gets focus on it", function(assert) {
+	QUnit.test("Slide Tile should get paused when the it gets focus on it", async function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
@@ -1119,7 +1119,7 @@ var FrameType = library.FrameType;
 		assert.ok(this.oSlideTile._bAnimationPause,"Tile has been paused on focus");
 	});
 
-	QUnit.test("Checking if the correct width has been applied when the gap is 1rem", function (assert) {
+	QUnit.test("Checking if the correct width has been applied when the gap is 1rem", async function(assert) {
 		// Arrange
 		this.fnCreateGridContainer("1rem");
 		var aItems = this.oGrid.getItems();
@@ -1131,7 +1131,7 @@ var FrameType = library.FrameType;
 		//Assert
 		assert.ok(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 
-	QUnit.test("S4 home slide tile", function(assert) {
+	QUnit.test("S4 home slide tile", async function(assert) {
 		//Arrange
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
 		this.oSlideTile.setWidth("100%");
@@ -1142,7 +1142,7 @@ var FrameType = library.FrameType;
 	});
 
 	});
-	QUnit.test("Checking if the correct width has not been applied when the gap is not 1rem", function (assert) {
+	QUnit.test("Checking if the correct width has not been applied when the gap is not 1rem", async function(assert) {
 		// Arrange
 		this.fnCreateGridContainer("0.5rem");
 		var aItems = this.oGrid.getItems();
@@ -1155,7 +1155,7 @@ var FrameType = library.FrameType;
 		assert.notOk(aItems[0].hasStyleClass("sapMSTGridContainerOneRemGap"),"Width has been applied successfully when the gap is 1rem");
 
 	});
-	QUnit.test("Tab Navigation on tiles", function(assert) {
+	QUnit.test("Tab Navigation on tiles", async function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
@@ -1189,7 +1189,7 @@ var FrameType = library.FrameType;
 		assert.equal(document.activeElement.id, this.oTile2.getId(), "Focus on Tile2");
 	});
 
-	QUnit.test("CSS Rendering Normal Device", function(assert){
+	QUnit.test("CSS Rendering Normal Device", async function(assert) {
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		assert.equal(true,true,"ok");
@@ -1223,7 +1223,7 @@ var FrameType = library.FrameType;
 		assert.equal();
 	});
 
-	QUnit.test("CSS Rendering Mobile Device", function(assert){
+	QUnit.test("CSS Rendering Mobile Device", async function(assert) {
 		this.initializeMobileView();
 		this.oSlideTile = this.createSlideTile(true).placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -1262,7 +1262,7 @@ var FrameType = library.FrameType;
 		assert.equal();
 	});
 
-	QUnit.test("Border-Radius for the GenericTile wrapper", function(assert){
+	QUnit.test("Border-Radius for the GenericTile wrapper", async function(assert) {
 		this.oSlideTile = this.createSlideTile().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		assert.ok(getComputedStyle(document.querySelector(".sapMSTOverflowHidden")).borderRadius,"3.68px 3.68px 4px 4px", "Border-Radius property set correctly");
@@ -1286,7 +1286,7 @@ var FrameType = library.FrameType;
 		});
 	});
 
-	QUnit.test("Focus should not be present on the GenericTile level when rendered as a link", function(assert){
+	QUnit.test("Focus should not be present on the GenericTile level when rendered as a link", async function(assert) {
 		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
 		oCore.applyChanges();
 		this.oSlideTile.getTiles().forEach(function(oTile) {
@@ -1294,7 +1294,7 @@ var FrameType = library.FrameType;
 		});
 	});
 
-	QUnit.test("Aria text should not be updated while the focus is getting out", function(assert) {
+	QUnit.test("Aria text should not be updated while the focus is getting out", async function(assert) {
 		var bForward = true;
 		this.oTile1 = this.createTile().placeAt("qunit-fixture");
 		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
@@ -1322,7 +1322,7 @@ var FrameType = library.FrameType;
 		assert.ok(spy.notCalled, "Function _setAriaDescriptor not called");
 	});
 
-	QUnit.test("Focus on the slide tile when it has one tile inside it", function(assert){
+	QUnit.test("Focus on the slide tile when it has one tile inside it", async function(assert) {
 		//Arrange
 		this.oSlideTile = this.createSlideTile(false,true).placeAt("qunit-fixture");
 		oCore.applyChanges();

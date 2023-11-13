@@ -172,7 +172,7 @@ sap.ui.define([
 
 					if (!mLoadedLibraries[sInfoLibName]) {
 						Log.info("Library '" + sInfoLibName + "' is not loaded! Trying...");
-						return sap.ui.getCore().loadLibrary(sInfoLibName, {async: true})
+						return Library.load(sInfoLibName)
 							.then(function(oLibrary) {
 								mLoadedLibraries[sInfoLibName] = oLibrary.controls;
 								Log.info("Library '" + sInfoLibName + "...successfully.");

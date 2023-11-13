@@ -61,7 +61,7 @@ sap.ui.define([
 	/* tests */
 	QUnit.module("Basic rendering");
 
-	QUnit.test("Image is rendered when it's visible", function(assert) {
+	QUnit.test("Image is rendered when it's visible", async function(assert) {
 		// Arrange
 		var oImage = createImage();
 
@@ -78,7 +78,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image is not rendered when it's not visible", function(assert) {
+	QUnit.test("Image is not rendered when it's not visible", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			visible: false
@@ -97,7 +97,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image is rendered with correct backgroundPosition value", function(assert) {
+	QUnit.test("Image is rendered with correct backgroundPosition value", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			mode: "Background"
@@ -123,7 +123,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image is rendered with correct backgroundSize value", function(assert) {
+	QUnit.test("Image is rendered with correct backgroundSize value", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 				mode: "Background"
@@ -151,7 +151,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image is rendered with correct backgroundRepeat value", function(assert) {
+	QUnit.test("Image is rendered with correct backgroundRepeat value", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 				mode: "Background"
@@ -177,7 +177,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image is rendered with detailBox", function(assert) {
+	QUnit.test("Image is rendered with detailBox", async function(assert) {
 		// Arrange
 		var oImage = createImage();
 
@@ -196,7 +196,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image in 'Svg' mode renders inline 'svg'", function(assert) {
+	QUnit.test("Image in 'Svg' mode renders inline 'svg'", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 				src: ("/testsuite/test-resources/sap/m/demokit/sample/Image/images/sap-logo.svg"),
@@ -221,7 +221,7 @@ sap.ui.define([
 		}, 1000);
 	});
 
-	QUnit.test("Svg data is cached, so upon rerendering svg is not requested twice, but it is still rendered inline", function(assert) {
+	QUnit.test("Svg data is cached, so upon rerendering svg is not requested twice, but it is still rendered inline", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 				src: ("/testsuite/test-resources/sap/m/demokit/sample/Image/images/sap-logo.svg"),
@@ -257,7 +257,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering decorative image");
 
-	QUnit.test("Alt text and tooltip", function(assert) {
+	QUnit.test("Alt text and tooltip", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			tooltip: sTooltip,
@@ -278,7 +278,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Alt text and tooltip when empty", function(assert) {
+	QUnit.test("Alt text and tooltip when empty", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			decorative: true
@@ -295,7 +295,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Decorative Image ARIA", function(assert) {
+	QUnit.test("Decorative Image ARIA", async function(assert) {
 		var oImage = createImage({
 			alt: "abcd"
 		});
@@ -322,7 +322,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering non decorative image");
 
-	QUnit.test("Alt text and tooltip", function(assert) {
+	QUnit.test("Alt text and tooltip", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			decorative: false,
@@ -344,7 +344,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Alt text and tooltip when both are empty", function(assert) {
+	QUnit.test("Alt text and tooltip when both are empty", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			decorative: false
@@ -362,7 +362,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Alt text and tooltip when one of them is empty", function(assert) {
+	QUnit.test("Alt text and tooltip when one of them is empty", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			decorative: false,
@@ -387,7 +387,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Non decorative Image ARIA", function(assert) {
+	QUnit.test("Non decorative Image ARIA", async function(assert) {
 		var oImage = createImage({
 			decorative: false,
 			tooltip: sTooltip,
@@ -413,7 +413,7 @@ sap.ui.define([
 
 	QUnit.module("Mode property");
 
-	QUnit.test("Default mode property", function(assert) {
+	QUnit.test("Default mode property", async function(assert) {
 		var oImage = createImage();
 
 		// System under test
@@ -428,7 +428,7 @@ sap.ui.define([
 	});
 
 	// BCP: 1880373683 - on zoom 150% img URL is appended with @2 for high density image
-	QUnit.test("Image with mode sap.m.ImageMode.Background", function(assert) {
+	QUnit.test("Image with mode sap.m.ImageMode.Background", async function(assert) {
 		var done = assert.async();
 		var oImage = createImage({
 			mode: ImageMode.Background
@@ -568,7 +568,7 @@ sap.ui.define([
 
 	QUnit.module("Associations");
 
-	QUnit.test("ariaLabelledBy", function (assert) {
+	QUnit.test("ariaLabelledBy", async function(assert) {
 		var oSampleText = new Text("sampleText", {
 			text: "Sample text"
 		}), oAnotherText = new Text("anotherText", {
@@ -589,7 +589,7 @@ sap.ui.define([
 		oAnotherText.destroy();
 	});
 
-	QUnit.test("ariaDescribedBy", function (assert) {
+	QUnit.test("ariaDescribedBy", async function(assert) {
 		var oSampleText = new Text("sampleText", {
 			text: "Sample text"
 		}), oAnotherText = new Text("anotherText", {
@@ -610,7 +610,7 @@ sap.ui.define([
 		oAnotherText.destroy();
 	});
 
-	QUnit.test("ariaDetails", function (assert) {
+	QUnit.test("ariaDetails", async function(assert) {
 		var oSampleText = new Text("sampleText", {
 			text: "Sample text"
 		}), oAnotherText = new Text("anotherText", {
@@ -633,7 +633,7 @@ sap.ui.define([
 
 	QUnit.module("Dimensions");
 
-	QUnit.test("Default Offset Dimensions", function(assert) {
+	QUnit.test("Default Offset Dimensions", async function(assert) {
 		var oImage = createImage();
 
 		// System under test
@@ -649,7 +649,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Original Width", function(assert) {
+	QUnit.test("Original Width", async function(assert) {
 		var done = assert.async();
 		var oImage = createImage();
 
@@ -673,7 +673,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("Dimension Changes", function(assert) {
+	QUnit.test("Dimension Changes", async function(assert) {
 		var done = assert.async();
 		var oImage = createImage();
 
@@ -698,7 +698,7 @@ sap.ui.define([
 		}, 1000);
 	});
 
-	QUnit.test("Aspect Ratio", function(assert) {
+	QUnit.test("Aspect Ratio", async function(assert) {
 		var done = assert.async();
 		var oImage = createImage();
 
@@ -726,7 +726,7 @@ sap.ui.define([
 	QUnit.module("Density Aware");
 
 	if (window.devicePixelRatio > 1) {
-		QUnit.test("Density Aware default value (false)", function(assert) {
+		QUnit.test("Density Aware default value (false)", async function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
 				width: "",
@@ -751,7 +751,7 @@ sap.ui.define([
 			}, 1000);
 		});
 
-		QUnit.test("Density Aware set to true", function(assert) {
+		QUnit.test("Density Aware set to true", async function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
 				densityAware: true,
@@ -777,7 +777,7 @@ sap.ui.define([
 			}, 1000);
 		});
 
-		QUnit.test("Loading default image when high resolution image not available", function(assert) {
+		QUnit.test("Loading default image when high resolution image not available", async function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
 				densityAware: true,
@@ -800,7 +800,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+	QUnit.test("Image with density 1.5, source handling after rerendering", async function(assert) {
 		var done = assert.async();
 		this.stub(Image, "_currentDevicePixelRatio").value(1.5);
 
@@ -826,7 +826,7 @@ sap.ui.define([
 	QUnit.module("Src and ActiveSrc properties");
 
 	if (window.devicePixelRatio === 1) {
-		QUnit.test("Active Source Changed when pressed", function(assert) {
+		QUnit.test("Active Source Changed when pressed", async function(assert) {
 			var done = assert.async();
 			var oImage = createImage({
 				src: sSrcAction,
@@ -863,7 +863,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("Image with valid src", function(assert) {
+	QUnit.test("Image with valid src", async function(assert) {
 		var done = assert.async();
 
 		var oLoadSpy = sinon.spy(function() {
@@ -887,7 +887,7 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("Image with Invalid src and src change", function(assert) {
+	QUnit.test("Image with Invalid src and src change", async function(assert) {
 		var done = assert.async();
 		var oLoadSpy = sinon.spy(function() {
 				var $oImage = jQuery("#" + sControlId);
@@ -947,7 +947,7 @@ sap.ui.define([
 
 	QUnit.module("Tabindex");
 
-	QUnit.test("Existence of attribute tabindex", function(assert) {
+	QUnit.test("Existence of attribute tabindex", async function(assert) {
 		var fn1 = function() {},
 			fn2 = function() {},
 			oImage = createImage({
@@ -1015,7 +1015,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("aria-haspopup on image with press handled", function(assert) {
+	QUnit.test("aria-haspopup on image with press handled", async function(assert) {
 		// Arrange
 		var oImage = new Image();
 
@@ -1038,7 +1038,7 @@ sap.ui.define([
 
 	QUnit.module("Bug fixes");
 
-	QUnit.test("Change image src in case detailBox is present", function(assert){
+	QUnit.test("Change image src in case detailBox is present", async function(assert) {
 		var oImage = createImage();
 		var oLightBox = new LightBox();
 
@@ -1059,7 +1059,7 @@ sap.ui.define([
 		oImage.destroy();
 	});
 
-	QUnit.test("Image with valid src and default densityAware", function(assert) {
+	QUnit.test("Image with valid src and default densityAware", async function(assert) {
 		var done = assert.async();
 		var oLoadSpy = sinon.spy(function() {
 				var $Image = oImage.$();
@@ -1081,7 +1081,7 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("Image with Invalid src and src change under default densityAware", function(assert) {
+	QUnit.test("Image with Invalid src and src change under default densityAware", async function(assert) {
 		var done = assert.async();
 		var oLoadSpy = sinon.spy(function() {
 				var $Image = oImage.$();
@@ -1113,7 +1113,7 @@ sap.ui.define([
 		Core.applyChanges();
 	});
 
-	QUnit.test("Image with density 1.5, source handling after rerendering", function(assert) {
+	QUnit.test("Image with density 1.5, source handling after rerendering", async function(assert) {
 		var done = assert.async();
 		var oLoadSpy = this.spy(function() {
 				assert.equal(oErrorSpy.callCount, 0, "error event handler shouldn't be called");
@@ -1165,7 +1165,7 @@ sap.ui.define([
 		oImage.placeAt("qunit-fixture");
 	});
 
-	QUnit.test("onsapspace event should be prevented - SPACE", function(assert){
+	QUnit.test("onsapspace event should be prevented - SPACE", async function(assert) {
 		//setup
 		var oImage = createImage({
 				src: sSrc
@@ -1190,7 +1190,7 @@ sap.ui.define([
 	// This unit test is meant to cover the current logic of
 	// Image control where it fires load event after each
 	// re-rendering cycle
-	QUnit.test("Load is called on rerender", function (assert) {
+	QUnit.test("Load is called on rerender", async function(assert) {
 		var done = assert.async();
 		var callCount = 0;
 		var callLimit = 10;
@@ -1218,7 +1218,7 @@ sap.ui.define([
 
 	// This test is especially created to cover FF problem loading huge size SVG images,
 	// caused by wrongly reading naturalWidth property as '0'
-	QUnit.test("SVG Load is called on rerender", function (assert) {
+	QUnit.test("SVG Load is called on rerender", async function(assert) {
 		var done = assert.async();
 		var callCount = 0;
 		var callLimit = 10;
@@ -1246,7 +1246,7 @@ sap.ui.define([
 
 	QUnit.module("Attribute");
 
-	QUnit.test("Lazy loading", function(assert) {
+	QUnit.test("Lazy loading", async function(assert) {
 		// Arrange
 		var oImage = createImage({
 			lazyLoading: true
@@ -1264,7 +1264,7 @@ sap.ui.define([
 
 	QUnit.module("Load event");
 
-	QUnit.test("fired with lazyLoading set to true", function(assert) {
+	QUnit.test("fired with lazyLoading set to true", async function(assert) {
 		// Arrange
 		var oBox = new VBox({
 			height: "3000px"

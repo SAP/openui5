@@ -31,7 +31,7 @@ function($, Core, XMLView, App) {
 			XMLView.create({
 				id: "UxAP-331_ObjectPageRules1",
 				viewName: "view.UxAP-331_ObjectPageRules1"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView1 = oView;
 				this.objectPageSampleView1.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -49,7 +49,7 @@ function($, Core, XMLView, App) {
 	QUnit.test("ObjectPageId 1 created", function (assert) {
 		assert.notStrictEqual(this.referencedObjectPage1, undefined, "ObjectPageLayout 1 created successfully");
 	});
-	QUnit.test("ObjectPageId 1: DynamicPageTitle titleClickEnabled class not applied", function (assert) {
+	QUnit.test("ObjectPageId 1: DynamicPageTitle titleClickEnabled class not applied", async function(assert) {
 		assert.notOk(this.referencedObjectPage1.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class not applied");
 		this.referencedObjectPage1.setToggleHeaderOnTitleClick(true);
 		Core.applyChanges();
@@ -102,7 +102,7 @@ function($, Core, XMLView, App) {
 			XMLView.create({
 				id: "UxAP-331_ObjectPageRules2",
 				viewName: "view.UxAP-331_ObjectPageRules2"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView2 = oView;
 				this.objectPageSampleView2.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -168,7 +168,7 @@ function($, Core, XMLView, App) {
 			XMLView.create({
 				id: "UxAP-331_ObjectPageRules3",
 				viewName: "view.UxAP-331_ObjectPageRules3"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.objectPageSampleView3 = oView;
 				this.objectPageSampleView3.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -182,14 +182,14 @@ function($, Core, XMLView, App) {
 		}
 	});
 
-	QUnit.test("ObjectPageId 3: DynamicPageTitle titleClickEnabled class is applied", function (assert) {
+	QUnit.test("ObjectPageId 3: DynamicPageTitle titleClickEnabled class is applied", async function(assert) {
 		assert.ok(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is applied");
 		this.referencedObjectPage3.setToggleHeaderOnTitleClick(false);
 		Core.applyChanges();
 		assert.notOk(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is removed");
 	});
 
-	QUnit.test("ObjectPageId 3: DynamicPageTitle  headerContentPinnable class is applied", function (assert) {
+	QUnit.test("ObjectPageId 3: DynamicPageTitle  headerContentPinnable class is applied", async function(assert) {
 		assert.ok(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutHeaderPinnable"), "DynamicPageTitle headerContentPinnable class is applied");
 		this.referencedObjectPage3.setHeaderContentPinnable(false);
 		Core.applyChanges();
@@ -223,7 +223,7 @@ function($, Core, XMLView, App) {
 			XMLView.create({
 				id: "UxAP-ObjectPageTitlePropagationSupport",
 				viewName: "view.UxAP-ObjectPageTitlePropagationSupport"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oOPView = oView;
 				this.oOPView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -287,7 +287,7 @@ function($, Core, XMLView, App) {
 		XMLView.create({
 			id: "objectPageBoundSectionsViewSample",
 			viewName: "view.UxAP-ObjectPageBoundSections"
-		}).then(function (oView) {
+		}).then(async function(oView) {
 			this.oSampleView = oView;
 			this.appControl = new App();
 			this.appControl.addPage(this.oSampleView);
@@ -304,7 +304,7 @@ function($, Core, XMLView, App) {
 		XMLView.create({
 			id: "objectPageNotBoundSectionsViewSample",
 			viewName: "view.UxAP-ObjectPageNotBoundSections"
-		}).then(function (oView) {
+		}).then(async function(oView) {
 			this.oSampleView = oView;
 			this.appControl = new App();
 			this.appControl.addPage(this.oSampleView);

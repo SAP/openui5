@@ -10,7 +10,7 @@ function(Core, Element, JSONModel, XMLView) {
 			XMLView.create({
 				id: "UxAP-ModelMapping",
 				viewName: "view.UxAP-ModelMapping"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oView = oView;
 				this.oView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -22,7 +22,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}
 	});
 
-	QUnit.test("initial model mapping is applied", function (assert) {
+	QUnit.test("initial model mapping is applied", async function(assert) {
 		// Arrange
 		var oExpectedFirstName = "John",
 			oExpectedLastName = "Miller",
@@ -56,7 +56,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}.bind(this), 400);
 	});
 
-	QUnit.test("updated externalPath is applied", function (assert) {
+	QUnit.test("updated externalPath is applied", async function(assert) {
 		// Arrange
 		var oNewFirstName = "John1",
 			oNewLastName = "Miller1",
@@ -101,7 +101,7 @@ function(Core, Element, JSONModel, XMLView) {
 		}.bind(this), 400);
 	});
 
-	QUnit.test("mapping is updated when the model is changed", function (assert) {
+	QUnit.test("mapping is updated when the model is changed", async function(assert) {
 		// Arrange
 		var oExpectedFirstName = "JohnChanged",
 			oExpectedLastName = "MillerChanged",

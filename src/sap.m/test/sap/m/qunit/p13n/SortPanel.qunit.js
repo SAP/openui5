@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("SortPanel API tests", {
-		beforeEach: function(){
+		beforeEach: async function() {
 			this.oSortPanel = new SortPanel();
 			this.oSortPanel.setP13nData([
 				{

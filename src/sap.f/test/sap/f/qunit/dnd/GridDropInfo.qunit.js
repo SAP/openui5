@@ -122,7 +122,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("isDroppable", function(assert) {
+	QUnit.test("isDroppable", async function(assert) {
 		var oTestControl = new CustomListItem(),
 			oFakeEvent = createFakeEvent("dragover");
 
@@ -137,7 +137,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			var oDropItem = new Text(),
 				oDragItem = new Text();
 

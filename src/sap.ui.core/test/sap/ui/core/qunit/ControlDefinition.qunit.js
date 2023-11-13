@@ -414,7 +414,7 @@ sap.ui.define([
 		assert.equal(events.length, 2, "one event should have been received");
 		equalEvent(events[1], "my.lib.TestElement1", "element", oClass.getMetadata());
 
-		return sap.ui.getCore().loadLibrary("sap.ui.testlib", {async: true}).then(function() {
+		return Library.load("sap.ui.testlib").then(function() {
 			assert.equal(events.length, 3, "one event should have been received");
 			equalEvent(events[2], "sap.ui.testlib", "library", Library.all()["sap.ui.testlib"]);
 			Library.detachLibraryChanged(onlibchange);

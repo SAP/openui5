@@ -5,13 +5,15 @@ sap.ui.define([
 	"./BaseListContent",
 	"./TimelineContentRenderer",
 	"sap/f/cards/loading/TimelinePlaceholder",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
-], function (
+], function(
 	BaseListContent,
 	TimelineContentRenderer,
 	TimelinePlaceholder,
+	Lib,
 	library,
 	Core,
 	BindingHelper
@@ -84,7 +86,7 @@ sap.ui.define([
 	 */
 	TimelineContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
-			Core.loadLibrary("sap.suite.ui.commons", { async: true })
+			Lib.load("sap.suite.ui.commons")
 				.then(function () {
 					sap.ui.require([
 						"sap/suite/ui/commons/Timeline",

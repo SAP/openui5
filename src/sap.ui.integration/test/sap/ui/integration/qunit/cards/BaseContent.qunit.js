@@ -26,7 +26,7 @@ sap.ui.define([
 				return oContentFactory.getClass(sType).getMetadata().getRenderer().getMinHeight(oConfiguration, oContent, this.oCard);
 			}.bind(this);
 		},
-		beforeEach: function () {
+		beforeEach: async function() {
 			jQuery("html").addClass("sapUiSizeCompact");
 			this.oFakeContent = new Text();
 			this.oFakeContent.placeAt(DOM_RENDER_LOCATION);

@@ -6,13 +6,15 @@
  * Initialization Code and shared classes of library testlibs.customCss.lib1
  */
 sap.ui.define([
-	"sap/ui/core/library", // library dependencies
+	"sap/ui/core/Lib",
+	// library dependencies
+	"sap/ui/core/library",
 	"sap/ui/core/Core"
-], function(coreLib, Core) {
+], function(Library, coreLib, Core) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
-	return Core.initLibrary({
+	return Library.init({
 		name : "testlibs.customCss.lib1",
 		dependencies : ["sap.ui.core"],
 		types: [

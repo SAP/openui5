@@ -19,7 +19,7 @@ sap.ui.define([
 		before: function() {
 			return Component.create({
 				name: "samples.scrollcomp"
-			}).then(function(oComponent) {
+			}).then(async function(oComponent) {
 				oCompCont = new ComponentContainer("CompCont", {
 					component: oComponent
 				});

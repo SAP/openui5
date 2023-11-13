@@ -89,7 +89,7 @@ sap.ui.define([
 		};
 
 		QUnit.module("Rendering", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oM = new Month().placeAt("qunit-fixture");
 				oCore.applyChanges();
 			},
@@ -104,7 +104,7 @@ sap.ui.define([
 			assert.ok(this.oM.getDomRef(), "Control is rendered");
 		});
 
-		QUnit.test("Corner case for January 0001", function (assert) {
+		QUnit.test("Corner case for January 0001", async function(assert) {
 			// Act
 			this.oM.setDate(createDate(1, 0, 1));
 			oCore.applyChanges();
@@ -117,7 +117,7 @@ sap.ui.define([
 			assert.strictEqual($FirstDay.find(".sapUiCalItemText").text(), "", "The day from year 0000 should not have a visible text");
 		});
 
-		QUnit.test("Corner case for December 9999", function (assert) {
+		QUnit.test("Corner case for December 9999", async function(assert) {
 			// Act
 			var oMonth = new Month({
 			}).placeAt("qunit-fixture");
@@ -253,7 +253,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Rendering", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oM = new Month().placeAt("qunit-fixture");
 				oCore.applyChanges();
 			},
@@ -263,7 +263,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Adding special date should not move the focus to the month control", function (oAssert) {
+		QUnit.test("Adding special date should not move the focus to the month control", async function(oAssert) {
 			// Arrange
 			var fnDone = oAssert.async(), // Async test
 				oSpecialDate = new DateTypeRange({
@@ -298,7 +298,7 @@ sap.ui.define([
 
 		});
 
-		QUnit.test("Testing if showWeekNumbers property works properly", function (oAssert) {
+		QUnit.test("Testing if showWeekNumbers property works properly", async function(oAssert) {
 
 			oAssert.strictEqual(this.oM.$().hasClass("sapUiCalNoWeekNum"), false, "When showWeekNumbers property is 'true', the class that hides the week numbers should not be 'visible'");
 			// Act
@@ -356,7 +356,7 @@ sap.ui.define([
 				"aggregation 'specialDates' focus should be returned");
 		});
 
-		QUnit.test("specialDates outside current month are not rendered as such", function (oAssert) {
+		QUnit.test("specialDates outside current month are not rendered as such", async function(oAssert) {
 			// Arrange
 			var $Date;
 			this.oM.setDate(UI5Date.getInstance(2016, 6, 1));
@@ -400,7 +400,7 @@ sap.ui.define([
 		});
 
 		// BCP: 1880151681
-		QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
+		QUnit.test("Selecting a weeknumber does not throw an error", async function(assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -420,7 +420,7 @@ sap.ui.define([
 		});
 
 		// BCP: 1880151681
-		QUnit.test("Selecting a day header does not throw an error", function (assert) {
+		QUnit.test("Selecting a day header does not throw an error", async function(assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -460,7 +460,7 @@ sap.ui.define([
 			isSelectedDaySpy.restore();
 		});
 
-		QUnit.test("Selecting a week number in Edge + touch does not cause day selection", function (assert) {
+		QUnit.test("Selecting a week number in Edge + touch does not cause day selection", async function(assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -481,7 +481,7 @@ sap.ui.define([
 			isSelectedDaySpy.restore();
 		});
 
-		QUnit.test("select event is also called when click on sapUiCalDayName", function (assert) {
+		QUnit.test("select event is also called when click on sapUiCalDayName", async function(assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -505,7 +505,7 @@ sap.ui.define([
 			assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
 		});
 
-		QUnit.test("select event is also called when click on sapUiCalItemText", function (assert) {
+		QUnit.test("select event is also called when click on sapUiCalItemText", async function(assert) {
 			// Arrange
 			this.oM.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -529,7 +529,7 @@ sap.ui.define([
 			assert.equal(oMonthSelectSpy.callCount, 1, "select was fired");
 		});
 
-		QUnit.test("setting startDate doesn't apply focus", function (assert) {
+		QUnit.test("setting startDate doesn't apply focus", async function(assert) {
 			// Arrange
 			var oMonthFocusDateSpy = this.spy(this.oM, "setDate"),
 				oLastMonthDate = UI5Date.getInstance();
@@ -585,7 +585,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("General ARIA", function (assert) {
+		QUnit.test("General ARIA", async function(assert) {
 			// Arrange
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -601,7 +601,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("First DOM element with role='rowheader' has week label set", function (assert) {
+		QUnit.test("First DOM element with role='rowheader' has week label set", async function(assert) {
 			// Arrange
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -622,7 +622,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("Day cells have role gridcell", function (assert) {
+		QUnit.test("Day cells have role gridcell", async function(assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
 			oCore.applyChanges();
@@ -631,7 +631,7 @@ sap.ui.define([
 			assert.equal(jQuery("#" + this.oSut.getId() + "-20160105").attr("role"), "gridcell", "The day cell has role gridcell");
 		});
 
-		QUnit.test("Wrapper of day cells has role row", function (assert) {
+		QUnit.test("Wrapper of day cells has role row", async function(assert) {
 			// Arrange
 			this.oSut.placeAt('qunit-fixture');
 			oCore.applyChanges();
@@ -640,7 +640,7 @@ sap.ui.define([
 			assert.equal(this.oSut.getDomRef().childNodes[1].getAttribute("role"), "row", "The day cell's wrapper has role row");
 		});
 
-		QUnit.test("Special Dates with legend", function (assert) {
+		QUnit.test("Special Dates with legend", async function(assert) {
 			//Act
 			this.oSut.placeAt('qunit-fixture');
 			oCore.applyChanges();
@@ -650,7 +650,7 @@ sap.ui.define([
 					"The corresponding legend item's text is used as aria-label");
 		});
 
-		QUnit.test("Dummy cell has an accessible name", function (assert) {
+		QUnit.test("Dummy cell has an accessible name", async function(assert) {
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -659,7 +659,7 @@ sap.ui.define([
 				"Dummy cell's accessible name is provided in aria-label");
 		});
 
-		QUnit.test("Selected state announcement", function (assert) {
+		QUnit.test("Selected state announcement", async function(assert) {
 			this.oSut.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			var oInvisibleMessageSpy = this.spy(this.oSut._oInvisibleMessage, "announce");
@@ -741,7 +741,7 @@ sap.ui.define([
 
 		QUnit.module("Unfinished range selection indication in the DOM");
 
-		QUnit.test("Unfinished interval selection feedback when using keyboard", function (assert) {
+		QUnit.test("Unfinished interval selection feedback when using keyboard", async function(assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
 				oMonth = new Month({
@@ -763,7 +763,7 @@ sap.ui.define([
 			oMonth.destroy();
 		});
 
-		QUnit.test("Unfinished interval selection feedback when using mouse", function(assert) {
+		QUnit.test("Unfinished interval selection feedback when using mouse", async function(assert) {
 			//arrange
 			var oMonth = new Month({
 					intervalSelection: true,
@@ -808,7 +808,7 @@ sap.ui.define([
 			oMonth.destroy();
 		});
 
-		QUnit.test("_markDatesBetweenStartAndHoveredDate", function (assert) {
+		QUnit.test("_markDatesBetweenStartAndHoveredDate", async function(assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
 				oMonth = new Month({
@@ -916,7 +916,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("_getDateTypes function", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oM = new Month({date: UI5Date.getInstance(2017, 1, 1)}).placeAt("qunit-fixture");
 				oCore.applyChanges();
 			},
@@ -1116,7 +1116,7 @@ sap.ui.define([
 
 
 		QUnit.module("Week selection/deselection - Multiple day selection", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oM = new Month({
 					primaryCalendarType: CalendarType.Gregorian
 				}).placeAt("qunit-fixture");
@@ -1368,7 +1368,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Multiselect mode (SHIFT + Click/ENTER)", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oM = new Month({
 					singleSelection: false,
 					primaryCalendarType: CalendarType.Gregorian

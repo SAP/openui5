@@ -135,7 +135,7 @@ sap.ui.define([
 		 */
 		_loadVkDependency: function() {
 			return new Promise(function (resolve, reject) {
-				Core.loadLibrary("sap.ui.vk", { async: true })
+				Library.load("sap.ui.vk")
 					.then(() => {
 						sap.ui.require(["sap/ui/vk/Viewer", "sap/ui/vk/ContentResource"], (viewer, contentResource) => {
 							resolve({ viewer, contentResource});
@@ -156,7 +156,7 @@ sap.ui.define([
 		 */
 		_loadRichTextEditorDependency: function() {
 			return new Promise((resolve, reject) => {
-				Core.loadLibrary("sap.ui.richtexteditor", { async: true })
+				Library.load("sap.ui.richtexteditor")
 					.then(() => {
 						sap.ui.require(["sap/ui/richtexteditor/RichTextEditor"], (richTextEditor) => {
 							resolve(richTextEditor);

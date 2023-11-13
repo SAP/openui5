@@ -407,7 +407,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("SelectAll", function(assert) {
+	QUnit.test("SelectAll", async function(assert) {
 		oTable.setSelectionMode(SelectionMode.MultiToggle);
 		oCore.applyChanges();
 
@@ -540,7 +540,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("ColumnHeaderVisible", function(assert) {
+	QUnit.test("ColumnHeaderVisible", async function(assert) {
 		oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), false, "ColumnHeaderVisible ok");
@@ -549,7 +549,7 @@ sap.ui.define([
 		assert.equal(oTable.$().find(".sapUiTableColHdrCnt").is(":visible"), true, "ColumnHeaderVisible ok");
 	});
 
-	QUnit.test("Column headers active state styling", function(assert) {
+	QUnit.test("Column headers active state styling", async function(assert) {
 		var oColumn = oTable.getColumns()[4];
 		var oHeaderMenu = new TableQUnitUtils.ColumnHeaderMenu();
 
@@ -593,7 +593,7 @@ sap.ui.define([
 		oResetRowHeights.resetHistory();
 	});
 
-	QUnit.test("getCellControl", function(assert) {
+	QUnit.test("getCellControl", async function(assert) {
 		oTable.getColumns()[2].setVisible(false);
 		oCore.applyChanges();
 
@@ -628,7 +628,7 @@ sap.ui.define([
 		assert.ok(!oCell, "Big ColIndex");
 	});
 
-	QUnit.test("Row Actions", function(assert) {
+	QUnit.test("Row Actions", async function(assert) {
 		assert.equal(oTable.getRowActionCount(), 0, "RowActionCount is 0: Table has no row actions");
 		assert.ok(!oTable.$().hasClass("sapUiTableRAct"), "RowActionCount is 0: No CSS class sapUiTableRAct");
 		assert.ok(!oTable.$().hasClass("sapUiTableRActS"), "RowActionCount is 0: No CSS class sapUiTableRActS");
@@ -675,7 +675,7 @@ sap.ui.define([
 			"The RowActions column is positioned correctly");
 	});
 
-	QUnit.test("Row Settings Template", function(assert) {
+	QUnit.test("Row Settings Template", async function(assert) {
 		var oOnAfterRenderingEventListener = sinon.spy();
 		var oRowSettings;
 
@@ -722,7 +722,7 @@ sap.ui.define([
 			"Changing the template changed the highlight property of the template clones in the rows");
 	});
 
-	QUnit.test("Localization Change", function(assert) {
+	QUnit.test("Localization Change", async function(assert) {
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
 		var pAdaptLocalization;
 
@@ -806,7 +806,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("AlternateRowColors", function(assert) {
+	QUnit.test("AlternateRowColors", async function(assert) {
 		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "By default there is no alternating rows");
 
 		var isAlternatingRow = function() {
@@ -979,7 +979,7 @@ sap.ui.define([
 		assert.equal(invalidationSpy.callCount, 7, "value is being invalidated");
 	});
 
-	QUnit.test("Fixed column count and table / column width", function(assert) {
+	QUnit.test("Fixed column count and table / column width", async function(assert) {
 		var aColumns = oTable.getColumns();
 		assert.equal(aColumns[0]._iFixWidth, undefined, "The _iFixWidth of the first column is undefined");
 		assert.equal(aColumns[1]._iFixWidth, undefined, "The _iFixWidth of the second column is undefined");
@@ -1004,7 +1004,7 @@ sap.ui.define([
 			"The table width allows displaying of the fixed columns again");
 	});
 
-	QUnit.test("Fixed column count and column spans", function(assert) {
+	QUnit.test("Fixed column count and column spans", async function(assert) {
 		oTable.removeAllColumns();
 		oCore.applyChanges();
 		oTable.setFixedColumnCount(1);
@@ -1041,13 +1041,13 @@ sap.ui.define([
 		assert.equal(oTable.getRenderer().getLastFixedColumnIndex(oTable), 2, "The lastFixedColumIndex is correct");
 	});
 
-	QUnit.test("Content is wider than column", function(assert) {
+	QUnit.test("Content is wider than column", async function(assert) {
 		oTable.getColumns()[0].setWidth("60px");
 		oCore.applyChanges();
 		assert.strictEqual(oTable.getDomRef("table-fixed").getBoundingClientRect().width, 160, "Fixed column table has the correct width");
 	});
 
-	QUnit.test("Hide one column in fixed area", function(assert) {
+	QUnit.test("Hide one column in fixed area", async function(assert) {
 		var iVisibleRowCount = oTable._getRowCounts().count;
 		function checkCellsFixedBorder(oTable, iCol, sMsg) {
 			var oColHeader = getColumnHeader(iCol, null, null, oTable)[0];
@@ -1078,7 +1078,7 @@ sap.ui.define([
 		checkCellsFixedBorder(oTable, 0, "When one of the fixed columns is not visible, the fixed border is displayed on the last visible column in fixed area");
 	});
 
-	QUnit.test("Hide one column in scroll area", function(assert) {
+	QUnit.test("Hide one column in scroll area", async function(assert) {
 		oTable.getColumns()[5].setVisible(false);
 		oCore.applyChanges();
 		var $table = oTable.$();
@@ -1090,7 +1090,7 @@ sap.ui.define([
 			"Horizontal scrollbar has correct left margin");
 	});
 
-	QUnit.test("No fixed column used, when table is too small.", function(assert) {
+	QUnit.test("No fixed column used, when table is too small.", async function(assert) {
 		oTable.setFixedColumnCount(3);
 		oTable.setWidth("400px");
 
@@ -1141,7 +1141,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("#focus", function(assert) {
+	QUnit.test("#focus", async function(assert) {
 		var fnFocusSpy = sinon.spy(oTable, "focus");
 		var oFocusInfo = {
 			targetInfo: new Message({
@@ -1189,7 +1189,7 @@ sap.ui.define([
 		checkFocus(oTable.getDomRef("noDataCnt"), assert);
 	});
 
-	QUnit.test("#getFocusDomRef", function(assert) {
+	QUnit.test("#getFocusDomRef", async function(assert) {
 		assert.strictEqual(oTable.getFocusDomRef(), getColumnHeader(0, null, null, oTable)[0], "Column header visible");
 
 		oTable.setColumnHeaderVisible(false);
@@ -1466,7 +1466,7 @@ sap.ui.define([
 			});
 		});
 
-		pSequence = pSequence.then(function() {
+		pSequence = pSequence.then(async function() {
 			oTable.insertColumn(new Column({
 				label: new Text({text: "a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a a"}),
 				template: new HeightTestControl(),
@@ -1796,7 +1796,7 @@ sap.ui.define([
 		oTable.sort(aColumns[1], SortOrder.Descending, true);
 	});
 
-	QUnit.test("remove column", function(assert) {
+	QUnit.test("remove column", async function(assert) {
 		var done = assert.async();
 		createSortingTableData();
 		var oRemovedColumn;
@@ -1825,7 +1825,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("remove all columns", function(assert) {
+	QUnit.test("remove all columns", async function(assert) {
 		var done = assert.async();
 		createSortingTableData();
 
@@ -1852,7 +1852,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("destroy columns", function(assert) {
+	QUnit.test("destroy columns", async function(assert) {
 		var done = assert.async();
 		createSortingTableData();
 
@@ -1879,7 +1879,7 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("change column order", function(assert) {
+	QUnit.test("change column order", async function(assert) {
 		var done = assert.async();
 		createSortingTableData();
 		var oRemovedColumn;
@@ -1928,7 +1928,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Prevent re-rendering on setEnableBusyIndicator", function(assert) {
+	QUnit.test("Prevent re-rendering on setEnableBusyIndicator", async function(assert) {
 		var spy = sinon.spy();
 		oTable.addEventDelegate({onAfterRendering: spy});
 
@@ -2348,7 +2348,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_updateTableCell callback", function(assert) {
+	QUnit.test("_updateTableCell callback", async function(assert) {
 		var done = assert.async();
 		var iCallCountUpdateTableCellOnTable = 0;
 		var iCallCountUpdateTableCell = 0;
@@ -2718,7 +2718,7 @@ sap.ui.define([
 		this.test(assert, "Footer control", oTable.getFooter().getDomRef(), false);
 	});
 
-	QUnit.test("NoData", function(assert) {
+	QUnit.test("NoData", async function(assert) {
 		oTable.unbindRows();
 		oCore.applyChanges();
 		this.test(assert, null, oTable.getDomRef("noDataCnt"), true);
@@ -3028,7 +3028,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Row And Cell Pools", function(assert) {
+	QUnit.test("Row And Cell Pools", async function(assert) {
 		var aRows = oTable.getRows();
 		var oLastRow = aRows[aRows.length - 1];
 		var oLastRowFirstCell = oLastRow.getCells()[0];
@@ -3247,38 +3247,38 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Table invalidation", function(assert) {
+	QUnit.test("Table invalidation", async function(assert) {
 		oTable.invalidate();
 		oCore.applyChanges();
 		this.compareDOMStrings(assert);
 	});
 
-	QUnit.test("Rows invalidation", function(assert) {
+	QUnit.test("Rows invalidation", async function(assert) {
 		oTable.invalidateRowsAggregation();
 		oTable.invalidate();
 		oCore.applyChanges();
 		this.compareDOMStrings(assert);
 	});
 
-	QUnit.test("Removing one row", function(assert) {
+	QUnit.test("Removing one row", async function(assert) {
 		oTable.getRowMode().setRowCount(oTable.getRowMode().getRowCount() - 1);
 		oCore.applyChanges();
 		this.compareDOMStrings(assert);
 	});
 
-	QUnit.test("Adding one row", function(assert) {
+	QUnit.test("Adding one row", async function(assert) {
 		oTable.getRowMode().setRowCount(oTable.getRowMode().getRowCount() + 1);
 		oCore.applyChanges();
 		this.compareDOMStrings(assert);
 	});
 
-	QUnit.test("Removing one column", function(assert) {
+	QUnit.test("Removing one column", async function(assert) {
 		oTable.removeColumn(oTable.getColumns()[0]);
 		oCore.applyChanges();
 		this.compareDOMStrings(assert);
 	});
 
-	QUnit.test("Adding one column", function(assert) {
+	QUnit.test("Adding one column", async function(assert) {
 		oTable.addColumn(new Column({
 			label: "Label",
 			template: "Template"
@@ -3315,7 +3315,7 @@ sap.ui.define([
 		this.testAppliedExtensions(assert);
 	});
 
-	QUnit.test("Applied extensions (IOS)", function(assert) {
+	QUnit.test("Applied extensions (IOS)", async function(assert) {
 		var bOriginalDeviceOsIos = Device.os.ios;
 		Device.os.ios = true;
 		oTable.destroy();
@@ -3817,7 +3817,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("NoData", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oTable = TableQUnitUtils.createTable({
 				rows: "{/}",
 				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
@@ -3888,14 +3888,14 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
-	QUnit.test("Without columns and showNoData=true", function(assert) {
+	QUnit.test("Without columns and showNoData=true", async function(assert) {
 		this.oTable.destroyColumns();
 		oCore.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
 	});
 
-	QUnit.test("Without columns and showNoData=false", function(assert) {
+	QUnit.test("Without columns and showNoData=false", async function(assert) {
 		this.oTable.destroyColumns();
 		this.oTable.setShowNoData(false);
 		oCore.applyChanges();
@@ -3903,7 +3903,7 @@ sap.ui.define([
 		this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
 	});
 
-	QUnit.test("Without columns and noData=sap.m.IllustratedMessage", function(assert) {
+	QUnit.test("Without columns and noData=sap.m.IllustratedMessage", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.setNoData(new IllustratedMessage());
@@ -3912,7 +3912,7 @@ sap.ui.define([
 		assert.strictEqual(oTable.getAggregation("_noColumnsMessage"), null, "The NoColumns IllustratedMessage is not created synchronously");
 		this.assertNoContentMessage(assert, oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
 
-		return this.waitForNoColumnsMessage(oTable).then(function(oIllustratedMessage) {
+		return this.waitForNoColumnsMessage(oTable).then(async function(oIllustratedMessage) {
 			oCore.applyChanges();
 			assert.ok(oIllustratedMessage.isA("sap.m.IllustratedMessage"), "The NoColumns element is a sap.m.IllustratedMessage");
 			assert.strictEqual(oIllustratedMessage.getEnableVerticalResponsiveness(), true, "Value of the 'enableVerticalResponsiveness' property");
@@ -3920,7 +3920,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Change 'showNoData' property with data", function(assert) {
+	QUnit.test("Change 'showNoData' property with data", async function(assert) {
 		this.oTable.setShowNoData(true);
 		oCore.applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from true to true");
@@ -3938,7 +3938,7 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false, "Change from false to true");
 	});
 
-	QUnit.test("Change 'showNoData' property without data", function(assert) {
+	QUnit.test("Change 'showNoData' property without data", async function(assert) {
 		this.oTable.unbindRows();
 		this.oTable.setShowNoData(true);
 		oCore.applyChanges();
@@ -3957,7 +3957,7 @@ sap.ui.define([
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Change from false to true");
 	});
 
-	QUnit.test("Change 'noData' aggregation", function(assert) {
+	QUnit.test("Change 'noData' aggregation", async function(assert) {
 		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
 		var oText1 = new Text();
 		var oText2 = new Text();
@@ -4047,7 +4047,7 @@ sap.ui.define([
 		this.oTable.setNoData(oIllustratedMessage); // To check whether multiple async loadings of the NoColumns message causes issues.
 		assert.ok(oInvalidateSpy.notCalled, "Change from text to sap.m.IllustratedMessage: Table not invalidated");
 
-		return this.waitForNoColumnsMessage(this.oTable).then(TableQUnitUtils.$wait() /* If NoColumns is fetched twice */).then(function() {
+		return this.waitForNoColumnsMessage(this.oTable).then(TableQUnitUtils.$wait() /* If NoColumns is fetched twice */).then(async function() {
 			assert.equal(oInvalidateSpy.callCount, 1,
 				"Change from text to sap.m.IllustratedMessage: Table invalidated after loading default NoColumns IllustratedMessage");
 
@@ -4059,7 +4059,7 @@ sap.ui.define([
 
 			this.oTable.setNoData(oIllustratedMessage);
 			this.oTable.setNoData("Hello");
-		}.bind(this)).then(TableQUnitUtils.$wait(100)).then(function() {
+		}.bind(this)).then(TableQUnitUtils.$wait(100)).then(async function() {
 			oCore.applyChanges();
 			this.assertNoContentMessage(assert, this.oTable, TableUtils.getResourceText("TBL_NO_COLUMNS"));
 

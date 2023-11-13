@@ -959,7 +959,7 @@ sap.ui.define([
 
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.ready().then(function () {
+			return this.oBaseEditor.ready().then(async function() {
 				oCore.applyChanges();
 
 				var oProp1Editor = this.oBaseEditor.getPropertyEditorsByNameSync("prop1")[0];
@@ -986,7 +986,7 @@ sap.ui.define([
 				propertyEditors: {
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				oStringEditor = new PropertyEditor({
 					config: {
 						path: "/fooPath/foo1",
@@ -1033,7 +1033,7 @@ sap.ui.define([
 				propertyEditors: {
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				oStringEditor = new PropertyEditor({
 					config: {
 						path: "/fooPath/foo1",
@@ -1079,7 +1079,7 @@ sap.ui.define([
 					"string": "sap/ui/integration/designtime/baseEditor/propertyEditor/stringEditor/StringEditor",
 					"number": "sap/ui/integration/designtime/baseEditor/propertyEditor/numberEditor/NumberEditor"
 				}
-			}).then(function() {
+			}).then(async function() {
 				// Creation will be artifically delayed by oStringEditorStub
 				var oStringEditor = new PropertyEditor({
 					config: {

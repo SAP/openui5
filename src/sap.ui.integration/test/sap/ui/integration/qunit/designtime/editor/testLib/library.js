@@ -1,7 +1,7 @@
-sap.ui.define(["sap/ui/core/Core"], function () {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/Core"], function(Library) {
 	"use strict";
 
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.integration.cardeditor.test.testLib",
 		version: "1.0.0",
 		elements: [

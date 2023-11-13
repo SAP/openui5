@@ -18,7 +18,7 @@ sap.ui.define([
 	Localization.setLanguage("en_US");
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.sut = new CalendarWeekInterval("CalP",{
 				startDate: UI5Date.getInstance("2015", "0", "1", "8", "0", "0"),
 				pickerPopup: true
@@ -87,7 +87,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calendar Picker");
-	QUnit.test("If choosed date from the Calendar picker is in the 'selected' week the startDate should stay the same", function(assert) {
+	QUnit.test("If choosed date from the Calendar picker is in the 'selected' week the startDate should stay the same", async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -118,7 +118,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("If chosen date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", function(assert) {
+	QUnit.test("If chosen date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -150,7 +150,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("fireStartDateChange", function(assert) {
+	QUnit.test("fireStartDateChange", async function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarWeekInterval.prototype, "fireStartDateChange"),
@@ -200,7 +200,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
+	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", async function(assert) {
 		// arrange
 		var oSpyCancel = this.spy(CalendarWeekInterval.prototype, "fireCancel");
 		var oCalP = new CalendarWeekInterval("CalP",{
@@ -220,7 +220,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", function(assert) {
+	QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", async function(assert) {
 		// arrange
 		var oCalPicker,
 			$Date,
@@ -260,7 +260,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Text of the direct navigation button is correct", function(assert) {
+	QUnit.test("Text of the direct navigation button is correct", async function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarWeekInterval("CalP",{
@@ -323,7 +323,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", function(assert) {
+	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", async function(assert) {
 		// arrange
 		var oCalPicker,
 			oCalP = new CalendarWeekInterval("CalP",{

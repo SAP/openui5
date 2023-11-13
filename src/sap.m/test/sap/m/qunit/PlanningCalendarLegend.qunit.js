@@ -145,7 +145,7 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclDB
-		}).then(function(myView) {
+		}).then(async function(myView) {
 			myView.setModel(oModel);
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
@@ -168,7 +168,7 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclNoDB
-		}).then(function(myView) {
+		}).then(async function(myView) {
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
@@ -190,7 +190,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("when no appointmenetItems is set, the Appointments section should not appear", function (assert) {
+	QUnit.test("when no appointmenetItems is set, the Appointments section should not appear", async function(assert) {
 		//Prepare
 		var oPCLegend = new PlanningCalendarLegend();
 
@@ -210,7 +210,7 @@ sap.ui.define([
 		//Act
 		return XMLView.create({
 			definition: sPclNoDB
-		}).then(function(myView) {
+		}).then(async function(myView) {
 
 			var oPCLegend = myView.byId("PlanningCalendarLegend");
 
@@ -230,7 +230,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("itemsHeader and appointmentItemsHeader", function (assert) {
+	QUnit.test("itemsHeader and appointmentItemsHeader", async function(assert) {
 		// arrange
 		var oPCLegend = new PlanningCalendarLegend({
 			items: [new CalendarLegendItem({ text: "abc", type: "Type01" })],

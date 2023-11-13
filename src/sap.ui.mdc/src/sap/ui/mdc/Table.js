@@ -2427,7 +2427,7 @@ sap.ui.define([
 	 */
 	Table.prototype._loadExportLibrary = function() {
 		if (!this._oExportLibLoadPromise) {
-			this._oExportLibLoadPromise = Core.loadLibrary("sap.ui.export", true);
+			this._oExportLibLoadPromise = Library.load("sap.ui.export");
 		}
 		return this._oExportLibLoadPromise;
 	};

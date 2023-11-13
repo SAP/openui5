@@ -12,7 +12,7 @@ sap.ui.define([
 	var oRb = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Properties", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -54,7 +54,7 @@ sap.ui.define([
 		}.bind(this), "Setting a different type is not possible.");
 	});
 
-	QUnit.test("Enabled", function (assert) {
+	QUnit.test("Enabled", async function(assert) {
 		this.oFeedInput.setEnabled(false);
 		assert.strictEqual(this.oFeedInput.getEnabled(), false, "Getter should return correct non-default value");
 		assert.strictEqual(this.oFeedInput._getTextArea().getEnabled(), false, "enabled=false: TextArea should be disabled");
@@ -78,7 +78,7 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getPostButton().getEnabled(), true, "enabled=true, Value = 'some string': Button should be enabled when TextArea contains any non-whitespace chars");
 	});
 
-	QUnit.test("Icon", function (assert) {
+	QUnit.test("Icon", async function(assert) {
 		this.oFeedInput.setIcon("myIcon");
 		assert.strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
 		assert.strictEqual(this.oFeedInput._getAvatar().sId, this.oFeedInput.getId() + '-icon', "Id should be same");
@@ -99,7 +99,7 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getAvatar()._getActualDisplayType(),
 		"Icon", "Should have default placeholder icon");
 	});
-	QUnit.test("Post Button Icon", function (assert) {
+	QUnit.test("Post Button Icon", async function(assert) {
 		//Feed input button true
 		this.oFeedInput.setEnabled(true);
 		oCore.applyChanges();
@@ -183,7 +183,7 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput._getTextArea().getPlaceholder(), this.oFeedInput.getPlaceholder(), "Property should be passed to TextArea");
 	});
 
-	QUnit.test("ShowIcon", function (assert) {
+	QUnit.test("ShowIcon", async function(assert) {
 		this.oFeedInput.setShowIcon(false);
 		oCore.applyChanges();
 		assert.strictEqual(this.oFeedInput.getShowIcon(), false, "Getter should return correct non-default value");
@@ -228,7 +228,7 @@ sap.ui.define([
 
 
 	QUnit.module("CSS", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -247,7 +247,7 @@ sap.ui.define([
 		assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
 	});
 
-	QUnit.test("Character Counter", function (assert) {
+	QUnit.test("Character Counter", async function(assert) {
 		assert.ok(!this.oFeedInput.$().find("#input-counterContainer").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Counter container does not contain Text Area counter");
 		assert.ok(!this.oFeedInput.$().find("#input-TextArea").has(this.oFeedInput.$().find("#input-textArea-counter")).length, "Text Area does not contain visible Text Area counter");
 		assert.ok(this.oFeedInput._getTextArea().getAggregation("_counter").isA("sap.m.Text"), "Counter aggregation is of type sap.m.Text");
@@ -289,7 +289,7 @@ sap.ui.define([
 
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedInput = new FeedInput("input");
 			this.oFeedInput.placeAt("qunit-fixture");
 			oCore.applyChanges();

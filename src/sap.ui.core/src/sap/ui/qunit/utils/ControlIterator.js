@@ -229,7 +229,7 @@ return VersionInfo.load()
 		return Promise.all(
 			aLibraries.map(function(sLibName) {
 				// ignore load errors. This happens for e.g. "themelib_sap_bluecrystal"...
-				return oCore.loadLibrary(sLibName, {async: true}).catch(nop);
+				return Lib.load(sLibName).catch(nop);
 			})
 		);
 	})

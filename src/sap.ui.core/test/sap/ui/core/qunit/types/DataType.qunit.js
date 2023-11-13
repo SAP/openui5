@@ -1,12 +1,12 @@
 /*global sinon, QUnit, globalUtil */
 sap.ui.define([
-	"sap/ui/base/DataType",
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
 	"sap/base/util/isPlainObject",
-	"sap/ui/core/Popup", // provides enum sap.ui.core.Popup.Dock
-	'sap/ui/core/library' // provides data type sap.ui.core.Collision
-], function (DataType, Log, ObjectPath, isPlainObject) {
+	"sap/ui/base/DataType",
+	"sap/ui/core/Lib",
+	'sap/ui/core/library' // provides sap.ui.core data type and enums
+], function (Log, ObjectPath, isPlainObject, DataType, Library) {
 	"use strict";
 
 	function random(values) {
@@ -330,6 +330,107 @@ sap.ui.define([
 		assert.ok(multiDimArrayType, "a 5-dim int array type can be retrieved");
 		assert.ok(multiDimArrayType.isValid([[[[[1], [2, 3], []]]], [[[]]], []]), "5-dim int array should be accepted");
 
+	});
+
+
+
+	QUnit.module("Enum Types");
+
+	QUnit.test("Register upfront with registerEnum", function (assert) {
+		const oColorEnum = {
+			Red: "Red",
+			Yellow: "Yellow",
+			Blue: "Blue"
+		};
+		DataType.registerEnum("sap.test.RegisteredColor", oColorEnum);
+
+		const type = DataType.getType("sap.test.RegisteredColor");
+		assert.ok(type instanceof DataType, "type 'sap.test.RegisteredColor' is a DataType");
+		assert.equal(type.getName(), 'sap.test.RegisteredColor', "type name");
+		assert.equal(type.getDefaultValue(), "Red", "default value");
+		assert.equal(type.getBaseType().getName(), "string", "base type is string");
+		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+		assert.ok(type.isEnumType(), "type should be marked as enum");
+		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
+
+		Object.entries(oColorEnum).forEach(([name, value]) => {
+			assert.equal(type.isValid(value), true, "accepts value " + value);
+			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
+		});
+		assert.equal(type.isValid("something"), false, "should not accept 'something'");
+		assert.ok(DataType.getType("sap.test.RegisteredColor") === type, "multiple calls should return same type object");
+	});
+
+	QUnit.test("Auto-registered (top-level) Enum via Lib Proxy", async function (assert) {
+		sap.ui.define("sap/test/enumlib/library", [
+			"sap/ui/core/Lib"
+		], function(Library) {
+			const thisLib = Library.init({
+				name: "sap.test.enumlib"
+			});
+			thisLib.LibColor = {
+				Red: "Red",
+				Yellow: "Yellow",
+				Blue: "Blue"
+			};
+			return thisLib;
+		});
+
+		await Library.load("sap.test.enumlib");
+		const oColorEnum = sap.ui.require("sap/test/enumlib/library").LibColor;
+
+		const type = DataType.getType("sap.test.enumlib.LibColor");
+		assert.ok(type instanceof DataType, "type 'sap.test.enumlib.LibColor' is a DataType");
+		assert.equal(type.getName(), 'sap.test.enumlib.LibColor', "type name");
+		assert.equal(type.getDefaultValue(), "Red", "default value");
+		assert.equal(type.getBaseType().getName(), "string", "base type is string");
+		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+		assert.ok(type.isEnumType(), "type should be marked as enum");
+		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
+
+		Object.entries(oColorEnum).forEach(([name, value]) => {
+			assert.equal(type.isValid(value), true, "accepts value " + value);
+			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
+		});
+		assert.equal(type.isValid("something"), false, "should not accept 'something'");
+		assert.ok(DataType.getType("sap.test.enumlib.LibColor") === type, "multiple calls should return same type object");
+	});
+
+	QUnit.test("Auto-registered (deeply nested) Enum via Lib Proxy", async function (assert) {
+		sap.ui.define("sap/test/otherlib/library", [
+			"sap/ui/core/Lib"
+		], function(Library) {
+			const thisLib = Library.init({
+				name: "sap.test.otherlib"
+			});
+			thisLib.deeply ??= {};
+			thisLib.deeply.nested ??= {};
+			thisLib.deeply.nested.LibColor = {
+				Red: "Red",
+				Yellow: "Yellow",
+				Blue: "Blue"
+			};
+			return thisLib;
+		});
+
+		await Library.load("sap.test.otherlib");
+		const oColorEnum = sap.ui.require("sap/test/otherlib/library").deeply.nested.LibColor;
+
+		const type = DataType.getType("sap.test.otherlib.deeply.nested.LibColor");
+		assert.ok(type instanceof DataType, "type 'sap.test.otherlib.deeply.nested.LibColor' is a DataType");
+		assert.equal(type.getName(), 'sap.test.otherlib.deeply.nested.LibColor', "type name");
+		assert.equal(type.getDefaultValue(), "Red", "default value");
+		assert.equal(type.getBaseType().getName(), "string", "base type is string");
+		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+		assert.ok(type.isEnumType(), "type should be marked as enum");
+		assert.strictEqual(type.getEnumValues(), oColorEnum, "type should return the original enum object with keys and values");
+
+		Object.entries(oColorEnum).forEach(([name, value]) => {
+			assert.equal(type.isValid(value), true, "accepts value " + value);
+			assert.equal(type.parseValue(name), value, "'" + name + "' should be parsed as '" + value + "'");
+		});
+		assert.equal(type.isValid("something"), false, "should not accept 'something'");
+		assert.ok(DataType.getType("sap.test.otherlib.deeply.nested.LibColor") === type, "multiple calls should return same type object");
 	});
 
 
@@ -680,10 +781,15 @@ sap.ui.define([
 		assert.equal(type.isValid("1px 1px inherit 1px"), false, "inherit NOT allowed with other valid values");
 	});
 
-	QUnit.test("enum sap.ui.core.TextAlign", function (assert) {
-		var oEnum = ObjectPath.get("sap.ui.core.TextAlign");
+	QUnit.test("enum sap.ui.core.TextAlign", async function (assert) {
+		const oEnum = await new Promise((resolve, reject) => {
+			sap.ui.require([
+				"sap/ui/core/library"
+			], (coreLibrary) => resolve(coreLibrary.TextAlign), reject);
+		});
+
 		// precondition
-		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist as global property");
+		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist and be a plain object");
 
 		var type = DataType.getType("sap.ui.core.TextAlign");
 		assert.ok(!!type, "type 'sap.ui.core.TextAlign' exists");
@@ -693,7 +799,7 @@ sap.ui.define([
 		assert.equal(type.getBaseType().getName(), "string", "base type is string");
 		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
 		assert.ok(type.isEnumType(), "type should be marked as enum");
-		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
+		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the original enum object with keys and values");
 
 		Object.keys(oEnum).forEach(function(name) {
 			var value = oEnum[name];
@@ -704,10 +810,15 @@ sap.ui.define([
 		assert.ok(DataType.getType("sap.ui.core.TextAlign") === type, "multiple calls should return same type object");
 	});
 
-	QUnit.test("enum sap.ui.core.Popup.Dock", function (assert) {
-		var oEnum = ObjectPath.get("sap.ui.core.Popup.Dock");
+	QUnit.test("enum sap.ui.core.Popup.Dock", async function (assert) {
+		const oEnum = await new Promise((resolve, reject) => {
+			sap.ui.require([
+				"sap/ui/core/Popup"
+			], (Popup) => resolve(Popup.Dock), reject);
+		});
+
 		// precondition
-		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist as global property");
+		assert.ok(oEnum && isPlainObject(oEnum), "[precondition] enum object should exist and be a plain object");
 
 		var type = DataType.getType("sap.ui.core.Popup.Dock");
 		assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
@@ -717,7 +828,7 @@ sap.ui.define([
 		assert.equal(type.getBaseType().getName(), "string", "base type is string");
 		assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
 		assert.ok(type.isEnumType(), "type should be marked as enum");
-		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
+		assert.strictEqual(type.getEnumValues(), oEnum, "type should return the original enum object with keys and values");
 
 		Object.keys(oEnum).forEach(function(name) {
 			var value = oEnum[name];

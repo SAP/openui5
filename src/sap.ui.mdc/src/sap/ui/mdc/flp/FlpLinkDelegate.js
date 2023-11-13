@@ -3,6 +3,7 @@
  */
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/mdc/LinkDelegate",
 	"sap/ui/mdc/link/LinkItem",
 	"sap/ui/mdc/link/Factory",
@@ -10,7 +11,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/isPlainObject",
 	"sap/ui/mdc/enums/LinkType"
-], function(Element, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) {
+], function(Element, Lib, LinkDelegate, LinkItem, Factory, Log, SapBaseLog, isPlainObject, LinkType) {
 	"use strict";
 
 	/**
@@ -221,9 +222,7 @@ sap.ui.define([
 			ownNavigation: undefined,
 			availableActions: []
 		};
-		return sap.ui.getCore().loadLibrary('sap.ui.fl', {
-			async: true
-		}).then(function() {
+		return Lib.load('sap.ui.fl').then(function() {
 			return new Promise(function(resolve) {
 				sap.ui.require([
 					'sap/ui/fl/Utils'

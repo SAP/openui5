@@ -1,8 +1,8 @@
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/Lib"],
+	function(Library) {
 	"use strict";
 
-	sap.ui.getCore().initLibrary({
+	Library.init({
 		name:"sap.test.lib4",
 		noLibraryCSS:true
 	});

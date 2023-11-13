@@ -6,10 +6,11 @@
  * Initialization Code and shared classes of library sap.ui.testrecorder.
  */
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
 	"sap/ui/support/library"
-], function () {
+], function(Library) {
 	"use strict";
 
 	/**
@@ -26,7 +27,7 @@ sap.ui.define([
 	 * @since 1.74
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.testrecorder",
 		dependencies : [
 			"sap.ui.core",

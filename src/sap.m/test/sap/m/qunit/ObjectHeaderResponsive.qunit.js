@@ -97,7 +97,7 @@ sap.ui.define([
 
 	QUnit.module("Basic rendering");
 
-	QUnit.test("Responsive header", function(assert){
+	QUnit.test("Responsive header", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -114,7 +114,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Tooltip rendering", function(assert) {
+	QUnit.test("Tooltip rendering", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			tooltip: "Test tooltip for the header"
@@ -131,7 +131,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title text div is not rendered when there is no text for the title", function (assert){
+	QUnit.test("Title text div is not rendered when there is no text for the title", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: ""
@@ -149,7 +149,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Icon should be rendered", function (assert){
+	QUnit.test("Icon should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			icon: IconPool.getIconURI("inbox")
@@ -168,7 +168,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title Icon has tooltip", function(assert){
+	QUnit.test("Title Icon has tooltip", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			icon: IconPool.getIconURI("inbox"),
@@ -186,7 +186,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Icon shouldn't be rendered", function (assert){
+	QUnit.test("Icon shouldn't be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -202,7 +202,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Image shape", function(assert){
+	QUnit.test("Image shape", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			icon: "../images/SAPUI5.jpg"
@@ -228,7 +228,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title with icon should be rendered", function(assert){
+	QUnit.test("Title with icon should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "title",
@@ -249,7 +249,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title without icon should be rendered", function(assert){
+	QUnit.test("Title without icon should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "title",
@@ -269,7 +269,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title occupies the whole available space when no number", function(assert){
+	QUnit.test("Title occupies the whole available space when no number", async function(assert) {
 		// arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Full title test",
@@ -290,7 +290,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title arrow should be rendered", function (assert){
+	QUnit.test("Title arrow should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			showTitleSelector: true
@@ -308,7 +308,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title arrow shouldn't be rendered", function (assert){
+	QUnit.test("Title arrow shouldn't be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -324,7 +324,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Info should be rendered", function (assert){
+	QUnit.test("Info should be rendered", async function(assert) {
 		var sIntro = "Some intro text that describes the object!";
 
 		// Arrange
@@ -345,7 +345,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Info shouldn't be rendered", function (assert){
+	QUnit.test("Info shouldn't be rendered", async function(assert) {
 
 		// Arrange
 		var oObjectHeader = createObjectHeader();
@@ -362,7 +362,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title is active and is rendered as a link", function (assert){
+	QUnit.test("Title is active and is rendered as a link", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
@@ -382,7 +382,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title is active but it's not a link", function (assert){
+	QUnit.test("Title is active but it's not a link", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
@@ -401,7 +401,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("titleActive is set to true but no Title is provided", function (assert){
+	QUnit.test("titleActive is set to true but no Title is provided", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "",
@@ -420,7 +420,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Intro is sap.mLink when it is active", function (assert){
+	QUnit.test("Intro is sap.mLink when it is active", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			intro: "OH intro text",
@@ -439,7 +439,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active title tap", function(assert){
+	QUnit.test("Active title tap", async function(assert) {
 		var domRef = null;
 		var eventHandler = function(oEvent) {
 			domRef = oEvent.getParameters().domRef;
@@ -470,7 +470,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active title getFocusDomRef", function(assert){
+	QUnit.test("Active title getFocusDomRef", async function(assert) {
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
 			titleActive: true
@@ -486,7 +486,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Tap on ObjectHeader title arrow span should lead to preventing default action", function(assert){
+	QUnit.test("Tap on ObjectHeader title arrow span should lead to preventing default action", async function(assert) {
 		var oEvent_title_arrow,
 			oSpyPreventDefaultTitleArrow,
 			oObjectHeader = createObjectHeader({
@@ -517,7 +517,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Tap on ObjectAttribute should not lead to preventing default action", function(assert){
+	QUnit.test("Tap on ObjectAttribute should not lead to preventing default action", async function(assert) {
 		var oEvent_attr,
 			oSpyPreventDefaultOA,
 			oa1 = new ObjectAttribute("attrId", {title: "title", text: "link", active: true}),
@@ -556,7 +556,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Attribute should be rendered", function (assert){
+	QUnit.test("Attribute should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			attributes: [
@@ -577,7 +577,7 @@ sap.ui.define([
 		assert.ok(attr.length, "One attribute is rendered.");
 	});
 
-	QUnit.test("Attribute shouldn't be rendered", function (assert){
+	QUnit.test("Attribute shouldn't be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -590,7 +590,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "Zero attributes are rendered.");
 	});
 
-	QUnit.test("Attribute shouldn't be rendered if it has empty title and text", function (assert){
+	QUnit.test("Attribute shouldn't be rendered if it has empty title and text", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oAttr = new ObjectAttribute({
@@ -608,7 +608,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "Zero attributes are rendered.");
 	});
 
-	QUnit.test("Attribute should be rendered after insertAttribute", function (assert){
+	QUnit.test("Attribute should be rendered after insertAttribute", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oAttr = new ObjectAttribute({
@@ -627,7 +627,7 @@ sap.ui.define([
 		assert.ok(attr.length, "One attribute is rendered.");
 	});
 
-	QUnit.test("Attribute should be removed: removeAttribute", function (assert){
+	QUnit.test("Attribute should be removed: removeAttribute", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oAttr = new ObjectAttribute({
@@ -653,7 +653,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "The attribute is removed.");
 	});
 
-	QUnit.test("Attributes should be removed: removeAllAttributes", function (assert){
+	QUnit.test("Attributes should be removed: removeAllAttributes", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		addAttributes(oObjectHeader, 2);
@@ -674,7 +674,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "All attributes are removed.");
 	});
 
-	QUnit.test("removeAllAttributes when no attributes at all", function (assert){
+	QUnit.test("removeAllAttributes when no attributes at all", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -690,7 +690,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "No error is raised when executing removeAllAttributes");
 	});
 
-	QUnit.test("Attributes should be destroyed: destroyAttributes", function (assert){
+	QUnit.test("Attributes should be destroyed: destroyAttributes", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		addAttributes(oObjectHeader, 2);
@@ -711,7 +711,7 @@ sap.ui.define([
 		assert.ok(!attr.length, "All attributes are destroyed.");
 	});
 
-	QUnit.test("Status should be rendered", function (assert){
+	QUnit.test("Status should be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			statuses: [
@@ -732,7 +732,7 @@ sap.ui.define([
 		assert.ok(status.length, "Status is rendered.");
 	});
 
-	QUnit.test("Status shouldn't be rendered", function (assert){
+	QUnit.test("Status shouldn't be rendered", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -745,7 +745,7 @@ sap.ui.define([
 		assert.ok(!status.length, "Zero statuses are rendered.");
 	});
 
-	QUnit.test("Status shouldn't be rendered if the title and text are empty", function (assert){
+	QUnit.test("Status shouldn't be rendered if the title and text are empty", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oStatus = new ObjectStatus({
@@ -768,7 +768,7 @@ sap.ui.define([
 		assert.ok(!status.length, "Zero statuses are rendered.");
 	});
 
-	QUnit.test("Status should be rendered after insertStatus", function (assert){
+	QUnit.test("Status should be rendered after insertStatus", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oStatus = new ObjectStatus({
@@ -787,7 +787,7 @@ sap.ui.define([
 		assert.ok(status.length, "Status is rendered.");
 	});
 
-	QUnit.test("Status should be removed: removeStatus", function (assert){
+	QUnit.test("Status should be removed: removeStatus", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		var oStatus = new ObjectStatus({
@@ -813,7 +813,7 @@ sap.ui.define([
 		assert.ok(!status.length, "The status is removed.");
 	});
 
-	QUnit.test("Statuses should be removed: removeAllStatuses", function (assert){
+	QUnit.test("Statuses should be removed: removeAllStatuses", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		addStatuses(oObjectHeader, 2);
@@ -834,7 +834,7 @@ sap.ui.define([
 		assert.ok(!status.length, "All statuses are removed.");
 	});
 
-	QUnit.test("removeAllStatuses when no statuses at all", function (assert){
+	QUnit.test("removeAllStatuses when no statuses at all", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -850,7 +850,7 @@ sap.ui.define([
 		assert.ok(!status.length, "No error is raised when executing removeAllStatuses");
 	});
 
-	QUnit.test("Statuses should be destroyed: destroyStatuses", function (assert){
+	QUnit.test("Statuses should be destroyed: destroyStatuses", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 		addStatuses(oObjectHeader, 2);
@@ -898,7 +898,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Desktop fullScreenOptimized rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			var oObjectHeader = createObjectHeader({
 				fullScreenOptimized: true
 			});
@@ -963,7 +963,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Desktop on Combi device (e.g. both system Desktop and Tablet return true) - fullScreenOptimized should be rendered as on a 'normal' device", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.bSystemDesktop = Device.system.desktop;
 			this.bSystemTablet = Device.system.tablet;
 
@@ -1013,7 +1013,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Master detail rendering: 3 states rendered in 2 columns", function (assert){
+	QUnit.test("Master detail rendering: 3 states rendered in 2 columns", async function(assert) {
 		var oObjectHeader = createObjectHeader();
 
 		// System Under Test
@@ -1027,7 +1027,7 @@ sap.ui.define([
 		assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 	});
 
-	QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns", function (assert){
+	QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns", async function(assert) {
 
 		var oObjectHeader = createObjectHeader({
 			fullScreenOptimized: true
@@ -1044,7 +1044,7 @@ sap.ui.define([
 		assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 	});
 
-	QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns", function (assert){
+	QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns", async function(assert) {
 
 		var oObjectHeader = createObjectHeader({
 			fullScreenOptimized: true
@@ -1073,7 +1073,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("5 states rendered in 1 column", function (assert){
+	QUnit.test("5 states rendered in 1 column", async function(assert) {
 		var oObjectHeader = createObjectHeader();
 
 		// System under Test
@@ -1099,7 +1099,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Master detail rendering: 3 states rendered in 2 columns", function (assert){
+	QUnit.test("Master detail rendering: 3 states rendered in 2 columns", async function(assert) {
 		var oObjectHeader = createObjectHeader();
 
 		// System Under Test
@@ -1113,7 +1113,7 @@ sap.ui.define([
 		assert.notEqual(count, 3, "States aren't rendered in 3 columns.");
 	});
 
-	QUnit.test("4 states in fullScreenOptimized mode rendered in 2 columns in portrait mode", function (assert){
+	QUnit.test("4 states in fullScreenOptimized mode rendered in 2 columns in portrait mode", async function(assert) {
 		Device.orientation.landscape = false;
 		Device.orientation.portrait = true;
 
@@ -1133,7 +1133,7 @@ sap.ui.define([
 		assert.notEqual(count, 4, "States aren't rendered in 4 columns.");
 	});
 
-	QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns in landscape mode", function (assert){
+	QUnit.test("2 states in fullScreenOptimized mode rendered in 2 columns in landscape mode", async function(assert) {
 		Device.orientation.landscape = true;
 		Device.orientation.portrait = false;
 
@@ -1152,7 +1152,7 @@ sap.ui.define([
 		assert.notEqual(count, 1, "States aren't rendered in 1 column.");
 	});
 
-	QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns in landscape mode", function (assert){
+	QUnit.test("5 states in fullScreenOptimized mode rendered in 3 columns in landscape mode", async function(assert) {
 		Device.orientation.landscape = true;
 		Device.orientation.portrait = false;
 
@@ -1190,7 +1190,7 @@ sap.ui.define([
 			}
 		});
 
-	QUnit.test("6 states rendered in 1 column", function (assert){
+	QUnit.test("6 states rendered in 1 column", async function(assert) {
 		var oObjectHeader = createObjectHeader();
 
 		// System under Test
@@ -1211,7 +1211,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("OH has aria-labelledby", function(assert){
+	QUnit.test("OH has aria-labelledby", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		assert.ok(oObjectHeader.$().attr("aria-labelledby"), "OH has attribute aria-labelledby");
 	});
 
-	QUnit.test("OH has attribute role=region", function(assert){
+	QUnit.test("OH has attribute role=region", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader();
 
@@ -1236,7 +1236,7 @@ sap.ui.define([
 		assert.equal($objectHeader.attr("role"), "region", "role is region");
 	});
 
-	QUnit.test("Active title has aria attributes", function(assert){
+	QUnit.test("Active title has aria attributes", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
@@ -1252,7 +1252,7 @@ sap.ui.define([
 		assert.equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
 	});
 
-	QUnit.test("Active icon has aria attributes", function(assert){
+	QUnit.test("Active icon has aria attributes", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			icon: IconPool.getIconURI("inbox"),
@@ -1267,7 +1267,7 @@ sap.ui.define([
 		assert.equal(jQuery(".sapMOHRIcon.sapMPointer .sapUiIcon.sapUiIconPointer").attr("role"), "button", "ActiveIcon has role=button");
 	});
 
-	QUnit.test("Title Image has aria-labelledby and tooltip", function(assert){
+	QUnit.test("Title Image has aria-labelledby and tooltip", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			icon: "../images/SAPUI5.jpg",
@@ -1284,7 +1284,7 @@ sap.ui.define([
 		assert.equal($sImg.attr("title"), "test tooltip", "image has tooltip");
 	});
 
-	QUnit.test("Title has level H1", function(assert){
+	QUnit.test("Title has level H1", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title"
@@ -1299,7 +1299,7 @@ sap.ui.define([
 		assert.ok($sTitle.find( "h1" ), "Title has the default titleLevel H1");
 	});
 
-	QUnit.test("Title has level H3", function(assert){
+	QUnit.test("Title has level H3", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
@@ -1315,7 +1315,7 @@ sap.ui.define([
 		assert.ok($sTitle.find( "h3" ), "Title has titleLevel H13");
 	});
 
-	QUnit.test("Title level is set correctly", function(assert){
+	QUnit.test("Title level is set correctly", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title"
@@ -1333,7 +1333,7 @@ sap.ui.define([
 		assert.ok($sTitle.find( "h4" ), "Title has titleLevel H4");
 	});
 
-	QUnit.test("When set to Auto title has level H1", function(assert){
+	QUnit.test("When set to Auto title has level H1", async function(assert) {
 		// Arrange
 		var oObjectHeader = createObjectHeader({
 			title: "OH title",
@@ -1351,7 +1351,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering Markers aggregation");
 
-	QUnit.test("Render Draft and Favorite", function(assert){
+	QUnit.test("Render Draft and Favorite", async function(assert) {
 		var oObjectHeader = createObjectHeader({
 			title : "Markers agregation",
 			number : "3.624",
@@ -1372,7 +1372,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Render marker by setting the markers aggregation", function(assert){
+	QUnit.test("Render marker by setting the markers aggregation", async function(assert) {
 		var oObjectHeader = createObjectHeader({
 			id: "markersOH",
 			title : "Markers agregation",
@@ -1396,7 +1396,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Removing marker", function(assert){
+	QUnit.test("Removing marker", async function(assert) {
 		var oObjectHeader = createObjectHeader({
 			id: "markersOlI",
 			title : "Markers agregation",

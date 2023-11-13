@@ -191,7 +191,7 @@ sap.ui.define([
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
 					var oLabel6 = that.oEditor.getAggregation("_formContent")[11];
 					var oField6 = that.oEditor.getAggregation("_formContent")[12];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.wait().then(async function() {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "oField1: String 1 English");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -219,7 +219,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						Core.applyChanges();
-						EditorQunitUtils.wait(2000).then(function () {
+						EditorQunitUtils.wait(2000).then(async function() {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -250,7 +250,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							Core.applyChanges();
-							EditorQunitUtils.wait().then(function () {
+							EditorQunitUtils.wait().then(async function() {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String 3");
@@ -329,7 +329,7 @@ sap.ui.define([
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
 					var oLabel6 = that.oEditor.getAggregation("_formContent")[11];
 					var oField6 = that.oEditor.getAggregation("_formContent")[12];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.wait().then(async function() {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "oField1: String 1 English");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -357,7 +357,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						Core.applyChanges();
-						EditorQunitUtils.wait(2000).then(function () {
+						EditorQunitUtils.wait(2000).then(async function() {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -388,7 +388,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							Core.applyChanges();
-							EditorQunitUtils.wait().then(function () {
+							EditorQunitUtils.wait().then(async function() {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String 3");
@@ -466,7 +466,7 @@ sap.ui.define([
 					var oField5 = that.oEditor.getAggregation("_formContent")[10];
 					var oLabel6 = that.oEditor.getAggregation("_formContent")[11];
 					var oField6 = that.oEditor.getAggregation("_formContent")[12];
-					EditorQunitUtils.wait().then(function () {
+					EditorQunitUtils.wait().then(async function() {
 						assert.equal(oLabel1.getText(), "Label 1 English", "Label1: Label 1 English");
 						assert.equal(oField1.getAggregation("_field").getValue(), "String 1 English", "oField1: String 1 English");
 						assert.ok(oField1.getAggregation("_field").isA("sap.m.Input"), "oField1: Input control");
@@ -494,7 +494,7 @@ sap.ui.define([
 						oValueHelpIcon1.firePress();
 						oValueHelpIcon1.focus();
 						Core.applyChanges();
-						EditorQunitUtils.wait(2000).then(function () {
+						EditorQunitUtils.wait(2000).then(async function() {
 							var oTranslationPopover1 = oField1._oTranslationPopover;
 							var aHeaderItems1 = oTranslationPopover1.getCustomHeader().getItems();
 							assert.equal(aHeaderItems1[0].getText(), that.oEditor._oResourceBundle.getText("EDITOR_FIELD_TRANSLATION_LIST_POPOVER_TITLE"), "oTranslationPopover1 Header: Title");
@@ -525,7 +525,7 @@ sap.ui.define([
 							oValueHelpIcon3.firePress();
 							oValueHelpIcon3.focus();
 							Core.applyChanges();
-							EditorQunitUtils.wait().then(function () {
+							EditorQunitUtils.wait().then(async function() {
 								var oTranslationPopover3 = oField3._oTranslationPopover;
 								var aHeaderItems3 = oTranslationPopover3.getCustomHeader().getItems();
 								assert.equal(aHeaderItems3[2].getItems()[1].getValue(), "String 3", "oTranslationPopover3 Header: String 3");

@@ -47,7 +47,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDateTime").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDateTime").then(async function(aPropertyEditor) {
 				this.oDateTimeEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				this.oDateTimeEditorElement = this.oDateTimeEditor.getContent();

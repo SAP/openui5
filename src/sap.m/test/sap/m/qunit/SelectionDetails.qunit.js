@@ -54,7 +54,7 @@ sap.ui.define([
 		StandardListItem, FixFlex, ScrollContainer, Title];
 
 	QUnit.module("Default values", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -87,7 +87,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Basic Rendering", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -114,7 +114,7 @@ sap.ui.define([
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button disabled");
 	});
 
-	QUnit.test("Toolbar button is up to date", function(assert) {
+	QUnit.test("Toolbar button is up to date", async function(assert) {
 		// Arrange
 		this.oSelectionDetails.addItem(new SelectionDetailsItem());
 		oCore.applyChanges();
@@ -135,7 +135,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("API methods", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oResponsivePopover = new ResponsivePopover();
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.setAggregation("_popover", this.oResponsivePopover, true);
@@ -207,7 +207,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Internal control creation", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -318,7 +318,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Popover height handling", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.bOriginalPhone = Device.system.phone;
 			Device.system.phone = false;
 
@@ -417,7 +417,7 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.withArgs("contentHeight", SelectionDetails._POPOVER_MAX_HEIGHT + "px").callCount, 1, "Property contentHeight has been updated.");
 	});
 
-	QUnit.test("Popover does not exceed viewport", function(assert) {
+	QUnit.test("Popover does not exceed viewport", async function(assert) {
 		//Arrange
 		var iOriginalHeight = Device.resize.height;
 		Device.resize.height = 400;
@@ -452,7 +452,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oNavContainer = new NavContainer();
 			this.oPopover = new ResponsivePopover({
@@ -687,7 +687,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Main List Navigation", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -730,7 +730,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Popover interaction", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1024,7 +1024,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Factory function registration", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1072,7 +1072,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1127,7 +1127,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Change Handler", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails();
 			this.oSelectionDetails.placeAt("qunit-fixture");
 			this.oDummyControl = new ManagedObject();
@@ -1243,7 +1243,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Selection change handling", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oSelectionDetails = new SelectionDetails({
 				items: [new SelectionDetailsItem()]
 			});
@@ -1325,7 +1325,7 @@ sap.ui.define([
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), true, "The button is enabled");
 	});
 
-	QUnit.test("Selection data updates button text - remove items", function(assert) {
+	QUnit.test("Selection data updates button text - remove items", async function(assert) {
 		//Arrange
 		var oEventParam = {
 			data: [{
@@ -1355,7 +1355,7 @@ sap.ui.define([
 		assert.equal(this.oSelectionDetails.getAggregation("_button").getEnabled(), false, "The button is disabled");
 	});
 
-	QUnit.test("Button is updated with selection data if it exists", function(assert) {
+	QUnit.test("Button is updated with selection data if it exists", async function(assert) {
 		//Arrange
 		this.oSelectionDetails._oSelectionData = new Array(10);
 
@@ -1368,7 +1368,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Factory integration", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.aCreatedItems = [];
 			this.fnFactory = function (aDisplayData, aData, oContext, oData) {
 				var oItem = new SelectionDetailsItem();

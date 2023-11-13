@@ -6,10 +6,14 @@
  * Initialization Code and shared classes of library sap.ui.mdc.
  */
  sap.ui.define([
-	"sap/ui/core/Core", // provides sap.ui.getCore()
-	"sap/ui/core/library", // library dependency
-	"sap/m/library" // library dependency
-], function () {
+  "sap/ui/core/Lib",
+  // provides sap.ui.getCore()
+  "sap/ui/core/Core",
+  // library dependency
+  "sap/ui/core/library",
+  // library dependency
+  "sap/m/library"
+ ], function(Library) {
   "use strict";
 
   /**
@@ -25,7 +29,7 @@
    * @public
    * @experimental As of version 1.54
    */
-  const thisLib = sap.ui.getCore().initLibrary({
+  const thisLib = Library.init({
 	 version: "${version}",
 	 name: "sap.ui.mdc",
 	 dependencies: ["sap.ui.core", "sap.m"],

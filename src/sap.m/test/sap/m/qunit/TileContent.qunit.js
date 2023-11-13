@@ -15,7 +15,7 @@ sap.ui.define([
 
 
 	QUnit.module("Default Values", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent();
 			oCore.applyChanges();
 		},
@@ -45,7 +45,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering of colored footer", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent();
 			this.oTileContent.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -59,7 +59,7 @@ sap.ui.define([
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorNeutral"), "Correct CSS class added");
 	});
 
-	QUnit.test("Critical CSS Class added", function(assert) {
+	QUnit.test("Critical CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Critical);
 		oCore.applyChanges();
@@ -67,7 +67,7 @@ sap.ui.define([
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorCritical"), "Correct CSS class added");
 	});
 
-	QUnit.test("Error CSS Class added", function(assert) {
+	QUnit.test("Error CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Error);
 		oCore.applyChanges();
@@ -75,7 +75,7 @@ sap.ui.define([
 		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorError"), "Correct CSS class added");
 	});
 
-	QUnit.test("Good CSS Class added", function(assert) {
+	QUnit.test("Good CSS Class added", async function(assert) {
 		//Act
 		this.oTileContent.setFooterColor(ValueColor.Good);
 		oCore.applyChanges();
@@ -84,7 +84,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Protected property bRenderFooter", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent("tileContent", {
 				footer : "Current Quarter",
 				unit : "EUR"
@@ -123,7 +123,7 @@ sap.ui.define([
 		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
 	});
 
-	QUnit.test("Footer is not rendered in case _bRenderFooter is false", function(assert) {
+	QUnit.test("Footer is not rendered in case _bRenderFooter is false", async function(assert) {
 		//Arrange
 		this.oTileContent.setRenderFooter(false);
 
@@ -136,7 +136,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Protected property _bRenderContent", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oTileContent = new TileContent("tileContent", {
 				content: new Text()
 			}).placeAt("qunit-fixture");
@@ -174,7 +174,7 @@ sap.ui.define([
 		assert.equal(this.oTileContent.invalidate.callCount, 0, "The control has not been invalidated.");
 	});
 
-	QUnit.test("Content is not rendered in case _bRenderContent is false", function(assert) {
+	QUnit.test("Content is not rendered in case _bRenderContent is false", async function(assert) {
 		//Arrange
 		this.oTileContent.setRenderContent(false);
 

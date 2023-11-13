@@ -67,7 +67,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", function (assert) {
+	QUnit.test("BCP: 1870326083 - _triggerVisibleSubSectionsEvents should force OP to recalculate", async function(assert) {
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout({enableLazyLoading: true}),
 			oRequestAdjustLayoutSpy = this.spy(oObjectPageLayout, "_requestAdjustLayout");
@@ -90,7 +90,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
@@ -122,7 +122,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		Core.applyChanges();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering if already scheduled", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			that = this,
@@ -153,7 +153,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		Core.applyChanges();
 	});
 
-	QUnit.test("Early lazyLoading onAfterRendering when hidden", function (assert) {
+	QUnit.test("Early lazyLoading onAfterRendering when hidden", async function(assert) {
 
 		var oObjectPage = new ObjectPageLayout({enableLazyLoading: true}),
 			iExpectedLazyLoadingDelay,
@@ -216,7 +216,7 @@ function (jQuery, Core, JSONModel, ObjectPageDynamicHeaderTitle, ObjectPageLayou
 		Core.applyChanges();
 	});
 
-	QUnit.test("Sections are lazy loaded when header content is pinned initially", function (assert) {
+	QUnit.test("Sections are lazy loaded when header content is pinned initially", async function(assert) {
 		// Arrange
 		var oObjectPageLayout = new ObjectPageLayout({
 				enableLazyLoading: true,

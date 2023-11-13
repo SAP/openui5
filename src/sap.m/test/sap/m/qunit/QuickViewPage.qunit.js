@@ -135,7 +135,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Data binding", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oQuickViewPage = getQuickViewPage();
 
 			this.oQuickViewPage.setModel(oModel);
@@ -148,7 +148,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When testing the binding of the control", function (assert) {
+	QUnit.test("When testing the binding of the control", async function(assert) {
 		// Act
 		var fnSpyCreatePageContent = sinon.spy(this.oQuickViewPage, "_createPageContent");
 		var fnSpyCreateForm = sinon.spy(this.oQuickViewPage, "_createForm");
@@ -197,7 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oQuickViewPage = getQuickViewPage();
 
 			this.oQuickViewPage.setModel(oModel);
@@ -214,7 +214,7 @@ sap.ui.define([
 		assert.strictEqual(this.oQuickViewPage.$().length, 1, "should render");
 	});
 
-	QUnit.test("Testing if the QuickView Header is created when it is with no content", function (assert) {
+	QUnit.test("Testing if the QuickView Header is created when it is with no content", async function(assert) {
 		mData.title = "";
 		mData.description = "";
 		mData.iconVisibility = false;
@@ -246,7 +246,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Properties are correctly cloned", function (assert) {
+	QUnit.test("Properties are correctly cloned", async function(assert) {
 		// Arrange
 		var oAvatar = new Avatar({
 			src: "sap-icon://error",
@@ -296,7 +296,7 @@ sap.ui.define([
 		assert.strictEqual(oRenderedAvatar.getSrc(), "sap-icon://hint", "Properties should have same values");
 	});
 
-	QUnit.test("No avatar but titleUrl", function (assert) {
+	QUnit.test("No avatar but titleUrl", async function(assert) {
 
 		this.oQuickViewPage.setTitle("Title");
 		this.oQuickViewPage.setTitleUrl("www.sap.com");

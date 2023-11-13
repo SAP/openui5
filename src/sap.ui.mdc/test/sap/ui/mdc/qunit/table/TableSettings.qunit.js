@@ -50,7 +50,7 @@ sap.ui.define([
 						+ ' \'collectionName\': \'items\' \} \}"><type><mdcTable:' + sType + '/></type>' + sSettings + '<columns><mdcTable:Column'
 						+ ' id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{description}" id="myTable--text0"'
 						+ ' /></mdcTable:Column></columns></Table></mvc:View>'
-		}).then(function(oView) {
+		}).then(async function(oView) {
 			oView.setModel(oModel);
 			oView.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -176,7 +176,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId("myTable");
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// One RowActionItem
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
@@ -300,7 +300,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
@@ -346,7 +346,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
@@ -388,7 +388,7 @@ sap.ui.define([
 			oFireRowPressSpy = sinon.spy(that.oTable, "fireRowPress");
 
 			return that.oTable.initialized();
-		}).then(function() {
+		}).then(async function() {
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});

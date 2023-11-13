@@ -443,7 +443,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Behavior depending on device: only phone", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.bOriginalIsPhone = Device.system.phone;
 			Device.system.phone = true;
 			appFeedList.invalidate();
@@ -464,7 +464,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Behavior depending on device: all except phone", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.bOriginalIsPhone = Device.system.phone;
 			Device.system.phone = false;
 			appFeedList.invalidate();
@@ -485,7 +485,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Check property combination", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedListItem = new FeedListItem({
 				sender: null,
 				text: "Some text which is displayed.",
@@ -501,7 +501,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("The links in the text are recognised", function (assert) {
+	QUnit.test("The links in the text are recognised", async function(assert) {
 		//Arrange
 		var sOriginal = "sample text: www.sap.com to be surrounded by tags",
 			sTransformed = "sample text: <a href=\"//www.sap.com\" target=\"_self\" class=\"sapMLnk\">www.sap.com</a> to be surrounded by tags",
@@ -601,7 +601,7 @@ sap.ui.define([
 		assert.notEqual(oFeedList.getItems()[9].getSender(), "Hello", "Sender Press event was not fired");
 	});
 
-	QUnit.test("URL navigation can be cancelled", function (assert) {
+	QUnit.test("URL navigation can be cancelled", async function(assert) {
 		// Arrange
 		var oFLI = new FeedListItem({
 				sender: "Alexandrina Victoria",
@@ -637,7 +637,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering behavior");
 
-	QUnit.test("Expanded text should appear also after rerendering", function (assert) {
+	QUnit.test("Expanded text should appear also after rerendering", async function(assert) {
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 
 		oFeedList.getItems()[10]._toggleTextExpanded();
@@ -665,7 +665,7 @@ sap.ui.define([
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImage") >= 0, "Css class 'sapMFeedListItemImage' is present");
 	});
 
-	QUnit.test("Item with a non clickable icon is rendered", function (assert) {
+	QUnit.test("Item with a non clickable icon is rendered", async function(assert) {
 		//Arrange
 		var oItem = oFeedList.getItems()[0];
 		//Act
@@ -685,7 +685,7 @@ sap.ui.define([
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 	});
 
-	QUnit.test("Expand collapse text changed", function (assert) {
+	QUnit.test("Expand collapse text changed", async function(assert) {
 		oFeedList.getItems()[10].setMoreLabel("MORE TEXT");
 		oFeedList.getItems()[10].setLessLabel("LESS TEXT");
 		oCore.applyChanges();
@@ -694,7 +694,7 @@ sap.ui.define([
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
 	});
 
-	QUnit.test("Text Expanded", function (assert) {
+	QUnit.test("Text Expanded", async function(assert) {
 		oFeedList.getItems()[10]._toggleTextExpanded();
 		oCore.applyChanges();
 
@@ -702,7 +702,7 @@ sap.ui.define([
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getLessLabel());
 	});
 
-	QUnit.test("Text Collapsed", function (assert) {
+	QUnit.test("Text Collapsed", async function(assert) {
 		oFeedList.getItems()[10]._toggleTextExpanded();
 		oCore.applyChanges();
 
@@ -717,14 +717,14 @@ sap.ui.define([
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), oFeedList.getItems()[10].getMoreLabel());
 	});
 
-	QUnit.test("MoreLabel property set to 'null'", function (assert) {
+	QUnit.test("MoreLabel property set to 'null'", async function(assert) {
 		oFeedList.getItems()[10].setMoreLabel(null);
 		oCore.applyChanges();
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), "MORE");
 		assert.equal(oFeedList.getItems()[10]._oLinkExpandCollapse.getText(), FeedListItem._sTextShowMore);
 	});
 
-	QUnit.test("LessLabel property set to 'null'", function (assert) {
+	QUnit.test("LessLabel property set to 'null'", async function(assert) {
 		oFeedList.getItems()[10].setLessLabel(null);
 		oCore.applyChanges();
 		oFeedList.getItems()[10]._toggleTextExpanded();
@@ -733,7 +733,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Check property combination", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedListItem = new FeedListItem({
 				sender: null,
 				text: "Some text which is displayed.",
@@ -755,7 +755,7 @@ sap.ui.define([
 		assert.ok(this.oFeedListItem, "FeedListItem is clickable");
 	});
 
-	QUnit.test("Only single Press event is added.", function (assert) {
+	QUnit.test("Only single Press event is added.", async function(assert) {
 		assert.equal(Object.keys(this.oFeedListItem.oAvatar.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
 		this.oFeedListItem.invalidate();
 		oCore.applyChanges();
@@ -764,7 +764,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("HTML Text inside", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedListItem = new FeedListItem({
 				sender: null,
 				text: "Some text <strong>which</strong> is <em>displayed</em>."
@@ -788,7 +788,7 @@ sap.ui.define([
 		assert.equal(sConvertedText2, sHtmlText, "Plain text is converted back to html text");
 	});
 
-	QUnit.test("No html text", function (assert) {
+	QUnit.test("No html text", async function(assert) {
 		//Arrange
 		var sPlainText = "Some text which is displayed.";
 		//Act
@@ -799,7 +799,7 @@ sap.ui.define([
 		assert.equal(sPlainText, sText, "Text does not have html tags");
 	});
 
-	QUnit.test("Html collapsed text ", function (assert) {
+	QUnit.test("Html collapsed text ", async function(assert) {
 		//Arrange
 		var sCollapsedText = "Some text <strong>which</strong>";
 		var sFullText = this.oFeedListItem.getText();
@@ -825,7 +825,7 @@ sap.ui.define([
 		assert.equal(this.oFeedListItem._checkTextIsExpandable(), false, "Text is not expandable");
 	});
 
-	QUnit.test("Empty html tags are removed for collapsed text", function (assert) {
+	QUnit.test("Empty html tags are removed for collapsed text", async function(assert) {
 		//Arrange
 		var sText = "<p></p><ul></ul><strong></strong><p>Some</p> text";
 		var sCollapsedText = "<p>Some</p>";
@@ -867,7 +867,7 @@ sap.ui.define([
 		assert.equal(this.oFeedListItem._bEmptyTagsInShortTextCleared, true, "The flag variable has been set to prevent unnecessary clearing of empty tags");
 	});
 
-	QUnit.test("Collapsed text is cleared from empty tags during _toggleTextExpanded if collapsing the text", function (assert) {
+	QUnit.test("Collapsed text is cleared from empty tags during _toggleTextExpanded if collapsing the text", async function(assert) {
 		//Arrange
 		this.oFeedListItem.setText("<p></p><ul></ul><strong></strong><p>Some</p> text");
 		this.oFeedListItem.setMaxCharacters(5);
@@ -902,7 +902,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Special characters", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			var oData, oModel;
 
 			this.oFeedListItem = new FeedListItem({
@@ -932,7 +932,7 @@ sap.ui.define([
 //	});
 
 	QUnit.module("Actions aggregation and hidden aggregations", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedListItem = new FeedListItem({
 				actions: [
 					new FeedListItemAction(),
@@ -956,7 +956,7 @@ sap.ui.define([
 		assert.ok(this.oFeedListItem.$("actionButton").length > 0, "The action button is rendered");
 	});
 
-	QUnit.test("Hides action button", function (assert) {
+	QUnit.test("Hides action button", async function(assert) {
 		// Arrange
 		this.oFeedListItem.destroyAggregation("actions");
 
@@ -968,7 +968,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Actions Button visibility test", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oFeedListItem = new FeedListItem({
 				actions: [
 					new FeedListItemAction({
@@ -1237,7 +1237,7 @@ sap.ui.define([
 
 	QUnit.module("Security");
 
-	QUnit.test("Sanitize CSS position", function (assert) {
+	QUnit.test("Sanitize CSS position", async function(assert) {
 		var oList = new List(),
 			oFeedListItem = new FeedListItem({
 				sender: "George Washington",

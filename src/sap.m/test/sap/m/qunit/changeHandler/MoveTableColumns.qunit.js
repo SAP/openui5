@@ -101,7 +101,7 @@ sap.ui.define([
 
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent
@@ -280,7 +280,7 @@ sap.ui.define([
 			});
 			this.oUiComponent = new Comp("comp");
 
-			return this.oUiComponent.rootControlLoaded().then(function() {
+			return this.oUiComponent.rootControlLoaded().then(async function() {
 				// Place component in container and display
 				this.oUiComponentContainer = new ComponentContainer({
 					component : this.oUiComponent

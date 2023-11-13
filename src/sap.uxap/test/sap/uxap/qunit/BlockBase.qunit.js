@@ -17,7 +17,7 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 
 	QUnit.module("BlockBase");
 
-	QUnit.test("Owner component propagated to views", function (assert) {
+	QUnit.test("Owner component propagated to views", async function(assert) {
 		var oComponentContainer,
 			oComponent,
 			oMainView,
@@ -137,7 +137,7 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			XMLView.create({
 				id: "UxAP-InfoBlocks",
 				viewName: "view.UxAP-InfoBlocks"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageInfoView = oView;
 				this.oObjectPageInfoView.placeAt('qunit-fixture');
 				Core.applyChanges();
@@ -189,7 +189,7 @@ function(ComponentContainer, Shell, Core, Element, BlockBase, ObjectPageLayout, 
 			XMLView.create({
 				id: "UxAP-InfoBlocks",
 				viewName: "view.UxAP-InfoBlocks"
-			}).then(function (oView) {
+			}).then(async function(oView) {
 				this.oObjectPageInfoView = oView;
 				this.oObjectPageInfoView.placeAt('qunit-fixture');
 				Core.applyChanges();

@@ -82,7 +82,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Call to setLabelText sets the label", function(assert) {
+		QUnit.test("Call to setLabelText sets the label", async function(assert) {
 			var sLabelText = "text",
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
@@ -92,7 +92,7 @@ sap.ui.define([
 			assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText), true, "setProperty is called with right arguments");
 		});
 
-		QUnit.test("Call to setWidth sets the width", function(assert) {
+		QUnit.test("Call to setWidth sets the width", async function(assert) {
 			var sWidth = "500px",
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
@@ -103,7 +103,7 @@ sap.ui.define([
 			assert.equal(this.oWSC.$().outerWidth() + "px", sWidth, "width is properly set");
 		});
 
-		QUnit.test("Call to setHeight sets the height", function(assert) {
+		QUnit.test("Call to setHeight sets the height", async function(assert) {
 			var sHeight = "500px",
 				oSetPropertySpy = this.spy(this.oWSC, "setProperty");
 
@@ -175,7 +175,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Keyboard", {
-			beforeEach: function() {
+			beforeEach: async function() {
 				this.oWSC = new WheelSliderContainer({
 					sliders: [
 						new WheelSlider({ items: new Item({ key: "1", text: "1" })}),
@@ -193,7 +193,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("onsaphome", function(assert) {
+		QUnit.test("onsaphome", async function(assert) {
 			// arrange
 			var oSliderFocusSpy,
 				oFirstSlider = this.oWSC.getSliders()[0],
@@ -215,7 +215,7 @@ sap.ui.define([
 			assert.equal(oSliderFocusSpy.thisValues[0], oFirstSlider, "focus is called on the first slider");
 		});
 
-		QUnit.test("onsapend", function(assert) {
+		QUnit.test("onsapend", async function(assert) {
 			// arrange
 			var oSliderFocusSpy,
 				oLastSlider = this.oWSC.getSliders()[2],
@@ -237,7 +237,7 @@ sap.ui.define([
 			assert.equal(oSliderFocusSpy.thisValues[0], oLastSlider, "focus is called on the first slider");
 		});
 
-		QUnit.test("onsapleft", function(assert) {
+		QUnit.test("onsapleft", async function(assert) {
 			// arrange
 			var oSliderFocusSpy,
 				oFirstSlider = this.oWSC.getSliders()[0],
@@ -259,7 +259,7 @@ sap.ui.define([
 			assert.equal(oSliderFocusSpy.thisValues[0], oFirstSlider, "focus is called on the first slider");
 		});
 
-		QUnit.test("onsapright", function(assert) {
+		QUnit.test("onsapright", async function(assert) {
 			// arrange
 			var oSliderFocusSpy,
 				oLastSlider = this.oWSC.getSliders()[2],

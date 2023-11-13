@@ -1,12 +1,13 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/TimelineContent",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/widgets/Card"
-
-], function (
+], function(
+	Lib,
 	TimelineContent,
 	Core,
 	BaseListContent,
@@ -16,7 +17,7 @@ sap.ui.define([
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
-	return Core.loadLibrary("sap.suite.ui.commons", { async: true }).then(function () {
+	return Lib.load("sap.suite.ui.commons").then(function () {
 		QUnit.module("Timeline Card", {
 			beforeEach: function () {
 				this.oTimelineContent = new TimelineContent();
@@ -55,7 +56,7 @@ sap.ui.define([
 			assert.strictEqual(this.oTimelineContent.getInnerList().getGrowingThreshold(), 35, "Growing threshold should be set according to 'maxItems'");
 		});
 
-		QUnit.test("No items pagination", function (assert) {
+		QUnit.test("No items pagination", async function(assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -134,7 +135,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Data and items length", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",

@@ -3,15 +3,17 @@
 sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/BaseListContent",
 	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/cards/actions/CardActions",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/MemoryLeakCheck",
 	"sap/ui/qunit/QUnitUtils"
-], function (
+], function(
 	mLibrary,
 	Core,
+	Lib,
 	BaseListContent,
 	ListContent,
 	CardActions,
@@ -23,7 +25,7 @@ sap.ui.define([
 
 	const DOM_RENDER_LOCATION = "qunit-fixture";
 	const AvatarColor = mLibrary.AvatarColor;
-	const pIfMicrochartsAvailable = Core.loadLibrary("sap.suite.ui.microchart", { async: true });
+	const pIfMicrochartsAvailable = Lib.load("sap.suite.ui.microchart");
 
 	function testWithMicrochart(assert, oCard, oManifest, fnTest) {
 		const done = assert.async();
@@ -791,7 +793,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("List Card", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -1433,7 +1435,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Overridden methods", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -1595,7 +1597,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Icons", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"
@@ -1756,7 +1758,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Loading of the Microchart library", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"
@@ -1966,7 +1968,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Legend", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"

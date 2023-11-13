@@ -6,9 +6,11 @@
  * Initialization Code and shared classes of library sap.ui.layout.
  */
 sap.ui.define([
-	'sap/ui/base/DataType',
-	'sap/ui/core/library'], // library dependency
-	function(DataType, library) {
+ 'sap/ui/base/DataType',
+ "sap/ui/core/Lib",
+ 'sap/ui/core/library'
+], // library dependency
+	function(DataType, Library, library) {
 	 "use strict";
 
 	 /**
@@ -21,7 +23,7 @@ sap.ui.define([
 	  * @since 1.15
 	  * @public
 	  */
-	 var thisLib = sap.ui.getCore().initLibrary({
+	 var thisLib = Library.init({
 		 name : "sap.ui.layout",
 		 version: "${version}",
 		 dependencies: ["sap.ui.core"],

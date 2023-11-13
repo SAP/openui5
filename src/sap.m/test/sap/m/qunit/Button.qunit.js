@@ -389,7 +389,7 @@ sap.ui.define([
 		}, assert);
 	});
 
-	QUnit.test("Should not re-render the button if the text is changed", function(assert) {
+	QUnit.test("Should not re-render the button if the text is changed", async function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
@@ -524,7 +524,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("getAccessibilityInfo", function(assert) {
+	QUnit.test("getAccessibilityInfo", async function(assert) {
 		var oButton = new Button("btnLink", {
 			accessibleRole: ButtonAccessibleRole.Link
 		}).placeAt("qunit-fixture");
@@ -533,7 +533,7 @@ sap.ui.define([
 	});
 
 	// BCP: 0020751294 0000677825 2019
-	QUnit.test("Press event fires once", function(assert) {
+	QUnit.test("Press event fires once", async function(assert) {
 		// arrange
 		var pressSpy = this.spy(),
 			oTouchEndEvent = { setMarked: function() { }, originalEvent: { buttons: 0, type: "mouseup" }, target: { id: "btn1-BDI-content" } },
@@ -556,7 +556,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("_activeButton _inactiveButton", function(assert) {
+	QUnit.test("_activeButton _inactiveButton", async function(assert) {
 		//sut
 		var sIconURI = 'sap-icon://slim-arrow-down',
 			sActiveIconURI = 'sap-icon://slim-arrow-up',
@@ -586,7 +586,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("tabindex", function(assert) {
+	QUnit.test("tabindex", async function(assert) {
 		assert.equal(b1.$().attr("tabindex"), undefined, "By default the button(root) should have no tabindex");
 		assert.equal(b1.$("inner").attr("tabindex"), undefined, "By default the button(inner) should have no tabindex");
 
@@ -601,7 +601,7 @@ sap.ui.define([
 		assert.equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
 	});
 
-	QUnit.test("Enter event should fire press on keydown", function(assert) {
+	QUnit.test("Enter event should fire press on keydown", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -628,7 +628,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Enter event should not fire press on keyup", function(assert) {
+	QUnit.test("Enter event should not fire press on keyup", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -647,7 +647,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press on keydown", function(assert) {
+	QUnit.test("Space event should not fire press on keydown", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -666,7 +666,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should fire press on keyup", function(assert) {
+	QUnit.test("Space event should fire press on keyup", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -685,7 +685,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if ESCAPE is pressed and released after the Space is released", function(assert) {
+	QUnit.test("Space event should not fire press if ESCAPE is pressed and released after the Space is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -708,7 +708,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if ESCAPE is pressed then Space is released and then Escape is released", function(assert) {
+	QUnit.test("Space event should not fire press if ESCAPE is pressed then Space is released and then Escape is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -731,7 +731,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("_bPressedSpace is reset on Escape", function(assert) {
+	QUnit.test("_bPressedSpace is reset on Escape", async function(assert) {
 		// System under Test
 		var oButton = new Button().placeAt("qunit-fixture");
 
@@ -750,7 +750,7 @@ sap.ui.define([
 		oButton.destroy();
   });
 
-	QUnit.test("Space event should not fire press if SHIFT is pressed and released after the Space is released", function(assert) {
+	QUnit.test("Space event should not fire press if SHIFT is pressed and released after the Space is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -773,7 +773,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Space event should not fire press if SHIFT is pressed then Space is released and then SHIFT is released", function(assert) {
+	QUnit.test("Space event should not fire press if SHIFT is pressed then Space is released and then SHIFT is released", async function(assert) {
 		// System under Test
 		var pressSpy = this.spy(),
 			oButton = new Button({
@@ -796,7 +796,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("All keys should be ignored when Space is pressed", function(assert) {
+	QUnit.test("All keys should be ignored when Space is pressed", async function(assert) {
 		// System under Test
 		var oEvent = {
 				preventDefault: this.spy()
@@ -878,7 +878,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", function(assert) {
+	QUnit.test("Types Negative, Critical, Success, Neutral implied icon is applied", async function(assert) {
 		// arrange
 		var oButton = new Button({
 			text: "button"
@@ -937,7 +937,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Icon is preferred over the type's implied icon", function(assert) {
+	QUnit.test("Icon is preferred over the type's implied icon", async function(assert) {
 		// arrange
 		var oButton = new Button({
 			text: "button",
@@ -972,7 +972,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Rendering of icons for Back/Up type", function (assert) {
+	QUnit.test("Rendering of icons for Back/Up type", async function(assert) {
 		var oButton = new Button({
 			type: ButtonType.Back
 		});
@@ -1002,7 +1002,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Determining ACC type", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel = new Label({
 				text: "Label"
 			});
@@ -1056,7 +1056,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButton._determineAccessibilityType(), ButtonAccessibilityType.Labelled);
 	});
 
-	QUnit.test("Labelled (via enhanceAccessibilityState)", function (assert) {
+	QUnit.test("Labelled (via enhanceAccessibilityState)", async function(assert) {
 		// prepare
 		var ButtonContainer = Control.extend("test.lib.ButtonContainer", {
 			metadata: {
@@ -1120,7 +1120,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Icon-only button ARIA", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel = new Label("label", {
 				text: "Label"
 			});
@@ -1152,7 +1152,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Add", "Tooltip is set");
 	});
 
-	QUnit.test("Described (via association)", function (assert) {
+	QUnit.test("Described (via association)", async function(assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
 
@@ -1161,7 +1161,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Only description is added in aria-describedby");
 	});
 
-	QUnit.test("Described (via semantic type)", function (assert) {
+	QUnit.test("Described (via semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
@@ -1172,7 +1172,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Only type is added in aria-describedby");
 	});
 
-	QUnit.test("Labelled (via association)", function (assert) {
+	QUnit.test("Labelled (via association)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		oCore.applyChanges();
 
@@ -1181,7 +1181,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
 	});
 
-	QUnit.test("Labelled (via labelFor)", function (assert) {
+	QUnit.test("Labelled (via labelFor)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		oCore.applyChanges();
 
@@ -1190,7 +1190,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via associations)", function (assert) {
+	QUnit.test("Combined (via associations)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1200,7 +1200,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via labelFor and association)", function (assert) {
+	QUnit.test("Combined (via labelFor and association)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1210,7 +1210,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via association and semantic type)", function (assert) {
+	QUnit.test("Combined (via association and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
@@ -1222,7 +1222,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+	QUnit.test("Combined (via labelFor and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oLabel.setLabelFor(this.oButton);
@@ -1235,7 +1235,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Text button w/ tooltip ARIA", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel = new Label("label", {
 				text: "Label"
 			});
@@ -1268,7 +1268,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
 	});
 
-	QUnit.test("Descriptive (via association)", function (assert) {
+	QUnit.test("Descriptive (via association)", async function(assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
 
@@ -1276,7 +1276,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
 	});
 
-	QUnit.test("Described (via semantic type)", function (assert) {
+	QUnit.test("Described (via semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
@@ -1286,7 +1286,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("title"), "Tooltip", "Tooltip is set");
 	});
 
-	QUnit.test("Labelled (via association)", function (assert) {
+	QUnit.test("Labelled (via association)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		oCore.applyChanges();
 
@@ -1295,7 +1295,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
 	});
 
-	QUnit.test("Labelled (via labelFor)", function (assert) {
+	QUnit.test("Labelled (via labelFor)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		oCore.applyChanges();
 
@@ -1304,7 +1304,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip", "Tooltip is added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via associations)", function (assert) {
+	QUnit.test("Combined (via associations)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1314,7 +1314,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via labelFor and association)", function (assert) {
+	QUnit.test("Combined (via labelFor and association)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1324,7 +1324,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description btn-tooltip", "Both description and tooltip are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via association and semantic type)", function (assert) {
+	QUnit.test("Combined (via association and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
@@ -1336,7 +1336,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "btn-tooltip " + sTypeId, "Both tooltip and type are added in aria-describedby");
 	});
 
-	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+	QUnit.test("Combined (via labelFor and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oLabel.setLabelFor(this.oButton);
@@ -1349,7 +1349,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Text button w/o tooltip ARIA", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oLabel = new Label("label", {
 				text: "Label"
 			});
@@ -1378,14 +1378,14 @@ sap.ui.define([
 
 	// Nothing to assert for the Default case...
 
-	QUnit.test("Descriptive (via association)", function (assert) {
+	QUnit.test("Descriptive (via association)", async function(assert) {
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
 	});
 
-	QUnit.test("Described (via semantic type)", function (assert) {
+	QUnit.test("Described (via semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.setType(ButtonType.Emphasized);
@@ -1394,21 +1394,21 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
 
-	QUnit.test("Labelled (via association)", function (assert) {
+	QUnit.test("Labelled (via association)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 	});
 
-	QUnit.test("Labelled (via labelFor)", function (assert) {
+	QUnit.test("Labelled (via labelFor)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-labelledby"), "label btn-content", "Self-reference is added in addition to the label");
 	});
 
-	QUnit.test("Combined (via associations)", function (assert) {
+	QUnit.test("Combined (via associations)", async function(assert) {
 		this.oButton.addAriaLabelledBy(this.oLabel);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1417,7 +1417,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
 	});
 
-	QUnit.test("Combined (via labelFor and association)", function (assert) {
+	QUnit.test("Combined (via labelFor and association)", async function(assert) {
 		this.oLabel.setLabelFor(this.oButton);
 		this.oButton.addAriaDescribedBy(this.oDescription);
 		oCore.applyChanges();
@@ -1426,7 +1426,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), "description", "Description is added");
 	});
 
-	QUnit.test("Combined (via association and semantic type)", function (assert) {
+	QUnit.test("Combined (via association and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oButton.addAriaLabelledBy(this.oLabel);
@@ -1437,7 +1437,7 @@ sap.ui.define([
 		assert.strictEqual(this.oButtonDomRef.getAttribute("aria-describedby"), sTypeId, "Type is added");
 	});
 
-	QUnit.test("Combined (via labelFor and semantic type)", function (assert) {
+	QUnit.test("Combined (via labelFor and semantic type)", async function(assert) {
 		var sTypeId = InvisibleText.getStaticId("sap.m", "BUTTON_ARIA_TYPE_EMPHASIZED");
 
 		this.oLabel.setLabelFor(this.oButton);
@@ -1450,7 +1450,7 @@ sap.ui.define([
 
 	QUnit.module("General ARIA");
 
-	QUnit.test("Default tooltip for Back/Up type", function (assert) {
+	QUnit.test("Default tooltip for Back/Up type", async function(assert) {
 		var oButton = new Button({
 				type: ButtonType.Back
 			}),
@@ -1465,7 +1465,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("Appearance of the aria-haspopup attribute", function (assert) {
+	QUnit.test("Appearance of the aria-haspopup attribute", async function(assert) {
 		var oButton = new Button("btn", {
 				text: "I am a button"
 			}),
@@ -1498,7 +1498,7 @@ sap.ui.define([
 		oButton.destroy();
 	});
 
-	QUnit.test("aria-live attribute", function (assert) {
+	QUnit.test("aria-live attribute", async function(assert) {
 		// text
 		var oTextButton = new Button({
 			text:'text'
@@ -1531,7 +1531,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Badge on Button", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oButton = new Button("badgedButton", {
 				icon: "sap-icon://home",
 				text: "I have a badge!",
@@ -1557,7 +1557,7 @@ sap.ui.define([
 		assert.ok(this.oButton._determineSelfReferencePresence(), "Self reference properly applied");
 	});
 
-	QUnit.test("Check badge visibility and value", function (assert) {
+	QUnit.test("Check badge visibility and value", async function(assert) {
 		var $oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
 
 		// check for badge visibility and value
@@ -1578,7 +1578,7 @@ sap.ui.define([
 		assert.equal(this.oButton.$().find(".sapMBadgeIndicator").hasClass("sapMBadgeAnimationRemove"), true, "Badge Indicator DOM element exists and is hidden");
 	});
 
-	QUnit.test("Check badge aria-describedby and invisible text", function (assert) {
+	QUnit.test("Check badge aria-describedby and invisible text", async function(assert) {
 		var oBadgeInvisibleText = this.oButton._getBadgeInvisibleText();
 
 		// check invisible text
@@ -1596,7 +1596,7 @@ sap.ui.define([
 				  "When the Badge is not visible, aria-describedby attribute of the button and invisible text are empty");
 	});
 
-	QUnit.test("Badge value range", function (assert) {
+	QUnit.test("Badge value range", async function(assert) {
 		//Arrange
 		var $oBadgeIndicator = this.oButton.$().find(".sapMBadgeIndicator").first();
 

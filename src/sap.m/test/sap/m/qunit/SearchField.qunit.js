@@ -147,7 +147,7 @@ sap.ui.define([
 		assert.ok(jQuery("#sf4-search").length == 0, "Search button is not rendered if showSearchButton == false");
 	});
 
-	QUnit.test("Placeholder property - default value", function (assert) {
+	QUnit.test("Placeholder property - default value", async function(assert) {
 		// arrange
 		var oSF = new SearchField();
 		oSF.placeAt(DOM_RENDER_LOCATION);
@@ -166,7 +166,7 @@ sap.ui.define([
 		oSF.destroy();
 	});
 
-	QUnit.test("Placeholder property - set value", function (assert) {
+	QUnit.test("Placeholder property - set value", async function(assert) {
 		// arrange
 		var sPlaceholder = "New Placeholder";
 		var oSF = new SearchField({
@@ -185,7 +185,7 @@ sap.ui.define([
 		oSF.destroy();
 	});
 
-	QUnit.test("Screen Reader", function(assert) {
+	QUnit.test("Screen Reader", async function(assert) {
 		// arrange
 		var lbl = new Label("lbl", {
 			text: "Label",
@@ -260,7 +260,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField("sf5", {
 				placeholder: sPlaceholder,
 				value: sValue,
@@ -270,13 +270,13 @@ sap.ui.define([
 			}).placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oSearchField.destroy();
 			Core.applyChanges();
 		}
 	});
 
-	QUnit.test("input's maxlength attribute remains rendered after every invalidation", function(assert) {
+	QUnit.test("input's maxlength attribute remains rendered after every invalidation", async function(assert) {
 		// arrange
 		this.oSearchField.setMaxLength(20);
 		Core.applyChanges();
@@ -298,7 +298,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSearchField.getDomRef("I").getAttribute("maxlength"), "20", "attribute is present");
 	});
 
-	QUnit.test("ARIA attributes for Chrome specific", function(assert) {
+	QUnit.test("ARIA attributes for Chrome specific", async function(assert) {
 		// arrange
 		var bHasAutocorrect;
 		this.stub(Device, "browser").value({name: "cr", chrome: true});
@@ -313,7 +313,7 @@ sap.ui.define([
 		assert.strictEqual(bHasAutocorrect, false, "Shouldn't be rendered");
 	});
 
-	QUnit.test("ARIA attributes for Safari specific", function(assert) {
+	QUnit.test("ARIA attributes for Safari specific", async function(assert) {
 		// arrange
 		var bHasAutocorrect;
 		this.stub(Device, "browser").value({name: "sf", safari: true});
@@ -351,7 +351,7 @@ sap.ui.define([
 		assert.notOk(this.oSearchField.getDomRef().style.width, "Width style is not added");
 	});
 
-	QUnit.test("Setting value to empty string should update the search field", function (assert) {
+	QUnit.test("Setting value to empty string should update the search field", async function(assert) {
 		// arrange
 		var oSF = new SearchField();
 		oSF.placeAt(DOM_RENDER_LOCATION);
@@ -376,7 +376,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Input", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField("sf7", {
 				placeholder: sPlaceholder,
 				enabled: true,
@@ -388,7 +388,7 @@ sap.ui.define([
 
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oSearchField.destroy();
 			this.oMockEvent = null;
 			Core.applyChanges();
@@ -423,12 +423,12 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField();
 			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oSearchField.destroy();
 			Core.applyChanges();
 		}
@@ -552,7 +552,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Suggestions on mobile phone", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.isPhone = Device.system.phone;
 			Device.system.phone = true;
 
@@ -569,7 +569,7 @@ sap.ui.define([
 			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			Device.system.phone = this.isPhone;
 			this.oSearchField.destroy();
 			Core.applyChanges();
@@ -580,7 +580,7 @@ sap.ui.define([
 		assert.strictEqual(this.oSearchField.getFocusDomRef().getAttribute("inputmode"), "none", "inputmode is 'none'");
 	});
 
-	QUnit.test("Search is fired once when suggestion item is tapped", function (assert) {
+	QUnit.test("Search is fired once when suggestion item is tapped", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			fnSearchSpy = this.stub();
@@ -602,7 +602,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("Search is fired once when 'magnifier' button is pressed", function (assert) {
+	QUnit.test("Search is fired once when 'magnifier' button is pressed", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			fnSearchSpy = this.stub();
@@ -633,7 +633,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("Search is fired once when 'OK' button is pressed", function (assert) {
+	QUnit.test("Search is fired once when 'OK' button is pressed", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			fnSearchSpy = this.stub();
@@ -656,7 +656,7 @@ sap.ui.define([
 		}, 500);
 	});
 
-	QUnit.test("Search is NOT fired when 'X' button is pressed", function (assert) {
+	QUnit.test("Search is NOT fired when 'X' button is pressed", async function(assert) {
 		// Arrange
 		var done = assert.async(),
 			fnSearchSpy = this.stub();
@@ -699,7 +699,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Suggestions aria attributes", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField("sf8", {
 				enableSuggestions: true,
 				suggestionItems: [
@@ -713,13 +713,13 @@ sap.ui.define([
 			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oSearchField.destroy();
 			Core.applyChanges();
 		}
 	});
 
-	QUnit.test("Aria-selected is false when non of the items are selected", function (assert) {
+	QUnit.test("Aria-selected is false when non of the items are selected", async function(assert) {
 		// Act
 		var oSuggestionItems = this.oSearchField.getSuggestionItems();
 
@@ -735,18 +735,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus handling", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField();
 			this.oSearchField.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
-		afterEach: function() {
+		afterEach: async function() {
 			this.oSearchField.destroy();
 			Core.applyChanges();
 		}
 	});
 
-	QUnit.test("sapMFocus class isn't deleted when invalidated", function (assert) {
+	QUnit.test("sapMFocus class isn't deleted when invalidated", async function(assert) {
 		// Act
 		this.oSearchField.focus();
 
@@ -762,7 +762,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Translations", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSearchField = new SearchField({
 				value: "some value"
 			});
@@ -778,7 +778,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Placeholder is updated when language is changed", function (assert) {
+	QUnit.test("Placeholder is updated when language is changed", async function(assert) {
 		// act
 		this.oSearchField.invalidate();
 		Core.applyChanges();

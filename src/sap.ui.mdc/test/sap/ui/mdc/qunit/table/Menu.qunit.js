@@ -63,7 +63,7 @@ sap.ui.define([
 				}
 			]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
 			}.bind(this));
@@ -162,7 +162,7 @@ sap.ui.define([
 				groupable: true
 			}]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
 			}.bind(this));
@@ -313,7 +313,7 @@ sap.ui.define([
 				}
 			]);
 
-			return this.oTable.initialized().then(function() {
+			return this.oTable.initialized().then(async function() {
 				this.oTable.placeAt("qunit-fixture");
 				Core.applyChanges();
 			}.bind(this));

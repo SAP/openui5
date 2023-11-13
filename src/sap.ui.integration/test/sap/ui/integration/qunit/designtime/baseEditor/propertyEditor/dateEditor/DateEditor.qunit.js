@@ -47,7 +47,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(async function(aPropertyEditor) {
 				this.oDateEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				this.oDateEditorElement = this.oDateEditor.getContent();
@@ -167,7 +167,7 @@ sap.ui.define([
 				foo: "03-2020-05"
 			});
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDate").then(async function(aPropertyEditor) {
 				oCore.applyChanges();
 				var oDateEditor = aPropertyEditor[0];
 				assert.strictEqual(

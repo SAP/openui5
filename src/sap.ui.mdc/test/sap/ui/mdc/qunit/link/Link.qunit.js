@@ -307,7 +307,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -331,7 +331,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -400,7 +400,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -424,7 +424,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -492,7 +492,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -516,7 +516,7 @@ sap.ui.define([
 			}
 		});
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 
@@ -608,7 +608,7 @@ sap.ui.define([
 			done();
 		};
 
-		oLink.getContent().then(function(oPanel) {
+		oLink.getContent().then(async function(oPanel) {
 			oPanel.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			assert.ok(fnMessageToastSpy.notCalled);
@@ -785,7 +785,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - without links, without additional content", function(assert) {
+	QUnit.test("createPopover - without links, without additional content", async function(assert) {
 		const done = assert.async();
 
 		const oLink = new Link();
@@ -806,7 +806,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - with links, without additional content", function(assert) {
+	QUnit.test("createPopover - with links, without additional content", async function(assert) {
 		const done = assert.async();
 		const sBaseUrl = window.location.href;
 
@@ -846,7 +846,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - with links and with additional content", function(assert) {
+	QUnit.test("createPopover - with links and with additional content", async function(assert) {
 		const done = assert.async();
 		const sBaseUrl = window.location.href;
 		const oAdditionalContentText = new Text({
@@ -889,7 +889,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("createPopover - without links, with additional content", function(assert) {
+	QUnit.test("createPopover - without links, with additional content", async function(assert) {
 		const done = assert.async();
 		const oAdditionalContentText = new Text({
 			text: "Additional Content Text"

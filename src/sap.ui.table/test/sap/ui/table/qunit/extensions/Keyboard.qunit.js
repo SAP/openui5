@@ -303,7 +303,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus handling", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
@@ -474,7 +474,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Focus restoration and item navigation reinitialization", function(assert) {
+	QUnit.test("Focus restoration and item navigation reinitialization", async function(assert) {
 		initRowActions(oTable, 1, 1);
 		oCore.applyChanges();
 

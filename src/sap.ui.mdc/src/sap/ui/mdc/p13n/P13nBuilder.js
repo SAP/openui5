@@ -336,9 +336,7 @@ sap.ui.define([
 				oDialogParent = oParent;
 			}
 
-			return sap.ui.getCore().loadLibrary('sap.ui.rta', {
-				async: true
-			}).then(function() {
+			return Library.load('sap.ui.rta').then(function() {
 				return new Promise(function(resolve) {
 					sap.ui.require([
 						"sap/ui/rta/Utils"

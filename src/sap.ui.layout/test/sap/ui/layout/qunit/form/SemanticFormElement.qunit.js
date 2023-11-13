@@ -113,7 +113,7 @@ sap.ui.define([
 		assert.equal(aFields[0], oField1, "First field rendered");
 	});
 
-	QUnit.test("invalid content", function(assert) {
+	QUnit.test("invalid content", async function(assert) {
 		var oLabel = new Label("L1");
 		var oException;
 
@@ -175,7 +175,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("two fields with fieldLabels", function(assert) {
+	QUnit.test("two fields with fieldLabels", async function(assert) {
 		var oLabel1 = new Label("L1", {text: "Label 1"});
 		var oLabel2 = new Label("L2", {text: "Label 2"});
 		oFormElement.addFieldLabel(oLabel1);
@@ -226,7 +226,7 @@ sap.ui.define([
 		assert.ok(aFields[4] && aFields[4] === oField2, "Second field rendered");
 	});
 
-	QUnit.test("remove field", function(assert) {
+	QUnit.test("remove field", async function(assert) {
 		var oLabel1 = new Label("L1", {text: "Label 1"});
 		var oLabel2 = new Label("L2", {text: "Label 2"});
 		oFormElement.addFieldLabel(oLabel1);
@@ -401,7 +401,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("visibility change", function(assert) {
+	QUnit.test("visibility change", async function(assert) {
 		var oLabel1 = new Label("L1", {text: "Label 1"});
 		var oLabel2 = new Label("L2", {text: "Label 2"});
 		var oLabel3 = new Label("L3", {text: "Label 3"});
@@ -465,7 +465,7 @@ sap.ui.define([
 		afterEach: afterTest
 	});
 
-	QUnit.test("one Field", function(assert) {
+	QUnit.test("one Field", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -484,7 +484,7 @@ sap.ui.define([
 		assert.notOk(aFields[0].setText.called, "Text not determined again");
 	});
 
-	QUnit.test("two fields", function(assert) {
+	QUnit.test("two fields", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -499,7 +499,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 2", "rendered text");
 	});
 
-	QUnit.test("two fields - Text created async", function(assert) {
+	QUnit.test("two fields - Text created async", async function(assert) {
 		var fnResolve;
 		oFormElement._oInitPromise = new Promise(function(fResolve, fReject) { // fake async loading
 			fnResolve = fResolve;
@@ -530,7 +530,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("three fields", function(assert) {
+	QUnit.test("three fields", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -548,7 +548,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 / Text 3 / Text 2", "rendered text");
 	});
 
-	QUnit.test("three fields with async getFormattedValue", function(assert) {
+	QUnit.test("three fields with async getFormattedValue", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -579,7 +579,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("remove field", function(assert) {
+	QUnit.test("remove field", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -596,7 +596,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 2", "rendered text");
 	});
 
-	QUnit.test("change value of field", function(assert) {
+	QUnit.test("change value of field", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -618,7 +618,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Test 1 / Test 2 / Test 3", "rendered text");
 	});
 
-	QUnit.test("delimiter change", function(assert) {
+	QUnit.test("delimiter change", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -635,7 +635,7 @@ sap.ui.define([
 		assert.equal(aFields[0].getText && aFields[0].getText(), "Text 1 * Text 2", "rendered text");
 	});
 
-	QUnit.test("change mode", function(assert) {
+	QUnit.test("change mode", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Input("F1", {value: "Text 1"});
@@ -669,7 +669,7 @@ sap.ui.define([
 		assert.ok(oDeleimiter._bIsBeingDestroyed, "oDeleimiter control destroyed;");
 	});
 
-	QUnit.test("visibility change", function(assert) {
+	QUnit.test("visibility change", async function(assert) {
 		var oLabel1 = new Label("L1", {text: "Label 1"});
 		var oLabel2 = new Label("L2", {text: "Label 2"});
 		var oLabel3 = new Label("L3", {text: "Label 3"});
@@ -723,7 +723,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("two fields supporting control-rendring, but layout don't support it", function(assert) {
+	QUnit.test("two fields supporting control-rendring, but layout don't support it", async function(assert) {
 		Link.prototype.getFormRenderAsControl = function() {return true;};
 		sinon.stub(oFormElement, "getParent").returns({ //fake assigned to FormContainer
 			getParent: function() {
@@ -811,7 +811,7 @@ sap.ui.define([
 		assert.ok(aFields[2] && aFields[2] === oField2, "Second field rendered");
 	});
 
-	QUnit.test("two fields one control don't support control rendering", function(assert) {
+	QUnit.test("two fields one control don't support control rendering", async function(assert) {
 		var oLabel = new Label("L1", {text: "Test"});
 		oFormElement.setLabel(oLabel);
 		var oField1 = new Link("F1", {text: "Text 1"});

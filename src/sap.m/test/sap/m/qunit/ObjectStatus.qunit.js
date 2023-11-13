@@ -86,7 +86,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("render a placeholder if _isEmpty", function(assert) {
+	QUnit.test("render a placeholder if _isEmpty", async function(assert) {
 		//arrange
 		var oOS = new ObjectStatus(),
 			$OS;
@@ -142,7 +142,7 @@ sap.ui.define([
 
 	QUnit.module("changing properties");
 
-	QUnit.test("ObjectStatus if the text is changed", function(assert) {
+	QUnit.test("ObjectStatus if the text is changed", async function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
@@ -165,7 +165,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus if the text is a number", function(assert) {
+	QUnit.test("ObjectStatus if the text is a number", async function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTextToExpect = "5",
@@ -188,7 +188,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus title is changed", function(assert) {
+	QUnit.test("ObjectStatus title is changed", async function(assert) {
 		// Arrange
 		var sTextToSet = "<script>alert(\"HAACKED\");<\/script>",
 			oResult,
@@ -215,7 +215,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("ObjectStatus if the title is a number", function(assert) {
+	QUnit.test("ObjectStatus if the title is a number", async function(assert) {
 		// Arrange
 		var iNumberToSet = 5,
 			sTitleToExpect = "5",
@@ -250,7 +250,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new text is empty", function(assert) {
+	QUnit.test("if the new text is empty", async function(assert) {
 		// Arrange
 		var sTextToSet = "  ",
 			oConstructor = { text : "not empty text"};
@@ -271,7 +271,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new title is empty", function(assert) {
+	QUnit.test("if the new title is empty", async function(assert) {
 		// Arrange
 		var sTitleToSet = "  ",
 			oConstructor = { title : "not empty text"};
@@ -292,7 +292,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new text is undefined", function(assert) {
+	QUnit.test("if the new text is undefined", async function(assert) {
 		// Arrange
 		var sTextToSet,
 			oConstructor = { text : "not empty text"};
@@ -313,7 +313,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("if the new title is undefined", function(assert) {
+	QUnit.test("if the new title is undefined", async function(assert) {
 		// Arrange
 		var sTitleToSet,
 			oConstructor = { title : "not empty text"};
@@ -334,7 +334,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the text was empty before", function(assert) {
+	QUnit.test("Should rerender if the text was empty before", async function(assert) {
 		// Arrange
 		var sTextToSet = "not empty text",
 			oConstructor = { text : ""};
@@ -355,7 +355,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should rerender if the title was empty before", function(assert) {
+	QUnit.test("Should rerender if the title was empty before", async function(assert) {
 		// Arrange
 		var sTitleToSet = "not empty text",
 			oConstructor = { title : ""};
@@ -376,7 +376,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display titles with special characters correctly", function(assert) {
+	QUnit.test("Should display titles with special characters correctly", async function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oConstructor = { title : "not empty text"};
@@ -397,7 +397,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display texts with special characters correctly", function(assert) {
+	QUnit.test("Should display texts with special characters correctly", async function(assert) {
 		// Arrange
 		var sTextToSet = "Account blocked - Blocked for payment",
 			oConstructor = { text : "not empty text"};
@@ -418,7 +418,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Should display titles with special characters correctly", function(assert) {
+	QUnit.test("Should display titles with special characters correctly", async function(assert) {
 		// Arrange
 		var sTitleToSet = "Account blocked - Blocked for payment",
 			oConstructor = { title : "not empty text"};
@@ -439,7 +439,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("setState", function(assert) {
+	QUnit.test("setState", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({text: "test", state: "Warning"});
 
@@ -496,7 +496,7 @@ sap.ui.define([
 
 	QUnit.module("Screen reader ARIA support");
 
-	QUnit.test("General ARIA attributes", function (assert) {
+	QUnit.test("General ARIA attributes", async function(assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "Success object status", state: ValueState.Success});
 
@@ -511,7 +511,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Active Object Status aria role ", function (assert) {
+	QUnit.test("Active Object Status aria role ", async function(assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "test", active: true});
 
@@ -529,7 +529,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Inactive Object Status aria role", function(assert) {
+	QUnit.test("Inactive Object Status aria role", async function(assert) {
 		//Arrange
 		var oObjectStatus = new ObjectStatus({text: "text"});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -600,7 +600,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("Active ObjectStatus specific ARIA", function(assert) {
+	QUnit.test("Active ObjectStatus specific ARIA", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 			title: "Title",
@@ -618,7 +618,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("State element is being referenced", function (assert) {
+	QUnit.test("State element is being referenced", async function(assert) {
 		// Arrange
 		var sId = "os",
 			oObjectStatus = new ObjectStatus(sId, {
@@ -644,7 +644,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Tooltip and aria-describedby", function (assert) {
+	QUnit.test("Tooltip and aria-describedby", async function(assert) {
 		// Arrange
 		var sId = "os",
 			oObjectStatus = new ObjectStatus(sId, {
@@ -670,7 +670,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Labelling using aria-labelledby", function (assert) {
+	QUnit.test("Labelling using aria-labelledby", async function(assert) {
 		// Arrange
 		var sId = "oslab",
 		oLabel = new Label("info", {
@@ -698,7 +698,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
+	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", async function(assert) {
 		// Arrange
 		var oCore = sap.ui.getCore(),
 			oObjectStatus = new ObjectStatus({
@@ -720,7 +720,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", function (assert) {
+	QUnit.test("Internal icon ARIA for non-icon-only ObjectStatus", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 				icon: "sap-icon://status-inactive",
@@ -741,7 +741,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("accessibilityState on inactive control instance", function (assert) {
+	QUnit.test("accessibilityState on inactive control instance", async function(assert) {
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
 			ariaLabelledBy: ["label"],
@@ -764,7 +764,7 @@ sap.ui.define([
 
 	QUnit.module("textDirection");
 
-	QUnit.test("Title and Text has dir set to LTR when Inherit", function (assert) {
+	QUnit.test("Title and Text has dir set to LTR when Inherit", async function(assert) {
 		//Arange
 		var oObjectStatus = new ObjectStatus({title: "Staus", text: "Success object"});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -778,7 +778,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", function (assert) {
+	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", async function(assert) {
 		//Arange
 		var oObjectStatus = new ObjectStatus({title: "Staus", text: "Success object", textDirection: TextDirection.RTL});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -807,7 +807,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Active status has 'sapMObjStatusActive' class and icon and text are encapsulated in one span", function(assert) {
+	QUnit.test("Active status has 'sapMObjStatusActive' class and icon and text are encapsulated in one span", async function(assert) {
 		this.oActiveStat.placeAt("qunit-fixture");
 		oCore.applyChanges();
 
@@ -819,7 +819,7 @@ sap.ui.define([
 		assert.strictEqual(this.oActiveStat.$().find(".sapMObjStatusText").length, 1, "The text span has class sapMObjStatusText.");
 	});
 
-	QUnit.test("Active status with empty icon and text", function(assert) {
+	QUnit.test("Active status with empty icon and text", async function(assert) {
 		this.oActiveStat.setText("");
 		this.oActiveStat.setIcon("");
 		this.oActiveStat.placeAt("qunit-fixture");
@@ -831,7 +831,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Private function _isClickable", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oActiveStat = new ObjectStatus("oStatus", {
 				title: "Title",
 				text: "Contract #D1234567890",
@@ -922,7 +922,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("press active ObjectStatus with text and icon", function(assert) {
+	QUnit.test("press active ObjectStatus with text and icon", async function(assert) {
 		// Act
 		this.oActiveStat.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -934,7 +934,7 @@ sap.ui.define([
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
 	});
 
-	QUnit.test("press title of active ObjectStatus with no text and icon should not fire event", function(assert) {
+	QUnit.test("press title of active ObjectStatus with no text and icon should not fire event", async function(assert) {
 		this.oActiveStat.setText("");
 		this.oActiveStat.setIcon("");
 
@@ -947,7 +947,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("ObjectStatus marks the Event on touchstart", function(assert) {
+	QUnit.test("ObjectStatus marks the Event on touchstart", async function(assert) {
 		// Arrange
 		var oEvent = new jQuery.Event();
 
@@ -963,7 +963,7 @@ sap.ui.define([
 
 	QUnit.module("Keyboard handling");
 
-	QUnit.test("Enter", function(assert) {
+	QUnit.test("Enter", async function(assert) {
 
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
@@ -986,7 +986,7 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Space", function(assert) {
+	QUnit.test("Space", async function(assert) {
 
 		// Arrange
 		var oObjectStatus = new ObjectStatus({
@@ -1010,7 +1010,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : function() {
+		beforeEach : async function() {
 			this.oText = new ObjectStatus({
 				text: "",
 				emptyIndicatorMode: EmptyIndicatorMode.On
@@ -1055,7 +1055,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
 		//Arrange
 		this.oText.setText("test");
 		oCore.applyChanges();
@@ -1064,7 +1064,7 @@ sap.ui.define([
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		oCore.applyChanges();
@@ -1080,7 +1080,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
 		//Arrange
 		this.oTextEmptyAuto.setText("test");
 		oCore.applyChanges();
@@ -1089,7 +1089,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTextEmptyAuto.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", function(assert) {
+	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", async function(assert) {
 		var oSpan = this.oTextEmptyAutoNoClass.getDomRef().childNodes[0];
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
@@ -1101,7 +1101,7 @@ sap.ui.define([
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", async function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oText.setText("test");

@@ -15,7 +15,7 @@ sap.ui.define([
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	QUnit.module("", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oLayout1 = new HorizontalLayout("Layout1", {
 				content: [new Button("B1",{text:"X", tooltip:"Button tooltip"}),
 						new Input("IN1",{value:"Test",width:"50px"}),
@@ -45,7 +45,7 @@ sap.ui.define([
 		assert.equal(oInput[0].offsetLeft, oButton[0].offsetLeft + oButton[0].offsetWidth, "Input should be exactly right of Button");
 	});
 
-	QUnit.test("NoWrap", function(assert) {
+	QUnit.test("NoWrap", async function(assert) {
 		this.oLayout1.setAllowWrapping(false);
 		Element.getElementById("IN1").setWidth("5000px");
 		oCore.applyChanges();
@@ -57,7 +57,7 @@ sap.ui.define([
 		assert.ok(oInput.offset().left < oImage.offset().left, "Left offset of Input < Second button");
 	});
 
-	QUnit.test("Wrapping", function(assert) {
+	QUnit.test("Wrapping", async function(assert) {
 		this.oLayout1.setAllowWrapping(true);
 		Element.getElementById("IN1").setWidth("5000px");
 		oCore.applyChanges();
@@ -69,7 +69,7 @@ sap.ui.define([
 		assert.equal(oImage.offset().left, oInput.offset().left, "Left offset of Input == Second button");
 	});
 
-	QUnit.test("Container Padding Classes", function (assert) {
+	QUnit.test("Container Padding Classes", async function(assert) {
 		// System under Test + Act
 		var oContainer = new HorizontalLayout({
 				content: [

@@ -1,23 +1,25 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
-		"../../services/SampleServices",
-		"sap/ui/integration/library",
-		"sap/ui/integration/widgets/Card",
-		"sap/ui/integration/cards/actions/CardActions",
-		"sap/ui/integration/cards/actions/NavigationAction",
-		"sap/ui/integration/cards/actions/SubmitAction",
-		"sap/ui/integration/util/RequestDataProvider",
-		"sap/ui/integration/Host",
-		"sap/ui/core/Core",
-		"sap/ui/core/Element",
-		"sap/base/Log",
-		"sap/ui/events/KeyCodes",
-		"sap/ui/qunit/QUnitUtils",
-		"sap/m/library"
-	],
-	function (
+	"../../services/SampleServices",
+	"sap/ui/core/Lib",
+	"sap/ui/integration/library",
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/integration/cards/actions/CardActions",
+	"sap/ui/integration/cards/actions/NavigationAction",
+	"sap/ui/integration/cards/actions/SubmitAction",
+	"sap/ui/integration/util/RequestDataProvider",
+	"sap/ui/integration/Host",
+	"sap/ui/core/Core",
+	"sap/ui/core/Element",
+	"sap/base/Log",
+	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
+	"sap/m/library"
+],
+	function(
 		SampleServices,
+		Lib,
 		library,
 		Card,
 		CardActions,
@@ -1645,7 +1647,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List should be actionable ", function (assert) {
+		QUnit.test("List should be actionable ", async function(assert) {
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
@@ -1855,7 +1857,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Submit action handler", function (assert) {
+		QUnit.test("Submit action handler", async function(assert) {
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
@@ -1894,7 +1896,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Submit action handler at the Host", function (assert) {
+		QUnit.test("Submit action handler at the Host", async function(assert) {
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
@@ -1968,7 +1970,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", function (assert) {
+		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", async function(assert) {
 			var done = assert.async(2),
 				oCardFireActionSpy = sinon.spy(this.oCard, "fireAction"),
 				oFurtherProcessingSpy = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
@@ -2003,7 +2005,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Trigger action", function (assert) {
+		QUnit.test("Trigger action", async function(assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = this.oCard,
@@ -2050,7 +2052,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Complex expression binding", function (assert) {
+		QUnit.test("Complex expression binding", async function(assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = this.oCard;
@@ -2071,9 +2073,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		return Core.loadLibrary("sap.suite.ui.commons", {
-			async: true
-		}).then(function () {
+		return Lib.load("sap.suite.ui.commons").then(function () {
 			QUnit.module("Navigation Action - Timeline Content", {
 				beforeEach: function () {
 					this.oCard = new Card({
@@ -2087,7 +2087,7 @@ sap.ui.define([
 				}
 			});
 
-			QUnit.test("Timeline should be actionable ", function (assert) {
+			QUnit.test("Timeline should be actionable ", async function(assert) {
 				var done = assert.async(),
 					oActionSpy = sinon.spy(CardActions, "fireAction"),
 					oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {

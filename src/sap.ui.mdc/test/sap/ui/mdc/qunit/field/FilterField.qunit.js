@@ -92,7 +92,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("default rendering", function(assert) {
+	QUnit.test("default rendering", async function(assert) {
 
 		oFilterField.placeAt("content");
 		oCore.applyChanges();
@@ -132,7 +132,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Eventing", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oFilterField = new FilterField("FF1", {
 				dataType: "sap.ui.model.type.Integer",
 				dataTypeConstraints: {maximum: 100},
@@ -193,7 +193,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for single value", function(assert) {
+	QUnit.test("clenaup wrong input for single value", async function(assert) {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
@@ -237,7 +237,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("clenaup wrong input for multi value", function(assert) {
+	QUnit.test("clenaup wrong input for multi value", async function(assert) {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oFilterField, true); // to test valueState
@@ -375,7 +375,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("value updates in searchfield scenario", function(assert) { // BCP: 2280085536
+	QUnit.test("value updates in searchfield scenario", async function(assert) { // BCP: 2280085536
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",
@@ -410,7 +410,7 @@ sap.ui.define([
 		oFilterField.fireChange.restore();
 	});
 
-	QUnit.test("search event handling", function(assert) {
+	QUnit.test("search event handling", async function(assert) {
 		oFilterField.destroy();
 		oFilterField = new FilterField("FF1", {
 			propertyKey: "$search",

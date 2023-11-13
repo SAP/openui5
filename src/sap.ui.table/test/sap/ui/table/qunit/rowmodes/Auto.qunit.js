@@ -326,7 +326,7 @@ sap.ui.define([
 	RowsUpdatedTest.test("Render when theme not applied", function(assert) {
 		var oIsThemeApplied = sinon.stub(Core, "isThemeApplied").returns(false);
 		this.createTable();
-		return this.checkRowsUpdated(assert, []).then(() => {
+		return this.checkRowsUpdated(assert, []).then(async () => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
 			Core.applyChanges();
@@ -396,7 +396,7 @@ sap.ui.define([
 	}
 
 	function RowsUpdatedTestRerenderWithoutBinding(assert, fnOriginalTest) {
-		return fnOriginalTest().then(() => {
+		return fnOriginalTest().then(async () => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
 			Core.applyChanges();
@@ -408,7 +408,7 @@ sap.ui.define([
 		return fnOriginalTest().then(() => {
 			this.resetRowsUpdatedSpy();
 			return TableQUnitUtils.hideTestContainer();
-		}).then(() => {
+		}).then(async () => {
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
 			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
@@ -421,7 +421,7 @@ sap.ui.define([
 	}
 
 	function RowsUpdatedTestRerenderWithBinding(assert, fnOriginalTest) {
-		return fnOriginalTest().then(() => {
+		return fnOriginalTest().then(async () => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
 			Core.applyChanges();
@@ -436,7 +436,7 @@ sap.ui.define([
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
 			return TableQUnitUtils.hideTestContainer();
-		}).then(() => {
+		}).then(async () => {
 			this.oTable.invalidate();
 			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
@@ -454,7 +454,7 @@ sap.ui.define([
 		}).then(() => {
 			this.resetRowsUpdatedSpy();
 			return TableQUnitUtils.hideTestContainer();
-		}).then(() => {
+		}).then(async () => {
 			this.oTable.getRowMode().setRowContentHeight(this.oTable._getDefaultRowHeight() + 20); // The table will show less rows.
 			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);

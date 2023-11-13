@@ -195,7 +195,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("API and Rendering", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oApp = new App("myApp", { initialPage: "toolHeaderPage" });
 			this.oPage = new Page("toolHeaderPage", { title: "Tool Header" });
 			this.oApp.placeAt(DOM_RENDER_LOCATION);
@@ -242,7 +242,7 @@ sap.ui.define([
 		assert.ok(jQuery('.sapMOTAPopover').length > 0, "Popover is rendered");
 	});
 
-	QUnit.test("ToolHeader sapMBarChildFirstChild class", function (assert) {
+	QUnit.test("ToolHeader sapMBarChildFirstChild class", async function(assert) {
 		var oFirstControl = this.toolHeader.getContent()[0],
 			oSecondControl = this.toolHeader.getContent()[1];
 

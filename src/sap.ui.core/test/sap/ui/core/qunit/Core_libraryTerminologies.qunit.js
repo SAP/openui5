@@ -27,9 +27,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLibraryResourceBundle() - Simple", function(assert) {
-		return Core.loadLibrary("testlibs.terminologies.simple", {
-			async: true
-		}).then(function() {
+		return Lib.load("testlibs.terminologies.simple").then(function() {
 			assert.equal(this.oRBCreateSpy.callCount, 1, "ResourceBundle.create should be called once");
 
 			var oLibRB = Core.getLibraryResourceBundle("testlibs.terminologies.simple");
@@ -38,9 +36,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("getLibraryResourceBundle() - Absolute bundleUrl shouldn't be resolved", function(assert) {
-		return Core.loadLibrary("testlibs.terminologies.absoluteBundleUrl", {
-			async: true
-		}).then(function(oLibInfo) {
+		return Lib.load("testlibs.terminologies.absoluteBundleUrl").then(function(oLibInfo) {
 			assert.equal(this.oRBCreateSpy.callCount, 1, "ResourceBundle.create should be called once");
 			assert.equal(this.oRBgetUrlSpy.returnValues[0], "test-resources/sap/ui/core/qunit/testdata/libraries/terminologies/absoluteBundleUrl/i18n/i18n.properties", "Relative base 'bundleUrl' should be resolved");
 			assert.equal(this.oRBgetUrlSpy.returnValues[1], "https://somewhere.else/i18n/terminologies/oil/i18n.properties", "Absolute 'bundleUrl' shouldn't be resolved.");
@@ -55,9 +51,7 @@ sap.ui.define([
 		var mLoadedLibraries = Lib.all();
 		var iLoaded = mLoadedLibraries["testlibs.terminologies.simple"] ? 0 : 1;
 
-		return Core.loadLibrary("testlibs.terminologies.simple", {
-			async: true
-		}).then(function() {
+		return Lib.load("testlibs.terminologies.simple").then(function() {
 			// If library was already loaded by another test, no ResourceBundle will be loaded again
 			assert.equal(this.oRBCreateSpy.callCount, iLoaded, "ResourceBundle.create should be called " + iLoaded + " times");
 
@@ -97,9 +91,7 @@ sap.ui.define([
 			});
 		})
 		.then(function () {
-			return Core.loadLibrary("testlibs.terminologies.notLoadedYet", {
-				async: true
-			}).then(function () {
+			return Lib.load("testlibs.terminologies.notLoadedYet").then(function () {
 				return Core.getLibraryResourceBundle("testlibs.terminologies.notLoadedYet", true)
 					.then(function (oLibRB) {
 						assert.equal(oLibRB.getText("TEST_TEXT"), "Retail", "'Retail' text is returned, because the library is available now and terminology 'retail is correctly applied'.");

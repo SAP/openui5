@@ -111,7 +111,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("D&D Resizer", function(assert) {
+	QUnit.test("D&D Resizer", async function(assert) {
 		const fnTestAdaptations = (bDuringResize) => {
 			assert.equal(this.oTable.getDomRef("rzoverlay") != null, bDuringResize,
 				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");

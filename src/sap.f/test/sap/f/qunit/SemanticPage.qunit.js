@@ -759,7 +759,7 @@ function(
 	// This test is needed to ensure that the buttons added to customShareActions can be bound
 	// the same way as other buttons
 	// Due to the buttons being shown in the static UI area there might be issues with bindings
-	QUnit.test("test SemanticPage customShareActions content bindings", function (assert) {
+	QUnit.test("test SemanticPage customShareActions content bindings", async function(assert) {
 		var sButtonText = "Action 1";
 		var aTexts = [];
 		aTexts["action1"] = sButtonText;
@@ -789,7 +789,7 @@ function(
 		assert.strictEqual(oCustomShareButton.getText(), sButtonText, "Expected text from binding in button is there");
 	});
 
-	QUnit.test("test SemanticPage customShareActions *delayed* content bindings", function (assert) {
+	QUnit.test("test SemanticPage customShareActions *delayed* content bindings", async function(assert) {
 		var sButtonText = "Action 1";
 		var aTexts = [];
 		aTexts["action1"] = sButtonText;
@@ -935,7 +935,7 @@ function(
 		assert.ok(oSaveAsTileAction.bIsDestroyed, "oSaveAsTileAction button has been destroyed.");
 	});
 
-	QUnit.test("SemanticPage landmark info is set correctly", function (assert) {
+	QUnit.test("SemanticPage landmark info is set correctly", async function(assert) {
 		var oLandmarkInfo = new DynamicPageAccessibleLandmarkInfo({
 			rootRole: "Region",
 			rootLabel: "Root",
@@ -961,7 +961,7 @@ function(
 	});
 
 
-	QUnit.test("test SemanticPage snapping and expanding of header", function (assert) {
+	QUnit.test("test SemanticPage snapping and expanding of header", async function(assert) {
 		//Arrange
 		var oSnappedTitle = oFactory.getTitle(),
 			oExpandedTitle = oFactory.getDynamicPageTitle(),

@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.ui.support.
  */
-sap.ui.define(["sap/ui/core/library"],
-	function (library1) {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library"],
+	function(Library, library1) {
 	"use strict";
 
 	/**
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/core/library"],
 	 * @since 1.50
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.support",
 		dependencies : ["sap.ui.core"],
 		types: [

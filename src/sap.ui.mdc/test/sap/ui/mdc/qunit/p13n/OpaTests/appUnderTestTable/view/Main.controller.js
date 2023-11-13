@@ -1,13 +1,14 @@
 
 sap.ui.define([
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Core",
 	"sap/ui/mdc/p13n/StateUtil",
 	"test-resources/sap/ui/mdc/qunit/util/V4ServerHelper",
 	"sap/ui/model/odata/v4/ODataModel"
-], function(Element, Controller, Fragment, oCore, StateUtil, V4ServerHelper, ODataModel) {
+], function(Element, Lib, Controller, Fragment, oCore, StateUtil, V4ServerHelper, ODataModel) {
 	"use strict";
 	return Controller.extend("view.Main", {
 
@@ -49,7 +50,7 @@ sap.ui.define([
 
 		onPressRTA: function() {
 			const oOwnerComponent = this.getOwnerComponent();
-			oCore.loadLibrary("sap/ui/rta", { async: true }).then(function () {
+			Lib.load("sap/ui/rta").then(function () {
 				sap.ui.require(["sap/ui/rta/api/startKeyUserAdaptation"], function (startKeyUserAdaptation) {
 					startKeyUserAdaptation({
 						rootControl: oOwnerComponent.getAggregation("rootControl")

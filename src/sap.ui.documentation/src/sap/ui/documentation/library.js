@@ -8,12 +8,13 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/thirdparty/jquery",
 	'sap/ui/core/util/LibraryInfo',
 	"sap/ui/documentation/sdk/util/Resources",
 	'sap/ui/core/library',
 	'sap/m/library'
-], function(Log, Core, jQuery, LibraryInfo, ResourcesUtil) {
+], function(Log, Core, Library, jQuery, LibraryInfo, ResourcesUtil) {
 
 	'use strict';
 
@@ -27,7 +28,7 @@ sap.ui.define([
 	 * @since 1.48
 	 * @public
 	 */
-	var thisLibrary = Core.initLibrary({
+	var thisLibrary = Library.init({
 		name : 'sap.ui.documentation',
 		version: '${version}',
 		dependencies : ['sap.ui.core','sap.m'],

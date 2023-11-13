@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("API", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");
@@ -23,7 +23,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the controls", function (assert) {
+	QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the controls", async function(assert) {
 		var sExpectedAM = "AM",
 			sExpectedPM = "PM",
 			sLocale = "de_DE",
@@ -39,7 +39,7 @@ sap.ui.define([
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
 	});
 
-	QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the controls", function (assert) {
+	QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the controls", async function(assert) {
 		var sDisplayFormat = "medium",
 			oSetPropertySpy = this.spy(this.oTPC, "setProperty"),
 			oSetupControlsSpy = this.spy(this.oTPC, "_createControls");
@@ -51,7 +51,7 @@ sap.ui.define([
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
 	});
 
-	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the controls", function(assert) {
+	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the controls", async function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPC, "setProperty"),
 			oSetupControlsSpy = this.spy(this.oTPC, "_createControls"),
 			iStep = 23;
@@ -63,7 +63,7 @@ sap.ui.define([
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
 	});
 
-	QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the controls", function(assert) {
+	QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the controls", async function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPC, "setProperty"),
 			oSetupControlsSpy = this.spy(this.oTPC, "_createControls"),
 			iStep = 23;
@@ -75,7 +75,7 @@ sap.ui.define([
 		assert.ok(oSetupControlsSpy.called, "_createControls is called to regenerate the controls");
 	});
 
-	QUnit.test("Call to setValue sets the value", function (assert) {
+	QUnit.test("Call to setValue sets the value", async function(assert) {
 		var sValue = "15:16:17",
 			oSetPropertySpy = this.spy(this.oTPC, "setProperty");
 
@@ -85,7 +85,7 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
 
-	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
+	QUnit.test("Call to setValue calls the _setTimeValues", async function(assert) {
 		var sValue = "15:16:17",
 			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
@@ -98,7 +98,7 @@ sap.ui.define([
 		assert.equal(oSetTimeValuesSpy.calledWithExactly(sExpectedDate, false), true, "_setTimeValues is called with parsed date");
 	});
 
-	QUnit.test("Call to setValue with '24:00:00' sets the value", function (assert) {
+	QUnit.test("Call to setValue with '24:00:00' sets the value", async function(assert) {
 		var sValue = "24:00:00",
 			oSetPropertySpy = this.spy(this.oTPC, "setProperty");
 
@@ -109,7 +109,7 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.calledWithExactly("value", sValue, true), true, "setProperty is called with right arguments");
 	});
 
-	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
+	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", async function(assert) {
 		var sValue = "24:00:00",
 			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPC, "_setTimeValues");
@@ -124,7 +124,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Internals", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");
@@ -503,7 +503,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clocks Interactions", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.setValueFormat("HH:mm:ss");
@@ -551,7 +551,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Clicking on button changes the clock", function (assert) {
+	QUnit.test("Clicking on button changes the clock", async function(assert) {
 		var sId = this.oTPC.getId();
 
 		Element.getElementById(sId + "-btnH").focus();
@@ -574,7 +574,7 @@ sap.ui.define([
 		assert.ok(Element.getElementById(sId + "-clockS").hasStyleClass("sapMTPCActive"), "Seconds clock is visible after clicking the Seconds button");
 	});
 
-	QUnit.test("Arrows actions (covers arrows and mousewheel)", function (assert) {
+	QUnit.test("Arrows actions (covers arrows and mousewheel)", async function(assert) {
 		var oHoursClock = this.oTPC._getHoursClock(),
 			oMinutesClock = this.oTPC._getMinutesClock(),
 			oSecondsClock = this.oTPC._getSecondsClock(),
@@ -760,7 +760,7 @@ sap.ui.define([
 		assert.equal(oFinalDate.getSeconds(), 58, "Seconds are set properly");
 	});
 
-	QUnit.test("Direct input of two-digit numbers", function (assert) {
+	QUnit.test("Direct input of two-digit numbers", async function(assert) {
 		var sId = this.oTPC.getId(),
 			oFinalDate;
 
@@ -820,7 +820,7 @@ sap.ui.define([
 		assert.equal(oFinalDate.getSeconds(), 33, "Seconds are set properly");
 	});
 
-	QUnit.test("Direct input of one-digit numbers w/o overflow", function (assert) {
+	QUnit.test("Direct input of one-digit numbers w/o overflow", async function(assert) {
 		var sId = this.oTPC.getId(),
 			oFinalDate;
 
@@ -876,7 +876,7 @@ sap.ui.define([
 		assert.equal(oFinalDate.getSeconds(), 3, "Seconds are set properly");
 	});
 
-	QUnit.test("Direct input of 24 when support2400 is enabled", function (assert) {
+	QUnit.test("Direct input of 24 when support2400 is enabled", async function(assert) {
 		var sId = this.oTPC.getId(),
 			oHoursClock,
 			oMinutesClock,
@@ -942,7 +942,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Direct input of one-digit numbers with overflow", function (assert) {
+	QUnit.test("Direct input of one-digit numbers with overflow", async function(assert) {
 		var sId = this.oTPC.getId(),
 			oFinalDate;
 
@@ -992,7 +992,7 @@ sap.ui.define([
 		assert.equal(oFinalDate.getSeconds(), 7, "Seconds are set properly");
 	});
 
-	QUnit.test("Increase/decrease with different steps for minutes and seconds (Page Up/Page Down)", function (assert) {
+	QUnit.test("Increase/decrease with different steps for minutes and seconds (Page Up/Page Down)", async function(assert) {
 		var oMinutesClock,
 			oSecondsClock,
 			oMinutesButton,
@@ -1056,7 +1056,7 @@ sap.ui.define([
 		assert.equal(parseInt(oSecondsButton.getText()), 0, "... and Button text shows the same value");
 	});
 
-	QUnit.test("Increase/decrease with different steps for minutes and seconds (Arrow Up/Arrow Down)", function (assert) {
+	QUnit.test("Increase/decrease with different steps for minutes and seconds (Arrow Up/Arrow Down)", async function(assert) {
 		var oMinutesClock,
 			oSecondsClock,
 			oMinutesButton,
@@ -1129,7 +1129,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ACC", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTPC = new TimePickerClocks({
 				valueFormat: "hh:mm:ss a",
 				displayFormat: "hh:mm:ss a",
@@ -1169,7 +1169,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oTPC = new TimePickerClocks();
 
 			this.oTPC.placeAt("qunit-fixture");

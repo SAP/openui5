@@ -187,7 +187,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("default rendering", function(assert) {
+	QUnit.test("default rendering", async function(assert) {
 
 		oField.placeAt("content");
 		oCore.applyChanges();
@@ -200,7 +200,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("FieldEditMode", function(assert) {
+	QUnit.test("FieldEditMode", async function(assert) {
 
 		oField.setEditMode(FieldEditMode.Display);
 		oField.placeAt("content");
@@ -221,7 +221,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("external control", function(assert) {
+	QUnit.test("external control", async function(assert) {
 
 		let oSlider = new Slider("S1");
 		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
@@ -266,7 +266,7 @@ sap.ui.define([
 	let oFieldEdit, oFieldDisplay;
 
 	QUnit.module("properties", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oFieldEdit = new Field("F1", { editMode: FieldEditMode.Editable });
 			oFieldDisplay = new Field("F2", { editMode: FieldEditMode.Display });
@@ -315,7 +315,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("additionalValue", function(assert) {
+	QUnit.test("additionalValue", async function(assert) {
 
 		oFieldEdit.setValue("Test");
 		oFieldEdit.setAdditionalValue("Hello");
@@ -434,7 +434,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("multipleLines", function(assert) {
+	QUnit.test("multipleLines", async function(assert) {
 
 		oFieldEdit.setValue("Test");
 		oFieldDisplay.setValue("Test");
@@ -477,7 +477,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType Time", function(assert) {
+	QUnit.test("dataType Time", async function(assert) {
 
 		oFieldEdit.setDataType("sap.ui.model.type.Time");
 		oFieldEdit.setValue(new Date(1970, 0, 1, 9, 0, 0));
@@ -498,7 +498,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType DateTimeOffset", function(assert) {
+	QUnit.test("dataType DateTimeOffset", async function(assert) {
 
 		oFieldEdit.setDataType("Edm.DateTimeOffset");
 		oFieldEdit.setValue(new Date(2017, 10, 7, 13, 1, 24));
@@ -519,7 +519,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dataType sap.ui.model.type.Currency", function(assert) {
+	QUnit.test("dataType sap.ui.model.type.Currency", async function(assert) {
 
 		oFieldEdit.setDataType("sap.ui.model.type.Currency");
 		oFieldEdit.setValue([12.34, "USD"]);
@@ -548,7 +548,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("width", function(assert) {
+	QUnit.test("width", async function(assert) {
 
 		oFieldEdit.setWidth("100px");
 		oFieldDisplay.setWidth("100px");
@@ -567,7 +567,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("required", function(assert) {
+	QUnit.test("required", async function(assert) {
 
 		const oLabel = new Label("L1", { text: "test", labelFor: oFieldEdit }).placeAt("content");
 		oFieldEdit.setRequired(true);
@@ -581,7 +581,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("placeholder", function(assert) {
+	QUnit.test("placeholder", async function(assert) {
 
 		oFieldEdit.setPlaceholder("Test");
 		oCore.applyChanges();
@@ -592,7 +592,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("valueState", function(assert) {
+	QUnit.test("valueState", async function(assert) {
 
 		oFieldEdit.setValueState("Error");
 		oFieldEdit.setValueStateText("Test");
@@ -605,7 +605,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("value / additionalValue / valueState together", function(assert) {
+	QUnit.test("value / additionalValue / valueState together", async function(assert) {
 
 		oFieldEdit.setDisplay(FieldDisplay.DescriptionValue);
 		oCore.applyChanges();
@@ -634,7 +634,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textAlign", function(assert) {
+	QUnit.test("textAlign", async function(assert) {
 
 		oFieldEdit.setTextAlign("End");
 		oFieldDisplay.setTextAlign("End");
@@ -650,7 +650,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("textDirection", function(assert) {
+	QUnit.test("textDirection", async function(assert) {
 
 		oFieldEdit.setTextDirection("RTL");
 		oFieldDisplay.setTextDirection("RTL");
@@ -667,7 +667,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Eventing", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oField = new Field("F1", {
 				dataType: "Edm.String"
@@ -745,7 +745,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content", function(assert) {
+	QUnit.test("with external content", async function(assert) {
 
 		oField.setValue(70);
 		const oSlider = new Slider("S1");
@@ -779,7 +779,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("cleanup wrong input", function(assert) {
+	QUnit.test("cleanup wrong input", async function(assert) {
 
 		const fnDone = assert.async();
 		Messaging.registerObject(oField, true); // to test valueState
@@ -823,7 +823,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Clone", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			oField = new Field("F1");
 			oField.setValue("Test");
 			oField.attachChange(_myChangeHandler);
@@ -837,7 +837,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("with internal content", function(assert) {
+	QUnit.test("with internal content", async function(assert) {
 
 		const oClone = oField.clone("myClone");
 		oClone.placeAt("content");
@@ -886,7 +886,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("with external content", function(assert) {
+	QUnit.test("with external content", async function(assert) {
 
 		oField.setValue(70);
 		const oSlider = new Slider("S1");
@@ -956,7 +956,7 @@ sap.ui.define([
 	let oAdditionalType;
 
 	QUnit.module("Binding", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oModel = new JSONModel({
 				value: 10,
@@ -1115,7 +1115,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("change binding", function(assert) {
+	QUnit.test("change binding", async function(assert) {
 
 		oField2.bindProperty("value", { path: "/value", type: oType });
 		oCore.applyChanges();
@@ -1188,7 +1188,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("additionalValue with twoway binding", function(assert) {
+	QUnit.test("additionalValue with twoway binding", async function(assert) {
 
 		oField3.bindProperty("additionalValue", { path: "description", type: oAdditionalType });
 		oCore.applyChanges();
@@ -1533,7 +1533,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Output", function(assert) {
+	QUnit.test("Output", async function(assert) {
 
 		oField.setValue([undefined, undefined, oCurrencyCodeList]);
 		oField.setValue([1, "USD"]); // to check that currency list is still used
@@ -1551,7 +1551,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("update of user input", function(assert) {
+	QUnit.test("update of user input", async function(assert) {
 
 		oField.setValue([1, "USD", oCurrencyCodeList]);
 		oField.placeAt("content");
@@ -1588,7 +1588,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("update of user input for initial condition", function(assert) {
+	QUnit.test("update of user input for initial condition", async function(assert) {
 
 		oField.setValue([null, null, oCurrencyCodeList]);
 		oField.placeAt("content");
@@ -1626,7 +1626,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("update while user input pending", function(assert) {
+	QUnit.test("update while user input pending", async function(assert) {
 
 		// simulates OutParameter sets unit while user alredy types number
 		oField.placeAt("content");
@@ -1714,7 +1714,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("DateTime with timezone", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			FieldBaseDelegateODataDefaultTypes.enable();
 			oModel = new JSONModel({
 				dateTime: "2022-02-25T07:06:30+01:00",

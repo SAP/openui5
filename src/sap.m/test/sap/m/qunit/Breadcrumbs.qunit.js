@@ -188,7 +188,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		assert.strictEqual(oStandardBreadCrumbsControl.getCurrentLocationText(), sNewCurrentLocationVal, "current location value changed to sNewCurrentLocationVal");
 	});
 
-	QUnit.test("Instantiation", function (assert) {
+	QUnit.test("Instantiation", async function(assert) {
 		var oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks(0, null),
 			$currentLocationText;
 
@@ -272,7 +272,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		} );
 	});
 
-	QUnit.test("separator has aria-hidden", function (assert) {
+	QUnit.test("separator has aria-hidden", async function(assert) {
 		// arrange
 		var oControl = oFactory.getBreadCrumbControlWithLinks(4, oFactory.getText());
 		oControl.placeAt("qunit-fixture");
@@ -286,7 +286,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		oControl.destroy();
 	});
 
-	QUnit.test("Custom separator (DOM Patching)", function (assert) {
+	QUnit.test("Custom separator (DOM Patching)", async function(assert) {
 		//arrange
 		var oControl = this.oStandardBreadCrumbsControl;
 		oControl.placeAt("qunit-fixture");
@@ -473,7 +473,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		assert.ok(invalidateSpy.notCalled, "breadcrumb is not invalidated during rendering");
 	});
 
-	QUnit.test("Prevent width rounding issues", function (assert) {
+	QUnit.test("Prevent width rounding issues", async function(assert) {
 
 		var oLink1 = new Link({text: "Sales Organization"}),
 			oLink2 = new Link({text: "Order Type"}),
@@ -687,7 +687,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		});
 	});
 
-	QUnit.test("Position and size of the items", function (assert) {
+	QUnit.test("Position and size of the items", async function(assert) {
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
 			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation(),
 			oLinks = oStandardBreadCrumbsControl._getControlsForBreadcrumbTrail(),
@@ -737,7 +737,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 		assert.strictEqual(oStandardBreadCrumbsControl.$().attr("tabindex"), undefined, "Tabindex should not be set for empty breadcrumbs");
 	});
 
-	QUnit.test("Current location focus restored", function (assert) {
+	QUnit.test("Current location focus restored", async function(assert) {
 		// Arrange
 		var oStandardBreadCrumbsControl = this.oStandardBreadCrumbsControl,
 			oCurrentLocation = oStandardBreadCrumbsControl._getCurrentLocation();
@@ -756,7 +756,7 @@ function(Library, DomUnitsRem, Parameters, Breadcrumbs, Link, OverflowToolBar, T
 
 	});
 
-	QUnit.test("ARIA labelledBy", function(assert) {
+	QUnit.test("ARIA labelledBy", async function(assert) {
 		var oBreadcrumbsControl = new Breadcrumbs({
 			ariaLabelledBy: "id1"
 		});

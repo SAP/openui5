@@ -1,13 +1,15 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Lib",
 	"sap/ui/integration/cards/AnalyticalContent",
 	"sap/ui/integration/cards/actions/NavigationAction",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/actions/CardActions",
 	"../services/SampleServices"
-], function (
+], function(
+	Lib,
 	AnalyticalContent,
 	NavigationAction,
 	Card,
@@ -970,9 +972,9 @@ sap.ui.define([
 
 
 
-	return Core.loadLibrary("sap.viz", { async: true }).then(function () {
+	return Lib.load("sap.viz").then(function () {
 		QUnit.module("Chart creation", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",

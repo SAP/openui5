@@ -2,17 +2,18 @@
 sap.ui.define([
 	"sap/m/upload/UploadSetwithTable",
 	"sap/ui/core/Element",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Core",
 	"sap/m/upload/FilePreviewDialog",
 	"./UploadSetwithTableTestUtils",
 	"sap/ui/thirdparty/jquery"
-], function(UploadSetwithTable, Element, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
+], function(UploadSetwithTable, Element, Lib, JSONModel, oCore, FilePreviewDialog, TestUtils, jQuery) {
 	"use strict";
 
 
 	QUnit.module("FilePreviewDialog general functionality", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSetwithTable = new UploadSetwithTable("UploadSetwithTable", {
 				items: {
 					path: "/items",
@@ -54,7 +55,7 @@ sap.ui.define([
 		assert.equal(oAssociatedControlRef.getMaxFileSizeforPreview(), 1024, "MaxFileSizeforPreview is set to 1024 units");
 	});
 
-	QUnit.test("Test for method _openFilePreview", function (assert) {
+	QUnit.test("Test for method _openFilePreview", async function(assert) {
 		var fnDone = assert.async();
 
 		var oItem = this.oUploadSetwithTable.getItems()[0];
@@ -79,10 +80,10 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	return oCore.loadLibrary("sap.suite.ui.commons", { async: true })
+	return Lib.load("sap.suite.ui.commons")
 		.then(function (assert) {
 			QUnit.module("Supported media type", {
-				beforeEach: function () {
+				beforeEach: async function() {
 					this.$RootNode = jQuery(document.body);
 					this.oUploadSetwithTable = new UploadSetwithTable("UploadSetwithTable", {
 						items: {
@@ -99,7 +100,7 @@ sap.ui.define([
 					this.oUploadSetwithTable = null;
 				}
 			});
-			QUnit.test("Test for supported media type and Illustrated Messages", function (assert) {
+			QUnit.test("Test for supported media type and Illustrated Messages", async function(assert) {
 				var fnDone = assert.async();
 
 				var oItem = this.oUploadSetwithTable.getItems()[0];

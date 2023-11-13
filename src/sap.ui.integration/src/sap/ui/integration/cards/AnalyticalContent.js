@@ -6,16 +6,18 @@ sap.ui.define([
 	"./BaseContent",
 	"sap/f/cards/loading/AnalyticalPlaceholder",
 	"sap/m/IllustratedMessageType",
+	"sap/ui/core/Lib",
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/core/Core"
-], function (
+], function(
 	AnalyticalContentRenderer,
 	BaseContent,
 	AnalyticalPlaceholder,
 	IllustratedMessageType,
+	Lib,
 	library,
 	BindingResolver,
 	Log,
@@ -127,7 +129,7 @@ sap.ui.define([
 	 */
 	AnalyticalContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
-			Core.loadLibrary("sap.viz", { async: true })
+			Lib.load("sap.viz")
 				.then(function () {
 					sap.ui.require([
 						"sap/viz/ui5/controls/VizFrame",

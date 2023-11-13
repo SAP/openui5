@@ -1,10 +1,11 @@
 
 sap.ui.define([
 	"sap/ui/core/Core",
+	"sap/ui/core/Lib",
 	"sap/ui/core/library"
-], function(oCore) {
+], function(oCore, Library) {
 	"use strict";
-	return oCore.initLibrary({
+	return Library.init({
 		name: "testlibs.scenario11.lib1",
 		noLibraryCSS: true
 	});

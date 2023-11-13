@@ -107,7 +107,7 @@ sap.ui.define("sap.m.qunit.UploadSetOpenFileDialog", [
 	}
 
 	QUnit.module("UploadSet openFileDialog method", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oUploadSet = new UploadSet({
 				instantUpload: true,
 				items: {
@@ -191,7 +191,7 @@ sap.ui.define("sap.m.qunit.UploadSetOpenFileDialog", [
 		assert.deepEqual(this.oUploadSet._oItemToUpdate, oItem);
 	});
 
-	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the case of uploadComplete", function (assert) {
+	QUnit.test("onUploadComplete event test that _oItemToUpdate is set to null in the case of uploadComplete", async function(assert) {
 		// Arrange
 		var oItem = this.oUploadSet.getItems()[0];
 		oItem.setUploadState("Ready");

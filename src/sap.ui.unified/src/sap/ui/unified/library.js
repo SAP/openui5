@@ -10,6 +10,7 @@ sap.ui.define([
  'sap/ui/base/Object',
  "./ColorPickerDisplayMode",
  "./FileUploaderHttpRequestMethod",
+ "sap/ui/core/Lib",
  "sap/ui/core/RenderManager",
  'sap/ui/core/library'
 ], function(
@@ -17,6 +18,7 @@ sap.ui.define([
  BaseObject,
  ColorPickerDisplayMode,
  FileUploaderHttpRequestMethod,
+ Library,
  RenderManager
 ) {
 
@@ -32,7 +34,7 @@ sap.ui.define([
 	 * @since 1.28
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.ui.unified",
 		version: "${version}",
 		dependencies : ["sap.ui.core"],

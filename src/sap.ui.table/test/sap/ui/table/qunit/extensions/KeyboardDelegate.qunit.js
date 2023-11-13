@@ -440,7 +440,7 @@ sap.ui.define([
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
-	QUnit.test("_allowsToggleExpandedState; Tree row", function(assert) {
+	QUnit.test("_allowsToggleExpandedState; Tree row", async function(assert) {
 		initRowActions(oTreeTable, 2, 2);
 
 		var oTreeIconCell = getCell(0, 0, null, null, oTreeTable)[0];
@@ -497,7 +497,7 @@ sap.ui.define([
 			"Returned True: Pressing a key on a row action cell in a grouping row can toggle a group");
 	});
 
-	QUnit.test("_focusElement", function(assert) {
+	QUnit.test("_focusElement", async function(assert) {
 		var oElement;
 		var oSetSilentFocusSpy = this.spy(oTable._getKeyboardExtension(), "setSilentFocus");
 		var sInputType;
@@ -627,7 +627,7 @@ sap.ui.define([
 		assert.ok(!KeyboardDelegate._isElementInteractive(), "No parameter passed: False was returned");
 	});
 
-	QUnit.test("_getFirstInteractiveElement", function(assert) {
+	QUnit.test("_getFirstInteractiveElement", async function(assert) {
 		var $FirstInteractiveElement = KeyboardDelegate._getFirstInteractiveElement(oTable.getRows()[0]);
 		assert.strictEqual($FirstInteractiveElement.length, 1, "First row: One element was returned");
 		assert.strictEqual($FirstInteractiveElement[0].value, "Focus&TabInput1", "First row: The correct element was returned");
@@ -840,7 +840,7 @@ sap.ui.define([
 		checkFocus(getCell(1, 2), assert);
 	});
 
-	QUnit.test("Row Actions", function(assert) {
+	QUnit.test("Row Actions", async function(assert) {
 		initRowActions(oTable, 1, 1);
 		oCore.applyChanges();
 		var oElem = checkFocus(getRowAction(1, true), assert);
@@ -852,7 +852,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
-	QUnit.test("Extension and Footer", function(assert) {
+	QUnit.test("Extension and Footer", async function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		oCore.applyChanges();
@@ -905,7 +905,7 @@ sap.ui.define([
 		checkFocus(getCell(0, 1), assert);
 	});
 
-	QUnit.test("No cells", function(assert) {
+	QUnit.test("No cells", async function(assert) {
 		var oElem;
 
 		oTable.setColumnHeaderVisible(false);
@@ -920,7 +920,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
-	QUnit.test("No content cells", function(assert) {
+	QUnit.test("No content cells", async function(assert) {
 		var oElem;
 
 		oTable.getRowMode().setRowCount(0);
@@ -934,7 +934,7 @@ sap.ui.define([
 		checkFocus(getColumnHeader(0), assert);
 	});
 
-	QUnit.test("CreationRow when hideEmptyRows is set to true", function(assert) {
+	QUnit.test("CreationRow when hideEmptyRows is set to true", async function(assert) {
 		var oElem, oCreationRow, oInput, oApplyButton;
 
 		oTable.getRowMode().setRowCount(5);
@@ -1161,14 +1161,14 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Fixed columns", function(assert) {
+	QUnit.test("Fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
 		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("Fixed columns + fixed rows", function(assert) {
+	QUnit.test("Fixed columns + fixed rows", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
@@ -1180,14 +1180,14 @@ sap.ui.define([
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("No Row Header", function(assert) {
+	QUnit.test("No Row Header", async function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
 		oCore.applyChanges();
 
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("No Column Header", function(assert) {
+	QUnit.test("No Column Header", async function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 
@@ -1199,7 +1199,7 @@ sap.ui.define([
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("Fixed columns + fixed rows + row header + column header + row actions", function(assert) {
+	QUnit.test("Fixed columns + fixed rows + row header + column header + row actions", async function(assert) {
 		initRowActions(this.oTable, 1, 1);
 		this.oTable.setFixedColumnCount(1);
 		this.oTable.setRowMode(new FixedRowMode({
@@ -1212,7 +1212,7 @@ sap.ui.define([
 		this.testArrowKeys(assert);
 	});
 
-	QUnit.test("Multi header", function(assert) {
+	QUnit.test("Multi header", async function(assert) {
 		var that = this;
 
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
@@ -1245,7 +1245,7 @@ sap.ui.define([
 		this.triggerKey(Key.Arrow.DOWN, this.oTable.qunit.getSelectAllCell(), this.oTable.qunit.getRowHeaderCell(0));
 	});
 
-	QUnit.test("Multi header + row actions", function(assert) {
+	QUnit.test("Multi header + row actions", async function(assert) {
 		initRowActions(this.oTable, 1, 1);
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
@@ -1274,7 +1274,7 @@ sap.ui.define([
 			{defaultPrevented: false, propagationStopped: false});
 	});
 
-	QUnit.test("Variable row heights", function(assert) {
+	QUnit.test("Variable row heights", async function(assert) {
 		this.oTable._bVariableRowHeightEnabled = true;
 		this.oTable.invalidate();
 		oCore.applyChanges();
@@ -1393,7 +1393,7 @@ sap.ui.define([
 		test();
 	});
 
-	QUnit.test("Inside Row Header, Fixed Rows (Range Selection)", function(assert) {
+	QUnit.test("Inside Row Header, Fixed Rows (Range Selection)", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
@@ -1452,7 +1452,7 @@ sap.ui.define([
 			return navigate(Key.Arrow.UP, 2, 3, true);
 		}).then(function() {
 			return navigate(Key.Arrow.UP, 2, 2, true);
-		}).then(function() {
+		}).then(async function() {
 			navigate(Key.Arrow.UP, 1, 1);
 			navigate(Key.Arrow.UP, 0, 0);
 			that.triggerKey(Key.Arrow.UP, oTarget, oTarget);
@@ -1473,7 +1473,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", function(assert) {
+	QUnit.test("Inside Data Rows, Fixed Rows (Range Selection)", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
@@ -1547,7 +1547,7 @@ sap.ui.define([
 			return navigate(Key.Arrow.UP, 2, 3, 0, true);
 		}).then(function() {
 			return navigate(Key.Arrow.UP, 2, 2, 0, true);
-		}).then(function() {
+		}).then(async function() {
 			navigate(Key.Arrow.UP, 1, 1, 0);
 			navigate(Key.Arrow.UP, 0, 0, 0);
 
@@ -1648,7 +1648,7 @@ sap.ui.define([
 			return navigate(Key.Arrow.UP, 2, 3, true);
 		}).then(function() {
 			return navigate(Key.Arrow.UP, 2, 2, true);
-		}).then(function() {
+		}).then(async function() {
 			navigate(Key.Arrow.UP, 1, 1);
 			navigate(Key.Arrow.UP, 0, 0);
 
@@ -1780,7 +1780,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Element outside the grid", function(assert) {
+	QUnit.test("Element outside the grid", async function(assert) {
 		var oInput = new TestInputControl({tabbable: true});
 		this.oTable.addExtension(oInput);
 		oCore.applyChanges();
@@ -1810,7 +1810,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Column header; No row selection", function(assert) {
+	QUnit.test("Column header; No row selection", async function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
 		oCore.applyChanges();
 
@@ -1828,7 +1828,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Column header; 1 (of 5) fixed columns", function(assert) {
+	QUnit.test("Column header; 1 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
 		oCore.applyChanges();
 
@@ -1870,7 +1870,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(1), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Column header; 2 (of 5) fixed columns", function(assert) {
+	QUnit.test("Column header; 2 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 
@@ -1900,7 +1900,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(2), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Column header; 4 (of 5) fixed columns", function(assert) {
+	QUnit.test("Column header; 4 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(4);
 		oCore.applyChanges();
 
@@ -1915,7 +1915,7 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getColumnHeaderCell(3), this.oTable.qunit.getColumnHeaderCell(-1));
 	});
 
-	QUnit.test("Column header; 5 (of 5) fixed columns", function(assert) {
+	QUnit.test("Column header; 5 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(5);
 		oCore.applyChanges();
 
@@ -1948,7 +1948,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getDataCell(0, 0));
 	});
 
-	QUnit.test("Content; No row selection", function(assert) {
+	QUnit.test("Content; No row selection", async function(assert) {
 		this.oTable.setSelectionMode(library.SelectionMode.None);
 		oCore.applyChanges();
 
@@ -1966,7 +1966,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getDataCell(0, 0));
 	});
 
-	QUnit.test("Content; 1 (of 5) fixed columns", function(assert) {
+	QUnit.test("Content; 1 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(1);
 		oCore.applyChanges();
 
@@ -1993,7 +1993,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getDataCell(0, 1), this.oTable.qunit.getDataCell(0, 0));
 	});
 
-	QUnit.test("Content; 2 (of 5) fixed columns", function(assert) {
+	QUnit.test("Content; 2 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 
@@ -2023,7 +2023,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getDataCell(0, 2), this.oTable.qunit.getDataCell(0, 0));
 	});
 
-	QUnit.test("Content; 4 (of 5) fixed columns", function(assert) {
+	QUnit.test("Content; 4 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(4);
 		oCore.applyChanges();
 
@@ -2038,7 +2038,7 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, 3), this.oTable.qunit.getDataCell(0, -1));
 	});
 
-	QUnit.test("Content; 5 (of 5) fixed columns", function(assert) {
+	QUnit.test("Content; 5 (of 5) fixed columns", async function(assert) {
 		this.oTable.setFixedColumnCount(5);
 		oCore.applyChanges();
 
@@ -2130,7 +2130,7 @@ sap.ui.define([
 		this.triggerKey(Key.END, this.oTable.qunit.getDataCell(0, -1), this.oTable.qunit.getRowActionCell(0));
 	});
 
-	QUnit.test("Fixed columns with column span", function(assert) {
+	QUnit.test("Fixed columns with column span", async function(assert) {
 		var iColSpan = 2;
 
 		this.oTable.setFixedColumnCount(4);
@@ -2148,7 +2148,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Fixed columns with multi header", function(assert) {
+	QUnit.test("Fixed columns with multi header", async function(assert) {
 		var iColSpan = 2;
 		var that = this;
 
@@ -2268,7 +2268,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[iRowCount - 1].getIndex(), iTotalRowCount - 1, "Row index");
 	});
 
-	QUnit.test("Row header column - Less data rows than rendered rows", function(assert) {
+	QUnit.test("Row header column - Less data rows than rendered rows", async function(assert) {
 		this.oTable.getRowMode().setRowCount(10);
 		oCore.applyChanges();
 
@@ -2292,7 +2292,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Row header column - Less data rows than rendered rows and fixed rows", function(assert) {
+	QUnit.test("Row header column - Less data rows than rendered rows and fixed rows", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 12,
 			fixedTopRowCount: 2,
@@ -2335,7 +2335,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[mRowCounts.fixedTop].getIndex(), mRowCounts.fixedTop, "Row index");
 	});
 
-	QUnit.test("Row header column - No Column Header", function(assert) {
+	QUnit.test("Row header column - No Column Header", async function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 
@@ -2358,7 +2358,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Row header column - Multi Header and Fixed Top/Bottom Rows", function(assert) {
+	QUnit.test("Row header column - Multi Header and Fixed Top/Bottom Rows", async function(assert) {
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
@@ -2453,7 +2453,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Content column - Less data rows than rendered rows", function(assert) {
+	QUnit.test("Content column - Less data rows than rendered rows", async function(assert) {
 		this.oTable.getRowMode().setRowCount(10);
 		oCore.applyChanges();
 
@@ -2478,7 +2478,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Content column - Less data rows than rendered rows and fixed rows", function(assert) {
+	QUnit.test("Content column - Less data rows than rendered rows and fixed rows", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 12,
 			fixedTopRowCount: 2,
@@ -2519,7 +2519,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[mRowCounts.fixedTop].getIndex(), mRowCounts.fixedTop, "Row index");
 	});
 
-	QUnit.test("Content column - No Column Header", function(assert) {
+	QUnit.test("Content column - No Column Header", async function(assert) {
 		this.oTable.setColumnHeaderVisible(false);
 		oCore.applyChanges();
 
@@ -2542,7 +2542,7 @@ sap.ui.define([
 		assert.equal(this.oTable.getRows()[0].getIndex(), 0, "Row index");
 	});
 
-	QUnit.test("Content column - Multi Header and Fixed Top/Bottom Rows", function(assert) {
+	QUnit.test("Content column - Multi Header and Fixed Top/Bottom Rows", async function(assert) {
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_3_1"}));
@@ -2608,7 +2608,7 @@ sap.ui.define([
 		this.triggerKey(Key.HOME, this.oTable.qunit.getDataCell(mRowCounts.fixedTop - 1, 0), this.oTable.qunit.getColumnHeaderCell(0));
 	});
 
-	QUnit.test("Content column - Variable row heights", function(assert) {
+	QUnit.test("Content column - Variable row heights", async function(assert) {
 		this.oTable._bVariableRowHeightEnabled = true;
 		this.oTable.invalidate();
 		oCore.applyChanges();
@@ -3158,14 +3158,14 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Less data rows than rendered rows", function(assert) {
+	QUnit.test("Less data rows than rendered rows", async function(assert) {
 		this.oTable.getRowMode().setRowCount(10);
 		oCore.applyChanges();
 
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Multi Header", function(assert) {
+	QUnit.test("Multi Header", async function(assert) {
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
@@ -3179,7 +3179,7 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Fixed rows", function(assert) {
+	QUnit.test("Fixed rows", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 6,
 			fixedTopRowCount: 2,
@@ -3190,7 +3190,7 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Less data rows than rendered rows and fixed rows", function(assert) {
+	QUnit.test("Less data rows than rendered rows and fixed rows", async function(assert) {
 		this.oTable.setRowMode(new FixedRowMode({
 			rowCount: 10,
 			fixedTopRowCount: 2,
@@ -3201,7 +3201,7 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Multi header and fixed rows", function(assert) {
+	QUnit.test("Multi header and fixed rows", async function(assert) {
 		this.oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b"}));
 		this.oTable.getColumns()[1].addMultiLabel(new TestControl({text: "b1"}));
@@ -3220,7 +3220,7 @@ sap.ui.define([
 		this.testPageKeys(assert);
 	});
 
-	QUnit.test("Variable row heights", function(assert) {
+	QUnit.test("Variable row heights", async function(assert) {
 		this.oTable._bVariableRowHeightEnabled = true;
 		this.oTable.invalidate();
 		this.oTable.getModel().destroy();
@@ -3438,7 +3438,7 @@ sap.ui.define([
 		this.triggerKey(Key.Page.DOWN, this.oTable.qunit.getColumnHeaderCell(-1), this.oTable.qunit.getColumnHeaderCell(-1));
 	});
 
-	QUnit.test("Column header; No row header", function(assert) {
+	QUnit.test("Column header; No row header", async function(assert) {
 		var iColumnCount = this.oTable.getColumns().length;
 		var oTarget;
 		var i;
@@ -3536,7 +3536,7 @@ sap.ui.define([
 		this.triggerKey(Key.Page.UP, this.oTable.qunit.getDataCell(0, 0), this.oTable.qunit.getRowHeaderCell(0));
 	});
 
-	QUnit.test("Content; No row header", function(assert) {
+	QUnit.test("Content; No row header", async function(assert) {
 		var iColumnCount = this.oTable.getColumns().length;
 		var oTarget;
 		var i;
@@ -3565,7 +3565,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Column Spans", function(assert) {
+	QUnit.test("Column Spans", async function(assert) {
 		var iColumnCount = this.oTable.getColumns().length;
 		var oTarget;
 		var i;
@@ -3641,7 +3641,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("F6 - Forward navigation - With Extension and Footer", function(assert) {
+	QUnit.test("F6 - Forward navigation - With Extension and Footer", async function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		oCore.applyChanges();
@@ -3669,7 +3669,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Footer"), assert);
 	});
 
-	QUnit.test("Shift+F6 - Backward navigation - With Extension and Footer", function(assert) {
+	QUnit.test("Shift+F6 - Backward navigation - With Extension and Footer", async function(assert) {
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		oCore.applyChanges();
@@ -3716,7 +3716,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Focus2"), assert);
 	});
 
-	QUnit.test("Tab - With Extension and Footer", function(assert) {
+	QUnit.test("Tab - With Extension and Footer", async function(assert) {
 		oTable.setShowOverlay(true);
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
@@ -3739,7 +3739,7 @@ sap.ui.define([
 		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
-	QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
+	QUnit.test("Shift+Tab - With Extension and Footer", async function(assert) {
 		oTable.setShowOverlay(true);
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
@@ -3782,7 +3782,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Tab - Without Column Header", function(assert) {
+	QUnit.test("Tab - Without Column Header", async function(assert) {
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
@@ -3803,7 +3803,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Tab - With Extension and Footer", function(assert) {
+	QUnit.test("Tab - With Extension and Footer", async function(assert) {
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
@@ -3852,7 +3852,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
+	QUnit.test("Shift+Tab - With Extension and Footer", async function(assert) {
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
@@ -4004,7 +4004,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation > BusyIndicator", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			setupTest();
 
 			oTable.setBusyIndicatorDelay(0);
@@ -4060,7 +4060,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Page scrolling", function(assert) {
+	QUnit.test("Page scrolling", async function(assert) {
 		var aEventTargetGetters = [
 			getCell.bind(window, 0, 0),
 			getCell.bind(window, oTable._getRowCounts().count - 1, 0),
@@ -4230,7 +4230,7 @@ sap.ui.define([
 		TestControl: TableQUnitUtils.TestControl
 	});
 
-	QUnit.test("Add column (focus on data cell)", function(assert) {
+	QUnit.test("Add column (focus on data cell)", async function(assert) {
 		var oTable = this.oTable;
 		var TestControl = this.TestControl;
 
@@ -4240,7 +4240,7 @@ sap.ui.define([
 		}), 0);
 		oCore.applyChanges();
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(async function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getDataCell(1, 1), "The cell at the same position is focused");
 
 			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
@@ -4260,7 +4260,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Add column (focus on header cell)", function(assert) {
+	QUnit.test("Add column (focus on header cell)", async function(assert) {
 		var oTable = this.oTable;
 		var TestControl = this.TestControl;
 
@@ -4270,7 +4270,7 @@ sap.ui.define([
 		}), 0);
 		oCore.applyChanges();
 
-		return oTable.qunit.whenRenderingFinished().then(function() {
+		return oTable.qunit.whenRenderingFinished().then(async function() {
 			assert.strictEqual(document.activeElement, oTable.qunit.getColumnHeaderCell(2), "The same cell is focused");
 
 			qutils.triggerKeydown(document.activeElement, Key.Arrow.LEFT, false, false, false);
@@ -4290,7 +4290,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Fix first column", function(assert) {
+	QUnit.test("Fix first column", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.qunit.getDataCell(1, 1).focus();
@@ -4305,7 +4305,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Add row", function(assert) {
+	QUnit.test("Add row", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.qunit.getDataCell(2, 1).focus();
@@ -4320,7 +4320,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Fix first row", function(assert) {
+	QUnit.test("Fix first row", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.qunit.getDataCell(1, 1).focus();
@@ -4335,7 +4335,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Resize - Auto row mode", function(assert) {
+	QUnit.test("Resize - Auto row mode", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.setRowMode(RowModeType.Auto);
@@ -4586,7 +4586,7 @@ sap.ui.define([
 					});
 
 					return pSequence;
-				}).then(function() {
+				}).then(async function() {
 					/* Cancellation of the row selection mode. */
 
 					// Prepare selection states.
@@ -4750,7 +4750,7 @@ sap.ui.define([
 		return this.testRangeSelection(assert);
 	});
 
-	QUnit.test("Default Test Table - Move between Row Header and Row", function(assert) {
+	QUnit.test("Default Test Table - Move between Row Header and Row", async function(assert) {
 		this.oTable.setSelectionBehavior(library.SelectionBehavior.Row);
 		this.oTable.setSelectedIndex(0);
 		oCore.applyChanges();
@@ -4789,7 +4789,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction > Shift+Left & Shift+Right (Column Resizing)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			setupTest();
 			oTable._getVisibleColumns()[2].setResizable(false);
 			oCore.applyChanges();
@@ -4857,7 +4857,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Multi Header - Resize spans", function(assert) {
+	QUnit.test("Multi Header - Resize spans", async function(assert) {
 		oTable.setFixedColumnCount(0);
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_1_1"}));
 		oTable.getColumns()[0].addMultiLabel(new TestControl({text: "a_2_1"}));
@@ -4984,7 +4984,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction > Ctrl+Left & Ctrl+Right (Column Reordering)", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			setupTest();
 			oTable.setFixedColumnCount(0);
 			oCore.applyChanges();
@@ -5057,7 +5057,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Fixed Columns - Move fixed columns", function(assert) {
+	QUnit.test("Fixed Columns - Move fixed columns", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 
@@ -5102,7 +5102,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Fixed Columns - Move scrollable columns", function(assert) {
+	QUnit.test("Fixed Columns - Move scrollable columns", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 
@@ -5179,7 +5179,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("On SelectAll", function(assert) {
+	QUnit.test("On SelectAll", async function(assert) {
 		oTable.clearSelection();
 		oCore.applyChanges();
 
@@ -5203,7 +5203,7 @@ sap.ui.define([
 		assert.ok(oTable.getSelectedIndices().length === 0, "No rows are selected");
 	});
 
-	QUnit.test("On a Row Header", function(assert) {
+	QUnit.test("On a Row Header", async function(assert) {
 		oTable.clearSelection();
 		oCore.applyChanges();
 
@@ -5227,7 +5227,7 @@ sap.ui.define([
 		this.assertSelection(assert, 0, false);
 	});
 
-	QUnit.test("On a Data Cell - SelectionBehavior = Row", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = Row", async function(assert) {
 		var iCallCount = 0;
 		var bPreventDefault = false;
 
@@ -5287,7 +5287,7 @@ sap.ui.define([
 		bPreventDefault = false;
 	});
 
-	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector", function(assert) {
+	QUnit.test("On a Data Cell - SelectionBehavior = RowSelector", async function(assert) {
 		var cellClickEventHandler = this.spy();
 
 		oTable.clearSelection();
@@ -5315,7 +5315,7 @@ sap.ui.define([
 		assert.strictEqual(cellClickEventHandler.callCount, 4, "Click handler called: 4");
 	});
 
-	QUnit.test("On a Row Action Cell - SelectionBehavior = RowSelector", function(assert) {
+	QUnit.test("On a Row Action Cell - SelectionBehavior = RowSelector", async function(assert) {
 		var cellClickEventHandler = this.spy();
 
 		oTable.clearSelection();
@@ -5440,7 +5440,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("(De)Select All possible", function(assert) {
+	QUnit.test("(De)Select All possible", async function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.MultiToggle);
 		oCore.applyChanges();
 
@@ -5551,7 +5551,7 @@ sap.ui.define([
 		test(true);
 	});
 
-	QUnit.test("On element that is not a cell", function(assert) {
+	QUnit.test("On element that is not a cell", async function(assert) {
 		oTable.addExtension(new TestInputControl());
 		oTable.setFooter(new TestInputControl());
 		oTable.addEventDelegate({
@@ -6028,7 +6028,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Action Mode > Enter and Leave", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			setupTest();
 
 			oTable.removeAllColumns();
@@ -6391,7 +6391,7 @@ sap.ui.define([
 		this.testOnDataCellWithoutInteractiveControls(assert, Key.MINUS, "Minus", false, false, false, qutils.triggerKeypress);
 	});
 
-	QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no click handler", function(assert) {
+	QUnit.test("Space & Enter - On a Data Cell - Row selection not possible and no click handler", async function(assert) {
 		oTable.clearSelection();
 		TableQUnitUtils.addColumn(oTable, "Not Focusable & Not Tabbable", "NoFocusNoTab", false, false, false);
 		oCore.applyChanges();
@@ -6593,7 +6593,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("TAB & Shift+TAB - selectionMode is None", function(assert) {
+	QUnit.test("TAB & Shift+TAB - selectionMode is None", async function(assert) {
 		var oTable = this.oTable;
 
 		oTable.setSelectionMode("None");
@@ -6682,7 +6682,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Action Mode > Navigation", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			setupTest();
 
 			oTable.removeColumn(2); // Remove unnecessary columns to speed up the test.
@@ -7324,7 +7324,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("TAB & Shift+TAB", function(assert) {
+	QUnit.test("TAB & Shift+TAB", async function(assert) {
 		oTable.setSelectionMode(library.SelectionMode.None);
 		oCore.applyChanges();
 
@@ -7335,14 +7335,14 @@ sap.ui.define([
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Invisible Columns", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Invisible Columns", async function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		oCore.applyChanges();
 
 		return this.testActionModeTabNavigation(assert);
 	});
 
-	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns", function(assert) {
+	QUnit.test("TAB & Shift+TAB - Row Headers, Fixed Columns", async function(assert) {
 		oTable.setFixedColumnCount(2);
 		oCore.applyChanges();
 
@@ -7497,7 +7497,7 @@ sap.ui.define([
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	});
 
-	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between text input elements", function(assert) {
+	QUnit.test("Ctrl+Up & Ctrl+Down - Navigate between text input elements", async function(assert) {
 		oTable.getRowMode().setRowCount(4);
 		oCore.applyChanges();
 
@@ -7545,7 +7545,7 @@ sap.ui.define([
 		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
 	});
 
-	QUnit.test("Up & Down - Navigate between text input elements", function(assert) {
+	QUnit.test("Up & Down - Navigate between text input elements", async function(assert) {
 		oTable.getRowMode().setRowCount(4);
 		oCore.applyChanges();
 
@@ -7591,7 +7591,7 @@ sap.ui.define([
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
-	QUnit.test("Focus handling when the table is in Action Mode and keyboard navigation scrolls the table", function(assert) {
+	QUnit.test("Focus handling when the table is in Action Mode and keyboard navigation scrolls the table", async function(assert) {
 		var aEvents = [];
 
 		oTable.setFixedColumnCount(0);

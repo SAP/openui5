@@ -1572,7 +1572,7 @@ sap.ui.define([
 	 */
 	UploadSetwithTable.prototype._loadCloudFilePickerDependency = function () {
 		return new Promise( (resolve, reject) => {
-			Core.loadLibrary("sap.suite.ui.commons", { async: true })
+			Library1.load("sap.suite.ui.commons")
 				.then(function (data) {
 					sap.ui.require(["sap/suite/ui/commons/CloudFilePicker"], function (cloudFilePicker) {
 						resolve(cloudFilePicker);

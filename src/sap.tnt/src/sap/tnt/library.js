@@ -5,8 +5,8 @@
 /**
  * Initialization Code and shared classes of library sap.tnt.
  */
-sap.ui.define(["sap/ui/core/library", "sap/m/library"],
-	function() {
+sap.ui.define(["sap/ui/core/Lib", "sap/ui/core/library", "sap/m/library"],
+	function(Library) {
 	"use strict";
 
 	/**
@@ -19,7 +19,7 @@ sap.ui.define(["sap/ui/core/library", "sap/m/library"],
 	 * @since 1.36
 	 * @public
 	 */
-	var thisLib = sap.ui.getCore().initLibrary({
+	var thisLib = Library.init({
 		name : "sap.tnt",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],

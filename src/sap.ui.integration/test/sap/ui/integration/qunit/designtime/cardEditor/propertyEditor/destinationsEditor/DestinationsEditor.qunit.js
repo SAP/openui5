@@ -159,7 +159,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDestination").then(function (aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDestination").then(async function(aPropertyEditor) {
 				var oDestinationsEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				var oNestedArrayEditor = oDestinationsEditor.getContent();

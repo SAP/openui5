@@ -284,7 +284,7 @@ sap.ui.define([
 	//************** Test Code **************
 
 	QUnit.module("Properties & Functions", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			Core.applyChanges();
@@ -504,7 +504,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("GroupHeaderMenu", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			Core.applyChanges();
@@ -514,7 +514,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Mobile", function(assert) {
+	QUnit.test("Mobile", async function(assert) {
 		var done = assert.async();
 
 		var oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
@@ -1438,25 +1438,25 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rerender while binding/unbinding", function(assert) {
+	QUnit.test("Rerender while binding/unbinding", async function(assert) {
 		var oBindingInfo = this.oTable.getBindingInfo("rows");
 		var that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();
 		Core.applyChanges();
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.invalidate();
 			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(this.oTable.qunit.whenRenderingFinished).then(async function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			that.oTable.bindRows(oBindingInfo);
 			that.oTable.invalidate();
 			Core.applyChanges();
-		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(async function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.invalidate();

@@ -5,16 +5,17 @@
  * Initialization Code and shared classes of library sap.ui.integration.
  */
 sap.ui.define([
-	"sap/ui/base/DataType",
-	"sap/ui/core/Core",
-	"sap/ui/Global",
-	// library dependency
-	"sap/ui/core/library",
-	"sap/m/library",
-	"sap/f/library",
-	"sap/ui/unified/library",
-	"sap/ui/layout/library"
-], function (DataType, oCore) {
+ "sap/ui/base/DataType",
+ "sap/ui/core/Core",
+ "sap/ui/core/Lib",
+ "sap/ui/Global",
+ // library dependency
+ "sap/ui/core/library",
+ "sap/m/library",
+ "sap/f/library",
+ "sap/ui/unified/library",
+ "sap/ui/layout/library"
+], function(DataType, oCore, Library) {
 	"use strict";
 
 	/**
@@ -27,7 +28,7 @@ sap.ui.define([
 	 * @since 1.62
 	 * @public
 	 */
-	var thisLib = oCore.initLibrary({
+	var thisLib = Library.init({
 		name: "sap.ui.integration",
 		version: "${version}",
 		dependencies: [

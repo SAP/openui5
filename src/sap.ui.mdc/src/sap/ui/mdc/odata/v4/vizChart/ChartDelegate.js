@@ -1739,7 +1739,7 @@ sap.ui.define([
                 resolve();
             }
 
-            Core.loadLibrary("sap.viz", {async: true}).then(function(){
+            Library.load("sap.viz").then(function(){
                 sap.ui.require(aNotLoadedModulePaths, onModulesLoadedSuccess);
             });
 

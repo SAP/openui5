@@ -29,7 +29,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Highlighting", {
-		before: function () {
+		before: async function() {
 			this.oSuggestionsPopover = new SuggestionsPopover();
 			oCore.applyChanges();
 		},
@@ -66,7 +66,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("initContent", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			this.oSuggestionsPopover = new SuggestionsPopover();
 			oCore.applyChanges();
 		},
@@ -76,7 +76,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_onsaparrowkey should not be called when we have composition characters", function (assert) {
+	QUnit.test("_onsaparrowkey should not be called when we have composition characters", async function(assert) {
 		// Arrange
 		var oInput = new Input({
 			showSuggestion: true,
@@ -107,7 +107,7 @@ sap.ui.define([
 
 	QUnit.module("mobile");
 
-	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", function (assert) {
+	QUnit.test("On mobile the sapUiNoContentPadding class is added to the picker.", async function(assert) {
 		var oComboBox, oSuggestionsPopover;
 
 		// Arrange
@@ -135,7 +135,7 @@ sap.ui.define([
 		oSuggestionsPopover.destroy();
 	});
 
-	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("ComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
 		var oComboBox;
 
 		// Arrange
@@ -162,7 +162,7 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", function (assert) {
+	QUnit.test("MultiComboBox: The following condition is met: height != 'auto' as this prevents the scroll on mobile devices (can be adjusted in future).", async function(assert) {
 		var oMultiComboBox;
 
 		// Arrange
@@ -189,7 +189,7 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
-	QUnit.test("Get the proper list", function (assert) {
+	QUnit.test("Get the proper list", async function(assert) {
 		var oSuggPopover, oInput;
 
 		// Arrange
@@ -217,7 +217,7 @@ sap.ui.define([
 		oSuggPopover.destroy();
 	});
 
-	QUnit.test("Navigating through GroupItems should deselect items from the list", function (assert) {
+	QUnit.test("Navigating through GroupItems should deselect items from the list", async function(assert) {
 		var oSuggPopover, oInput, oListItem, oList, oListSpy;
 
 		// Setup

@@ -264,7 +264,7 @@ sap.ui.define([
 		assert.ok(oDataReceivedSpy.calledOnce, "The original dataReceived event listener was called once");
 	});
 
-	QUnit.test("Hierarchy modes", function(assert) {
+	QUnit.test("Hierarchy modes", async function(assert) {
 		function assertMode(oTable, sExpectedMode, sMessage) {
 			sMessage = "Table is in mode '" + sExpectedMode + "'" + (sMessage ? " - " + sMessage : "");
 			assert.strictEqual(TableUtils.Grouping.getHierarchyMode(oTable), sExpectedMode, sMessage);

@@ -50,7 +50,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(async function(aPropertyEditors) {
 				this.oStringEditor = aPropertyEditors[0];
 				oCore.applyChanges();
 				this.oStringEditorElement = this.oStringEditor.getContent();
@@ -157,7 +157,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(function (aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleString").then(async function(aPropertyEditors) {
 				var oStringEditor = aPropertyEditors[0];
 				oCore.applyChanges();
 				var oStringEditorElement = oStringEditor.getContent();

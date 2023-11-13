@@ -133,7 +133,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Dates", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
 			oCore.applyChanges();
 		},
@@ -155,7 +155,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Navigation to next/previous Month", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
 			oCore.applyChanges();
 		},
@@ -173,7 +173,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Monthpicker", {
-		beforeEach: function () {
+		beforeEach: async function() {
 			oCal1 = new Calendar("Cal1", {}).placeAt("content");
 			oCore.applyChanges();
 		},

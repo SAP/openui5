@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Item",
+	"sap/ui/core/Lib",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/BindingMode",
 	"sap/ui/Device",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Element,
 	Fragment,
 	Item,
+	Lib,
 	JSONModel,
 	BindingMode,
 	Device,
@@ -1041,7 +1043,7 @@ sap.ui.define([
 
 		_initCardSample: function (oSample) {
 			if (!this._pInitCardSample) {
-				this._pInitCardSample = Core.loadLibrary("sap.ui.integration", { async: true })
+				this._pInitCardSample = Lib.load("sap.ui.integration")
 					.then(function () {
 						return Promise.all([
 							Fragment.load({

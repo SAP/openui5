@@ -16,7 +16,7 @@ sap.ui.define([
 	(function () {
 
 		QUnit.module("Corner cases", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
 				oCore.applyChanges();
@@ -168,7 +168,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("setMonth", function(assert) {
+		QUnit.test("setMonth", async function(assert) {
 			// Prepare
 			var oGridItemRefs,
 				iFocusedIndex;
@@ -264,7 +264,7 @@ sap.ui.define([
 			assert.equal(this.MP._iYear, 2019, "Year is correctly set to the MonthPicker instance");
 		});
 
-		QUnit.test("_selectMonth", function(assert) {
+		QUnit.test("_selectMonth", async function(assert) {
 			// arrange
 			var oFakeMousedownEvent = {
 					button: false,
@@ -455,7 +455,7 @@ sap.ui.define([
 			);
 		});
 
-		QUnit.test("_markInterval", function(assert) {
+		QUnit.test("_markInterval", async function(assert) {
 			// arrange
 			var sCurrentYear = UI5Date.getInstance().getFullYear(),
 				oSep_01_2019 = UI5Date.getInstance(sCurrentYear, 8, 1),
@@ -478,7 +478,7 @@ sap.ui.define([
 			assert.ok(aRefs.eq(10).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 		});
 
-		QUnit.test("_markInterval", function (assert) {
+		QUnit.test("_markInterval", async function(assert) {
 			// Prepare
 			var aItemsMarkedAsBetween,
 				oBeforeStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2022, 1, 1)),
@@ -518,7 +518,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Accessibility", {
-			beforeEach: function () {
+			beforeEach: async function() {
 				this.oMP = new MonthPicker();
 				this.oMP.placeAt("qunit-fixture");
 				oCore.applyChanges();
@@ -538,7 +538,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Interaction", {
-			beforeEach: function() {
+			beforeEach: async function() {
 				this.MP = new MonthPicker();
 				this.MP.placeAt("qunit-fixture");
 				oCore.applyChanges();

@@ -100,7 +100,7 @@ sap.ui.define([
 
 	QUnit.module("Display");
 
-	QUnit.test("Merge Label and Icon", function(assert) {
+	QUnit.test("Merge Label and Icon", async function(assert) {
 			var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -118,7 +118,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge in Growing Feature", function(assert) {
+	QUnit.test("Merge in Growing Feature", async function(assert) {
 		var sut = createSUT("MergeDuplicates", true);
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -145,7 +145,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Group Header occures", function(assert) {
+	QUnit.test("Merge when Group Header occures", async function(assert) {
 		var oLastNameSorter = new Sorter("lastName", false, true);
 
 		var sut = createSUT("MergeDuplicates", false, {sorter: oLastNameSorter});
@@ -175,7 +175,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Table Rerendering", function(assert) {
+	QUnit.test("Merge when Table Rerendering", async function(assert) {
 		var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -210,7 +210,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Merge when Items Rerendering", function(assert) {
+	QUnit.test("Merge when Items Rerendering", async function(assert) {
 		var sut = createSUT("MergeDuplicates");
 		sut.placeAt("qunit-fixture");
 		oCore.applyChanges();
@@ -279,7 +279,7 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: function() {
+		beforeEach: async function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
 				operationMode: "Server"
