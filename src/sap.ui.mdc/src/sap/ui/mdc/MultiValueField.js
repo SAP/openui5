@@ -9,13 +9,13 @@ sap.ui.define([
 	'sap/ui/mdc/enums/ConditionValidated',
 	'sap/ui/mdc/enums/OperatorName'
 ], function(
-		library,
-		FieldBase,
-		FieldBaseRenderer,
-		Condition,
-		ConditionValidated,
-		OperatorName
-	) {
+	library,
+	FieldBase,
+	FieldBaseRenderer,
+	Condition,
+	ConditionValidated,
+	OperatorName
+) {
 	"use strict";
 
 	/**
@@ -46,7 +46,7 @@ sap.ui.define([
 	 * @since 1.93.0
 	 *
 	 * @public
-   	 * @experimental As of version 1.93.0
+		   * @experimental As of version 1.93.0
 	 */
 	const Field = FieldBase.extend("sap.ui.mdc.MultiValueField", /* @lends sap.ui.mdc.MultiValueField.prototype */ {
 		metadata: {
@@ -54,10 +54,19 @@ sap.ui.define([
 			designtime: "sap/ui/mdc/designtime/field/MultiValueField.designtime",
 			properties: {
 				/**
-				 * Path to the <code>MultiValueFieldDelegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * The object has the following properties:
+				 * <ul>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
+				 * </ul>
+				 * <i>Sample delegate object:</i>
+				 * <pre><code>{
+				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	payload: {}
+				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
-				 * Do not bind or modify the module. Once the required module is associated, this property might not be needed any longer.
-				 *
+				 * Do not bind or modify the module. This property can only be configured during control initialization.
 				 * @experimental
 				 */
 				delegate: {
@@ -75,7 +84,7 @@ sap.ui.define([
 				items: {
 					type: "sap.ui.mdc.field.MultiValueFieldItem",
 					multiple: true,
-					singularName : "item",
+					singularName: "item",
 					bindable: "bindable"
 				}
 			},
@@ -246,7 +255,7 @@ sap.ui.define([
 
 		if (sMutation === "insert") {
 			// observe items for update of key and text
-			this._oObserver.observe(oItem, {properties: true});
+			this._oObserver.observe(oItem, { properties: true });
 		} else {
 			this._oObserver.unobserve(oItem);
 		}
