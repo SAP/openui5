@@ -11,6 +11,7 @@
 					"selectedKey": "FR",
 					"type": "ComboBox",
 					"label": "Country",
+					"placeholder": "Country",
 					"data": {
 						"request": {
 							"url": "./countries.json"

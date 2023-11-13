@@ -3353,6 +3353,10 @@
           "description": "Label for the filter. Used by screen readers",
           "type": "string"
         },
+        "placeholder": {
+          "description": "The placeholder of the filter",
+          "type": "string"
+        },
         "items": {
           "type": "array",
           "items": {
