@@ -140,6 +140,25 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("removeSelection with invalid session object", function (assert) {
+		this.oTable.addDependent(this.oCellSelector);
+		var done = assert.async();
+
+		this.oTable.attachEventOnce("rowsUpdated", () => {
+			var oCell = getCell(this.oTable, 1, 0); // first cell of first row
+			qutils.triggerKeydown(oCell, KeyCodes.SPACE); // select first cell of first row
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), {from: {rowIndex: 1, colIndex: 0}, to: {rowIndex: 1, colIndex: 0}});
+
+			this.oCellSelector.removeSelection();
+			assert.deepEqual(this.oCellSelector.getSelectionRange(), null, "Selection has been removed");
+
+			this.oCellSelector.exit();
+			this.oCellSelector.removeSelection();
+			assert.deepEqual(this.oCellSelector._oSession, { cellRefs: [] }, "Session has been cleared");
+			done();
+		});
+	});
+
 	QUnit.module("Dialog Behavior", {
 		beforeEach: function() {
 			this.oMockServer = new MockServer({ rootUri : sServiceURI });

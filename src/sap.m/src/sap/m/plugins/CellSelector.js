@@ -744,7 +744,7 @@ sap.ui.define([
 	};
 
 	CellSelector.prototype._clearSelection = function() {
-		this._oSession.cellRefs.forEach(function(oCellRef) {
+		this._oSession?.cellRefs?.forEach(function(oCellRef) {
 			oCellRef.classList.remove("sapMPluginsCellSelectorSelected", "sapMPluginsCellSelectorTop", "sapMPluginsCellSelectorBottom", "sapMPluginsCellSelectorLeft", "sapMPluginsCellSelectorRight");
 			oCellRef.removeAttribute("aria-selected");
 		});
