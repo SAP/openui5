@@ -188,10 +188,8 @@
 											<vm:VariantManagement id="variantManagementContained" for="ObjectPageSubSectionWithVM" updateVariantInURL="true" />
 										</contentRight>
 									</Bar>
-									<html:div style="height:auto;min-height:4em;min-width:100%;background-color:#A9EAFF;line-height:2em;display:inline-grid">
-										<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}" />
-										<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}" />
-									</html:div>
+									<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}" />
+									<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}" />
 								</l:Grid>
 							</uxap:ObjectPageSubSection>
 						</uxap:ObjectPageSection>
