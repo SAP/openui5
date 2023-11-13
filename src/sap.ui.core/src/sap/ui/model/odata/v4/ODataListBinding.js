@@ -1610,7 +1610,8 @@ sap.ui.define([
 			}
 
 			if (oCache) {
-				if (!oCache.hasSentRequest() && ODataListBinding.isBelowCreated(oContext)) {
+				if (!oCache.hasSentRequest() && that.isRelative()
+						&& ODataListBinding.isBelowCreated(oContext)) {
 					aElements = oContext.getAndRemoveCollection(that.sPath);
 					if (aElements) { // there is a collection from a finished deep create
 						// copy the created elements into the newly created cache
@@ -3005,7 +3006,7 @@ sap.ui.define([
 	 * (in case of a recursive hierarchy).
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oAncestor - Some node which may be an ancestor
-	 * @param {sap.ui.model.odata.v4.Context} oDescendant - Some node which may be a descendant
+	 * @param {sap.ui.model.odata.v4.Context} [oDescendant] - Some node which may be a descendant
 	 * @returns {boolean} Whether the assumed ancestor relation holds
 	 * @throws {Error} If either context does not represent a node in a recursive hierarchy
 	 *   according to its current expansion state
@@ -3015,6 +3016,9 @@ sap.ui.define([
 	ODataListBinding.prototype.isAncestorOf = function (oAncestor, oDescendant) {
 		if (!this.mParameters.$$aggregation || !this.mParameters.$$aggregation.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
+		}
+		if (!oDescendant) {
+			return false;
 		}
 		[oAncestor, oDescendant].forEach((oNode) => {
 			if (this.aContexts[oNode.iIndex] !== oNode) {
@@ -3158,9 +3162,10 @@ sap.ui.define([
 	 * Moves the given (child) node to the given parent. An expanded (child) node is silently
 	 * collapsed before and expanded after the move. A collapsed parent is automatically expanded;
 	 * so is a leaf. The (child) node is added as the parent's 1st child (created persisted).
+	 * Omitting a new parent turns the child into a root.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oChildContext - The (child) node to be moved
-	 * @param {sap.ui.model.odata.v4.Context} oParentContext - The new parent's context
+	 * @param {sap.ui.model.odata.v4.Context} [oParentContext] - The new parent's context
 	 * @returns {sap.ui.base.SyncPromise<void>}
 	 *   A promise which is resolved without a defined result when the move is finished, or
 	 *   rejected in case of an error
@@ -3199,7 +3204,7 @@ sap.ui.define([
 		}
 
 		const sChildPath = oChildContext.getCanonicalPath().slice(1);
-		const sParentPath = oParentContext.getCanonicalPath().slice(1); // before #lockGroup!
+		const sParentPath = oParentContext?.getCanonicalPath().slice(1); // before #lockGroup!
 		const oGroupLock = this.lockGroup(this.getUpdateGroupId(), true, true);
 
 		return this.oCache.move(oGroupLock, sChildPath, sParentPath).then((iCount) => {
@@ -3209,6 +3214,7 @@ sap.ui.define([
 			}
 
 			const iChildIndex = this.aContexts.indexOf(oChildContext);
+			// Note: w/o oParentContext, iParentIndex === -1 and iParentIndex + 1 === 0 :-)
 			const iParentIndex = this.aContexts.indexOf(oParentContext); // Note: !== iChildIndex
 			if (iChildIndex < iParentIndex) {
 				this.aContexts.splice(iParentIndex + 1, 0, oChildContext);

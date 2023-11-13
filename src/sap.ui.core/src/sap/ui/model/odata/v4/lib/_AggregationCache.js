@@ -1016,13 +1016,13 @@ sap.ui.define([
 	/**
 	 * Moves the (child) node with the given path to the parent node with the given path by sending
 	 * a PATCH request for "<parent navigation>@odata.bind". The (child) node may be a leaf or a
-	 * collapsed node, but not expanded!
+	 * collapsed node, but not expanded! Omitting a new parent turns the child into a root.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {string} sChildPath
 	 *   The (child) node's path relative to the cache
-	 * @param {string} sParentPath
+	 * @param {string} [sParentPath=null]
 	 *   The parent node's path relative to the cache
 	 * @returns {sap.ui.base.SyncPromise<number>}
 	 *   A promise which is resolved with the number of child nodes added (normally one, but maybe
@@ -1031,16 +1031,18 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath) {
+	_AggregationCache.prototype.move = function (oGroupLock, sChildPath, sParentPath = null) {
 		const sTransientPredicate = "($uid=" + _Helper.uid() + ")";
 
 		const sChildPredicate = sChildPath.slice(sChildPath.indexOf("("));
 		const oChildNode = this.aElements.$byPredicate[sChildPredicate];
-		const sParentPredicate = sParentPath.slice(sParentPath.indexOf("("));
+		const sParentPredicate = sParentPath?.slice(sParentPath.indexOf("("));
 		const oParentNode = this.aElements.$byPredicate[sParentPredicate];
 
 		let oReadPromise;
-		let oCache = _Helper.getPrivateAnnotation(oParentNode, "cache");
+		let oCache = oParentNode
+			? _Helper.getPrivateAnnotation(oParentNode, "cache")
+			: this.oFirstLevel;
 		if (this.oAggregation.expandTo > 1) { // "expand all": GET LimitedRank
 			oReadPromise = this.requestRank(oChildNode, oGroupLock.getUnlockedCopy());
 		} else if (!oCache && oParentNode["@$ui5.node.isExpanded"] === false) {
@@ -1063,7 +1065,7 @@ sap.ui.define([
 				// update the cache with the PATCH response (Note: "@odata.etag" is optional!)
 				_Helper.updateExisting(this.mChangeListeners, sChildPredicate, oChildNode, {
 					"@odata.etag" : oPatchResult["@odata.etag"],
-					"@$ui5.node.level" : oParentNode["@$ui5.node.level"] + 1
+					"@$ui5.node.level" : oParentNode ? oParentNode["@$ui5.node.level"] + 1 : 1
 				});
 			};
 			const iOldIndex = this.aElements.indexOf(oChildNode);
@@ -1078,7 +1080,7 @@ sap.ui.define([
 					iPreorderRank, iOffset);
 				updateChildNode();
 				_Helper.setPrivateAnnotation(oChildNode, "rank", iPreorderRank);
-				switch (oParentNode["@$ui5.node.isExpanded"]) {
+				switch (oParentNode ? oParentNode["@$ui5.node.isExpanded"] : true) {
 					case false:
 						iResult = this.expand(_GroupLock.$cached, sParentPredicate).unwrap() + 1;
 						// fall through
@@ -1089,7 +1091,7 @@ sap.ui.define([
 						_Helper.updateAll(this.mChangeListeners, sParentPredicate, oParentNode,
 							{"@$ui5.node.isExpanded" : true}); // not a leaf anymore
 				}
-				const iNewIndex = this.aElements.indexOf(oParentNode) + 1;
+				const iNewIndex = this.aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
 				this.aElements.splice(iNewIndex, 0, oChildNode);
 				this.shiftRank(iNewIndex, +iOffset);
 				this.adjustDescendantCount(oChildNode, iNewIndex, +iOffset);
@@ -1141,8 +1143,9 @@ sap.ui.define([
 				_Helper.setPrivateAnnotation(oChildNode, "parent", oCache);
 				oCache.restoreElement(0, oChildNode);
 
-				const iNewIndex = this.aElements.indexOf(oParentNode) + 1;
-				const aSpliced = _Helper.getPrivateAnnotation(oParentNode, "spliced");
+				const iNewIndex = this.aElements.indexOf(oParentNode) + 1; // 0 w/o oParentNode :-)
+				const aSpliced
+					= oParentNode && _Helper.getPrivateAnnotation(oParentNode, "spliced");
 				if (aSpliced) {
 					// Note: "@$ui5.node.level" will be adjusted by #expand for aSpliced!
 					oChildNode["@$ui5.node.level"] = aSpliced[0]["@$ui5.node.level"];

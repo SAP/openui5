@@ -2078,14 +2078,17 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("move", function (assert) {
+[0, 1, 2, 3].forEach((i) => { // 0: w/ parent, 1: null parent, 2: no parent, 3: no args
+	QUnit.test(`move: #${i}`, function (assert) {
 		const oBinding = {
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
 		let bResolved = false;
-		this.mock(oContext).expects("isAncestorOf").withExactArgs("~oParent~").returns(false);
-		this.mock(oBinding).expects("move").withExactArgs(sinon.match.same(oContext), "~oParent~")
+		this.mock(oContext).expects("isAncestorOf").withExactArgs(i ? null : "~oParent~")
+			.returns(false);
+		this.mock(oBinding).expects("move")
+			.withExactArgs(sinon.match.same(oContext), i ? null : "~oParent~")
 			.returns(new SyncPromise(function (resolve) {
 				setTimeout(function () {
 					bResolved = true;
@@ -2093,14 +2096,34 @@ sap.ui.define([
 				}, 0);
 			}));
 
-		// code under test
-		const oPromise = oContext.move({parent : "~oParent~"});
+		let oPromise;
+		switch (i) {
+			case 0:
+				// code under test
+				oPromise = oContext.move({parent : "~oParent~"});
+				break;
+
+			case 1:
+				// code under test
+				oPromise = oContext.move({parent : null});
+				break;
+
+			case 2:
+				// code under test
+				oPromise = oContext.move({});
+				break;
+
+			default:
+				// code under test
+				oPromise = oContext.move();
+		}
 
 		assert.ok(oPromise instanceof Promise);
 		return oPromise.then(function () {
 			assert.ok(bResolved, "not too soon");
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("move: fails", function (assert) {
@@ -2108,16 +2131,6 @@ sap.ui.define([
 			move : mustBeMocked
 		};
 		const oContext = Context.create({/*oModel*/}, oBinding, "/EMPLOYEES('42')");
-
-		assert.throws(function () {
-			// code under test
-			oContext.move({});
-		}, new Error("Unsupported parent context: undefined"));
-
-		assert.throws(function () {
-			// code under test
-			oContext.move({parent : null});
-		}, new Error("Unsupported parent context: null"));
 
 		const oContextMock = this.mock(oContext);
 		oContextMock.expects("isAncestorOf").withExactArgs("~oParent~").returns(true);
