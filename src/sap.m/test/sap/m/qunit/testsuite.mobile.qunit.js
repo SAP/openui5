@@ -986,6 +986,15 @@ sap.ui.define([
 					}
 				}
 			},
+			"p13n.modules.xConfigHandler": {
+				title: "Test Page for sap.m.p13n.modules.xConfigHandler",
+				module: "test-resources/sap/m/qunit/p13n/xConfigHandler.qunit",
+				loader: {
+					paths: {
+						resourceroot: "test-resources/sap/m/qunit/p13n"
+					}
+				}
+			},
 			"p13n.modules.PersistenceProvider": {
 				title: "Test Page for sap.m.p13n.modules.PersistenceProvider",
 				module: "test-resources/sap/m/qunit/p13n/PersistenceProvider.qunit",
