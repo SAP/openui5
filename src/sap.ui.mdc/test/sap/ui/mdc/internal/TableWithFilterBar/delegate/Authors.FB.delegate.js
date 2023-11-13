@@ -75,7 +75,7 @@ sap.ui.define([
 					});
 				}
 
-				DelegateCache.add(oFilterBar, oCacheSettings);
+				DelegateCache.add(oFilterBar.originalNode || oFilterBar, oCacheSettings);
 
 				fResolve(aProperties);
 			});
