@@ -69,13 +69,6 @@ sap.ui.define([
 													"loaded": null,
 													"content": {}
 												},
-												"sap/ui/core/Configuration": {
-													"name": "sap/ui/core/Configuration.js",
-													"state": 4,
-													"group": null,
-													"loaded": null,
-													"url": "../../../../../../../resources/sap/ui/core/Configuration.js"
-												},
 												"sap/ui/core/Locale.js": {
 													"name": "sap/ui/core/Locale.js",
 													"state": 4,

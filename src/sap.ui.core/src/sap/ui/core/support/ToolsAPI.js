@@ -119,6 +119,9 @@ sap.ui.define([
 					debug: Supportability.isDebugModeEnabled(),
 					inspect: Supportability.isControlInspectorEnabled(),
 					originInfo: Supportability.collectOriginInfo(),
+					/**
+					 * @deprecated
+					 */
 					noDuplicateIds: Configuration.getNoDuplicateIds()
 				},
 				libraries: _getLibraries(),

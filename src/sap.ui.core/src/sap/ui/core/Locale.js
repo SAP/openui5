@@ -189,7 +189,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/base/Object', "sap/base/i18n/Localizat
 		 * @returns {string} a language code that should
 		 * @public
 		 * @since 1.17.0
-		 * @deprecated As of 1.44, use {@link sap.ui.core.Configuration#getSAPLogonLanguage} instead
+		 * @deprecated As of 1.44, use {@link module:sap/base/i18n/Localization.getSAPLogonLanguage} instead
 		 *   as that class allows to configure an SAP Logon language.
 		 */
 		getSAPLogonLanguage : function() {
