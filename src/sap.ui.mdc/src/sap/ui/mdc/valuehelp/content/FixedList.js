@@ -251,6 +251,7 @@ sap.ui.define([
 			const bUseFirstMatch = this.getUseFirstMatch();
 			let bFirstFilterItemSelected = false;
 			let sFirstMatchItemId;
+			let bCaseSensitive;
 //			var oOperator = this._getOperator();
 
 			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === OperatorName.EQ/*oOperator.name*/)) {
@@ -262,6 +263,7 @@ sap.ui.define([
 					checkDescription: true,
 					value: sFilterValue
 				});
+				bCaseSensitive = this.getValueHelpDelegate().isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 				if (oContext) {
 					oFirstMatchItem = _getItemFromContext.call(this, oContext);
 				}
@@ -293,12 +295,12 @@ sap.ui.define([
 			}
 
 			if (bFireTypeaheadSuggested && bFirstFilterItemSelected) {
-				_fireTypeahedSuggested.call(this, oFirstMatchItem, sFirstMatchItemId);
+				_fireTypeaheadSuggested.call(this, oFirstMatchItem, sFirstMatchItemId, bCaseSensitive);
 			}
 		}
 	}
 
-	function _fireTypeahedSuggested(oItem, sItemId) {
+	function _fireTypeaheadSuggested(oItem, sItemId, bCaseSensitive) {
 
 		// use selected item as typeahead suggestion
 		const sFilterValue = this.getFilterValue();
@@ -307,7 +309,7 @@ sap.ui.define([
 			const vKey = _getKey.call(this, oItem);
 			const vDescription = _getText.call(this, oItem);
 			const oCondition = this.createCondition(vKey, vDescription);
-			this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId});
+			this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
 		}
 
 	}

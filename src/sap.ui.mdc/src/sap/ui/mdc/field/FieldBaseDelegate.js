@@ -9,17 +9,19 @@
 sap.ui.define([
 	'sap/ui/mdc/BaseDelegate',
 	'sap/ui/mdc/DefaultTypeMap',
-	'sap/ui/model/FormatException',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enums/ConditionValidated',
-	'sap/ui/mdc/enums/FieldDisplay'
+	'sap/ui/mdc/enums/FieldDisplay',
+	'sap/ui/model/FormatException',
+	'sap/ui/core/Element'
 ], function(
 	BaseDelegate,
 	DefaultTypeMap,
-	FormatException,
 	Condition,
 	ConditionValidated,
-	FieldDisplay
+	FieldDisplay,
+	FormatException,
+	Element
 ) {
 	"use strict";
 
@@ -187,71 +189,64 @@ sap.ui.define([
 	};
 
 	/**
-	 * Return object for the autocomplete feature.
+	 * Checks if entered text matches text found from value help
 	 *
-	 * @static
-	 * @constant
-	 * @typedef {object} sap.ui.mdc.field.AutocompleteInfo
-	 * @property {string} text Complete text that is shown in the field
-	 * @property {int} selectionStart Start of the selected text
-	 * @property {int} selectionEnd End of the selected text
-	 * @since: 1.120.0
+	 * This function is called during a user's type-ahead into a {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control.
+	 *
+	 * By Default this method checks if the text starts with the user input. Depending of the <code>bCaseSensitive</code> parameter this check is performed case sensitive.
+	 *
+	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
+	 * @param {string} sUserInput Currently typed text (Could be changed when the type-ahed result is returned asynchronously.)
+	 * @param {string} sText Text to be checked
+	 * @param {boolean} bDescription If <code>true</code> this text is the description
+	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering was done case sensitive
+	 * @returns {boolean} <code>true</code> if text matches user input
+	 * @since: 1.121.0
 	 * @public
 	 */
+	FieldBaseDelegate.isInputMatchingText = function(oField, sUserInput, sText, bDescription, bCaseSensitive) {
+
+		if (bCaseSensitive) {
+			// filtering was executed case sensitive, so comparision needs to be case sensitive too
+			return sText.normalize().startsWith(sUserInput.normalize());
+		}
+
+		return sText.normalize().toLowerCase().startsWith(sUserInput.normalize().toLowerCase());
+
+	};
 
 	/**
-	 * Determines the text and selection for the autocomplete functionality.
+	 * Determines the text for the autocomplete functionality.
 	 *
-	 * This function is called during a user's type-ahead into a {@link sap.ui.mdc.Field Field} or {@link sap.ui.mdc.FilterField FilterField} control.
+	 * This function is called during a user's type-ahead into a {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control.
 	 *
-	 * During the programmatical selection of the text in the input field the browser moves the cursor to the beginning of the selection, so the selection should start after the text has been entered.
-	 * Otherwise this could lead to unwanted side effects.
+	 * The returned text will be shown as selected after the user input ends.
+	 *
+	 * By Default this method uses the {@link sap.ui.mdc.field.FieldBase#getDisplay display} property of the
+	 * {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control
+	 * to determine what text (key or description) is used as autocomplete-text. A text is only used if it matches the user input.
+	 * If set to <code>Valur</code>, the key is used.
+	 * If set to <code>Description</code>, the description is used.
+	 * If set to <code>ValueDescription</code>, the key is used, if it maps, otherwise the description.
+	 * If set to <code>DescriptionValue</code>, the description is used, if it maps, otherwise the key.
+	 *
+	 * <b>Note:</b> Whatever this function returns, the user input will not be overwritten, only the text after the user input will be added and shown as selected.
+	 * Otherwise the cursor position might change or the user input changes while typing what would lead to confusion.
 	 *
 	 * @param {sap.ui.mdc.field.FieldBase} oField <code>Field</code> control instance
 	 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
-	 * @param {string} sCurrentText Currently typed text (Could be changed when the type-ahed result is returned asynchronously.)
-	 * @param {string} sUsedText Text used to determine condition
-	 * @param {sap.ui.model.Type} oType Type of the value
-	 * @param {sap.ui.model.Type} oAdditionalType Type of the description
-	 * @returns {sap.ui.mdc.field.AutocompleteInfo} Object containing text and selection to show in field
-	 * @since: 1.120.0
-	 * @private
+	 * @param {string} sKey Formatted text of the key (value)
+	 * @param {string} sDescription FormattedText of the description
+	 * @param {boolean} bKeyMatch If <code>true</code> the key matches to the user input
+	 * @param {boolean} bDescriptionMatch If <code>true</code> the description matches to the user input
+	 * @returns {string} Output text
+	 * @since: 1.121.0
+	 * @public
 	 */
-	FieldBaseDelegate.getAutocomplete = function(oField, oCondition, sCurrentText, sUsedText, oType, oAdditionalType) {
-
-		if (sCurrentText !== sUsedText) {
-			// user changed text after typeahead was determined, so result might be wrong
-			return null;
-		}
+	FieldBaseDelegate.getAutocompleteOutput = function(oField, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch) {
 
 		const sDisplay = oField.getDisplay();
-		let sKey;
-		let sDescription;
 		let sOutput;
-		let iStart;
-		let iEnd;
-
-		// get output texts
-		if (oType) {
-			sKey = oType.formatValue(oCondition.values[0], "string");
-		} else {
-			sKey = oCondition.values[0];
-		}
-
-		// check if key match
-		const bKeyMatch = sKey.startsWith(sCurrentText);
-		let bDescriptionMatch = false;
-
-		if (oCondition.values.length > 1) { // as condition could only contain a key
-			if (oAdditionalType) {
-				sDescription = oAdditionalType.formatValue(oCondition.values[1], "string");
-			} else {
-				sDescription = oCondition.values[1];
-			}
-
-			// check if description match
-			bDescriptionMatch = sDescription.startsWith(sCurrentText);
-		}
 
 		if (sDisplay === FieldDisplay.Value) {
 			if (bKeyMatch) {
@@ -275,13 +270,7 @@ sap.ui.define([
 			}
 		}
 
-		if (sOutput) {
-			iStart = sCurrentText.length;
-			iEnd = sOutput.length;
-			return {text: sOutput, selectionStart: iStart, selectionEnd: iEnd};
-		}
-
-		return null;
+		return sOutput;
 
 	};
 

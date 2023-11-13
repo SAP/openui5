@@ -1762,13 +1762,19 @@ sap.ui.define([
 	QUnit.test("Parsing: unsing condition from navigation", function(assert) {
 
 		const oNavigateCondition = Condition.createItemCondition("I3", "Item3", {testIn: "A"}, {testOut: "B"});
+		const oCompareCondition = Condition.createItemCondition("I3", "Item3", {testIn: "A"}, {testOut: "B"}); // as internal propertys (output) must not be returned
 		oConditionType.oFormatOptions.navigateCondition = oNavigateCondition; // fake setting directly
 
 		let vResult = oConditionType.parseValue("Item3");
-		assert.deepEqual(vResult, oNavigateCondition, "navigationCondition returned");
+		assert.deepEqual(vResult, oCompareCondition, "navigationCondition returned");
 
 		vResult = oConditionType.parseValue("Item1");
-		assert.notDeepEqual(vResult, oNavigateCondition, "navigationCondition not returned");
+		assert.notDeepEqual(vResult, oCompareCondition, "navigationCondition not returned");
+
+		// for autocomplete output could be different than formattes value (bevause of delegate implementation / case insensitiveness)
+		oNavigateCondition.output = "item3";
+		vResult = oConditionType.parseValue("item3");
+		assert.deepEqual(vResult, oCompareCondition, "navigationCondition returned");
 
 	});
 

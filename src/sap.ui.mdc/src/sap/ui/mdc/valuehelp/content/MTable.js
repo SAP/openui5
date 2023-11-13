@@ -222,12 +222,13 @@ sap.ui.define([
 			const oLatestApplyFiltersPromise = this._retrievePromise("applyFilters");
 			oLatestApplyFiltersPromise?.getInternalPromise().then((bApplyFilters) => {
 				const oBindingContext = this.getValueHelpDelegate().getFirstMatch(this.getValueHelpInstance(), this);
+				const bCaseSensitive = this.getValueHelpDelegate().isFilteringCaseSensitive(this.getValueHelpInstance(), this);
 				this._oFirstItemResult = {
 					result: this.getItemFromContext(oBindingContext),
 					filterValue: this.getFilterValue(),
 					index: -1
 				};
-				_fireTypeahedSuggested.call(this, oBindingContext);
+				_fireTypeaheadSuggested.call(this, oBindingContext, bCaseSensitive);
 			});
 			return oLatestApplyFiltersPromise && oLatestApplyFiltersPromise.getInternalPromise(); // re-fetching the applyFilters promise, in case filterValue was changed during the filtering and a parallel run was triggered
 		}.bind(this));
@@ -981,7 +982,7 @@ sap.ui.define([
 		return aListBindingContexts;
 	};
 
-	function _fireTypeahedSuggested(oBindingContext) {
+	function _fireTypeaheadSuggested(oBindingContext, bCaseSensitive) {
 
 		if (!this.getUseFirstMatch() || !this._oFirstItemResult || !this._oFirstItemResult.result || !this._oFirstItemResult.filterValue) {
 			return;
@@ -999,7 +1000,7 @@ sap.ui.define([
 			}
 		}
 
-		this.fireTypeaheadSuggested({condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId});
+		this.fireTypeaheadSuggested({condition: oCondition, filterValue: this._oFirstItemResult.filterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
 
 	}
 

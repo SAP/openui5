@@ -3061,14 +3061,18 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
+		const bCaseSensitive = oEvent.getParameter("caseSensitive");
 		const oContent = this.getControlForSuggestion();
 		const oOperator = FilterOperatorUtil.getEQOperator(this.getSupportedOperators()); /// use EQ operator of Field (might be different one)
+		const sCurrentValue = this._vLiveChangeValue || this._sFilterValue; // as FilterValue is updated delayed
 
-		if (_isFocused.call(this) && oContent && oContent.setDOMValue && oContent.selectText && !this._bPreventAutocomplete && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
+		if (_isFocused.call(this) && !this._bPreventAutocomplete && sCurrentValue === sFilterValue && // skip if user changes text after result was determined
+			oContent && oContent.setDOMValue && oContent.selectText && (!oContent.isComposingCharacter || !oContent.isComposingCharacter())) { // Autocomplete only possible if content supports it
 			const oContentFactory = this.getContentFactory();
 			const bIsMeasure = oContentFactory.isMeasure();
 			const oDelegate = this.getControlDelegate(); // on typeahead it must be initialized
 			let oDataType;
+			const oAdditionalDataType = oContentFactory.getAdditionalDataType();
 
 			if (bIsMeasure) {
 				const aCompositeTypes = this.getContentFactory().getCompositeTypes();
@@ -3079,9 +3083,31 @@ sap.ui.define([
 				oDataType = oContentFactory.getDataType();
 			}
 
-			const oAutocomplete = oDelegate.getAutocomplete(this, oCondition, this._vLiveChangeValue || this._sFilterValue, sFilterValue, oDataType, oContentFactory.getAdditionalDataType());
+			// determine formattes value used for output
+			let sKey;
+			let sDescription;
 
-			if (oAutocomplete && oAutocomplete.text) { // only if something returned
+			// get output texts
+			if (oDataType) {
+				sKey = oDataType.formatValue(oCondition.values[0], "string");
+			} else {
+				sKey = oCondition.values[0];
+			}
+
+			if (oCondition.values.length > 1) { // as condition could only contain a key
+				if (oAdditionalDataType) {
+					sDescription = oAdditionalDataType.formatValue(oCondition.values[1], "string");
+				} else {
+					sDescription = oCondition.values[1];
+				}
+			}
+
+			// check if entered text matches result
+			const bKeyMatch = !!sKey && oDelegate.isInputMatchingText(this, sFilterValue, sKey, false, bCaseSensitive);
+			const bDescriptionMatch = !!sDescription && oDelegate.isInputMatchingText(this, sFilterValue, sDescription, true, bCaseSensitive);
+			let sOutput = oDelegate.getAutocompleteOutput(this, oCondition, sKey, sDescription, bKeyMatch, bDescriptionMatch);
+
+			if (sOutput) { // only if something returned
 				this._oNavigateCondition = merge({}, oCondition); // to keep Payload
 				this._oNavigateCondition.operator = oOperator.name;
 
@@ -3101,8 +3127,12 @@ sap.ui.define([
 					}
 				}
 
-				oContent.setDOMValue(oAutocomplete.text);
-				oContent.selectText(oAutocomplete.selectionStart, oAutocomplete.selectionEnd);
+				// while typing the types user input should not be changed. As the output might have a diffrent upper/lower case, replace the beginning with the user input.
+				sOutput = sFilterValue + sOutput.substr(sFilterValue.length);
+				this._oNavigateCondition.output = sOutput; // store for parsing as in ConditionType normally the user input is compared with formatted value. But here the output could be different because of delegate implementation.
+
+				oContent.setDOMValue(sOutput);
+				oContent.selectText(sFilterValue.length, sOutput.length);
 
 				oContentFactory.updateConditionType();
 				_setAriaAttributes.call(this, true, sItemId); // TODO: check if still open?

@@ -68,15 +68,15 @@ sap.ui.define([
 
 			DelegateCache.add(oFilterBar, {
 				"stock": { "operators": [OperatorName.BT] },
-				"author_ID": { "valueHelp": "FH1", display: FieldDisplay.Description},
-				"title": { "valueHelp": "FH4" },
+				"author_ID": { "valueHelp": "FH1", "display": FieldDisplay.Description, "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {}}},
+				"title": { "valueHelp": "FH4", "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {}}},
 				"published": { "defaultOperator": "RENAISSANCE", "valueHelp": "FHPublished", "operators": [OperatorName.EQ, OperatorName.GT, OperatorName.LT, OperatorName.BT, "MEDIEVAL", "RENAISSANCE", "MODERN", OperatorName.LASTYEAR] },
-				"language_code": { "valueHelp": "FHLanguage", "display": FieldDisplay.Description},
+				"language_code": { "valueHelp": "FHLanguage", "display": FieldDisplay.Description, "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {"autoCompleteCaseSensitive": "key"}}},
 				"classification_code": { "valueHelp": "FHClassification", "display": FieldDisplay.Description},
 				"genre_code": { "valueHelp": "FHGenre", "display": FieldDisplay.Description},
 				"subgenre_code": { "valueHelp": "FHSubGenre", "display": FieldDisplay.Description },
 				"detailgenre_code": { "valueHelp": "FHDetailGenre", "display": FieldDisplay.Description},
-				"currency_code": { "valueHelp": "FH-Currency", display: FieldDisplay.Value, operators: [OperatorName.EQ]},
+				"currency_code": { "valueHelp": "FH-Currency", "display": FieldDisplay.Value, "operators": [OperatorName.EQ], "delegate": {"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": {"autoCompleteCaseSensitive": "description"}}},
 				"createdAt": { "operators": ["MYDATE", "MYDATERANGE", OperatorName.EQ, OperatorName.GE, OperatorName.LE, OperatorName.BT, OperatorName.LT, OperatorName.TODAY, OperatorName.YESTERDAY, OperatorName.TOMORROW, OperatorName.LASTDAYS, "MYNEXTDAYS", OperatorName.THISWEEK, OperatorName.THISMONTH, OperatorName.THISQUARTER, OperatorName.THISYEAR, OperatorName.NEXTHOURS, OperatorName.NEXTMINUTES, OperatorName.LASTHOURS] }
 			}, "$Filters");
 

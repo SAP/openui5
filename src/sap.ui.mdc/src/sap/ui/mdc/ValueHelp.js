@@ -288,7 +288,12 @@ sap.ui.define([
 						/**
 						 * ID of the suggested item (This is needed to set the corresponding ARIA attribute)
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * If <code>true</code> the filtering was executed case sensitive
+						 * since 1.121.0
+						 */
+						caseSensitive: { type: "boolean" }
 					}
 				}
 			},
@@ -923,7 +928,8 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
-		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId});
+		const bCaseSensitive = oEvent.getParameter("caseSensitive");
+		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
 	}
 
 	function _handleSelect(oEvent) {
