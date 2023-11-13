@@ -20,13 +20,13 @@
 			"sap/tnt/ToolPage",
 			"sap/tnt/ToolHeader",
 			"sap/m/Button",
-			"sap/m/ToggleButton",
+			"sap/m/CheckBox",
 			"sap/m/library",
 			"sap/m/Title",
 			"sap/m/Image",
 			"sap/m/OverflowToolbar"
 		], (Device, SideNavigation, NavigationList, NavigationListItem, NavigationListGroup,
-			ToolPage, ToolHeader, Button, ToggleButton, mLibrary, Title, Image, OverflowToolbar) => {
+			ToolPage, ToolHeader, Button, CheckBox, mLibrary, Title, Image, OverflowToolbar) => {
 
 			const ButtonType = mLibrary.ButtonType;
 			const OverflowToolbarPriority = mLibrary.OverflowToolbarPriority;
@@ -109,12 +109,11 @@
 				layoutData: new OverflowToolbarLayoutData({ priority: OverflowToolbarPriority.NeverOverflow })
 			});
 
-			const oToggleDensityButton = new ToggleButton("toggleDensity", {
-				icon: "sap-icon://resize",
+			const oDensityCheckBox = new CheckBox("density", {
+				selected: document.body.classList.contains("sapUiSizeCompact"),
 				text: "Compact Mode",
-				type: ButtonType.Transparent,
-				press: (oEvent) => {
-					document.body.classList.toggle("sapUiSizeCompact", oEvent.getParameter("pressed"));
+				select: (oEvent) => {
+					document.body.classList.toggle("sapUiSizeCompact", oEvent.getParameter("selected"));
 				},
 				layoutData: new OverflowToolbarLayoutData({ priority: OverflowToolbarPriority.NeverOverflow })
 			});
@@ -144,7 +143,7 @@
 			const oTP = new ToolPage({
 				header: oTH,
 				sideContent: oSN,
-				mainContents: oToggleDensityButton,
+				mainContents: oDensityCheckBox,
 			}).placeAt("body");
 		});
 	</script>
