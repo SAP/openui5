@@ -25,6 +25,8 @@ sap.ui.define([
 	 * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
 	 * provide the according item of the <code>targetAggregation</code> to return the according key associated to this item.
 	 * @param {string} mSettings.targetAggregation The name of the aggregation that is now managed by this controller
+	 * @param {string} [mSettings.persistenceIdentifier] The name of the aggregation that is now managed by this controller
+	 * @param {sap.m.p13n.MetadataHelper} [mSettings.helper] The <code>{@link sap.m.p13n.MetadataHelper MetadataHelper}</code> to provide metadata-specific information. It may be used to define more granular information for the selection of items.
 	 *
 	 * @class
 	 * The <code>SelectionController</code> entity serves as a base class to create control-specific personalization implementations.
@@ -42,6 +44,8 @@ sap.ui.define([
 			BaseObject.call(this);
 
 			this._oAdaptationControl = mSettings.control;
+			this._sPersistenceIdentifier = mSettings.persistenceIdentifier ? mSettings.persistenceIdentifier : null;
+			this._oMetadataHelper = mSettings.helper ? mSettings.helper : null;
 
 			/**
 			 * The 'stableKeys' can be provided in the constructor to exclude the keys from the p13n UI, while still respecting them in the
@@ -64,6 +68,22 @@ sap.ui.define([
 
 		}
 	});
+
+	/**
+	 * Gets defined <code>persistenceIdentifier</code> of the controller.
+	 * @returns {string|null} String if <code>_sPersistenceIdentifier</code> is defined, otherwise null.
+	 */
+	SelectionController.prototype.getPersistenceIdentifier = function(){
+		return this._sPersistenceIdentifier;
+	};
+
+	/**
+	 * Gets defined {@link sap.m.p13n.MetadataHelper MetadataHelper} of the controller.
+	 * @returns {sap.m.p13n.MetadataHelper|null} Instance of {@link sap.m.p13n.MetadataHelper} if defined, otherwise null.
+	 */
+	SelectionController.prototype.getMetadataHelper = function(){
+		return this._oMetadataHelper;
+	};
 
 	/**
 	 * The control that is being personalized via this controller.
@@ -243,8 +263,8 @@ sap.ui.define([
 
 		if (sMoveOperation) {
 			var aExistingArrayWithoutDeletes = this._removeItems(aExistingArray, mDeleteInsert.deletes);
-			var aChangedArrayWithoutnserts = this._removeItems(aChangedArray, mDeleteInsert.inserts);
-			var aMoveChanges = this._createMoveChanges(aExistingArrayWithoutDeletes, aChangedArrayWithoutnserts, oControl, sMoveOperation, aDeltaAttributes);
+			var aChangedArrayWithoutInserts = this._removeItems(aChangedArray, mDeleteInsert.inserts);
+			var aMoveChanges = this._createMoveChanges(aExistingArrayWithoutDeletes, aChangedArrayWithoutInserts, oControl, sMoveOperation, aDeltaAttributes);
 			aChanges = aChanges.concat(aMoveChanges);
 		}
 
@@ -286,7 +306,6 @@ sap.ui.define([
 						}
 					}.bind(this));
 					// eslint-enable-next-line no-loop-func
-
 					aChanges.push(this._createMoveChange(sKey, Math.min(nIndex, aChangedItems.length), sOperation, oControl));
 				}
 			}
@@ -417,6 +436,10 @@ sap.ui.define([
 
 		oChangeContent.targetAggregation = this.getTargetAggregation();
 
+		if (this._sPersistenceIdentifier){
+			oChangeContent.persistenceIdentifier = this._sPersistenceIdentifier;
+		}
+
 		var oAddRemoveChange = {
 			selectorElement: oControl,
 			changeSpecificData: {
@@ -428,15 +451,21 @@ sap.ui.define([
 	};
 
 	SelectionController.prototype._createMoveChange = function(sPropertykey, iNewIndex, sMoveOperation, oControl){
+		var oContent = {
+			key: sPropertykey,
+			targetAggregation: this.getTargetAggregation(),
+			index: iNewIndex
+		};
+
+		if (this._sPersistenceIdentifier){
+			oContent.persistenceIdentifier = this._sPersistenceIdentifier;
+		}
+
 		var oMoveChange =  {
 			selectorElement: oControl,
 			changeSpecificData: {
 				changeType: sMoveOperation,
-				content: {
-					key: sPropertykey,
-					targetAggregation: this.getTargetAggregation(),
-					index: iNewIndex
-				}
+				content: oContent
 			}
 		};
 		return oMoveChange;
@@ -601,7 +630,9 @@ sap.ui.define([
 
 		var bEnhance = fnEnhace instanceof Function;
 
-		oPropertyHelper.getProperties().forEach(function(oProperty) {
+		var oControllerHelper = this.getMetadataHelper();
+		var oHelper = oControllerHelper ? oControllerHelper : oPropertyHelper;
+		oHelper.getProperties().forEach(function(oProperty) {
 
 			var mItem = {};
 			mItem.key = oProperty.name || oProperty.key;

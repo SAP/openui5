@@ -103,7 +103,7 @@ sap.ui.define([
 	 * methods that always expect a control instance as parameter. Only registered control instances can be used for personalization through the <code>Engine</code>.
 	 * @public
 	 * @typedef {object} sap.m.p13n.EngineRegistrationConfig
-	 * @property {sap.m.p13n.MetadataHelper} helper The <code>{@link sap.m.p13n.modification.MetadataHelper MetadataHelper}</code> to provide metadata-specific information.
+	 * @property {sap.m.p13n.MetadataHelper} helper The <code>{@link sap.m.p13n.MetadataHelper MetadataHelper}</code> to provide metadata-specific information. It may be used to define more granular information for the selection of items.
 	 * @property {Object<string,sap.m.p13n.SelectionController>} controller A map of arbitrary keys that contain a controller instance as value. The key must be unique and needs to be provided for later access when using <code>Engine</code> functionality specific for one controller type.
 	 */
 
@@ -365,7 +365,7 @@ sap.ui.define([
 	 *		},
 	 *		{
 	 *			key: "key2",
-	 *			grouped: false //Removes selection status for key2
+	 *			grouped: false //Removes grouping status for key2
 	 *		},{
 	 *			key: "key3",
 	 *			position: 2 //Reorders current grouping position in the array
@@ -543,6 +543,15 @@ sap.ui.define([
 					var oCurrentState = oController.getCurrentState();
 					var oPriorState = merge(oCurrentState instanceof Array ? [] : {}, oCurrentState);
 
+					var oControllerHelper = oController.getMetadataHelper();
+					var oHelper = oControllerHelper ? oControllerHelper : oRegistryEntry.helper;
+					var oPropertyInfo = oHelper.getProperties().map(function (a) {
+						return {
+							key: a.key,
+							name: a.name
+						};
+					});
+
 					var mDeltaConfig = {
 						existingState: mDiffParameters.stateBefore || oPriorState,
 						applyAbsolute: mDiffParameters.applyAbsolute,
@@ -550,12 +559,7 @@ sap.ui.define([
 						control: oController.getAdaptationControl(),
 						changeOperations: mChangeOperations,
 						deltaAttributes: ["key"],
-						propertyInfo: oRegistryEntry.helper.getProperties().map(function (a) {
-							return {
-								key: a.key,
-								name: a.name
-							};
-						})
+						propertyInfo: oPropertyInfo
 					};
 
 					//Only execute change calculation in case there is a difference (--> example: press 'Ok' without a difference)
@@ -733,7 +737,8 @@ sap.ui.define([
 
 		var oControl = Engine.getControlInstance(vControl);
 		var oRegistryEntry = this._getRegistryEntry(vControl);
-		mEnhanceConfig.currentState = Engine.getInstance().getController(oControl, mEnhanceConfig.changeType)?.getCurrentState();
+		var sPersistenceIdentifier = mEnhanceConfig && mEnhanceConfig.value && mEnhanceConfig.value.controllerKey ? mEnhanceConfig.value.controllerKey : undefined;
+		mEnhanceConfig.currentState = Engine.getInstance().getController(oControl, mEnhanceConfig.changeType, sPersistenceIdentifier)?.getCurrentState();
 
 		return xConfigAPI.enhanceConfig(oControl, mEnhanceConfig)
 			.then(function (oConfig) {
@@ -898,27 +903,33 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control} vControl The registered Control instance.
 	 * @param {string} sKey The key/changeType for which the controller has been registered.
+	 * @param {string} [sPersistenceIdentifier] The key defined for the controller. Should be used if <code>sKey</code> represents the changeType.
 	 *
 	 * @returns {sap.m.p13n.SelectionController} The controller instance
 	 */
-	Engine.prototype.getController = function (vControl, sKey) {
+	Engine.prototype.getController = function (vControl, sKey, sPersistenceIdentifier) {
 		var oRegistryEntry = this._getRegistryEntry(vControl), oController;
 		if (oRegistryEntry && oRegistryEntry.controller.hasOwnProperty(sKey)) {
 			oController = oRegistryEntry.controller[sKey];
 		}
 
-		if (!oController) {
-			this.getRegisteredControllers(vControl).forEach(function (sController) {
-				var oRegisteredController = this.getController(vControl, sController);
-				if (oRegisteredController) {
-					Object.keys(oRegisteredController.getChangeOperations()).forEach(function (sOperationType) {
-						if (oRegisteredController.getChangeOperations()[sOperationType] === sKey) {
+		if (oController) {
+			return oController;
+		}
+
+		this.getRegisteredControllers(vControl).forEach(function (sController) {
+			var oRegisteredController = this.getController(vControl, sController);
+			if (oRegisteredController) {
+				Object.keys(oRegisteredController.getChangeOperations()).forEach(function (sOperationType) {
+					if (oRegisteredController.getChangeOperations()[sOperationType] === sKey) {
+						if (!sPersistenceIdentifier || sPersistenceIdentifier === oRegisteredController.getPersistenceIdentifier()) {
 							oController = oRegisteredController;
 						}
-					});
-				}
-			}.bind(this));
-		}
+					}
+				});
+			}
+		}.bind(this));
+
 		return oController;
 	};
 

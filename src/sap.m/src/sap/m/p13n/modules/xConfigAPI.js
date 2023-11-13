@@ -241,6 +241,9 @@ sap.ui.define([
 						}
 					});
 					oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.index;
+					if (vValue.persistenceIdentifier) {
+						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["persistenceIdentifier"] = vValue.persistenceIdentifier;
+					}
 					break;
 				case "remove":
 				case "add":
@@ -249,6 +252,9 @@ sap.ui.define([
 					if (vValue.hasOwnProperty("value")) {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.value;
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
+						if (vValue.persistenceIdentifier) {
+							oConfig.aggregations[sAggregationName][sPropertyInfoKey]["persistenceIdentifier"] = vValue.persistenceIdentifier;
+						}
 					} else {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
 					}
