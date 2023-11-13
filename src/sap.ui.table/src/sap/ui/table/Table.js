@@ -3262,14 +3262,6 @@ sap.ui.define([
 		}
 	};
 
-	// Still called by the SmartTable. Will be deleted later.
-	Table.prototype._getHideStandardTooltips = function() {
-		return this._bHideStandardTooltips ?? false;
-	};
-	Table.prototype._setHideStandardTooltips = function(bHideStandardTooltips) {
-		this._bHideStandardTooltips = bHideStandardTooltips;
-	};
-
 	/**
 	 * Notifies the selection listeners about the changed rows.
 	 * @private
