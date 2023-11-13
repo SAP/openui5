@@ -30,6 +30,13 @@ sap.ui.define([
 	QUnit.module("Freestyle application", {
 		async beforeEach(assert) {
 			var fnDone = assert.async();
+			const oView = await XMLView.create({
+				definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+					'<l:VerticalLayout id="layout">' +
+						'<m:Button text="Button 1" id="button1" />' +
+					"</l:VerticalLayout>" +
+				"</mvc:View>"
+			});
 			var CustomComponent = UIComponent.extend("sap.ui.rta.test.Component", {
 				createContent() {
 					return new VerticalLayout({
@@ -39,14 +46,7 @@ sap.ui.define([
 							new Button({
 								text: "Missing stable id"
 							}),
-							new XMLView({ // Missing ID for view and implicit missing IDs for controls inside
-								viewContent:
-									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
-										'<l:VerticalLayout id="layout">' +
-											'<m:Button text="Button 1" id="button1" />' +
-										"</l:VerticalLayout>" +
-									"</mvc:View>"
-							})
+							oView
 						]
 					});
 				}
@@ -84,6 +84,41 @@ sap.ui.define([
 	QUnit.module("Fiori Elements Application with extension", {
 		async beforeEach(assert) {
 			var fnDone = assert.async();
+			var oParser = new DOMParser();
+
+			sandbox.stub(LoaderExtensions, "loadResource")
+			.callThrough()
+			.withArgs(
+				sinon.match(function(sResourceName) {
+					return typeof sResourceName === "string" && sResourceName.endsWith("fixture/application/ext/view/ProductDetailReview.view.xml");
+				})
+			)
+			.resolves(
+				oParser.parseFromString(
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+							'<l:VerticalLayout id="layout">' +
+								'<m:Button text="Button 1"/>' +
+							"</l:VerticalLayout>" +
+						"</mvc:View>",
+					"text/xml"
+				)
+			);
+			const oView1 = await XMLView.create({
+				definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+					'<l:VerticalLayout id="layout">' +
+						'<m:Button text="Button 1" id="button1" />' +
+					"</l:VerticalLayout>" +
+				"</mvc:View>"
+			});
+			const oView2 = await XMLView.create({
+				id: "reviewView",
+				// definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+				// 	'<l:VerticalLayout id="layout">' +
+				// 		'<m:Button text="Button 1"/>' +
+				// 	"</l:VerticalLayout>" +
+				// "</mvc:View>"
+				viewName: "fixture.application.ext.view.ProductDetailReview"
+			});
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
 				createContent() {
 					return new VerticalLayout({
@@ -94,43 +129,12 @@ sap.ui.define([
 							new Button({
 								text: "Missing stable id"
 							}),
-							new XMLView({ // Missing ID for view and implicit missing IDs for controls inside
-								viewContent:
-									'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
-										'<l:VerticalLayout id="layout">' +
-											'<m:Button text="Button 1" id="button1" />' +
-										"</l:VerticalLayout>" +
-									"</mvc:View>"
-							}),
-
-							// This view considered as a custom extension:
-							new XMLView("reviewView", { // Missing ID for view and implicit missing IDs for controls inside
-								viewName: "fixture.application.ext.view.ProductDetailReview"
-							})
+							oView1,
+							oView2
 						]
 					});
 				}
 			});
-
-			var oParser = new DOMParser();
-
-			sandbox.stub(LoaderExtensions, "loadResource")
-			.callThrough()
-			.withArgs(
-				sinon.match(function(sResourceName) {
-					return typeof sResourceName === "string" && sResourceName.endsWith("fixture/application/ext/view/ProductDetailReview.view.xml");
-				})
-			)
-			.returns(
-				oParser.parseFromString(
-					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
-							'<l:VerticalLayout id="layout">' +
-								'<m:Button text="Button 1"/>' +
-							"</l:VerticalLayout>" +
-						"</mvc:View>",
-					"text/xml"
-				)
-			);
 
 			this.oComponent = new CustomComponent(); // Missing ID
 
@@ -179,6 +183,7 @@ sap.ui.define([
 		},
 		afterEach() {
 			sandbox.restore();
+			this.oComponentContainer.destroy();
 		}
 	}, function() {
 		QUnit.test("base functionality", function(assert) {

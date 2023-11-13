@@ -53,8 +53,8 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.createSandbox();
-	var oView;
 	sinon.stub(PersistenceWriteAPI, "save");
+	let oViewPromise;
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
 			manifest: {
@@ -64,17 +64,19 @@ sap.ui.define([
 					},
 					id: "MockComponent"
 				}
-			}
+			},
+			interfaces: ["sap.ui.core.IAsyncContentCreation"]
 		},
 		createContent() {
-			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>";
-			oView = new XMLView(this.createId("mockview"), {
-				viewContent
+			oViewPromise = XMLView.create({
+				id: this.createId("mockview"),
+				definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + "</mvc:View>"
 			});
-			return oView;
+			return oViewPromise;
 		}
 	});
 	var oComp = new MockComponent("testComponent");
+	var oView = await oViewPromise;
 	var oComponentContainer = new ComponentContainer({
 		component: oComp
 	});
@@ -827,10 +829,11 @@ sap.ui.define([
 			});
 			var done = assert.async();
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
-			oComp.runAsOwner(function() {
+			oComp.runAsOwner(async function() {
 				this.oCompContInside = new ComponentContainer("CompContInside", {
 					component: new MockComponent("compInside")
 				});
+				await oViewPromise;
 				oComp.byId("mockview").addContent(this.oCompContInside);
 				this.oCompContInside.getComponentInstance().byId("mockview").addContent(this.oNonRtaDialog);
 				done();

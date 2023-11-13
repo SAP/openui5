@@ -2595,8 +2595,11 @@ sap.ui.define([
 				componentId: "testComponent",
 				componentData: {},
 				manifest: {}
-			}).then(function() {
-				var oView;
+			}).then(async function() {
+				const oView = await XMLView.create({
+					id: "testComponent---mockview",
+					viewName: "sap.ui.test.VariantManagementTestApp"
+				});
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
@@ -2609,10 +2612,6 @@ sap.ui.define([
 						}
 					},
 					createContent() {
-						oView = new XMLView({
-							viewName: "sap.ui.test.VariantManagementTestApp",
-							id: this.createId("mockview")
-						});
 						var oApp = new App(oView.createId("mockapp"));
 						oApp.addPage(oView);
 						return oApp;

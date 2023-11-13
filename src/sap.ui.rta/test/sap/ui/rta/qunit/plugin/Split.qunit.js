@@ -50,8 +50,9 @@ sap.ui.define([
 				commandFactory: new CommandFactory()
 			});
 
-			this.oView = new XMLView("mockview", {
-				viewContent:
+			this.oView = await XMLView.create({
+				id: "mockview",
+				definition:
 					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
 						'<Panel id="panel">' +
 							'<Button id="button1" />' +
