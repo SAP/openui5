@@ -255,13 +255,14 @@ sap.ui.define([
 			this._onResize();
 		}
 
-		if (this._shouldShowMoreButton()) {
-			this._oShowMoreButton.$().attr("role", "button");
+		if (this._shouldShowMoreButton() && this._oShowMoreButton.getDomRef()) {
+			var domRef = this._oShowMoreButton.getDomRef();
+			domRef.setAttribute("role", "button");
 
 			if (this.getGroupType() === AvatarGroupType.Group) {
-				this._oShowMoreButton.$().attr("tabindex", "-1");
+				domRef.setAttribute("tabindex", "-1");
 			} else {
-				this._oShowMoreButton.$().attr("aria-label", this._getResourceBundle().getText("AVATARGROUP_POPUP"));
+				domRef.setAttribute("aria-label", this._getResourceBundle().getText("AVATARGROUP_POPUP"));
 			}
 		}
 
@@ -287,7 +288,7 @@ sap.ui.define([
 			sPopupMessage = oResourceBundle.getText("AVATARGROUP_POPUP");
 
 		if (this.getGroupType() === AvatarGroupType.Group) {
-			this.$().attr("aria-label", sPopupMessage + " " + sBaseMessage);
+			this.getDomRef().setAttribute("aria-label", sPopupMessage + " " + sBaseMessage);
 		}
 	};
 
@@ -542,7 +543,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AvatarGroup.prototype._getWidth = function () {
-		return Math.ceil(this.$().width());
+		return Math.ceil(this.getDomRef().clientWidth);
 	};
 
 	/**
@@ -559,7 +560,7 @@ sap.ui.define([
 			iAvatarWidth = this._getAvatarWidth(sAvatarDisplaySize),
 			iAvatarMargin = this._getAvatarMargin(sAvatarDisplaySize),
 			iAvatarNetWidth = this._getAvatarNetWidth(iAvatarWidth, iAvatarMargin),
-			iRenderedAvatars = this.$().children(".sapFAvatarGroupItem").length;
+			iRenderedAvatars = this.getDomRef().querySelectorAll(".sapFAvatarGroupItem").length;
 
 		if (iWidth === 0) {
 			return;

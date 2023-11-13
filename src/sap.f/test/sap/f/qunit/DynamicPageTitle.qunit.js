@@ -1315,7 +1315,7 @@ function (
 
 				setTimeout(function () {
 					// Assert
-					assert.strictEqual(oSpy.firstCall.args[0], null,
+					assert.strictEqual(oSpy.firstCall?.args[0], null,
 						"_setContentAreaFlexBasis is called first with null value to reset the flex-basis");
 					// Clean up
 					fnDone();
@@ -1417,11 +1417,11 @@ function (
 		oUtil.toMobileMode();
 		oUtil.renderObject(this.oDynamicPage);
 
-		var $TopArea = this.oDynamicPageTitle.$topArea,
-			$MainArea = this.oDynamicPageTitle.$mainArea,
+		var $TopArea = this.oDynamicPageTitle.$("top"),
+			$MainArea = this.oDynamicPageTitle.$("main"),
 			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
-			$STOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper,
-			oSnappedWrapper = this.oDynamicPageTitle.$snappedWrapper.context,
+			$STOMWrapper = this.oDynamicPageTitle.$("snapped-title-on-mobile-wrapper"),
+			oSnappedWrapper = this.oDynamicPageTitle.$("snapped-wrapper").context,
 			oSnappedHeadingWrapper,
 			oTitle,
 			$titleWrapper = this.oDynamicPage.$("header");
@@ -1471,7 +1471,7 @@ function (
 		Core.applyChanges();
 
 		this.oDynamicPage.setHeaderExpanded(true);
-		oSnappedHeadingWrapper = this.oDynamicPageTitle.$snappedHeadingWrapper;
+		oSnappedHeadingWrapper = this.oDynamicPageTitle.$("snapped-heading-wrapper");
 
 		assert.ok(oSnappedHeadingWrapper.hasClass("sapUiHidden"), "Snapped content is hidden on mobile when SnappedTitleOnMobile " +
 		"is set");
@@ -1489,11 +1489,11 @@ function (
 		this.oDynamicPageTitle.setAggregation("snappedTitleOnMobile", null);
 		oUtil.renderObject(this.oDynamicPage);
 
-		var $TopArea = this.oDynamicPageTitle.$topArea,
-			$MainArea = this.oDynamicPageTitle.$mainArea,
+		var $TopArea = this.oDynamicPageTitle.$("top"),
+			$MainArea = this.oDynamicPageTitle.$("main"),
 			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
-			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
-			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			oSTOMWrapper = this.oDynamicPageTitle.$("snapped-title-on-mobile-wrapper").context,
+			$SnappedWrapper = this.oDynamicPageTitle.$("snapped-wrapper"),
 			$titleWrapper = this.oDynamicPage.$("header");
 
 		// Assert
@@ -1537,11 +1537,11 @@ function (
 		oUtil.toTabletMode();
 		oUtil.renderObject(this.oDynamicPage);
 
-		var $TopArea = this.oDynamicPageTitle.$topArea,
-			$MainArea = this.oDynamicPageTitle.$mainArea,
+		var $TopArea = this.oDynamicPageTitle.$("top"),
+			$MainArea = this.oDynamicPageTitle.$("main"),
 			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
-			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
-			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			oSTOMWrapper = this.oDynamicPageTitle.$("snapped-title-on-mobile-wrapper").context,
+			$SnappedWrapper = this.oDynamicPageTitle.$("snapped-wrapper"),
 			$titleWrapper = this.oDynamicPage.$("header");
 
 		// Assert
@@ -1584,11 +1584,11 @@ function (
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
-		var $TopArea = this.oDynamicPageTitle.$topArea,
-			$MainArea = this.oDynamicPageTitle.$mainArea,
+		var $TopArea = this.oDynamicPageTitle.$("top"),
+			$MainArea = this.oDynamicPageTitle.$("main"),
 			bIsExpandButtonVisible = this.oDynamicPageTitle._getShowExpandButton(),
-			oSTOMWrapper = this.oDynamicPageTitle.$snappedTitleOnMobileWrapper.context,
-			$SnappedWrapper = this.oDynamicPageTitle.$snappedWrapper,
+			oSTOMWrapper = this.oDynamicPageTitle.$("snapped-title-on-mobile-wrapper").context,
+			$SnappedWrapper = this.oDynamicPageTitle.$("snapped-wrapper"),
 			$titleWrapper = this.oDynamicPage.$("header");
 
 		// Assert

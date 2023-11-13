@@ -72,12 +72,12 @@ function(
 
 		assert.ok(oDynamicPage.getHeaderExpanded(), "initial value for the headerExpanded prop is true");
 		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", sAriaLabelledBy, "Initial aria-labelledby references");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(!oDynamicPage.$("header").hasClass(sSnappedClass));
 
 		oDynamicPage.setHeaderExpanded(false);
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false under regular conditions works");
 		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "false", sAriaLabelledBy, "Header is now snapped");
-		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oDynamicPage.$("header").hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		assert.strictEqual(parseInt($oDynamicPageHeader[0].style.height), iHeaderHeight, "Header height is fixed");
@@ -87,7 +87,7 @@ function(
 		oDynamicPage.setHeaderExpanded(true);
 		assert.ok(oDynamicPage.getHeaderExpanded(), "header converted to expanded");
 		oUtil.testExpandedCollapsedARIA(assert, oDynamicPage, "true", sAriaLabelledBy, "Header is expanded again");
-		assert.ok(!oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(!oDynamicPage.$("header").hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", true, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "visible", "Header should be included in the tab chain again");
 		assert.strictEqual($oDynamicPageHeader[0].style.height, "", "Header height is restored to the default value");
@@ -96,7 +96,7 @@ function(
 
 		oDynamicPage._snapHeader();
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "setting it to false via user interaction");
-		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass));
+		assert.ok(oDynamicPage.$("header").hasClass(sSnappedClass));
 		assert.ok(oSetPropertySpy.calledWith("headerExpanded", false, true));
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
 		assert.strictEqual(parseInt($oDynamicPageHeader[0].style.height), iHeaderHeight, "Header height is fixed");

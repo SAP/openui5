@@ -558,7 +558,7 @@ sap.ui.define([
 		QUnit.test("ScrollToElement correct when subHeader toggles", function(assert) {
 			var oIconTabBar = this.oDynamicPage.getContent(),
 				oElement = oIconTabBar.getItems()[0].getContent()[0].getContent()[20].getDomRef(),
-				$wrapper = this.oDynamicPage.$wrapper;
+				$wrapper = this.oDynamicPage.$("contentWrapper");
 
 			// Setup: an element in the context exists
 			assert.ok(oElement, "element is in dom");

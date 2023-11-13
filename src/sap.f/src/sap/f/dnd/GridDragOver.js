@@ -248,13 +248,13 @@ sap.ui.define([
 			oDropContainerDomRef = oDropContainer.getDomRefForSetting(this._sTargetAggregation) || oDropContainer.getDomRef(),
 			oTargetControl = mDropPosition.targetControl,
 			iTargetIndex = oDropContainer.indexOfAggregation(this._sTargetAggregation, oTargetControl),
-			$targetGridItem,
-			$insertTarget,
+			targetGridItemDom,
+			insertTargetDom,
 			mStyles;
 
 		if (oTargetControl) {
-			$targetGridItem = this._findContainingGridItem(oTargetControl);
-			$insertTarget = $targetGridItem || oTargetControl.$();
+			targetGridItemDom = this._findContainingGridItem(oTargetControl);
+			insertTargetDom = targetGridItemDom || oTargetControl.getDomRef();
 		}
 
 		if (this._mDropIndicatorSize) {
@@ -274,10 +274,10 @@ sap.ui.define([
 			this._$indicator.css(mStyles);
 		}
 
-		if ($insertTarget && mDropPosition.position == "Before") {
-			this._$indicator.insertBefore($insertTarget);
-		} else if ($insertTarget) {
-			this._$indicator.insertAfter($insertTarget);
+		if (insertTargetDom && mDropPosition.position == "Before") {
+			this._$indicator.insertBefore(insertTargetDom);
+		} else if (insertTargetDom) {
+			this._$indicator.insertAfter(insertTargetDom);
 			iTargetIndex += 1;
 		} else {
 			oDropContainerDomRef.appendChild(this._$indicator[0]);
@@ -302,14 +302,13 @@ sap.ui.define([
 	 * Hides the control that is currently dragged.
 	 */
 	GridDragOver.prototype._hideDraggedItem = function() {
-		this._oDragControl.$().hide();
+		this._oDragControl.getDomRef().style.display = 'none';
 
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
-		var $gridItem = this._findContainingGridItem(this._oDragControl);
-
-		if ($gridItem && this._bIsInSameContainer) {
-			$gridItem.hide();
+		var gridItemDom = this._findContainingGridItem(this._oDragControl);
+		if (gridItemDom && this._bIsInSameContainer) {
+			gridItemDom.style.display = 'none';
 		}
 	};
 
@@ -319,16 +318,15 @@ sap.ui.define([
 	GridDragOver.prototype._showDraggedItem = function() {
 
 		if (this._oDragControl.getDomRef()) {
-			this._oDragControl.$().show();
+			this._oDragControl.getDomRef().style.display = '';
 		}
 
 		// this._oDragControl.setVisible(false); // todo, this brakes the drag session
 
-		var $gridItem = this._findContainingGridItem(this._oDragControl);
-		if ($gridItem) {
-			$gridItem.show();
+		var gridItemDom = this._findContainingGridItem(this._oDragControl);
+		if (gridItemDom) {
+			gridItemDom.style.display = '';
 		}
-
 	};
 
 	/**
@@ -342,9 +340,8 @@ sap.ui.define([
 			};
 
 		this._oCoreDragSession.setIndicatorConfig(mStyles);
-
 		if (oCoreDefaultIndicator) {
-			jQuery(oCoreDefaultIndicator).css(mStyles);
+			Object.assign(oCoreDefaultIndicator.style, mStyles);
 		}
 	};
 
@@ -361,7 +358,7 @@ sap.ui.define([
 		this._oCoreDragSession.setIndicatorConfig(mStyles);
 
 		if (oCoreDefaultIndicator) {
-			jQuery(oCoreDefaultIndicator).css(mStyles);
+			Object.assign(oCoreDefaultIndicator.style, mStyles);
 		}
 	};
 
@@ -418,30 +415,30 @@ sap.ui.define([
 	 * @returns {DropPosition} Suggested drop position
 	 */
 	GridDragOver.prototype._calculateDropPosition = function(oDragEvent) {
-		var $target = this._findItemFromPoint(oDragEvent.pageX, oDragEvent.pageY),
+		var targetDom = this._findItemFromPoint(oDragEvent.pageX, oDragEvent.pageY),
 			mCloseTarget,
 			oTargetControl,
 			sBeforeOrAfter;
 
-		if (!$target) {
+		if (!targetDom) {
 			mCloseTarget = this._findClosestItem(oDragEvent.pageX, oDragEvent.pageY);
 		}
 
 		if (mCloseTarget) {
-			$target = mCloseTarget.target;
+			targetDom = mCloseTarget.target;
 		}
 
 		if (mCloseTarget && mCloseTarget.direction === "Left") {
 			sBeforeOrAfter = "After";
 		}
 
-		if (!$target) {
+		if (!targetDom) {
 			// fallback to last item in the target
-			$target = this._getLastItem();
+			targetDom = this._getLastItem();
 			sBeforeOrAfter = "After";
 		}
 
-		if (!$target) {
+		if (!targetDom) {
 			// an empty grid
 			return {
 				targetControl: null,
@@ -449,12 +446,12 @@ sap.ui.define([
 			};
 		}
 
-		if ($target.hasClass("sapUiDnDGridIndicator")) {
+		if (targetDom.classList.contains("sapUiDnDGridIndicator")) {
 			// the indicator is the target
 			return null;
 		}
 
-		oTargetControl = Element.closestTo($target[0], true);
+		oTargetControl = Element.closestTo(targetDom, true);
 
 		if (!sBeforeOrAfter) {
 			sBeforeOrAfter = this._calculateDropBeforeOrAfter(oTargetControl, oDragEvent);
@@ -517,13 +514,13 @@ sap.ui.define([
 	 * @returns {Object} The dimensions
 	 */
 	GridDragOver.prototype._getDimensions = function(oControl) {
-		var $gridItem = this._findContainingGridItem(oControl);
+		var gridItemDom = this._findContainingGridItem(oControl);
 
-		if ($gridItem) {
+		if (gridItemDom) {
 			return {
-				rect: $gridItem[0].getBoundingClientRect(),
-				columnsSpan: $gridItem.css("grid-column-start"),
-				rowsSpan: $gridItem.css("grid-row-start")
+				rect: gridItemDom.getBoundingClientRect(),
+				columnsSpan: gridItemDom.style["grid-column-start"],
+				rowsSpan: gridItemDom.style["grid-row-start"]
 			};
 		}
 
@@ -537,20 +534,20 @@ sap.ui.define([
 	/**
 	 * Finds if the control is contained in grid item and returns it.
 	 * @param {sap.ui.core.Control} oControl The control
-	 * @returns {jQuery|null} The grid item which contains the control. If any.
+	 * @returns {HTMLElement|null} The grid item which contains the control. If any.
 	 */
 	GridDragOver.prototype._findContainingGridItem = function(oControl) {
-		var $control = oControl.$(),
-			sDisplay = $control.parent().css("display");
+		var controlDom = oControl.getDomRef(),
+			sDisplay = controlDom?.parentNode.style.display;
 
 		if (sDisplay === "grid" || sDisplay === "inline-grid") {
-			return $control;
+			return controlDom;
 		}
 
 		// if there is a wrapping element
-		sDisplay = $control.parent().parent().css("display");
+		sDisplay = controlDom?.parentNode.parentNode.style.display;
 		if (sDisplay === "grid" || sDisplay === "inline-grid") {
-			return $control.parent();
+			return controlDom.parentNode;
 		}
 
 		return null;
@@ -558,36 +555,40 @@ sap.ui.define([
 
 	/**
 	 * Gets the last control in the target aggregation.
-	 * @returns {jQuery|null} The last item
+	 * @returns {HTMLElement|null} The last item
 	 */
 	GridDragOver.prototype._getLastItem = function () {
 		var aItems = this._oDropContainer.getAggregation(this._sTargetAggregation),
-			$target;
+			targetDom;
 
 		if (aItems && aItems.length) {
-			$target = aItems[aItems.length - 1].$();
+			targetDom = aItems[aItems.length - 1].getDomRef();
 		}
 
-		return $target;
+		return targetDom;
 	};
 
 	/**
 	 * Gets the control from target aggregation which is on the given position (if any).
 	 * @param {number} iPageX Mouse x
 	 * @param {number} iPageY Mouse y
-	 * @returns {jQuery|null} The jQuery ref of the control which is on this position
+	 * @returns {HTMLElement|null} The DOM ref of the control which is on this position
 	 */
 	GridDragOver.prototype._findItemFromPoint = function(iPageX, iPageY) {
 		var oOverElement = document.elementFromPoint(iPageX - window.pageXOffset, iPageY - window.pageYOffset),
-			$closestItem = jQuery(oOverElement).closest(".sapUiDnDGridControl, .sapUiDnDGridIndicator");
+			closestItemDom;
 
-		if ($closestItem.hasClass("sapUiDnDGridIndicator")) {
-			// drag over the indicator
-			return $closestItem;
+		if (oOverElement && oOverElement.closest) {
+			closestItemDom = oOverElement.closest(".sapUiDnDGridControl, .sapUiDnDGridIndicator");
 		}
 
-		if ($closestItem.hasClass("sapUiDnDGridControl")) {
-			return $closestItem;
+		if (closestItemDom?.classList.contains("sapUiDnDGridIndicator")) {
+			// drag over the indicator
+			return closestItemDom;
+		}
+
+		if (closestItemDom?.classList.contains("sapUiDnDGridControl")) {
+			return closestItemDom;
 		}
 
 		return null;
@@ -597,7 +598,7 @@ sap.ui.define([
 	 * Gets the closest control from target aggregation which is on the given position (if any).
 	 * @param {number} iPageX Mouse x
 	 * @param {number} iPageY Mouse y
-	 * @returns {jQuery|null} The jQuery ref of the control which is closest to this position
+	 * @returns {HTMLElement|null} The DOM ref of the control which is closest to this position
 	 */
 	GridDragOver.prototype._findClosestItem = function(iPageX, iPageY) {
 		// note: this method can be improved, currently it handles most of the cases, but not all of them
@@ -607,30 +608,30 @@ sap.ui.define([
 			iIsRtlModifier = bIsRtl ? -1 : 1,
 			iStepX = 80 * iIsRtlModifier, // px
 			iStepY = 20, // px
-			$found,
+			foundDom,
 			sDirection,
 			iTries = 0,
 			iX = iPageX - iStepX;
 
 		 // try left
-		while (!$found && iX > 0 && iTries < 4) {
-			$found = this._findItemFromPoint(iX, iPageY);
+		 while (!foundDom && iX > 0 && iTries < 4) {
+			foundDom = this._findItemFromPoint(iX, iPageY);
 			iX -= iStepX;
 			iTries++;
 		}
 
-		if ($found) {
+		if (foundDom) {
 			sDirection = "Left";
 		}
 
 		// try upwards, only in close proximity
-		if (!$found && iPageY - iStepY > 0) {
-			$found = this._findItemFromPoint(iPageX, iPageY - 20);
+		if (!foundDom && iPageY - iStepY > 0) {
+			foundDom = this._findItemFromPoint(iPageX, iPageY - 20);
 			sDirection = "Top";
 		}
 
 		return {
-			target: $found,
+			target: foundDom,
 			direction: sDirection
 		};
 	};

@@ -449,19 +449,18 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._reflectItemVisibilityToWrapper = function (oItem) {
 
-		var oItemWrapper = GridContainerUtils.getItemWrapper(oItem),
-			$oItemWrapper;
+		var oItemWrapper = GridContainerUtils.getItemWrapper(oItem);
 
-		if (!oItemWrapper) {
+		if (!oItemWrapper || !oItemWrapper.getDomRef?.()) {
 			return;
 		}
 
-		$oItemWrapper = jQuery(oItemWrapper);
+		var oItemWrapperDom = oItemWrapper.getDomRef();
 
-		if (oItem.getVisible() && $oItemWrapper.hasClass("sapFGridContainerInvisiblePlaceholder")) {
-			$oItemWrapper.removeClass("sapFGridContainerInvisiblePlaceholder");
-		} else if (!oItem.getVisible() && !$oItemWrapper.hasClass("sapFGridContainerInvisiblePlaceholder")) {
-			$oItemWrapper.addClass("sapFGridContainerInvisiblePlaceholder");
+		if (oItem.getVisible() && oItemWrapperDom.classList.contains("sapFGridContainerInvisiblePlaceholder")) {
+			oItemWrapperDom.classList.remove("sapFGridContainerInvisiblePlaceholder");
+		} else if (!oItem.getVisible() && !oItemWrapperDom.classList.contains("sapFGridContainerInvisiblePlaceholder")) {
+			oItemWrapperDom.classList.add("sapFGridContainerInvisiblePlaceholder");
 		}
 	};
 
@@ -525,7 +524,8 @@ sap.ui.define([
 			that.addDelegate(this._oItemNavigation);
 		}
 
-		that.$().children().map(function (iIndex, oWrapperItem) {
+		var children = Array.from(that.getDomRef()?.children || []);
+		children.forEach(function (oWrapperItem, iIndex) {
 			if (oWrapperItem.getAttribute("class").indexOf("sapFGridContainerItemWrapper") > -1) {
 				aWrapperItemsDomRef.push(oWrapperItem);
 			}
@@ -575,7 +575,7 @@ sap.ui.define([
 	 */
 	GridContainer.prototype._detectColumnsChange = function () {
 		var oSettings = this.getActiveLayoutSettings(),
-			iWidth = this.$().innerWidth(),
+			iWidth = this.getDomRef()?.clientWidth || 0,
 			iColumns;
 
 		if (!oSettings) {
@@ -860,7 +860,7 @@ sap.ui.define([
 		}
 
 		if (bSettingsAreChanged) {
-			this.$().css(this._getActiveGridStyles());
+			Object.assign(this.getDomRef().style, this._getActiveGridStyles());
 			this.getItems().forEach(this._applyItemAutoRows.bind(this));
 		}
 
@@ -898,19 +898,17 @@ sap.ui.define([
 		}
 
 		if (hasItemAutoHeight(oItem)) {
-			var $item = oItem.$(),
+			var itemDomRef = oItem.getDomRef(),
 				oSettings = this.getActiveLayoutSettings(),
 				fHeight = oItem.getDomRef() ? oItem.getDomRef().getBoundingClientRect().height : 0,
 				iRows = oSettings.calculateRowsForItem(Math.round(fHeight));
 
-			if (!iRows) {
+			if (!iRows || !itemDomRef) {
 				// if the rows can not be calculated correctly, don't do anything
 				return;
 			}
 
-			$item.parent().css({
-				'grid-row': 'span ' + Math.max(iRows, getItemRowCount(oItem))
-			});
+			itemDomRef.parentNode.style['grid-row'] = 'span ' + Math.max(iRows, getItemRowCount(oItem));
 		}
 	};
 
@@ -927,7 +925,7 @@ sap.ui.define([
 			return;
 		}
 
-		iMaxColumns = oSettings.getComputedColumnsCount(this.$().innerWidth());
+		iMaxColumns = oSettings.getComputedColumnsCount(this.getDomRef().clientWidth);
 
 		if (!iMaxColumns) {
 			// if the max columns can not be calculated correctly, don't do anything
@@ -936,7 +934,7 @@ sap.ui.define([
 
 		this.getItems().forEach(function (oItem) {
 			// if item has more columns than total columns, it brakes the whole layout
-			oItem.$().parent().css("grid-column", "span " + Math.min(getItemColumnCount(oItem), iMaxColumns));
+			oItem.getDomRef().parentNode.style["grid-column"] = "span " + Math.min(getItemColumnCount(oItem), iMaxColumns);
 		});
 	};
 

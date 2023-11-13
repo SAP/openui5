@@ -749,16 +749,16 @@ sap.ui.define([
 	DynamicPageTitle.prototype._cacheDomElements = function () {
 		this.$topNavigationActionsArea = this.$("topNavigationArea");
 		this.$mainNavigationActionsArea = this.$("mainNavigationArea");
-		this.$beginArea = this.$("left-inner");
-		this.$topArea = this.$("top");
-		this.$mainArea = this.$("main");
-		this.$middleArea = this.$("content");
-		this.$snappedTitleOnMobileWrapper = this.$("snapped-title-on-mobile-wrapper");
-		this.$snappedHeadingWrapper = this.$("snapped-heading-wrapper");
-		this.$expandHeadingWrapper = this.$("expand-heading-wrapper");
-		this.$snappedWrapper = this.$("snapped-wrapper");
-		this.$expandWrapper = this.$("expand-wrapper");
 		this._$focusSpan = this.$("focusSpan");
+		this._beginAreaDom = this.getDomRef("left-inner");
+		this._topAreaDom = this.getDomRef("top");
+		this._mainAreaDom = this.getDomRef("main");
+		this._middleAreaDom = this.getDomRef("content");
+		this._snappedTitleOnMobileWrapperDom = this.getDomRef("snapped-title-on-mobile-wrapper");
+		this.snappedHeadingWrapperDom = this.getDomRef("snapped-heading-wrapper");
+		this.expandHeadingWrapperDom = this.getDomRef("expand-heading-wrapper");
+		this.snappedWrapperDom = this.getDomRef("snapped-wrapper");
+		this.expandWrapperDom = this.getDomRef("expand-wrapper");
 	};
 
 	/**
@@ -820,14 +820,14 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._toggleFocusableState = function (bFocusable) {
-		var $oTitleFocusSpan;
+		var oTitleFocusSpanDom;
 
 		this._bIsFocusable = bFocusable;
 
-		$oTitleFocusSpan = this._getFocusSpan();
+		oTitleFocusSpanDom = this.getFocusDomRef();
 
-		if ($oTitleFocusSpan) {
-			bFocusable ? $oTitleFocusSpan.show() : $oTitleFocusSpan.hide();
+		if (oTitleFocusSpanDom) {
+			oTitleFocusSpanDom.style.display = bFocusable ? "" : "none";
 		}
 	};
 
@@ -957,12 +957,11 @@ sap.ui.define([
 			bHasVisibleBreadcrumbs = this.getBreadcrumbs() && this.getBreadcrumbs().getVisible(),
 			bHasVisibleSnappedTitleOnMobile = Device.system.phone && this.getSnappedTitleOnMobile() && !this._bExpandedState,
 			bShouldShowTopArea = (bHasVisibleBreadcrumbs || bNavigationActionsShouldBeInTopArea) && !bHasVisibleSnappedTitleOnMobile,
-			bShouldChangeNavigationActionsPlacement = this.getNavigationActions().length > 0 && (bNavigationActionsShouldBeInTopArea ^ bNavigationActionsAreInTopArea),
-			$topArea = this.$topArea;
+			bShouldChangeNavigationActionsPlacement = this.getNavigationActions().length > 0 && (bNavigationActionsShouldBeInTopArea ^ bNavigationActionsAreInTopArea);
 
 		this._toggleTopAreaVisibility(bShouldShowTopArea);
 
-		$topArea && $topArea.toggleClass("sapFDynamicPageTitleTopBreadCrumbsOnly",
+		this._topAreaDom?.classList.toggle("sapFDynamicPageTitleTopBreadCrumbsOnly",
 			bHasVisibleBreadcrumbs && !bNavigationActionsShouldBeInTopArea);
 
 		if (bShouldChangeNavigationActionsPlacement) {
@@ -1050,7 +1049,7 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._toggleTopAreaVisibility = function(bShoudShowTopArea) {
 		if (this.getDomRef()) {
-			this.$("top").toggleClass("sapUiHidden", !bShoudShowTopArea);
+			this.getDomRef("top")?.classList.toggle("sapUiHidden", !bShoudShowTopArea);
 		}
 	};
 
@@ -1103,9 +1102,19 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._setShrinkFactors = function(fHeadingFactor, fContentFactor, fActionsFactor) {
-		this.$("left-inner").css("flex-shrink", fHeadingFactor);
-		this.$("content").css("flex-shrink", fContentFactor);
-		this.$("mainActions").css("flex-shrink", fActionsFactor);
+		var leftInnerDom = this.getDomRef("left-inner"),
+			contentDom = this.getDomRef("content"),
+			mainActions = this.getDomRef("mainActions");
+
+		if (leftInnerDom) {
+			leftInnerDom.style["flex-shrink"] = fHeadingFactor;
+		}
+		if (contentDom) {
+			contentDom.style["flex-shrink"] = fContentFactor;
+		}
+		if (mainActions) {
+			mainActions.style["flex-shrink"] = fActionsFactor;
+		}
 	};
 
 	/**
@@ -1148,19 +1157,19 @@ sap.ui.define([
 		}
 
 		if (Device.system.phone && this.getSnappedTitleOnMobile()) {
-			this.$snappedTitleOnMobileWrapper.toggleClass("sapUiHidden", bExpanded);
-			this.$topArea.toggleClass("sapUiHidden", !bExpanded);
-			this.$mainArea.toggleClass("sapUiHidden", !bExpanded);
-			this.$().toggleClass("sapContrast", !bExpanded);
+			this._snappedTitleOnMobileWrapperDom?.classList.toggle("sapUiHidden", bExpanded);
+			this._topAreaDom?.classList.toggle("sapUiHidden", !bExpanded);
+			this._mainAreaDom?.classList.toggle("sapUiHidden", !bExpanded);
+			this.toggleStyleClass("sapContrast", !bExpanded);
 		} else {
 			// Snapped heading
 			if (exists(this.getSnappedHeading())) {
-				this.$snappedHeadingWrapper.toggleClass("sapUiHidden", bExpanded);
+				this.snappedHeadingWrapperDom?.classList.toggle("sapUiHidden", bExpanded);
 			}
 
 			// Expanded heading
 			if (exists(this.getExpandedHeading())) {
-				this.$expandHeadingWrapper.toggleClass("sapUiHidden", !bExpanded);
+				this.expandHeadingWrapperDom?.classList.toggle("sapUiHidden", !bExpanded);
 			}
 
 			if (bUserInteraction && oldExpandedState !== bExpanded) {
@@ -1171,14 +1180,14 @@ sap.ui.define([
 
 		// Snapped content
 		if (exists(this.getSnappedContent())) {
-			this.$snappedWrapper.toggleClass("sapUiHidden", bExpanded);
-			this.$snappedWrapper.parent().toggleClass("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
+			this.snappedWrapperDom?.classList.toggle("sapUiHidden", bExpanded);
+			this.snappedWrapperDom?.parentNode.classList.toggle("sapFDynamicPageTitleMainSnapContentVisible", !bExpanded);
 		}
 
 		// Expanded content
 		if (exists(this.getExpandedContent())) {
-			this.$expandWrapper.toggleClass("sapUiHidden", !bExpanded);
-			this.$expandWrapper.parent().toggleClass("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
+			this.expandWrapperDom?.classList.toggle("sapUiHidden", !bExpanded);
+			this.expandWrapperDom?.parentNode.classList.toggle("sapFDynamicPageTitleMainExpandContentVisible", bExpanded);
 		}
 	};
 
@@ -1273,11 +1282,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPageTitle.prototype._getWidth = function () {
-		return this.$().outerWidth();
+		return this.getDomRef()?.offsetWidth || null;
 	};
 
 	DynamicPageTitle.prototype.getFocusDomRef = function() {
-		return this._getFocusSpan()[0] || null;
+		return this._getFocusSpan()?.[0] || null;
 	};
 
 	/**
@@ -1404,12 +1413,13 @@ sap.ui.define([
 	DynamicPageTitle.prototype._observeContentChanges = function (oChanges) {
 		var oControl = oChanges.child,
 			sMutation = oChanges.mutation,
-			$node =  oControl.$().parent();
+			nodeDom;
 
 		// Only overflow toolbar is supported as of now
 		if (!(oControl instanceof OverflowToolbar)) {
 			return;
 		}
+		nodeDom = oControl.getDomRef?.()?.parentNode;
 
 		if (sMutation === "insert") {
 			oControl.attachEvent("_contentSizeChange", this._onContentSizeChange, this);
@@ -1417,8 +1427,10 @@ sap.ui.define([
 		} else if (sMutation === "remove") {
 			oControl.detachEvent("_contentSizeChange", this._onContentSizeChange, this);
 			oControl.detachEvent("_minWidthChange", this._onContentMinWidthChange, this);
-			this._setContentAreaFlexBasis(0, $node);
-			$node.css({ "min-width": "" });
+			this._setContentAreaFlexBasis(0, nodeDom);
+			if (nodeDom) {
+				nodeDom.style["min-width"] = "";
+			}
 		}
 	};
 
@@ -1430,7 +1442,7 @@ sap.ui.define([
 	 */
 	DynamicPageTitle.prototype._onContentSizeChange = function (oEvent) {
 		var iContentSize = oEvent.getParameter("contentSize");
-		this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().$().parent());
+		this._setContentAreaFlexBasis(iContentSize, oEvent.getSource().getDomRef().parentNode);
 	};
 
 	/**
@@ -1442,13 +1454,13 @@ sap.ui.define([
 		DynamicPageTitle.prototype._onContentMinWidthChange = function (oEvent) {
 		var iMinWidth = oEvent.getParameter("minWidth"),
 			sMinWidth = iMinWidth > 0 ? iMinWidth + "px" : "",
-			$node = oEvent.getSource().$().parent();
+			sourceParent = oEvent.getSource().getDomRef().parentNode;
 
-		$node.css({ "min-width": sMinWidth });
+		sourceParent.style["min-width"] = sMinWidth;
 
-		if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
+		if (sourceParent.classList.contains("sapFDynamicPageTitleMainContent")) {
 			this._sContentAreaMinWidth = sMinWidth;
-		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
+		} else if (sourceParent.classList.contains("sapFDynamicPageTitleMainActions")) {
 			this._sActionsAreaMinWidth = sMinWidth;
 		}
 	};
@@ -1456,32 +1468,31 @@ sap.ui.define([
 	/**
 	 * Sets (if iContentSize is non-zero) or resets (otherwise) the flex-basis of the HTML element where the
 	 * content aggregation is rendered.
-	 * @param iContentSize - the total width of the overflow toolbar's overflow-enabled content (items that can overflow)
-	 * @param $node - the DOM node to which flex-basis style will be set
+	 * @param {number} iContentSize - the total width of the overflow toolbar's overflow-enabled content (items that can overflow)
+	 * @param {HTMLElement} nodeDom - the DOM node to which flex-basis style will be set
 	 * @private
 	 */
-	DynamicPageTitle.prototype._setContentAreaFlexBasis = function (iContentSize, $node) {
+	DynamicPageTitle.prototype._setContentAreaFlexBasis = function (iContentSize, nodeDom) {
 		var bAreaHasContent;
 
 		iContentSize = parseInt(iContentSize);
 		bAreaHasContent = iContentSize && iContentSize > 1;
-
-		if ($node.hasClass("sapFDynamicPageTitleMainContent")) {
+		if (nodeDom?.classList.contains("sapFDynamicPageTitleMainContent")) {
 			this._bContentAreaHasContent = bAreaHasContent;
-			$node.toggleClass("sapFDynamicPageTitleMainContentHasContent", bAreaHasContent);
-		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
+			nodeDom.classList.toggle("sapFDynamicPageTitleMainContentHasContent", bAreaHasContent);
+		} else if (nodeDom?.classList.contains("sapFDynamicPageTitleMainActions")) {
 			this._bActionsAreaHasContent = bAreaHasContent;
-			$node.toggleClass("sapFDynamicPageTitleMainActionsHasContent", bAreaHasContent);
+			nodeDom.classList.toggle("sapFDynamicPageTitleMainActionsHasContent", bAreaHasContent);
 		}
 	};
 
 	DynamicPageTitle.prototype._updateARIAState = function (bExpanded) {
 		var sARIAText = this._getARIALabelReferences(bExpanded),
-			$oFocusSpan = this._getFocusSpan();
+			oFocusSpanDom = this.getFocusDomRef();
 
-		if ($oFocusSpan) {
-			$oFocusSpan.attr("aria-labelledby", sARIAText);
-			$oFocusSpan.attr("aria-expanded", bExpanded);
+		if (oFocusSpanDom) {
+			oFocusSpanDom.setAttribute("aria-labelledby", sARIAText);
+			oFocusSpanDom.setAttribute("aria-expanded", bExpanded);
 		}
 		return this;
 	};
@@ -1537,11 +1548,11 @@ sap.ui.define([
 	};
 
 	DynamicPageTitle.prototype._addFocusClass = function () {
-		this.$().addClass("sapFDynamicPageTitleFocus");
+		this.addStyleClass("sapFDynamicPageTitleFocus");
 	};
 
 	DynamicPageTitle.prototype._removeFocusClass = function () {
-		this.$().removeClass("sapFDynamicPageTitleFocus");
+		this.removeStyleClass("sapFDynamicPageTitleFocus");
 	};
 
 	return DynamicPageTitle;

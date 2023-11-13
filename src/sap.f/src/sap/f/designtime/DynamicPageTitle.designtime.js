@@ -17,7 +17,7 @@ sap.ui.define([],
 				},
 				expandedHeading: {
 					domRef: function (oElement) {
-						return oElement.$("expand-heading-wrapper").get(0);
+						return oElement.getDomRef("expand-heading-wrapper");
 					},
 					ignore: function (oElement) {
 						return oElement.getHeading() || !oElement.getExpandedHeading();
@@ -25,7 +25,7 @@ sap.ui.define([],
 				},
 				snappedHeading: {
 					domRef: function (oElement) {
-						return oElement.$("snapped-heading-wrapper").get(0);
+						return oElement.getDomRef("snapped-heading-wrapper");
 					},
 					ignore: function (oElement) {
 						return oElement.getHeading() || !oElement.getSnappedHeading();
@@ -55,7 +55,7 @@ sap.ui.define([],
 				},
 				snappedContent: {
 					domRef: function (oElement) {
-						return oElement.$("snapped-wrapper").get(0);
+						return oElement.getDomRef("snapped-wrapper");
 					},
 					actions: {
 						move: {
@@ -65,7 +65,7 @@ sap.ui.define([],
 				},
 				expandedContent: {
 					domRef: function (oElement) {
-						return oElement.$("expand-wrapper").get(0);
+						return oElement.getDomRef("expand-wrapper");
 					},
 					actions: {
 						move: {

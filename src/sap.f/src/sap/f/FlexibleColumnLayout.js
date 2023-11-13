@@ -867,7 +867,7 @@ sap.ui.define([
 			oRm = new RenderManager().getInterface();
 
 		oRm.renderControl(oControl);
-		oRm.flush(this._$columns[sColumn].find(".sapFFCLColumnContent")[0], undefined, true);
+		oRm.flush(this._columns[sColumn].querySelector(".sapFFCLColumnContent"), undefined, true);
 		oRm.destroy();
 	};
 
@@ -911,9 +911,9 @@ sap.ui.define([
 		this._deregisterResizeHandler();
 		this._oAnimationEndListener.cancelAll();
 
-		if (this.$().length) {
+		if (this.getDomRef()) {
 			FlexibleColumnLayout.COLUMN_ORDER.slice().forEach(function (sColumn) {
-				this._$columns[sColumn].removeClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
+				this._columns[sColumn].classList.remove(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
 			}.bind(this));
 		}
 	};
@@ -1033,8 +1033,9 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._measureControlWidth = function () {
-		if (this.$().is(":visible")) {
-			this._iWidth = this.$().width();
+		var domRef = this.getDomRef();
+		if (domRef?.clientHeight && domRef?.clientWidth) {
+			this._iWidth = domRef.clientWidth;
 		} else {
 			this._iWidth = 0;
 		}
@@ -1095,16 +1096,16 @@ sap.ui.define([
 
 		if (!Device.system.phone) {
 			this._cacheColumnSeparators();
-			this._$overlay = this.$("overlay");
-			this._$overlaySeparator = this.$("overlaySeparator");
+			this._overlay = this.getDomRef("overlay");
+			this._overlaySeparator = this.getDomRef("overlaySeparator");
 		}
 	};
 
 	FlexibleColumnLayout.prototype._cacheColumns = function () {
-		this._$columns = {
-			begin: this.$("beginColumn"),
-			mid: this.$("midColumn"),
-			end: this.$("endColumn")
+		this._columns = {
+			begin: this.getDomRef("beginColumn"),
+			mid: this.getDomRef("midColumn"),
+			end: this.getDomRef("endColumn")
 		};
 	};
 
@@ -1234,7 +1235,7 @@ sap.ui.define([
 		}
 
 		aColumns.slice().forEach(function (sColumn) {
-			this._$columns[sColumn].removeClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
+			this._columns[sColumn].classList.remove(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
 		}.bind(this));
 
 		// update separator visibility only after pinning the columns
@@ -1268,7 +1269,7 @@ sap.ui.define([
 				autoSize: iWidth > 0 && (sColumn === "mid"),
 
 				hasAnimations: bHasAnimations,
-				previousAnimationCompleted: !oPendingAnimationEnd[this._$columns[sColumn]],
+				previousAnimationCompleted: !oPendingAnimationEnd[this._columns[sColumn]],
 				updateContextualSettings: oOptions.updateContextualSettings,
 				updateMediaCSSClases: oOptions.updateMediaCSSClases
 			});
@@ -1302,8 +1303,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._resizeColumn = function (sColumn, oColumnConfig) {
-		var $column = this._$columns[sColumn],
-			oColumnDomRef = $column.get(0),
+		var oColumn = this._columns[sColumn],
 			iNewWidth = oColumnConfig.width,
 			sNewWidth = convertPxToCSSSizeString(iNewWidth, this._getControlWidth(), oColumnConfig.shouldInsetColumn),
 			bAutoSize = oColumnConfig.autoSize,
@@ -1315,8 +1315,8 @@ sap.ui.define([
 				resumeResizeHandler: bSuspendResizeHandler && !bHidden // toggle back after resize
 			})),
 			fnResizeErrorCallback = function() {
-				ResizeHandler.resume(oColumnDomRef);
-				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = "";
+				ResizeHandler.resume(oColumn);
+				oColumn.querySelector(".sapFFCLColumnContent").style.width = "";
 			};
 
 			if (bAutoSize) {
@@ -1326,27 +1326,27 @@ sap.ui.define([
 
 			// Add the active class to the column if it shows something
 			// the concealed column should remain visible until the end of animations for other columns
-			$column.toggleClass("sapFFCLColumnActive", iNewWidth > 0 || oColumnConfig.shouldConcealColumn);
-			$column.toggleClass("sapFFCLColumnInset", oColumnConfig.shouldInsetColumn);
+			oColumn.classList.toggle("sapFFCLColumnActive", iNewWidth > 0 || oColumnConfig.shouldConcealColumn);
+			oColumn.classList.toggle("sapFFCLColumnInset", oColumnConfig.shouldInsetColumn);
 			// Remove all the classes that are used for HCB theme borders, they will be set again later
-			$column.removeClass("sapFFCLColumnHidden sapFFCLColumnOnlyActive sapFFCLColumnLastActive sapFFCLColumnFirstActive");
+			oColumn.classList.remove("sapFFCLColumnHidden", "sapFFCLColumnOnlyActive", "sapFFCLColumnLastActive", "sapFFCLColumnFirstActive");
 
 			// Suspend ResizeHandler while animation is running
 			if (bSuspendResizeHandler) {
-				ResizeHandler.suspend(oColumnDomRef);
+				ResizeHandler.suspend(oColumn);
 			}
 
 			if (bResizeColumnWithAnimation) {
-				$column.addClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
-				$column.width(sNewWidth);
+				oColumn.classList.add(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME);
+				oColumn.style.width = sNewWidth;
 				this._attachAfterColumnResizedOnce(sColumn, fnAfterResizeCallback, fnResizeErrorCallback);
 
 			} else if (bAutoSize && bAnimationsEnabled){
-				$column.width(sNewWidth);
+				oColumn.style.width = sNewWidth;
 				this._attachAfterAllColumnsResizedOnce(fnAfterResizeCallback, fnResizeErrorCallback);
 
 			} else {
-				$column.width(sNewWidth);
+				oColumn.style.width = sNewWidth;
 				fnAfterResizeCallback();
 			}
 
@@ -1373,28 +1373,28 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._afterColumnResize = function (sColumn, oOptions) {
-		var oColumn = this._$columns[sColumn],
+		var oColumn = this._columns[sColumn],
 			bShouldRevealColumn = oOptions.shouldRevealColumn,
 			bShouldConcealColumn = oOptions.shouldConcealColumn,
 			iNewWidth = oOptions.width,
 			bShouldRestoreFocus = oOptions.shouldRestoreFocus;
 
 		//BCP: 1980006195
-		oColumn.toggleClass("sapFFCLColumnHidden", iNewWidth === 0);
+		oColumn.classList.toggle("sapFFCLColumnHidden", iNewWidth === 0);
 
 		if (bShouldRevealColumn || bShouldConcealColumn ) {
-			oColumn[0].querySelector(".sapFFCLColumnContent").style.width = "";
+			oColumn.querySelector(".sapFFCLColumnContent").style.width = "";
 		}
-		oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
-		oColumn.toggleClass(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME, false);
+		oColumn.classList.toggle(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, false);
+		oColumn.classList.toggle(FlexibleColumnLayout.ANIMATED_COLUMN_CLASS_NAME, false);
 
 		if (bShouldConcealColumn) {
 			// The column does not show anything anymore, so we can remove the active class
-			oColumn.removeClass("sapFFCLColumnActive");
+			oColumn.classList.toggle("sapFFCLColumnActive");
 		}
 
 		if (oOptions.resumeResizeHandler) {
-			ResizeHandler.resume(oColumn[0]);
+			ResizeHandler.resume(oColumn);
 		}
 
 		this._cacheColumnWidth(sColumn, iNewWidth);
@@ -1408,16 +1408,15 @@ sap.ui.define([
 			var bShouldConcealColumn = this._shouldConcealColumn(sColumn, sLayout, sPreviousLayout),
 				bShouldRevealColumn = this._shouldRevealColumn(sColumn, sLayout, sPreviousLayout),
 				bShouldPin = bShouldConcealColumn || bShouldRevealColumn,
-				oColumn = this._$columns[sColumn],
-				oColumnDomRef = oColumn[0];
+				oColumn = this._columns[sColumn];
 
 			if (bShouldRevealColumn) {
-				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = oColumnWidths[sColumn] + "px";
+				oColumn.querySelector(".sapFFCLColumnContent").style.width = oColumnWidths[sColumn] + "px";
 			} else if (bShouldConcealColumn) {
-				oColumnDomRef.querySelector(".sapFFCLColumnContent").style.width = oColumnDomRef.offsetWidth + "px";
+				oColumn.querySelector(".sapFFCLColumnContent").style.width = oColumn.offsetWidth + "px";
 			}
 
-			oColumn.toggleClass(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldPin);
+			oColumn.classList.toggle(FlexibleColumnLayout.PINNED_COLUMN_CLASS_NAME, bShouldPin);
 
 		}, this);
 	};
@@ -1426,7 +1425,7 @@ sap.ui.define([
 		var oPendingAnimationEnd = {};
 		// check if the previous animation completed
 		FlexibleColumnLayout.COLUMN_ORDER.slice().forEach(function(sColumn) {
-			oPendingAnimationEnd[sColumn] = this._oAnimationEndListener.isWaitingForColumnResizeEnd(this._$columns[sColumn]);
+			oPendingAnimationEnd[sColumn] = this._oAnimationEndListener.isWaitingForColumnResizeEnd(jQuery(this._columns[sColumn]));
 		}, this);
 		return oPendingAnimationEnd;
 	};
@@ -1477,12 +1476,12 @@ sap.ui.define([
 		}
 
 		if (aActiveColumns.length === 1) {
-			this._$columns[aActiveColumns[0]].addClass("sapFFCLColumnOnlyActive");
+			this._columns[aActiveColumns[0]].classList.add("sapFFCLColumnOnlyActive");
 		}
 
 		if (aActiveColumns.length > 1) {
-			this._$columns[aActiveColumns[0]].addClass("sapFFCLColumnFirstActive");
-			this._$columns[aActiveColumns[aActiveColumns.length - 1]].addClass("sapFFCLColumnLastActive");
+			this._columns[aActiveColumns[0]].classList.add("sapFFCLColumnFirstActive");
+			this._columns[aActiveColumns[aActiveColumns.length - 1]].classList.add("sapFFCLColumnLastActive");
 		}
 	};
 
@@ -1495,9 +1494,9 @@ sap.ui.define([
 			cursorStartX: oEvent.pageX,
 			cursorX: oEvent.pageX, // the mouse/finger position-x
 			columnWidths: {
-				begin: this._$columns.begin.get(0).offsetWidth,
-				mid: this._$columns.mid.get(0).offsetWidth,
-				end: this._$columns.end.get(0).offsetWidth
+				begin: this._columns.begin.offsetWidth,
+				mid: this._columns.mid.offsetWidth,
+				end: this._columns.end.offsetWidth
 			},
 			separator: oSeparator,
 			separatorPosition: {
@@ -1569,8 +1568,8 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._enterInteractiveResizeMode = function (bTouch) {
 		var oSeparatorPosition = this._oDragInfo.separatorPosition;
 
-		this._$overlay.css("display", "block");
-		this._$overlaySeparator.css(oSeparatorPosition.direction, oSeparatorPosition.x);
+		this._overlay.style.display = "block";
+		this._overlaySeparator.style[oSeparatorPosition.direction] = oSeparatorPosition.x;
 		this._oDragInfo.separator.style.visibility = "hidden";
 
 		if (bTouch) {
@@ -1583,7 +1582,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._exitInteractiveResizeMode = function () {
-		this._$overlay.css("display", "");
+		this._overlay.style.display = "";
 		this._oDragInfo.separator.style.visibility = "";
 		this._oDragInfo.separator.focus();
 		this._ignoreMouse = false;
@@ -1693,8 +1692,8 @@ sap.ui.define([
 			// only offset the rendered columns
 			// skip mid column as it has width: 100% by default (to allow the mid column
 			// take the space that remains after sizing its sibling columns)
-			this._$columns.begin.css("width", this._oDragInfo.columnWidths.begin + "px");
-			this._$columns.end.css("width", this._oDragInfo.columnWidths.end + "px");
+			this._columns.begin.style.width = this._oDragInfo.columnWidths.begin + "px";
+			this._columns.end.style.width = this._oDragInfo.columnWidths.end + "px";
 		}
 
 		if (bLayoutChange) {
@@ -1761,13 +1760,12 @@ sap.ui.define([
 
 	FlexibleColumnLayout.prototype._offsetDraggedColumnSeparator = function (iOffset) {
 		this._oDragInfo.separatorPosition.x += iOffset;
-		this._$overlaySeparator.css(this._oDragInfo.separatorPosition.direction,
-			this._oDragInfo.separatorPosition.x);
+		this._overlaySeparator.style[this._oDragInfo.separatorPosition.direction] = this._oDragInfo.separatorPosition.x;
 	};
 
 	FlexibleColumnLayout.prototype._toggleColumnVisibility = function (sColumn, bShow) {
-		this._$columns[sColumn].toggleClass("sapFFCLColumnHidden", !bShow);
-		this._$columns[sColumn].toggleClass("sapFFCLColumnActive", bShow);
+		this._columns[sColumn].classList.toggle("sapFFCLColumnHidden", !bShow);
+		this._columns[sColumn].classList.toggle("sapFFCLColumnActive", bShow);
 	};
 
 	/**
@@ -2063,7 +2061,7 @@ sap.ui.define([
 	 * @private
 	 */
 	FlexibleColumnLayout.prototype._getColumnWidth = function (sColumn) {
-		var oColumn = this._$columns[sColumn].get(0),
+		var oColumn = this._columns[sColumn],
 			sCssWidth = oColumn.style.width,
 			iCssWidth = parseInt(sCssWidth),
 			bPercentWidth;
@@ -2170,8 +2168,8 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._isColumnAdjacentToDraggedSeparator = function (sColumn) {
 		return this._oDragInfo &&
 			this._oDragInfo.separator &&
-			(this._$columns[sColumn][0] === this._oDragInfo.separator.previousElementSibling ||
-			 this._$columns[sColumn][0] === this._oDragInfo.separator.nextElementSibling);
+			(this._columns[sColumn] === this._oDragInfo.separator.previousElementSibling ||
+			this._columns[sColumn] === this._oDragInfo.separator.nextElementSibling);
 	};
 
 	/**
@@ -2227,9 +2225,9 @@ sap.ui.define([
 			return false;
 		}
 
-		oColumn = this._$columns[sColumn];
+		oColumn = this._columns[sColumn];
 		if (bWasPartiallyResized) {
-			return oColumn.width() !== iNewWidth;
+			return oColumn.clientWidth !== iNewWidth;
 		}
 
 		if (this._bNeverRendered || oOptions.autoSize) {
@@ -2267,7 +2265,7 @@ sap.ui.define([
 	FlexibleColumnLayout.prototype._updateColumnCSSClasses = function (sColumn, iWidth) {
 		var sNewClassName = "";
 
-		this._$columns[sColumn].removeClass("sapUiContainer-Narrow sapUiContainer-Medium sapUiContainer-Wide sapUiContainer-ExtraWide");
+		this._columns[sColumn].classList.remove("sapUiContainer-Narrow", "sapUiContainer-Medium", "sapUiContainer-Wide", "sapUiContainer-ExtraWide");
 		if (iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0]) {
 			sNewClassName = "Narrow";
 		} else if (iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[1]) {
@@ -2278,7 +2276,7 @@ sap.ui.define([
 			sNewClassName = "ExtraWide";
 		}
 
-		this._$columns[sColumn].addClass("sapUiContainer-" + sNewClassName);
+		this._columns[sColumn].classList.add("sapUiContainer-" + sNewClassName);
 	};
 
 	/**
@@ -2958,7 +2956,7 @@ sap.ui.define([
 	};
 
 	FlexibleColumnLayout.prototype._attachAfterColumnResizedOnce = function (sColumn, fnSuccessCallback, fnErrorCallback) {
-		this._oAnimationEndListener.waitForColumnResizeEnd(this._$columns[sColumn])
+		this._oAnimationEndListener.waitForColumnResizeEnd(jQuery(this._columns[sColumn]))
 			.then(fnSuccessCallback)
 			.catch(function() {
 				fnErrorCallback && fnErrorCallback();
@@ -3139,7 +3137,7 @@ sap.ui.define([
 
 	/**
 	 * Attaches a <code>transitionend</code> listener to the given column element.
-	 * @param $column - a jQuery object
+	 * @param {jQuery} $column - a jQuery object
 	 * @returns {Promise}
 	 * @private
 	 */
@@ -3207,7 +3205,7 @@ sap.ui.define([
 	/**
 	 * Checks if <code>transitionend</code> listener on the given column element is
 	 * already attached and waiting.
-	 * @param $column - a jQuery object
+	 * @param {jQuery} $column - a jQuery object
 	 * @returns {Promise}
 	 * @private
 	 */

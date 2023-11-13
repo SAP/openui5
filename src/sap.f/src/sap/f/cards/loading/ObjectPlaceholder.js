@@ -74,10 +74,10 @@ sap.ui.define([
 	};
 
 	ObjectPlaceholder.prototype._handleResize = function () {
-		var iAvailableHeight = this.$().height();
+		var iAvailableHeight = this.getDomRef().clientHeight;
 		var iFitCnt = Math.floor(iAvailableHeight / PAIR_ROWS_HEIGHT);
 
-		var iColsCnt = this.$().width() >  SECOND_COLUMN_DISPLAY_THRESHOLD ? 2 : 1;
+		var iColsCnt = this.getDomRef().clientWidth >  SECOND_COLUMN_DISPLAY_THRESHOLD ? 2 : 1;
 
 		if (this._iRowsCnt !== iFitCnt || this._iColsCnt !== iColsCnt) {
 			this._iRowsCnt = iFitCnt;
