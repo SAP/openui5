@@ -82,7 +82,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Type Conversion: Convert all types", function(assert) {
-		assert.expect(18);
+		assert.expect(20);
 		var myEnum = {
 			enumKey: "enumValue"
 		};
@@ -144,7 +144,22 @@ sap.ui.require([
 			type: BaseConfiguration.Type.Object,
 			external: true
 		}), {objectAsStringKey: "objectAsStringValue"}, "BaseConfiguration.get for param 'sapUiParamObjectAsString' returns correct value '{objectAsStringKey: \"objectAsStringValue\"}'");
+		assert.deepEqual(BaseConfiguration.get({
+			name: "sapUiParamMergedObject",
+			type: BaseConfiguration.Type.Object,
+			external: true
+		}), {objectKeyUrl: "urlObject"}, "BaseConfiguration.get for param 'sapUiParamMergedObject' returns correct value '{objectKeyUrl: \"urlObject\"}'");
 		BaseConfiguration._.invalidate();
+		assert.deepEqual(BaseConfiguration.get({
+			name: "sapUiParamMergedObject",
+			type: BaseConfiguration.Type.MergedObject,
+			external: true
+		}), {
+			objectKeyGlobal: "globalObject",
+			objectKeyBootstrap: "bootstrapObject",
+			objectKeyMeta: "metaObject",
+			objectKeyUrl: "urlObject"
+		}, "BaseConfiguration.get for param 'sapUiParamMergedObject' returns correct value '{objectKeyGlobal: \"globalObject\",objectKeyBootstrap: \"bootstrapObject\",objectKeyMeta: \"metaObject\",objectKeyUrl: \"urlObject\"}'");
 		assert.strictEqual(BaseConfiguration.get({
 			name: "sapUiParamString",
 			type: BaseConfiguration.Type.String,
@@ -173,7 +188,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("Type Conversion: Default values", function(assert) {
-		assert.expect(10);
+		assert.expect(13);
 
 		assert.strictEqual(BaseConfiguration.get({
 			name: "sapUiParamDoesNotExist",
@@ -226,10 +241,27 @@ sap.ui.require([
 			type: BaseConfiguration.Type.Object,
 			defaultValue: undefined
 		}), undefined, "BaseConfiguration.get for param 'sapUiParamDoesNotExist' returns correct value 'undefined'");
+		BaseConfiguration._.invalidate();
+		assert.deepEqual(BaseConfiguration.get({
+			name: "sapUiParamDoesNotExist",
+			type: BaseConfiguration.Type.MergedObject
+		}), {}, "BaseConfiguration.get for param 'sapUiParamDoesNotExist' returns correct value '{}'");
+		BaseConfiguration._.invalidate();
+		assert.deepEqual(BaseConfiguration.get({
+			name: "sapUiParamDoesNotExist",
+			type: BaseConfiguration.Type.MergedObject,
+			defaultValue: true
+		}), true, "BaseConfiguration.get for param 'sapUiParamDoesNotExist' returns provided default value 'true'");
+		BaseConfiguration._.invalidate();
+		assert.deepEqual(BaseConfiguration.get({
+			name: "sapUiParamDoesNotExist",
+			type: BaseConfiguration.Type.MergedObject,
+			defaultValue: undefined
+		}), undefined, "BaseConfiguration.get for param 'sapUiParamDoesNotExist' returns correct value 'undefined'");
 	});
 
 	QUnit.test("Type Conversion: Invalid usage of BaseConfiguration.get", function(assert) {
-		assert.expect(8);
+		assert.expect(9);
 		var myEnum = {
 			enumKey: "enumValue"
 		};
@@ -261,6 +293,13 @@ sap.ui.require([
 				external: true
 			});
 		}, new TypeError("unsupported value"), "BaseConfiguration.get with type 'object' for param 'sapUiParamInteger' throws error 'unsupported value'");
+		assert.throws(function () {
+			BaseConfiguration.get({
+				name: "sapUiParamInteger",
+				type: BaseConfiguration.Type.MergedObject,
+				external: true
+			});
+		}, new TypeError("unsupported value"), "BaseConfiguration.get with type 'mergedObject' for param 'sapUiParamInteger' throws error 'unsupported value'");
 		assert.throws(function () {
 			BaseConfiguration.get({
 				name: "sapUiParamInteger",
@@ -346,10 +385,10 @@ sap.ui.require([
 		var oLogSpy = sinon.spy(sap.ui.loader._.logger, "error");
 
 		// Change some parameter using the globalThis['sap-ui-config'] object
-		globalThis["sap-ui-config"]["paramD"] = "hubelDubel";
-		globalThis["sap-ui-config"]["xx-paramE"] = "hubelDubel";
-		globalThis["sap-ui-config"]["notProvidedParamC"] = "hubelDubel";
-		globalThis["sap-ui-config"]["notProvidedParamD"] = "hubelDubel";
+		globalThis["sap-ui-config"]["param-d"] = "hubelDubel";
+		globalThis["sap-ui-config"]["xx-param-e"] = "hubelDubel";
+		globalThis["sap-ui-config"]["not-provided-param-c"] = "hubelDubel";
+		globalThis["sap-ui-config"]["not-provided-param-d"] = "hubelDubel";
 
 		// Change some parameter using WritableBootInstance.set
 		oWritableBootInstance.set("sapUiParamG", "HubelDubel");

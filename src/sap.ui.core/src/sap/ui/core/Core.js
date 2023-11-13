@@ -501,7 +501,7 @@ sap.ui.define([
 			const paths = {};
 			const oResourceRoots = BaseConfig.get({
 				name: "sapUiResourceRoots",
-				type: BaseConfig.Type.Object
+				type: BaseConfig.Type.MergedObject
 			}) ?? {};
 			for (const n in oResourceRoots) {
 				paths[ui5ToRJS(n)] = oResourceRoots[n] || ".";
