@@ -481,5 +481,32 @@
         ]
       }
     ]
+  },
+  "1.108.22": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "164df2fb35cfda0c030168ea775fbd1de2dd827e",
+        "type": "FIX",
+        "text": " core/Component: skip the sync processing of i18n before resources are loaded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007495122023"
+          }
+        ]
+      },
+      {
+        "id": "ddbddcf2a9d6efd0f8a4829ffc05351461cc8ddc",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      }
+    ]
   }
 }

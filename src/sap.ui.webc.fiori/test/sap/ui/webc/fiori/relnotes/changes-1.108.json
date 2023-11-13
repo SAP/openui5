@@ -1,0 +1,18 @@
+{
+  "1.108.22": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "476387fc82612950e446d43d910ee7eacf6fad37",
+        "type": "FIX",
+        "text": " sap.ui.webc.fiori: Third party zxing configuration corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370116548"
+          }
+        ]
+      }
+    ]
+  }
+}

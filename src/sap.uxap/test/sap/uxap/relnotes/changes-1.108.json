@@ -135,5 +135,25 @@
         ]
       }
     ]
+  },
+  "1.108.22": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "8657fd3aee767e8fb1d6c90e1c37171ae13b93af",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Downport of changes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380007216"
+          },
+          {
+            "type": "BCP",
+            "reference": "2380131154"
+          }
+        ]
+      }
+    ]
   }
 }

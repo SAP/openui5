@@ -188,5 +188,43 @@
         ]
       }
     ]
+  },
+  "1.108.22": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "e8e21c6e8afae0519533a3caa6cabff48d436d52",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Fix RTA for content of DynamicPageTitle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008317072023"
+          }
+        ]
+      },
+      {
+        "id": "6307eee95d4f068dc5f555ae845356a405f136d8",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Keyboard navigation after focusItem() now continues from the focused item",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008259582023"
+          }
+        ]
+      },
+      {
+        "id": "73edda3b7ccbcff55cd600f99637087ee99900ec",
+        "type": "FIX",
+        "text": " sap.f.GridList: Navigation matrix elements are included if they have DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007493952023"
+          }
+        ]
+      }
+    ]
   }
 }

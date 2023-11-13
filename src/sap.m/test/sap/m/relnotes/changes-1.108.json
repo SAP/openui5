@@ -1393,5 +1393,65 @@
         ]
       }
     ]
+  },
+  "1.108.22": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "31530f949b8f54b1170a4715c6ed85897b4be5c0",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Count in filter is now visible on mobile Safari",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007028902023"
+          }
+        ]
+      },
+      {
+        "id": "c537ae40d7d005d902319fe33eafd2f2aaac6105",
+        "type": "FIX",
+        "text": " sap.m.ObjectNumber: apply horizon theme updates",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370126403"
+          }
+        ]
+      },
+      {
+        "id": "153b0c35b6ac280f14bb1b8d6cb7cf45a4c1c88d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: OPA tests in demo app are now running",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370127346"
+          }
+        ]
+      },
+      {
+        "id": "44c262a188efcf68a932bb0c560dcfc50a21e40f",
+        "type": "FIX",
+        "text": "sap.m.Carousel: f7 qunit is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118746"
+          }
+        ]
+      },
+      {
+        "id": "5ddea7f7eb5e1dd301dbcafe01a09ceba1ab4137",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarAppointment: getDomRef() now returns proper DOM element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008495332023"
+          }
+        ]
+      }
+    ]
   }
 }
