@@ -18,6 +18,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 
 	/**
 	 * Retrieves and returns the relevant {@link sap.ui.mdc.link.LinkItem} for the <code>Link</code> control.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into <code>null</code>.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
@@ -31,6 +32,10 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 
 	/**
 	 * Calculates and returns the type of link that is displayed.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into a {@link sap.ui.mdc.link.LinkTypeWrapper LinkTypeWrapper}.
+	 * The {@link sap.ui.mdc.link.LinkTypeWrapper LinkTypeWrapper} contains an <code>initialType</code> and a <code>runtimeType</code> {@link sap.ui.mdc.link.LinkType LinkType}.
+	 * The <code>initialType</code> has a <code>type</code> property of type <code>Popover</code> and a <code>directLink</code> property of type <code>undefined</code>.
+	 * The <code>runtimeType</code> is of type <code>null</code>.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @returns {Promise<sap.ui.mdc.link.LinkTypeWrapper>} Once resolved, a {@link sap.ui.mdc.link.LinkTypeWrapper} containing an initial {@link sap.ui.mdc.link.LinkType} and an optional <code>Promise</code> are returned.
@@ -49,6 +54,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 
 	/**
 	 * Retrieves and returns the relevant <code>additionalContent</code> for the <code>Link</code> control as an array.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into an empty array.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code> control
 	 * @returns {Promise<sap.ui.core.Control[]>} Once resolved, an array of {@link sap.ui.core.Control} is returned
@@ -60,6 +66,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 	/**
 	 * Enables the modification of the {@link sap.ui.mdc.link.LinkItem} instances before the popover opens. This enables additional parameters
 	 * to be added to the link.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into the passed <code>aLinkItems</code> array.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.model.Context|null|undefined} oBindingContext Binding context of the <code>Link</code> control
@@ -72,10 +79,11 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/mdc/enums/LinkType'], function
 
 	/**
 	 * Allows for interception before the actual navigation takes place.
+	 * <br>By default, this method returns a <code>Promise</code> that resolves into <code>true</code>.
 	 * @public
 	 * @param {sap.ui.mdc.Link} oLink Instance of the <code>Link</code>
 	 * @param {sap.ui.base.Event} oEvent The <code>pressLink</code> event that is fired by the <code>Link</code> control
-	 * @returns {Promise<boolean>} Once resolved, it returns a Boolean value that determines whether the navigation takes place
+	 * @returns {Promise<boolean>} Once resolved, this method returns a <code>boolean<code> value that determines whether the navigation takes place
 	 */
 	 LinkDelegate.beforeNavigationCallback = function(oLink, oEvent) {
 		return Promise.resolve(true);
