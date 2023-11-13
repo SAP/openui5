@@ -39,15 +39,22 @@ sap.ui.define([
 		assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
 		assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
 
-		// support for old usage of Metadata
-		if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
-			oClassInfo = {
-				metadata : oClassInfo || {},
-				// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
-				constructor : ObjectPath.get(sClassName) // legacy-relevant, code path not used by extend call
-			};
-			oClassInfo.metadata.__version = 1.0;
-		}
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			// support for old usage of Metadata
+			if ( !oClassInfo || typeof oClassInfo.metadata !== "object" ) {
+				oClassInfo = {
+					metadata : oClassInfo || {},
+					// retrieve class by its name. Using a lookup costs time but avoids the need for redundant arguments to this function
+					constructor : ObjectPath.get(sClassName) // legacy-relevant, code path not used by extend call
+				};
+				oClassInfo.metadata.__version = 1.0;
+			}
+		})();
+
+		oClassInfo.metadata ??= {};
 		oClassInfo.metadata.__version = oClassInfo.metadata.__version || 2.0;
 		if ( !isFunction(oClassInfo.constructor) ) {
 			throw Error("constructor for class " + sClassName + " must have been declared before creating metadata for it");
@@ -79,19 +86,27 @@ sap.ui.define([
 			oPrototype;
 
 		if ( oStaticInfo.baseType ) {
-			var oParentClass;
-			if ( isFunction(oStaticInfo.baseType) ) {
+			var oParentClass,
+				bValidBaseType = isFunction(oStaticInfo.baseType);
+
+			if ( bValidBaseType ) {
 				oParentClass = oStaticInfo.baseType;
 				if ( !isFunction(oParentClass.getMetadata) ) {
 					throw new TypeError("baseType must be a UI5 class with a static getMetadata function");
 				}
-			} else {
+			}
+
+			/**
+			 * @deprecated
+			 */
+			if ( !bValidBaseType ) {
 				// lookup base class by its name - same reasoning as above
 				oParentClass = ObjectPath.get(oStaticInfo.baseType); // legacy-relevant, code path not used by extend call
 				if ( !isFunction(oParentClass) ) {
 					Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
 				}
 			}
+
 			// link metadata with base metadata
 			if ( oParentClass.getMetadata ) {
 				this._oParent = oParentClass.getMetadata();
