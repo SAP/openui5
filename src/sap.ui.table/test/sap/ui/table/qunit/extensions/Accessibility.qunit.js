@@ -1073,58 +1073,32 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	function testTitleAndSelectorText(assert, sSelectionMode, sSelectionBehavior, iFixedColumnCount, bSelected) {
+	function testSelectorText(assert, sSelectionMode, sSelectionBehavior, bSelected) {
 		var oRow = oTable.getRows()[0];
-		var $Ref = oRow.getDomRefs(true);
-		var $Cell = getRowHeader(0);
 		var $RowSelectorTextRef = oRow.$("rowselecttext");
 
 		if (sSelectionMode === "None") {
-			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
-			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
-			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
 			assert.equal($RowSelectorTextRef.text(), "-", "The row header doesn't have row selector text because SelectionMode is \"None\"");
 		} else {
-			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
-			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
-				TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
-			var sText = bSelected ? "deselects" : "selects";
+			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") : TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 
-			assert.equal($Cell[0].title, sTitle,
-				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-				", The row header has a title saying that clicking " + sText + " the row");
-			if (sSelectionBehavior === "Row") {
-				assert.equal($Ref.rowScrollPart[0].title, sTitle, "selectionBehavior = Row, fixedColumnCount = " + iFixedColumnCount +
-				", The scrollable part of the row has a title saying that clicking " + sText + " the row");
-
-				if (iFixedColumnCount === "1") {
-					assert.equal($Ref.rowFixedPart[0].title, sTitle,
-						"selectionBehavior = Row, fixedColumnCount = 1, The fixed part of the row has a title saying that clicking deselects the row");
-				}
-
-				assert.equal($Ref.rowActionPart[0].title, sTitle,
-					"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-					", The action part of the row has a title saying that clicking " + sText + " the row");
-			}
 			assert.ok($RowSelectorTextRef.html().indexOf(sRowSelectorText) > -1,
-				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-				" The row header has a row selector text saying that pressing SPACE " + sText + " the row");
+				`selectionBehavior = ${sSelectionBehavior} - 
+				The row header has a row selector text saying that pressing SPACE ${bSelected ? "deselects" : "selects"} the row`);
 		}
 	}
 
-	QUnit.test("Title and selector text", function(assert) {
+	QUnit.test("Selector text", function(assert) {
 		var oRow = oTable.getRows()[0];
 		var $Cell = getRowHeader(0);
 		var $RowSelectorTextRef = oRow.$("rowselecttext");
-		initRowActions(oTable, 1, 1);
-		initRowActions(oTreeTable, 1, 1);
 
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, true);
+			testSelectorText(assert, "MultiToggle", "RowSelector", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, false);
+			testSelectorText(assert, "MultiToggle", "RowSelector", false);
 
 			oTable.setSelectionBehavior("Row");
 			oCore.applyChanges();
@@ -1134,21 +1108,9 @@ sap.ui.define([
 				oTable.setSelectedIndex(0);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, true);
+			testSelectorText(assert, "MultiToggle", "Row", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, false);
-
-			oTable.setFixedColumnCount(0, false);
-			oCore.applyChanges();
-
-			return new Promise(function(resolve) {
-				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
-				oTable.setSelectedIndex(0);
-			});
-		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, true);
-			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
+			testSelectorText(assert, "MultiToggle", "Row", false);
 
 			oTable.setSelectionMode(SelectionMode.Single);
 			oCore.applyChanges();
@@ -1158,9 +1120,9 @@ sap.ui.define([
 				oTable.setSelectedIndex(0);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert, "Single", "Row", 0, true);
+			testSelectorText(assert, "Single", "Row", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "Single", "Row", 0, false);
+			testSelectorText(assert, "Single", "Row", false);
 
 			oTable.setSelectionMode(SelectionMode.None);
 			oCore.applyChanges();
@@ -1169,7 +1131,7 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert, "None");
+			testSelectorText(assert, "None");
 
 			oTable.setSelectionMode(SelectionMode.MultiToggle);
 			oCore.applyChanges();
@@ -1178,7 +1140,7 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
+			testSelectorText(assert, "MultiToggle", "Row", false);
 			oTable.getModel().setData([]);
 
 			return new Promise(function(resolve) {
@@ -2172,50 +2134,6 @@ sap.ui.define([
 		oCore.applyChanges();
 		oCol = oTable.getColumns()[0];
 		checkColumnHeaders(oTable, oCol, []);
-	});
-
-	QUnit.test("Hidden Standard Tooltips", function(assert) {
-
-		function checkTooltips(bEnable, sSelectionBehavior, sSelectionMode, iExpected) {
-			oTable._setHideStandardTooltips(!bEnable);
-			oTable.setSelectionBehavior(sSelectionBehavior);
-			oTable.setSelectionMode(sSelectionMode);
-			oCore.applyChanges();
-			assert.equal(oTable.$().find("[title]").length, iExpected,
-				"Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
-		}
-
-		var aColumns = oTable.getColumns();
-		for (var i = 0; i < aColumns.length; i++) {
-			aColumns[i].setTooltip(null);
-		}
-		initRowActions(oTable, 1, 1);
-		oCore.applyChanges();
-
-		var iRows = oTable.getRows().length;
-		var iRowElements = iRows * 4; // Row areas: header, fixed, scrollable, action
-		var iRowSelectors = iRows;
-		var iActionItems = iRows; // The icons have tooltips.
-
-		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
-		checkTooltips(true, "Row", "Single", iRowElements + iRowSelectors + iActionItems);
-		checkTooltips(true, "Row", "None", iActionItems);
-		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRowElements + iActionItems);
-		checkTooltips(true, "RowOnly", "Single", iRowElements + iActionItems);
-		checkTooltips(true, "RowOnly", "None", iActionItems);
-		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRowSelectors + iActionItems);
-		checkTooltips(true, "RowSelector", "Single", iRowSelectors + iActionItems);
-		checkTooltips(true, "RowSelector", "None", iActionItems);
-
-		checkTooltips(false, "Row", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "Row", "Single", iActionItems);
-		checkTooltips(false, "Row", "None", iActionItems);
-		checkTooltips(false, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "RowOnly", "Single", iActionItems);
-		checkTooltips(false, "RowOnly", "None", iActionItems);
-		checkTooltips(false, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "RowSelector", "Single", iActionItems);
-		checkTooltips(false, "RowSelector", "None", iActionItems);
 	});
 
 	QUnit.module("No Acc Mode", {

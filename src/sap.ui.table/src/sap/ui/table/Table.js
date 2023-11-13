@@ -1025,10 +1025,6 @@ sap.ui.define([
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
 		this._mAnimationFrames = {};
-
-		// TBD: Tooltips are not desired by Visual Design, discuss whether to switch it off by default
-		this._setHideStandardTooltips(false);
-
 		this._aRowHeights = [];
 		this._aSortedColumns = [];
 		this._aTableHeaders = [];
@@ -3266,36 +3262,10 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Returns whether certain additional standard tooltips should be shown or not.
-	 *
-	 * see <code>_setHideStandardTooltips</code> for more details
-	 *
-	 * @private
-	 * @returns {boolean} <code>true</code>, when additional standard tooltips should be shown
-	 */
+	// Still called by the SmartTable. Will be deleted later.
 	Table.prototype._getHideStandardTooltips = function() {
-		return this._bHideStandardTooltips;
+		return this._bHideStandardTooltips ?? false;
 	};
-
-	/**
-	 * Defines whether certain additional standard tooltips should be shown or hidden.
-	 * The tooltips which are affected by this setting are:
-	 *
-	 * <ul>
-	 *  <li>Text on Group headers</li>
-	 *  <li>Tooltips on Row Selectors and Row for Selection</li>
-	 *  <li>Default tooltips on AnalyticalColumn headers</li>
-	 * </ul>
-	 *
-	 * Other tooltips like for Select All / Clear All icons, Expand / Collapse icons or Row Actions are not affected.
-	 *
-	 * <b>Note: The changes only take effect after a full invalidation / rerendering of the table.</b>
-	 *
-	 * @param {boolean} bHideStandardTooltips Whether to show the additional tooltips or not
-	 * @private
-	 * @ui5-restricted sap.ui.comp, sap.ui.mdc
-	 */
 	Table.prototype._setHideStandardTooltips = function(bHideStandardTooltips) {
 		this._bHideStandardTooltips = bHideStandardTooltips;
 	};
