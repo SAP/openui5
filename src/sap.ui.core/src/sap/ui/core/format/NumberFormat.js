@@ -320,9 +320,6 @@ sap.ui.define([
 	/**
 	 * Get a float instance of the NumberFormat, which can be used for formatting.
 	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
-	 *
 	 * <p>
 	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode.
 	 * Please set the roundingMode property in oFormatOptions to change the
@@ -398,7 +395,9 @@ sap.ui.define([
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
-	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} float instance of the NumberFormat
 	 * @static
 	 * @public
@@ -413,9 +412,6 @@ sap.ui.define([
 
 	/**
 	 * Get an integer instance of the NumberFormat, which can be used for formatting.
-	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
 	 *
 	 * <p>
 	 * This instance has TOWARDS_ZERO set as default rounding mode.
@@ -491,7 +487,9 @@ sap.ui.define([
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
-	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} integer instance of the NumberFormat
 	 * @static
 	 * @public
@@ -506,9 +504,6 @@ sap.ui.define([
 
 	/**
 	 * Get a currency instance of the NumberFormat, which can be used for formatting.
-	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
 	 *
 	 * <p>
 	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode.
@@ -639,7 +634,9 @@ sap.ui.define([
 	 *   default value of <code>true</>.
 	 *   This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code>,
 	 *   or if <code>oFormatOptions.pattern</code> is supplied.
-	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} currency instance of the NumberFormat
 	 * @static
 	 * @public
@@ -678,9 +675,6 @@ sap.ui.define([
 
 	/**
 	 * Get a unit instance of the NumberFormat, which can be used for formatting units.
-	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
 	 *
 	 * <p>
 	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode.
@@ -770,7 +764,9 @@ sap.ui.define([
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
-	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} unit instance of the NumberFormat
 	 * @static
 	 * @public
@@ -785,9 +781,6 @@ sap.ui.define([
 
 	/**
 	 * Get a percent instance of the NumberFormat, which can be used for formatting.
-	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
 	 *
 	 * <p>
 	 * This instance has HALF_AWAY_FROM_ZERO set as default rounding mode.
@@ -853,7 +846,9 @@ sap.ui.define([
 	 *   numbers are formatted into compact forms. When this option is set, the default value of the
 	 *   'precision' option is set to 2. This can be changed by setting either min/maxFractionDigits,
 	 *   decimals, shortDecimals, or the 'precision' option itself.
-	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.NumberFormat} percentage instance of the NumberFormat
 	 * @static
 	 * @public

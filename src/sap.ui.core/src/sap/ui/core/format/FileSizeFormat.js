@@ -67,14 +67,13 @@ sap.ui.define([
 	/**
 	 * Get an instance of the FileSizeFormat, which can be used for formatting.
 	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
-	 *
 	 * @param {object} [oFormatOptions]
 	 *   Supports the same options as {@link sap.ui.core.format.NumberFormat.getFloatInstance}
 	 * @param {boolean} [oFormatOptions.binaryFilesize=false]
 	 *   Whether to use base 2, that means 1 Kibibyte = 1024 Byte, or base 10, that means 1 Kilobyte = 1000 Byte
-	 * @param {sap.ui.core.Locale} [oLocale] The locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @ui5-omissible-params oFormatOptions
 	 * @return {sap.ui.core.format.FileSizeFormat} instance of the FileSizeFormat
 	 * @static
@@ -87,14 +86,13 @@ sap.ui.define([
 	/**
 	 * Create an instance of the FileSizeFormat.
 	 *
-	 * If no locale is given, the currently configured
-	 * {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale formatLocale} will be used.
-	 *
 	 * @param {object} [oFormatOptions]
 	 *   Supports the same options as {@link sap.ui.core.format.NumberFormat.getFloatInstance}
 	 * @param {boolean} [oFormatOptions.binaryFilesize=false]
 	 *   Whether to use base 2, that means 1 Kibibyte = 1024 Byte, or base 10, that means 1 Kilobyte = 1000 Byte
-	 * @param {sap.ui.core.Locale} [oLocale] The locale to get the formatter for
+	 * @param {sap.ui.core.Locale} [oLocale]
+	 *   The locale to get the formatter for; if no locale is given, a locale for the currently configured language is
+	 *   used; see {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 	 * @return {sap.ui.core.format.FileSizeFormat} the instance of the FileSizeFormat
 	 * @static
 	 * @private
