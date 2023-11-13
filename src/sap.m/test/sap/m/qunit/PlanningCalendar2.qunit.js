@@ -2909,12 +2909,12 @@ sap.ui.define([
 		this.test(assert, 3, 6, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (30mins event at the beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 0, 30, 0));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1h event at the beginning of the row)", function (assert) {
+		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 13, 1, 0, 0));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (1h and 30 mins event in 1h and 30 mins from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 0, 0));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
+		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 13, 1, 30, 0), UI5Date.getInstance(2017, 10, 13, 3, 30, 0));
 	});
 
 	QUnit.module("Create Appointments near DST change: _calcCreateNewAppHours", {
@@ -2993,12 +2993,12 @@ sap.ui.define([
 		this.test(assert, 3, 6, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 20));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 day event at the beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 14));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 day event at the beginning of the row)", function (assert) {
+		this.test(assert, 1, 0, this.oRowStartDate, UI5Date.getInstance(2017, 10, 15));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 days event in 3 days from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 19));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (4 days event in 3 days from the row's startDate)", function (assert) {
+		this.test(assert, 6, 3, UI5Date.getInstance(2017, 10, 16), UI5Date.getInstance(2017, 10, 20));
 	});
 
 	QUnit.module("Create Appointments: _calcCreateNewAppMonths", {
@@ -3039,12 +3039,12 @@ sap.ui.define([
 		this.test(assert, 3, 6, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 5, 1));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 month event at the first day of beginning of the row)", function (assert) {
-		this.test(assert, 1, 0, UI5Date.getInstance(2017, 10, 1), UI5Date.getInstance(2017, 11, 1));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (2 months event at the first day of beginning of the row)", function (assert) {
+		this.test(assert, 1, 0, UI5Date.getInstance(2017, 10, 1), UI5Date.getInstance(2017, 12, 1));
 	});
 
-	QUnit.skip("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 months event in 3 months from the row's startDate)", function (assert) {
-		this.test(assert, 6, 3, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 4, 1));
+	QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (4 months event in 3 months from the row's startDate)", function (assert) {
+		this.test(assert, 6, 3, UI5Date.getInstance(2018, 1, 1), UI5Date.getInstance(2018, 5, 1));
 	});
 
 	QUnit.module("headerContent + binding");
