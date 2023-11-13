@@ -66,7 +66,7 @@ sap.ui.define([
 				});
 			}
 
-			DelegateCache.add(oFilterBar, {
+			DelegateCache.add(oFilterBar.originalNode || oFilterBar, {
 				"stock": { "operators": [OperatorName.BT] },
 				"author_ID": { "valueHelp": "FH1", display: FieldDisplay.Description},
 				"title": { "valueHelp": "FH4" },
