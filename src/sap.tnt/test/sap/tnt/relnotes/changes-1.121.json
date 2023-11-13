@@ -3,9 +3,31 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "93d06f5d90bbf2b948d26b0857dc5c0a0beb04b9",
+        "type": "FIX",
+        "text": " sap.tnt.NavigationList: Prevent error caused by early DOM ref access",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370144985"
+          }
+        ]
+      },
+      {
         "id": "35c2e0470ef71c90f767e5d51184240a63cb31eb",
         "type": "FEATURE",
         "text": " sap.tnt.SideNavigation: Enabled support for grouping items"
+      },
+      {
+        "id": "9747e407cc18a22cb403c32d0362d9047365c1fc",
+        "type": "FEATURE",
+        "text": " sap.m.IllustratedMessage: Added new illustrations to TNT set",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
       },
       {
         "id": "031fac60ca0f0a278f48aadf195518e2f1b2f348",

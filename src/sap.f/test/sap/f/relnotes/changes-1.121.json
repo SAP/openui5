@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "692e7c386e9a92a7b85448660e6c98eadff09e0e",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
         "id": "4a16709820f3ebc0d65886d8087fa6b279363924",
         "type": "FIX",
         "text": " sap.f.FlexibleColumnLayout: fix not visible column",

@@ -3,6 +3,17 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "c35cacd8580739d703288ab0797b0ebe9933e3b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Colour Non-working days in legend",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380104768"
+          }
+        ]
+      },
+      {
         "id": "e143ada2b110b78caabcc2082ebc6320c0477501",
         "type": "FIX",
         "text": " sap.m.Select: Visual alignment",

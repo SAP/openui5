@@ -3,6 +3,49 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "c040f69367a909de78360dfd136d5b5ce04a1aff",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: adjust external label references"
+      },
+      {
+        "id": "1c1c0ab7cc5cfded48f1af3cec0e88bb1017f419",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix access continuum issues"
+      },
+      {
+        "id": "c35cacd8580739d703288ab0797b0ebe9933e3b3",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarLegend: Colour Non-working days in legend",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380104768"
+          }
+        ]
+      },
+      {
+        "id": "1830a492e93f14a19f9c86a44b7f6065fabc7b55",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: prevent unexpected error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370136956"
+          }
+        ]
+      },
+      {
+        "id": "257b3d52dbb770a7b835222ed94664600fede4ca",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: fix menu closing in firefox on tap",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380074090"
+          }
+        ]
+      },
+      {
         "id": "a69121e57bb0995f9385f6662f99b36d6f23ebf7",
         "type": "FIX",
         "text": " sap.ui.unified.Menu: Align focus high contrast style",

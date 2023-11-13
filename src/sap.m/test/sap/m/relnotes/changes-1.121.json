@@ -3,6 +3,44 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "83c9d999fd5c7fb361825f44571bf11dec477d61",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Improve reverse selection precision.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370071110"
+          }
+        ]
+      },
+      {
+        "id": "cf8627145abd030d1dc88f1f65088b9e8734280f",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: remove extra spacing in table",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138291"
+          }
+        ]
+      },
+      {
+        "id": "1c1c0ab7cc5cfded48f1af3cec0e88bb1017f419",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix access continuum issues"
+      },
+      {
+        "id": "771e12889679aa6b5c356c713660ca3ed3df2011",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: fix date out of range errors",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2380118714"
+          }
+        ]
+      },
+      {
         "id": "a08755a292aaabc2cc8f5a4db7825ae80e0cd500",
         "type": "FIX",
         "text": " m.Table: Enter should fire selectionChange in SingleSelectMaster",
@@ -23,6 +61,16 @@
             "reference": "2380093723"
           }
         ]
+      },
+      {
+        "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
+      },
+      {
+        "id": "6602fdaa026949cf862940cd39a3cba4d8d3a3df",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: add component description"
       },
       {
         "id": "1c87cb623d5b9591458bda6e66f2df865999a896",

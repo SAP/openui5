@@ -3,6 +3,50 @@
     "date": "November 2023",
     "notes": [
       {
+        "id": "942178703f0b4af406b086f0d03699aedf6c86d2",
+        "type": "FIX",
+        "text": " sap.ui.test.action.EnterText: Revert restriction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370143073"
+          }
+        ]
+      },
+      {
+        "id": "692e7c386e9a92a7b85448660e6c98eadff09e0e",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "f32a4e1b35a2e78db341f3bb17ba9ff64e5328cc",
+        "type": "FIX",
+        "text": " Lib/ui5loader: Provide deprecation message for pseudo-modules",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370138723"
+          }
+        ]
+      },
+      {
+        "id": "ba254de5fa24d26e7e18f4c662961d248de1b655",
+        "type": "FIX",
+        "text": " Interaction: Fix start time determination",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370140056"
+          }
+        ]
+      },
+      {
         "id": "1743ae8028c12030e1ce534bb6230d4919abdb5a",
         "type": "FIX",
         "text": " Revert \"sap.base.util.now: Migrate performance.timing\"",
@@ -12,6 +56,11 @@
             "reference": "2370137732"
           }
         ]
+      },
+      {
+        "id": "07ce8256d4d4dd9d854e552b2eefc8c73cbf1c73",
+        "type": "FIX",
+        "text": " Rename sap/ui/core/Component.get to sap/ui/core/Component.getComponentById"
       },
       {
         "id": "35c2e0470ef71c90f767e5d51184240a63cb31eb",
