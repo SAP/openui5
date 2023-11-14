@@ -42,51 +42,29 @@ sap.ui.define([
 		aAnnotationsMockdata[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdata[i].FinStatementHierarchyLevelVal);
 	}
 
+	// TODO: Refactor tests to use TableQunitUtils. See "TreeTable with Annotations, starting level 1 > Expand and Collapse" for reference. Delete
+	//  config afterwards.
 	MockServer.config({
-		autoRespondAfter: 100
+		autoRespondAfter: 999
 	});
-
-	function attachEventHandler(oControl, iSkipCalls, fnHandler, that) {
-		var iCalled = 0;
-		var fnEventHandler = function() {
-			var fnTest = function() {
-				iCalled++;
-				if (iSkipCalls === iCalled) {
-					oControl.detachRowsUpdated(fnEventHandler);
-					oControl.attachEventOnce("rowsUpdated", fnHandler, that);
-				}
-			};
-			Promise.resolve().then(fnTest.bind(this));
-		};
-
-		oControl.attachRowsUpdated(fnEventHandler);
-	}
 
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
 		oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 	}
 
 	function createTable(mSettings) {
-		var mParams = {
-			title: "TreeTable",
+		return TableQUnitUtils.createTable(TreeTable, {
+			id: "table0",
 			columns: [
 				new Column({label: "HierarchyNode", template: "HierarchyNode"}),
 				new Column({label: "ParentNode", template: "ParentNode"}),
 				new Column({label: "Level", template: "FinStatementHierarchyLevelVal"}),
 				new Column({label: "FinancialStatementItemText", template: "FinancialStatementItemText"}),
 				new Column({label: "DrilldownState", template: "DrilldownState"})
-			]
-		};
-
-		for (var key in mSettings) {
-			mParams[key] = mSettings[key];
-		}
-
-		var oTable = new TreeTable("table0", mParams);
-		oTable.setModel(this.oModel);
-		oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-		return oTable;
+			],
+			models: this.oModel,
+			...mSettings
+		});
 	}
 
 	QUnit.module("TreeTable with Annotations, starting level 1", {
@@ -102,232 +80,179 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initial Test", function(assert) {
-		var done = assert.async();
-		this.oTable = createTable.call(this);
-
-		var fnHandler1 = function() {
-			var oBinding = this.oTable.getBinding();
-
-			// test some defaults
-			assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not in parameters when not set explicitly");
-			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
-			assert.notOk(oBinding.mParameters.collapseRecursive, "Collapse recursive is not existing when it is not set explicitly");
-			assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode is false");
-
-			var aRows = this.oTable.getRows();
-			assert.equal(aRows.length, 10, "10 Rows present");
-
-			var iCountContexts = 0;
-			for (var i = 0; i < aRows.length; i++) {
-				if (aRows[i].getBindingContext()) {
-					iCountContexts++;
-				}
+	QUnit.test("Initial Test", async function(assert) {
+		this.oTable = createTable.call(this, {
+			rows: {
+				path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+				parameters: {rootLevel: 1}
 			}
-
-			assert.equal(iCountContexts, 1, "Only one row has a context");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows({
-			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
-			parameters: {rootLevel: 1}
 		});
+		await this.oTable.qunit.whenRenderingFinished();
+
+		const oBinding = this.oTable.getBinding();
+		assert.notOk(oBinding.mParameters.numberOfExpandedLevels, "Number of expanded levels is not in parameters when not set explicitly");
+		assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
+		assert.notOk(oBinding.mParameters.collapseRecursive, "Collapse recursive is not existing when it is not set explicitly");
+		assert.ok(!this.oTable.getUseGroupMode(), "useGroupMode is false");
+
+		const aRows = this.oTable.getRows();
+		assert.equal(aRows.length, 10, "10 Rows present");
+
+		let iContexts = 0;
+		for (var i = 0; i < aRows.length; i++) {
+			if (aRows[i].getBindingContext()) {
+				iContexts++;
+			}
+		}
+
+		assert.equal(iContexts, 1, "Only one row has a context");
 	});
 
-	QUnit.test("Expand and Collapse", function(assert) {
-		var done = assert.async();
-		this.oTable = createTable.call(this, {threshold: 10});
-		var oBinding;
+	QUnit.test("Expand and Collapse", async function(assert) {
+		this.oTable = createTable.call(this, {
+			rows: {
+				path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
+				parameters: {rootLevel: 1}
+			},
+			threshold: 10
+		});
+		await this.oTable.qunit.whenRenderingFinished();
 
-		// test expand root
-		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding();
-			assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
+		const oBinding = this.oTable.getBinding();
+		assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "One node is rendered, State: collapsed");
+		assert.ok(oBinding.getCollapseRecursive(), "CollapseRecursive is true (default)");
 
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
-				"Test that only one node is rendered, State: collapsed");
-			assert.ok(oBinding.getCollapseRecursive(), "CollapseRecursive is true (default)");
-			// expand first node, 2 change events, 1 for expand, 1 when data is loaded
-			attachEventHandler(this.oTable, 1, fnHandler2, this);
-			this.oTable.expand(0);
+		// expand first node
+		this.oTable.expand(0);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): 1st node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): One node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0): 9 nodes are collapsed");
 
-		};
-
-		// test expand next level
-		var fnHandler2 = function() {
-			assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1,
-				"Expand(0): Test that first node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0): Test that only one node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0): Test that 9 nodes are collapsed");
-			// expand second node, 2 change events, 1 for expand, 1 when data is loaded
-			attachEventHandler(this.oTable, 1, fnHandler3, this);
-			this.oTable.expand(1);
-		};
+		// expand second node
+		this.oTable.expand(1);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): 2 nodes are expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): 8 nodes are collapsed");
 
 		// collapse to root, collapse recursive true
-		var fnHandler3 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): Test that two nodes are expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): Test that 8 nodes are collapsed");
-			// collapse, only one event for collapse, data is already loaded
-			attachRowsUpdatedOnce(this.oTable, fnHandler4, this);
-			this.oTable.collapse(0);
-		};
+		this.oTable.collapse(0);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "Collapse(0): One node is rendered, State: collapsed");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "Collapse(0): There shall be no other rows");
 
 		// expand root
-		var fnHandler4 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
-				"Collapse(0): Test that only one node is rendered, State: collapsed");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "Collapse(0): There shall be no other rows");
-			// data already loaded, only one change event fired by expand
-			attachRowsUpdatedOnce(this.oTable, fnHandler5, this);
-			this.oTable.expand(0);
-		};
+		this.oTable.expand(0);
+		// data already loaded, only one change event fired by expand
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapse(0): 1st node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "Expand(0) after collapse(0): One node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "Expand(0) after collapse(0): 9 nodes are collapsed");
 
-		// check only root is expanded, expand next level
-		var fnHandler5 = function() {
-			assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1,
-				"Expand(0) after collapse(0): Test that first node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1,
-				"Expand(0) after collapse(0): Test that only one node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9,
-				"Expand(0) after collapse(0): Test that 9 nodes are collapsed");
-			// data already loaded, only one change event fired by expand
-			attachRowsUpdatedOnce(this.oTable, fnHandler6, this);
-			this.oTable.expand(1);
-		};
+		// expand first node
+		this.oTable.expand(1);
+		// data already loaded, only one change event fired by expand
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): 2 nodes are expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): 8 nodes are collapsed");
 
 		// collapseRecursive=false, collapse to root
-		var fnHandler6 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2, "Expand(1): Test that two nodes are expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8, "Expand(1): Test that 8 nodes are collapsed");
-			this.oTable.getBinding().setCollapseRecursive(false);
-			attachRowsUpdatedOnce(this.oTable, fnHandler7, this);
-			this.oTable.collapse(0);
-		};
+		this.oTable.getBinding().setCollapseRecursive(false);
+		this.oTable.collapse(0);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
+			"Collapse(0) recursive false: One node is rendered, State: collapsed");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0,
+			"Collapse(0) recursive false: There shall be no other rows");
 
-		// test root is collapsed, expand root
-		var fnHandler7 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
-				"Collapse(0) recursive false: Test that only one node is rendered, State: collapsed");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0,
-				"Collapse(0) recursive false: There shall be no other rows");
-			attachRowsUpdatedOnce(this.oTable, fnHandler8, this);
-			this.oTable.expand(0);
-		};
+		// expand root
+		this.oTable.expand(0);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2,
+			"Expand(0) after Collapse recursive: 2 nodes are expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8,
+			"Expand(0) after Collapse recursive: 8 nodes are collapsed");
 
-		// check subsequent nodes of root are still expanded,
-		// also check visualization (margins)) of the nodes, collapseRecursive=true
-		// collapseAll()
+		// check margins of levels
+		var iLevel0a = parseInt(this.oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		var iLevel1a = parseInt(this.oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		var iLevel2a = parseInt(this.oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		var iLevel2b = parseInt(this.oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		var iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		var iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"));
+
+		assert.ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
+		assert.ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
+		assert.ok(iLevel2a === iLevel2b, "Margin-left: Level 2 equals Level 2");
+		assert.ok(iLevel1b < iLevel2c, "Margin-left: Level 1 smaller Level 2");
+
 		// check isExpanded
-		var fnHandler8 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 2,
-				"Expand(0) after Collapse recursive: Test that two nodes are expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 8,
-				"Expand(0) after Collapse recursive: Test that 8 nodes are collapsed");
+		assert.ok(this.oTable.isExpanded(0), "Root expanded");
+		assert.ok(this.oTable.isExpanded(1), "First child of Root expanded");
+		assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(5), "4th grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(6), "5th grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(7), "6th grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(8), "7th grand child of Root NOT expanded");
+		assert.ok(!this.oTable.isExpanded(9), "2nd child of Root NOT expanded");
+		// also check a node which is not in the visible area of the table
+		assert.ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
 
-			// check margins of levels
-			var iLevel0a = parseInt(this.oTable.getRows()[0].$().find(".sapUiTableTreeIcon").css("margin-left"));
-			var iLevel1a = parseInt(this.oTable.getRows()[1].$().find(".sapUiTableTreeIcon").css("margin-left"));
-			var iLevel2a = parseInt(this.oTable.getRows()[2].$().find(".sapUiTableTreeIcon").css("margin-left"));
-			var iLevel2b = parseInt(this.oTable.getRows()[3].$().find(".sapUiTableTreeIcon").css("margin-left"));
-			var iLevel2c = parseInt(this.oTable.getRows()[8].$().find(".sapUiTableTreeIcon").css("margin-left"));
-			var iLevel1b = parseInt(this.oTable.getRows()[9].$().find(".sapUiTableTreeIcon").css("margin-left"));
+		this.oTable.getBinding().setCollapseRecursive(true);
+		this.oTable.collapseAll();
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1, "CollapseAll: One node is rendered, State: collapsed");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "CollapseAll: There shall be no other rows");
 
-			assert.ok(iLevel0a < iLevel1a, "Margin-left: Level 0 smaller Level 1");
-			assert.ok(iLevel1a < iLevel2a, "Margin-left: Level 1 smaller Level 2");
-			assert.ok(iLevel2a === iLevel2b, "Margin-left: Level 2 equals Level 2");
-			assert.ok(iLevel1b < iLevel2c, "Margin-left: Level 1 smaller Level 2");
+		// expand root
+		this.oTable.expand(0);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1,
+			"Expand(0) after collapseAll recursive: 1st node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1,
+			"Expand(0) after collapseAll recursive: One node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9,
+			"Expand(0) after collapseAll recursive: 9 nodes are collapsed");
 
-			// check isExpanded
-			assert.ok(this.oTable.isExpanded(0), "Root expanded");
-			assert.ok(this.oTable.isExpanded(1), "First child of Root expanded");
-			assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(3), "2nd grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(4), "3rd grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(5), "4th grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(6), "5th grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(7), "6th grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(8), "7th grand child of Root NOT expanded");
-			assert.ok(!this.oTable.isExpanded(9), "2nd child of Root NOT expanded");
-			// also check a node which is not in the visible area of the table
-			assert.ok(!this.oTable.isExpanded(12), "5th child of Root NOT expanded");
-
-			this.oTable.getBinding().setCollapseRecursive(true);
-			attachRowsUpdatedOnce(this.oTable, fnHandler9, this);
-			this.oTable.collapseAll();
-		};
-
-		// Check all nodes are collapsed, expand root
-		var fnHandler9 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
-				"CollapseAll: Test that only one node is rendered, State: collapsed");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 0, "CollapseAll: There shall be no other rows");
-			attachRowsUpdatedOnce(this.oTable, fnHandler10, this);
-			this.oTable.expand(0);
-		};
-
-		// Test all nodes got collapsed
 		// expand to level 2
-		var fnHandler10 = function() {
-			assert.equal(this.oTable.getRows()[0].$().find(".sapUiTableTreeIconNodeOpen").length, 1,
-				"Expand(0) after collapseAll recursive: Test that first node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1,
-				"Expand(0) after collapseAll recursive: Test that only one node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9,
-				"Expand(0) after collapseAll recursive: Test that 9 nodes are collapsed");
-			// one event for expandToLevel, one event for change
-			attachEventHandler(this.oTable, 1, fnHandler11, this);
-			this.oTable.expandToLevel(2);
-		};
+		this.oTable.expandToLevel(2);
+		await this.oTable.qunit.whenBindingChange();
+		await this.oTable.qunit.whenRenderingFinished();
 
-		var fnHandler11 = function() {
-			setTimeout(function() {
-				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 3,
-					"ExpandToLevel(2): Test that 3 nodes are expanded");
-				assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 7,
-					"ExpandToLevel(2): Test that 7 nodes are collapsed");
-				assert.ok(this.oTable.isExpanded(0), "Root expanded");
-				assert.ok(this.oTable.isExpanded(1), "First child of root expanded");
-				assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 3, "ExpandToLevel(2): 3 nodes are expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 7, "ExpandToLevel(2): 7 nodes are collapsed");
+		assert.ok(this.oTable.isExpanded(0), "Root expanded");
+		assert.ok(this.oTable.isExpanded(1), "First child of root expanded");
+		assert.ok(!this.oTable.isExpanded(2), "1st grand child of Root NOT expanded");
 
-				assert.ok(!this.oTable.isExpanded(8), "Node 000360 NOT expanded");
-				assert.ok(this.oTable.isExpanded(9), "Node 000362 expanded");
-				assert.ok(!this.oTable.isExpanded(10), "Node 000363 NOT expanded");
+		assert.ok(!this.oTable.isExpanded(8), "Node 000360 NOT expanded");
+		assert.ok(this.oTable.isExpanded(9), "Node 000362 expanded");
+		assert.ok(!this.oTable.isExpanded(10), "Node 000363 NOT expanded");
 
-				assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
-				assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
-				assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
+		assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+		assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+		assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-				assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
-				assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
-				assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
+		assert.ok(!this.oTable.isExpanded(14), "Node 000680 NOT expanded");
+		assert.ok(this.oTable.isExpanded(15), "Node 000682 expanded");
+		assert.ok(!this.oTable.isExpanded(16), "Node 000683 NOT expanded");
 
-				assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
-				assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
-				assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
+		assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+		assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+		assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 
-				attachRowsUpdatedOnce(this.oTable, fnHandler12, this);
-				// scroll the table
-				this.oTable.setFirstVisibleRow(20);
-			}.bind(this), 0);
-		};
-
-		var fnHandler12 = function() {
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "After Scrolling: Test that only one node is expanded");
-			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "After Scrolling: Test that 9 nodes are collapsed");
-			assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
-			assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
-			assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
-			done();
-		};
-
-		attachRowsUpdatedOnce(this.oTable, fnHandler1, this);
-		this.oTable.bindRows({
-			path: "/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result",
-			parameters: {rootLevel: 1}
-		});
+		this.oTable.setFirstVisibleRow(20);
+		await this.oTable.qunit.whenRenderingFinished();
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeOpen").length, 1, "After Scrolling: One node is expanded");
+		assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 9, "After Scrolling: 9 nodes are collapsed");
+		assert.ok(!this.oTable.isExpanded(31), "Node 001114 NOT expanded");
+		assert.ok(this.oTable.isExpanded(32), "Node 001131 expanded");
+		assert.ok(!this.oTable.isExpanded(33), "Node 001132 NOT expanded");
 	});
 
 	QUnit.test("Number Of Expanded Levels", function(assert) {
