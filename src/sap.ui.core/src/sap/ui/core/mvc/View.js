@@ -770,8 +770,11 @@ sap.ui.define([
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
 	 * @returns {this} Reference to the newly created clone
 	 * @public
+	 * @deprecated As of version 1.120, please call the corresponding View factory instead, e.g. {@link sap.ui.core.mvc.XMLView.create}
 	 */
 	View.prototype.clone = function(sIdSuffix, aLocalIds) {
+		Log.error("Cloning a View and/or using a View as a binding template is deprecated. Please call the corresponding View factory instead, e.g. XMLView.create()");
+
 		var mSettings = {}, sKey, oClone;
 		//Clone properties (only those with non-default value)
 		for (sKey in this.mProperties  && !(this.isBound && this.isBound(sKey))) {
