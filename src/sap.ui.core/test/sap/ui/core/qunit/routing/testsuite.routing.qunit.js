@@ -15,7 +15,8 @@ sap.ui.define(function(require) {
 					"qunit/view": "./fixture",
 					"test/routing/target": "./fixture",
 					"sap/ui/core/qunit/routing": "./",
-					"testdata": "../testdata"
+					"testdata": "../testdata",
+					"qunit/router": "./fixture/router"
 				}
 			}
 		},
