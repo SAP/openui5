@@ -64,6 +64,9 @@ sap.ui.define([
 	//shortcut for sap.m.BorderDesign
 	var BorderDesign = library.BorderDesign;
 
+	//shortcut for sap.m.CarouselScrollMode
+	var CarouselScrollMode = library.CarouselScrollMode;
+
 	var iDragRadius = 10;
 	var iMoveRadius = 20;
 	var bRtl = Localization.getRTL();
@@ -520,9 +523,9 @@ sap.ui.define([
 				iNewActivePageIndex = iOldActivePageIndex;
 			} else {
 				if (bForward) {
-					iNewActivePageIndex = iOldActivePageIndex + 1;
+					iNewActivePageIndex = this._iCurrSlideIndex;
 				} else {
-					iNewActivePageIndex = iOldActivePageIndex - 1;
+					iNewActivePageIndex = this._iCurrSlideIndex + this._getNumberOfItemsToShow() - 1;
 				}
 
 				// loop happened
@@ -819,13 +822,35 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the index of the slide that should be shown
+	 * @private
+	 * @param {int} iCurrentSlideIndex Current slide index
+	 * @param {int} iDefaultIndexStep Index that shows if previous or next arrow is pressed
+	 * @returns {int} Index of the slide
+	 */
+	Carousel.prototype._calculateSlideIndex = function (iCurrentSlideIndex, iDefaultIndexStep) {
+		const oCarouselLayout = this.getCustomLayout();
+		let iSlideIndex;
+
+		if (oCarouselLayout && oCarouselLayout.getScrollMode() === CarouselScrollMode.VisiblePages) {
+			const iNumberOfItemsOnPage =  this._getNumberOfItemsToShow();
+			iSlideIndex = iDefaultIndexStep > 0 ? iCurrentSlideIndex + iNumberOfItemsOnPage : Math.max(0, iCurrentSlideIndex - iNumberOfItemsOnPage);
+		} else {
+			iSlideIndex = iDefaultIndexStep > 0 ? iCurrentSlideIndex + 1 : iCurrentSlideIndex - 1;
+		}
+
+		return iSlideIndex;
+	};
+
+	/**
 	 * Call this method to display the previous page (corresponds to a swipe left).
 	 *
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Carousel.prototype.previous = function () {
-		this._moveToPage(this._iCurrSlideIndex - 1);
+		const iSlideIndex = this._calculateSlideIndex(this._iCurrSlideIndex, -1);
+		this._moveToPage(iSlideIndex);
 		return this;
 	};
 
@@ -836,7 +861,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Carousel.prototype.next = function () {
-		this._moveToPage(this._iCurrSlideIndex + 1);
+		const iSlideIndex = this._calculateSlideIndex(this._iCurrSlideIndex, 1);
+		this._moveToPage(iSlideIndex);
 		return this;
 	};
 

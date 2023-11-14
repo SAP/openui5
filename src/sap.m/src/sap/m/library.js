@@ -160,6 +160,7 @@ sap.ui.define([
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.CarouselScrollMode",
 			"sap.m.SelectColumnRatio",
 			"sap.m.SelectionDetailsActionLevel",
 			"sap.m.SelectListKeyboardNavigationMode",
@@ -4235,6 +4236,28 @@ sap.ui.define([
 		 * @public
 		 */
 		XXLarge : "XXLarge"
+
+	};
+
+	/**
+	 * Defines how pages will be scrolled, when clicking the arrow.
+	 *
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.CarouselScrollMode = {
+
+		/**
+		 * Pages will be scrolled one at a time
+		 * @public
+		 */
+		SinglePage : "SinglePage",
+
+		/**
+		 * Pages will be scrolled, depending on the value of <code>visiblePagesCount</code>
+		 * @public
+		 */
+		VisiblePages : "VisiblePages"
 
 	};
 
