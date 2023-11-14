@@ -8,13 +8,9 @@
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "qunit.router.component.parentRoute.Child.view.RootView",
-			"type": "XML",
-			"async": true
+			"type": "XML"
 		},
 		"routing": {
-			"config": {
-				"async": true
-			},
 			"routes": [
 				{
 					"pattern": "product/{id}",
