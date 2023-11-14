@@ -417,8 +417,8 @@ sap.ui.define([
 		let iGroupNodeLevel = oGroupNode["@$ui5.node.level"];
 		let iDescendants = _Helper.getPrivateAnnotation(oGroupNode, "descendants");
 		if (iDescendants) { // => this.oAggregation.expandTo > 1
-			// Note: "descendants" refers to LimitedDescendantCountProperty and counts descendants
-			// within "top pyramid" only!
+			// Note: "descendants" refers to LimitedDescendantCount and counts descendants within
+			// "top pyramid" only!
 			iGroupNodeLevel = this.oAggregation.expandTo;
 		}
 		const aElements = this.aElements;
@@ -1519,14 +1519,11 @@ sap.ui.define([
 	 */
 	_AggregationCache.prototype.requestRank = async function (oElement, oGroupLock) {
 		const sMetaPath = this.oAggregation.$metaPath;
-		const sLimitedRankProperty = this.oAggregation.$DrillStateProperty.slice(0,
-				this.oAggregation.$DrillStateProperty.lastIndexOf("/") + 1)
-			+ "LimitedRank";
 		const {$apply, $orderby} = this.oFirstLevel.getQueryOptions();
 		const mQueryOptions = {
 			$apply,
 			$filter : _Helper.getKeyFilter(oElement, sMetaPath, this.getTypes()),
-			$select : sLimitedRankProperty
+			$select : this.oAggregation.$LimitedRank
 		};
 		if ($orderby) {
 			mQueryOptions.$orderby = $orderby;
@@ -1535,7 +1532,7 @@ sap.ui.define([
 			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
 		const oResult = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
 
-		return parseInt(_Helper.drillDown(oResult, sLimitedRankProperty));
+		return parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
 	};
 
 	/**
@@ -1785,7 +1782,7 @@ sap.ui.define([
 			return sPredicate;
 		}
 
-		switch (_Helper.drillDown(oElement, oAggregation.$DrillStateProperty)) {
+		switch (_Helper.drillDown(oElement, oAggregation.$DrillState)) {
 			case "expanded":
 				bIsExpanded = true;
 				break;
@@ -1797,24 +1794,24 @@ sap.ui.define([
 			default: // "leaf"
 				// bIsExpanded = undefined;
 		}
-		_Helper.deleteProperty(oElement, oAggregation.$DrillStateProperty);
+		_Helper.deleteProperty(oElement, oAggregation.$DrillState);
 		if (oGroupNode) {
 			iLevel = oGroupNode["@$ui5.node.level"] + 1;
 		} else {
-			sDistanceFromRoot = _Helper.drillDown(oElement, oAggregation.$DistanceFromRootProperty);
+			sDistanceFromRoot = _Helper.drillDown(oElement, oAggregation.$DistanceFromRoot);
 			if (sDistanceFromRoot) { // Edm.Int64
-				_Helper.deleteProperty(oElement, oAggregation.$DistanceFromRootProperty);
+				_Helper.deleteProperty(oElement, oAggregation.$DistanceFromRoot);
 				iLevel = parseInt(sDistanceFromRoot) + 1;
 			}
 		}
 		// set the node values
 		_AggregationHelper.setAnnotations(oElement, bIsExpanded, /*bIsTotal*/undefined, iLevel);
 
-		if (oAggregation.$LimitedDescendantCountProperty) {
+		if (oAggregation.$LimitedDescendantCount) {
 			sLimitedDescendantCount
-				= _Helper.drillDown(oElement, oAggregation.$LimitedDescendantCountProperty);
+				= _Helper.drillDown(oElement, oAggregation.$LimitedDescendantCount);
 			if (sLimitedDescendantCount) {
-				_Helper.deleteProperty(oElement, oAggregation.$LimitedDescendantCountProperty);
+				_Helper.deleteProperty(oElement, oAggregation.$LimitedDescendantCount);
 				if (sLimitedDescendantCount !== "0") { // Edm.Int64
 					_Helper.setPrivateAnnotation(oElement, "descendants",
 						parseInt(sLimitedDescendantCount));

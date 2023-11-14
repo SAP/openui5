@@ -24946,6 +24946,7 @@ sap.ui.define([
 	//
 	// Selection on header and root context (JIRA: CPOUI5ODATAV4-1943).
 	// Use $count (JIRA: CPOUI5ODATAV4-1855).
+	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401).
 	//
 	// Root is kept alive and requests messages, then list is refreshed and the kept-alive node is
 	// neither the root nor a leaf anymore ;-) A side-effects refresh fails and the new root is
@@ -24960,13 +24961,15 @@ sap.ui.define([
 	// downloadUrl
 	// JIRA: CPOUI5ODATAV4-2275
 [false, true].forEach(function (bKeepAlive) {
-	var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive;
+	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
+		var sTitle = "Recursive Hierarchy: root is leaf; bKeepAlive=" + bKeepAlive
+				+ ", hierarchyQualifier : " + sHierarchyQualifier;
 
 	QUnit.test(sTitle, function (assert) {
 		var sExpectedDownloadUrl
 				= "/special/cases/Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-				+ ",NodeProperty='_/NodeID')"
+				+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
+				+ "',NodeProperty='_/NodeID')"
 				+ "&$select=ArtistID,IsActiveEntity,_/DistanceFromRoot,_/DrillState,_/NodeID"
 				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
 			oHeaderContext,
@@ -24975,19 +24978,19 @@ sap.ui.define([
 			oModel = this.createSpecialCasesModel({autoExpandSelect : true}),
 			oRoot,
 			oTable,
-			sView = '\
-<Text id="count" text="{$count}"/>\
-<t:Table id="table" rows="{path : \'/Artists\',\
-		parameters : {\
-			$$aggregation : {\
-				hierarchyQualifier : \'OrgChart\'\
-			},\
-			$count : true\
-		}}" threshold="0" visibleRowCount="3">\
-	<Text text="{= %{@$ui5.node.isExpanded} }"/>\
-	<Text text="{= %{@$ui5.node.level} }"/>\
-	<Text text="{BestFriend/Name}"/>\
-</t:Table>',
+			sView = `
+<Text id="count" text="{$count}"/>
+<t:Table id="table" rows="{path : '/Artists',
+		parameters : {
+			$$aggregation : {
+				hierarchyQualifier : '${sHierarchyQualifier}'
+			},
+			$count : true
+		}}" threshold="0" visibleRowCount="3">
+	<Text text="{= %{@$ui5.node.isExpanded} }"/>
+	<Text text="{= %{@$ui5.node.level} }"/>
+	<Text text="{BestFriend/Name}"/>
+</t:Table>`,
 			that = this;
 
 		this.expectRequest({
@@ -24997,8 +25000,8 @@ sap.ui.define([
 			.expectRequest({
 				batchNo : 1,
 				url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='_/NodeID',Levels=1)"
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
+					+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
 					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$count=true&$skip=0&$top=3"
@@ -25031,13 +25034,13 @@ sap.ui.define([
 
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(), {
-				hierarchyQualifier : "OrgChart"
+				hierarchyQualifier : sHierarchyQualifier
 			}, "JIRA: CPOUI5ODATAV4-1825");
 			// code under test
 			assert.deepEqual(oListBinding.getAggregation(/*bVerbose*/true), {
-				hierarchyQualifier : "OrgChart",
-				$DistanceFromRootProperty : "_/DistanceFromRoot",
-				$DrillStateProperty : "_/DrillState",
+				hierarchyQualifier : sHierarchyQualifier,
+				$DistanceFromRoot : "_/DistanceFromRoot",
+				$DrillState : "_/DrillState",
 				$NodeProperty : "_/NodeID"
 			}, "JIRA: CPOUI5ODATAV4-1961, CPOUI5ODATAV4-2275");
 			// code under test
@@ -25288,8 +25291,8 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 7,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='_/NodeID',Levels=1)"
+						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='"
+						+ sHierarchyQualifier + "',NodeProperty='_/NodeID',Levels=1)"
 						+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ "&$count=true&$skip=0&$top=3"
@@ -25351,8 +25354,8 @@ sap.ui.define([
 					+ "&$filter=ArtistID eq '0' and IsActiveEntity eq true", oError)
 				.expectRequest("Artists/$count", oError)
 				.expectRequest("Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-					+ ",NodeProperty='_/NodeID',Levels=1)"
+					+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
+					+ "',NodeProperty='_/NodeID',Levels=1)"
 					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$count=true&$skip=0&$top=3", oError)
@@ -25391,8 +25394,8 @@ sap.ui.define([
 			assert.strictEqual(oListBinding.getAllCurrentContexts()[1], oKeptAliveNode,
 				"still kept alive");
 
-			that.expectRequest("Artists?$apply=descendants($root/Artists,OrgChart,_/NodeID"
-						+ ",filter(ArtistID eq '1' and IsActiveEntity eq true),1)"
+			that.expectRequest("Artists?$apply=descendants($root/Artists," + sHierarchyQualifier
+						+ ",_/NodeID,filter(ArtistID eq '1' and IsActiveEntity eq true),1)"
 					+ "&$select=ArtistID,IsActiveEntity,_/DrillState,_/NodeID"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 					+ "&$count=true&$skip=0&$top=3", {
@@ -25453,8 +25456,8 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 9,
 					url : "Artists?$apply=com.sap.vocabularies.Hierarchy.v1.TopLevels("
-						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='OrgChart'"
-						+ ",NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
+						+ "HierarchyNodes=$root/Artists,HierarchyQualifier='" + sHierarchyQualifier
+						+ "',NodeProperty='_/NodeID')&$select=ArtistID,IsActiveEntity"
 						+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID"
 						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)"
 						+ "&$count=true&$skip=0&$top=3"
@@ -25504,7 +25507,7 @@ sap.ui.define([
 			// Note: overall count must not change here, just the "expansion state"
 			oListBinding.setAggregation({
 				expandTo : Number.MAX_SAFE_INTEGER,
-				hierarchyQualifier : "OrgChart"
+				hierarchyQualifier : sHierarchyQualifier
 			});
 
 			return that.waitForChanges(assert, "expandTo");
@@ -25540,17 +25543,18 @@ sap.ui.define([
 			// code under test (BCP: 2370045709)
 			oListBinding.setAggregation({
 				expandTo : Number.MAX_SAFE_INTEGER,
-				hierarchyQualifier : "OrgChart"
+				hierarchyQualifier : sHierarchyQualifier
 			});
 			// code under test (BCP: 2370045709)
 			oListBinding.changeParameters({
 				$$aggregation : {
 					expandTo : Number.MAX_SAFE_INTEGER,
-					hierarchyQualifier : "OrgChart"
+					hierarchyQualifier : sHierarchyQualifier
 				}
 			});
 			assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
 		});
+	});
 	});
 });
 
@@ -30207,17 +30211,22 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2393
 	//
 	// Before deletion, the new node is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
+	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
 [false, true].forEach((bMakeRoot) => {
-	const sTitle = `Recursive Hierarchy: expand all and create; make root = ${bMakeRoot}`;
+	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
+		const sTitle = `Recursive Hierarchy: expand all and create for ${sHierarchyQualifier};
+make root = ${bMakeRoot}`;
+		const sLimitedRank = sHierarchyQualifier === "OldChart" ? "LimitedRank" : "Limited_Rank";
 
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?$apply=ancestors"
-			+ "($root/Artists(ArtistID='99',IsActiveEntity=false)/_Friend,OrgChart,_/NodeID,"
-			+ "filter(IsActiveEntity eq false)/search(covfefe),keep start)/orderby(ArtistID)"
+			+ "($root/Artists(ArtistID='99',IsActiveEntity=false)/_Friend," + sHierarchyQualifier
+			+ ",_/NodeID,filter(IsActiveEntity eq false)/search(covfefe),keep start)"
+			+ "/orderby(ArtistID)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
-			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID')";
+			+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')";
 		const sReadUrl = sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
 			+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID";
 		const sView = `
@@ -30225,7 +30234,7 @@ sap.ui.define([
 		parameters : {
 			$$aggregation : {
 				expandTo : 1E16,
-				hierarchyQualifier : 'OrgChart',
+				hierarchyQualifier : '${sHierarchyQualifier}',
 				search : 'covfefe'
 			},
 			$filter : 'IsActiveEntity eq false',
@@ -30400,9 +30409,9 @@ sap.ui.define([
 				Name : "New"
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-				+ "&$select=_/LimitedRank", {
+				+ "&$select=_/" + sLimitedRank, {
 				_ : {
-					LimitedRank : "4" // Edm.Int64
+					[sLimitedRank] : "4" // Edm.Int64
 				}
 			});
 
@@ -30536,10 +30545,10 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 7,
 					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
-						+ "&$select=_/LimitedRank"
+						+ "&$select=_/" + sLimitedRank
 				}, {
 					_ : {
-						LimitedRank : "10" // Edm.Int64
+						[sLimitedRank] : "10" // Edm.Int64
 					}
 				});
 
@@ -30586,6 +30595,7 @@ sap.ui.define([
 				[undefined, 2, "6", "Iota"],
 				[undefined, 2, "7", "Kappa"]
 			]);
+	});
 	});
 });
 
@@ -30947,15 +30957,19 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-2360
 	//
 	// Before deletion, Beta is maybe is maybe moved to make it a root (JIRA: CPOUI5ODATAV4-2400)
+	// Old vs. new format of RecursiveHierarchy annotation (JIRA: CPOUI5ODATAV4-2401)
 [false, true].forEach((bMakeRoot) => {
-	const sTitle = `Recursive Hierarchy: expand all and move; make root = ${bMakeRoot}`;
+	["OldChart", "OrgChart"].forEach((sHierarchyQualifier) => {
+		const sTitle = `Recursive Hierarchy: expand all and move for ${sHierarchyQualifier};
+make root = ${bMakeRoot}`;
+		const sLimitedRank = sHierarchyQualifier === "OldChart" ? "LimitedRank" : "Limited_Rank";
 
 	QUnit.test(sTitle, async function (assert) {
 		const oModel = this.createSpecialCasesModel({autoExpandSelect : true});
 		const sFriend = "/Artists(ArtistID='99',IsActiveEntity=false)/_Friend";
 		const sBaseUrl = sFriend.slice(1) + "?$apply=orderby(ArtistID)"
 			+ "/com.sap.vocabularies.Hierarchy.v1.TopLevels(HierarchyNodes=$root" + sFriend
-			+ ",HierarchyQualifier='OrgChart',NodeProperty='_/NodeID')";
+			+ ",HierarchyQualifier='" + sHierarchyQualifier + "',NodeProperty='_/NodeID')";
 		const sReadUrl = sBaseUrl + "&$select=ArtistID,IsActiveEntity,Name"
 			+ ",_/DescendantCount,_/DistanceFromRoot,_/DrillState,_/NodeID";
 		const sView = `
@@ -30963,7 +30977,7 @@ sap.ui.define([
 		parameters : {
 			$$aggregation : {
 				expandTo : 1E16,
-				hierarchyQualifier : 'OrgChart'
+				hierarchyQualifier : '${sHierarchyQualifier}'
 			},
 			$orderby : 'ArtistID'
 		}}" threshold="0" visibleRowCount="3">
@@ -31115,10 +31129,10 @@ sap.ui.define([
 			.expectRequest({
 				batchNo : 3,
 				url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-					+ "&$select=_/LimitedRank"
+					+ "&$select=_/" + sLimitedRank
 			}, {
 				_ : {
-					LimitedRank : "5" // Edm.Int64
+					[sLimitedRank] : "5" // Edm.Int64
 				}
 			})
 			.expectRequest({
@@ -31300,9 +31314,9 @@ sap.ui.define([
 				Name : "Beth"
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-				+ "&$select=_/LimitedRank", {
+				+ "&$select=_/" + sLimitedRank, {
 				_ : {
-					LimitedRank : "12" // Edm.Int64
+					[sLimitedRank] : "12" // Edm.Int64
 				}
 			});
 
@@ -31342,9 +31356,9 @@ sap.ui.define([
 				Name : "Gimel"
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-				+ "&$select=_/LimitedRank", {
+				+ "&$select=_/" + sLimitedRank, {
 				_ : {
-					LimitedRank : "13" // Edm.Int64
+					[sLimitedRank] : "13" // Edm.Int64
 				}
 			});
 
@@ -31401,10 +31415,10 @@ sap.ui.define([
 			.expectRequest({
 				batchNo : 10,
 				url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
-					+ "&$select=_/LimitedRank"
+					+ "&$select=_/" + sLimitedRank
 			}, {
 				_ : { // Note: rank has not changed due to move
-					LimitedRank : "12" // Edm.Int64
+					[sLimitedRank] : "12" // Edm.Int64
 				}
 			});
 
@@ -31440,10 +31454,10 @@ sap.ui.define([
 			.expectRequest({
 				batchNo : 11,
 				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-					+ "&$select=_/LimitedRank"
+					+ "&$select=_/" + sLimitedRank
 			}, {
 				_ : { // Note: rank has not changed due to move
-					LimitedRank : "13" // Edm.Int64
+					[sLimitedRank] : "13" // Edm.Int64
 				}
 			});
 
@@ -31493,10 +31507,10 @@ sap.ui.define([
 			.expectRequest({
 				batchNo : 12,
 				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
-					+ "&$select=_/LimitedRank"
+					+ "&$select=_/" + sLimitedRank
 			}, {
 				_ : { // Note: same rank on UI as on server
-					LimitedRank : "1" // Edm.Int64
+					[sLimitedRank] : "1" // Edm.Int64
 				}
 			});
 
@@ -31558,10 +31572,10 @@ sap.ui.define([
 				.expectRequest({
 					batchNo : 13,
 					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
-						+ "&$select=_/LimitedRank"
+						+ "&$select=_/" + sLimitedRank
 				}, {
 					_ : { // Note: 0, 8, or 10
-						LimitedRank : "0" // Edm.Int64
+						[sLimitedRank] : "0" // Edm.Int64
 					}
 				});
 
@@ -31629,6 +31643,7 @@ sap.ui.define([
 				[undefined, 2, "4", "Lambda"],
 				[undefined, 1, "9", "Aleph"]
 			]);
+	});
 	});
 });
 
