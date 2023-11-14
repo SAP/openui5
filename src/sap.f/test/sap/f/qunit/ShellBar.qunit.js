@@ -361,7 +361,7 @@ function(
 		}
 	});
 
-	QUnit.test("Defaults", async function(assert) {
+	QUnit.test("Defaults", function (assert) {
 		// Act
 		this.oSB.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
@@ -474,7 +474,7 @@ function(
 			"Property '_bOTBUpdateNeeded' set to false after method called");
 	});
 
-	QUnit.test("_assignControls - Full ShellBar", async function(assert) {
+	QUnit.test("_assignControls - Full ShellBar", function (assert) {
 		// Arrange
 		var oOTB = this.oSB._oOverflowToolbar,
 			oAdditionalButton1 = new OverflowToolbarButton(),
@@ -546,7 +546,7 @@ function(
 		}
 	});
 
-	QUnit.test("ResponsiveHandler _handleResize on size changed", async function(assert) {
+	QUnit.test("ResponsiveHandler _handleResize on size changed", function (assert) {
 
 		// Arrange
 		var oControl = this.oSB,
@@ -574,7 +574,7 @@ function(
 		assert.strictEqual(oHandleResizeSpy.callCount, 1, "_handleResize is called when the theme is applied and the values are cought");
 	});
 
-	QUnit.test("ResponsiveHandler phone/regular transformation test", async function(assert) {
+	QUnit.test("ResponsiveHandler phone/regular transformation test", function (assert) {
 
 		// Arrange
 		var oControl = this.oSB;
@@ -625,7 +625,7 @@ function(
 
 	// Accessibility related tests
 	QUnit.module("Accessibility", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oSB = new ShellBar({
 				title: "Application title",
 				secondTitle: "Short description",
@@ -648,7 +648,7 @@ function(
 		}
 	});
 
-	QUnit.test("Hidden title behavior", async function(assert) {
+	QUnit.test("Hidden title behavior", function (assert) {
 		var sHiddenTitleId = '#' + this.oSB.getId() + '-titleHidden',
 			$oHiddenTitle = jQuery(sHiddenTitleId),
 			sTitle = this.oSB.getTitle(),
@@ -826,7 +826,7 @@ function(
 	});
 
 	QUnit.module("Managed Search", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			var oSearchManager = new SearchManager();
 
 			oSearchManager._oSearch.setIsOpen(true);
@@ -883,7 +883,7 @@ function(
 			"Full width search class list was added to Shell Bar.");
 	});
 
-	QUnit.test("LayoutData of Search", async function(assert) {
+	QUnit.test("LayoutData of Search", function (assert) {
 		// Arrange
 		var oSB = this.oSB,
 		oSearchManager = this.oSB.getSearchManager(),
@@ -923,7 +923,7 @@ function(
 		}.bind(this), 1000);
 	});
 
-	QUnit.test("Mobile requirements with both configuration - with or without menu button", async function(assert) {
+	QUnit.test("Mobile requirements with both configuration - with or without menu button", function (assert) {
 
 		// Act
 		this.oSB.setMenu(new Menu({items:[new MenuItem()]}));
@@ -947,7 +947,7 @@ function(
 	});
 
 	QUnit.module("Events", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oSB = new ShellBar({
 				title: "Application title",
 				secondTitle: "Short description",
@@ -1187,7 +1187,7 @@ function(
 	});
 
 	QUnit.module("AdditionalDataSupport", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oSB = new ShellBar({
 				additionalContent: [
 					new OverflowToolbarButton({
@@ -1298,7 +1298,7 @@ function(
 	});
 
 	QUnit.module("Binding", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			var oModel = new JSONModel({
 				initials: "KS"
 			});
@@ -1313,7 +1313,7 @@ function(
 		}
 	});
 
-	QUnit.test("Profile aggregation", async function(assert) {
+	QUnit.test("Profile aggregation", function (assert) {
 		var oAvatar = new Avatar({
 			initials: '{/initials}'
 		});

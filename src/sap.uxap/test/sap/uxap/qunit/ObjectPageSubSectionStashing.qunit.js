@@ -14,7 +14,7 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 			XMLView.create({
 				id: "UxAP-12-ObjectPageSubSectionStashing",
 				viewName: "view.UxAP-12-ObjectPageSubSectionStashing"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt('qunit-fixture');
 				Core.applyChanges();
@@ -59,7 +59,7 @@ function (XMLView, Core, StashedSupport, ObjectPageLazyLoader) {
 			XMLView.create({
 				id: "UxAP-12-ObjectPageSubSectionStashing-Optimization",
 				viewName: "view.UxAP-12-ObjectPageSubSectionStashing-Optimization"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt('qunit-fixture');
 				Core.applyChanges();

@@ -63,7 +63,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
 				oCore.applyChanges();
 				this.oMapEditor = aPropertyEditor[0];
 				var oMapEditorContent = getMapEditorContent(this.oMapEditor);
@@ -542,7 +542,7 @@ sap.ui.define([
 				}
 			});
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleMap").then(function (aPropertyEditor) {
 				var oMapEditor = aPropertyEditor[0];
 				var oMapEditorContent = getMapEditorContent(oMapEditor);
 				var aItems = oMapEditorContent.items;

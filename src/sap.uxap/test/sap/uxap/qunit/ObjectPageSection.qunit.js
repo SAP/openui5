@@ -24,7 +24,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		return XMLView.create({
 			id: "UxAP-13_objectPageSection",
 			viewName: "view.UxAP-13_ObjectPageSection"
-		}).then(async function(ObjectPageSectionView) {
+		}).then(function(ObjectPageSectionView) {
 
 			ObjectPageSectionView.placeAt('qunit-fixture');
 			Core.applyChanges();
@@ -66,7 +66,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 	QUnit.module("Section title visibility");
 
-	QUnit.test("Title visibility with one section", async function(assert) {
+	QUnit.test("Title visibility with one section", function (assert) {
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 				useIconTabBar: true,
 				sections: new ObjectPageSection({
@@ -88,7 +88,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Title visibility with more than one section", async function(assert) {
+	QUnit.test("Title visibility with more than one section", function (assert) {
 		var	aSections,
 			oObjectPageLayout = new ObjectPageLayout("page02", {
 				useIconTabBar: true,
@@ -131,7 +131,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 	QUnit.module("Section/SubSection Importance");
 
-	QUnit.test("Section with title has button placeholders", async function(assert) {
+	QUnit.test("Section with title has button placeholders", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: new ObjectPageSection({
@@ -153,7 +153,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Section without title has no button placeholders", async function(assert) {
+	QUnit.test("Section without title has no button placeholders", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: new ObjectPageSection({
@@ -176,7 +176,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("First section has expand buttons when hidden", async function(assert) {
+	QUnit.test("First section has expand buttons when hidden", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: [
@@ -215,7 +215,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("First section has showMore button when content hidden", async function(assert) {
+	QUnit.test("First section has showMore button when content hidden", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: [
@@ -254,7 +254,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		oObjectPageLayout.destroy();
 	});
 
-	QUnit.test("Section with dynamically added title has button placeholders", async function(assert) {
+	QUnit.test("Section with dynamically added title has button placeholders", function (assert) {
 
 		var oObjectPageLayout = new ObjectPageLayout("page02", {
 			sections: new ObjectPageSection({
@@ -293,7 +293,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 			"When the section has high importance then it should never be hidden");
 	});
 
-	QUnit.test("Section title display/hide", async function(assert) {
+	QUnit.test("Section title display/hide", function (assert) {
 		var oObjectPageLayout = new ObjectPageLayout({
 			sections: new ObjectPageSection({
 				title: "Title",
@@ -570,7 +570,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 			return XMLView.create({
 				id: "UxAP-13_objectPageSection",
 				viewName: "view.UxAP-13_ObjectPageSection"
-			}).then(async function(oView) {
+			}).then(function(oView) {
 				this.ObjectPageSectionView = oView;
 				this.ObjectPageSectionView.placeAt('qunit-fixture');
 				Core.applyChanges();
@@ -581,7 +581,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		}
 	});
 
-	QUnit.test("Test aria-labelledby attribute", async function(assert) {
+	QUnit.test("Test aria-labelledby attribute", function (assert) {
 		assert.expect(6);
 
 		var done = assert.async(),
@@ -640,7 +640,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 	});
 
 	QUnit.module("Invalidation", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oObjectPageLayout = new ObjectPageLayout("page", {
 				sections: new ObjectPageSection({
 					subSections: [
@@ -674,7 +674,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 	});
 
 	QUnit.module("Private methods", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oObjectPageLayout = new ObjectPageLayout("page", {
 				sections: new ObjectPageSection({
 					subSections: [
@@ -702,7 +702,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		}
 	});
 
-	QUnit.test("_getVisibleSubSections", async function(assert) {
+	QUnit.test("_getVisibleSubSections", function (assert) {
 		// Setup
 		var oSection = this.oObjectPageLayout.getSections()[0],
 			aSubSections = oSection.getSubSections();
@@ -746,7 +746,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 	QUnit.module("SubSection promoted");
 
-	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", async function(assert) {
+	QUnit.test("Showing SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", function(assert) {
 		// Arrange
 		var oObjectPageSubSection1 = new ObjectPageSubSection({
 				title: "SubSection1",
@@ -791,7 +791,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		Core.applyChanges();
 	});
 
-	QUnit.test("Adding SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", async function(assert) {
+	QUnit.test("Adding SubSection changes 'sapUxAPObjectPageSubSectionPromoted' class", function(assert) {
 		// Arrange
 		var oObjectPageSubSection1 = new ObjectPageSubSection({
 				title: "SubSection1",
@@ -835,7 +835,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		Core.applyChanges();
 	});
 
-	QUnit.test("SubSection with long title has 'sapUxAPObjectPageSectionMultilineContent' class", async function(assert) {
+	QUnit.test("SubSection with long title has 'sapUxAPObjectPageSectionMultilineContent' class", function(assert) {
 		// Arrange
 		var oObjectPageSubSection = new ObjectPageSubSection({
 				title: "Loooooooooooooooooooooooooooooong loooooooooooooooooooooooooooooooong looooooooooooooooooong tiiiiiiiiiiiiiiiiiiiiiitle",
@@ -867,7 +867,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 		Core.applyChanges();
 	});
 
-	QUnit.test("Resizing OPL adds 'sapUxAPObjectPageSectionMultilineContent' class to promoted SubSection", async function(assert) {
+	QUnit.test("Resizing OPL adds 'sapUxAPObjectPageSectionMultilineContent' class to promoted SubSection", function(assert) {
 		// Arrange
 		var oObjectPageSubSection = new ObjectPageSubSection({
 				title: "Not too long title",
@@ -916,7 +916,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 
 	QUnit.module("Heading aggregation");
 
-	QUnit.test("Heading is displayed correctly", async function(assert) {
+	QUnit.test("Heading is displayed correctly", function (assert) {
 		// Arrange
 		var oMessageStrip = new MessageStrip({ text: "Simple message strip" }),
 			oObjectPageLayout = new ObjectPageLayout({
@@ -955,7 +955,7 @@ function(Element, jQuery, Core, XMLView, library, ObjectPageLayout, ObjectPageSu
 	});
 
 	QUnit.module("Layout", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oObjectPage = new ObjectPageLayout({
 				sections: new ObjectPageSection({
 					subSections: [

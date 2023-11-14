@@ -342,7 +342,7 @@ sap.ui.define([
 		assert.equal(this.getClipboardText().split("\n").length, this.oTable.getGrowingThreshold(), "Not all contexts, only growing contexts are copied");
 	});
 
-	QUnit.test("No binding", async function(assert) {
+	QUnit.test("No binding", function(assert) {
 		var aClonedItems = this.oTable.getItems().map(function(oItem) {
 			return oItem.clone();
 		});
@@ -360,7 +360,7 @@ sap.ui.define([
 		assert.equal(this.getClipboardText(), "1\tname1\tcolor1\n3\tname3\tcolor3", "Data is extracted from the row since there is no binding");
 	});
 
-	QUnit.test("Copy button visibility", async function(assert) {
+	QUnit.test("Copy button visibility", function(assert) {
 		const oCopyButton = this.oCopyProvider.getCopyButton();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
 
@@ -441,7 +441,7 @@ sap.ui.define([
 		assert.equal(this.getClipboardText(), "5\tname5\tcolor5", "Cell and row selection are copied to clipboard");
 	});
 
-	QUnit.test("Copy button visibility", async function(assert) {
+	QUnit.test("Copy button visibility", function(assert) {
 		const oCopyButton = this.oCopyProvider.getCopyButton();
 		assert.ok(oCopyButton.getVisible(), "The copy button is visible at the beginning");
 
@@ -612,7 +612,7 @@ sap.ui.define([
 	QUnit.test("API", function(assert) {
 		return this.oTable._fullyInitialized().then(function() {
 			return MDCTableQUnitUtils.waitForBinding(this.oTable);
-		}.bind(this)).then(async function() {
+		}.bind(this)).then(function() {
 			var oCopyButton = this.oCopyProvider.getCopyButton();
 			assert.ok(oCopyButton, "Copy button is created successfully");
 

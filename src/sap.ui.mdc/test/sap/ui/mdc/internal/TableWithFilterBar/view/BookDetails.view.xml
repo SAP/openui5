@@ -44,7 +44,7 @@
 									<Label text="ID" />
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id= "fID" value="{path: 'ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" editMode="{=${view>/editMode} ? 'ReadOnly' : 'Display'}" multipleLines="false"/>
 									<Label text="Author ID" />
-									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" valueHelp="FH1" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"  multipleLines="false">
+									<mdc:Field delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"autoCompleteCaseSensitive": false\}\}' id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32', formatOptions: {groupingEnabled: false}}" valueHelp="FH1" display="ValueDescription" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"  multipleLines="false">
 										<mdc:dependents>
 											<mdc:ValueHelp id="FH1"
 												delegate='\{"name": "sap/ui/v4demo/delegate/Books.AuthorVH.delegate", "payload": \{\}\}'>
@@ -154,7 +154,7 @@
 									<Label text="Stock"/>
 									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="fStock" value="{path: 'stock', type: 'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false"/>
 									<Label text="Price"/>
-									<mdc:Field delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}' id="fPrice" value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" valueHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false">
+									<mdc:Field delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"autoCompleteCaseSensitive": false\}\}' id="fPrice" value="{parts: [{path:'price', type:'sap.ui.model.odata.type.Decimal', constraints: {precision: 9, scale: 2}}, {path:'currency_code', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 3}}, {mode:'OneTime', path:'/##@@requestCurrencyCodes', targetType:'any'}], type:'sap.ui.model.odata.type.Currency', mode:'TwoWay'}" valueHelp="FVH-Currency" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" multipleLines="false">
 										<mdc:dependents>
 											<mdc:ValueHelp id="FVH-Currency"
 												delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>

@@ -143,6 +143,17 @@ function(
 				{ text: "item1-bound" },
 				{ text: "item2-bound" }
 			]);
+			const oView = await XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
+						'<m:List id="layout" items="{path: \'/\'}">' +
+							'<m:CustomListItem id="itemTpl">' +
+								'<m:Text id="text" text="{text}" />' +
+							"</m:CustomListItem>" +
+						"</m:List>" +
+					"</mvc:View>"
+			});
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -153,17 +164,7 @@ function(
 					}
 				},
 				createContent() {
-					return new XMLView({
-						id: "myView",
-						viewContent:
-							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
-								'<m:List id="layout" items="{path: \'/\'}">' +
-									'<m:CustomListItem id="itemTpl">' +
-										'<m:Text id="text" text="{text}" />' +
-									"</m:CustomListItem>" +
-								"</m:List>" +
-							"</mvc:View>"
-					});
+					return oView;
 				}
 			});
 
@@ -208,6 +209,17 @@ function(
 				{ text: "item1-bound" },
 				{ text: "item2-bound" }
 			]);
+			const oView = await XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
+						'<m:List id="layout" items="{path: \'/\'}">' +
+							'<m:CustomListItem id="itemTpl">' +
+								'<m:Text text="{text}" />' +
+							"</m:CustomListItem>" +
+						"</m:List>" +
+					"</mvc:View>"
+			});
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -218,17 +230,7 @@ function(
 					}
 				},
 				createContent() {
-					return new XMLView({
-						id: "myView",
-						viewContent:
-							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
-								'<m:List id="layout" items="{path: \'/\'}">' +
-									'<m:CustomListItem id="itemTpl">' +
-										'<m:Text text="{text}" />' +
-									"</m:CustomListItem>" +
-								"</m:List>" +
-							"</mvc:View>"
-					});
+					return oView;
 				}
 			});
 
@@ -273,6 +275,17 @@ function(
 				{ text: "item1-bound" },
 				{ text: "item2-bound" }
 			]);
+			const oView = await XMLView.create({
+				id: "myView",
+				definition:
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
+						'<m:List id="layout" items="{path: \'/\'}">' +
+							'<m:CustomListItem id="itemTpl">' +
+								'<m:Text text="{text}" />' +
+							"</m:CustomListItem>" +
+						"</m:List>" +
+					"</mvc:View>"
+			});
 
 			var FixtureComponent = UIComponent.extend("fixture.UIComponent", {
 				metadata: {
@@ -283,17 +296,7 @@ function(
 					}
 				},
 				createContent() {
-					return new XMLView({
-						id: "myView",
-						viewContent:
-							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m">' +
-								'<m:List id="layout" items="{path: \'/\'}">' +
-									'<m:CustomListItem id="itemTpl">' +
-										'<m:Text text="{text}" />' +
-									"</m:CustomListItem>" +
-								"</m:List>" +
-							"</mvc:View>"
-					});
+					return oView;
 				}
 			});
 

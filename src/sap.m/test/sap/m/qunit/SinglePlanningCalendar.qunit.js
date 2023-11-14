@@ -376,7 +376,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("firstDayOfWeek", async function(assert) {
+	QUnit.test("firstDayOfWeek", function(assert) {
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2015, 0, 1, 8),
 				views: [
@@ -486,7 +486,7 @@ sap.ui.define([
 		oSPC.destroy();
 	});
 
-	QUnit.test("CalendarWeekNumbering - correct week day", async function(assert) {
+	QUnit.test("CalendarWeekNumbering - correct week day", function(assert) {
 		var sInitialWeekNumbering = "ISO_8601";
 		var sViewKey = "WeekView";
 		var oSPC = new SinglePlanningCalendar({
@@ -577,7 +577,7 @@ sap.ui.define([
 
 	QUnit.module("Multi dates selection");
 
-	QUnit.test("Multi dates selection - add/remove/get selectedDates", async function(assert) {
+	QUnit.test("Multi dates selection - add/remove/get selectedDates", function(assert) {
 		var sViewKey = "WeekView";
 		var oSPC = new SinglePlanningCalendar({
 				startDate: UI5Date.getInstance(2015, 0, 1, 8),

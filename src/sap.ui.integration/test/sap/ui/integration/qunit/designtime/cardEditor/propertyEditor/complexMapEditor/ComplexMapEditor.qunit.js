@@ -229,7 +229,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
 				var oComplexMapEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();
@@ -246,7 +246,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleDataSource").then(function (aPropertyEditor) {
 				var oComplexMapEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				var oNestedArrayEditor = oComplexMapEditor.getContent();

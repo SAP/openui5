@@ -246,7 +246,7 @@ sap.ui.define([
 
 			this.oArrayEditor.setConfig(this.oPropertyConfig);
 
-			this.oArrayEditor.ready().then(async function() {
+			this.oArrayEditor.ready().then(function () {
 				oCore.applyChanges();
 				this.oArrayEditor.attachValueChange(function (oEvent) {
 					assert.strictEqual(oEvent.getParameter("value").length, 1, "Then there is one item");
@@ -483,7 +483,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function(aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				fnReady();
@@ -611,7 +611,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function(aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				fnReady();
@@ -681,7 +681,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(async function(aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sideIndicator").then(function (aPropertyEditor) {
 				this.oArrayEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				oCore.applyChanges();
 				fnReady();
@@ -709,7 +709,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Custom configuration", {
-		beforeEach: async function(assert) {
+		beforeEach: function (assert) {
 			var mJson = {
 				"content": [
 					{
@@ -788,7 +788,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Integration with BaseEditor", {
-		beforeEach: async function(assert) {
+		beforeEach: function (assert) {
 			var fnDone = assert.async();
 
 			var mConfig = {

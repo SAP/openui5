@@ -28,7 +28,7 @@ sap.ui.define([
 
 
 	QUnit.module("Properties", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -49,7 +49,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Renderer", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -59,7 +59,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("checking Narrow renderMode", async function(assert) {
+	QUnit.test("checking Narrow renderMode", function (assert) {
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelRenderModeNarrow"), "should not have style class \"sapTntInfoLabelRenderModeNarrow\" ");
 
 		this.InfoLabel.setRenderMode(RenderMode.Narrow);
@@ -68,7 +68,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("checking display only mode", async function(assert) {
+	QUnit.test("checking display only mode", function (assert) {
 		assert.notOk(this.InfoLabel.$().hasClass("sapTntInfoLabelDisplayOnly"), "should not have style class \"sapTntInfoLabelDisplayOnly\" ");
 
 		this.InfoLabel.setDisplayOnly(true);
@@ -76,7 +76,7 @@ sap.ui.define([
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelDisplayOnly"), "should have style class \"sapTntInfoLabelDisplayOnly\" ");
 	});
 
-	QUnit.test("Setting empty text", async function(assert) {
+	QUnit.test("Setting empty text", function (assert) {
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelNoText"), "should have style class \"sapTntInfoLabelNoText\" ");
 
 		this.InfoLabel.setText("Test text");
@@ -88,7 +88,7 @@ sap.ui.define([
 		assert.ok(this.InfoLabel.$().hasClass("sapTntInfoLabelNoText"), "should have style class \"sapTntInfoLabelNoText\" ");
 	});
 
-	QUnit.test("testing textDirection", async function(assert) {
+	QUnit.test("testing textDirection", function (assert) {
 		assert.strictEqual(this.InfoLabel.getTextDirection(), "Inherit", "InfoLabel text initially should have text direction \"Inherit\"");
 
 		this.InfoLabel.setTextDirection(TextDirection.RTL);
@@ -97,14 +97,14 @@ sap.ui.define([
 		assert.strictEqual(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelInner")[0]).attr("dir"), "rtl", "InfoLabel \"dir\" attribute should be \"rtl\"");
 	});
 
-	QUnit.test("testing icon", async function(assert) {
+	QUnit.test("testing icon", function (assert) {
 		this.InfoLabel.setIcon("sap-icon://show");
 		Core.applyChanges();
 		assert.ok(jQuery(this.InfoLabel.getDomRef().getElementsByClassName("sapTntInfoLabelWithIcon")[0]), "There is a span with an icon rendered");
 	});
 
 	QUnit.module("Appearance", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -122,7 +122,7 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getRenderMode(), RenderMode.Narrow, "renderMode is set to sap.tnt.RenderMode.Narrow (\"Narrow\") ");
 	});
 
-	QUnit.test("changing colorScheme property", async function(assert) {
+	QUnit.test("changing colorScheme property", function (assert) {
 		var warningFunctionSpy = sinon.spy(log, "warning");
 
 		assert.strictEqual(this.InfoLabel.getColorScheme(), 7, "Initially colorScheme is set to 7");
@@ -166,7 +166,7 @@ sap.ui.define([
 		this.InfoLabel.setProperty.restore();
 	});
 
-	QUnit.test("check setting colorScheme classes ", async function(assert) {
+	QUnit.test("check setting colorScheme classes ", function (assert) {
 		Core.applyChanges();
 		assert.ok(this.InfoLabel.$().hasClass("backgroundColor7"), "should have style class \"backgroundColor7\" ");
 
@@ -176,7 +176,7 @@ sap.ui.define([
 		assert.ok(this.InfoLabel.$().hasClass("backgroundColor1"), "should have style class \"backgroundColor1\" ");
 	});
 
-	QUnit.test("changing width property", async function(assert) {
+	QUnit.test("changing width property", function (assert) {
 		this.InfoLabel.setWidth("120px");
 		Core.applyChanges();
 		assert.strictEqual(this.InfoLabel.getWidth(), "120px", "width is set to 120px");
@@ -194,7 +194,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("API", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -204,7 +204,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("setting text property", async function(assert) {
+	QUnit.test("setting text property", function (assert) {
 		assert.strictEqual(this.InfoLabel.getText(), "", "Text is initially set to \"\" ");
 
 		this.InfoLabel.setText("Now available");
@@ -272,7 +272,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oRB = Library.getResourceBundleFor("sap.tnt");
 
 			this.InfoLabel = new InfoLabel("iLabel1").placeAt("qunit-fixture");
@@ -296,7 +296,7 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabel.getDomRef().childElementCount, 2, "InfoLabel should have 2 spans inside - one for the visible text and one for the invisible");
 	});
 
-	QUnit.test("testing if the invisible text is added", async function(assert) {
+	QUnit.test("testing if the invisible text is added", function (assert) {
 		var sEmptyText = this.oRB.getText("INFOLABEL_EMPTY"),
 			sDefaultText = this.oRB.getText("INFOLABEL_DEFAULT");
 
@@ -322,7 +322,7 @@ sap.ui.define([
 		assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, sDefaultText, "InfoLabel initially should have invisible text \"Info label\"");
 	});
 
-	QUnit.test("testing InfoLabel with icon", async function(assert) {
+	QUnit.test("testing InfoLabel with icon", function (assert) {
 		var sEmptyText = this.oRB.getText("INFOLABEL_EMPTY"),
 			sDefaultText = this.oRB.getText("INFOLABEL_DEFAULT"),
 			sIconHideText = IconPool.getIconInfo("sap-icon://hide").text,

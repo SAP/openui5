@@ -1226,50 +1226,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the row tooltips to match the selection state.
-	 *
-	 * @param {sap.ui.table.Row} oRow Instance of the row.
-	 * @param {jQuery} $Ref The jQuery references to the DOM areas of the row.
-	 * @param {string} sTextMouse The text for the tooltip.
-	 * @public
-	 */
-	AccExtension.prototype.updateRowTooltips = function(oRow, $Ref, sTextMouse) {
-		if (!this._accMode) {
-			return;
-		}
-
-		var oTable = this.getTable();
-		var bShowRowTooltips = !oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary() && !oTable._getHideStandardTooltips();
-
-		if ($Ref.row) {
-			if (bShowRowTooltips && TableUtils.isRowSelectionAllowed(oTable) && !$Ref.row.hasClass("sapUiTableRowHidden")) {
-				$Ref.row.attr("title", sTextMouse);
-			} else {
-				$Ref.row.removeAttr("title");
-			}
-		}
-
-		if ($Ref.rowSelector) {
-			if (bShowRowTooltips && TableUtils.isRowSelectorSelectionAllowed(oTable)) {
-				$Ref.rowSelector.attr("title", sTextMouse);
-			} else {
-				$Ref.rowSelector.removeAttr("title");
-			}
-		}
-
-		if ($Ref.rowScrollPart) {
-			var $Row = $Ref.rowScrollPart.add($Ref.rowFixedPart).add($Ref.rowActionPart);
-
-			if (bShowRowTooltips && TableUtils.isRowSelectionAllowed(oTable)) {
-				// the row requires a tooltip for selection if the cell selection is allowed
-				$Row.attr("title", sTextMouse);
-			} else {
-				$Row.removeAttr("title");
-			}
-		}
-	};
-
-	/**
 	 * Is called by the row whenever the selection state is changed and updates the corresponding ARIA attributes and tooltips.
 	 *
 	 * @param {sap.ui.table.Row} oRow Instance of the row.
@@ -1284,10 +1240,9 @@ sap.ui.define([
 
 		var $Ref = oRow.getDomRefs(true);
 		var sTextKeyboard = "";
-		var sTextMouse = "";
 
 		if (!oRow.isEmpty() && !oRow.isGroupHeader() && !oRow.isSummary()) {
-			var mTooltipTexts = this.getAriaTextsForSelectionMode(true);
+			var mKeyboardTexts = this.getKeyboardTexts();
 			var oTable = this.getTable();
 			var bIsSelected = oTable._getSelectionPlugin().isSelected(oRow);
 
@@ -1295,19 +1250,12 @@ sap.ui.define([
 				$Ref.row.not($Ref.rowHeaderPart).not($Ref.rowActionPart).add($Ref.row.children(".sapUiTableCell")).attr("aria-selected", bIsSelected ? "true" : "false");
 			}
 
-			if (!bIsSelected) {
-				sTextKeyboard = mTooltipTexts.keyboard["rowSelect"];
-				sTextMouse = mTooltipTexts.mouse["rowSelect"];
-			} else {
-				sTextKeyboard = mTooltipTexts.keyboard["rowDeselect"];
-				sTextMouse = mTooltipTexts.mouse["rowDeselect"];
-			}
+			sTextKeyboard = bIsSelected ? mKeyboardTexts.rowDeselect : mKeyboardTexts.rowSelect;
 		}
 
 		if ($Ref.rowSelectorText) {
 			$Ref.rowSelectorText.text(sTextKeyboard);
 		}
-		this.updateRowTooltips(oRow, $Ref, sTextMouse);
 	};
 
 	/**
@@ -1395,54 +1343,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrieve Aria descriptions from resource bundle for a certain selection mode.
+	 * Retrieve descriptions for keyboard interactions.
 	 *
-	 * @param {boolean} [bConsiderSelectionState] Set to <code>true</code>, to consider the current selection state of the table.
-	 * @param {string} [sSelectionMode] If no selection mode is set, the current selection mode of the table is used.
-	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}} Tooltip texts.
+	 * @returns {{rowSelect: string, rowDeselect: string}} Text descriptions.
 	 * @public
 	 */
-	AccExtension.prototype.getAriaTextsForSelectionMode = function(bConsiderSelectionState, sSelectionMode) {
-		var oTable = this.getTable();
-
-		if (!sSelectionMode) {
-			sSelectionMode = oTable.getSelectionMode();
-		}
-
-		var bShowTooltips = !oTable._getHideStandardTooltips();
-		var mTooltipTexts = {
-			mouse: {
-				rowSelect: "",
-				rowDeselect: ""
-			},
-			keyboard: {
-				rowSelect: "",
-				rowDeselect: ""
-			}
+	AccExtension.prototype.getKeyboardTexts = function() {
+		var sSelectionMode = this.getTable().getSelectionMode();
+		var mTexts = {
+			rowSelect: "",
+			rowDeselect: ""
 		};
 
-		var iSelectedCount = oTable._getSelectionPlugin().getSelectedCount();
-
-		if (sSelectionMode === SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
-			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
-		} else if (sSelectionMode === SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
-			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
-			// text for de-select is the same like for single selection
-			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
-
-			if (bConsiderSelectionState === true && iSelectedCount === 0) {
-				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
-			}
+		if (sSelectionMode === SelectionMode.None) {
+			return mTexts;
 		}
 
-		return mTooltipTexts;
+		mTexts.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
+		mTexts.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
+
+		return mTexts;
 	};
 
 	/**

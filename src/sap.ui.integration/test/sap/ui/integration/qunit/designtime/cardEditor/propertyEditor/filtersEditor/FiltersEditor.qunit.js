@@ -216,7 +216,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(function (aPropertyEditor) {
 				var oFiltersEditor = aPropertyEditor[0];
 				sap.ui.getCore().applyChanges();
 				var oNestedArrayEditor = oFiltersEditor.getContent();
@@ -256,7 +256,7 @@ sap.ui.define([
 			var mConfig = _createBaseEditorConfig();
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleFilter").then(function (aPropertyEditor) {
 				var oFiltersEditor = aPropertyEditor[0];
 				sap.ui.getCore().applyChanges();
 				var oNestedArrayEditor = oFiltersEditor.getContent();

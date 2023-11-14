@@ -24,7 +24,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Drag&Drop: RTL", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oIconTabBar = new IconTabBar({
 				enableTabReordering: true,
 				items: [

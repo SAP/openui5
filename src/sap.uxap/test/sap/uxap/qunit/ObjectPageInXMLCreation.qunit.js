@@ -9,7 +9,7 @@ function(Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-162_ObjectPageSample",
 				viewName: "view.UxAP-162_ObjectPageSample"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageSampleView = oView;
 				this.objectPageSampleView.placeAt("qunit-fixture");
 				Core.applyChanges();

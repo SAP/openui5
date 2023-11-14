@@ -135,7 +135,7 @@ sap.ui.define([
 			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 100, true);
 		}).then(function() {
 			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 750, true);
-		}).then(async function() {
+		}).then(function() {
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[3].setWidth("1000px");
 			oCore.applyChanges();

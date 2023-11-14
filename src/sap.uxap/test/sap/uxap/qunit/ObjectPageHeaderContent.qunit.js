@@ -9,7 +9,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 			XMLView.create({
 				id: "UxAP-ObjectPageHeaderContent",
 				viewName: "view.UxAP-ObjectPageHeaderContent"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.contentView = oView;
 				this.contentView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -29,7 +29,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		assert.ok(this.contentView.$().find(".sapUxAPObjectPageHeaderIdentifierTitleInContent"), "Title is rendered inside the HeaderContent");
 	});
 
-	QUnit.test("showEditHeaderBtn", async function(assert) {
+	QUnit.test("showEditHeaderBtn", function (assert) {
 		var oPl = this.contentView.byId("ObjectPageLayout");
 		oPl.setShowEditHeaderButton(true);
 		Core.applyChanges();
@@ -51,7 +51,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 			XMLView.create({
 				id: "UxAP-ObjectPageHeaderContent",
 				viewName: "view.UxAP-ObjectPageHeaderContent"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.contentView = oView;
 				this.contentView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -81,7 +81,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		assert.strictEqual(oNestedControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
-	QUnit.test("insertHeaderContent", async function(assert) {
+	QUnit.test("insertHeaderContent", function (assert) {
 		var oPage = this.contentView.byId("ObjectPageLayout"),
 			oControl = new Label({id: "label1", text: "label1"});
 
@@ -93,7 +93,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
-	QUnit.test("addHeaderContent", async function(assert) {
+	QUnit.test("addHeaderContent", function (assert) {
 		var oPage = this.contentView.byId("ObjectPageLayout"),
 			oControl = new Label({id: "label2", text: "label2"});
 
@@ -105,7 +105,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		assert.strictEqual(oControl.getParent().getId(), oPage.getId(), "control parent is correct");
 	});
 
-	QUnit.test("removeHeaderContent", async function(assert) {
+	QUnit.test("removeHeaderContent", function (assert) {
 		var oPage = this.contentView.byId("ObjectPageLayout"),
 			oToRemove = this.contentView.byId("testLink");
 
@@ -119,7 +119,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		oToRemove.destroy();
 	});
 
-	QUnit.test("removeAllHeaderContent", async function(assert) {
+	QUnit.test("removeAllHeaderContent", function (assert) {
 		var oRemovedContent = this.contentView.byId("ObjectPageLayout").removeAllHeaderContent();
 		Core.applyChanges();
 
@@ -132,7 +132,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		oRemovedContent.forEach(function(oItem) {oItem.destroy();});
 	});
 
-	QUnit.test("destroyHeaderContent", async function(assert) {
+	QUnit.test("destroyHeaderContent", function (assert) {
 		this.contentView.byId("ObjectPageLayout").addHeaderContent(new Label({id: "label3", text: "label3"}));
 		Core.applyChanges();
 
@@ -143,7 +143,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 	});
 
 	QUnit.module("Dynamic Header State Preserved On Scroll", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oObjectPageWithPreserveHeaderStateOnScroll = new ObjectPageLayout({
 				preserveHeaderStateOnScroll: true
 			});
@@ -216,7 +216,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 			XMLView.create({
 				id: "UxAP-ObjectPageHeaderContent",
 				viewName: "view.UxAP-ObjectPageHeaderContent"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.contentView = oView;
 				this.contentView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -228,7 +228,7 @@ function(Element, jQuery, Core, Label, Text, ObjectPageDynamicHeaderTitle, Objec
 		}
 	});
 
-	QUnit.test("addHeaderContent", async function(assert) {
+	QUnit.test("addHeaderContent", function (assert) {
 		var	oObjectPageLayout = this.contentView.byId("ObjectPageLayout"),
 		oResizableControl = new GenericDiv({height: "100px"}),
 		done = assert.async(),

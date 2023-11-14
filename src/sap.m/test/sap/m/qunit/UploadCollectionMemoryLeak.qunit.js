@@ -133,7 +133,7 @@ sap.ui.define([
 			restoreSpySetup(this);
 		}
 	});
-	QUnit.skip("UCI read only", async function(assert) {
+	QUnit.skip("UCI read only", function (assert) {
 		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
@@ -142,7 +142,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI without thumbnail url", async function(assert) {
+	QUnit.skip("UCI without thumbnail url", function (assert) {
 		this.oItem.setThumbnailUrl();
 		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
@@ -152,7 +152,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI with edit and delete button", async function(assert) {
+	QUnit.skip("UCI with edit and delete button", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleEdit(true);
@@ -174,7 +174,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI with grouping", async function(assert) {
+	QUnit.skip("UCI with grouping", function (assert) {
 		var oModel = new JSONModel({
 			"items": [
 				{
@@ -225,7 +225,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI enter edit", async function(assert) {
+	QUnit.skip("UCI enter edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new undefined/*UploadCollection*/({
@@ -238,7 +238,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI enter edit - cancel edit", async function(assert) {
+	QUnit.skip("UCI enter edit - cancel edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new undefined/*UploadCollection*/({
@@ -253,7 +253,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("UCI enter edit - change name - cancel edit", async function(assert) {
+	QUnit.skip("UCI enter edit - change name - cancel edit", function (assert) {
 		this.oItem.setEnableEdit(true);
 		this.oItem.setVisibleEdit(true);
 		var oCollection = new undefined/*UploadCollection*/({
@@ -280,7 +280,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("UCI delete item", async function(assert) {
+	QUnit.skip("UCI delete item", function (assert) {
 		this.oItem.setEnableDelete(true);
 		this.oItem.setVisibleDelete(true);
 		var oCollection = new undefined/*UploadCollection*/({
@@ -305,7 +305,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.skip("Uploading a file - progress case", async function(assert) {
+	QUnit.skip("Uploading a file - progress case", function (assert) {
 		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
@@ -327,7 +327,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - upload complete", async function(assert) {
+	QUnit.skip("Uploading a file - upload complete", function (assert) {
 		var oCollection = new undefined/*UploadCollection*/({
 			items: [this.oItem]
 		}).placeAt("qunit-fixture");
@@ -357,7 +357,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - terminate upload", async function(assert) {
+	QUnit.skip("Uploading a file - terminate upload", function (assert) {
 		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();
@@ -377,7 +377,7 @@ sap.ui.define([
 		checkDestroy(this, assert);
 	});
 
-	QUnit.skip("Uploading a file - terminate upload via popover", async function(assert) {
+	QUnit.skip("Uploading a file - terminate upload via popover", function (assert) {
 		var oCollection = new undefined/*UploadCollection*/().placeAt("qunit-fixture");
 		oCore.applyChanges();
 		var oFileUploader = oCollection._getFileUploader();

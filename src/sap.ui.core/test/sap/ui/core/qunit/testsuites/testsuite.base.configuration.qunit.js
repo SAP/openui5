@@ -20,7 +20,7 @@ sap.ui.define([], function() {
 				page: "test-resources/sap/ui/core/qunit/base/Config_bootstrap.qunit.html"
 			},
 			"base/Config_cascade": {
-				page: "test-resources/sap/ui/core/qunit/base/Config_cascade.qunit.html?sap-ui-paramA=url"
+				page: "test-resources/sap/ui/core/qunit/base/Config_cascade.qunit.html?sap-ui-paramA=url&sap-ui-param-merged-object={\"objectKeyUrl\":\"urlObject\"}"
 			},
 			"base/Config_noUrl": {
 				page: "test-resources/sap/ui/core/qunit/base/Config_noUrl.qunit.html?sap-ui-foo-bar=url"

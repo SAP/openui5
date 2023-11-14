@@ -124,7 +124,7 @@ sap.ui.define([
 		assert.equal(jQuery("#Text3").get(0), undefined, "Text 3 Invisible");
 	});
 
-	QUnit.test("Text Output", async function(assert) {
+	QUnit.test("Text Output", function(assert) {
 		// test if result is in HTML
 		oDom = document.getElementById('Text1');
 		assert.equal(oDom.textContent,"This is a simple Text.", "Displayed Text");
@@ -155,7 +155,7 @@ sap.ui.define([
 		assert.equal(oDom.style.width, "155px", "Defined width");
 	});
 
-	QUnit.test("Text Align & RTL", async function(assert) {
+	QUnit.test("Text Align & RTL", function(assert) {
 		// default
 		Core.applyChanges();
 		oDom = document.getElementById('Text1');
@@ -187,7 +187,7 @@ sap.ui.define([
 		t1.setTextAlign(TextAlign.Begin);
 	});
 
-	QUnit.test("Null Text", async function(assert) {
+	QUnit.test("Null Text", function(assert) {
 		assert.expect(2);
 		t1.setText(null);
 		try {
@@ -212,7 +212,7 @@ sap.ui.define([
 
 		return XMLView.create({
 			definition: sViewXML
-		}).then(async function(oView) {
+		}).then(function(oView) {
 			oView.setModel(
 				new JSONModel({
 					text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"
@@ -233,7 +233,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("New line characters with binding", async function(assert) {
+	QUnit.test("New line characters with binding", function(assert) {
 		var oModel = new JSONModel();
 		var oData = {text: "Should visualize tab\tand new line\nand escaped \\n and \\t from binding"};
 		oModel.setData(oData);
@@ -244,7 +244,7 @@ sap.ui.define([
 		assert.equal(countLines(t65), 2, "Text should be in 2 lines");
 	});
 
-	QUnit.test("New line characters", async function(assert) {
+	QUnit.test("New line characters", function(assert) {
 		//test normalization \r\n \r \n\r
 		var txt66 = "test\r\ntest\rtest\n\rtest";
 		var t66 = new Text("Text66", {text: txt66});
@@ -294,7 +294,7 @@ sap.ui.define([
 		});
 	}
 
-	QUnit.test("non-native max lines", async function(assert) {
+	QUnit.test("non-native max lines", function(assert) {
 		var done = assert.async();
 		t5.canUseNativeLineClamp = function() {
 			return false;
@@ -338,7 +338,7 @@ sap.ui.define([
 
 		}, 200);
 	});
-	QUnit.test("When width is not set max-width should apply to control", async function(assert) {
+	QUnit.test("When width is not set max-width should apply to control", function(assert) {
 		var sut = new Text({text : "text"}).placeAt("qunit-fixture");
 		Core.applyChanges();
 		assert.ok(sut.$().hasClass("sapMTextMaxWidth"), "Text has max width restriction for the trunctation.");
@@ -349,7 +349,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("getTextDomRef should respect maxlines", async function(assert) {
+	QUnit.test("getTextDomRef should respect maxlines", function(assert) {
 		var sut = new Text({text : "line1\nline2\nline3", maxLines: 2}).placeAt("qunit-fixture");
 		Core.applyChanges();
 		assert.ok(sut.getDomRef("inner") === sut.getTextDomRef(), "TextDomRef is the inner wrapper.");
@@ -366,7 +366,7 @@ sap.ui.define([
 		oText.destroy();
 	});
 
-	QUnit.test("wrapping and break word with initially empty text", async function(assert) {
+	QUnit.test("wrapping and break word with initially empty text", function(assert) {
 		assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 
 		t6.setText("LongTextWithNoSpaces");
@@ -378,7 +378,7 @@ sap.ui.define([
 		assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 	});
 
-	QUnit.test("setting renderWhitespace property", async function(assert) {
+	QUnit.test("setting renderWhitespace property", function(assert) {
 		var oText = new Text("Text7", {text:"This text is not wrapping.\t\t Line   breaks cannot make it wrap"}).placeAt("qunit-fixture");
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text does not have a class for render whitespace characters");
 		assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text does not have a class for render whitespace characters with wrapping");
@@ -397,7 +397,7 @@ sap.ui.define([
 		oText.destroy();
 	});
 
-	QUnit.test("Break words when wrapping type is 'Hyphenated'", async function(assert) {
+	QUnit.test("Break words when wrapping type is 'Hyphenated'", function (assert) {
 		var oText = new Text({
 			text: "singlewordwithoutspacesbutwithhyphenationenabled",
 			wrapping: true,
@@ -427,7 +427,7 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
-	QUnit.test("max lines with isThemeApplied true in RTL", async function(assert) {
+	QUnit.test("max lines with isThemeApplied true in RTL", function (assert){
 
 		this.stub(sap.ui.getCore(), "isThemeApplied").returns(true);
 
@@ -447,7 +447,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("max lines with isThemeApplied false", async function(assert) {
+	QUnit.test("max lines with isThemeApplied false", function(assert) {
 		function themeChanged() {
 			return new Promise(function(resolve) {
 				function onChanged() {
@@ -483,7 +483,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oText = new Text({
 				text: "",
 				emptyIndicatorMode: EmptyIndicatorMode.On
@@ -528,7 +528,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
 		//Arrange
 		this.oText.setText("test");
 		Core.applyChanges();
@@ -537,7 +537,7 @@ sap.ui.define([
 		assert.strictEqual(this.oText.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		Core.applyChanges();
@@ -554,7 +554,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
 		//Arrange
 		this.oTextEmptyAuto.setText("test");
 		Core.applyChanges();
@@ -563,7 +563,7 @@ sap.ui.define([
 		assert.strictEqual(this.oTextEmptyAuto.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", async function(assert) {
+	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", function(assert) {
 		var oSpan = this.oTextEmptyAutoNoClass.getDomRef().childNodes[0];
 		//Assert
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
@@ -575,7 +575,7 @@ sap.ui.define([
 		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
 		//Arrange
 		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oText.setText("test");

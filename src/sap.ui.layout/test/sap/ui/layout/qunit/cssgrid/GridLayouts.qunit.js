@@ -410,7 +410,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("When Grid (GridList control) is with Grouping", async function(assert) {
+	QUnit.test("When Grid (GridList control) is with Grouping", function (assert) {
 		var oGridBoxLayout = new GridBoxLayout();
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
@@ -442,7 +442,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("When (GridList control) is without Grouping", async function(assert) {
+	QUnit.test("When (GridList control) is without Grouping", function (assert) {
 		var oGridBoxLayout = new GridBoxLayout();
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1", group: "Group A" },
@@ -472,7 +472,7 @@ sap.ui.define([
 		assert.equal(sGridAutoRows, "1fr",  "Height of the rows comes from CSS Grid property 'grid-auto-rows'");
 	});
 
-	QUnit.test("Is class correct depending on CSS Grid support", async function(assert) {
+	QUnit.test("Is class correct depending on CSS Grid support", function (assert) {
 		var oGridBoxLayout = new GridBoxLayout();
 		var oGridList = new GridList("gListClass", {
 			customLayout: oGridBoxLayout
@@ -487,7 +487,7 @@ sap.ui.define([
 		assert.equal(document.querySelector(id).classList.contains("sapUiLayoutCSSGridBoxLayoutPolyfill"), false,  "'sapUiLayoutCSSGridBoxLayoutPolyfill' class is not applied");
 	});
 
-	QUnit.test("Is growing works correct", async function(assert) {
+	QUnit.test("Is growing works correct", function (assert) {
 		var oGridBoxLayout = new GridBoxLayout();
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
@@ -520,7 +520,7 @@ sap.ui.define([
 		assert.equal(document.getElementById(id).childElementCount, 2,  "there are two items in the list");
 	});
 
-	QUnit.test("Is boxWidth works correct", async function(assert) {
+	QUnit.test("Is boxWidth works correct", function (assert) {
 		var data = [
 			{ title: "Grid item title 1", subtitle: "Subtitle 1"},
 			{ title: "Grid item title 2", subtitle: "Subtitle 2"}];
@@ -706,7 +706,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ResponsiveColumnItemLayoutData", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oGrid = new CSSGrid({
 				items: [
 					new HTML({ content: "<div></div>" }),
@@ -730,7 +730,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Set item layoutData", async function(assert) {
+	QUnit.test("Set item layoutData", function (assert) {
 
 		// Arrange
 		this.spy(GridLayoutBase, "setItemStyles");
@@ -751,7 +751,7 @@ sap.ui.define([
 		this.oGrid.onLayoutDataChange.restore();
 	});
 
-	QUnit.test("Remove item layoutData", async function(assert) {
+	QUnit.test("Remove item layoutData", function (assert) {
 
 		// Arrange
 		this.oItem.setLayoutData(this.oLayoutData);
@@ -767,7 +767,7 @@ sap.ui.define([
 		assert.notOk(this.oItem.getDomRef().style.getPropertyValue("grid-column"), "Should NOT have grid-column property");
 	});
 
-	QUnit.test("Change item layoutData", async function(assert) {
+	QUnit.test("Change item layoutData", function (assert) {
 
 		// Arrange
 		this.oItem.setLayoutData(this.oLayoutData);

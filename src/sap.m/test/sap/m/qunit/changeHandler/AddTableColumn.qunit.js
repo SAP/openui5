@@ -112,7 +112,7 @@ sap.ui.define([
 			return Component.create({
 				id: "comp",
 				name: "test"
-			}).then(async function(oComponent) {
+			}).then(function(oComponent) {
 				this.oUiComponent = oComponent;
 
 				// Place component in container and display

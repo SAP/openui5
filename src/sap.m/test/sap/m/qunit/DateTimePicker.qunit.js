@@ -186,7 +186,7 @@ sap.ui.define([
 		//Cleanup - redundant
 	});
 
-	QUnit.test("maxDate being yesterday should not throw error on open", async function(assert) {
+	QUnit.test("maxDate being yesterday should not throw error on open", function (assert) {
 		// Arrange
 		var oYesterdayDate = UI5Date.getInstance(),
 			oDP = new DateTimePicker("DatePicker").placeAt("qunit-fixture");
@@ -205,7 +205,7 @@ sap.ui.define([
 		oDP.destroy();
 	});
 
-	QUnit.test("showCurrentTimeButton - button existence", async function(assert) {
+	QUnit.test("showCurrentTimeButton - button existence", function(assert) {
 		// Prepare
 		var oDTP = new DateTimePicker({
 			showCurrentTimeButton: true
@@ -218,7 +218,7 @@ sap.ui.define([
 		assert.ok(oDTP._oClocks.getShowCurrentTimeButton(), "Now button visibility is propagated to the clocks");
 	});
 
-	QUnit.test("valueFormat and displayFormat when value is bound", async function(assert) {
+	QUnit.test("valueFormat and displayFormat when value is bound", function(assert) {
 		var oModel = new JSONModel({ date: UI5Date.getInstance(Date.UTC(2016, 1, 18, 8, 0, 0)) }),
 			oDTP,
 			oInputRef;
@@ -259,7 +259,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("Overwriting the user input with model updates will be prevented", async function(assert) {
+	QUnit.test("Overwriting the user input with model updates will be prevented", function (assert) {
 		// Prepare
 		var oDTP = new DateTimePicker(),
 			oHandleInputValueConcurrencySpy = this.spy(oDTP, "handleInputValueConcurrency");
@@ -300,7 +300,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("_fillDateRange works with max date when the current date is after the max date", async function(assert) {
+	QUnit.test("_fillDateRange works with max date when the current date is after the max date", function(assert) {
 		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
 			oNewMinDate = UI5Date.getInstance(2014, 0, 1),
 			oNewMaxDate = UI5Date.getInstance(2014, 11, 31),
@@ -327,7 +327,7 @@ sap.ui.define([
 		oDateTimePicker.destroy();
 	});
 
-	QUnit.test("_fillDateRange works with min date when the current date is before the min date", async function(assert) {
+	QUnit.test("_fillDateRange works with min date when the current date is before the min date", function(assert) {
 		var oDateTimePicker = new DateTimePicker("DTPMinMax").placeAt("uiArea1"),
 			oDate = UI5Date.getInstance(),
 			oDateTomorow = UI5Date.getInstance(oDate.getFullYear(), oDate.getMonth(), oDate.getDate() + 1),
@@ -351,7 +351,7 @@ sap.ui.define([
 		oDateTimePicker.destroy();
 	});
 
-	QUnit.test("Swticher is rendered and visible on small screen size", async function(assert) {
+	QUnit.test("Swticher is rendered and visible on small screen size", function(assert) {
 		// Arrange
 		var done = assert.async(),
 			oDTP7 = new DateTimePicker("DTP7", {}),
@@ -382,7 +382,7 @@ sap.ui.define([
 		oDTP7._handleWindowResize({name: "Phone"});
 	});
 
-	QUnit.test("Swticher is rendered and hidden on large screen size", async function(assert) {
+	QUnit.test("Swticher is rendered and hidden on large screen size", function(assert) {
 		// Arrange
 		var done = assert.async(),
 			oDTP8 = new DateTimePicker("DTP8", {}),
@@ -414,7 +414,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("initialFocusedDate property", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oDTp = new DateTimePicker();
 			this.oDTp.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -529,7 +529,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("change date using calendar - open", async function(assert) {
+	QUnit.test("change date using calendar - open", function(assert) {
 		var done = assert.async(),
 			oClocks,
 			aMonths,
@@ -595,7 +595,7 @@ sap.ui.define([
 		qutils.triggerKeyup("DTP3-OK", KeyCodes.ENTER, false, false, false);
 	});
 
-	QUnit.test("Open DateTimePicker from Button", async function(assert) {
+	QUnit.test("Open DateTimePicker from Button", function(assert) {
 		// Prepare
 		var oDTP = new DateTimePicker("HDTP", {
 				hideInput: true
@@ -626,7 +626,7 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("aria-expanded correctly set", async function(assert) {
+	QUnit.test("aria-expanded correctly set", function(assert) {
 		var oDTP = new DateTimePicker("DP", {}).placeAt("uiArea8");
 		oCore.applyChanges();
 
@@ -634,7 +634,7 @@ sap.ui.define([
 		assert.notOk(oDTP.$("inner").attr("aria-expanded"), "false", "DP input doesn't have 'aria-expanded' attrubute set.");
 	});
 
-	QUnit.test("aria-haspopup set correctly", async function(assert) {
+	QUnit.test("aria-haspopup set correctly", function(assert) {
 		var oDTP = new DateTimePicker();
 
 		oDTP.placeAt("qunit-fixture");
@@ -681,7 +681,7 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
-	QUnit.test("_focusActiveButton method: moves the focus to the first clock", async function(assert) {
+	QUnit.test("_focusActiveButton method: moves the focus to the first clock", function(assert) {
 		//Prepare
 		var done = assert.async();
 
@@ -705,7 +705,7 @@ sap.ui.define([
 		}, 400);
 	});
 
-	QUnit.test("showTimezone and aria-describedBy", async function(assert) {
+	QUnit.test("showTimezone and aria-describedBy", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker("DTPACC")
 			.placeAt("qunit-fixture"),
@@ -742,7 +742,7 @@ sap.ui.define([
 
 	QUnit.module("Calendar and TimePicker");
 
-	QUnit.test("Open picker on small screen", async function(assert) {
+	QUnit.test("Open picker on small screen", function(assert) {
 		//Prepare
 		jQuery("html").removeClass("sapUiMedia-Std-Desktop");
 		jQuery("html").addClass("sapUiMedia-Std-Phone");
@@ -767,7 +767,7 @@ sap.ui.define([
 		}, 400);
 	});
 
-	QUnit.test("Calendar hides when date is selected (on small screen)", async function(assert) {
+	QUnit.test("Calendar hides when date is selected (on small screen)", function(assert) {
 		var oDTP5 = new DateTimePicker("DTP5", {
 				dateValue: UI5Date.getInstance(2021, 10, 11)
 			}),
@@ -860,7 +860,7 @@ sap.ui.define([
 		assert.equal(oDate, actualValue, "Date is formatted and parsed correctly");
 	});
 
-	QUnit.test("_createPopup: mobile device", async function(assert) {
+	QUnit.test("_createPopup: mobile device", function(assert) {
 		// prepare
 		var oDateTimePicker = new DateTimePicker(),
 			oDeviceStub = this.stub(Device, "system").value({
@@ -892,7 +892,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("The time picker UI part is created using the display format", async function(assert) {
+	QUnit.test("The time picker UI part is created using the display format", function(assert) {
 		var oDTP = new DateTimePicker({
 			value: "14/09/2021 15:00:00",
 			displayFormat: "dd/MM/yyyy h:mm:ss a",
@@ -942,7 +942,7 @@ sap.ui.define([
 		oDateTimePicker.destroy();
 	});
 
-	QUnit.test("setMinutesStep, setSecondsStep set the steps to the clocks", async function(assert) {
+	QUnit.test("setMinutesStep, setSecondsStep set the steps to the clocks", function(assert) {
 		//arrange, act
 		var oDTP = new DateTimePicker({
 			minutesStep: 5,
@@ -993,7 +993,7 @@ sap.ui.define([
 		oGetFormatterSpy.restore();
 	});
 
-	QUnit.test("_createPopupContent", async function(assert) {
+	QUnit.test("_createPopupContent", function (assert) {
 		// Arrange
 		var oDTP = new DateTimePicker().placeAt("qunit-fixture"),
 			oPopupContent;
@@ -1013,7 +1013,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("_inPreferredUserInteraction", async function(assert) {
+	QUnit.test("_inPreferredUserInteraction", function (assert) {
 		// Prepare
 		var oDTP = new DateTimePicker(),
 			oInPreferredUserInteractionSpy = this.spy(oDTP, "_inPreferredUserInteraction");
@@ -1085,7 +1085,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("Timezone interaction on picker", async function(assert) {
+	QUnit.test("Timezone interaction on picker", function(assert) {
 		//arange
 		this.stub(Localization, "getTimezone").callsFake(function() {
 			return "Europe/Sofia";
@@ -1140,7 +1140,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("showTimezone", async function(assert) {
+	QUnit.test("showTimezone", function(assert) {
 		var oDTP;
 
 		// arrange
@@ -1190,7 +1190,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("displayFormatType + timezone", async function(assert) {
+	QUnit.test("displayFormatType + timezone", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker({
 			value: "Feb 18, 2016, 10:00:00 AM",
@@ -1216,7 +1216,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("bound dateValue + timezone", async function(assert) {
+	QUnit.test("bound dateValue + timezone", function(assert) {
 		// arrange
 		var oTestDate = UI5Date.getInstance(2016, 1, 18, 15, 0, 0);
 		var oModel = new JSONModel({ date: oTestDate }),
@@ -1257,7 +1257,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("timezone + bound value type DateTime - order", async function(assert) {
+	QUnit.test("timezone + bound value type DateTime - order", function(assert) {
 		// arrange
 		var oTestDate = UI5Date.getInstance(2016, 1, 18, 3, 0, 0);
 		var oModel = new JSONModel({ date: oTestDate }),
@@ -1284,7 +1284,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("timezone + bound value data type String", async function(assert) {
+	QUnit.test("timezone + bound value data type String", function(assert) {
 		// arrange
 		var oTestDate = UI5Date.getInstance(2016, 1, 18, 3, 0, 0);
 		var oModel = new JSONModel({ date: "Feb++18++2016, 3:00:00 AM" }),
@@ -1348,7 +1348,7 @@ sap.ui.define([
 		oDTP.setValue("2022-02-17T17:16:33");
 	});
 
-	QUnit.test("when the displayFormat does not contain date part, the selected date is preserved", async function(assert) {
+	QUnit.test("when the displayFormat does not contain date part, the selected date is preserved", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker("dtp", {
 				value: "2022-02-11T07:16:33",
@@ -1396,7 +1396,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("picker selection in a different timezone", async function(assert) {
+	QUnit.test("picker selection in a different timezone", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker("dtp", {
 			value: "2022-05-16T01:16:33",
@@ -1419,7 +1419,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("DateTimeWithTimezone type value binding", async function(assert) {
+	QUnit.test("DateTimeWithTimezone type value binding", function(assert) {
 		// arrange
 		var oModel = new JSONModel({
 				date: null,
@@ -1452,7 +1452,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Different application timezone", {
-		before: async function() {
+		before: function() {
 			var sTZ1 = "Europe/Sofia";
 			var sTZ2 = "Europe/Berlin";
 
@@ -1460,13 +1460,13 @@ sap.ui.define([
 			Localization.setTimezone(this.localTimezone === sTZ1 ? sTZ2 : sTZ1);
 			oCore.applyChanges();
 		},
-		after: async function() {
+		after: function() {
 			Localization.setTimezone(this.localTimezone);
 			oCore.applyChanges();
 		}
 	});
 
-	QUnit.test("With Bound and Configured Timezone", async function(assert) {
+	QUnit.test("With Bound and Configured Timezone", function(assert) {
 		// arrange
 		Localization.setTimezone("Europe/London");
 
@@ -1494,13 +1494,68 @@ sap.ui.define([
 
 		// assert; \u202f is a Narrow No-Break Space which has been introduced with CLDR version 43
 		assert.equal(oDTP._getInputValue(), "Mar 31, 2023, 6:32:00\u202fPM", "correct displayed value");
-		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct displayed value");
+		assert.equal(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct value is set");
 
 		// clean
 		oDTP.destroy();
 	});
 
-	QUnit.test("measure label renders always the same UTC date and time", async function(assert) {
+	QUnit.test("DateTimePicker parseValue with timezone binding", function(assert) {
+		// arrange
+		Localization.setTimezone("Europe/London");
+
+		var oDate = UI5Date.getInstance(2023, 2, 31, 10, 32), // 8 hour time difference because of DST
+			oSecondDate = UI5Date.getInstance(2023, 1, 14), // 9 hour time difference
+			oModel = new JSONModel({
+			timezoneDTP:"Asia/Tokyo",
+			valueDTP: oDate
+			}),
+			oDTP = new DateTimePicker("dtp-parse", {
+				value: {
+					parts: [{
+							path: '/valueDTP',
+							type: 'sap.ui.model.odata.type.DateTimeOffset'
+						},
+						{
+							path: '/timezoneDTP',
+							type: 'sap.ui.model.odata.type.String'
+						}
+					],
+					type: 'sap.ui.model.odata.type.DateTimeWithTimezone'
+				}
+			}).setModel(oModel),
+			oInputRef;
+
+		oDTP.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		oInputRef = oDTP.$("inner");
+
+		assert.strictEqual(oDTP.getValue(), "Mar 31, 2023, 6:32:00\u202fPM Asia, Tokyo", "correct value is set");
+
+		// act - type invalid date into input
+		oInputRef.val("Feb 14, 2023");
+		qutils.triggerKeydown("dtp-parse-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.strictEqual(oDTP.getValue(), "Feb 14, 2023", "invalid date is parsed with no issues");
+		assert.strictEqual(oDTP.getDateValue().getTime(), oDate.getTime(), "date value remains set to the last valid date");
+
+		// act - type valid date into input
+		oInputRef.val("Feb 14, 2023, 9:00:00 AM");
+		qutils.triggerKeydown("dtp-parse-inner", KeyCodes.ENTER, false, false, false);
+		oInputRef.trigger("change");
+
+		// assert
+		assert.strictEqual(oDTP.getValue(), "Feb 14, 2023, 9:00:00\u202fAM Asia, Tokyo", "valid date is parsed");
+		assert.strictEqual(oDTP.getDateValue().getTime(), oSecondDate.getTime(), "date value is set to new date");
+
+		// clean
+		oDTP.destroy();
+	});
+
+	QUnit.test("measure label renders always the same UTC date and time", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker("dtp", {
 			showTimezone: true
@@ -1515,7 +1570,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("Timezone ID without a translation are also displayed", async function(assert) {
+	QUnit.test("Timezone ID without a translation are also displayed", function(assert) {
 		// arrange
 		var oDTP = new DateTimePicker({
 			timezone: "Etc/GMT-8",
@@ -1533,7 +1588,7 @@ sap.ui.define([
 
 	QUnit.module("Events");
 
-	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", async function(assert) {
+	QUnit.test("afterValueHelpOpen and afterValueHelpClose event fire when value help opens and closes", function(assert) {
 		var oDTP = new DateTimePicker(),
 			spyOpen = this.spy(oDTP, "fireAfterValueHelpOpen"),
 			spyClose = this.spy(oDTP, "fireAfterValueHelpClose");
@@ -1554,7 +1609,7 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
-	QUnit.test("liveChange event", async function(assert) {
+	QUnit.test("liveChange event", function(assert) {
 		var oDTP = new DateTimePicker(),
 			spyLiveChange = this.spy(oDTP, "fireLiveChange");
 

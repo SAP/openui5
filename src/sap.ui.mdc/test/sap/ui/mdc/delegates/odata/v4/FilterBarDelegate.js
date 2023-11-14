@@ -40,7 +40,7 @@ sap.ui.define([
 		});
 
 		if (oSettings) {
-			DelegateCache.add(oControl, oSettings);
+			DelegateCache.add(oControl.originalNode || oControl, oSettings);
 		}
 	};
 
@@ -110,7 +110,8 @@ sap.ui.define([
 
 						getId : function() {
 							return sFilterBarId;
-						}
+						},
+						originalNode: oControl
 				};
 
 				return mPropertyBag && !oControl.getId ? this.fetchProperties(oObj) : oControl.finalizePropertyHelper().then(function(oHelper){

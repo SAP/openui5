@@ -51,7 +51,7 @@ sap.ui.define([
 			mItem.visible = aVisible.indexOf(oProperty.name) > -1;
 			return true;
 		},
-		before: async function() {
+		before: function(){
 			this.sDefaultGroup = "BASIC";
 			this.aMockInfo = aInfoData;
 			oCore.applyChanges();
@@ -215,7 +215,7 @@ sap.ui.define([
 				}
 			},
 			id: "myTestDialog"
-		}).then(async function(oP13nDialog) {
+		}).then(function(oP13nDialog){
 			oDialog = oP13nDialog;
 			oDialog.placeAt("qunit-fixture");
 

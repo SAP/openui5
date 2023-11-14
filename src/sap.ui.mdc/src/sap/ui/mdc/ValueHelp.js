@@ -87,19 +87,28 @@ sap.ui.define([
 					defaultValue: [],
 					byValue: true
 				},
-
 				/**
-				 * Path to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * Object related to the <code>Delegate</code> module that provides the required APIs to execute model-specific logic.<br>
+				 * The object has the following properties:
+				 * <ul>
+				 * 	<li><code>name</code> defines the path to the <code>Delegate</code> module</li>
+				 * 	<li><code>payload</code> (optional) defines application-specific information that can be used in the given delegate</li>
+				 * </ul>
+				 * <i>Sample delegate object:</i>
+				 * <pre><code>{
+				 * 	name: "sap/ui/mdc/BaseDelegate",
+				 * 	payload: {}
+				 * }</code></pre>
 				 * <b>Note:</b> Ensure that the related file can be requested (any required library has to be loaded before that).<br>
 				 * Do not bind or modify the module. This property can only be configured during control initialization.
-				 *
 				 * @experimental
 				 */
 				delegate: {
 					type: "object",
 					group: "Data",
 					defaultValue: {
-						name: "sap/ui/mdc/ValueHelpDelegate"
+						name: "sap/ui/mdc/ValueHelpDelegate",
+						payload: {}
 					}
 				},
 
@@ -279,7 +288,12 @@ sap.ui.define([
 						/**
 						 * ID of the suggested item (This is needed to set the corresponding ARIA attribute)
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * If <code>true</code> the filtering was executed case sensitive
+						 * since 1.121.0
+						 */
+						caseSensitive: { type: "boolean" }
 					}
 				}
 			},
@@ -914,7 +928,8 @@ sap.ui.define([
 		const oCondition = oEvent.getParameter("condition");
 		const sFilterValue = oEvent.getParameter("filterValue");
 		const sItemId = oEvent.getParameter("itemId");
-		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId});
+		const bCaseSensitive = oEvent.getParameter("caseSensitive");
+		this.fireTypeaheadSuggested({condition: oCondition, filterValue: sFilterValue, itemId: sItemId, caseSensitive: bCaseSensitive});
 	}
 
 	function _handleSelect(oEvent) {

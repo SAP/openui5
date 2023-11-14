@@ -50,7 +50,7 @@ sap.ui.define([
 
 	QUnit.module("Render");
 
-	QUnit.test("Check if fix/flex content is rendered", async function(assert) {
+	QUnit.test("Check if fix/flex content is rendered", function (assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -81,7 +81,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("Test child order", async function(assert) {
+	QUnit.test("Test child order", function (assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -105,7 +105,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Test layout direction", async function(assert) {
+	QUnit.test("Test layout direction", function (assert) {
 		// Arrange
 		var oButton1 = new Button(), oButton2 = new Button(), oButton3 = new Button();
 
@@ -129,7 +129,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Flexible part Scrolling", async function(assert) {
+	QUnit.test("Flexible part Scrolling", function (assert) {
 		var oFlexLabel = new Label({
 				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
 			}),
@@ -159,7 +159,7 @@ sap.ui.define([
 		oFixFlex.destroy();
 	});
 
-	QUnit.test("Flexible part Scrolling with minFlexSize", async function(assert) {
+	QUnit.test("Flexible part Scrolling with minFlexSize", function (assert) {
 		var oFlexLabel = new Label({
 				text: "Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text. Loooong text."
 			}),

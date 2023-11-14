@@ -469,7 +469,7 @@ sap.ui.define([
 			oCP.destroy();
 		});
 
-		QUnit.test("_focusFirstElement when 'Default Color' button is available", async function(assert) {
+		QUnit.test("_focusFirstElement when 'Default Color' button is available", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({}),
 				oSpyFocusDefaultButton;
@@ -490,7 +490,7 @@ sap.ui.define([
 			oCP.destroy();
 		});
 
-		QUnit.test("_focusFirstElement when 'Default Color' button is not available", async function(assert) {
+		QUnit.test("_focusFirstElement when 'Default Color' button is not available", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({}),
 				oSpyFocusFirstSwatch;
@@ -1588,7 +1588,7 @@ sap.ui.define([
 
 	QUnit.module("ColorPalette - ARIA", function() {
 		// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
-		QUnit.test("ARIA attributes and tooltips are rendered", async function(assert) {
+		QUnit.test("ARIA attributes and tooltips are rendered", function (assert) {
 			// Prepare
 			var oCP = new ColorPalette({
 					colors: [
@@ -2050,7 +2050,7 @@ sap.ui.define([
 
 		QUnit.module("ColorPalettePopover - ARIA", function() {
 			// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
-			QUnit.test("Popover has certain aria attributes", async function(assert) {
+			QUnit.test("Popover has certain aria attributes", function (assert) {
 				// Prepare
 				var oCPP = new ColorPalettePopover(),
 					oOpener = new Button();

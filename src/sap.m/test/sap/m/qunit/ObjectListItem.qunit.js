@@ -130,7 +130,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("RenderLockedIcon", async function(assert) {
+	QUnit.test("RenderLockedIcon", function(assert) {
 		var lockedOlI = new ObjectListItem( "LockedOLI", {
 			icon : IMAGE_PATH + "action.png",
 			intro : "On behalf of John Smith",
@@ -155,7 +155,7 @@ sap.ui.define([
 
 	/************* ARIA Rendering *******************/
 
-	QUnit.test("ARIA attribute 'aria-labelledby' ID Refs list", async function(assert) {
+	QUnit.test("ARIA attribute 'aria-labelledby' ID Refs list", function(assert) {
 		// create ObjectListItem
 		var oAttrsAndStatuseListItem = new ObjectListItem({
 			id: 'oAttrsAndStatuseListItemId',
@@ -204,7 +204,7 @@ sap.ui.define([
 	});
 
 	//BCP: 1770099014
-	QUnit.test("Empty attributes and statuses are not used as ARIA labels", async function(assert) {
+	QUnit.test("Empty attributes and statuses are not used as ARIA labels", function(assert) {
 		//arrange
 		var oOLI = new ObjectListItem({
 				attributes: [
@@ -260,7 +260,7 @@ sap.ui.define([
 	});
 	list.addItem(showTextDir);
 
-	QUnit.test("TitleNumberIntroTextDirection RTL rendering", async function(assert) {
+	QUnit.test("TitleNumberIntroTextDirection RTL rendering", function(assert) {
 		assert.equal(jQuery('#showTextDir-intro>span').attr("dir"), undefined, "intro has no dir attribute");
 		assert.equal(jQuery('#showTextDir-titleText').attr("dir"), "rtl", "title has attribute dir=rtl");
 		assert.equal(jQuery('#showTextDir-ObjectNumber').attr("dir"), "ltr", "ObjectNumber has attribute dir=ltr");
@@ -287,7 +287,7 @@ sap.ui.define([
 	/******************************************************************/
 	QUnit.module("Rendering Markers aggregation");
 
-	QUnit.test("Render Draft and Favorite", async function(assert) {
+	QUnit.test("Render Draft and Favorite", function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -312,7 +312,7 @@ sap.ui.define([
 		markersOlI.destroy();
 	});
 
-	QUnit.test("Render marker by setting the markers aggregation", async function(assert) {
+	QUnit.test("Render marker by setting the markers aggregation", function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -337,7 +337,7 @@ sap.ui.define([
 		markersOlI.destroy();
 	});
 
-	QUnit.test("Removing marker", async function(assert) {
+	QUnit.test("Removing marker", function(assert) {
 		var markersOlI = new ObjectListItem({
 			id: "markersOlI",
 			title : "Markers agregation",
@@ -489,7 +489,7 @@ sap.ui.define([
 	/******************************************************************/
 	QUnit.module("Active state");
 
-	QUnit.test("TestActiveIcon", async function(assert) {
+	QUnit.test("TestActiveIcon", function(assert) {
 		// Setup
 		var imageSrc,
 			imageOLI1 = new ObjectListItem("imageOLI1", {
@@ -543,7 +543,7 @@ sap.ui.define([
 
 	QUnit.module("Icon / Image ratio");
 
-	QUnit.test("Icon has equal width and height", async function(assert) {
+	QUnit.test("Icon has equal width and height", function(assert) {
 		var done = assert.async();
 		var imageOLIIcon = new ObjectListItem("imageOLIIcon", {
 			icon : "sap-icon://hint",
@@ -565,7 +565,7 @@ sap.ui.define([
 		},1000);
 	});
 
-	QUnit.test("Image has different width and height", async function(assert) {
+	QUnit.test("Image has different width and height", function(assert) {
 		var done = assert.async();
 		var imageOLIImg = new ObjectListItem("imageOLIImg", {
 			icon : IMAGE_PATH + "grass.jpg",

@@ -393,7 +393,7 @@ sap.ui.define([
 			this.oCP._updateColorStringProperty(true, true);
 		});
 
-		QUnit.test("", async function(assert) {
+		QUnit.test("", function(assert) {
 			// arrange
 			var oCP = new ColorPicker();
 			var oFireChangeSpy = this.spy(oCP, "fireChange");

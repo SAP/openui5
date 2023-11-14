@@ -58,7 +58,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				this.oSelectEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				this.oSelectEditorElement = this.oSelectEditor.getContent();
@@ -170,7 +170,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function(aPropertyEditor) {
+			this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				var oSelectEditorElement = oSelectEditor.getContent();
@@ -190,7 +190,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.setConfig(mConfig);
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleSelect").then(function (aPropertyEditor) {
 				var oSelectEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				var oSelectEditorElement = oSelectEditor.getContent();

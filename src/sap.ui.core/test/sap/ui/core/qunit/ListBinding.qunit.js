@@ -224,25 +224,6 @@ sap.ui.define([
 		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
 	});
 
-	QUnit.test("ListBinding with Template (constructor, json)", function(assert) {
-		setup();
-		control.destroy();
-		control = new MyList({
-			items: {
-				path: "/teamMembers",
-				template: {
-					Type: "MyListItem",
-					text: "{lastName}"
-				}
-			}
-		});
-		control.placeAt("content");
-
-		var items = control.getAggregation("items");
-		assert.equal(items.length, testData.teamMembers.length, "number of list items");
-		assert.ok(items[0] instanceof MyListItem, "cloned items are list items");
-	});
-
 	//**********************************************************************************************
 	QUnit.test("getCount: Count is returned", function(assert) {
 		var oBinding = {
@@ -388,5 +369,4 @@ sap.ui.define([
 				sinon.match({detailedReason: "RemoveVirtualContext"})),
 				"named 'updateItems' method was called with detailed change reason");
 	});
-
 });

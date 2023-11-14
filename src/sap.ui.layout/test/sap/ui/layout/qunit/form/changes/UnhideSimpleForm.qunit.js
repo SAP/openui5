@@ -27,7 +27,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with legacy change format", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTitle0 = new Title({id : "Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "Label0", text : "Label 0", visible : false});
 			this.oLabel1 = new Label({id : "Label1", text : "Label 1"});
@@ -108,7 +108,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "component---Label0", text : "Label 0", visible : false});
 			this.oInput0 = new Input({id : "component---Input0", visible : false});

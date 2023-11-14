@@ -143,22 +143,27 @@ sap.ui.define([
 	QUnit.module("Aggregation Binding via template", {
 		async beforeEach(assert) {
 			var fnDone = assert.async();
+			let oViewPromise;
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+				metadata: {
+					interfaces: ["sap.ui.core.IAsyncContentCreation"]
+				},
 				createContent() {
-					return new XMLView({
+					oViewPromise = XMLView.create({
 						id: this.createId("view"),
-						viewContent:
-							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
-								'<l:VerticalLayout id="layout" content="{/buttons}">' +
-									"<l:content>" +
-										'<m:Button text="{text}" />' +
-									"</l:content>" +
-								"</l:VerticalLayout>" +
-							"</mvc:View>"
+						definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns:l="sap.ui.layout">' +
+							'<l:VerticalLayout id="layout" content="{/buttons}">' +
+								"<l:content>" +
+									'<m:Button text="{text}" />' +
+								"</l:content>" +
+							"</l:VerticalLayout>" +
+						"</mvc:View>"
 					});
+					return oViewPromise;
 				}
 			});
 			this.oComponent = new CustomComponent("comp");
+			await oViewPromise;
 
 			this.oModel = new JSONModel({
 				buttons: [
@@ -196,18 +201,23 @@ sap.ui.define([
 	QUnit.module("Aggregation Binding via factory function", {
 		async beforeEach(assert) {
 			var fnDone = assert.async();
+			let oViewPromise;
 			var CustomComponent = UIComponent.extend("sap.ui.dt.test.Component", {
+				metadata: {
+					interfaces: ["sap.ui.core.IAsyncContentCreation"]
+				},
 				createContent() {
-					return new XMLView({
+					oViewPromise = XMLView.create({
 						id: this.createId("view"),
-						viewContent:
-							'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout">' +
-								'<l:VerticalLayout id="layout" />' +
-							"</mvc:View>"
+						definition: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout">' +
+							'<l:VerticalLayout id="layout" />' +
+						"</mvc:View>"
 					});
+					return oViewPromise;
 				}
 			});
 			this.oComponent = new CustomComponent("comp");
+			await oViewPromise;
 
 			this.oModel = new JSONModel({
 				buttons: [

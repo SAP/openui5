@@ -42,16 +42,6 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("GridTable - HideStandardTooltips", function(assert) {
-		const oTable = new Table({type: TableType.Table});
-
-		return oTable.initialized().then(function() {
-			assert.ok(oTable._oTable._getHideStandardTooltips(), "HideStandardTooltips option set in inner GridTable");
-		}).finally(function() {
-			oTable.destroy();
-		});
-	});
-
 	QUnit.module("API", {
 		afterEach: function() {
 			this.destroyTable();

@@ -34,7 +34,7 @@ sap.ui.define([
 
 
 	QUnit.module("API", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({
 				headerText: "Panel Header",
 				content: [
@@ -52,77 +52,77 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Call to setWidth() with string value 100px", async function(assert) {
+	QUnit.test("Call to setWidth() with string value 100px", function (assert) {
 		this.oPanel.setWidth("100px");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getWidth(), "100px", "should set the size to 100px");
 	});
 
-	QUnit.test("Call to setWidth() with string value 59%", async function(assert) {
+	QUnit.test("Call to setWidth() with string value 59%", function (assert) {
 		this.oPanel.setWidth("59%");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getWidth(), "59%", "should set the size to 59%");
 	});
 
-	QUnit.test("Call to setWidth() with string value 10em", async function(assert) {
+	QUnit.test("Call to setWidth() with string value 10em", function (assert) {
 		this.oPanel.setWidth("10em");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getWidth(), "10em", "should set the size to 10em");
 	});
 
-	QUnit.test("Call to setWidth() with string value 10rem", async function(assert) {
+	QUnit.test("Call to setWidth() with string value 10rem", function (assert) {
 		this.oPanel.setWidth("10rem");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getWidth(), "10rem", "should set the size to 10rem");
 	});
 
-	QUnit.test("Call to setWidth() with string value auto", async function(assert) {
+	QUnit.test("Call to setWidth() with string value auto", function (assert) {
 		this.oPanel.setWidth("auto");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getWidth(), "auto", "should set the size to auto");
 	});
 
-	QUnit.test("Call to setHeight() with string value 100px", async function(assert) {
+	QUnit.test("Call to setHeight() with string value 100px", function (assert) {
 		this.oPanel.setHeight("100px");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getHeight(), "100px", "should set the size to 100px");
 	});
 
-	QUnit.test("Call to setHeight() with string value 59%", async function(assert) {
+	QUnit.test("Call to setHeight() with string value 59%", function (assert) {
 		this.oPanel.setHeight("59%");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getHeight(), "59%", "should set the size to 59%");
 	});
 
-	QUnit.test("Call to setHeight() with string value 10em", async function(assert) {
+	QUnit.test("Call to setHeight() with string value 10em", function (assert) {
 		this.oPanel.setHeight("10em");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getHeight(), "10em", "should set the size to 10em");
 	});
 
-	QUnit.test("Call to setHeight() with string value 10rem", async function(assert) {
+	QUnit.test("Call to setHeight() with string value 10rem", function (assert) {
 		this.oPanel.setHeight("10rem");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getHeight(), "10rem", "should set the size to 10rem");
 	});
 
-	QUnit.test("Call to setHeight() with string value auto", async function(assert) {
+	QUnit.test("Call to setHeight() with string value auto", function (assert) {
 		this.oPanel.setHeight("auto");
 		oCore.applyChanges();
 
 		assert.strictEqual(this.oPanel.getHeight(), "auto", "should set the size to auto");
 	});
 
-	QUnit.test("Call to setExpandable() with boolean value true", async function(assert) {
+	QUnit.test("Call to setExpandable() with boolean value true", function (assert) {
 		this.oPanel.setExpandable(true);
 		oCore.applyChanges();
 
@@ -130,7 +130,7 @@ sap.ui.define([
 		assert.notStrictEqual(this.oPanel._oExpandButton, undefined, "should create an icon");
 	});
 
-	QUnit.test("Call to setExpanded() with null value", async function(assert) {
+	QUnit.test("Call to setExpanded() with null value", function (assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(null);
 		oCore.applyChanges();
@@ -146,7 +146,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.getAccessibleRole(), PanelAccessibleRole.Form, "should be sap.m.PanelAccessibleRole.Form");
 	});
 
-	QUnit.test("Call to setAccessibleRole() with Region value", async function(assert) {
+	QUnit.test("Call to setAccessibleRole() with Region value", function (assert) {
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
 		oCore.applyChanges();
 
@@ -154,7 +154,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("role"), "region", "should set the role attribute in the DOM to region");
 	});
 
-	QUnit.test("Call to setAccessibleRole() with Form value", async function(assert) {
+	QUnit.test("Call to setAccessibleRole() with Form value", function (assert) {
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Form);
 		oCore.applyChanges();
 
@@ -162,7 +162,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("role"), "form", "should set the role attribute in the DOM to form");
 	});
 
-	QUnit.test("Call to setAccessibleRole() with Complementary value", async function(assert) {
+	QUnit.test("Call to setAccessibleRole() with Complementary value", function (assert) {
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Complementary);
 		oCore.applyChanges();
 
@@ -174,7 +174,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.getStickyHeader(), false, "should be false");
 	});
 
-	QUnit.test("Call to setStickyHeader() with boolean value true", async function(assert) {
+	QUnit.test("Call to setStickyHeader() with boolean value true", function (assert) {
 		this.oPanel.setStickyHeader(true);
 		oCore.applyChanges();
 
@@ -295,7 +295,7 @@ sap.ui.define([
 		assert.ok(bExpand, "Event should be triggered by an user interaction");
 	});
 
-	QUnit.test("ontap()", async function(assert) {
+	QUnit.test("ontap()", function(assert) {
 		this.createPanel({ expanded: false });
 		this.oPanel.ontap({
 			target: this.oPanel.getDomRef('content')
@@ -315,7 +315,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({
 				headerText: "Panel Header",
 				content: [
@@ -340,7 +340,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Header toolbar should override header text", async function(assert) {
+	QUnit.test("Header toolbar should override header text", function(assert) {
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		oCore.applyChanges();
 
@@ -350,7 +350,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("CSS classes", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({
 				headerText: "Panel Header",
 				content: [
@@ -384,7 +384,7 @@ sap.ui.define([
 		assert.ok(jQuery(".sapMPanelHeadingDiv div:first-child", $panel).hasClass("sapMPanelHdr"), "should have sapMPanelHdr class present on first header");
 	});
 
-	QUnit.test("Expandable panel with headerText", async function(assert) {
+	QUnit.test("Expandable panel with headerText", function(assert) {
 		this.oPanel.setExpandable(true);
 		oCore.applyChanges();
 
@@ -394,7 +394,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelExpandablePart").length, 1, "should have content area with sapMPanelExpandablePart class");
 	});
 
-	QUnit.test("Expandable and expanded panel with headerText", async function(assert) {
+	QUnit.test("Expandable and expanded panel with headerText", function(assert) {
 		// Arrange
 		var panel = new Panel({
 			headerText: "test",
@@ -425,7 +425,7 @@ sap.ui.define([
 		panel.destroy();
 	});
 
-	QUnit.test("Expandable and expanded panel with headerToolbar", async function(assert) {
+	QUnit.test("Expandable and expanded panel with headerToolbar", function(assert) {
 		// Arrange
 		var panel = new Panel({
 			headerToolbar: this.createToolbar(),
@@ -457,7 +457,7 @@ sap.ui.define([
 		panel.destroy();
 	});
 
-	QUnit.test("Expandable panel with headerToolbar and infoToolbar", async function(assert) {
+	QUnit.test("Expandable panel with headerToolbar and infoToolbar", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
 		this.oPanel.setAggregation("infoToolbar", this.createToolbar());
@@ -474,7 +474,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelInfoTB").length, 1, "should have a toolbar with sapMPanelInfoToolbar class");
 	});
 
-	QUnit.test("Expandable Panel expanded/collapsed", async function(assert) {
+	QUnit.test("Expandable Panel expanded/collapsed", function(assert) {
 		// Act
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(true);
@@ -493,7 +493,7 @@ sap.ui.define([
 		assert.strictEqual(oButton.getSrc(), "sap-icon://slim-arrow-right", "should have sapMPanelExpandableButton class present once");
 	});
 
-	QUnit.test("Panel with solid backgroundDesign", async function(assert) {
+	QUnit.test("Panel with solid backgroundDesign", function(assert) {
 		this.oPanel.setBackgroundDesign(BackgroundDesign.Solid);
 		oCore.applyChanges();
 
@@ -502,7 +502,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelBGSolid").length, 1, "should have sapMPanelBGSolid class present once");
 	});
 
-	QUnit.test("Panel with transparent backgroundDesign", async function(assert) {
+	QUnit.test("Panel with transparent backgroundDesign", function(assert) {
 		this.oPanel.setBackgroundDesign(BackgroundDesign.Transparent);
 		oCore.applyChanges();
 
@@ -517,7 +517,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelBGTranslucent").length, 1, "should have sapMPanelBGTranslucent class present once");
 	});
 
-	QUnit.test("Overflow should be hidden with expandable = true and expanded = false", async function(assert) {
+	QUnit.test("Overflow should be hidden with expandable = true and expanded = false", function (assert) {
 
 		// Arrange
 		var oPanel = new Panel({
@@ -555,7 +555,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Computed styles", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({
 				headerText: "Panel Header",
 				content: [
@@ -581,7 +581,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Sizes should be equal to the ones set through the setters", async function(assert) {
+	QUnit.test("Sizes should be equal to the ones set through the setters", function(assert) {
 		this.oPanel.setWidth("400px");
 		this.oPanel.setHeight("300px");
 
@@ -593,7 +593,7 @@ sap.ui.define([
 		assert.strictEqual($panel.height(), 300, "Height === 300");
 	});
 
-	QUnit.test("Content for panel with 200px height when headerToolbar and infoToolbar are 100px", async function(assert) {
+	QUnit.test("Content for panel with 200px height when headerToolbar and infoToolbar are 100px", function(assert) {
 		this.oPanel.setHeight("200px");
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		this.oPanel.setAggregation("infoToolbar", this.createToolbar("50px"));
@@ -605,7 +605,7 @@ sap.ui.define([
 		assert.equal($content.outerHeight(), 100, "should be 100px");
 	});
 
-	QUnit.test("Content height should always be the panel's height ", async function(assert) {
+	QUnit.test("Content height should always be the panel's height ", function(assert) {
 		// Arrange
 		var oContentDom;
 
@@ -633,7 +633,7 @@ sap.ui.define([
 		assert.strictEqual($header.css("height"), $header.css("lineHeight"), "Height and line height should be equal");
 	});
 
-	QUnit.test("Content of expandable Panel when expanded", async function(assert) {
+	QUnit.test("Content of expandable Panel when expanded", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(true);
 
@@ -644,7 +644,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "block", "should have display:block style present");
 	});
 
-	QUnit.test("Content of expandable Panel when collapsed", async function(assert) {
+	QUnit.test("Content of expandable Panel when collapsed", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setExpanded(false);
 
@@ -655,7 +655,7 @@ sap.ui.define([
 		assert.strictEqual($panel.find(".sapMPanelContent").css("display"), "none", "should have display:none style present");
 	});
 
-	QUnit.test("Panel with solid backgroundDesign", async function(assert) {
+	QUnit.test("Panel with solid backgroundDesign", function(assert) {
 		this.oPanel.setBackgroundDesign(BackgroundDesign.Solid);
 		oCore.applyChanges();
 
@@ -665,7 +665,7 @@ sap.ui.define([
 			"should have background-color:rgb(255, 255, 255) style present");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar should not have border", async function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - toolbar should not have border", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		oCore.applyChanges();
@@ -675,7 +675,7 @@ sap.ui.define([
 		assert.equal($toolbar.css("border-bottom-width"), "0px", "toolbar border should be 0px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", async function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - toolbar child should have margin-left: 3rem", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		oCore.applyChanges();
@@ -686,7 +686,7 @@ sap.ui.define([
 		assert.equal(parseInt($toolbar.css("margin-left")), 3 * fontSize, "toolbar margin-left should be " + (3 * fontSize) + "px");
 	});
 
-	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", async function(assert) {
+	QUnit.test("Expandable panel with headerToolbar - first toolbar child should not have margin-left", function(assert) {
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar("50px"));
 		oCore.applyChanges();
@@ -697,7 +697,7 @@ sap.ui.define([
 		assert.equal($firstToolbarChild.css("margin-left"), "0px", "first toolbar child margin-left should be 0px");
 	});
 
-	QUnit.test("Container Padding Classes", async function(assert) {
+	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
 		var oContainer = new Panel(),
 			sContentSelector = ".sapMPanelContent",
@@ -758,7 +758,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ARIA attributes", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({
 				headerText: "Panel Header",
 				content: [
@@ -783,7 +783,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Panel with header text and content", async function(assert) {
+	QUnit.test("Panel with header text and content", function(assert) {
 		var $panel = this.oPanel.$(),
 			sPanelHeaderId = this.oPanel.getId() + '-header',
 			sHeadingDiv = $panel.find(".sapMPanelHeadingDiv");
@@ -798,7 +798,7 @@ sap.ui.define([
 		assert.notOk($panel.attr("aria-labelledby"), "should not have a labelledby reference to the header, when there is no headerToolbar");
 	});
 
-	QUnit.test("Panel with header text and header toolbar", async function(assert) {
+	QUnit.test("Panel with header text and header toolbar", function(assert) {
 		var sHeadingDiv = this.oPanel.$().find(".sapMPanelHeadingDiv");
 
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -809,7 +809,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel.$().attr("aria-labelledby"), this.oPanel.getHeaderToolbar().getTitleId(), "should have a labelledby reference to the toolbar title.");
 	});
 
-	QUnit.test("Expandable panel with headerText and header toolbar", async function(assert) {
+	QUnit.test("Expandable panel with headerText and header toolbar", function(assert) {
 		this.stub(Device, "browser").value({ msie: false });
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Region);
@@ -822,7 +822,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel._oExpandButton.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
-	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", async function(assert) {
+	QUnit.test("Expandable panel with headerText and reinitialized header toolbar", function(assert) {
 		this.stub(Device, "browser").value({ msie: false });
 		var sHeaderToolbarTitleId, sNewHeaderToolbarTitleId;
 
@@ -842,7 +842,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel._oExpandButton.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
-	QUnit.test("Expandable panel with role Form", async function(assert) {
+	QUnit.test("Expandable panel with role Form", function(assert) {
 		var sHeaderToolbarTitleId;
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAccessibleRole(PanelAccessibleRole.Form);
@@ -855,7 +855,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPanel._oExpandButton.$().attr("aria-labelledby"), undefined, "should have collapse button with no labelledby reference to the toolbar title");
 	});
 
-	QUnit.test("Expandable panel with aria-controls attribute", async function(assert) {
+	QUnit.test("Expandable panel with aria-controls attribute", function(assert) {
 		var sContentId;
 		this.oPanel.setExpandable(true);
 		this.oPanel.setAggregation("headerToolbar", this.createToolbar());
@@ -866,7 +866,7 @@ sap.ui.define([
 				"an aria-controls attribute with reference to the content should be added to the collapse button");
 	});
 
-	QUnit.test("aria-labelledby", async function(assert) {
+	QUnit.test("aria-labelledby", function (assert) {
 		var oPanel = new Panel();
 
 		oPanel.placeAt("qunit-fixture");

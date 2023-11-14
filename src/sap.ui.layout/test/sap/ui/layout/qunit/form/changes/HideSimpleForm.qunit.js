@@ -32,7 +32,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using HideSimpleForm with old change format", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
 			this.oLabel0 = new Label({id : "Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label1",  text : "Label 1"});
@@ -83,7 +83,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a new change format", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});
 			this.oLabel0 = new Label({id : "component---Label0",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "component---Label1",  text : "Label 1"});
@@ -178,7 +178,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oToolbar0 = new Toolbar({id : "Toolbar0"});
 			var oTitle0 = new MobileTitle("Title0", {text : "Title 0"});
 			this.oToolbar0.addContent(oTitle0);
@@ -285,7 +285,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("using HideSimpleForm with a simpleform with toolbar", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oLabel0 = new Label({id : "Label30",  text : "Label 0", visible : true});
 			this.oLabel1 = new Label({id : "Label31",  text : "Label 1"});
 			this.oInput0 = new Input({id : "Input30", visible : true});

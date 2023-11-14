@@ -182,16 +182,16 @@ sap.ui.define([
 		/**
 		 * Returns the first day of the week of the given date.
 		 *
-		 * The interpretation of 'first day of the week' depends on the given locale or, if none is given,
-		 * on the current {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale UI5 format locale}.
+		 * The interpretation of 'first day of the week' depends on the given locale.
 		 *
 		 * If no date is given, today is used, represented in the session's default calendar.
 		 * If a date is given, the returned date will use the same calendar.
 		 * The time portion of the returned date will be set to the beginning of the day (0:00:00:000).
 		 *
 		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
-		 * @param {string} [sLocale=format locale] An optional locale identifier, as BCP language tag;
-		 *   defaults to the current format localе of UI5
+		 * @param {string} [sLocale]
+		 *   An optional locale identifier, as BCP language tag; defaults to the current format localе of UI5; see
+		 *   {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 		 * @returns {sap.ui.core.date.UniversalDate} First day of the week
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.mdc
@@ -209,16 +209,16 @@ sap.ui.define([
 		/**
 		 * Returns the last day of the week for the given date.
 		 *
-		 * The interpretation of 'last day of the week' depends on the given locale or, if none is given,
-		 * on the current {@link sap.ui.core.Configuration.FormatSettings#getFormatLocale UI5 format locale}.
+		 * The interpretation of 'last day of the week' depends on the given locale.
 		 *
 		 * If no date is given, today is used, represented in the session's default calendar.
 		 * If a date is given, the returned date will use the same calendar.
 		 * The time portion of the returned date will be set to the start of the day (00:00:00:000).
 		 *
 		 * @param {sap.ui.core.date.UniversalDate} [oUniversalDate=now] Base date, defaults to now
-		 * @param {string} [sLocale=format locale] An optional locale identifier, as BCP language tag;
-		 *   defaults to the current format localе of UI5
+		 * @param {string} [sLocale]
+		 *   An optional locale identifier, as BCP language tag; defaults to the current format localе of UI5; see
+		 *   {@link module:sap/base/i18n/Formatting.getLanguageTag Formatting.getLanguageTag}
 		 * @returns {sap.ui.core.date.UniversalDate} Last day of the week
 		 * @private
 		 * @ui5-restricted sap.ui.comp, sap.ui.mdc

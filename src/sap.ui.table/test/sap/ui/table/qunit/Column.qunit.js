@@ -82,7 +82,7 @@ sap.ui.define([
 		test(false, false, null);
 	});
 
-	QUnit.test("#isDragAllowed", async function(assert) {
+	QUnit.test("#isDragAllowed", function(assert) {
 		var oColumn = new Column({
 			label: new TableQUnitUtils.TestControl({text: "col2header"})
 		}),
@@ -392,7 +392,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Changes that affect rows", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oColumn = new Column();
 			this.oTable = new Table({
 				columns: [this.oColumn]

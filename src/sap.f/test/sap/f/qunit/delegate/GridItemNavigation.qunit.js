@@ -26,7 +26,7 @@ sap.ui.define([
 	const EMPTY_CELL = GridNavigationMatrix.EMPTY_CELL;
 
 	QUnit.module("Events", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oGrid = new GridContainer({
 				items: [
 					new GenericTile({ header: "Tile 1" }),

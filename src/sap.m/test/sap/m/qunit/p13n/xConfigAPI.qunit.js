@@ -56,7 +56,40 @@ sap.ui.define([
 				}
 			}, "The correct value has been created");
 		}.bind(this));
+	});
 
+	QUnit.test("Check #enhanceConfig with 'persistenceIdentifier'", function(assert){
+
+		var oModificationPayload = {
+			key: "test_property",
+			property: "key",
+			controlMeta: {
+				aggregation: "items"
+			},
+			value: {//TODO
+				value: "my_unique_test_key",
+				persistenceIdentifier: "custom-identifier"
+			}
+		};
+
+		return xConfigAPI.enhanceConfig(this.oControl, oModificationPayload)
+		.then(function(){
+
+			var oCustomData = this.oControl.getCustomData()[0];
+
+			assert.equal(oCustomData.getKey(), "xConfig", "The xConfig instance has been created");
+
+			assert.deepEqual(JSON.parse(oCustomData.getValue().replace(/\\/g, '')), {
+				"aggregations": {
+					"items": {
+						"test_property": {
+							"key": "my_unique_test_key",
+							"persistenceIdentifier": "custom-identifier"
+						}
+					}
+				}
+			}, "The correct value has been created");
+		}.bind(this));
 	});
 
 	QUnit.test("Check #enhanceConfig for move changes", function(assert){

@@ -638,7 +638,7 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView1, "Table").then(async function(mCreatedApp) {
+			return createAppEnvironment(sTableView1, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
@@ -997,7 +997,7 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView2, "Table").then(async function(mCreatedApp) {
+			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");
@@ -1113,7 +1113,7 @@ sap.ui.define([
 			TableQUnitUtils.restorePropertyInfos(Table.prototype);
 		},
 		createTestObjects: function() {
-			return createAppEnvironment(sTableView2, "Table").then(async function(mCreatedApp) {
+			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");

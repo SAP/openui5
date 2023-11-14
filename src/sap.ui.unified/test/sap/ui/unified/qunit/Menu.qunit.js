@@ -1294,7 +1294,7 @@ sap.ui.define([
 		assert.ok(bSpyDestroyHandler.calledOnce, " resize handler should be called only once");
 	});
 
-	QUnit.test("setRootMenuTopStyle", async function(assert) {
+	QUnit.test("setRootMenuTopStyle", function(assert) {
 		var oSubMenu = new Menu();
 		var oMenu = new Menu({
 			items: [new MenuItem({submenu: oSubMenu})]

@@ -284,7 +284,7 @@ sap.ui.define([
 	//************** Test Code **************
 
 	QUnit.module("Properties & Functions", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			Core.applyChanges();
@@ -504,7 +504,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("GroupHeaderMenu", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oModel = new ODataModelV2(sServiceURI, {useBatch: true});
 			this.oTable = createTable.call(this);
 			Core.applyChanges();
@@ -514,7 +514,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Mobile", async function(assert) {
+	QUnit.test("Mobile", function(assert) {
 		var done = assert.async();
 
 		var oShowGroupMenuButton = sinon.stub(TableUtils.Grouping, "showGroupMenuButton");
@@ -834,38 +834,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		}
-	});
-
-	QUnit.test("getTooltip_AsString / getTooltip_Text", function(assert) {
-		var done = assert.async();
-		this.oModel.metadataLoaded().then(function() {
-			this.oTable = createTable.call(this);
-
-			var fnHandler = function() {
-				var oColumn = this.oTable.getColumns()[1];
-				assert.equal(oColumn.getTooltip_AsString(), "Cost Center", "getTooltip_AsString: Default Tooltip");
-				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Default Tooltip");
-				this.oTable._setHideStandardTooltips(true);
-				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Skipped Default Tooltip");
-				assert.ok(!oColumn.getTooltip_Text(), "getTooltip_Text: Skipped Default Tooltip");
-				oColumn.setTooltip("Some other tooltip");
-				assert.equal(oColumn.getTooltip_AsString(), "Some other tooltip", "getTooltip_AsString: Custom String Tooltip");
-				assert.equal(oColumn.getTooltip_Text(), "Some other tooltip", "getTooltip_Text: Custom String Tooltip");
-				oColumn.setTooltip(new TooltipBase());
-				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip without text");
-				assert.ok(!oColumn.getTooltip_Text(), "getTooltip_Text: Custom Object Tooltip without text and skipped defaults");
-				this.oTable._setHideStandardTooltips(false);
-				assert.equal(oColumn.getTooltip_Text(), "Cost Center", "getTooltip_Text: Custom Object Tooltip without text");
-				oColumn.getTooltip().setText("Again some other tooltip");
-				assert.ok(!oColumn.getTooltip_AsString(), "getTooltip_AsString: Custom Object Tooltip with text");
-				assert.equal(oColumn.getTooltip_Text(), "Again some other tooltip", "getTooltip_Text: Custom Object Tooltip with text");
-				done();
-			};
-
-			attachEventHandler(this.oTable, 0, fnHandler, this);
-			this.oTable.bindRows("/ActualPlannedCosts(P_ControllingArea='US01',P_CostCenter='100-1000',P_CostCenterTo='999-9999')/Results");
-
-		}.bind(this));
 	});
 
 	QUnit.test("_setGrouped", function(assert) {
@@ -1438,25 +1406,25 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Rerender while binding/unbinding", async function(assert) {
+	QUnit.test("Rerender while binding/unbinding", function(assert) {
 		var oBindingInfo = this.oTable.getBindingInfo("rows");
 		var that = this;
 
 		this.oTable.unbindRows();
 		this.oTable.invalidate();
 		Core.applyChanges();
-		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(async function() {
+		return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Unbind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.invalidate();
 			Core.applyChanges();
-		}).then(this.oTable.qunit.whenRenderingFinished).then(async function() {
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, true, "Rerender");
 			that.assertNoDataVisibilityChangeCount(assert, 0);
 			that.oTable.bindRows(oBindingInfo);
 			that.oTable.invalidate();
 			Core.applyChanges();
-		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(async function() {
+		}).then(this.oTable.qunit.whenBindingChange).then(this.oTable.qunit.whenRenderingFinished).then(function() {
 			TableQUnitUtils.assertNoDataVisible(assert, that.oTable, false, "Bind");
 			that.assertNoDataVisibilityChangeCount(assert, 1);
 			that.oTable.invalidate();

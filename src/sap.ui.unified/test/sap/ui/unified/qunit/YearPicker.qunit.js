@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("API ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oYP = new YearPicker();
 			this.oYP.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -83,7 +83,7 @@ sap.ui.define([
 		assert.notOk(aSelectedDates[0].getEndDate(), "sap.m.DateRange has no endDate set");
 	});
 
-	QUnit.test("_selectYear", async function(assert) {
+	QUnit.test("_selectYear", function(assert) {
 		// arrange
 		var oSelectedDates = this.YP._getSelectedDates(),
 			aRefs;
@@ -223,7 +223,7 @@ sap.ui.define([
 		);
 	});
 
-	QUnit.test("_markInterval", async function(assert) {
+	QUnit.test("_markInterval", function(assert) {
 		// arrange
 		var oJan_01_2000 = UI5Date.getInstance(2000, 0, 1),
 			oJan_01_2003 = UI5Date.getInstance(2003, 0, 1),
@@ -245,7 +245,7 @@ sap.ui.define([
 		assert.ok(aRefs.eq(12).hasClass("sapUiCalItemSelBetween"), "is marked correctly with between class");
 	});
 
-	QUnit.test("_markInterval", async function(assert) {
+	QUnit.test("_markInterval", function (assert) {
 		// Prepare
 		var aItemsMarkedAsBetween,
 			oBeforeStartDate = CalendarDate.fromLocalJSDate(UI5Date.getInstance(2016, 0, 1)),
@@ -287,7 +287,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Accessibility", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oYP = new YearPicker();
 			this.oYP.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -307,7 +307,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Corner cases", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oYP = new YearPicker();
 			this.oYP.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -318,7 +318,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Year is set to 0001", async function(assert) {
+	QUnit.test("Year is set to 0001", function(assert) {
 		// Act
 		this.oYP.getDate().setFullYear(1);
 		oCore.applyChanges();
@@ -327,7 +327,7 @@ sap.ui.define([
 		assert.ok(true, "Error is not thrown trying to format date with negative year value");
 	});
 
-	QUnit.test("Year is set to 9999", async function(assert) {
+	QUnit.test("Year is set to 9999", function(assert) {
 		// Arrange
 		var oMaxYear;
 

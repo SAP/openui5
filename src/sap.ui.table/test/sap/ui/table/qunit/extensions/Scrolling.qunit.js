@@ -87,7 +87,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Horizontal scrollbar visibility", async function(assert) {
+	QUnit.test("Horizontal scrollbar visibility", function(assert) {
 		var oTable = this.oTable;
 		var oScrollExtension = oTable._getScrollExtension();
 		var oHSb = oScrollExtension.getHorizontalScrollbar();
@@ -150,7 +150,7 @@ sap.ui.define([
 		assert.strictEqual(oHSbContentComputedStyle.width, "500px", "Fixed columns and row actions: Scroll range");
 	});
 
-	QUnit.test("Vertical scrollbar visibility", async function(assert) {
+	QUnit.test("Vertical scrollbar visibility", function(assert) {
 		var oTable = this.oTable;
 		var oScrollExtension = oTable._getScrollExtension();
 		var oVSb = oScrollExtension.getVerticalScrollbar();
@@ -165,7 +165,7 @@ sap.ui.define([
 			oVSb = oScrollExtension.getVerticalScrollbar();
 			assert.ok(oVSb.offsetWidth === 0 && oVSb.offsetHeight === 0, "Table content fits height -> Vertical scrollbar is not visible");
 
-		}).then(async function() {
+		}).then(function() {
 			// BCP: 1970484410
 			TableRenderer.apiVersion = 1;
 			oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(7), "other");
@@ -188,7 +188,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Vertical scrollbar position", async function(assert) {
+	QUnit.test("Vertical scrollbar position", function(assert) {
 		var oScrollExtension = this.oTable._getScrollExtension();
 		var oVSb = oScrollExtension.getVerticalScrollbar();
 		var oVSbComputedStyle = window.getComputedStyle(oVSb);
@@ -205,7 +205,7 @@ sap.ui.define([
 		assert.strictEqual(oVSbComputedStyle.top, TableUtils.BaseSize.sapUiSizeCozy + "px", "Fixed rows: Top position");
 	});
 
-	QUnit.test("Vertical scrollbar height if variable row heights enabled", async function(assert) {
+	QUnit.test("Vertical scrollbar height if variable row heights enabled", function(assert) {
 		var oTable = this.oTable;
 
 		oTable.getRowMode().setRowCount(5);
@@ -318,7 +318,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("scrollVerticallyMax", async function(assert) {
+	QUnit.test("scrollVerticallyMax", function(assert) {
 		var oTable = this.oTable;
 		var oScrollExtension = oTable._getScrollExtension();
 		var iTotalRowCount = oTable._getTotalRowCount();
@@ -345,7 +345,7 @@ sap.ui.define([
 			oScrollExtension.scrollVerticallyMax(false);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 
-		}).then(async function() {
+		}).then(function() {
 			/* More data rows than visible rows, without fixed top/bottom rows */
 			oTable.setRowMode(new FixedRowMode({
 				rowCount: 5
@@ -360,7 +360,7 @@ sap.ui.define([
 			oScrollExtension.scrollVerticallyMax(false);
 			assert.equal(oTable.getFirstVisibleRow(), 0, "First visible row after scrolling");
 
-		}).then(async function() {
+		}).then(function() {
 			/* As many data rows as there are visible rows, without fixed top/bottom rows */
 			oTable.getRowMode().setRowCount(10);
 			oCore.applyChanges();
@@ -407,7 +407,7 @@ sap.ui.define([
 			"Returned null: The ScrollExtension is destroyed and has no reference to the table");
 	});
 
-	QUnit.test("isHorizontalScrollbarVisible", async function(assert) {
+	QUnit.test("isHorizontalScrollbarVisible", function(assert) {
 		var oScrollExtension = this.oTable._getScrollExtension();
 
 		assert.ok(oScrollExtension.isHorizontalScrollbarVisible(), "Table content does not fit width -> Horizontal scrollbar is visible");
@@ -420,7 +420,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("isVerticalScrollbarVisible", async function(assert) {
+	QUnit.test("isVerticalScrollbarVisible", function(assert) {
 		var oScrollExtension = this.oTable._getScrollExtension();
 
 		assert.ok(oScrollExtension.isVerticalScrollbarVisible(), "Table content does not fit height -> Vertical scrollbar is visible");
@@ -900,7 +900,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Focus", async function(assert) {
+	QUnit.test("Focus", function(assert) {
 		var oTable = this.oTable;
 
 		function getScrollLeft() {
@@ -963,7 +963,7 @@ sap.ui.define([
 			return test("Focus data cell in column 3, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 2), 850, true);
 		}).then(function() {
 			return test("Focus data cell in column 4, row 1 (scrollable column)", oTable.qunit.getDataCell(0, 3), 200, true);
-		}).then(async function() {
+		}).then(function() {
 			oTable.getColumns()[1].setWidth("1000px");
 			oTable.getColumns()[2].setWidth("100px");
 			oTable.getColumns()[3].setWidth("1000px");
@@ -989,7 +989,7 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var that = this;
 
-		return oTable.qunit.scrollHSbTo(50).then(async function() {
+		return oTable.qunit.scrollHSbTo(50).then(function() {
 			oTable.invalidate();
 			oCore.applyChanges();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -2337,7 +2337,7 @@ sap.ui.define([
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
-			}).then(oTable.qunit.whenNextRowsUpdated).then(TableQUnitUtils.$wait(0)).then(async function() {
+			}).then(oTable.qunit.whenNextRowsUpdated).then(TableQUnitUtils.$wait(0)).then(function() {
 				oTable.invalidate();
 				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -2369,7 +2369,7 @@ sap.ui.define([
 
 			return oTable.qunit.whenRenderingFinished().then(function() {
 				oTable.setFirstVisibleRow(1);
-			}).then(TableQUnitUtils.$wait(0)).then(async function() {
+			}).then(TableQUnitUtils.$wait(0)).then(function() {
 				oTable.invalidate();
 				oCore.applyChanges();
 			}).then(oTable.qunit.whenRenderingFinished).then(function() {
@@ -2681,7 +2681,7 @@ sap.ui.define([
 				rowMode: mConfig.rowMode
 			});
 
-			return oTable.qunit.whenRenderingFinished().then(async function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				TableQUnitUtils.addDelegateOnce(oTable, "onBeforeRendering", function() {
 					oTable.setFirstVisibleRow(1);
 				});
@@ -2713,7 +2713,7 @@ sap.ui.define([
 				_bVariableRowHeightEnabled: true
 			});
 
-			return oTable.qunit.whenRenderingFinished().then(async function() {
+			return oTable.qunit.whenRenderingFinished().then(function() {
 				TableQUnitUtils.addDelegateOnce(oTable, "onBeforeRendering", function() {
 					oTable.setFirstVisibleRow(1);
 				});
@@ -5739,7 +5739,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("MouseWheel; textarea element inside a cell", async function(assert) {
+	QUnit.test("MouseWheel; textarea element inside a cell", function(assert) {
 		var oTable = this.oTable;
 		var oWheelEvent = TableQUnitUtils.createMouseWheelEvent(20, MouseWheelDeltaMode.PIXEL, false);
 		var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
@@ -5780,7 +5780,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Touch", async function(assert) {
+	QUnit.test("Touch", function(assert) {
 		var oTable = this.oTable;
 		var bOriginalPointerSupport = Device.support.pointer;
 		var bOriginalTouchSupport = Device.support.touch;

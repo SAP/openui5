@@ -225,7 +225,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			createTables();
 			oTreeTable.getRowMode().setRowCount(12);
 			oCore.applyChanges();
@@ -353,7 +353,7 @@ sap.ui.define([
 		oTreeTable.getRows()[0].expand();
 	});
 
-	QUnit.test("Group Mode", async function(assert) {
+	QUnit.test("Group Mode", function(assert) {
 		var done = assert.async();
 		var bSecondPass = false;
 
@@ -423,7 +423,7 @@ sap.ui.define([
 		oTreeTable.getRows()[0].expand();
 	});
 
-	QUnit.test("GroupMenuButton", async function(assert) {
+	QUnit.test("GroupMenuButton", function(assert) {
 		var i;
 		var oGroupMenuButton;
 		oTreeTable.setUseGroupMode(true);

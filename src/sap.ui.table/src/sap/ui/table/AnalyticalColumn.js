@@ -283,32 +283,6 @@ sap.ui.define([
 		return (!this.getGrouped() || this._bLastGroupAndGrouped || this.getShowIfGrouped()) && (!this._bDependendGrouped || this._bLastGroupAndGrouped);
 	};
 
-	AnalyticalColumn.prototype.getTooltip_AsString = function() {
-		if (!this.getTooltip()) { // No tooltip at all, neither string nor TooltipBase
-			return this._getDefaultTooltip();
-		}
-		return Element.prototype.getTooltip_AsString.apply(this);
-	};
-
-	AnalyticalColumn.prototype.getTooltip_Text = function() {
-		var sTooltip = Element.prototype.getTooltip_Text.apply(this);
-		if (!this.getTooltip() || !sTooltip) { // No tooltip at all, neither string nor TooltipBase, or no text in TooltipBase
-			sTooltip = this._getDefaultTooltip();
-		}
-		return sTooltip;
-	};
-
-	AnalyticalColumn.prototype._getDefaultTooltip = function() {
-		var oParent = this.getParent();
-		if (isInstanceOfAnalyticalTable(oParent) && !oParent._getHideStandardTooltips()) {
-			var oBinding = oParent.getBinding();
-			if (oBinding && this.getLeadingProperty()) {
-				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
-			}
-		}
-		return null;
-	};
-
 	/**
 	 * This function checks whether a filter column menu item will be created. This function considers
 	 * several column properties and evaluates metadata to determine whether filtering for a column is applicable.

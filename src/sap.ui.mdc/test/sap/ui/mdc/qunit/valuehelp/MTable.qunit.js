@@ -398,11 +398,13 @@ sap.ui.define([
 		let oCondition;
 		let sFilterValue;
 		let sItemId;
+		let bTypeaheadCaseSensitive;
 		oMTable.attachEvent("typeaheadSuggested", function(oEvent) {
 			iTypeaheadSuggested++;
 			oCondition = oEvent.getParameter("condition");
 			sFilterValue = oEvent.getParameter("filterValue");
 			sItemId = oEvent.getParameter("itemId");
+			bTypeaheadCaseSensitive = oEvent.getParameter("caseSensitive");
 		});
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
@@ -433,6 +435,7 @@ sap.ui.define([
 			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
 			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
 			assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
+			assert.equal(bTypeaheadCaseSensitive, false, "typeaheadSuggested event caseSensitive");
 			assert.ok(aItems[0].hasStyleClass("sapMLIBSelected"), "Item shown as selected");
 			assert.notOk(aItems[0].getSelected(), "Item not really selected");
 			assert.equal(sShownItemId, aItems[0].getId(), "onShow returns first-match itemId");

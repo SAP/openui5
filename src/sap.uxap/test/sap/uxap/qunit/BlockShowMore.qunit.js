@@ -15,7 +15,7 @@ function($, isEmptyObject, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay",
 				viewName: "view.UxAP-330_PropertyOnBlockToSayIfItHaveMoreInfoToDisplay"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageSampleView = oView;
 				this.referencedObjectPage = this.objectPageSampleView.byId("objectPage330");
 				this.objectPageSampleView.placeAt('qunit-fixture');

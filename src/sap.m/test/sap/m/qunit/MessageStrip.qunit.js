@@ -22,7 +22,7 @@ sap.ui.define([
 	var nAnimationLengthTimeout = 300;
 
 	QUnit.module("API", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMessageStrip = new MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
@@ -33,7 +33,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Initialization", async function(assert) {
+	QUnit.test("Initialization", function(assert) {
 		// act
 		this.oMessageStrip.setShowIcon(true);
 		this.oMessageStrip.setShowCloseButton(true);
@@ -55,7 +55,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getShowCloseButton(), false, "showCloseButton should be false");
 	});
 
-	QUnit.test("Setting None type", async function(assert) {
+	QUnit.test("Setting None type", function(assert) {
 		// act
 		this.oMessageStrip.setType("None");
 		Core.applyChanges();
@@ -64,7 +64,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
 	});
 
-	QUnit.test("Setting undefined as type", async function(assert) {
+	QUnit.test("Setting undefined as type", function(assert) {
 		// act
 		this.oMessageStrip.setType(undefined);
 		Core.applyChanges();
@@ -73,7 +73,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getType(), "Information", "should forward to Information");
 	});
 
-	QUnit.test("Setting custom icon on Error state", async function(assert) {
+	QUnit.test("Setting custom icon on Error state", function(assert) {
 		// act
 		this.oMessageStrip.setType("Error");
 		this.oMessageStrip.setCustomIcon("sap-icon://undo");
@@ -83,7 +83,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "sap-icon://undo", "icon should be undo");
 	});
 
-	QUnit.test("Custom icon should not be set by the type icon", async function(assert) {
+	QUnit.test("Custom icon should not be set by the type icon", function(assert) {
 		// act
 		this.oMessageStrip.setType("Error");
 		Core.applyChanges();
@@ -92,7 +92,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.getCustomIcon(), "", "custom icon should not be defined");
 	});
 
-	QUnit.test("Link control via setLink", async function(assert) {
+	QUnit.test("Link control via setLink", function(assert) {
 		var linkText = "Link Text";
 
 		this.oMessageStrip.setLink(new Link({ text: linkText }));
@@ -102,7 +102,7 @@ sap.ui.define([
 			"should be set as an aggregation and have the specified text");
 	});
 
-	QUnit.test("Link control via setAggregation", async function(assert) {
+	QUnit.test("Link control via setAggregation", function(assert) {
 		// arrange
 		var oLink = new Link({
 			text: "Link Text"
@@ -116,7 +116,7 @@ sap.ui.define([
 		assert.strictEqual(this.oMessageStrip.$().find(".sapMLnk").length, 1, "should be set as an aggregation");
 	});
 
-	QUnit.test("Setting the text", async function(assert) {
+	QUnit.test("Setting the text", function(assert) {
 		// arrange
 		var oText = this.oMessageStrip.getAggregation("_text");
 
@@ -151,7 +151,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("setEnableFormattedText", async function(oAssert) {
+	QUnit.test("setEnableFormattedText", function (oAssert) {
 		// Arrange
 		var oLimitSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
 			oSetterSpy = sinon.spy(FormattedText.prototype, "setHtmlText"),
@@ -193,7 +193,7 @@ sap.ui.define([
 		oSetterSpy.restore();
 	});
 
-	QUnit.test("setText and enableFormattedText", async function(oAssert) {
+	QUnit.test("setText and enableFormattedText", function (oAssert) {
 		// Arrange
 		var sTestString = "<strong>Warning:</strong> something went wrong",
 			sTestStringSanitized = "<strong style=\"position: static !important;\">Warning:</strong> something went wrong",
@@ -217,7 +217,7 @@ sap.ui.define([
 			"Test string is propagated to the internal sap.m.FormattedText control");
 	});
 
-	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", async function(oAssert) {
+	QUnit.test("setText and sap.m.FormattedText - limiting sap.m.FormattedText valid HTML elements", function (oAssert) {
 		// Arrange
 		var oSpy = sinon.spy(FormattedText.prototype, "_setUseLimitedRenderingRules"),
 			sHTMLString = [
@@ -255,7 +255,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Data binding", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMessageStrip = new MessageStrip();
 
 			this.oMessageStrip.placeAt(DOM_RENDER_LOCATION);
@@ -272,7 +272,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("JSON model text binding", async function(assert) {
+	QUnit.test("JSON model text binding", function(assert) {
 		// arrange
 		var oModel = new JSONModel(this.generateData());
 		var sData = this.generateData().text;
@@ -289,7 +289,7 @@ sap.ui.define([
 
 
 	QUnit.module("Events", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMessageStrip = new MessageStrip({
 				text: "Test",
 				showCloseButton: true
@@ -375,7 +375,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ARIA Support", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oMessageStrip = new MessageStrip({
 				text: "Test",
 				showCloseButton: true,
@@ -400,7 +400,7 @@ sap.ui.define([
 		assert.strictEqual(role, "note", "role=note is present");
 	});
 
-	QUnit.test("Labelledby attribute", async function(assert) {
+	QUnit.test("Labelledby attribute", function (assert) {
 		//Arrange
 		var oMessageStrip = new MessageStrip({
 			text: "Some text",
@@ -448,7 +448,7 @@ sap.ui.define([
 			assert.strictEqual(describedBy, sId, "aria-describedby is not changed");
 	});
 
-	QUnit.test("When we have a close button it should have an aria-labelledby attribute", async function(assert) {
+	QUnit.test("When we have a close button it should have an aria-labelledby attribute", function (assert) {
 		//Arrange
 		var oRb = Library.getResourceBundleFor("sap.m");
 
@@ -495,7 +495,7 @@ sap.ui.define([
 			"the title of the close button should be set to 'Close'");
 	});
 
-	QUnit.test("Decorative icon should have aria-hidden set to true", async function(assert) {
+	QUnit.test("Decorative icon should have aria-hidden set to true", function(assert) {
 		//Act
 		this.oMessageStrip.setShowIcon(true);
 		Core.applyChanges();
@@ -505,7 +505,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Close button invisible text should be rendered only once", async function(assert) {
+	QUnit.test("Close button invisible text should be rendered only once", function(assert) {
 		//Arrange
 		var oMessageStrip = new MessageStrip({
 				type: "Error"
@@ -522,7 +522,7 @@ sap.ui.define([
 		oMessageStrip.destroy();
 	});
 
-	QUnit.test("Should render aria-roledescription attribute with the correct text", async function(assert) {
+	QUnit.test("Should render aria-roledescription attribute with the correct text", function(assert) {
 		// Arrange
 		var oResourceBundle = Library.getResourceBundleFor("sap.m"),
 			oMessageStrip = new MessageStrip({

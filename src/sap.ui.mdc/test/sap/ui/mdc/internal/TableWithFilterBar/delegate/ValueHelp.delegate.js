@@ -105,5 +105,30 @@ sap.ui.define([
 		return oChange;
 	};
 
+	ValueHelpDelegate.getFirstMatch = function(oValueHelp, oContent, oConfig) {
+
+		const oPayload = oValueHelp.getPayload();
+
+		if (oPayload.firstMatch && oPayload.firstMatch === "CheckKeyDescription") {
+			const aBindingContents = oContent.getRelevantContexts(oConfig);
+			const sKeyPath = oContent.getKeyPath();
+			const sDescriptionPath = oContent.getDescriptionPath();
+			const sFilterValue = oValueHelp.getFilterValue();
+
+			for (let i = 0; i < aBindingContents.length; i++) {
+				const oBindingContent = aBindingContents[i];
+				if (sKeyPath && oBindingContent.getValue(sKeyPath).toLowerCase().startsWith(sFilterValue.toLowerCase())) {
+					return oBindingContent;
+				} else if (sKeyPath && oBindingContent.getValue(sDescriptionPath).toLowerCase().startsWith(sFilterValue.toLowerCase())) {
+					return oBindingContent;
+				}
+			}
+			return aBindingContents[0];
+		}
+
+		return ODataV4ValueHelpDelegate.getFirstMatch.apply(this, arguments);
+
+	};
+
 	return ValueHelpDelegate;
 });

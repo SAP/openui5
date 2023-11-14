@@ -32,7 +32,7 @@ function(
 
 	/* --------------------------- IllustratedMessage API -------------------------------------- */
 	QUnit.module("IllustratedMessage - API ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage({
 				title: "Test title",
@@ -86,7 +86,7 @@ function(
 
 	/* --------------------------- IllustratedMessage Lifecycle -------------------------------------- */
 	QUnit.module("IllustratedMessage - Lifecycle ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -155,7 +155,7 @@ function(
 
 	/* --------------------------- IllustratedMessage GETTERS/SETTERS -------------------------------------- */
 	QUnit.module("IllustratedMessage - getters and setters ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -168,7 +168,7 @@ function(
 		}
 	});
 
-	QUnit.test("setIllustrationType", async function(assert) {
+	QUnit.test("setIllustrationType", function (assert) {
 		// Arrange
 		var fnUpdateInternalSpy = this.spy(this.oIllustratedMessage, "_updateInternalIllustrationSetAndType"),
 			sNewType = IllustratedMessageType.UnableToLoad;
@@ -198,7 +198,7 @@ function(
 		);
 	});
 
-	QUnit.test("_getDescription - sap.m.FormattedText", async function(assert) {
+	QUnit.test("_getDescription - sap.m.FormattedText", function (assert) {
 		// Arrange
 		var oDescription,
 			sCurrDescrVal,
@@ -244,7 +244,7 @@ function(
 		assert.strictEqual(oDescription.getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
-	QUnit.test("_getDescription - sap.m.Text", async function(assert) {
+	QUnit.test("_getDescription - sap.m.Text", function (assert) {
 		// Arrange
 		var oDescription = this.oIllustratedMessage._getDescription(),
 			sEmptyString = '',
@@ -298,7 +298,7 @@ function(
 			"Internal getter _getResourceBundle is correctly returning the sap.m resource bundle");
 	});
 
-	QUnit.test("_getTitle", async function(assert) {
+	QUnit.test("_getTitle", function (assert) {
 		// Arrange
 		var sTitleText = this.oIllustratedMessage._getTitle().getText(),
 		sEmptyString = '',
@@ -335,7 +335,7 @@ function(
 		assert.strictEqual(this.oIllustratedMessage._getTitle().getDomRef(), null, "The description control instance is not rendered when no text is present");
 	});
 
-	QUnit.test("ariaTitleLevel is set correctly", async function(assert) {
+	QUnit.test("ariaTitleLevel is set correctly", function(assert) {
 		// Arrange
 		this.oIllustratedMessage.setTitle("Test Title");
 
@@ -353,7 +353,7 @@ function(
 	/* --------------------------- IllustratedMessage Private methods -------------------------------------- */
 
 	QUnit.module("IllustratedMessage - Private methods ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -552,7 +552,7 @@ function(
 		}, this);
 	});
 
-	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", async function(assert) {
+	QUnit.test("_updateMedia (vertical) with enableVerticalResponsiveness property", function (assert) {
 		// Assert
 		assert.expect(24);
 
@@ -604,7 +604,7 @@ function(
 		}, this);
 	});
 
-	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", async function(assert) {
+	QUnit.test("IllustratedMessage should fit its container height when enableVerticalResponsiveness property is true", function (assert) {
 		var oFixtureDOM = document.getElementById("qunit-fixture"),
 			sFixtureOriginalHeight = oFixtureDOM.style.height,
 			sFixtureTargetHeight = '160px',
@@ -705,7 +705,7 @@ function(
 		}, this);
 	});
 
-	QUnit.test("_getFallbackMedia", async function(assert) {
+	QUnit.test("_getFallbackMedia", function (assert) {
 		// Arrange
 		var sExpectedFallbackMedia;
 
@@ -728,7 +728,7 @@ function(
 
 	/* --------------------------- IllustratedMessage Accessibility -------------------------------------- */
 	QUnit.module("IllustratedMessage - Accessibility ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -771,7 +771,7 @@ function(
 
 	/* --------------------------- IllustratedMessage Default Text Fallback -------------------------------------- */
 	QUnit.module("IllustratedMessage - Default Text Fallback logic ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -827,7 +827,7 @@ function(
 
 	/* --------------------------- IllustratedMessage Associations -------------------------------------- */
 	QUnit.module("IllustratedMessage - Associations ", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			// Arrange
 			this.oIllustratedMessage = new IllustratedMessage();
 			this.oIllustratedMessage.placeAt("qunit-fixture");
@@ -843,7 +843,7 @@ function(
 		}
 	});
 
-	QUnit.test("Testing the default ariaLabelledBy association in combination with calls of the other ariaLabelledBy related methods ", async function(assert) {
+	QUnit.test("Testing the default ariaLabelledBy association in combination with calls of the other ariaLabelledBy related methods ", function (assert) {
 
 		// Arrange
 		var $illustration = this.oIllustration.$(),
@@ -884,7 +884,7 @@ function(
 		assert.equal($illustration.attr("aria-labelledby"), sTitleId);
 	});
 
-	QUnit.test("Testing illustrationAriaLabelledBy association", async function(assert) {
+	QUnit.test("Testing illustrationAriaLabelledBy association", function (assert) {
 
 		// Arrange
 		new InvisibleText("illustration_label2", {text: "My label"}).toStatic();

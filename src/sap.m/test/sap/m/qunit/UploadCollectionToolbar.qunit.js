@@ -13,7 +13,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	"use strict";
 
 	QUnit.module("Toolbar Default", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oUploadCollection = new undefined/*UploadCollection*/("noToolbarTest", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -41,7 +41,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 		}
 	});
 
-	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", async function(assert) {
+	QUnit.test("A Toolbar without place holder is provided. Test that an info log has been written", function (assert) {
 		//Arrange
 		var oInfoLogStub = this.stub(Log, "info");
 
@@ -74,7 +74,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionToolbar", [
 	});
 
 	QUnit.module("Toolbar Custom", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oUploadCollection = new undefined/*UploadCollection*/("PHToolbarTest", {
 				toolbar: new OverflowToolbar({
 					content: [new Button("element1", {text: "Filter"}),

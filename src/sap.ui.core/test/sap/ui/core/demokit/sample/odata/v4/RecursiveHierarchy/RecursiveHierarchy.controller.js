@@ -110,6 +110,17 @@ sap.ui.define([
 			});
 		},
 
+		onMakeRoot : async function (oEvent) {
+			try {
+				this.getView().setBusy(true);
+				await oEvent.getSource().getBindingContext().move();
+			} catch (oError) {
+				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
+			} finally {
+				this.getView().setBusy(false);
+			}
+		},
+
 		onMove : function (oEvent) {
 			this._bInTreeTable = false;
 			this._oNode = oEvent.getSource().getBindingContext();
@@ -118,6 +129,8 @@ sap.ui.define([
 			const oListBinding = oSelectDialog.getBinding("items");
 			if (oListBinding.isSuspended()) {
 				oListBinding.resume();
+			} else {
+				oListBinding.refresh();
 			}
 			oSelectDialog.open();
 		},

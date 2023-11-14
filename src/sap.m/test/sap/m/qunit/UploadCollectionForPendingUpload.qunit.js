@@ -34,7 +34,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 
 	QUnit.module("PendingUpload: public and private methods", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("pendingUploads", {});
 			this.oUploadCollection.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -45,7 +45,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		}
 	});
 
-	QUnit.test("Set of 'instantUpload' at runtime is not allowed", async function(assert) {
+	QUnit.test("Set of 'instantUpload' at runtime is not allowed", function(assert) {
 		var oUploadCollection = this.oUploadCollection;
 		assert.ok(oUploadCollection.getInstantUpload(), "Default value is set to true.");
 		this.oUploadCollection.setInstantUpload(false);
@@ -74,7 +74,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		oUploadCollection = null;
 	});
 
-	QUnit.test("Check if property binding via model is still working", async function(assert) {
+	QUnit.test("Check if property binding via model is still working", function(assert) {
 		var oUploadCollection = this.oUploadCollection;
 		oUploadCollection.destroy();
 		oUploadCollection = null;
@@ -95,7 +95,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		oUploadCollection = null;
 	});
 
-	QUnit.test("API method 'upload' exists and reacts depending on usages.", async function(assert) {
+	QUnit.test("API method 'upload' exists and reacts depending on usages.", function(assert) {
 		var oUploadCollection = this.oUploadCollection;
 		this.spy(Log, "error");
 		oUploadCollection.upload();
@@ -113,7 +113,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		oUploadCollection = null;
 	});
 
-	QUnit.test("Container for FileUploader instances is created and destroyed when exiting the control.", async function(assert) {
+	QUnit.test("Container for FileUploader instances is created and destroyed when exiting the control.", function(assert) {
 		var oUploadCollection = new undefined/*UploadCollection*/({
 			instantUpload: false
 		}).placeAt("qunit-fixture");
@@ -125,7 +125,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		oUploadCollection = null;
 	});
 
-	QUnit.test("Test for method '_getFileUploader' for instantUpload = false", async function(assert) {
+	QUnit.test("Test for method '_getFileUploader' for instantUpload = false", function(assert) {
 		var oUploadCollection = new undefined/*UploadCollection*/({
 			instantUpload: false,
 			multiple: true
@@ -142,7 +142,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		oUploadCollection = null;
 	});
 
-	QUnit.test("Test for method _onChange for instantUpload = false", async function(assert) {
+	QUnit.test("Test for method _onChange for instantUpload = false", function(assert) {
 		var oFile1 = {
 			name: "file1"
 		};
@@ -164,7 +164,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.module("PendingUpload: test setters", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.createUploadCollection = function(oAddToContructor) {
 				if (this.oUploadCollection) {
 					this.oUploadCollection.destroy();
@@ -373,7 +373,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false ", {
 
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("uploadCollection1", {
 				instantUpload: false
 			});
@@ -395,7 +395,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.ok(document.getElementById("uploadCollection1-numberOfAttachmentsTitle"), "Title Number of attachments is rendered");
 	});
 
-	QUnit.test("Rendering of an item after change event", async function(assert) {
+	QUnit.test("Rendering of an item after change event", function(assert) {
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		oFileUploader.fireChange({
 			files: this.aFiles,
@@ -411,7 +411,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.ok(this.oUploadCollection.getItems()[0].getDomRef("ia_iconHL"), "Icon should be rendered if instantUpload = false");
 	});
 
-	QUnit.test("Setting of 'hidden' property on FileUploader instances", async function(assert) {
+	QUnit.test("Setting of 'hidden' property on FileUploader instances", function(assert) {
 		var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 		oFileUploader1.fireChange({
 			files: this.aFiles,
@@ -435,7 +435,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.deepEqual(this.oUploadCollection._oHeaderToolbar.getContent()[2], oFileUploader3, "oFileUploader3 should be on the fifth position in the toolbar");
 	});
 
-	QUnit.test("Positions of the FileUploader instances in the toolbar", async function(assert) {
+	QUnit.test("Positions of the FileUploader instances in the toolbar", function(assert) {
 		var oFileUploader1 = this.oUploadCollection._oFileUploader; // take the current FU instance
 		oFileUploader1.fireChange({
 			files: this.aFiles,
@@ -472,7 +472,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.equal(this.oUploadCollection._getFileUploader().getVisible(), true, "File Uploader is visible");
 	});
 
-	QUnit.test("Focus handling after change event", async function(assert) {
+	QUnit.test("Focus handling after change event", function(assert) {
 		//Arrange
 		var oFileUploader = this.oUploadCollection._getFileUploader();
 		oFileUploader.fireChange({
@@ -493,7 +493,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.module("Rendering of UploadCollection with instantUpload = false and uploadButtonInvisible = true", {
 
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("uploadCollectionHiddenUpload", {
 				instantUpload: false,
 				uploadButtonInvisible: true
@@ -534,7 +534,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 
 	QUnit.module("PendingUpload: upload method", {
 
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/({ instantUpload: false });
 			var oFile = {
 				name: "file1"
@@ -667,7 +667,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		}
 	});
 
-	QUnit.test("Creation of a new FileUploader Instance during rerendering", async function(assert) {
+	QUnit.test("Creation of a new FileUploader Instance during rerendering", function(assert) {
 		var oFileUploader1 = this.oUploadCollection._oFileUploader;
 		oFileUploader1.fireChange({
 			files: this.aFiles,
@@ -816,7 +816,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		assert.equal(this.oUploadCollection._aFilesFromDragAndDropForPendingUpload.length, 1, "File is inserted in the array");
 	});
 
-	QUnit.test("Dropping more than one file is not allowed when multiple is false", async function(assert) {
+	QUnit.test("Dropping more than one file is not allowed when multiple is false", function(assert) {
 		//Arrange
 		this.oUploadCollection.setMultiple(false);
 		oCore.applyChanges();
@@ -848,7 +848,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.module("Delete PendingUpload Item", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("pendingUploads", {
 				instantUpload: false,
 				multiple: true
@@ -862,7 +862,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		}
 	});
 
-	QUnit.test("Check file list", async function(assert) {
+	QUnit.test("Check file list", function(assert) {
 		assert.expect(4);
 		var oHandleDeleteStub = this.stub(this.oUploadCollection, "_handleDelete");
 		var oFile0 = {
@@ -952,7 +952,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.module("Delete PendingUpload Item, multiple FileUploaderInstances", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("pendingUploads", {
 				instantUpload: false
 			});
@@ -1009,7 +1009,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 		}
 	});
 
-	QUnit.test("Check if the item is properly saved to prevent further upload", async function(assert) {
+	QUnit.test("Check if the item is properly saved to prevent further upload", function(assert) {
 		var properCancellationHeaderParameterExists = false;
 		this.simulateFilePreselection.bind(this)([this.oFile0]);
 
@@ -1096,7 +1096,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionForPendingUpload", [
 	});
 
 	QUnit.module("PendingUpload uploadProgress Event", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oUploadCollection = new undefined/*UploadCollection*/("pendingUploads");
 			this.spy(this.oUploadCollection, "_onUploadProgress");
 

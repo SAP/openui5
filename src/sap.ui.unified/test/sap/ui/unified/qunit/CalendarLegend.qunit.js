@@ -170,7 +170,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Rendering", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oLegend = new CalendarLegend("Leg", {}).placeAt("qunit-fixture");
 			oCore.applyChanges();
 		},
@@ -185,7 +185,7 @@ sap.ui.define([
 		assert.equal(aLegendItems.length, 4, "4 categories rendered");
 	});
 
-	QUnit.test("Custom categories", async function(assert) {
+	QUnit.test("Custom categories", function (assert) {
 
 		var oLeg2 = new CalendarLegend("Leg2", {
 			items: [new CalendarLegendItem("L2-I0", {text: "Type10", type: CalendarDayType.Type10, tooltip: "Type 10"}),
@@ -239,7 +239,7 @@ sap.ui.define([
 		assert.equal(oExtractedRGB[3], oExpectedRGB.B, sLabel + " (BLUE)");
 	}
 
-	QUnit.test("Custom colors", async function(assert) {
+	QUnit.test("Custom colors", function (assert) {
 
 		this.oLegend.addItem(new CalendarLegendItem("L1-I0", {
 			text: "custom color 1",
@@ -261,7 +261,7 @@ sap.ui.define([
 		_checkColor(oCustomColorIfL4I7, {R: 255, G: 0, B: 0}, "Legend1: custom color 2 item has the right color", assert);
 	});
 
-	QUnit.test("Combination with Calendar", async function(assert) {
+	QUnit.test("Combination with Calendar", function (assert) {
 		var specialDates = oCal.getSpecialDates();
 		for (var i = 0; i < specialDates.length; i++) {
 			this.oLegend.addItem(new CalendarLegendItem({
@@ -379,7 +379,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Calendar Legend Navigation", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			var aLegendTypes = [],
 				aSpecialDay,
 				sType,
@@ -459,7 +459,7 @@ sap.ui.define([
 		assert.equal(document.activeElement.id, aLegendItems[0].getId(), "the first calendar legend item is focused");
 	});
 
-	QUnit.test("Filtering special dates in calendar", async function(assert) {
+	QUnit.test("Filtering special dates in calendar", function (assert) {
 		var aLegendItems = this.oLegend.getItems(),
 			aStandardItems = this.oLegend.getAggregation("_standardItems"),
 			aMonths = this.oCalendar.getAggregation("month");

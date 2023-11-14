@@ -273,7 +273,7 @@
 							</mdc:ValueHelp>
 
 							<mdc:ValueHelp id="FHLanguage"
-								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
+								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{"firstMatch": "CheckKeyDescription"\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Langugages">
 										<mdcvc:MTable keyPath="code" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
@@ -654,7 +654,7 @@
 						</mdc:basicSearchField>
 
 						<mdc:filterItems>
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
 								id="ff1" label="Author ID"
 								conditions="{$filters>/conditions/author_ID}"
 								propertyKey="author_ID"
@@ -662,7 +662,7 @@
 								dataTypeFormatOptions='\{"groupingEnabled": false\}'
 								required="false" valueHelp="FH1" display="Description"/>
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{\}\}'
 								id="ff2" label="Title"
 								conditions="{$filters>/conditions/title}"
 								propertyKey="title"
@@ -688,7 +688,7 @@
 								operators="EQ,GT,LT,BT,MEDIEVAL,RENAISSANCE,MODERN,LASTYEAR"
 								defaultOperator="RENAISSANCE"/>
 
-							<mdc:FilterField delegate='\{"name": "delegates/odata/v4/FieldBaseDelegate", "payload": \{\}\}'
+							<mdc:FilterField delegate='\{"name": "sap/ui/v4demo/delegate/FieldBase.delegate", "payload": \{"autoCompleteCaseSensitive": "key"\}\}'
 								id="ff5" label="Language" display="Description"
 								dataType="Edm.String"
 								dataTypeConstraints= "{nullable: false, maxLength: 3}"

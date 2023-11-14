@@ -55,7 +55,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleIcon").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleIcon").then(function(aPropertyEditor) {
 				this.oIconEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oIconEditor.setValue("sap-icon://target-group");
 				oCore.applyChanges();

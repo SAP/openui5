@@ -78,7 +78,7 @@ sap.ui.define([
 		assert.equal(oPanel.$().find("button:visible").length, bVisible ? 1 : 0);
 		// fnHasVisibleText(assert, oPanel, sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("info.POPOVER_DEFINE_LINKS"), bVisible);
 	}
-	QUnit.test("no 'item'", async function(assert) {
+	QUnit.test("no 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: []
 		});
@@ -89,7 +89,7 @@ sap.ui.define([
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 
 	});
-	QUnit.test("invalid 'item'", async function(assert) {
+	QUnit.test("invalid 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -104,7 +104,7 @@ sap.ui.define([
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid 'item'", async function(assert) {
+	QUnit.test("valid 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -120,7 +120,7 @@ sap.ui.define([
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid main 'item'", async function(assert) {
+	QUnit.test("valid main 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -136,7 +136,7 @@ sap.ui.define([
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("invalid main 'item'", async function(assert) {
+	QUnit.test("invalid main 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -151,7 +151,7 @@ sap.ui.define([
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("'additionalContent'", async function(assert) {
+	QUnit.test("'additionalContent'", function(assert) {
 		this.oPanel = new Panel({
 			additionalContent: new SimpleForm({
 				layout: SimpleFormLayout.ResponsiveGridLayout,
@@ -176,7 +176,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("invalid visible 'item'", async function(assert) {
+	QUnit.test("invalid visible 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -193,7 +193,7 @@ sap.ui.define([
 		fnHasVisibleText(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("invalid invisible 'item'", async function(assert) {
+	QUnit.test("invalid invisible 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -210,7 +210,7 @@ sap.ui.define([
 		fnHasVisibleText(assert, this.oPanel, "A", false, "Panel is not responsible for the visibility of items, it takes them as they are");
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid visible 'item'", async function(assert) {
+	QUnit.test("valid visible 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -227,7 +227,7 @@ sap.ui.define([
 		fnHasVisibleLink(assert, this.oPanel, "A", true);
 		fnHasVisibleMoreLinksButton(assert, this.oPanel, true);
 	});
-	QUnit.test("valid invisible 'item'", async function(assert) {
+	QUnit.test("valid invisible 'item'", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -251,7 +251,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("all items have not icon", async function(assert) {
+	QUnit.test("all items have not icon", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -269,7 +269,7 @@ sap.ui.define([
 
 		fnHasVisibleIcons(assert, this.oPanel, 0);
 	});
-	QUnit.test("all items have icon", async function(assert) {
+	QUnit.test("all items have icon", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -289,7 +289,7 @@ sap.ui.define([
 
 		fnHasVisibleIcons(assert, this.oPanel, 2);
 	});
-	QUnit.test("an item have not icon", async function(assert) {
+	QUnit.test("an item have not icon", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -318,7 +318,7 @@ sap.ui.define([
 			this.oPanel.destroy();
 		}
 	});
-	QUnit.test("test 01", async function(assert) {
+	QUnit.test("test 01", function(assert) {
 		this.oPanel = new Panel({
 			items: [
 				new PanelItem({
@@ -614,7 +614,7 @@ sap.ui.define([
 		assert.equal(oPanel._getPersonalizationButton().getVisible(), false, "personalization buttons visibility set to false");
 	});
 
-	QUnit.test("check if seperator is visible", async function(assert) {
+	QUnit.test("check if seperator is visible", function (assert) {
 		const oPanelItem = new PanelItem({
 			text: "PanelItem",
 			href: "#PanelItem"
@@ -637,7 +637,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("ContentTitle", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oPanel = new Panel({});
 			this.oModel = new JSONModel({
 				metadata: jQuery.extend(true, [], [])
@@ -677,7 +677,7 @@ sap.ui.define([
 		oPanel.setModel(oModel, "$sapuimdcLink");
 	};
 
-	QUnit.test("with Links, without additional content", async function(assert) {
+	QUnit.test("with Links, without additional content", function(assert) {
 		fnAddItemsToPanel(this.oPanel);
 
 		this.oPanel.placeAt("qunit-fixture");
@@ -686,7 +686,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.getContentTitle().getId(), this.oPanel._getLinkControls()[0].getId(), "ContentTitle set to first link control");
 	});
 
-	QUnit.test("with Links and with additional content", async function(assert) {
+	QUnit.test("with Links and with additional content", function(assert) {
 		fnAddItemsToPanel(this.oPanel);
 
 		const oText = new Text({ text: "AdditionalContentText" });
@@ -700,7 +700,7 @@ sap.ui.define([
 		assert.equal(this.oPanel.getContentTitle().getId(), oText.getId(), "ContentTitle set to first additional content control");
 	});
 
-	QUnit.test("without Links, with additional content", async function(assert) {
+	QUnit.test("without Links, with additional content", function(assert) {
 		const oText = new Text({ text: "AdditionalContentText" });
 		const oText2 = new Text({ text: "Another Text" });
 		this.oPanel.addAdditionalContent(oText);

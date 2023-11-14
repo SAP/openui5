@@ -56,7 +56,7 @@ sap.ui.define([
 
 
 	QUnit.module("Rendering All Fields", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.sID = "oOHBasic";
 			this.oOH = new ObjectHeader(this.sID, {
 				intro : "On behalf of John Smith",
@@ -101,7 +101,7 @@ sap.ui.define([
 		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumber"), "Number is sap.m.ObjectNumber");
 	});
 
-	QUnit.test("AttributesRendered", async function(assert) {
+	QUnit.test("AttributesRendered", function(assert) {
 		// Arrange
 		var oOA1 = new ObjectAttribute("oa1", {
 				text : "Contract #D1234567890"
@@ -122,7 +122,7 @@ sap.ui.define([
 		assert.notEqual(document.getElementById("oa2"), null, "Object attribute #2 should be rendered.");
 	});
 
-	QUnit.test("Attribute rerendered after being empty", async function(assert) {
+	QUnit.test("Attribute rerendered after being empty", function(assert) {
 		var oOA = new ObjectAttribute({text: "Test"});
 		var oOHEmpty = new ObjectHeader({attributes: [oOA]});
 
@@ -143,7 +143,7 @@ sap.ui.define([
 		oOHEmpty.destroy();
 	});
 
-	QUnit.test("StatusesRendered", async function(assert) {
+	QUnit.test("StatusesRendered", function(assert) {
 		// Arrange
 		var oOS1 = new ObjectStatus("os1", {
 				text : "Statuses 1",
@@ -170,7 +170,7 @@ sap.ui.define([
 		assert.equal(document.getElementById("oa1"), null, "Object attribute should not be rendered.");
 	});
 
-	QUnit.test("Flag Rendering Position", async function(assert) {
+	QUnit.test("Flag Rendering Position", function(assert) {
 		// Arrange - Mark Flagged and add Attribute
 		var oAttr = new ObjectAttribute(this.sID + "-attr1", {
 				text : "Attribute number 1"
@@ -189,7 +189,7 @@ sap.ui.define([
 		"Attribute and flag should be rendered on the same row");
 	});
 
-	QUnit.test("ProgressIndicatorRendered", async function(assert) {
+	QUnit.test("ProgressIndicatorRendered", function(assert) {
 		// Arrange
 		var oProgIndicator = new ProgressIndicator(this.sID + "-pi", {
 			visible : true,
@@ -219,7 +219,7 @@ sap.ui.define([
 		assert.ok(this.oOH.$("number").hasClass("sapMObjectNumberStatusSuccess"), "Number color uses value state success color.");
 	});
 
-	QUnit.test("Placeholders for invisible attributes", async function(assert) {
+	QUnit.test("Placeholders for invisible attributes", function(assert) {
 		// Arrange
 		var oOA = new ObjectAttribute("invisibleAttr", {
 				text : "Invisible attribute",
@@ -235,7 +235,7 @@ sap.ui.define([
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOHBottomRow > .sapMOHAttrRow').length === 0, "The attribute row should not be rendered");
 	});
 
-	QUnit.test("Placeholders for invisible status", async function(assert) {
+	QUnit.test("Placeholders for invisible status", function(assert) {
 		// Arrange
 		var oOS = new ProgressIndicator({
 				percentValue : 99,
@@ -253,7 +253,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Placeholders for invisible attribute with visible status", async function(assert) {
+	QUnit.test("Placeholders for invisible attribute with visible status", function(assert) {
 		// Arrange
 		var oOS = new ObjectStatus({
 				text : "Visible status",
@@ -280,7 +280,7 @@ sap.ui.define([
 		assert.ok(jQuery('#' + this.sID + ' > .sapMOH .sapMOHBottomRow > .sapMOHAttrRow').length === 1, "Invisible attribute should not cause new row.");
 	});
 
-	QUnit.test("Placeholders for invisible status with visible attribute", async function(assert) {
+	QUnit.test("Placeholders for invisible status with visible attribute", function(assert) {
 		// Arrange
 		var oPI = new ProgressIndicator({
 				displayValue : '30%',
@@ -313,7 +313,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Rendering condensed Object Header", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.sID = "oOHCondensed";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Condensed Object header with attribute, number and number unit",
@@ -358,7 +358,7 @@ sap.ui.define([
 		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
-	QUnit.test("Background is solid", async function(assert) {
+	QUnit.test("Background is solid", function(assert) {
 
 		this.oOH.setBackgroundDesign(BackgroundDesign.Solid);
 		oCore.applyChanges();
@@ -369,7 +369,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Internal API", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.sID = "oOHSimple";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Simple ObjectHeader",
@@ -383,7 +383,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Attribute and Flag API", async function(assert) {
+	QUnit.test("Attribute and Flag API", function(assert) {
 		// Arrange
 		var oOA = new ObjectAttribute({
 				text : "A regular attribute"
@@ -404,7 +404,7 @@ sap.ui.define([
 		assert.equal(this.oOH.getMarkers()[0].getId(), this.sID + "-flag", "Object header has flag marker");
 	});
 
-	QUnit.test("With empty status", async function(assert) {
+	QUnit.test("With empty status", function(assert) {
 
 		var emptyStatus = new ObjectStatus("ose1", {
 				text : "\n  \n  \t",
@@ -419,7 +419,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("With empty attribute", async function(assert) {
+	QUnit.test("With empty attribute", function(assert) {
 
 		var emptyAttr1 = new ObjectAttribute("oae1", {
 				text : "\n  \n  \t"
@@ -437,7 +437,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("With empty attributes and statuses", async function(assert) {
+	QUnit.test("With empty attributes and statuses", function(assert) {
 		var emptyAttr1 = new ObjectAttribute("oae1", {
 				text : "\n  \n  \t"
 			}),
@@ -465,7 +465,7 @@ sap.ui.define([
 		assert.notOk(this.oOH._hasBottomContent(), "Object header has no bottom content");
 	});
 
-	QUnit.test("With a non-empty ObjectStatus", async function(assert) {
+	QUnit.test("With a non-empty ObjectStatus", function(assert) {
 
 		var emptyStatus = new ObjectStatus("ose8", {
 				text : "\n  \n  \t",
@@ -484,7 +484,7 @@ sap.ui.define([
 		assert.ok(this.oOH._hasStatus(), "Object header has rendered statuses");
 	});
 
-	QUnit.test("With a ProgressIndicator", async function(assert) {
+	QUnit.test("With a ProgressIndicator", function(assert) {
 
 		var progressIndicator = new ProgressIndicator({
 				percentValue : 99,
@@ -506,7 +506,7 @@ sap.ui.define([
 		assert.ok($objectHeader.hasClass("sapMOHTitleDivFull"), "title occupies the whole available space");
 	});
 
-	QUnit.test("Title gets all length when no number in Condensed OH", async function(assert) {
+	QUnit.test("Title gets all length when no number in Condensed OH", function(assert) {
 		// Arrange
 		this.oOH.setCondensed(true);
 
@@ -521,7 +521,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("Events", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.sID = "oOHEvents";
 			this.oOH = new ObjectHeader(this.sID, {
 				intro : "On behalf of John Smith",
@@ -584,7 +584,7 @@ sap.ui.define([
 		domRef = null;
 	});
 
-	QUnit.test("TestIconTap", async function(assert) {
+	QUnit.test("TestIconTap", function(assert) {
 		this.oOH._oImageControl.firePress();
 
 		// Assert - OH with active icon should be clickable
@@ -624,7 +624,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("TestTitleSelectorTap", async function(assert) {
+	QUnit.test("TestTitleSelectorTap", function(assert) {
 		var oOH2 = new ObjectHeader("oOH2", {
 			title : "Im a title.",
 			showTitleSelector : true,
@@ -644,7 +644,7 @@ sap.ui.define([
 		oOH2.destroy();
 	});
 
-	QUnit.test("TestTitleSelector pressing SPACE", async function(assert) {
+	QUnit.test("TestTitleSelector pressing SPACE", function(assert) {
 		//Arrange
 		var oSpy = this.spy();
 		var oArrowOH = new ObjectHeader("arrowOH", {
@@ -668,7 +668,7 @@ sap.ui.define([
 		oArrowOH.destroy();
 	});
 
-	QUnit.test("TestTitleSelector pressing ENTER", async function(assert) {
+	QUnit.test("TestTitleSelector pressing ENTER", function(assert) {
 		//Arrange
 		var oSpy = this.spy();
 		var oArrowOH = new ObjectHeader("arrowOH", {
@@ -695,7 +695,7 @@ sap.ui.define([
 	/******************************************************************/
 
 	QUnit.module("TitleArrow", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.sID = "titleArrowOH";
 			this.oOH = new ObjectHeader(this.sID, {
 				title : "Title Arrow reset to false and should not be displayed.",
@@ -728,7 +728,7 @@ sap.ui.define([
 
 	QUnit.module("OH Screen Reader support");
 
-	QUnit.test("OH has aria-labelledby", async function(assert) {
+	QUnit.test("OH has aria-labelledby", function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title."
@@ -741,7 +741,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH has attribute role=region", async function(assert) {
+	QUnit.test("OH has attribute role=region", function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title."
@@ -755,7 +755,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH Condensed has aria-labelledby", async function(assert) {
+	QUnit.test("OH Condensed has aria-labelledby", function(assert){
 		var sID = "oOHCondensed",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
@@ -769,7 +769,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("OH Condensed has attribute role=region", async function(assert) {
+	QUnit.test("OH Condensed has attribute role=region", function(assert){
 		var sID = "oOHCondensed",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
@@ -784,7 +784,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active title has aria attributes", async function(assert) {
+	QUnit.test("Active title has aria attributes", function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
@@ -797,7 +797,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Active icon has aria attributes", async function(assert) {
+	QUnit.test("Active icon has aria attributes", function(assert){
 		var sID = "oOHBasic",
 			oObjectHeader = new ObjectHeader(sID, {
 				title : "Test Title.",
@@ -811,7 +811,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title has level H1", async function(assert) {
+	QUnit.test("Title has level H1", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level"
@@ -829,7 +829,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title has level H3", async function(assert) {
+	QUnit.test("Title has level H3", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level",
@@ -848,7 +848,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Title level is set correctly", async function(assert) {
+	QUnit.test("Title level is set correctly", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level"
@@ -869,7 +869,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("When set to Auto title has level H1", async function(assert) {
+	QUnit.test("When set to Auto title has level H1", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				title: "Test title level",
@@ -904,7 +904,7 @@ sap.ui.define([
 	});
 
 	// Related to: 002075129500008606402021
-	QUnit.test("The initial 'iconAlt' property value could be overridden", async function(assert) {
+	QUnit.test("The initial 'iconAlt' property value could be overridden", function(assert){
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 				icon : "non existing path/icon.png",
@@ -933,7 +933,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("aria-labelledby contains title reference", async function(assert) {
+	QUnit.test("aria-labelledby contains title reference", function(assert){
 		// Arrange
 		var sId = "OHID",
 			oObjectHeader = new ObjectHeader(sId, {
@@ -956,7 +956,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Presence of ariaLabelledBy references", async function(assert) {
+	QUnit.test("Presence of ariaLabelledBy references", function (assert) {
 		var oLabel = new Label("label", { text: "Label" }),
 			oOH = new ObjectHeader("objectHeader", { title: "Title", titleActive: true, ariaLabelledBy: "label" });
 
@@ -975,7 +975,7 @@ sap.ui.define([
 
 	QUnit.module("Exiting");
 
-	QUnit.test("TestIconExit", async function(assert) {
+	QUnit.test("TestIconExit", function(assert) {
 		var iconOH = new ObjectHeader("iconOH", {
 			icon : IconPool.getIconURI("pdf-attachment"),
 			intro : "On behalf of John Smith",
@@ -1005,7 +1005,7 @@ sap.ui.define([
 		assert.notOk(Element.getElementById("iconOH-favorite"), "Favorite icon is not found in UI5 Core");
 	});
 
-	QUnit.test("TestImageExit", async function(assert) {
+	QUnit.test("TestImageExit", function(assert) {
 		var imageOH = new ObjectHeader("imageOH", {
 			icon : "../images/action.png",
 			iconTooltip: "test tooltip",
@@ -1025,7 +1025,7 @@ sap.ui.define([
 		assert.notOk(Element.getElementById("imageOH"), "Image is removed from UI5 Core");
 	});
 
-	QUnit.test("Title selector icon size", async function(assert) {
+	QUnit.test("Title selector icon size", function(assert) {
 		// arrange
 		var oObjectHeader = new ObjectHeader({
 			showTitleSelector: true,
@@ -1051,7 +1051,7 @@ sap.ui.define([
 
 	QUnit.module("AdditionalNumbers aggregations rendering");
 
-	QUnit.test("additionalNumbers should be rendered", async function(assert) {
+	QUnit.test("additionalNumbers should be rendered", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1075,7 +1075,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if no aggregation is set", async function(assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if no aggregation is set", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers",
@@ -1095,7 +1095,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if the condensed property is set to true", async function(assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if the condensed property is set to true", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1120,7 +1120,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumbers shouldn't be rendered if the responsive property is set to true", async function(assert) {
+	QUnit.test("additionalNumbers shouldn't be rendered if the responsive property is set to true", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1145,7 +1145,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("additionalNumber should be rendered after insertAdditionalNumber", async function(assert) {
+	QUnit.test("additionalNumber should be rendered after insertAdditionalNumber", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1165,7 +1165,7 @@ sap.ui.define([
 		assert.ok(oAdditionalNum.length, "One additional number is rendered.");
 	});
 
-	QUnit.test("additionalNumber should be removed: removeAdditionalNumber", async function(assert) {
+	QUnit.test("additionalNumber should be removed: removeAdditionalNumber", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1192,7 +1192,7 @@ sap.ui.define([
 		assert.ok(!oAdditionalNum.length, "The additional number is removed.");
 	});
 
-	QUnit.test("additionalNumber should be removed: removeAllAdditionalNumbers", async function(assert) {
+	QUnit.test("additionalNumber should be removed: removeAllAdditionalNumbers", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1224,7 +1224,7 @@ sap.ui.define([
 		assert.ok(!oAdditionalNum.length, "All additional numbers are removed.");
 	});
 
-	QUnit.test("removeAllAdditionalNumbers when no additional numbers at all", async function(assert) {
+	QUnit.test("removeAllAdditionalNumbers when no additional numbers at all", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "Test numbers"
@@ -1242,7 +1242,7 @@ sap.ui.define([
 		assert.ok(!oAdditionalNum.length, "No error is raised when executing removeAllAttributes");
 	});
 
-	QUnit.test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", async function(assert) {
+	QUnit.test("AdditionalNumbers should be destroyed: destroyAdditionalNumbers", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1274,7 +1274,7 @@ sap.ui.define([
 		assert.ok(!oAdditionalNum.length, "All additional numbers are destroyed.");
 	});
 
-	QUnit.test("Separator should be rendered when there is one additionalNumber", async function(assert) {
+	QUnit.test("Separator should be rendered when there is one additionalNumber", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1298,7 +1298,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Separator shouldn't be rendered when there is more than one additionalNumber", async function(assert) {
+	QUnit.test("Separator shouldn't be rendered when there is more than one additionalNumber", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			title: "test additional numbers",
@@ -1330,7 +1330,7 @@ sap.ui.define([
 
 	QUnit.module("Contrast container in Belize");
 
-	QUnit.test("Contrast container should be set when Background is not transparent", async function(assert) {
+	QUnit.test("Contrast container should be set when Background is not transparent", function (assert) {
 		// Arrange
 		var oObjectHeader = new ObjectHeader({
 			id: "contrastId",
@@ -1349,7 +1349,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Contrast container should not be set when Background transparent", async function(assert) {
+	QUnit.test("Contrast container should not be set when Background transparent", function (assert) {
 		// Arrange
 		// Create non responsive ObjectHeader which has Transparent background by default
 		var oObjectHeader = new ObjectHeader({
@@ -1368,7 +1368,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Contrast container should be set when Background is changed from transparent to solid", async function(assert) {
+	QUnit.test("Contrast container should be set when Background is changed from transparent to solid", function (assert) {
 		// Arrange
 		// Create non responsive ObjectHeader which has Transparent background by default
 		var oObjectHeader = new ObjectHeader({
@@ -1395,7 +1395,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering Markers aggregation");
 
-	QUnit.test("Render Draft and Unsaved", async function(assert) {
+	QUnit.test("Render Draft and Unsaved", function(assert) {
 		var oObjectHeader = new ObjectHeader({
 			id: "markersOH",
 			title : "Markers agregation",
@@ -1417,7 +1417,7 @@ sap.ui.define([
 		oObjectHeader.destroy();
 	});
 
-	QUnit.test("Test _hasMarkers function", async function(assert) {
+	QUnit.test("Test _hasMarkers function", function(assert) {
 
 		var oObjectHeader = new ObjectHeader({
 			title : "Markers agregation",

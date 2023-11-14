@@ -258,7 +258,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("Custom tabs", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this.oVSD = new ViewSettingsDialog();
 			this.oVSD.placeAt("qunit-fixture");
 			oCore.applyChanges();

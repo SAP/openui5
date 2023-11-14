@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("API", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
@@ -23,7 +23,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the lists", async function(assert) {
+	QUnit.test("Call to setLocaleId sets right AM and PM values and regenerates the lists", function (assert) {
 		var sExpectedAM = "AM",
 			sExpectedPM = "PM",
 			sLocale = "de_DE",
@@ -42,7 +42,7 @@ sap.ui.define([
 		oSetupListsSpy.restore();
 	});
 
-	QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the lists", async function(assert) {
+	QUnit.test("Call to setDisplayFormat sets displayFormat and regenerates the lists", function (assert) {
 		var sDisplayFormat = "medium",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 			oSetupListsSpy = this.spy(this.oTPS, "_setupLists");
@@ -57,7 +57,7 @@ sap.ui.define([
 		oSetupListsSpy.restore();
 	});
 
-	QUnit.test("Call to setLabelText sets the label", async function(assert) {
+	QUnit.test("Call to setLabelText sets the label", function (assert) {
 		var sLabelText = "text",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
@@ -67,7 +67,7 @@ sap.ui.define([
 		assert.equal(oSetPropertySpy.calledWithExactly("labelText", sLabelText), true, "setProperty is called with right arguments");
 	});
 
-	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the lists", async function(assert) {
+	QUnit.test("Call to setMinutesStep sets minutesStep and regenerates the lists", function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 			oSetupListsSpy = this.spy(this.oTPS, "_setupLists"),
 			iStep = 23;
@@ -82,7 +82,7 @@ sap.ui.define([
 		oSetupListsSpy.restore();
 	});
 
-	QUnit.test("Call to setMinutesStep corrects value 0 to 1", async function(assert) {
+	QUnit.test("Call to setMinutesStep corrects value 0 to 1", function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 			iStep = 0,
 			iExpectedStep = 1;
@@ -96,7 +96,7 @@ sap.ui.define([
 		oSetPropertySpy.restore();
 	});
 
-	QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the lists", async function(assert) {
+	QUnit.test("Call to setSecondsStep sets secondsStep and regenerates the lists", function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 				oSetupListsSpy = this.spy(this.oTPS, "_setupLists"),
 				iStep = 23;
@@ -111,7 +111,7 @@ sap.ui.define([
 		oSetupListsSpy.restore();
 	});
 
-	QUnit.test("Call to setSecondsStep corrects value 0 to 1", async function(assert) {
+	QUnit.test("Call to setSecondsStep corrects value 0 to 1", function(assert) {
 		var oSetPropertySpy = this.spy(this.oTPS, "setProperty"),
 				iStep = 0,
 				iExpectedStep = 1;
@@ -125,7 +125,7 @@ sap.ui.define([
 		oSetPropertySpy.restore();
 	});
 
-	QUnit.test("Call to setWidth sets the width", async function(assert) {
+	QUnit.test("Call to setWidth sets the width", function (assert) {
 		var sWidth = "500px",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
@@ -136,7 +136,7 @@ sap.ui.define([
 		assert.equal(this.oTPS.$().outerWidth() + "px", sWidth, "width is properly set");
 	});
 
-	QUnit.test("Call to setHeight sets the height", async function(assert) {
+	QUnit.test("Call to setHeight sets the height", function (assert) {
 		var sHeight = "500px",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
@@ -147,7 +147,7 @@ sap.ui.define([
 		assert.equal(this.oTPS.$().outerHeight() + "px", sHeight, "height is properly set");
 	});
 
-	QUnit.test("Call to setValue sets the value", async function(assert) {
+	QUnit.test("Call to setValue sets the value", function (assert) {
 		var sValue = "15:16:17",
 			oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
@@ -159,7 +159,7 @@ sap.ui.define([
 		oSetPropertySpy.restore();
 	});
 
-	QUnit.test("Call to setValue calls the _setTimeValues", async function(assert) {
+	QUnit.test("Call to setValue calls the _setTimeValues", function (assert) {
 		var sValue = "15:16:17",
 			sExpectedDate = UI5Date.getInstance(2017, 11, 17, 15, 16, 17), // year, month, day, hours, minutes, seconds
 			oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
@@ -174,7 +174,7 @@ sap.ui.define([
 		oSetTimeValuesSpy.restore();
 	});
 
-	QUnit.test("Call to setValue with '24:00:00' sets the value", async function(assert) {
+	QUnit.test("Call to setValue with '24:00:00' sets the value", function (assert) {
 		var sValue = "24:00:00",
 				oSetPropertySpy = this.spy(this.oTPS, "setProperty");
 
@@ -187,7 +187,7 @@ sap.ui.define([
 		oSetPropertySpy.restore();
 	});
 
-	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", async function(assert) {
+	QUnit.test("Call to setValue with value '24:00:00' calls the _setTimeValues", function (assert) {
 		var sValue = "24:00:00",
 				sExpectedDate = UI5Date.getInstance(2017, 11, 17, 0, 0, 0), // year, month, day, hours, minutes, seconds
 				oSetTimeValuesSpy = this.spy(this.oTPS, "_setTimeValues"),
@@ -203,7 +203,7 @@ sap.ui.define([
 		oSetTimeValuesSpy.restore();
 	});
 
-	QUnit.test("Call to collapseAll should close all sliders", async function(assert) {
+	QUnit.test("Call to collapseAll should close all sliders", function (assert) {
 		var aSliders = this.oTPS.getAggregation("_columns");
 		aSliders[0].setIsExpanded(true);
 
@@ -216,7 +216,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
@@ -228,7 +228,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Change event is fired when slider is collapsed", async function(assert) {
+	QUnit.test("Change event is fired when slider is collapsed", function (assert) {
 		var sEventParam,
 			sExpectedValue = "13:14:15",
 			fnChangeEventSpy = sinon.spy(function (oEvent) {
@@ -249,7 +249,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Internals", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");
@@ -749,7 +749,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oTPS = new TimePickerSliders();
 
 			this.oTPS.placeAt("qunit-fixture");

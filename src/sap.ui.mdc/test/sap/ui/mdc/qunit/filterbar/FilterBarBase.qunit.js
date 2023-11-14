@@ -797,7 +797,7 @@ sap.ui.define([
 
     });
 
-    QUnit.test("check reason information", async function(assert) {
+    QUnit.test("check reason information", function(assert){
 
         const done = assert.async(3);
 
@@ -837,7 +837,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
         //GO
-		oSubmittedPromise.then(async function() {
+		oSubmittedPromise.then(function() {
 	        this.oFilterBarBase.onSearch();
 			sap.ui.getCore().applyChanges();
 		}.bind(this));

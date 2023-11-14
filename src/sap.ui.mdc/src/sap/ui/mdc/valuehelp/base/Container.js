@@ -177,7 +177,12 @@ sap.ui.define([
 						/**
 						 * ID of the suggested item (This is needed to set the corresponding ARIA attribute)
 						 */
-						itemId: { type: "string" }
+						itemId: { type: "string" },
+						/**
+						 * If <code>true</code> the filtering was executed case sensitive
+						 * since 1.121.0
+						 */
+						caseSensitive: { type: "boolean" }
 					}
 				}
 			}

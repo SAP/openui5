@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/mdc/table/RowSettings",
 	"sap/ui/mdc/table/RowActionItem",
-	"sap/ui/mdc/enums/TableRowAction"
-], function(Core, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction) {
+	"sap/ui/mdc/enums/TableRowAction",
+	"sap/ui/model/type/Boolean"
+], function(Core, XMLView, JSONModel, RowSettings, RowActionItem, TableRowAction, Boolean) {
 	'use strict';
 
 	function formatNavigated(sDescription) {
@@ -50,7 +51,7 @@ sap.ui.define([
 						+ ' \'collectionName\': \'items\' \} \}"><type><mdcTable:' + sType + '/></type>' + sSettings + '<columns><mdcTable:Column'
 						+ ' id="myTable--column0" header="column 0" propertyKey="column0"><m:Text text="{description}" id="myTable--text0"'
 						+ ' /></mdcTable:Column></columns></Table></mvc:View>'
-		}).then(async function(oView) {
+		}).then(function(oView) {
 			oView.setModel(oModel);
 			oView.placeAt("qunit-fixture");
 			Core.applyChanges();
@@ -176,7 +177,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId("myTable");
 
 			return that.oTable.initialized();
-		}).then(async function() {
+		}).then(function() {
 			// One RowActionItem
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
@@ -300,7 +301,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(async function() {
+		}).then(function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
@@ -346,7 +347,7 @@ sap.ui.define([
 			that.oTable = that.oView.byId('myTable');
 
 			return that.oTable.initialized();
-		}).then(async function() {
+		}).then(function() {
 			// Check default values for settings
 			assert.equal(that.oTable._oTable.getItems().length, 2, "The table contains 2 rows");
 			assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");
@@ -388,7 +389,7 @@ sap.ui.define([
 			oFireRowPressSpy = sinon.spy(that.oTable, "fireRowPress");
 
 			return that.oTable.initialized();
-		}).then(async function() {
+		}).then(function() {
 			let oRowSettings = new RowSettings({
 				rowActions: [new RowActionItem({type: "Navigation"})]
 			});

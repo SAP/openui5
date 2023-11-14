@@ -41,7 +41,7 @@ sap.ui.define([
 	});
 
     QUnit.module("S4 home Tiles", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			var oModel = new JSONModel({
 				attributes: [
 					{
@@ -152,7 +152,7 @@ sap.ui.define([
 		assert.equal(this.oSituation.getDomRef().getAttribute("aria-label"),this.oSituation._getAriaText(),"Aria-Label has been rendered Successfully");
 	});
 
-	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", async function(assert) {
+	QUnit.test("Tooltip,aria-label generation on tasks cards when there are less than four attributes", function(assert) {
 		//Arrange
 		var oNewModel = new JSONModel({
 			attributes: [
@@ -177,7 +177,7 @@ sap.ui.define([
 		assert.equal(sAriaLabel,this.oToDo._getAriaText(),"Aria-label successfully generated");
 	});
 
-	QUnit.test("Setting the width through property", async function(assert) {
+	QUnit.test("Setting the width through property", function(assert) {
 		//Arrange
 		this.oToDo.setWidth("25rem");
 		oCore.applyChanges();
@@ -185,14 +185,14 @@ sap.ui.define([
 		assert.equal(getComputedStyle(this.oToDo.getDomRef()).width,"400px","Width set correctly");
 	});
 
-	QUnit.test("Setting pressEnabled property", async function(assert) {
+	QUnit.test("Setting pressEnabled property", function(assert) {
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMPointer"),"Hand icon would be visible");
 		this.oToDo.setPressEnabled(false);
 		oCore.applyChanges();
 		assert.ok(this.oToDo.getDomRef().classList.contains("sapMATAutoPointer"),"Hand icon won't be visible");
 	});
 
-	QUnit.test("Setting enableNavigationButton property", async function(assert) {
+	QUnit.test("Setting enableNavigationButton property", function(assert) {
 		//Assert
 		assert.notOk(this.oToDo.getEnableNavigationButton(),"By default enableActionButton property has been set to false");
 		assert.ok(this.oToDo.hasStyleClass("sapMATHideActionButton"),"Style class has been added sucessfully");

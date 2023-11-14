@@ -33,7 +33,7 @@ sap.ui.define([
 	createAndAppendDiv("content");
 
 
-	QUnit.test("Should render ObjectNumber with unit", async function(assert) {
+	QUnit.test("Should render ObjectNumber with unit", function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -58,7 +58,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("Should not render unit element when Unit is empty", async function(assert) {
+	QUnit.test("Should not render unit element when Unit is empty", function(assert) {
 		// Arrange
 		var oObjectNumber = new ObjectNumber("onUnit", {
 			number: 256
@@ -80,7 +80,7 @@ sap.ui.define([
 		oObjectNumber.destroy();
 	});
 
-	QUnit.test("Non-emphasized ObjectNumber", async function(assert) {
+	QUnit.test("Non-emphasized ObjectNumber", function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -106,7 +106,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("ValueState of ObjectNumber", async function(assert) {
+	QUnit.test("ValueState of ObjectNumber", function(assert) {
 		//Arrange
 		var sNumber = "5",
 			sUnit = "Euro",
@@ -147,7 +147,7 @@ sap.ui.define([
 		sut.destroy();
 	});
 
-	QUnit.test("RTL ObjectNumber", async function(assert) {
+	QUnit.test("RTL ObjectNumber", function(assert) {
 		//Arrange
 		var on4 = new ObjectNumber("on4", {
 			number: "1.50",
@@ -220,7 +220,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Screen reader support", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oON = new ObjectNumber("ON", {
 				number: 256,
 				unit: "EUR",
@@ -255,7 +255,7 @@ sap.ui.define([
 			"Control's name is added in aria-roledescription");
 	});
 
-	QUnit.test("Active ObjectNumber", async function(assert) {
+	QUnit.test("Active ObjectNumber", function (assert) {
 		var oLabel = new Label("label", {
 				text: "Label",
 				labelFor: "ON"
@@ -274,7 +274,7 @@ sap.ui.define([
 		oLabel.destroy();
 	});
 
-	QUnit.test("ObjectNumber with state (different than 'None')", async function(assert) {
+	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
 		var sErrorText = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
 			oStateElement;
 
@@ -288,7 +288,7 @@ sap.ui.define([
 		assert.strictEqual(oStateElement.innerHTML, sErrorText, "Control has mapped the correct state text");
 	});
 
-	QUnit.test("ObjectNumber's Emphasized information", async function(assert) {
+	QUnit.test("ObjectNumber's Emphasized information", function (assert) {
 		var sEmphasizedText = Library.getResourceBundleFor("sap.m").getText("OBJECTNUMBER_EMPHASIZED"),
 			oEmphasizedInfoElement;
 
@@ -308,7 +308,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("ObjectNumber with ariaDescribedBy association", async function(assert) {
+	QUnit.test("ObjectNumber with ariaDescribedBy association", function (assert) {
 		var oDescription = new Text({ text: "Description" }),
 			sAriaDescribedByReferences;
 
@@ -335,7 +335,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oObjectNumber = new ObjectNumber({
 				emptyIndicatorMode: EmptyIndicatorMode.On
 			});
@@ -377,7 +377,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
 		//Arrange
 		this.oObjectNumber.setNumber(12);
 		Core.applyChanges();
@@ -386,7 +386,7 @@ sap.ui.define([
 		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
 		//Arrange
 		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		Core.applyChanges();
@@ -403,7 +403,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
 		//Arrange
 		this.oObjectNumberEmptyAuto.setNumber(12);
 		Core.applyChanges();
@@ -412,7 +412,7 @@ sap.ui.define([
 		assert.strictEqual(this.oObjectNumberEmptyAuto.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a number", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a number", function(assert) {
 		//Arrange
 		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oObjectNumber.setNumber(12);

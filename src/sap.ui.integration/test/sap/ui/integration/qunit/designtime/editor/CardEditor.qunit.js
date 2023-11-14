@@ -683,7 +683,7 @@ sap.ui.define([
 							var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("_field").getAggregation("content")[1];
 							oField1._settingsButton.focus();
 							var oMultiComboBox = oField1.getAggregation("_field");
-							EditorQunitUtils.wait().then(async function() {
+							EditorQunitUtils.wait().then(function () {
 								oMultiComboBox.focus();
 								// sometimes the focus in not in the test browser, need to call the onfocusin function hardly to set the message strip
 								oField1.onfocusin();

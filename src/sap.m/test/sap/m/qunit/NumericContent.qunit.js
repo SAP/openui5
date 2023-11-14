@@ -39,7 +39,7 @@ sap.ui.define([
 	Mobile.init();
 
 	QUnit.module("Rendering test - sap.m.NumericContent", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -49,13 +49,13 @@ sap.ui.define([
 			this.oNumericContent = null;
 		}
 	});
-	QUnit.test("Numeric Content rendered.", async function(assert) {
+	QUnit.test("Numeric Content rendered.", function (assert) {
 		this.oNumericContent.setValue("12");
 		oCore.applyChanges();
 		fnAssertNumericContentHasRendered(assert);
 	});
 
-	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", async function(assert) {
+	QUnit.test("Numeric Content rendered with correct value and scale when formatterValue is set to true.", function (assert) {
 		var value = '12.2';
 		var scale = '%';
 
@@ -74,7 +74,7 @@ sap.ui.define([
 		assert.strictEqual(document.getElementById("numeric-cnt-scale").innerText, scale, "Scale is rendered correctly");
 	});
 
-	QUnit.test("Numeric Content - Render Placeholder loading animation", async function(assert) {
+	QUnit.test("Numeric Content - Render Placeholder loading animation", function (assert) {
 		//Switch to Loading State
 		this.oNumericContent.setState(LoadState.Loading);
 		oCore.applyChanges();
@@ -86,7 +86,7 @@ sap.ui.define([
 		assert.equal(document.querySelector(".sapMNCLoadingShimmer"), null, "Loading Shimmer absent on 'Loaded' state");
 	});
 
-	QUnit.test("Numeric Content - State test", async function(assert) {
+	QUnit.test("Numeric Content - State test", function (assert) {
 		this.oNumericContent.setValue(200);
 
 		//Switch to Loading State
@@ -150,7 +150,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.Table");
 
-	QUnit.test("Numeric content inside sap.m.Table", async function(assert) {
+	QUnit.test("Numeric content inside sap.m.Table", function(assert) {
 		var oModel = new JSONModel();
 				oModel.setData({
 					numbers: [
@@ -198,7 +198,7 @@ sap.ui.define([
 
 	QUnit.module("Rendering test - sap.m.NumericContent inside sap.m.GenericTile");
 
-	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", async function(assert) {
+	QUnit.test("Numeric Content inside sap.m.GenericTile rendered.", function (assert) {
 		// Arrange
 		this.oNumericContent = fnCreateExampleNumericContent();
 		this.oGenericTile = new GenericTile("generic-tile", {
@@ -223,7 +223,7 @@ sap.ui.define([
 		this.oNumericContent = null;
 	});
 
-	QUnit.test("Resize handler is registered in init phase.", async function(assert) {
+	QUnit.test("Resize handler is registered in init phase.", function (assert) {
 		// Arrange
 		var oSpyRegister = sinon.spy(ResizeHandler, "register");
 		var oSpyDeregister = sinon.spy(ResizeHandler, "deregister");
@@ -249,7 +249,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Functional tests - sap.m.NumericContent", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -260,7 +260,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test formatter value processing", async function(assert) {
+	QUnit.test("Test formatter value processing", function (assert) {
 		this.oNumericContent.setFormatterValue(false);
 		this.oNumericContent.setValue("68Mio.");
 		oCore.applyChanges();
@@ -279,7 +279,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.getDomRef("scale"), null, "Scale cleaned successfully with formatter switched on");
 	});
 
-	QUnit.test("Test processing of formatter value with RTL and LTR mark", async function(assert) {
+	QUnit.test("Test processing of formatter value with RTL and LTR mark", function (assert) {
 		this.oNumericContent.setFormatterValue(true);
 		var sFormattedValue = String.fromCharCode(8206) + String.fromCharCode(8207) + "58,7 Mio";
 		this.oNumericContent.setValue(sFormattedValue);
@@ -289,7 +289,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.getDomRef("scale").textContent, "Mio", "Scale was rendered successfully with formatter switched on");
 	});
 
-	QUnit.test("Test nullify parameter", async function(assert) {
+	QUnit.test("Test nullify parameter", function (assert) {
 		assert.strictEqual(this.oNumericContent.getDomRef("value-inner").textContent, "0", "Value was nullified successfully");
 		this.oNumericContent.setNullifyValue(false);
 		oCore.applyChanges();
@@ -318,7 +318,7 @@ sap.ui.define([
 		assert.notDeepEqual(sTooltip, "Test, test", "Tooltip is not a string");
 	});
 
-	QUnit.test("Tests tooltip to check if it includes value color text", async function(assert) {
+	QUnit.test("Tests tooltip to check if it includes value color text", function (assert) {
 		//Arrange
 		var sTooltip = this.oNumericContent.getTooltip_AsString();
 		//Act
@@ -421,7 +421,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Property withoutMargin", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = new NumericContent({
 				scale: "Mrd",
 				indicator: DeviationIndicator.Up,
@@ -439,7 +439,7 @@ sap.ui.define([
 		assert.ok(this.oNumericContent.getWithMargin(), "Default value shall be 'false'.");
 	});
 
-	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", async function(assert) {
+	QUnit.test("CSS Class needs to be added if withoutMargin is set to true", function (assert) {
 		assert.ok(!this.oNumericContent.$().hasClass("WithoutMargin"));
 		this.oNumericContent.setWithMargin(false);
 		oCore.applyChanges();
@@ -451,7 +451,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Events test", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = fnCreateExampleNumericContent();
 			this.oNumericContent.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -505,7 +505,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.$().hasClass("sapMPointer"), false, "Class has been removed successfully");
 	});
 	QUnit.module("Negative values", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "−859,65 t.",
@@ -528,7 +528,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Adaptive font size", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				indicator: DeviationIndicator.Up,
 				value: "12345678",
@@ -563,7 +563,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - small", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - small", function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "de";
@@ -588,7 +588,7 @@ sap.ui.define([
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - medium", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - medium", function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "es";
@@ -607,7 +607,7 @@ sap.ui.define([
 		Localization.setLanguage(sDefaultLanguage);
 	});
 
-	QUnit.test("Test the adaptive font size change based on language - large", async function(assert) {
+	QUnit.test("Test the adaptive font size change based on language - large", function (assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage(),
 			sNewLanguage = "bg";
@@ -639,7 +639,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Truncate value to", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oNumericContent = new NumericContent("numeric-cnt", {
 				value: "12345678123456781234567812345678",
 				animateTextChange: false
@@ -652,7 +652,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test custom truncateValueTo property", async function(assert) {
+	QUnit.test("Test custom truncateValueTo property", function(assert) {
 		// Arrange
 		this.oNumericContent.setTruncateValueTo(1);
 		oCore.applyChanges();
@@ -668,7 +668,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 20, "Value is truncated to 20 chars");
 	});
 
-	QUnit.test("Test default value when adaptiveFontSize=false", async function(assert) {
+	QUnit.test("Test default value when adaptiveFontSize=false", function(assert) {
 		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		oCore.applyChanges();
@@ -677,7 +677,7 @@ sap.ui.define([
 		assert.strictEqual(this.oNumericContent.$("value-inner").html().length, 4, "Value is truncated to 4 chars");
 	});
 
-	QUnit.test("Test default value for specific language", async function(assert) {
+	QUnit.test("Test default value for specific language", function(assert) {
 		// Arrange
 		var sDefaultLanguage = Localization.getLanguage();
 		Localization.setLanguage("de");

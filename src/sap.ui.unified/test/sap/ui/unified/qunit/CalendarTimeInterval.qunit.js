@@ -72,7 +72,7 @@ sap.ui.define([
 	oNow.setMinutes(0); // to compare with interval starts
 
 	QUnit.module("Rendering", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal1 = new CalendarTimeInterval("Cal1").placeAt("qunit-fixture");
 			this.oCal2 = new CalendarTimeInterval("Cal2",{
 				width: "1500px",
@@ -139,7 +139,7 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal2--Head-B2").text(), "2015", "Calendar2: year 2015 shown");
 	});
 
-	QUnit.test("Header in Japaneese", async function(assert) {
+	QUnit.test("Header in Japaneese", function(assert) {
 		var sCurrentLanguage = Localization.getLanguage();
 		Localization.setLanguage("ja_JP");
 
@@ -161,7 +161,7 @@ sap.ui.define([
 		Localization.setLanguage(sCurrentLanguage);
 	});
 
-	QUnit.test("Header in Chinese", async function(assert) {
+	QUnit.test("Header in Chinese", function(assert) {
 		var sCurrentLanguage = Localization.getLanguage();
 		Localization.setLanguage("zh_CN");
 
@@ -183,7 +183,7 @@ sap.ui.define([
 		Localization.setLanguage(sCurrentLanguage);
 	});
 
-	QUnit.test("Japaneese language none case sensitive test", async function(assert) {
+	QUnit.test("Japaneese language none case sensitive test", function(assert) {
 		var sCurrentLanguage = Localization.getLanguage();
 		Localization.setLanguage("JA");
 
@@ -263,7 +263,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("change date via API", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal1 = new CalendarTimeInterval("Cal1",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange
@@ -288,7 +288,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("setStartDate", async function(assert) {
+	QUnit.test("setStartDate", function(assert) {
 		this.oCal1.setStartDate(UI5Date.getInstance("2015", "2", "10", "10", "10"));
 		oCore.applyChanges();
 		var $TimesRow = Element.getElementById("Cal1").getAggregation("timesRow").$();
@@ -300,7 +300,7 @@ sap.ui.define([
 		assert.equal(jQuery("#Cal1--Head-B2").text(), "2015", "Calendar1: year 2015 shown");
 	});
 
-	QUnit.test("focusDate", async function(assert) {
+	QUnit.test("focusDate", function(assert) {
 		this.oCal2.focusDate(UI5Date.getInstance("2015", "7", "13", "10", "10"));
 		var oStartDate = this.oCal2.getStartDate();
 		oCore.applyChanges();
@@ -324,7 +324,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("change time via navigation", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal2 = new CalendarTimeInterval("Cal2",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
@@ -344,7 +344,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("next/prev items", async function(assert) {
+	QUnit.test("next/prev items", function(assert) {
 		bStartDateChanged = false;
 		var aItems = this.oCal2.$().find("#Cal2--TimesRow-201504111000");
 		aItems[0].focus();
@@ -370,7 +370,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("After Rerendering, last focused hour is still focused", async function(assert) {
+	QUnit.test("After Rerendering, last focused hour is still focused", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval();
 		oCalendarTimeInt.placeAt("qunit-fixture");
@@ -389,7 +389,7 @@ sap.ui.define([
 		oCalendarTimeInt.destroy();
 	});
 
-	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", async function(assert) {
+	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval(),
 			oExternalControl = new CalendarTimeInterval("extControl"),
@@ -417,7 +417,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Day Picker", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal1 = new CalendarTimeInterval("Cal1",{
 				startDate: UI5Date.getInstance("2015", "2", "10", "10", "10", "00"),
 				select: handleSelect,
@@ -443,7 +443,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("displayed days", async function(assert) {
+	QUnit.test("displayed days", function(assert) {
 		assert.ok(!jQuery("#Cal1--DatesRow").get(0), "Calendar1: Day picker not initial rendered");
 		qutils.triggerEvent("click", "Cal1--Head-B0");
 		oCore.applyChanges();
@@ -470,7 +470,7 @@ sap.ui.define([
 		assert.ok(jQuery(aDays[9]).hasClass("sapUiCalItemSel"), "Calendar2: 11. displayed day is selected");
 	});
 
-	QUnit.test("change block", async function(assert) {
+	QUnit.test("change block", function(assert) {
 		qutils.triggerEvent("click", "Cal1--Head-B0");
 		oCore.applyChanges();
 		assert.ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button disabled");
@@ -485,7 +485,7 @@ sap.ui.define([
 		assert.equal(jQuery(aDays[14]).attr("tabindex"), "0", "Calendar1: 14. displayed day is focused");
 	});
 
-	QUnit.test("select day", async function(assert) {
+	QUnit.test("select day", function(assert) {
 		qutils.triggerEvent("click", "Cal2--Head-B0");
 		oCore.applyChanges();
 		bStartDateChanged = false;
@@ -500,7 +500,7 @@ sap.ui.define([
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 	});
 
-	QUnit.test("Selecting a date from previous month", async function(assert) {
+	QUnit.test("Selecting a date from previous month", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval("CTI", {
 				startDate: UI5Date.getInstance("2018", "10", "01"),
@@ -522,7 +522,7 @@ sap.ui.define([
 		oCalendarTimeInt.destroy();
 	});
 
-	QUnit.test("Selecting a date from next month", async function(assert) {
+	QUnit.test("Selecting a date from next month", function(assert) {
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval("CTI", {
 				startDate: UI5Date.getInstance("2018", "00", "31"),
@@ -545,7 +545,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Month Picker", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
 				startDate: UI5Date.getInstance("2015", "2", "10", "10", "57", "10"),
 				select: handleSelect,
@@ -571,7 +571,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("displayed months", async function(assert) {
+	QUnit.test("displayed months", function(assert) {
 		this.oCal.setStartDate(UI5Date.getInstance("2015", "2", "10", "10", "10"));
 		oCore.applyChanges();
 		assert.ok(!jQuery("#Cal1--MP").get(0), "Calendar1: Month picker not initial rendered");
@@ -600,7 +600,7 @@ sap.ui.define([
 		assert.notOk(jQuery(aMonths[2]).hasClass("sapUiCalItemSel"), "Calendar2: 4. displayed month is not selected");
 	});
 
-	QUnit.test("change block", async function(assert) {
+	QUnit.test("change block", function(assert) {
 		qutils.triggerEvent("click", "Cal1--Head-B1");
 		oCore.applyChanges();
 		assert.ok(jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Calendar1: previous button disabled");
@@ -622,7 +622,7 @@ sap.ui.define([
 		assert.equal(jQuery(aMonths[2]).attr("tabindex"), "0", "Calendar1: 3. displayed month is focused");
 	});
 
-	QUnit.test("select month", async function(assert) {
+	QUnit.test("select month", function(assert) {
 		qutils.triggerEvent("click", "Cal2--Head-B1");
 		oCore.applyChanges();
 		bStartDateChanged = false;
@@ -656,7 +656,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("YearPicker", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
 				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				select: handleSelect,
@@ -683,7 +683,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("displayed years", async function(assert) {
+	QUnit.test("displayed years", function(assert) {
 		assert.ok(!jQuery("#Cal1--YP").get(0), "Calendar1: Year picker not initial rendered");
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		oCore.applyChanges();
@@ -710,7 +710,7 @@ sap.ui.define([
 		assert.ok(jQuery(aYears[6]).hasClass("sapUiCalItemSel"), "Calendar2: 7. displayed year is selected");
 	});
 
-	QUnit.test("change block", async function(assert) {
+	QUnit.test("change block", function(assert) {
 		qutils.triggerEvent("click", "Cal1--Head-B2");
 		oCore.applyChanges();
 		qutils.triggerEvent("click", "Cal1--Head-prev");
@@ -730,7 +730,7 @@ sap.ui.define([
 		assert.equal(jQuery(aYears[6]).attr("tabindex"), "0", "Calendar2: 7. displayed year is focused");
 	});
 
-	QUnit.test("select year", async function(assert) {
+	QUnit.test("select year", function(assert) {
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal2--Head-B2");
 		oCore.applyChanges();
@@ -748,7 +748,7 @@ sap.ui.define([
 
 
 	QUnit.module("other", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal2 = new CalendarTimeInterval("Cal2",{
 				select: handleSelect,
 				startDateChange: handleStartDateChange,
@@ -768,7 +768,7 @@ sap.ui.define([
 			this.oCal2.destroy();
 		}
 	});
-	QUnit.test("Min/Max", async function(assert) {
+	QUnit.test("Min/Max", function(assert) {
 		this.oCal2.setStartDate(UI5Date.getInstance(9999, 11, 29));
 		assert.ok(!jQuery("#Cal2--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
 		assert.ok(!jQuery("#Cal2--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
@@ -800,7 +800,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("select time", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCal = new CalendarTimeInterval("Cal1",{
 				startDate: UI5Date.getInstance("2015", "2", "10", "8", "57", "10"),
 				select: handleSelect,
@@ -839,7 +839,7 @@ sap.ui.define([
 			this.oCal3.destroy();
 		}
 	});
-	QUnit.test("single selection", async function(assert) {
+	QUnit.test("single selection", function(assert) {
 		var $selectItem1 = jQuery("#Cal1--TimesRow-201503101300");
 		bSelectFired = false;
 		oSelectedStartDate = undefined;
@@ -866,7 +866,7 @@ sap.ui.define([
 		assert.ok(!$selectItem1.hasClass("sapUiCalItemSel"), "Old item not longer marked as selected");
 	});
 
-	QUnit.test("interval selection", async function(assert) {
+	QUnit.test("interval selection", function(assert) {
 		var $selectItem1 = jQuery("#Cal2--TimesRow-202202041200");
 		var $selectItem2 = jQuery("#Cal2--TimesRow-202202041400");
 		var $selectItem3 = jQuery("#Cal2--TimesRow-202202041600");
@@ -943,7 +943,7 @@ sap.ui.define([
 		// not needed to check classes of new selected items as it is the same like before
 	});
 
-	QUnit.test("multiple selection", async function(assert) {
+	QUnit.test("multiple selection", function(assert) {
 		var $selectItem1 = jQuery("#Cal3--TimesRow-201508130800");
 		var $selectItem2 = jQuery("#Cal3--TimesRow-201508130900");
 		bSelectFired = false;
@@ -1000,7 +1000,7 @@ sap.ui.define([
 
 
 	QUnit.module("Calendar Picker");
-	QUnit.test("Chosen date from the date picker is set as start date of the underying view", async function(assert) {
+	QUnit.test("Chosen date from the date picker is set as start date of the underying view", function(assert) {
 		// arrange
 		var $Date,
 			oCalP = new CalendarTimeInterval("CalP",{
@@ -1032,7 +1032,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("fireStartDateChange", async function(assert) {
+	QUnit.test("fireStartDateChange", function(assert) {
 		// arrange
 		var $Date, oCalStartDate,
 			oSpyFireDateChange = this.spy(CalendarTimeInterval.prototype, "fireStartDateChange"),
@@ -1082,7 +1082,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", async function(assert) {
+	QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
 		// arrange
 		var oSpyCancel = this.spy(CalendarTimeInterval.prototype, "fireCancel");
 		var oCalP = new CalendarTimeInterval("CalP",{
@@ -1131,7 +1131,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", async function(assert) {
+	QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker", function(assert) {
 		// arrange
 		var oCalPicker,
 			oCalP = new CalendarTimeInterval("CalP",{
@@ -1176,7 +1176,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Triggering button receives the focus on picker ESC", async function(assert) {
+	QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
 		// arrange
 		var oCalP = new CalendarTimeInterval("CalP",{
 			pickerPopup: true
@@ -1197,7 +1197,7 @@ sap.ui.define([
 		oCalP.destroy();
 	});
 
-	QUnit.test("Content overlay is shown when picker is open", async function(assert) {
+	QUnit.test("Content overlay is shown when picker is open", function(assert) {
 		// arrange
 		var oCalP = new CalendarTimeInterval("CalP",{
 			pickerPopup: true

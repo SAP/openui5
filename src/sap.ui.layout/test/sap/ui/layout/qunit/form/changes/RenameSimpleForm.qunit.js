@@ -31,7 +31,7 @@ sap.ui.define([
 	var SimpleFormLayout = layoutLibrary.form.SimpleFormLayout;
 
 	QUnit.module("using sap.ui.layout.changeHandler.RenameSimpleForm with a new change format", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.sNewValue = "new label";
 
 			this.oTitle0 = new Title({id : "component---Title0",  text : "Title 0"});

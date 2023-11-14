@@ -15,7 +15,7 @@ sap.ui.define([
 	var URLHelper = mlibrary.URLHelper;
 
 	QUnit.module("Initial Test deprecated properties", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -69,7 +69,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deprecated properties with setter", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
 				enableEdit : true,
@@ -107,7 +107,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Deprecated properties with pre-filled aggregation", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
@@ -190,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Test getter for all attributes", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
@@ -224,7 +224,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadCollectionItem selected", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				attributes : [ new ObjectAttribute({
 					active : false,
@@ -252,7 +252,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UploadCollectionItem with markers", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				markers : [ new ObjectMarker({
 					type : "Locked",
@@ -278,7 +278,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Download method - XMLHttpRequest", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",
@@ -360,7 +360,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Download Methods", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oUploadCollectionItem = new undefined/*UploadCollectionItem*/({
 				contributor : "Susan Baker",
 				documentId : "64469d2f-b3c4-a517-20d6-f91ebf85b9da",

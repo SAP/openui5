@@ -30,7 +30,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("#fireDnD - different DropInfo and DragInfo properties", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oGrid = new GridContainer({
 				items: [
 					this.oDraggedControl = new Text({ text: "item1" }),
@@ -162,7 +162,7 @@ sap.ui.define([
 
 	QUnit.module("#fireDnD between 2 containers");
 
-	QUnit.test("#fireDnD when the drag and drop containers are different", async function(assert) {
+	QUnit.test("#fireDnD when the drag and drop containers are different", function (assert) {
 		// Arrange
 		var oDropSpy1 = this.spy(),
 			oDropSpy2 = this.spy(),
@@ -219,7 +219,7 @@ sap.ui.define([
 		oDropContainer.destroy();
 	});
 
-	QUnit.test("#fireDnD when the drop container doesn't allow dropping", async function(assert) {
+	QUnit.test("#fireDnD when the drop container doesn't allow dropping", function (assert) {
 		// Arrange
 		var oSpy = this.spy(),
 			oDraggedControl = new Text({ text: "item1" }),
@@ -274,7 +274,7 @@ sap.ui.define([
 		oDropContainer.destroy();
 	});
 
-	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", async function(assert) {
+	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
 
 		// Arrange
 		var oDropSpy1 = this.spy(),
@@ -332,7 +332,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("#fireDnD - preventDefault on different events", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oGrid = new GridContainer({
 				items: [
 					this.oDraggedControl = new Text({ text: "item1" }),
@@ -415,7 +415,7 @@ sap.ui.define([
 
 	QUnit.module("#fireDnD between multiple containers with different 'groupName'");
 
-	QUnit.test("#fireDnD skips drop containers with different 'groupName'", async function(assert) {
+	QUnit.test("#fireDnD skips drop containers with different 'groupName'", function (assert) {
 		// Arrange
 		var oDropSpy1 = this.spy(),
 			oDropSpy2 = this.spy(),

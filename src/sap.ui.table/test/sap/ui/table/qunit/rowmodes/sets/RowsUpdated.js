@@ -101,7 +101,7 @@ sap.ui.define([
 	QUnit.test("Re-render without binding", function(assert) {
 		this.createTable({rows: ""});
 
-		return this.oTable.qunit.whenRenderingFinished().then(async () => {
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
 			Core.applyChanges();
@@ -115,7 +115,7 @@ sap.ui.define([
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
 			return TableQUnitUtils.hideTestContainer();
-		}).then(async () => {
+		}).then(() => {
 			this.oTable.invalidate();
 			Core.applyChanges();
 			return this.checkRowsUpdated(assert, []);
@@ -130,7 +130,7 @@ sap.ui.define([
 	QUnit.test("Re-render with binding", function(assert) {
 		this.createTable();
 
-		return this.oTable.qunit.whenRenderingFinished().then(async () => {
+		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
 			this.oTable.invalidate();
 			Core.applyChanges();
@@ -146,7 +146,7 @@ sap.ui.define([
 		return this.oTable.qunit.whenRenderingFinished().then(() => {
 			this.resetRowsUpdatedSpy();
 			return TableQUnitUtils.hideTestContainer();
-		}).then(async () => {
+		}).then(() => {
 			this.oTable.invalidate();
 			Core.applyChanges();
 			return this.checkRowsUpdated(assert, [

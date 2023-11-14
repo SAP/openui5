@@ -84,7 +84,7 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(async function() {
+			return oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -117,7 +117,7 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(async function() {
+			return oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.ok(
 					oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -147,7 +147,7 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(async function() {
+			return oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then priority is over config object");
 			});
@@ -161,7 +161,7 @@ sap.ui.define([
 			this.oBaseEditor.addContent(oPropertyEditors);
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return oPropertyEditors.ready().then(async function() {
+			return oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				var oOldContent = oPropertyEditors.getContent();
 				oPropertyEditors.setLayout("form");
@@ -175,7 +175,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Initialisation via setters", {
-		beforeEach: async function(assert) {
+		beforeEach: function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -196,7 +196,7 @@ sap.ui.define([
 		QUnit.test("when tags parameter is set", function (assert) {
 			this.oPropertyEditors.setTags("foo");
 
-			return this.oPropertyEditors.ready().then(async function() {
+			return this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -276,7 +276,7 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			return this.oPropertyEditors.ready().then(async function() {
+			return this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.ok(
 					this.oPropertyEditors.getDomRef() instanceof HTMLElement
@@ -332,7 +332,7 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			this.oPropertyEditors.ready().then(async function() {
+			this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 
@@ -422,7 +422,7 @@ sap.ui.define([
 		QUnit.test("when tags parameter is set, then config is set", function (assert) {
 			this.oPropertyEditors.setTags("foo");
 
-			return this.oPropertyEditors.ready().then(async function() {
+			return this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "foo1 value", "then internal property editor has a correct value");
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[1].getValue(), "foo2 value", "then internal property editor has a correct value");
@@ -449,7 +449,7 @@ sap.ui.define([
 				"type": "string"
 			}]);
 
-			this.oPropertyEditors.ready().then(async function() {
+			this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
@@ -477,7 +477,7 @@ sap.ui.define([
 			}]);
 			this.oPropertyEditors.setTags("foo");
 
-			this.oPropertyEditors.ready().then(async function() {
+			this.oPropertyEditors.ready().then(function () {
 				oCore.applyChanges();
 				assert.strictEqual(this.oPropertyEditors._getPropertyEditors()[0].getValue(), "baz value", "then internal property editor has a correct value");
 
@@ -821,7 +821,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("PropertyEditor is not descendant of BaseEditor initially", {
-		beforeEach: async function(assert) {
+		beforeEach: function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -909,7 +909,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Destroy", {
-		beforeEach: async function(assert) {
+		beforeEach: function (assert) {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -1053,7 +1053,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Ready handling", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oBaseEditor = new BaseEditor({
 				config: mConfig,
 				json: mJson
@@ -1068,7 +1068,7 @@ sap.ui.define([
 			}
 		}
 	}, function () {
-		QUnit.test("When a PropertyEditors wrapper is created", async function(assert) {
+		QUnit.test("When a PropertyEditors wrapper is created", function (assert) {
 			var fnDone = assert.async();
 
 			var fnRegisterWrapper = function (oEvent) {
@@ -1087,7 +1087,7 @@ sap.ui.define([
 			oCore.applyChanges();
 		});
 
-		QUnit.test("When a PropertyEditors wrapper has no nested editors", async function(assert) {
+		QUnit.test("When a PropertyEditors wrapper has no nested editors", function (assert) {
 			this.oPropertyEditors = new PropertyEditors({
 				config: []
 			});
@@ -1115,7 +1115,7 @@ sap.ui.define([
 				]
 			});
 
-			return this.oBaseEditor.ready().then(async function() {
+			return this.oBaseEditor.ready().then(function() {
 				this.oBaseEditor.addContent(this.oPropertyEditors);
 				oCore.applyChanges();
 
@@ -1188,7 +1188,7 @@ sap.ui.define([
 				layout: 'form'
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
-			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(async function(aPropertyEditors) {
+			return this.oBaseEditor.getPropertyEditorsByTag("foo").then(function (aPropertyEditors) {
 				oCore.applyChanges();
 				this.oFoo1LayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[0];
 				this.oFooTagLayoutGroup = this.oBaseEditor.getContent()[0].getContent().getFormContainers()[1];

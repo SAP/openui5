@@ -399,7 +399,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("no aria-labelledby attr. '-inner' in cell when columnHeaderVisible=false", async function(assert) {
+	QUnit.test("no aria-labelledby attr. '-inner' in cell when columnHeaderVisible=false", function(assert) {
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var oColumn;
 		var $Cell;
@@ -430,7 +430,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("ACCInfo", async function(assert) {
+	QUnit.test("ACCInfo", function(assert) {
 		var done = assert.async();
 		var $Cell;
 
@@ -544,7 +544,7 @@ sap.ui.define([
 		var done = assert.async();
 		initRowActions(oTable, 1, 1);
 
-		fakeGroupRow(1).then(async function(oRefs) {
+		fakeGroupRow(1).then(function(oRefs) {
 			assert.strictEqual(oRefs.row.attr("aria-expanded"), "true", "aria-expanded set on group row");
 			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on group row");
 			assert.strictEqual(oRefs.fixed.attr("aria-expanded"), "true", "aria-expanded set on group row (fixed)");
@@ -594,7 +594,7 @@ sap.ui.define([
 		initRowActions(oTable, 1, 1);
 		TableUtils.Grouping.setToDefaultGroupMode(oTable);
 
-		return fakeSumRow(1).then(async function(oRefs) {
+		return fakeSumRow(1).then(function(oRefs) {
 			oRowDomRefs = oRefs;
 
 			assert.strictEqual(oRefs.row.attr("aria-level"), "1", "aria-level set on sum row");
@@ -643,7 +643,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Other ARIA Attributes of Data Cell", async function(assert) {
+	QUnit.test("Other ARIA attributes of data cell", function(assert) {
 		var $Elem = oTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -788,7 +788,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("required state of multi column header with Focus", async function(assert) {
+	QUnit.test("required state of multi column header with Focus", function(assert) {
 		var $Cell;
 		var sTableId = oTable.getId();
 		var oCell = oTable._getVisibleColumns()[1].getDomRef();
@@ -805,7 +805,7 @@ sap.ui.define([
 		assert.ok($Cell.attr("aria-labelledby").includes(sTableId + "-ariarequired"), "aria-required");
 	});
 
-	QUnit.test("aria-haspopup", async function(assert) {
+	QUnit.test("aria-haspopup", function(assert) {
 		var oColumn = oTable.getColumns()[0];
 		var oHeaderMenu = new TableQUnitUtils.ColumnHeaderMenu();
 
@@ -822,7 +822,7 @@ sap.ui.define([
 		oHeaderMenu.destroy();
 	});
 
-	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
+	QUnit.test("Other ARIA attributes of column header", function(assert) {
 		var oDomRef = oTable.getColumns()[0].getDomRef();
 
 		assert.strictEqual(oDomRef.getAttribute("role"), "columnheader", "role");
@@ -979,7 +979,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Group Header Row (TreeTable)", async function(assert) {
+	QUnit.test("Group Header Row (TreeTable)", function(assert) {
 		var that = this;
 		var done = assert.async();
 		var $Cell;
@@ -1039,7 +1039,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Other ARIA Attributes", async function(assert) {
+	QUnit.test("Other ARIA attributes", function(assert) {
 		var $Elem;
 
 		$Elem = oTable.$("rowsel0");
@@ -1058,58 +1058,32 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	function testTitleAndSelectorText(assert, sSelectionMode, sSelectionBehavior, iFixedColumnCount, bSelected) {
+	function testSelectorText(assert, sSelectionMode, sSelectionBehavior, bSelected) {
 		var oRow = oTable.getRows()[0];
-		var $Ref = oRow.getDomRefs(true);
-		var $Cell = getRowHeader(0);
 		var $RowSelectorTextRef = oRow.$("rowselecttext");
 
 		if (sSelectionMode === "None") {
-			assert.ok(!$Cell[0].hasAttribute("title"), "The row header has no title because SelectionMode is \"None\"");
-			assert.ok(!$Ref.rowScrollPart[0].hasAttribute("title"), "The scrollable part of the row has no title because SelectionMode is \"None\"");
-			assert.ok(!$Ref.rowActionPart[0].hasAttribute("title"), "The action part of the row has no title because SelectionMode is \"None\"");
 			assert.equal($RowSelectorTextRef.text(), "-", "The row header doesn't have row selector text because SelectionMode is \"None\"");
 		} else {
-			var sTitle = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT") : TableUtils.getResourceText("TBL_ROW_SELECT");
-			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") :
-				TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
-			var sText = bSelected ? "deselects" : "selects";
+			var sRowSelectorText = bSelected ? TableUtils.getResourceText("TBL_ROW_DESELECT_KEY") : TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 
-			assert.equal($Cell[0].title, sTitle,
-				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-				", The row header has a title saying that clicking " + sText + " the row");
-			if (sSelectionBehavior === "Row") {
-				assert.equal($Ref.rowScrollPart[0].title, sTitle, "selectionBehavior = Row, fixedColumnCount = " + iFixedColumnCount +
-				", The scrollable part of the row has a title saying that clicking " + sText + " the row");
-
-				if (iFixedColumnCount === "1") {
-					assert.equal($Ref.rowFixedPart[0].title, sTitle,
-						"selectionBehavior = Row, fixedColumnCount = 1, The fixed part of the row has a title saying that clicking deselects the row");
-				}
-
-				assert.equal($Ref.rowActionPart[0].title, sTitle,
-					"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-					", The action part of the row has a title saying that clicking " + sText + " the row");
-			}
 			assert.ok($RowSelectorTextRef.html().indexOf(sRowSelectorText) > -1,
-				"selectionBehavior = " + sSelectionBehavior + ", fixedColumnCount = " + iFixedColumnCount +
-				" The row header has a row selector text saying that pressing SPACE " + sText + " the row");
+				`selectionBehavior = ${sSelectionBehavior} - 
+				The row header has a row selector text saying that pressing SPACE ${bSelected ? "deselects" : "selects"} the row`);
 		}
 	}
 
-	QUnit.test("Title and selector text", function(assert) {
+	QUnit.test("Selector text", function(assert) {
 		var oRow = oTable.getRows()[0];
 		var $Cell = getRowHeader(0);
 		var $RowSelectorTextRef = oRow.$("rowselecttext");
-		initRowActions(oTable, 1, 1);
-		initRowActions(oTreeTable, 1, 1);
 
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("rowsUpdated", resolve);
-		}).then(async function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, true);
+		}).then(function() {
+			testSelectorText(assert, "MultiToggle", "RowSelector", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "RowSelector", 1, false);
+			testSelectorText(assert, "MultiToggle", "RowSelector", false);
 
 			oTable.setSelectionBehavior("Row");
 			oCore.applyChanges();
@@ -1118,22 +1092,10 @@ sap.ui.define([
 				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
 				oTable.setSelectedIndex(0);
 			});
-		}).then(async function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, true);
+		}).then(function() {
+			testSelectorText(assert, "MultiToggle", "Row", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 1, false);
-
-			oTable.setFixedColumnCount(0, false);
-			oCore.applyChanges();
-
-			return new Promise(function(resolve) {
-				oTable._getSelectionPlugin().attachEventOnce("selectionChange", resolve);
-				oTable.setSelectedIndex(0);
-			});
-		}).then(async function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, true);
-			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
+			testSelectorText(assert, "MultiToggle", "Row", false);
 
 			oTable.setSelectionMode(SelectionMode.Single);
 			oCore.applyChanges();
@@ -1142,10 +1104,10 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 				oTable.setSelectedIndex(0);
 			});
-		}).then(async function() {
-			testTitleAndSelectorText(assert, "Single", "Row", 0, true);
+		}).then(function() {
+			testSelectorText(assert, "Single", "Row", true);
 			oTable.clearSelection();
-			testTitleAndSelectorText(assert, "Single", "Row", 0, false);
+			testSelectorText(assert, "Single", "Row", false);
 
 			oTable.setSelectionMode(SelectionMode.None);
 			oCore.applyChanges();
@@ -1153,8 +1115,8 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
-		}).then(async function() {
-			testTitleAndSelectorText(assert, "None");
+		}).then(function() {
+			testSelectorText(assert, "None");
 
 			oTable.setSelectionMode(SelectionMode.MultiToggle);
 			oCore.applyChanges();
@@ -1163,7 +1125,7 @@ sap.ui.define([
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
-			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
+			testSelectorText(assert, "MultiToggle", "Row", false);
 			oTable.getModel().setData([]);
 
 			return new Promise(function(resolve) {
@@ -1342,7 +1304,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Other ARIA Attributes", function(assert) {
+	QUnit.test("Other ARIA attributes", function(assert) {
 		var $Elem;
 
 		$Elem = oTable.$("rowact0");
@@ -1353,7 +1315,7 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	QUnit.test("Group Header Row (TreeTable)", async function(assert) {
+	QUnit.test("Group Header Row (TreeTable)", function(assert) {
 		var that = this;
 		var done = assert.async();
 		var $Cell;
@@ -1409,7 +1371,7 @@ sap.ui.define([
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby with Focus (Single Selection)", async function(assert) {
+	QUnit.test("aria-labelledby with Focus (Single Selection)", function(assert) {
 		oTable.setSelectionMode(SelectionMode.Single);
 		oCore.applyChanges();
 
@@ -1446,7 +1408,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Other ARIA Attributes SelectAll", async function(assert) {
+	QUnit.test("Other ARIA attributes of select all cell", function(assert) {
 		var $Elem = getSelectAll(false);
 		assert.strictEqual($Elem.attr("role"), "checkbox", "role");
 		assert.strictEqual($Elem.attr("aria-checked"), "false", "aria-checked");
@@ -1460,7 +1422,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Misc", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 			oTable.addExtension(new TestControl({text: "Extension"}));
@@ -1480,7 +1442,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("ARIA Attributes of Tree Table Expand Icon", async function(assert) {
+	QUnit.test("ARIA attributes of TreeTable expand icon", function(assert) {
 		var done = assert.async();
 		var $Elem;
 
@@ -1508,16 +1470,15 @@ sap.ui.define([
 		oCore.applyChanges();
 	});
 
-	QUnit.test("ARIA Attributes of Table Elements", function(assert) {
+	QUnit.test("ARIA attributes of table elements", function(assert) {
 		var $Elem = oTable.$().find("table");
 		$Elem.each(function() {
 			assert.strictEqual(jQuery(this).attr("role"), "presentation", "role");
 		});
 	});
 
-	QUnit.test("ARIA Attributes of Content Element", async function(assert) {
+	QUnit.test("ARIA attributes of content element", function(assert) {
 		var $Elem = oTable.$("sapUiTableGridCnt");
-		var done = assert.async();
 
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
@@ -1529,60 +1490,52 @@ sap.ui.define([
 		oCore.applyChanges();
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy().join(" "), "aria-labelledby");
 
-		oTable.attachEventOnce("rowsUpdated", function() {
-			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
+		oTable.getBinding().filter(new Filter("A", FilterOperator.EQ, "A1"));
+		assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
-			oTable.setRowActionTemplate(new RowAction());
-			oTable.setRowActionCount(1);
-			oCore.applyChanges();
+		oTable.setRowActionTemplate(new RowAction());
+		oTable.setRowActionCount(1);
+		oCore.applyChanges();
+		assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 
-			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
-			oTable.removeAllAriaLabelledBy();
-			oCore.applyChanges();
-			assert.notOk($Elem.attr("aria-labelledby"), "aria-labelledby when ariaLabelledBy association is empty array");
-			done();
-		});
-
-		var oBinding = oTable.getBinding();
-		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
-		oBinding.filter(oFilter);
+		oTable.removeAllAriaLabelledBy();
+		oCore.applyChanges();
+		assert.notOk($Elem.attr("aria-labelledby"), "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
-	QUnit.test("ARIA Attributes of Content Element (TreeTable)", function(assert) {
+	QUnit.test("ARIA attributes of content element (TreeTable)", function(assert) {
 		var $Elem = oTreeTable.$("sapUiTableGridCnt");
-		var done = assert.async();
 
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.strictEqual($Elem.attr("aria-rowcount"), "9", "aria-rowcount");
 		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 
-		oTable.attachEventOnce("rowsUpdated", function() {
-			assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
+		oTreeTable.getBinding().filter(new Filter("A", FilterOperator.EQ, "A1"));
+		assert.strictEqual($Elem.attr("aria-rowcount"), "4", "aria-rowcount after filter is applied");
 
-			oTreeTable.setRowActionTemplate(new RowAction());
-			oTreeTable.setRowActionCount(1);
-			oCore.applyChanges();
-
-			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
-
-			var oAnalyticalTable = new AnalyticalTable();
-			oAnalyticalTable.placeAt("qunit-fixture");
-			oCore.applyChanges();
-			$Elem = oAnalyticalTable.$("sapUiTableGridCnt");
-			assert.strictEqual($Elem.attr("aria-roledescription"), TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION"),
-				"aria-roledescription");
-			oAnalyticalTable.destroy();
-			oAnalyticalTable = null;
-			done();
-		});
-
-		var oBinding = oTreeTable.getBinding();
-		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
-		oBinding.filter(oFilter);
+		oTreeTable.setRowActionTemplate(new RowAction());
+		oTreeTable.setRowActionCount(1);
+		oCore.applyChanges();
+		assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 	});
 
-	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
+	QUnit.test("ARIA attributes of content element (AnalyticalTable)", function(assert) {
+		var oAnalyticalTable = new AnalyticalTable();
+
+		oAnalyticalTable.placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		assert.strictEqual(
+			oAnalyticalTable.$("sapUiTableGridCnt").attr("aria-roledescription"),
+			TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION"),
+			"aria-roledescription"
+		);
+
+		oAnalyticalTable.destroy();
+	});
+
+	QUnit.test("ARIA attributes of TH elements", function(assert) {
 		var oDomRef = oTable.getDomRef("tableCCnt");
 
 		var aThs = oDomRef.querySelectorAll("th[id]");
@@ -1596,7 +1549,7 @@ sap.ui.define([
 		assert.strictEqual(oDomRef.querySelector("th:not([id])").getAttribute("role"), "presentation", "role");
 	});
 
-	QUnit.test("ARIA Attributes of TR Elements", async function(assert) {
+	QUnit.test("ARIA attributes of TR elements", function(assert) {
 		initRowActions(oTable, 1, 1);
 		oCore.applyChanges();
 
@@ -1619,7 +1572,7 @@ sap.ui.define([
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	QUnit.test("ARIA Role of Dummy Elements", function(assert) {
+	QUnit.test("ARIA Role of dummy elements", function(assert) {
 		var $Elem = oTable.$("focusDummy");
 		assert.strictEqual($Elem.attr("role"), "none", "role");
 		$Elem = oTable.$().find(".sapUiTableCtrlBefore").first();
@@ -1649,7 +1602,7 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(3);
 	});
 
-	QUnit.test("Row index and count", async function(assert) {
+	QUnit.test("Row index and count", function(assert) {
 		var oAriaCount = oTable.getDomRef("ariacount");
 		var oNumberOfRows = oTable.getDomRef("rownumberofrows");
 		var oNumberOfColumns = oTable.getDomRef("colnumberofcols");
@@ -1687,7 +1640,7 @@ sap.ui.define([
 		assert.equal(oNumberOfColumns.textContent.trim(), "", "Data cell in row 1 column 1: colnumberofcols");
 	});
 
-	QUnit.test("ARIA colindices", async function(assert) {
+	QUnit.test("ARIA colindices", function(assert) {
 		var iNumberOfColumns = oTable._getVisibleColumns().length;
 		var $Elem, i;
 
@@ -1708,7 +1661,7 @@ sap.ui.define([
 			"" + (iNumberOfColumns + 2), "column " + i + ": aria-colindex of the row action");
 	});
 
-	QUnit.test("ARIA current", async function(assert) {
+	QUnit.test("ARIA current", function(assert) {
 		var done = assert.async();
 		var iNumberOfRows = oTable.getRows().length;
 		var $Elem, i;
@@ -1750,7 +1703,7 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(1);
 	});
 
-	QUnit.test("ARIA for Overlay", async function(assert) {
+	QUnit.test("ARIA for Overlay", function(assert) {
 		var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		var sTableId = oTable.getId();
 
@@ -1860,7 +1813,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("HiddenText cellacc", async function(assert) {
+	QUnit.test("HiddenText cellacc", function(assert) {
 		var oCol1 = oTable.getColumns()[0];
 		var $Cell = getCell(1, 1, true, null, oTable);
 
@@ -1888,7 +1841,7 @@ sap.ui.define([
 			"TreeTable: HiddenText cellacc is properly set after the first column is grouped");
 	});
 
-	QUnit.test("Highlight texts", async function(assert) {
+	QUnit.test("Highlight texts", function(assert) {
 		oTable.getRowMode().setRowCount(1);
 		oCore.applyChanges();
 
@@ -2004,14 +1957,7 @@ sap.ui.define([
 		}, iDelay + 50);
 	});
 
-	QUnit.test("_debug()", function(assert) {
-		var oExtension = oTable._getAccExtension();
-		assert.ok(!oExtension._ExtensionHelper, "No debug mode");
-		oExtension._debug();
-		assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
-	});
-
-	QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", async function(assert) {
+	QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		oExtension._debug();
 		oTable.getColumns()[1].setVisible(false);
@@ -2040,7 +1986,7 @@ sap.ui.define([
 		assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), -1, "COLUMNROWHEADER");
 	});
 
-	QUnit.test("ExtensionHelper.getRelevantColumnHeaders", async function(assert) {
+	QUnit.test("ExtensionHelper.getRelevantColumnHeaders", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		oExtension._debug();
 		var oHelper = oExtension._ExtensionHelper;
@@ -2090,50 +2036,6 @@ sap.ui.define([
 		checkColumnHeaders(oTable, oCol, []);
 	});
 
-	QUnit.test("Hidden Standard Tooltips", async function(assert) {
-
-		function checkTooltips(bEnable, sSelectionBehavior, sSelectionMode, iExpected) {
-			oTable._setHideStandardTooltips(!bEnable);
-			oTable.setSelectionBehavior(sSelectionBehavior);
-			oTable.setSelectionMode(sSelectionMode);
-			oCore.applyChanges();
-			assert.equal(oTable.$().find("[title]").length, iExpected,
-				"Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
-		}
-
-		var aColumns = oTable.getColumns();
-		for (var i = 0; i < aColumns.length; i++) {
-			aColumns[i].setTooltip(null);
-		}
-		initRowActions(oTable, 1, 1);
-		oCore.applyChanges();
-
-		var iRows = oTable.getRows().length;
-		var iRowElements = iRows * 4; // Row areas: header, fixed, scrollable, action
-		var iRowSelectors = iRows;
-		var iActionItems = iRows; // The icons have tooltips.
-
-		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRowElements + iRowSelectors + iActionItems);
-		checkTooltips(true, "Row", "Single", iRowElements + iRowSelectors + iActionItems);
-		checkTooltips(true, "Row", "None", iActionItems);
-		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRowElements + iActionItems);
-		checkTooltips(true, "RowOnly", "Single", iRowElements + iActionItems);
-		checkTooltips(true, "RowOnly", "None", iActionItems);
-		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRowSelectors + iActionItems);
-		checkTooltips(true, "RowSelector", "Single", iRowSelectors + iActionItems);
-		checkTooltips(true, "RowSelector", "None", iActionItems);
-
-		checkTooltips(false, "Row", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "Row", "Single", iActionItems);
-		checkTooltips(false, "Row", "None", iActionItems);
-		checkTooltips(false, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "RowOnly", "Single", iActionItems);
-		checkTooltips(false, "RowOnly", "None", iActionItems);
-		checkTooltips(false, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iActionItems);
-		checkTooltips(false, "RowSelector", "Single", iActionItems);
-		checkTooltips(false, "RowSelector", "None", iActionItems);
-	});
-
 	QUnit.module("No Acc Mode", {
 		beforeEach: function() {
 			createTables();
@@ -2144,7 +2046,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("No Acc Mode", async function(assert) {
+	QUnit.test("No Acc Mode", function(assert) {
 		oTable._getAccExtension()._accMode = false;
 		var oConfigStub = sinon.stub(ControlBehavior, "isAccessibilityEnabled");
 		oConfigStub.returns(false);

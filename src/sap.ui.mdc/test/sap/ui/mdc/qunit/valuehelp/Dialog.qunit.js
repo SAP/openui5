@@ -245,7 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("assigned to ValueHelp", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			oType = new StringType();
 			oAdditionalType = new StringType();
 

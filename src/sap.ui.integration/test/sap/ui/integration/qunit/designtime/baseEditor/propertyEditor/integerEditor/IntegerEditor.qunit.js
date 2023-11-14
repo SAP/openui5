@@ -41,7 +41,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleInteger").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleInteger").then(function (aPropertyEditor) {
 				this.oIntegerEditor = aPropertyEditor[0];
 				oCore.applyChanges();
 				this.oIntegerEditorElement = this.oIntegerEditor.getContent();

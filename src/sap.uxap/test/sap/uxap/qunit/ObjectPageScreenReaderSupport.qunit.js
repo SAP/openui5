@@ -28,7 +28,7 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 			XMLView.create({
 				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageView = oView;
 				this.objectPageView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -156,7 +156,7 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 		assert.equal(oFooter.$().attr("aria-labelledby"), $InvisibleTextDomRef.attr('id'), "ObjectPageLayout Footer aria-labelledby points to the invisible text control");
 	});
 
-	QUnit.test('Invisible Text gets removed when footer aggregation is destroyed', async function(assert) {
+	QUnit.test('Invisible Text gets removed when footer aggregation is destroyed', function (assert) {
 		// Arrange
 		var oPage = this.oObjectPage,
 			oFooter = oPage.getFooter();
@@ -177,7 +177,7 @@ function (Core, ObjectPageLayout, ObjectPageSection, XMLView, $) {
 			XMLView.create({
 				id: "UxAP-71_ObjectPageScreenReaderSupport",
 				viewName: "view.UxAP-71_ObjectPageScreenReaderSupport"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.objectPageView = oView;
 				this.objectPageView.placeAt("qunit-fixture");
 				Core.applyChanges();

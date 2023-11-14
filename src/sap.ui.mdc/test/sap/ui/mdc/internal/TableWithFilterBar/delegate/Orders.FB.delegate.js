@@ -63,7 +63,7 @@ sap.ui.define([
 				});
 			}
 
-			DelegateCache.add(oFilterBar, {
+			DelegateCache.add(oFilterBar.originalNode || oFilterBar, {
 				"OrderNo": {valueHelp: "FH1"},
 				"currency_code": {valueHelp: "FH-Currency", display: FieldDisplay.Value, operators: [OperatorName.EQ]},
 				"ID": {valueHelp: "VH-ID", display: FieldDisplay.ValueDescription, operators: [OperatorName.EQ], additionalDataType: {name: "sap.ui.model.odata.type.String", constraints: {maxLength: 10, isDigitSequence: true}}}

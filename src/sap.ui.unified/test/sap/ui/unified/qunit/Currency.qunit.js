@@ -20,7 +20,7 @@ sap.ui.define([
 	var oRb = Library.getResourceBundleFor("sap.m");
 
 	QUnit.module("Control API", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			//Currency with default values
 			this.sut = new Currency();
 			this.sut.placeAt("qunit-fixture");
@@ -77,7 +77,7 @@ sap.ui.define([
 		assert.strictEqual(this.sut.getUseSymbol(), false, "UseSymbol setter is correct");
 	});
 
-	QUnit.test("Test properly currency formatting", async function(assert) {
+	QUnit.test("Test properly currency formatting", function (assert) {
 		//act
 		this.sut.setValue(45012.91);
 		this.sut.setCurrency("EUR");
@@ -107,7 +107,7 @@ sap.ui.define([
 		assert.strictEqual(this.fnGetRenderedValue(), "45,013\u2008\u2007\u2007", "Format number with 2 decimals in JPY");
 	});
 
-	QUnit.test("MaxPrecision changes the rendered value", async function(assert) {
+	QUnit.test("MaxPrecision changes the rendered value", function (assert) {
 		//arrange
 		this.sut.setCurrency("USD");
 		this.sut.setValue(55.21);
@@ -125,7 +125,7 @@ sap.ui.define([
 		assert.strictEqual(this.fnGetRenderedValue(), "55.2", "New maxPrecision value subtracted the value with one");
 	});
 
-	QUnit.test("Special * currency", async function(assert) {
+	QUnit.test("Special * currency", function (assert) {
 		//arrange
 		this.sut.setCurrency("*");
 		this.sut.setValue(123.23);
@@ -246,7 +246,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Data binding", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oData = {
 				currencyCollection: [{
 					value: 0.215,
@@ -307,7 +307,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Control live update", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this.sandbox = sinon.sandbox;
 			this.oCurrency = new Currency({
 				value: 120,
@@ -350,7 +350,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrencyRenderer.render.callCount, 0, "Currency renderer should not be called");
 	});
 
-	QUnit.test("Special * currency case - Both methods should be called when changing currency to something different then *", async function(assert) {
+	QUnit.test("Special * currency case - Both methods should be called when changing currency to something different then *", function (assert) {
 		// Arrange
 		this.oCurrency.setCurrency("*");
 		this.oCurrency.setValue(120);
@@ -379,7 +379,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrency._renderCurrency.callCount, 1, "Internal method should be called once");
 	});
 
-	QUnit.test("Live switch between currency's with different decimal values", async function(assert) {
+	QUnit.test("Live switch between currency's with different decimal values", function (assert) {
 		var $Value = this.oCurrency.$().find(".sapUiUfdCurrencyValue");
 
 		// Arrange
@@ -424,7 +424,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Currency '*' special case", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oData = {
 				currencyCollection: [{
 					value: 20,
@@ -469,7 +469,7 @@ sap.ui.define([
 
 	QUnit.module("Currency value text direction");
 
-	QUnit.test("Currency value dir in LTR", async function(assert) {
+	QUnit.test("Currency value dir in LTR", function(assert) {
 		var dirText,
 			oCurrency = new Currency({id: "cDir", value: 100, currency: "EUR"});
 
@@ -482,7 +482,7 @@ sap.ui.define([
 		oCurrency.destroy();
 	});
 
-	QUnit.test("Currency value dir in RTL", async function(assert) {
+	QUnit.test("Currency value dir in RTL", function(assert) {
 		var dirText,
 			oCurrency = new Currency({id: "cDir", value: 100, currency: "EUR"}),
 			bRTL = Localization.getRTL();
@@ -502,7 +502,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("EmptyIndicator", {
-		beforeEach : async function() {
+		beforeEach : function() {
 			this.oCurrency = new Currency({
 				emptyIndicatorMode: EmptyIndicatorMode.On
 			});
@@ -545,7 +545,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is not empty", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
 		//Arrange
 		this.oCurrency.setValue(12);
 		this.oCurrency.setCurrency("EUR");
@@ -555,7 +555,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrencyWithValue.getDomRef().childNodes[0].firstChild.textContent, "12.00", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
 		//Arrange
 		this.oCurrency.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		Core.applyChanges();
@@ -572,7 +572,7 @@ sap.ui.define([
 		assert.strictEqual(oSpan.lastChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
 	});
 
-	QUnit.test("Indicator should not be rendered when text is available", async function(assert) {
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
 		//Arrange
 		this.oCurrencyEmptyAuto.setValue(12);
 		this.oCurrencyEmptyAuto.setCurrency("EUR");
@@ -583,7 +583,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrencyEmptyAuto.getDomRef().childNodes[0].firstChild.textContent, "12.00", "Empty indicator is not rendered");
 	});
 
-	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", async function(assert) {
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
 		//Arrange
 		this.oCurrency.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oCurrency.setValue(12);

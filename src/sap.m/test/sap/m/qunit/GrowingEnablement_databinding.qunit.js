@@ -104,7 +104,7 @@ sap.ui.define([
 
 	// Tests
 
-	QUnit.test("GrowingList rendered", async function(assert) {
+	QUnit.test("GrowingList rendered", function(assert) {
 		gl.addEventDelegate({
 			onAfterRendering: function(){
 				assert.ok("Complete rendering happened");
@@ -159,7 +159,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("New Data", async function(assert) {
+	QUnit.test("New Data", function(assert) {
 		assert.expect(7);
 		model.setData(data2);
 		oCore.applyChanges();
@@ -173,7 +173,7 @@ sap.ui.define([
 		assert.equal(info(2).text, "B", "Third item should be titled 'Adelheid'");
 	});
 
-	QUnit.test("Group/Ungroup", async function(assert) {
+	QUnit.test("Group/Ungroup", function(assert) {
 		var oBinding = gl.getBinding("items");
 		oBinding.sort(new Sorter("", false, function(oContext){
 			return oContext.getProperty("name").charAt(0);
@@ -205,7 +205,7 @@ sap.ui.define([
 				}
 			});
 		},
-		beforeEach: async function() {
+		beforeEach: function() {
 			this.oModel = new ODataV4Model({
 				serviceUrl: "/MyService/",
 				operationMode: "Server"

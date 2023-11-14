@@ -10,7 +10,7 @@ sap.ui.define([
 
 	QUnit.module("Initialise");
 
-	QUnit.test("scroll position initialisation", async function(assert) {
+	QUnit.test("scroll position initialisation", function(assert) {
 		// Arrange
 		var oSB = new ScrollBar({contentSize: "2000px", scrollPosition: 100});
 		oSB.placeAt(TESTS_DOM_CONTAINER);
@@ -26,7 +26,7 @@ sap.ui.define([
 
 
 	QUnit.module("API", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oSB = new ScrollBar();
 			this.oSB.placeAt(TESTS_DOM_CONTAINER);
 			oCore.applyChanges();
@@ -110,7 +110,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Event handler", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oSB = new ScrollBar();
 			this.oSB.placeAt(TESTS_DOM_CONTAINER);
 			oCore.applyChanges();
@@ -121,7 +121,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Scroll position after re-rendering", async function(assert) {
+	QUnit.test("Scroll position after re-rendering", function(assert) {
 		assert.expect(2);
 		// Arrange
 		var oSB = this.oSB;
@@ -143,7 +143,7 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("_$ScrollRef is assigned correctly after rendering", async function(assert) {
+	QUnit.test("_$ScrollRef is assigned correctly after rendering", function(assert) {
 		// Arrange
 		assert.expect(8);
 		var oSB = this.oSB;

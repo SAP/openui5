@@ -63,7 +63,7 @@ sap.ui.define([
 			});
 			this.oBaseEditor.placeAt("qunit-fixture");
 
-			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(async function(aPropertyEditor) {
+			return this.oBaseEditor.getPropertyEditorsByName("sampleJson").then(function(aPropertyEditor) {
 				this.oJsonEditor = aPropertyEditor[0].getAggregation("propertyEditor");
 				this.oJsonEditor.setValue(this.oValue);
 				Core.applyChanges();
@@ -196,7 +196,7 @@ sap.ui.define([
 			QUnitUtils.triggerEvent("click", this.oJsonEditorElement.$("vhi"));
 		});
 
-		QUnit.test("When a value is correctly changed in the inline editor", async function(assert) {
+		QUnit.test("When a value is correctly changed in the inline editor", function (assert) {
 			var fnDone = assert.async();
 
 			this.oJsonEditor.attachValueChange(function (oEvent) {

@@ -76,7 +76,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Rendering");
-	QUnit.test("test rendering and visible property", async function(assert) {
+	QUnit.test("test rendering and visible property", function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {
 				content: [
@@ -115,7 +115,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test design property", async function(assert) {
+	QUnit.test("test design property", function(assert) {
 		var oTB = createToolbar({
 			Toolbar : {
 				content: [
@@ -155,7 +155,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Should add the IBar-CTX if style and tag are set", async function(assert) {
+	QUnit.test("Should add the IBar-CTX if style and tag are set", function(assert) {
 		// Arrange + System under Test
 		var oTB = createToolbar();
 
@@ -173,7 +173,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test style property", async function(assert) {
+	QUnit.test("test style property", function (assert) {
 		var oTB = createToolbar({
 			Toolbar: {
 				content: [
@@ -213,7 +213,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("test sapMBarChildFirstChild class", async function(assert) {
+	QUnit.test("test sapMBarChildFirstChild class", function(assert) {
 		var oFirstControl = new Button({ text: "Button1" }),
 			oSecondControl = new Button({ text: "Button2" }),
 			oTB = createToolbar({
@@ -240,7 +240,7 @@ sap.ui.define([
 
 	QUnit.module("Accessiblity");
 
-	QUnit.test("getAccessibilityInfo method", async function(assert) {
+	QUnit.test("getAccessibilityInfo method", function(assert) {
 		var aDefaultContent = [
 			new Button({width: "150px"}),
 			new Button({width: "150px"})
@@ -259,7 +259,7 @@ sap.ui.define([
 
 	QUnit.module("ARIA");
 
-	QUnit.test("Default ARIA attributes", async function(assert) {
+	QUnit.test("Default ARIA attributes", function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -293,7 +293,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Role attribute and aria-labelledby with interactive Controls", async function(assert) {
+	QUnit.test("Role attribute and aria-labelledby with interactive Controls", function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -330,7 +330,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", async function(assert) {
+	QUnit.test("Role attribute and aria-labelledby with visible/not visible interactive Controls", function(assert) {
 		// Arrange + System under Test
 		var oBtn1 = new Button({
 			text : "Button Text"
@@ -368,7 +368,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("_getToolbarInteractiveControlsCount with non interactive Controls", async function(assert) {
+	QUnit.test("_getToolbarInteractiveControlsCount with non interactive Controls", function(assert) {
 		// Arrange + System under Test
 		var oTB = new Toolbar({
 			content : [new Title(), new Label(), new Text()]
@@ -383,7 +383,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("_getToolbarInteractiveControlsCount with interactive Controls", async function(assert) {
+	QUnit.test("_getToolbarInteractiveControlsCount with interactive Controls", function(assert) {
 		// Arrange + System under Test
 		var oTB = new Toolbar({
 			content : [new Input(), new Link(), new Button()]
@@ -398,7 +398,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal labels", async function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal labels", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -423,7 +423,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal and external labels", async function(assert) {
+	QUnit.test("If Toolbar's content is made of only a label aria-labelledby should not be present - internal and external labels", function(assert) {
 		// Arrange + System under Test
 		var oLabel = new Label({
 			text : "Toolbar Label"
@@ -445,7 +445,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Active toolbar role", async function(assert) {
+	QUnit.test("Active toolbar role", function(assert) {
 		var fnDone = assert.async(),
 
 		// Arrange
@@ -473,7 +473,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("Active toolbar aria-haspopup", async function(assert) {
+	QUnit.test("Active toolbar aria-haspopup", function(assert) {
 		// Arrange
 		var oToolbar = new Toolbar({
 			active: true,
@@ -496,7 +496,7 @@ sap.ui.define([
 		oToolbar.destroy();
 	});
 
-	QUnit.test("_setEnableAccessibilty", async function(assert) {
+	QUnit.test("_setEnableAccessibilty", function(assert) {
 		// Arrange
 		var oTB = new Toolbar({
 			content: [ new Button(),
@@ -845,7 +845,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LayoutData");
-	QUnit.test("should reapply layout data styles after content is rerendered", async function(assert) {
+	QUnit.test("should reapply layout data styles after content is rerendered", function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new Button({
 			text : "Button Text",
@@ -874,7 +874,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("should reapply style after layout data is changed", async function(assert) {
+	QUnit.test("should reapply style after layout data is changed", function(assert) {
 		var sInitMinWidth = "100px";
 		var sLastMinWidth = "200px";
 		var oBtn = new Button({
@@ -909,7 +909,7 @@ sap.ui.define([
 		oTB.destroy();
 	});
 
-	QUnit.test("setting layout data should apply changes with rerender", async function(assert) {
+	QUnit.test("setting layout data should apply changes with rerender", function(assert) {
 		var sMinWidth = "100px";
 		var oBtn = new Button({
 			text : "Button Text"
@@ -941,7 +941,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Element Margins");
-	QUnit.test("Should add margins to elements in a Toolbar", async function(assert) {
+	QUnit.test("Should add margins to elements in a Toolbar", function(assert) {
 		// Arrange
 		var oFirstButton = new Button("first"),
 			oMiddleButton = new Button("middle"),

@@ -175,9 +175,7 @@ sap.ui.define([
 			return null;
 		}
 
-		const oInnerTable = new InnerTable(sId, this.getTableSettings());
-		oInnerTable._setHideStandardTooltips(true);
-		return oInnerTable;
+		return new InnerTable(sId, this.getTableSettings());
 	};
 
 	GridTableType.prototype.getTableSettings = function() {
@@ -312,8 +310,8 @@ sap.ui.define([
 				const oInnerRowActionItem = new InnerRowActionItem({
 					type: oRowActionItem.isBound("type") ? oRowActionItem.getBindingInfo("type") : oRowActionItem.getType(),
 					visible: oRowActionItem.isBound("visible") ? oRowActionItem.getBindingInfo("visible") : oRowActionItem.getVisible(),
-					icon: oRowActionItem.isBound("icon") ? oRowActionItem.getBindingInfo("icon") : oRowActionItem._getIcon(),
-					text: oRowActionItem.isBound("text") ? oRowActionItem.getBindingInfo("text") : oRowActionItem._getText(),
+					icon: oRowActionItem.isBound("icon") ? oRowActionItem.getBindingInfo("icon") : oRowActionItem.getIcon(),
+					text: oRowActionItem.isBound("text") ? oRowActionItem.getBindingInfo("text") : oRowActionItem.getText(),
 					press: [this._onRowActionPress, this]
 				});
 				// Add custom data for MDC row action, so original is retrievable from inner row action item

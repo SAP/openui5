@@ -143,7 +143,7 @@ sap.ui.define([
 
 	QUnit.module("Ready state with different data modes");
 
-	QUnit.test("Default data mode, multiple times placeAt", async function(assert) {
+	QUnit.test("Default data mode, multiple times placeAt", function (assert) {
 		// Arrange
 		var done = assert.async();
 		var oCard = new Card("asd");

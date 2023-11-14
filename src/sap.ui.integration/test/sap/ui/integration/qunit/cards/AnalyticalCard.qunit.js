@@ -974,7 +974,7 @@ sap.ui.define([
 
 	return Lib.load("sap.viz").then(function () {
 		QUnit.module("Chart creation", {
-			beforeEach: async function() {
+			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",

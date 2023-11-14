@@ -1297,6 +1297,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [
 	{hasSent : true},
+	{hasSent : false, isAbsolute : true},
 	{hasSent : false, isBelowCreated : false},
 	{hasSent : false, isBelowCreated : true, elements : undefined},
 	{hasSent : false, isBelowCreated : true, elements : []}
@@ -1328,7 +1329,10 @@ sap.ui.define([
 		oBinding.setContext(oContext);
 
 		this.mock(oCache).expects("hasSentRequest").withExactArgs().returns(oFixture.hasSent);
-		this.mock(ODataListBinding).expects("isBelowCreated").exactly(oFixture.hasSent ? 0 : 1)
+		this.mock(oBinding).expects("isRelative").exactly(oFixture.hasSent ? 0 : 1)
+			.withExactArgs().returns(!oFixture.isAbsolute);
+		this.mock(ODataListBinding).expects("isBelowCreated")
+			.exactly(oFixture.hasSent || oFixture.isAbsolute ? 0 : 1)
 			.withExactArgs(sinon.match.same(oContext)).returns(oFixture.isBelowCreated);
 		this.mock(oContext).expects("getAndRemoveCollection")
 			.exactly("elements" in oFixture ? 1 : 0)
@@ -10629,6 +10633,9 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(oBinding.isAncestorOf(oAncestor, oDescendant), "~result~");
+
+		// code under test (shortcut)
+		assert.strictEqual(oBinding.isAncestorOf(oAncestor, null), false);
 	});
 
 	//*********************************************************************************************
@@ -10781,11 +10788,16 @@ sap.ui.define([
 		[false, true].forEach((bIsExpanded) => {
 			[1, 4].forEach((iCount) => {
 				[undefined, 1, Number.MAX_SAFE_INTEGER, 1E16].forEach((iExpandTo) => {
-					const sTitle = `move: created=${bCreated}, direction=${iDirection},
- expanded=${bIsExpanded}, child nodes added=${iCount}, expandTo=${iExpandTo}`;
+					[false, true].forEach((bMakeRoot) => {
+	const sTitle = `move: created=${bCreated}, direction=${iDirection}, expanded=${bIsExpanded},
+child nodes added=${iCount}, expandTo=${iExpandTo}, make root=${bMakeRoot}`;
+
+	if (bMakeRoot && (iDirection < 0 || iCount > 1)) {
+		return;
+	}
 
 	QUnit.test(sTitle, function (assert) {
-		const iParentIndex = 42;
+		const iParentIndex = bMakeRoot ? -1 : 42;
 		let iChildIndex = iParentIndex + 1;
 		if (iDirection < 0) {
 			iChildIndex = 23;
@@ -10801,12 +10813,15 @@ sap.ui.define([
 		};
 		this.mock(oChildContext).expects("isExpanded").withExactArgs().returns(bIsExpanded);
 		this.mock(oChildContext).expects("getCanonicalPath").withExactArgs().returns("/~child~");
-		const oParentContext = {
+		const oParentContext = bMakeRoot ? null : {
 			iIndex : iParentIndex,
 			getCanonicalPath : mustBeMocked,
 			getModelIndex : mustBeMocked
 		};
-		this.mock(oParentContext).expects("getCanonicalPath").withExactArgs().returns("/~parent~");
+		if (oParentContext) {
+			this.mock(oParentContext).expects("getCanonicalPath").withExactArgs()
+				.returns("/~parent~");
+		}
 		const oBinding = this.bindList("/EMPLOYEES");
 		// Note: autoExpandSelect at model would be required for hierarchyQualifier, but that leads
 		// too far :-(
@@ -10824,11 +10839,13 @@ sap.ui.define([
 		};
 		oBinding.oCache = oCache;
 		const oMoveExpectation = this.mock(oCache).expects("move")
-			.withExactArgs("~oGroupLock~", "~child~", "~parent~")
+			.withExactArgs("~oGroupLock~", "~child~", bMakeRoot ? undefined : "~parent~")
 			.returns(new SyncPromise((resolve) => {
 				setTimeout(() => {
-					this.mock(oParentContext).expects("getModelIndex").exactly(iCount > 1 ? 1 : 0)
-						.withExactArgs().returns("~iModelIndex~");
+					if (oParentContext) {
+						this.mock(oParentContext).expects("getModelIndex")
+							.exactly(iCount > 1 ? 1 : 0).withExactArgs().returns("~iModelIndex~");
+					}
 					this.mock(oBinding).expects("insertGap").exactly(iCount > 1 ? 1 : 0)
 						.withExactArgs("~iModelIndex~", iCount - 1);
 					for (let i = 0; i < 100; i += 1) {
@@ -10837,7 +10854,9 @@ sap.ui.define([
 						} // else: leave some gaps ;-)
 					}
 					oBinding.aContexts[iChildIndex] = oChildContext;
-					oBinding.aContexts[iParentIndex] = oParentContext;
+					if (oParentContext) {
+						oBinding.aContexts[iParentIndex] = oParentContext;
+					}
 					this.mock(oChildContext).expects("created").withExactArgs()
 						.returns(bCreated ? {/*Promise*/} : undefined);
 					this.mock(oChildContext).expects("setCreatedPersisted")
@@ -10853,14 +10872,16 @@ sap.ui.define([
 			}));
 
 		// code under test
-		const oSyncPromise = oBinding.move(oChildContext, oParentContext);
+		const oSyncPromise = oBinding.move(oChildContext, bMakeRoot ? null : oParentContext);
 
 		assert.strictEqual(oSyncPromise.isPending(), true);
 
 		return oSyncPromise.then(function (vResult) {
 			const iNewParentIndex = iDirection < 0 ? iParentIndex - 1 : iParentIndex;
 			assert.strictEqual(vResult, undefined, "without a defined result");
-			assert.strictEqual(oBinding.aContexts[iNewParentIndex], oParentContext);
+			if (oParentContext) {
+				assert.strictEqual(oBinding.aContexts[iNewParentIndex], oParentContext);
+			}
 			assert.strictEqual(oBinding.aContexts[iNewParentIndex + 1], oChildContext);
 			for (let i = 0; i < 100; i += 1) {
 				if (oBinding.aContexts[i]) {
@@ -10873,6 +10894,7 @@ sap.ui.define([
 			}
 		});
 	});
+					});
 				});
 			});
 		});

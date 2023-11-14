@@ -56,7 +56,7 @@ sap.ui.define([
 			assert.strictEqual(this.oTimelineContent.getInnerList().getGrowingThreshold(), 35, "Growing threshold should be set according to 'maxItems'");
 		});
 
-		QUnit.test("No items pagination", async function(assert) {
+		QUnit.test("No items pagination", function (assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -135,7 +135,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Data and items length", {
-			beforeEach: async function() {
+			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
 					height: "600px",

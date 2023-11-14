@@ -26,7 +26,7 @@ function(Element, jQuery, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-FormLayout",
 				viewName: "view.UxAP-FormLayout"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.oObjectPageFormView = oView;
 				this.oObjectPageFormView.placeAt("qunit-fixture");
 				Core.applyChanges();
@@ -91,7 +91,7 @@ function(Element, jQuery, Core, XMLView) {
 			XMLView.create({
 				id: "UxAP-SimpleFormLayout",
 				viewName: "view.UxAP-SimpleFormLayout"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.oObjectPageFormView = oView;
 				this.oObjectPage = oView.byId("ObjectPageLayout");
 				this.oObjectPageFormView.placeAt("qunit-fixture");

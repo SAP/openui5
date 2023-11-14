@@ -220,7 +220,7 @@ function(
 
 	QUnit.module("Section without sub-section");
 
-	QUnit.test("Section without sub-section simulation", async function(assert) {
+	QUnit.test("Section without sub-section simulation", function (assert) {
 
 		// Arrange
 		var oMainSection = new ObjectPageSection({
@@ -288,7 +288,7 @@ function(
 		assert.strictEqual(this.oObjectPage.getUseIconTabBar(), false, "is correctly set to false");
 	});
 
-	QUnit.test("test UseIconTabBar APIs", async function(assert) {
+	QUnit.test("test UseIconTabBar APIs", function (assert) {
 		// Act
 		this.oObjectPage.setUseIconTabBar(false);
 		Core.applyChanges();
@@ -1435,7 +1435,7 @@ function(
 		oPage.attachEvent("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
-	QUnit.test("test remove selected section", async function(assert) {
+	QUnit.test("test remove selected section", function (assert) {
 
 		var oObjectPage = this.oObjectPage,
 			iLoadingDelay = 500,
@@ -1457,7 +1457,7 @@ function(
 		}, iLoadingDelay);
 	});
 
-	QUnit.test("test rename selected section", async function(assert) {
+	QUnit.test("test rename selected section", function (assert) {
 		var oObjectPage = this.oObjectPage,
 			oFirstSection = this.oFirstSection,
 			done = assert.async(),
@@ -1581,7 +1581,7 @@ function(
 		assert.equal($subSectionTitle.attr("aria-level"), sTitleLevel4, "The subSection has the correct aria-level");
 	});
 
-	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", async function(assert) {
+	QUnit.test("test sections/subsections aria-level when sectionTitleLevel is not TitleLevel.Auto", function (assert) {
 		var oObjectPageSectionTitleLevel = TitleLevel.H1,
 			oObjectPageMinimumSectionTitleLevel = TitleLevel.H6,
 			oObjectPage = oFactory.getObjectPageLayoutWithSectionTitleLevel(oObjectPageSectionTitleLevel),
@@ -1693,7 +1693,7 @@ function(
 			XMLView.create({
 				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.oSampleView = oView;
 				this.appControl = new App();
 				this.appControl.addPage(this.oSampleView);
@@ -1708,7 +1708,7 @@ function(
 		}
 	});
 
-	QUnit.test("test AnchorBar not rendering using ShowAnchorBar within XMLView", async function(assert) {
+	QUnit.test("test AnchorBar not rendering using ShowAnchorBar within XMLView", function (assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13");
 
 		oObjectPage.setShowAnchorBar(false);
@@ -1718,7 +1718,7 @@ function(
 		assert.strictEqual(oObjectPage.$().find(".sapUxAPAnchorBar").length, 0, "AnchorBar is not rendered");
 	});
 
-	QUnit.test("test AnchorBar rendering using ShowAnchorBar within XMLView", async function(assert) {
+	QUnit.test("test AnchorBar rendering using ShowAnchorBar within XMLView", function (assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13");
 
 		oObjectPage.setShowAnchorBar(true);
@@ -1728,7 +1728,7 @@ function(
 		assert.equal(checkObjectExists(".sapUxAPAnchorBar"), true);
 	});
 
-	QUnit.test("test AnchorBar showPopover setting through ObjectPageLayout", async function(assert) {
+	QUnit.test("test AnchorBar showPopover setting through ObjectPageLayout", function (assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13"),
 			oAnchorBar =  oObjectPage.getAggregation("_anchorBar"),
 			oSectionButton = oAnchorBar.getContent()[0];
@@ -1742,7 +1742,7 @@ function(
 		assert.notOk(oSectionButton.$().hasClass("sapMMenuBtnSplit"), "Drop-down icon in AnchorBar button is not shown");
 	});
 
-	QUnit.test("test AnchorBar menu items IDs build correctly", async function(assert) {
+	QUnit.test("test AnchorBar menu items IDs build correctly", function (assert) {
 		assert.expect(1);
 		var done = assert.async(),
 			sIds = [],
@@ -1790,7 +1790,7 @@ function(
 		Core.applyChanges();
 	});
 
-	QUnit.test("test AnchorBar focus section synchronously and immediate after anchor press to prevent loss of focus when header is snapping", async function(assert) {
+	QUnit.test("test AnchorBar focus section synchronously and immediate after anchor press to prevent loss of focus when header is snapping", function (assert) {
 		assert.expect(1);
 		// Arrange
 		var done = assert.async(),
@@ -1826,7 +1826,7 @@ function(
 			XMLView.create({
 				id: "objectPageViewSample",
 				viewName: "view.UxAP-77_ObjectPageSample"
-			}).then(async function(oView) {
+			}).then(function (oView) {
 				this.oSampleView = oView;
 				this.appControl = new App();
 				this.appControl.addPage(this.oSampleView);
@@ -1847,7 +1847,7 @@ function(
 		}
 	});
 
-	QUnit.test("test ObjectPageHeader for ObjectPageLayout defined into XMLView", async function(assert) {
+	QUnit.test("test ObjectPageHeader for ObjectPageLayout defined into XMLView", function (assert) {
 		var oHeader = this.oObjectPage.getHeaderTitle(),
 			oNewHeader;
 
@@ -1914,7 +1914,7 @@ function(
 				XMLView.create({
 					id: "objectPageView",
 					viewName: "view.UxAP-77_ObjectPage"
-				}).then(async function(oView) {
+				}).then(function (oView) {
 					this.oView = oView;
 					this.appControl = new App();
 					this.appControl.addPage(this.oView);
@@ -2111,7 +2111,7 @@ function(
 		}
 	});
 
-	QUnit.test("test removeAllSections should reset selectedSection", async function(assert) {
+	QUnit.test("test removeAllSections should reset selectedSection", function (assert) {
 		var oObjectPage = this.oOP,
 			done = assert.async();
 
@@ -2126,7 +2126,7 @@ function(
 		},  this.iDelay);
 	});
 
-	QUnit.test("applyLayout is not called on invalidated SubSection without parent ObjectPage", async function(assert) {
+	QUnit.test("applyLayout is not called on invalidated SubSection without parent ObjectPage", function (assert) {
 		var oObjectPage = this.oOP,
 			sNewTitle = "New SubSection Title",
 			oSectionToRemove = this.oSelectedSection,
@@ -2145,7 +2145,7 @@ function(
 	});
 
 
-	QUnit.test("test destroySections should reset selectedSection", async function(assert) {
+	QUnit.test("test destroySections should reset selectedSection", function (assert) {
 		var oObjectPage = this.oOP,
 			done = assert.async();
 
@@ -2433,7 +2433,7 @@ function(
 	});
 
 	QUnit.module("ObjectPage API: Header", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oObjectPageLayout = new ObjectPageLayout();
 			this.oObjectPageLayout.placeAt('qunit-fixture');
 			Core.applyChanges();
@@ -2492,7 +2492,7 @@ function(
 		});
 	});
 
-	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", async function(assert) {
+	QUnit.test("ObjectPageLayout - backgroundDesignAnchorBar", function (assert) {
 		var $oAnchorBarDomRef = this.oObjectPageLayout.$("anchorBar");
 
 		// assert
@@ -2737,7 +2737,7 @@ function(
 		helpers.toDesktopMode(oObjectPage);
 	});
 
-	QUnit.test("ObjectPage Header pinnable and not pinnable", async function(assert) {
+	QUnit.test("ObjectPage Header pinnable and not pinnable", function (assert) {
 
 		var oHeader = this.oObjectPage._getHeaderContent(),
 			oPinButton = oHeader.getAggregation("_pinButton");
@@ -2758,7 +2758,7 @@ function(
 			"The ObjectPage Header Pin Button is visible");
 	});
 
-	QUnit.test("ObjectPage Header Pin Button focus preservation", async function(assert) {
+	QUnit.test("ObjectPage Header Pin Button focus preservation", function (assert) {
 		// Arrange
 		var oHeader = this.oObjectPage._getHeaderContent(),
 			oPinButton = oHeader.getAggregation("_pinButton"),
@@ -3345,7 +3345,7 @@ function(
 
 	QUnit.module("Private methods");
 
-	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - _appendTitleCloneToDOM", async function(assert) {
+	QUnit.test("BCP:1870298358 - cloned header should not introduce scrollbar - _appendTitleCloneToDOM", function (assert) {
 
 		// Arrange
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 2, true),
@@ -3382,7 +3382,7 @@ function(
 		Core.applyChanges();
 	});
 
-	QUnit.test("_obtainExpandedTitleHeight does not change element overflow", async function(assert) {
+	QUnit.test("_obtainExpandedTitleHeight does not change element overflow", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
@@ -3403,7 +3403,7 @@ function(
 		oObjectPage.destroy();
 	});
 
-	QUnit.test("_getHeaderContentDomRef works as expected", async function(assert) {
+	QUnit.test("_getHeaderContentDomRef works as expected", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar();
@@ -3435,7 +3435,7 @@ function(
 		oObjectPage.destroy();
 	});
 
-	QUnit.test("_obtainSnappedTitleHeight does not change element overflow", async function(assert) {
+	QUnit.test("_obtainSnappedTitleHeight does not change element overflow", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
@@ -3526,7 +3526,7 @@ function(
 		helpers.renderObject(oObjectPage);
 	});
 
-	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", async function(assert) {
+	QUnit.test("BCP:1870298358 - _getScrollableViewportHeight method should acquire the exact height", function (assert) {
 
 		// Arrange
 		var oObjectPage = oFactory.getObjectPageLayoutWithIconTabBar(),
@@ -3579,7 +3579,7 @@ function(
         oObjectPage.destroy();
 	});
 
-	QUnit.test("ObjectPage _applyContextualSettings: changes media classes", async function(assert) {
+	QUnit.test("ObjectPage _applyContextualSettings: changes media classes", function (assert) {
         // Arrange
 		var oObjectPage = new ObjectPageLayout({}),
 			oContextualSettings = {contextualWidth: 800},
@@ -3824,7 +3824,7 @@ function(
 
 	QUnit.module("ObjectPage landmarkInfo API");
 
-	QUnit.test("DynamicPage landmark info is set correctly", async function(assert) {
+	QUnit.test("DynamicPage landmark info is set correctly", function (assert) {
 		var oObjectPage = helpers.generateObjectPageWithContent(oFactory, 3, false, true),
 			oLandmarkInfo = new ObjectPageAccessibleLandmarkInfo({
 				rootRole: "Region",

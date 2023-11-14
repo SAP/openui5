@@ -150,13 +150,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Hidden columns with span", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(false);
 			aCols[4].setVisible(false);
 			oCore.applyChanges();
 		},
-		afterEach: async function() {
+		afterEach: function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(true);
 			aCols[4].setVisible(true);
@@ -172,7 +172,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Fixed columns", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			oTable.setFixedColumnCount(1);
 			oCore.applyChanges();
 		},
@@ -184,7 +184,7 @@ sap.ui.define([
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Multi headers influence fixed column count");
 	});
 
-	QUnit.test("Fixed column count with multiheaders and hidden columns", async function(assert) {
+	QUnit.test("Fixed column count with multiheaders and hidden columns", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		oCore.applyChanges();
 		assert.strictEqual(oTable.getComputedFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");

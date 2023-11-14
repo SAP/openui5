@@ -47,7 +47,7 @@ sap.ui.define([
 				'\t\t\t\t</mdc:Chart>\n' +
 				'</core:View>';
 			return createAppEnvironment(sChartView, "Chart")
-			.then(async function(mCreatedView) {
+			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
 				this.oUiComponent = mCreatedView.comp;
 				this.oUiComponentContainer = mCreatedView.container;

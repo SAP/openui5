@@ -34,7 +34,7 @@ sap.ui.define([
 
 	QUnit.module("API");
 
-	QUnit.test("default values", async function(assert) {
+	QUnit.test("default values", function(assert) {
 
 		// system under test
 		var oPage = new Page();
@@ -64,7 +64,7 @@ sap.ui.define([
 	QUnit.module("HTML");
 
 	var fnRendererTestCase = function(mOptions) {
-		QUnit.test("rendering", async function(assert) {
+		QUnit.test("rendering", function(assert) {
 
 			// system under test
 			var oPage = mOptions.page;

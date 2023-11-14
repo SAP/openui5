@@ -1647,7 +1647,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("List should be actionable ", async function(assert) {
+		QUnit.test("List should be actionable ", function (assert) {
 
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
@@ -1857,7 +1857,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Submit action handler", async function(assert) {
+		QUnit.test("Submit action handler", function (assert) {
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
@@ -1896,7 +1896,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("Submit action handler at the Host", async function(assert) {
+		QUnit.test("Submit action handler at the Host", function (assert) {
 			var mEventArguments,
 				done = assert.async(),
 				oStubRequest = this.stub(RequestDataProvider.prototype, "getData").resolves("Success"),
@@ -1970,7 +1970,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", async function(assert) {
+		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", function (assert) {
 			var done = assert.async(2),
 				oCardFireActionSpy = sinon.spy(this.oCard, "fireAction"),
 				oFurtherProcessingSpy = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {});
@@ -2005,7 +2005,7 @@ sap.ui.define([
 			Core.applyChanges();
 		});
 
-		QUnit.test("Trigger action", async function(assert) {
+		QUnit.test("Trigger action", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = this.oCard,
@@ -2052,7 +2052,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Complex expression binding", async function(assert) {
+		QUnit.test("Complex expression binding", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oCard = this.oCard;
@@ -2087,7 +2087,7 @@ sap.ui.define([
 				}
 			});
 
-			QUnit.test("Timeline should be actionable ", async function(assert) {
+			QUnit.test("Timeline should be actionable ", function (assert) {
 				var done = assert.async(),
 					oActionSpy = sinon.spy(CardActions, "fireAction"),
 					oStubOpenUrl = sinon.stub(NavigationAction.prototype, "execute").callsFake(function () {

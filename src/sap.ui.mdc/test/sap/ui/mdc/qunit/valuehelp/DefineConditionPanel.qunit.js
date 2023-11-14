@@ -154,7 +154,7 @@ sap.ui.define([
 		assert.equal(oDefineConditionPanel != null, true, "instance can be created");
 	});
 
-	QUnit.test("bind empty condition Model and add one condition", async function(assert) {
+	QUnit.test("bind empty condition Model and add one condition", function(assert) {
 
 		let aConditions = oModel.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one empty condition should exist");
@@ -175,7 +175,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("dummy condition with different operator", async function(assert) {
+	QUnit.test("dummy condition with different operator", function(assert) {
 
 		oConfig = {
 				dataType: oDataType,
@@ -690,7 +690,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("use custom operator", async function(assert) {
+	QUnit.test("use custom operator", function(assert) {
 
 		oModel.setData({
 			conditions: {
@@ -738,7 +738,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("switch custom operator", async function(assert) {
+	QUnit.test("switch custom operator", function(assert) {
 
 		const aOriginalOperators = FilterOperatorUtil.getOperatorsForType(BaseType.String);
 		FilterOperatorUtil.setOperatorsForType(BaseType.String, [FilterOperatorUtil.getOperator(OperatorName.BT), oCustomOperator], oCustomOperator);
@@ -1204,7 +1204,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("use default type", async function(assert) {
+	QUnit.test("use default type", function(assert) {
 
 		oDataType.destroy();
 		oModel.setData({

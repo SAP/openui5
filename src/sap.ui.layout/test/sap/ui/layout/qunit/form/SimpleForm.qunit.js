@@ -140,7 +140,7 @@ sap.ui.define([
 			assert.equal(oFormLayout.getId(), "SF1--Layout", "Stable ID of FormLayout");
 		}
 
-		QUnit.test("initial state", async function(assert) {
+		QUnit.test("initial state", function(assert) {
 			assert.ok(oSimpleForm, "SimpleForm is created");
 			assert.ok(oForm, "internal Form is created");
 			assert.equal(oForm.getId(), "SF1--Form", "Stable ID of Form");
@@ -163,7 +163,7 @@ sap.ui.define([
 			asyncLayoutTest(assert, "sap/ui/layout/form/ResponsiveGridLayout", usedLayout);
 		});
 
-		QUnit.test("width", async function(assert) {
+		QUnit.test("width", function(assert) {
 			oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
 			assert.ok(!/width:/.test(oSimpleForm.$().attr("style")), "SimpleForm2: no width set");
@@ -207,7 +207,7 @@ sap.ui.define([
 			assert.notOk(!!oForm.getToolbar(), "Form getToolbar");
 		});
 
-		QUnit.test("AriaLabelledBy", async function(assert) {
+		QUnit.test("AriaLabelledBy", function(assert) {
 			oSimpleForm.addAriaLabelledBy("XXX");
 			oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -216,7 +216,7 @@ sap.ui.define([
 			assert.equal(jQuery("#SF1--Form").attr("aria-labelledby"), "XXX", "aria-labelledby");
 		});
 
-		QUnit.test("_suggestTitleId", async function(assert) {
+		QUnit.test("_suggestTitleId", function(assert) {
 			oSimpleForm._suggestTitleId("ID1");
 			oSimpleForm.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -2135,7 +2135,7 @@ sap.ui.define([
 			assert.notOk(!!oLayoutData, "FormContainer has no LayoutData");
 		}
 
-		QUnit.test("change Layout", async function(assert) {
+		QUnit.test("change Layout", function(assert) {
 			var oOldLayout;
 			var fnDone;
 			if (oFormLayout) {
@@ -2262,7 +2262,7 @@ sap.ui.define([
 			oClone.destroy();
 		}
 
-		QUnit.test("clone", async function(assert) {
+		QUnit.test("clone", function(assert) {
 			oSimpleForm.setLayout("ColumnLayout");
 			var oToolbar = new Toolbar("TB1");
 			oSimpleForm.addContent(oToolbar);

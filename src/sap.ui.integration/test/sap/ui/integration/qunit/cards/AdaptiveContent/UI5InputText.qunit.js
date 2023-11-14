@@ -77,7 +77,7 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function() {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -110,7 +110,7 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function() {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -134,7 +134,7 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function() {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -157,7 +157,7 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function() {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
@@ -180,7 +180,7 @@ function (
 				get: function () { return false; }
 			};
 
-		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(async function() {
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
 			//Arrange
 			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();

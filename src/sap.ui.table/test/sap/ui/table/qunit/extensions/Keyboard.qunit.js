@@ -303,7 +303,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Focus handling", {
-		beforeEach: async function() {
+		beforeEach: function() {
 			createTables();
 
 			oTable.addColumn(TableQUnitUtils.createInputColumn({text: "test3"}));
@@ -474,7 +474,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Focus restoration and item navigation reinitialization", async function(assert) {
+	QUnit.test("Focus restoration and item navigation reinitialization", function(assert) {
 		initRowActions(oTable, 1, 1);
 		oCore.applyChanges();
 
@@ -553,57 +553,44 @@ sap.ui.define([
 			"Re-rendered when focus was on an element outside the table: The onfocusin event was not triggered");
 	});
 
-	QUnit.test("Focus restoration (datacell->NoData->previously selected datacell) with empty model", function(assert) {
+	QUnit.test("Focus restoration after data update (DataCell -> NoData -> previously focused DataCell)", function(assert) {
 		var done = assert.async();
+		var oCell = oTable.getRows()[0].getDomRef("col0");
+		var oModel = new JSONModel({modelData: oTable.getModel().getData()});
+
+		oCell.focus();
+		oTable.setModel(new JSONModel());
 
 		oTable.attachEventOnce("rowsUpdated", function() {
-			var oCell = oTable.getRows()[0].getDomRef("col0");
-			var aData = oTable.getModel().getData();
-			var oModel = new JSONModel();
+			assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
 
-			oModel.setData({modelData: aData});
+			oTable.setModel(oModel);
+			oTable.bindRows("/modelData");
 
-			oCell.focus();
-			assert.strictEqual(document.activeElement.id, oCell.id, "1st focus on cell");
-
-			oTable.setModel(new JSONModel());
 			oTable.attachEventOnce("rowsUpdated", function() {
-				assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
-
-				oTable.setModel(oModel);
-				oCore.applyChanges();
-				oTable.bindRows("/modelData");
-				oTable.attachEventOnce("rowsUpdated", function() {
-					assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
-					done();
-				});
+				assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
+				done();
 			});
 		});
 	});
 
-	QUnit.test("Focus restoration (datacell->NoData->previously selected datacell) with unbindRows", function(assert) {
+	QUnit.test("Focus restoration after unbind and then bind (DataCell -> NoData -> previously focused DataCell)", function(assert) {
 		var done = assert.async();
+		var oCell = oTable.getRows()[0].getDomRef("col0");
+		var oModel = new JSONModel({modelData: oTable.getModel().getData()});
+
+		oCell.focus();
+		oTable.unbindRows();
 
 		oTable.attachEventOnce("rowsUpdated", function() {
-			var oCell = oTable.getRows()[0].getDomRef("col0");
-			var aData = oTable.getModel().getData();
-			var oModel = new JSONModel();
+			assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
 
-			oModel.setData({modelData: aData});
+			oTable.setModel(oModel);
+			oTable.bindRows("/modelData");
 
-			oCell.focus();
-			assert.strictEqual(document.activeElement.id, oCell.id, "1st focus on cell");
-
-			oTable.unbindRows();
 			oTable.attachEventOnce("rowsUpdated", function() {
-				assert.strictEqual(document.activeElement.id, oTable.getDomRef("noDataCnt").id, "Focus on NoData");
-				oTable.setModel(oModel);
-				oCore.applyChanges();
-				oTable.bindRows("/modelData");
-				oTable.attachEventOnce("rowsUpdated", function() {
-					assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
-					done();
-				});
+				assert.strictEqual(document.activeElement.id, oCell.id, "2nd focus on cell");
+				done();
 			});
 		});
 	});

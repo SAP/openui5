@@ -793,7 +793,7 @@ sap.ui.define([
 	};
 
 	QUnit.module("List Card", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -1435,7 +1435,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Overridden methods", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px",
@@ -1597,7 +1597,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Icons", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"
@@ -1758,7 +1758,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Loading of the Microchart library", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"
@@ -1968,7 +1968,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Legend", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
 				height: "600px"

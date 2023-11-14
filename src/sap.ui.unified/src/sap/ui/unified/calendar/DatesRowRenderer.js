@@ -100,7 +100,7 @@ DatesRowRenderer.renderWeekNumbers = function (oRm, oDatesRow) {
 		iDaysWidth,
 		aWeekNumbers;
 
-	if (oDatesRow.getShowWeekNumbers() && oDatesRow.getPrimaryCalendarType() === CalendarType.Gregorian) {
+	if (oDatesRow.getShowWeekNumbers() && oDatesRow._getPrimaryCalendarType() === CalendarType.Gregorian) {
 		oResourceBundle = Library.getResourceBundleFor("sap.ui.unified");
 
 		oRm.openStart("div", oDatesRow.getId() + "-weeks");

@@ -35,7 +35,7 @@ sap.ui.define([
 		SIDE_CONTENT_LABEL = "SIDE_CONTENT_LABEL";
 
 	QUnit.module("Public API", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			// Replacing jQuery width method to report stable browser screen resolution for the test
 			var that = this;
 			this._ojQueryWidthMethod = $.fn.width;
@@ -76,7 +76,7 @@ sap.ui.define([
 		assert.ok(oSideContent.position().left > oMainContent.position().left, "Main content is before the side content by default");
 	});
 
-	QUnit.test("'sideContentPosition' property set to Begin",async function(assert) {
+	QUnit.test("'sideContentPosition' property set to Begin",function(assert) {
 
 		this._oDSC.setSideContentPosition(SideContentPosition.Begin);
 		oCore.applyChanges();
@@ -250,7 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Scroll delegate", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oList = new List("list1", {
 				items: new StandardListItem({
 					title : "123 456"
@@ -277,7 +277,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getScrollDelegate: List in mainContent, mainContent take the whole DSC height",async function(assert) {
+	QUnit.test("getScrollDelegate: List in mainContent, mainContent take the whole DSC height",function(assert) {
 		// prepare
 		this.oDSC.addMainContent(this.oList);
 		oCore.applyChanges();
@@ -319,7 +319,7 @@ sap.ui.define([
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in mainContent, mainContent is above the sideContent",async function(assert) {
+	QUnit.test("getScrollDelegate: List in mainContent, mainContent is above the sideContent",function(assert) {
 		// prepare
 		this.oDSC.addMainContent(this.oList);
 		oCore.applyChanges();
@@ -356,7 +356,7 @@ sap.ui.define([
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the parent Page control");
 	});
 
-	QUnit.test("getScrollDelegate: List in sideContent, sideContent take the whole DSC height",async function(assert) {
+	QUnit.test("getScrollDelegate: List in sideContent, sideContent take the whole DSC height",function(assert) {
 		// prepare
 		this.oDSC.addSideContent(this.oList);
 		oCore.applyChanges();
@@ -399,7 +399,7 @@ sap.ui.define([
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's sideContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in sideContent, mainContent is above the sideContent",async function(assert) {
+	QUnit.test("getScrollDelegate: List in sideContent, mainContent is above the sideContent",function(assert) {
 		// prepare
 		this.oDSC.addSideContent(this.oList);
 		oCore.applyChanges();
@@ -436,7 +436,7 @@ sap.ui.define([
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the parent Page control");
 	});
 
-	QUnit.test("getScrollDelegate: List in Panel in mainContent",async function(assert) {
+	QUnit.test("getScrollDelegate: List in Panel in mainContent",function(assert) {
 		var oPanel = new Panel({
 			content: this.oList
 		});
@@ -482,7 +482,7 @@ sap.ui.define([
 			"S breakpoint: getScrollDelegate returns the scroll delegate of the DSC's mainContent aggregation");
 	});
 
-	QUnit.test("getScrollDelegate: List in Panel in sideContent",async function(assert) {
+	QUnit.test("getScrollDelegate: List in Panel in sideContent",function(assert) {
 		var oPanel = new Panel({
 			content: this.oList
 		});
@@ -530,7 +530,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Helper functionality", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			// Replacing jQuery width method to report stable browser screen resolution for the test
 			var that = this;
 			this._ojQueryWidthMethod = $.fn.width;
@@ -877,7 +877,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content Query", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent({
 				containerQuery: true
 			});
@@ -899,7 +899,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Content positioning after rerendering", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent({
 				containerQuery: true,
 				sideContentFallDown: "BelowM"
@@ -915,7 +915,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("After rerendering the visibility of the contents remains the same",async function(assert) {
+	QUnit.test("After rerendering the visibility of the contents remains the same",function(assert) {
 		this._oDSC.invalidate();
 		oCore.applyChanges();
 		assert.ok(this._oDSC._MCVisible, "The main content is visible");
@@ -923,7 +923,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Construction / Destruction", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent();
 			this._oDSC.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -961,7 +961,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Interaction", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent();
 			this._oDSC.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1044,7 +1044,7 @@ sap.ui.define([
 		$.fn.width = this._ojQueryWidthMethod;
 	});
 
-	QUnit.test("breakpointChange event not fired initially", async function(assert) {
+	QUnit.test("breakpointChange event not fired initially", function(assert) {
 		var fnDone = assert.async(2),
 			oDSC = new DynamicSideContent({containerQuery: true}),
 			oBreakpointChangedSpy = this.spy(oDSC, "fireBreakpointChanged"),
@@ -1075,7 +1075,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Screen reader", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent({containerQuery: true});
 			this._oDSC.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1097,7 +1097,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Invalidation", {
-		beforeEach : async function() {
+		beforeEach : function () {
 			this._oDSC = new DynamicSideContent({showSideContent: false, containerQuery: true});
 			this._oDSC.placeAt("qunit-fixture");
 			oCore.applyChanges();
@@ -1107,7 +1107,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Side Content invisible after invalidation",async function(assert) {
+	QUnit.test("Side Content invisible after invalidation",function(assert) {
 		var SC_GRID_CELL_SELECTOR = "SCGridCell",
 			HIDDEN_CLASS = "sapUiHidden";
 

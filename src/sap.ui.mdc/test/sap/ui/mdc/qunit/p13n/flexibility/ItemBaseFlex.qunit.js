@@ -56,7 +56,7 @@ sap.ui.define([
 			);
 
 			//Create the app environment for flex related processing
-			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(async function(mCreatedApp) {
+			return createAppEnvironment(sTestView, "ItemBaseFlexTest").then(function(mCreatedApp){
 				this.oView = mCreatedApp.view;
 				this.oUiComponentContainer = mCreatedApp.container;
 				this.oUiComponentContainer.placeAt("qunit-fixture");

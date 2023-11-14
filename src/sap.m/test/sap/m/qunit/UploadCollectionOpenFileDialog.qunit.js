@@ -105,7 +105,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	}
 
 	QUnit.module("openFileDialog method", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oUploadCollection = new undefined/*UploadCollection*/({
 				items: {
 					path: "/items",
@@ -189,7 +189,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 	});
 
 	QUnit.module("openFileDialog Integration", {
-		beforeEach: async function() {
+		beforeEach: function () {
 			this.oUploadCollection = new undefined/*UploadCollection*/({
 				items: {
 					path: "/items",
@@ -212,7 +212,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		}
 	});
 
-	QUnit.test("onChange event ends in rerendering without the item which is updated", async function(assert) {
+	QUnit.test("onChange event ends in rerendering without the item which is updated", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
@@ -229,7 +229,7 @@ sap.ui.define("sap.m.qunit.UploadCollectionOpenFileDialog", [
 		assert.deepEqual(this.oUploadCollection._oList.getItems().length, 4, "The new file is not in the aggregated list");
 	});
 
-	QUnit.test("onChange event test NumberOfAttachmentTitle", async function(assert) {
+	QUnit.test("onChange event test NumberOfAttachmentTitle", function (assert) {
 		// Arrange
 		this.oUploadCollection.setMultiple(false);
 		var oItemToUpdate = this.oUploadCollection.getItems()[0];
