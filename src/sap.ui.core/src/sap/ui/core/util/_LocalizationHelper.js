@@ -37,7 +37,8 @@ sap.ui.define([
 		const mChanges = BaseEvent.getParameters(oEvent),
 			oBrowserEvent = jQuery.Event(sEventId, {changes : mChanges}),
 			aObjectsToUpdate = getObjectsToUpdate(),
-			bRTLChanged = mChanges.rtl !== undefined;
+			bRTLChanged = mChanges.rtl !== undefined,
+			bLanguageChanged = mChanges.language !== undefined;
 
 		Log.info("localization settings changed: " + Object.keys(mChanges).join(","), null, "sap/ui/core/util/LocalizationHelper");
 
@@ -46,6 +47,12 @@ sap.ui.define([
 			// update the dir attribute of the document
 			document.documentElement.setAttribute("dir", mChanges.rtl ? "rtl" : "ltr");
 			Log.info("RTL mode " + mChanges.rtl ? "activated" : "deactivated");
+		}
+
+		// special handling for changes of the language
+		if (bLanguageChanged) {
+			// update the lang attribute of the document
+			document.documentElement.setAttribute("lang", mChanges.language);
 		}
 
 		/*
@@ -110,6 +117,8 @@ sap.ui.define([
 			// Set the document's dir property
 			document.documentElement.setAttribute("dir", sDir); // webkit does not allow setting document.dir before the body exists
 			Log.info("Content direction set to '" + sDir + "'", null, "sap/ui/core/util/_LocalizationHelper");
+			// Set the document's lang property
+			document.documentElement.setAttribute("lang", Localization.getLanguageTag().toString()); // webkit does not allow setting document.dir before the body exists
 		},
 		registerForUpdate(sType, fnGetObjects) {
 			mRegistry[sType] = fnGetObjects;
