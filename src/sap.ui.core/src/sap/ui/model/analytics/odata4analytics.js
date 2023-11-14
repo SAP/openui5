@@ -3421,14 +3421,15 @@ sap.ui.define([
 			var sOptionString = "";
 			// 1. Process conditions
 			aUI5Filter.sort(function(a, b) {
-				if (a.sPath == b.sPath) {
+				// default path to "" to ensure that the array contains all multi-filters, that don't have a path,
+				// at the beginning
+				var sAPath = a.sPath || "",
+					sBPath = b.sPath || "";
+
+				if (sAPath === sBPath) {
 					return 0;
 				}
-				if (a.sPath > b.sPath) {
-					return 1;
-				} else {
-					return -1;
-				}
+				return sAPath > sBPath ? 1 : -1;
 			});
 
 			var sPropertyName = aUI5Filter[0].sPath;

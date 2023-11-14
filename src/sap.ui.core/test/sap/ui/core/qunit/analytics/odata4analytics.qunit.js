@@ -1722,6 +1722,48 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// BCP: 985176/2023
+	QUnit.test("renderUI5FilterArray", function (assert) {
+		var aFilterArray = [
+				{sPath: 'Material'},
+				{aFilters: [/*Multi Filter*/]},
+				{sPath: 'MaterialDocument', sOperator: 'EQ', oValue1: '4900005860'},
+				{sPath: 'MaterialDocument', sOperator: 'EQ', oValue1: "4900005859"},
+				{sPath: 'MaterialDocument', sOperator: 'EQ', oValue1: '4900005915'},
+				{sPath: 'MaterialDocument', sOperator: 'EQ', oValue1: '4900005916'},
+				{sPath: 'MaterialGroup'},
+				{sPath: 'MaterialType'},
+				{sPath: 'Plant'},
+				{sPath: 'ReversalMovementIsSelected'},
+				{sPath: 'StockLevelIsValuated'},
+				{sPath: 'StorageLocation'}
+			],
+			oFilterExpression = new odata4analytics.FilterExpression(),
+			oFilterExpressionMock = this.mock(oFilterExpression);
+
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[0]).returns("~Material");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[2]).returns("~MaterialDocument0");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[3]).returns("~MaterialDocument1");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[4]).returns("~MaterialDocument2");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[5]).returns("~MaterialDocument3");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[6]).returns("~MaterialGroup");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[7]).returns("~MaterialType");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[8]).returns("~Plant");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[9])
+			.returns("~ReversalMovementIsSelected");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[10])
+			.returns("~StockLevelIsValuated");
+		oFilterExpressionMock.expects("renderUI5Filter").withExactArgs(aFilterArray[11]).returns("~StorageLocation");
+		oFilterExpressionMock.expects("renderUI5MultiFilter").withExactArgs(aFilterArray[1]).returns("~MultiFilter");
+
+		// code under test
+		assert.strictEqual(oFilterExpression.renderUI5FilterArray(aFilterArray.slice()),
+			"(~Material) and (~MaterialDocument0 or ~MaterialDocument1 or ~MaterialDocument2 or ~MaterialDocument3)"
+			+ " and (~MaterialGroup) and (~MaterialType) and (~Plant) and (~ReversalMovementIsSelected)"
+			+ " and (~StockLevelIsValuated) and (~StorageLocation) and (~MultiFilter)");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("deepEqual", function (assert) {
 		var aColumns = [];
 
