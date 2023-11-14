@@ -242,6 +242,7 @@ sap.ui.define([
 			enableLiveAutocompletion: true
 		});
 
+		this._oEditor.textInput.getElement().id = this.getId() + "-editor-textarea";
 		this._oEditor.renderer.setShowGutter(true);
 
 		this._oEditor.addEventListener("change", function (oEvent) {
