@@ -7,9 +7,8 @@ sap.ui.define([
 	"./RouterHashChanger",
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
-	"sap/base/util/ObjectPath",
 	"sap/ui/performance/trace/Interaction"
-], function(HashChangerBase, RouterHashChanger, hasher, Log, ObjectPath, Interaction) {
+], function(HashChangerBase, RouterHashChanger, hasher, Log, Interaction) {
 	"use strict";
 
 	/**
@@ -366,6 +365,7 @@ sap.ui.define([
 	(function() {
 
 		var _oHashChanger = null;
+		var History;
 
 		/**
 		 * Gets a global singleton of the HashChanger. The singleton will get created when this function is invoked for the first time.
@@ -410,13 +410,12 @@ sap.ui.define([
 		 */
 		HashChanger.replaceHashChanger = function(oHashChanger) {
 			if (_oHashChanger && oHashChanger) {
-				var fnGetHistoryInstance = ObjectPath.get("sap.ui.core.routing.History.getInstance"),
-					oHistory;
+				History = History || sap.ui.require("sap/ui/core/routing/History");
 
 				// replace the hash changer on oHistory should occur before the replacement on router hash changer
 				// because the history direction should be determined before a router processes the hash.
-				if (fnGetHistoryInstance) {
-					oHistory = fnGetHistoryInstance();
+				if (History) {
+					var oHistory = History.getInstance();
 					// set the new hash changer to oHistory. This will also deregister the listeners from the old hash
 					// changer.
 					oHistory._setHashChanger(oHashChanger);
