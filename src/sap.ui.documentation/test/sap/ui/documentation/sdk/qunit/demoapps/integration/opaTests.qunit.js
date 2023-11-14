@@ -1,19 +1,17 @@
-/* global QUnit,sinon */
+/* global QUnit, sinon */
 
 QUnit.config.autostart = false;
 
-sap.ui.getCore().attachInit(function() {
+sap.ui.getCore().attachInit(function () {
 	"use strict";
 
 	sap.ui.require([
-		'sap/ui/test/opaQunit',
-		'sap/ui/test/Opa5',
-		'sap/ui/test/Opa',
-		'sap/ui/test/matchers/Properties',
-		'sap/ui/test/matchers/BindingPath',
-		'sap/ui/test/matchers/Ancestor',
-		'sap/ui/test/actions/Press'
-	], function (opaTest, Opa5, Opa, Properties, BindingPath, Ancestor, Press) {
+		"sap/ui/test/opaQunit",
+		"sap/ui/test/Opa5",
+		"sap/ui/test/matchers/Properties",
+		"sap/ui/test/matchers/Ancestor",
+		"sap/ui/test/actions/Press"
+	], function (opaTest, Opa5, Properties, Ancestor, Press) {
 
 		var sViewName = "DemoApps";
 
@@ -26,7 +24,7 @@ sap.ui.getCore().attachInit(function() {
 			autoWait: true
 		});
 
-		opaTest("Should see at least 5 demo app cells", function (Given, When) {
+		opaTest("Should see at least 10 demo apps cards", function (Given, When) {
 
 			// Needed for hash based navigation for the test to work properly
 			window['sap-ui-documentation-static'] = true;
@@ -34,8 +32,8 @@ sap.ui.getCore().attachInit(function() {
 			Given.iStartMyUIComponent({
 				componentConfig: {
 					name: "sap.ui.documentation.sdk",
-					settings : {
-						id : "demokit"
+					settings: {
+						id: "demokit"
 					},
 					manifest: true
 				},
@@ -44,41 +42,48 @@ sap.ui.getCore().attachInit(function() {
 
 			When.waitFor({
 				viewName: sViewName,
-				controlType: "sap.ui.layout.BlockLayoutCell",
-				success: function (aBlockLayoutCells) {
-					// 5 cells are there by definition (header + 4 categories) so we need at least 10 cells
-					Opa5.assert.ok(aBlockLayoutCells.length >= 10, "More than 10 BlockLayoutCells are displayed");
-				}
+				controlType: "sap.f.Card",
+				matchers: function (oCard) {
+					return oCard.$().hasClass("sapUiDemoKitDemoAppsCommonCard");
+				},
+				success: function (aItems) {
+					Opa5.assert.ok(aItems.length >= 10, "Found at least 10 demo apps");
+				},
+				errorMessage: "Did not find any demo apps"
 			});
 		});
 
 		opaTest("Should display the category headers", function (Given, When, Then) {
 			Then.waitFor({
 				viewName: sViewName,
-				controlType: "sap.m.Panel",
-				matchers: function (oCell) {
-					var oToolbar = oCell.getHeaderToolbar();
-					return (oToolbar ? oToolbar.hasStyleClass("headlineCell") : false);
+				controlType: "sap.m.Title",
+				matchers: function (oTitle) {
+					return oTitle.$().hasClass("sapUiDemoKitDemoAppsCategoryTitle");
 				},
 				success: function (aCells) {
-					Opa5.assert.ok(aCells.length >= 3, "There are at least 3 category cells displayed");
-				}
+					Opa5.assert.ok(aCells.length > 0, "Found at least one category header");
+				},
+				errorMessage: "Did not find any category headers"
 			});
 		});
 
 		opaTest("Should parse and display the metadata correctly", function (Given, When, Then) {
 			Then.waitFor({
 				viewName: sViewName,
-				controlType: "sap.ui.layout.BlockLayoutCell",
-				matchers: function (oCell) {
-					var oTitle = oCell.$().find(".sapMTitle").html();
-					return (oTitle ? oTitle.search("Shopping Cart") >= 0 : false);
+				controlType: "sap.f.Card",
+				matchers: function (oCard) {
+					var $Card = oCard.$(),
+						$TitleElement = $Card.find('.sapUiDemoKitDemoAppsCardHeaderLink');
+
+					return $TitleElement.text() === 'Shopping Cart';
 				},
-				success: function (aCells) {
-					var oCell = aCells[0];
-					var oData;
+				success: function (aCards) {
+					var oCard = aCards[0], oData;
+
 					try {
-						oData = oCell.getModel().getProperty("/demoApps").filter(function (oData) { return oData.name === "Shopping Cart"; })[0];
+						oData = oCard.getModel().getProperty("/demoApps").filter(function (oData) {
+							return oData.name === "Shopping Cart";
+						})[0];
 					} catch (oException) {
 						Opa5.assert.ok(false, "The shopping cart metadata could not be found");
 					}
@@ -86,10 +91,10 @@ sap.ui.getCore().attachInit(function() {
 					// icon
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.ui.core.Icon",
+						controlType: "sap.ui.documentation.DemoAppsCardHeader",
 						matchers: [
-							new Ancestor(oCell),
-							new Properties({src: "sap-icon://" + oData.icon})
+							new Ancestor(oCard),
+							new Properties({ iconSrc: "sap-icon://" + oData.icon })
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The icon \"" + oData.icon + "\" is displayed correctly");
@@ -99,10 +104,13 @@ sap.ui.getCore().attachInit(function() {
 					// title
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.m.Title",
+						controlType: "sap.ui.documentation.DemoAppsCardHeader",
 						matchers: [
-							new Ancestor(oCell),
-							new Properties({text: oData.name})
+							new Ancestor(oCard),
+							new Properties({
+								href: oData.ref,
+								hrefText: oData.name
+							})
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The title \"" + oData.name + "\" is displayed correctly");
@@ -114,27 +122,24 @@ sap.ui.getCore().attachInit(function() {
 						viewName: sViewName,
 						controlType: "sap.m.Text",
 						matchers: [
-							new Ancestor(oCell),
-							new Properties({text: oData.desc})
+							new Ancestor(oCard),
+							new Properties({ text: oData.desc })
 						],
 						success: function () {
 							Opa5.assert.ok(true, "The description \"" + oData.desc + "\" is displayed correctly");
 						}
 					});
 
-					// main link
+					// library link
 					Then.waitFor({
 						viewName: sViewName,
-						controlType: "sap.ui.documentation.TitleLink",
+						controlType: "sap.m.Link",
 						matchers: [
-							new Ancestor(oCell),
-							new Properties({
-								text: oData.name,
-								href: oData.ref
-							})
+							new Ancestor(oCard),
+							new Properties({ text: oData.lib })
 						],
 						success: function () {
-							Opa5.assert.ok(true, "The main link \"" + oData.ref + "\" is displayed correctly");
+							Opa5.assert.ok(true, "The library link \"" + oData.lib + "\" is displayed correctly");
 						}
 					});
 
@@ -145,7 +150,7 @@ sap.ui.getCore().attachInit(function() {
 							viewName: sViewName,
 							controlType: "sap.m.Link",
 							matchers: [
-								new Ancestor(oCell),
+								new Ancestor(oCard),
 								new Properties({
 									text: oData.links[i].name,
 									href: oData.links[i].ref
@@ -158,116 +163,73 @@ sap.ui.getCore().attachInit(function() {
 							/* eslint-enable no-loop-func */
 						});
 					}
-
-					// teaser
-					Then.waitFor({
-						viewName: sViewName,
-						controlType: "sap.m.List",
-						matchers: [
-							new Ancestor(oCell)
-						],
-						success: function () {
-							Opa5.assert.ok(true, "The teaser \"" + oData.teaser + "\" is displayed correctly");
-						}
-					});
-
-					// library link
-					Then.waitFor({
-						viewName: sViewName,
-						controlType: "sap.m.Link",
-						matchers: [
-							new Ancestor(oCell),
-							new Properties({text: oData.lib})
-						],
-						success: function () {
-							Opa5.assert.ok(true, "The library link \"" + oData.lib + "\" is displayed correctly");
-						}
-					});
-
-				}
-			});
-		});
-
-		opaTest("Should see the download button", function (Given, When, Then) {
-			Then.waitFor({
-				viewName: sViewName,
-				id: "download",
-				success: function () {
-					Opa5.assert.ok(true, "The download button is visible");
-				}
-			});
-		});
-
-		opaTest("Should be able to download all apps", function (Given, When, Then) {
-			var fnCreateArchive;
-			var fnHandleError;
-
-			When.waitFor({
-				viewName : sViewName,
-				id : "demoAppsPage",
-				success: function (oPage) {
-					var oController = oPage.getParent().getController();
-					fnCreateArchive = sinon.stub(oController, "_createArchive", function () {});
-					fnHandleError = sinon.stub(oController, "_handleError", function () {});
 				}
 			});
 
-			// press the download button once
-			var oDownloadButton = {
-				viewName: sViewName,
-				id: "download",
-				actions: new Press()
-			};
-			When.waitFor(oDownloadButton);
+			opaTest("Should see at least 10 download buttons", function (Given, When, Then) {
+				Then.waitFor({
+					viewName: sViewName,
+					controlType: "sap.m.Button",
+					matchers: function (oButton) {
+						return oButton.$().hasClass("sapUiDemoKitDemoAppsCardDownloadButton");
+					},
+					success: function (aItems) {
+						Opa5.assert.ok(aItems.length >= 10, "Found at least 10 download buttons");
+					}
+				});
+			});
 
-			// download all apps
-			When.waitFor({
-				viewName: sViewName,
-				controlType: "sap.m.Button",
-				matchers: new Properties({ text: "Download" }),
-				searchOpenDialogs: true,
-				success: function (aDownloadButtons) {
-					// close dialog
-					When.waitFor({
-						viewName: sViewName,
-						controlType: "sap.m.Button",
-						matchers: new Properties({ text: "Cancel" }),
-						actions: new Press()
-					});
+			opaTest("Should be able to download all apps", function (Given, When, Then) {
+				var fnCreateArchive;
+				var fnHandleError;
 
-					When.waitFor(oDownloadButton);
+				When.waitFor({
+					viewName: sViewName,
+					id: "sapUiDemoKitDemoAppsPage",
+					success: function (oPage) {
+						var oController = oPage.getParent().getController();
+						fnCreateArchive = sinon.stub(oController, "createArchive", function () { });
+						fnHandleError = sinon.stub(oController, "handleError", function () { });
+					}
+				});
 
-					// loop over the demo apps and download each
-					aDownloadButtons.forEach(function (oButton) {
+				When.waitFor({
+					viewName: sViewName,
+					controlType: "sap.m.Button",
+					matchers: function (oButton) {
+						return oButton.$().hasClass("sapUiDemoKitDemoAppsCardDownloadButton");
+					},
+					success: function (aDownloadButtons) {
+						aDownloadButtons.forEach(function (oButton) {
+							Then.waitFor({
+								success: function () {
+									sinon.assert.notCalled(fnHandleError);
+									if (fnHandleError.callCount > 0) {
+										Opa5.stopQueue();
+									}
+								}
+							});
+
+							When.waitFor({
+								viewName: sViewName,
+								controlType: "sap.m.Button",
+								matchers: new Properties({ id: oButton.getId() }),
+								actions: new Press()
+							});
+						});
+
 						Then.waitFor({
 							success: function () {
 								sinon.assert.notCalled(fnHandleError);
-								if (fnHandleError.callCount > 0) {
-									Opa.stopQueue();
-								}
+								Opa5.assert.ok(true, "All downloads worked");
+								fnHandleError.restore();
+								fnCreateArchive.restore();
 							}
 						});
 
-						When.waitFor({
-							viewName: sViewName,
-							controlType: "sap.m.Button",
-							matchers: new Properties({ id: oButton.getId() }),
-							actions: new Press()
-						});
-					});
-
-					// final check and cleanup
-					Then.waitFor({
-						success: function () {
-							sinon.assert.notCalled(fnHandleError);
-							Opa5.assert.ok(true, "All downloads worked");
-							fnHandleError.restore();
-							fnCreateArchive.restore();
-						}
-					});
-
-					Then.iTeardownMyApp();
-				}
+						Then.iTeardownMyApp();
+					}
+				});
 			});
 		});
 
