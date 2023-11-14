@@ -1,9 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
+	// ensure that all used types are loaded in advance
 	"sap/ui/model/odata/type/Currency",
+	"sap/ui/model/odata/type/Decimal",
 	"sap/ui/model/odata/type/Unit"
-], function (Controller, JSONModel, CurrencyType, UnitType) {
+], function (Controller, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.internal.samples.odata.twoFields", {
