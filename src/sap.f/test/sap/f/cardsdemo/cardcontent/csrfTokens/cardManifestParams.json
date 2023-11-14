@@ -59,7 +59,7 @@
 					"url": "{{destinations.ActivitiesMockServer}}/Activities",
 					"method": "POST",
 					"parameters": {
-						"X-CSRF-Token": "{{csrfTokens.token1}}ADD"
+						"X-CSRF-Token": "{csrfTokens>/token1/value}ADD"
 					}
 				},
 				"path": "/data"

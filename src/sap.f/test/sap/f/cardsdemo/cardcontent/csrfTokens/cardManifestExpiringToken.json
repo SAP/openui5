@@ -40,7 +40,7 @@
 				"token1": {
 					"data": {
 						"request": {
-							"url": "{{destinations.ActivitiesMockServer}}/Tokens",
+							"url": "{{destinations.ActivitiesMockServer}}/ExpiringToken",
 							"method": "HEAD",
 							"headers": {
 								"X-CSRF-Token": "Fetch"
@@ -59,7 +59,7 @@
 					"url": "{{destinations.ActivitiesMockServer}}/ActivitiesExpiringToken",
 					"method": "GET",
 					"headers": {
-						"X-CSRF-Token": "{{csrfTokens.token1}}"
+						"X-CSRF-Token": "{csrfTokens>/token1/value}"
 					}
 				},
 				"path": "/data"

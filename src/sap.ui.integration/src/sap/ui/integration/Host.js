@@ -266,15 +266,18 @@ sap.ui.define([
 		};
 
 		/**
-		 * Resolves the CSRF token and returns a Promise with its value.
+		 * Resolves the value of a CSRF token.
+		 * Subclasses of Host can override this method to take over the default CSRF token resolving.
+		 * Applications must not call this method directly, it is called by the framework.
 		 *
-		 * @param {{data: object}} mCSRFTokenConfig The CSRF token configuration.
-		 * @returns {Promise<string>} A promise which resolves the CSRF token to its value.
+		 * @param {{data: object}} csrfTokenConfig The CSRF token configuration.
 		 * @experimental since 1.97
+		 * @returns {Promise<string>} A promise which resolves the CSRF token to its value.
 		 * @abstract
-		 * @public
+		 * @protected
+		 * @deprecated As of version 1.121.0
 		 */
-		Host.prototype.getCsrfToken = function (mCSRFTokenConfig) {
+		Host.prototype.getCsrfToken = function (csrfTokenConfig) {
 			return Promise.resolve();
 		};
 
@@ -286,6 +289,7 @@ sap.ui.define([
 		 * @experimental since 1.97
 		 * @abstract
 		 * @public
+		 * @deprecated As of version 1.121.0
 		 */
 		Host.prototype.csrfTokenFetched = function (mCSRFTokenConfig, pCSRFTokenValuePromise) {
 
@@ -298,6 +302,7 @@ sap.ui.define([
 		 * @experimental since 1.97
 		 * @abstract
 		 * @public
+		 * @deprecated As of version 1.121.0
 		 */
 		Host.prototype.csrfTokenExpired = function (mCSRFTokenConfig) {
 

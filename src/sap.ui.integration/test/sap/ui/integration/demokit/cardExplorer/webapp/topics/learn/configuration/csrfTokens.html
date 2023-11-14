@@ -12,26 +12,21 @@
 
 	<div class="topic">
 		<div class="content">
-			<h1 id="overview">
-				CSRF Tokens
-			</h1>
+			<h1 id="overview">CSRF Tokens</h1>
 			<p>
-				A CSRF (Cross Site Request Forgery) Token is a secret, unique and unpredictable value a
+				A CSRF (Cross Site Request Forgery) Token is a secret, unique and unpredictable value that
 				server-side application generates in order to protect CSRF vulnerable resources.
 
 				The tokens are generated and submitted by the server-side
 				application in a subsequent HTTP request made by the client.
 			</p>
-			<h2 id="inTheManifest">
-				In the manifest
-			</h2>
 			<p>
-				Card developers describe the CSRF Tokens in the <code>configuration</code> section,
-				<code>csrfTokens</code> subsection of the manifest.
-				These tokens can be referred inside a data request using a placeholder like
-				<code>{{CSRFTokens.myCSRFToken}}</code>. See the example below.
+				Card developers describe the CSRF tokens in the <code>configuration/csrfTokens</code> subsection of the manifest.
+				These tokens can be referred inside a data request using a binding syntax like
+				<code>{csrfTokens>/myCSRFToken/value}</code>.
 			</p>
-			<h3 id="properties">CSRF Token properties</h3>
+
+			<h2 id="properties">CSRF Token Properties</h2>
 			<div class="tableWrapper">
 				<table>
 					<tr>
@@ -44,26 +39,37 @@
 					</tr>
 					<tr>
 						<td>data</td>
-						<td><a href="../../../index.html#/learn/features/data"
-							   target="_parent">Data</a></td>
+						<td><a href="../../../index.html#/learn/features/data" target="_parent">Data</a></td>
 						<td>Yes</td>
-						<td>The data section</td>
+						<td>
+							Data request to obtain the token.
+							<br>
+							<b>Note:</b> By default the token will be taken from the <code>X-CSRF-Token</code> response header.
+						</td>
 						<td>1.38.0</td>
 						<td>1.97</td>
 					</tr>
 				</table>
 			</div>
-			<h2 id="inTheHostEnvironment">
-				In the host environment
-			</h2>
+
+			<h2 id="csrfTokensModel">CSRF Tokens Model</h2>
+			<p>The following values are available for every CSRF token and can be used in data requests:</p>
+			<table>
+				<tr>
+					<th>Path</th>
+					<th>Description</th>
+				</tr>
+				<tr>
+					<td>{csrfTokens>/keyOfTheToken/value}</td>
+					<td>The value of the token.</td>
+				</tr>
+			</table>
+
 			<p>
-				The CSRF Tokens can be resolved by the host application developer.
-				For detailed information about the contribution from host environment, see
-				<a href="../../../index.html#/integrate/csrfTokens" target="_parent">Integrate CSRF Tokens</a>.
+				<b>Note:</b> The syntax <code>{{csrfTokens.myCSRFToken}} is deprecated as of version 1.121.0.</code>
 			</p>
-			<h2 id="examples">
-				Example
-			</h2>
+
+			<h2 id="examples">Example</h2>
 			<p>An example with a card which fetches data and uses CSRF Tokens:</p>
 			<pre class="lang-json">
 "sap.card": {
@@ -76,7 +82,7 @@
 				"defaultUrl": "/getDataWithCSRF"
 			}
 		},
-		"csrfTokens": {
+		<mark>"csrfTokens": {
 			"token1": {
 				"data": {
 					"request": {
@@ -88,7 +94,7 @@
 					}
 				}
 			}
-		}
+		}</mark>
 	},
 	"data": {
 		"request": {
@@ -97,9 +103,9 @@
 				"$format": "json"
 			},
 			"method": "GET",
-			"headers": {
-				"X-CSRF-Token": "{{csrfTokens.token1}}"
-			}
+			<mark>"headers": {
+				"X-CSRF-Token": "{csrfTokens>/token1/value}"
+			}</mark>
 		},
 		"path": "/data"
 	},
