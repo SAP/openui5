@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"sap/ui/integration/widgets/Card",
@@ -175,6 +175,45 @@ sap.ui.define([
 
 		// Act - change the DOM ref
 		oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Card Ready State");
+
+	QUnit.test("_onReady should be called only once", async function (assert) {
+		// Arrange
+		const oCard = new Card();
+		let oldPromises = [],
+			allPromises = [];
+		const onReadySpy = sinon.spy();
+
+		oCard.attachEvent("_ready", onReadySpy);
+
+		oCard._initReadyState();
+		oldPromises = oCard._aReadyPromises;
+		allPromises.concat(oldPromises);
+		assert.ok(Array.isArray(oldPromises));
+		oCard._clearReadyState();
+
+		oCard._initReadyState();
+		assert.notStrictEqual(oldPromises, oCard._aReadyPromises, "Promises array should have changed");
+		oldPromises = oCard._aReadyPromises;
+		allPromises = allPromises.concat(oldPromises);
+		oCard._clearReadyState();
+
+		oCard._initReadyState();
+		assert.notStrictEqual(oldPromises, oCard._aReadyPromises, "Promises array should have changed");
+		oldPromises = oCard._aReadyPromises;
+		allPromises = allPromises.concat(oldPromises);
+
+		// Act
+		["_dataReady", "_dataPassedToContent", "_headerReady", "_filterBarReady", "_contentReady"]
+		.forEach((e) => oCard.fireEvent(e));
+
+		await Promise.all(allPromises);
+		assert.strictEqual(onReadySpy.callCount, 1, "Ready event should be fired only once");
+
+		// Cleanup
+		oCard.destroy();
 	});
 
 });
