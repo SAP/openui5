@@ -1,0 +1,7 @@
+<mvc:View xmlns="sap.ui.core" xmlns:mvc="sap.ui.core.mvc">
+	<ComponentContainer
+		id="container"
+		name="qunit.router.component.parentRoute.Child"
+		manifest="true"
+		async="true"></ComponentContainer>
+</mvc:View>
