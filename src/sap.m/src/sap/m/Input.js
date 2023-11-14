@@ -1139,18 +1139,9 @@ function(
 						// if the property valueHelpOnly is set to true, the event is triggered in the ontap function
 						return;
 					 }
-					var oParent = this.getParent(),
-						$input;
+					var oParent = this.getParent();
 
-					if (Device.support.touch) {
-						// prevent opening the soft keyboard
-						$input = oParent.$('inner');
-						$input.attr('readonly', 'readonly');
-						oParent.focus();
-						$input.removeAttr('readonly');
-					} else {
-						oParent.focus();
-					}
+					oParent.focus();
 
 					that.bValueHelpRequested = true;
 
