@@ -640,12 +640,7 @@ sap.ui.define([
 
 		if (aChanges instanceof Array && aChanges.length > 0) {
 			var oModificationSetting = this._determineModification(vControl);
-			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload)
-				.then(function (aChanges) {
-					var oControl = Engine.getControlInstance(vControl);
-					this.fireStateChange(oControl);
-					return aChanges;
-				}.bind(this));
+			return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
 		} else {
 			return Promise.resolve([]);
 		}
