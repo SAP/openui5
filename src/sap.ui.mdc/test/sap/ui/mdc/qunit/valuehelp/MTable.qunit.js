@@ -411,6 +411,7 @@ sap.ui.define([
 		sinon.spy(oListBinding, "changeParameters");
 		oListBinding.suspend(); // check for resuming
 
+		oMTable.setConditions(); // before filtering conditions should be cleared in typeahead for single-value
 		oMTable.setFilterFields("$search");
 		oMTable._bContentBound = true;
 		oMTable.setFilterValue("X");
@@ -424,12 +425,14 @@ sap.ui.define([
 			// as JSOM-Model does not support $search all items are returned, but test for first of result
 			const oTable = oMTable.getTable();
 			const aItems = oTable.getItems();
+			const sShownItemId = oMTable.onShow(); // to update selection and scroll
 			assert.equal(iTypeaheadSuggested, 1, "typeaheadSuggested event fired");
 			assert.deepEqual(oCondition, Condition.createItemCondition("I1", "Item 1"), "typeaheadSuggested event condition");
 			assert.equal(sFilterValue, "X", "typeaheadSuggested event filterValue");
 			assert.equal(sItemId, aItems[0].getId(), "typeaheadSuggested event itemId");
 			assert.ok(aItems[0].hasStyleClass("sapMLIBSelected"), "Item shown as selected");
 			assert.notOk(aItems[0].getSelected(), "Item not really selected");
+			assert.equal(sShownItemId, aItems[0].getId(), "onShow returns first-match itemId");
 
 			oContainer.getValueHelpDelegate.restore();
 			ValueHelpDelegateV4.updateBinding.restore();
