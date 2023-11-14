@@ -1028,9 +1028,9 @@ function(
 		return this;
 	};
 
-	TileContainer.prototype.rerender = function() {
+	TileContainer.prototype.invalidate = function() {
 		if (!this._oDragSession || this._oDragSession.bDropped) {
-			Control.prototype.rerender.apply(this);
+			Control.prototype.invalidate.apply(this);
 		}
 	};
 

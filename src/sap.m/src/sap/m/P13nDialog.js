@@ -388,7 +388,6 @@ sap.ui.define([
 			}, this);
 		}
 		this.invalidate();
-		this.rerender();
 	};
 
 	/**

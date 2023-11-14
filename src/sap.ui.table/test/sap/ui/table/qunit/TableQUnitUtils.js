@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/Core",
 	"sap/ui/core/library",
+	"sap/ui/core/UIArea",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/util/merge",
@@ -32,6 +33,7 @@ sap.ui.define([
 	Control,
 	oCore,
 	CoreLibrary,
+	UIArea,
 	Device,
 	jQuery,
 	merge,
@@ -155,14 +157,16 @@ sap.ui.define([
 		var wrapForRenderingDetection = function(oObject, sFunctionName) {
 			var fnOriginalFunction = oObject[sFunctionName];
 			oObject[sFunctionName] = function() {
-				this.fireRenderingTriggered();
+				if (sFunctionName !== "rerenderControl" || arguments[0] === oTable) {
+					this.fireRenderingTriggered();
+				}
 				fnOriginalFunction.apply(oObject, arguments);
 			}.bind(this);
 		}.bind(this);
 
 		// Add wrappers and hooks for functions that inevitably trigger a "rowsUpdated" event.
 		wrapForRenderingDetection(oTable, "invalidate");
-		wrapForRenderingDetection(oTable, "rerender");
+		wrapForRenderingDetection(UIArea, "rerenderControl");
 	};
 	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.RefreshRows] = function() { this.fireRenderingTriggered(); };
 	HelperPlugin.prototype.hooks[TableUtils.Hook.Keys.Table.UpdateRows] = function() { this.fireRenderingTriggered(); };

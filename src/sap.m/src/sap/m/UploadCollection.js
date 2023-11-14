@@ -812,7 +812,7 @@ sap.ui.define([
 		var sNoDataTextDescription = this.getNoDataText() + " " + sNoDataDescription;
 		this._oList.setNoDataText(sNoDataTextDescription);
 		if (this.getUploadEnabled() && this._oList.getItems().length == 0) {
-			this.rerender();
+			this.invalidate();
 		}
 		return this;
 	};
@@ -2850,7 +2850,6 @@ sap.ui.define([
 				//necessary for IE otherwise it comes to an error if onUploadProgress happens before the new item is added to the list
 				if (oProgressLabel) {
 					oProgressLabel.setText(sPercentUploaded);
-					oProgressLabel.rerender(); //Rerender the ProgressLabel during Upload
 					oItem._percentUploaded = iPercentUploaded;
 					// add ARIA attribute for screen reader support
 

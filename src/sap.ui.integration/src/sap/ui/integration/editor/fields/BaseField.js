@@ -535,7 +535,7 @@ sap.ui.define([
 				}
 				oMessageStrip.getDomRef().style.width = width + "px";
 			};
-			oMessageStrip.rerender();
+			oMessageStrip.invalidate();
 		}
 	};
 
