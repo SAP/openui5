@@ -132,7 +132,8 @@ function(
 
 	QUnit.test("DynamicPage - backgroundDesign property", function(assert) {
 		var oDynamicPage = this.oDynamicPage,
-				$oDomRef = oDynamicPage.$wrapper;
+				//$oDomRef = oDynamicPage.$("contentWrapper");
+			$oDomRef = oDynamicPage.$("contentWrapper");
 
 		// assert
 		assert.strictEqual(oDynamicPage.getBackgroundDesign(), PageBackgroundDesign.Standard, "Should have backgroundDesign property = 'Standard'");
@@ -436,7 +437,7 @@ function(
 
 		assert.ok($oDynamicPageHeader.hasClass("sapFDynamicPageHeaderWithContent"),
 			"The DynamicPage Header is not empty - sapFDynamicPageHeaderWithContent is added");
-		assert.ok(!oDynamicPage.$titleArea.hasClass("sapFDynamicPageTitleOnly"),
+		assert.ok(!oDynamicPage.$("header").hasClass("sapFDynamicPageTitleOnly"),
 			"The DynamicPage Header is not empty - sapFDynamicPageTitleOnly is not added");
 	});
 
@@ -470,7 +471,7 @@ function(
 		this.oDynamicPage._updateFitContainer();
 
 		// Assert
-		assert.strictEqual(this.oDynamicPage.$contentFitContainer.hasClass("sapFDynamicPageContentFitContainer"), false,
+		assert.strictEqual(this.oDynamicPage.$("contentFitContainer").hasClass("sapFDynamicPageContentFitContainer"), false,
 		"'sapFDynamicPageContentFitContainer' class is not added");
 
 		// Clean up
@@ -503,11 +504,11 @@ function(
 		var oDynamicPage = this.oDynamicPage;
 
 		oDynamicPage._snapHeader();
-		assert.ok(oDynamicPage.$headerInContentWrapper.hasClass("sapFDynamicPageHeaderSolid"),
+		assert.ok(oDynamicPage.$("headerWrapper").hasClass("sapFDynamicPageHeaderSolid"),
 			"The snapped header in content has solid background");
 
 		oDynamicPage._expandHeader();
-		assert.notOk(oDynamicPage.$headerInContentWrapper.hasClass("sapFDynamicPageHeaderSolid"),
+		assert.notOk(oDynamicPage.$("headerWrapper").hasClass("sapFDynamicPageHeaderSolid"),
 			"The expanded header in content does not have solid background");
 	});
 
@@ -678,7 +679,7 @@ function(
 
 		// assert initial setup (in the context of which the final check is valid)
 		assert.notEqual(getComputedStyle( oHeader.getDomRef()).position, "static", "the header is css-positioned");
-		assert.notEqual(getComputedStyle( this.oDynamicPage.$wrapper.get(0)).position, "static", "the scroll-container is css-positioned");
+		assert.notEqual(getComputedStyle( this.oDynamicPage.$("contentWrapper").get(0)).position, "static", "the scroll-container is css-positioned");
 
 		// Act:
 		// scroll just before snap
@@ -687,7 +688,7 @@ function(
 
 		// Check:
 		// obtain the amount of top pixels that are in the overflow (i.e. pixels that are scrolled out of view)
-		iScrollTop = this.oDynamicPage.$wrapper.scrollTop();
+		iScrollTop = this.oDynamicPage.$("contentWrapper").scrollTop();
 		// obtain the distance of the expand button from the top of the scrollable content
 		iButtonOffsetTop = oHeader._getCollapseButton().getDomRef().offsetTop + oHeader.getDomRef().offsetTop;
 		assert.ok(iButtonOffsetTop >= iScrollTop, "snap button is not in the overflow");
@@ -860,7 +861,7 @@ function(
 			"The DynamicPage Header is empty - sapFDynamicPageHeaderWithContent not added");
 		assert.ok(!$oDynamicPageHeader.hasClass("sapFDynamicPageHeaderPinnable"),
 			"The DynamicPage Header is pinnable, but it`s empty - sapFDynamicPageHeaderPinnable not added");
-		assert.ok(oDynamicPage.$titleArea.hasClass("sapFDynamicPageTitleOnly"),
+		assert.ok(oDynamicPage.$("header").hasClass("sapFDynamicPageTitleOnly"),
 			"The DynamicPage Header is empty and has Title only - sapFDynamicPageTitleOnly is added");
 	});
 
@@ -902,7 +903,7 @@ function(
 
 	QUnit.test("DynamicPage Footer visibility", function (assert) {
 		// Arrange
-		var $footerWrapper = this.oDynamicPage.$footerWrapper,
+		var $footerWrapper = this.oDynamicPage.$("footerWrapper"),
 			oFooter = this.oDynamicPage.getFooter(),
 			$footer = oFooter.$();
 
@@ -991,7 +992,7 @@ function(
 		// Act: toggle to 'true'
 		this.oDynamicPage.setShowFooter(true);
 		// scroll to bottom
-		this.oDynamicPage.$wrapper.scrollTop(this.oDynamicPage._getMaxScrollPosition());
+		this.oDynamicPage.$("contentWrapper").scrollTop(this.oDynamicPage._getMaxScrollPosition());
 
 		// Check
 		oFooterBoundingClientRect = this.oDynamicPage.getFooter().getDomRef().getBoundingClientRect();
@@ -1024,14 +1025,14 @@ function(
 	QUnit.test("When footer is visible, CSS class is applied to the DynamicPage", function (assert) {
 		// Assert - when footer is visible, CSS class is applied
 		assert.ok(this.oDynamicPage.$().hasClass("sapFDynamicPageFooterVisible"), "DynamicPage has CSS class");
-		assert.strictEqual(this.oDynamicPage.$wrapper.css("scroll-padding-bottom"), "58px", "58px scroll padding bottom on the wrapper");
+		assert.strictEqual(this.oDynamicPage.$("contentWrapper").css("scroll-padding-bottom"), "58px", "58px scroll padding bottom on the wrapper");
 
 		// Act - toggle to 'false'
 		this.oDynamicPage.setShowFooter(false);
 
 		// Assert - when footer is not visible, CSS class is not applied
 		assert.notOk(this.oDynamicPage.$().hasClass("sapFDynamicPageFooterVisible"), "DynamicPage does not have CSS class");
-		assert.strictEqual(this.oDynamicPage.$wrapper.css("scroll-padding-bottom"), "auto", "No scroll padding bottom on the wrapper");
+		assert.strictEqual(this.oDynamicPage.$("contentWrapper").css("scroll-padding-bottom"), "auto", "No scroll padding bottom on the wrapper");
 	});
 
 
@@ -1841,7 +1842,7 @@ function(
 		var oDynamicPage = this.oDynamicPage,
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper;
+			$wrapper = oDynamicPage.$("contentWrapper");
 
 		assert.equal($wrapper.find($header).length > 0, true, "Header is in content area initially");
 
@@ -1893,7 +1894,7 @@ function(
 			oMoveHeaderSpy = this.spy(),
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper;
+			$wrapper = oDynamicPage.$("contentWrapper");
 
 		// Setup
 		this.oDynamicPage.attachEvent("_moveHeader", oMoveHeaderSpy);
@@ -1913,7 +1914,7 @@ function(
 			oHeader = oDynamicPage.getHeader(),
 			$titleWrapper = oDynamicPage.$("header"),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper;
+			$wrapper = oDynamicPage.$("contentWrapper");
 
 		assert.equal($wrapper.find($header).length > 0, true, "Header is in the content area initially");
 
@@ -1942,7 +1943,7 @@ function(
 
 	QUnit.test("DynamicPage _moveHeaderToTitleArea(true) should preserve the top scroll position of the content", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			iScrollPositionBefore = 0,
 			iExpectedScrollPositionAfter = 0; // should remain 0 as the header is still expanded
 
@@ -1960,7 +1961,7 @@ function(
 			oMoveHeaderSpy = this.spy(),
 			oHeader = oDynamicPage.getHeader(),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper;
+			$wrapper = oDynamicPage.$("contentWrapper");
 
 		// Setup
 		oDynamicPage.attachEvent("_moveHeader", oMoveHeaderSpy);
@@ -2097,13 +2098,13 @@ function(
 
 		//arrange
 		oDynamicPage.setHeaderExpanded(false);
-		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage.$("contentWrapper").scrollTop(iExpectedScrollPosition);
 		//act
 		oDynamicPage.invalidate();
 		Core.applyChanges();
 
 		//assert
-		assert.ok(oDynamicPage.$wrapper.scrollTop, iExpectedScrollPosition,
+		assert.ok(oDynamicPage.$("contentWrapper").scrollTop, iExpectedScrollPosition,
 			"DynamicPage Scroll position is correct after rerender");
 	});
 
@@ -2112,7 +2113,7 @@ function(
 			oDynamicPage = this.oDynamicPage; // Scroll position of wrapper is set to 0 when navigating to another page
 
 		//arrange
-		oDynamicPage.$wrapper.scrollTop(iExpectedScrollPosition);
+		oDynamicPage.$("contentWrapper").scrollTop(iExpectedScrollPosition);
 		oDynamicPage.addStyleClass("sapMNavItem");
 
 		//act
@@ -2375,9 +2376,9 @@ function(
 
 	QUnit.test("DynamicPage _needsVerticalScrollBar() floors the current max scrollHeight", function (assert) {
 		// Arrange
-		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		var iScrollHeight = this.oDynamicPage.$("contentWrapper")[0].scrollHeight;
 		// mock the conditions of the tested scenario:
-		this.oDynamicPage.$wrapper[0] = {
+		this.oDynamicPage.$("contentWrapper")[0] = {
 			scrollHeight: iScrollHeight,
 			// the browser returns a ceiled value for <code>clientHeight</code>
 			clientHeight: iScrollHeight - 1,
@@ -2408,9 +2409,9 @@ function(
 
 	QUnit.test("DynamicPage _getMaxScrollPosition() prevents 1px maxScrollPosition due to rounding", function (assert) {
 		// Arrange
-		var iScrollHeight = this.oDynamicPage.$wrapper[0].scrollHeight;
+		var iScrollHeight = this.oDynamicPage.$("contentWrapper")[0].scrollHeight;
 		// mock the conditions of the tested scenario:
-		this.oDynamicPage.$wrapper[0] = {
+		this.oDynamicPage.$("contentWrapper")[0] = {
 			scrollHeight: iScrollHeight,
 			// the browser returns a ceiled value for <code>clientHeight</code>
 			clientHeight: iScrollHeight,
@@ -2421,7 +2422,6 @@ function(
 				};
 			}
 		};
-
 		// Assert
 		assert.strictEqual(this.oDynamicPage._getMaxScrollPosition(), 0,
 			"no scrollbar needed");
@@ -2459,7 +2459,7 @@ function(
 	QUnit.test("DynamicPage _toggleHeaderOnScroll for position <= snapping height preserves expanded state", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			$header = this.oDynamicPage.getHeader().$(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			iSnappingHeight = oDynamicPage._getSnappingHeight();
 
 		//arrange
@@ -2476,7 +2476,7 @@ function(
 	QUnit.test("DynamicPage _toggleHeaderOnScroll for position > snapping height snaps the header", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			$header = this.oDynamicPage.getHeader().$(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			iSnappingHeight = oDynamicPage._getSnappingHeight();
 
 		//arrange
@@ -2493,7 +2493,7 @@ function(
 	QUnit.test("DynamicPage _toggleHeaderOnScroll for position <= snapping height when header in title preserves the expanded state", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			$header = this.oDynamicPage.getHeader().$(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			iSnappingHeight = this.oDynamicPage._getSnappingHeight();
 
 		//setup
@@ -2513,7 +2513,7 @@ function(
 			oHeader = this.oDynamicPage.getHeader(),
 			$header = oHeader.$(),
 			$HeaderDom = oHeader.getDomRef(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			iHeaderHeight = getElementHeight($HeaderDom, true),
 			iTestScrollPosition = iHeaderHeight + 100, // pick position greater than snapping height => will require snap
 			iExpectedScrollPosition = iTestScrollPosition + iHeaderHeight;
@@ -2603,7 +2603,7 @@ function(
 		oUtil.renderObject(this.oDynamicPage);
 
 		assert.strictEqual(this.oDynamicPage.getHeaderExpanded(), false, "The DynamicPage getHeaderExpanded is still false");
-		assert.strictEqual(this.oDynamicPage.$titleArea.hasClass(sSnappedClass), true);
+		assert.strictEqual(this.oDynamicPage.$("header").hasClass(sSnappedClass), true);
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), true, "Header is hidden");
 	});
 
@@ -2632,7 +2632,7 @@ function(
 			oHeader = oDynamicPage.getHeader(),
 			oTitle = oDynamicPage.getTitle(),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			$titleWrapper = oDynamicPage.$("header"),
 			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
 			$oExpandButton = oTitle.getAggregation("_expandButton").$(),
@@ -2641,7 +2641,7 @@ function(
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
 		assert.strictEqual(oDynamicPage.getHeaderExpanded(), false, "The DynamicPage getHeaderExpanded is false");
-		assert.ok(oDynamicPage.$titleArea.hasClass(sSnappedClass), "title has snapped css-class");
+		assert.ok(oDynamicPage.$("header").hasClass(sSnappedClass), "title has snapped css-class");
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), !bExpectedHeaderInContent, "Header visibility is correct");
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
@@ -2656,7 +2656,7 @@ function(
 			oHeader = oDynamicPage.getHeader(),
 			oTitle = oDynamicPage.getTitle(),
 			$header = oHeader.$(),
-			$wrapper = oDynamicPage.$wrapper,
+			$wrapper = oDynamicPage.$("contentWrapper"),
 			$titleWrapper = oDynamicPage.$("header"),
 			$oCollapseButton = oHeader.getAggregation("_collapseButton").$(),
 			$oExpandButton = oTitle.getAggregation("_expandButton").$(),
@@ -2665,7 +2665,7 @@ function(
 		iExpectedScrollPosition = iExpectedScrollPosition || 0;
 
 		assert.strictEqual(oDynamicPage.getHeaderExpanded(), true, "The DynamicPage getHeaderExpanded is true");
-		assert.strictEqual(oDynamicPage.$titleArea.hasClass(sSnappedClass), false, "title does not have snapped css-class");
+		assert.strictEqual(oDynamicPage.$("header").hasClass(sSnappedClass), false, "title does not have snapped css-class");
 		assert.strictEqual(oHeader.$().hasClass("sapFDynamicPageHeaderHidden"), false, "Header visibility is correct");
 		assert.equal($titleWrapper.find($header).length > 0, !bExpectedHeaderInContent, "Header in the title value is correct");
 		assert.equal($wrapper.find($header).length > 0, bExpectedHeaderInContent, "Header in the content value is correct");
@@ -2843,7 +2843,7 @@ function(
 					//check
 					assert.ok(oDynamicPage.getScrollDelegate().hasOwnProperty("_$Container"), "scroll delegate has property _$Container");
 					assert.strictEqual(oDynamicPage.getScrollDelegate()._$Container.length, 1, "scroll delegate obtained reference to page container");
-					assert.strictEqual(oDynamicPage.getScrollDelegate()._$Container[0], oDynamicPage.$wrapper[0], "scroll delegate container reference is wrapper reference");
+					assert.strictEqual(oDynamicPage.getScrollDelegate()._$Container[0], oDynamicPage.$("contentWrapper")[0], "scroll delegate container reference is wrapper reference");
 
 					//act
 					oDynamicPage._setScrollPosition(iNewScrollPosition);
@@ -3349,7 +3349,7 @@ function(
 		Core.applyChanges();
 
 		//Act
-		assert.equal(oDynamicPage.$wrapper.css("scroll-padding-top"), oDynamicPage.$wrapper.css("padding-top"),
+		assert.equal(oDynamicPage.$("contentWrapper").css("scroll-padding-top"), oDynamicPage.$("contentWrapper").css("padding-top"),
 		"Scroll padding is equal to visual padding of scrolling wrapper");
 		//Clean up
 		oDynamicPage.setContent(oContent);

@@ -109,37 +109,37 @@ sap.ui.define([
 	};
 
 	Accessibility.prototype.onAfterRenderingSecondTitle = function () {
-		var $oSecondTitle = this._oControl._oSecondTitle.$();
+		var oSecondTitle = this._oControl._oSecondTitle.getDomRef();
 
-		$oSecondTitle.attr("role", "heading");
-		$oSecondTitle.attr("aria-level", "2");
+		oSecondTitle.setAttribute("role", "heading");
+		oSecondTitle.setAttribute("aria-level", "2");
 	};
 
 	Accessibility.prototype.onAfterRenderingSearch = function () {
-		this._oControl._oSearch.$().attr("aria-label", this.getEntityTooltip("SEARCH"));
+		this._oControl._oSearch.getDomRef().setAttribute("aria-label", this.getEntityTooltip("SEARCH"));
 	};
 
 	Accessibility.prototype.onAfterRenderingAvatar = function () {
-		var $oAvatar = this._oControl.getProfile().$();
+		var oAvatar = this._oControl.getProfile().getDomRef();
 
-		$oAvatar.attr("aria-label", this.getEntityTooltip("PROFILE"));
-		$oAvatar.attr("aria-haspopup", "menu");
+		oAvatar.setAttribute("aria-label", this.getEntityTooltip("PROFILE"));
+		oAvatar.setAttribute("aria-haspopup", "menu");
 	};
 
 	Accessibility.prototype.onAfterRenderingProducts = function () {
-		var $oProducts = this._oControl._oProductSwitcher.$();
+		var oProducts = this._oControl._oProductSwitcher.getDomRef();
 
-		$oProducts.attr("aria-label", this.getEntityTooltip("PRODUCTS"));
+		oProducts.setAttribute("aria-label", this.getEntityTooltip("PRODUCTS"));
 	};
 
 	Accessibility.prototype.onAfterRenderingNavButton = function () {
-		this._oControl._oNavButton.$().attr("aria-label", this.getEntityTooltip("BACK"));
+		this._oControl._oNavButton.getDomRef().setAttribute("aria-label", this.getEntityTooltip("BACK"));
 	};
 
 	Accessibility.prototype.onAfterRenderingMenuButton = function () {
-		var $oMenuButton = this._oControl._oMenuButton.$();
+		var oMenuButton = this._oControl._oMenuButton.getDomRef();
 
-		$oMenuButton.attr("aria-label", this.getEntityTooltip("MENU"));
+		oMenuButton.setAttribute("aria-label", this.getEntityTooltip("MENU"));
 	};
 
 	Accessibility.prototype.exit = function () {

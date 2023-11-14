@@ -151,14 +151,14 @@ sap.ui.define([
 		ProductSwitch.prototype._setSelection = function (vItem) {
 			if (this._oCurrentSelectedItem) {
 				this._oCurrentSelectedItem.removeStyleClass("sapFPSItemSelected");
-				this._oCurrentSelectedItem.$().removeAttr("aria-checked");
+				this._oCurrentSelectedItem.getDomRef().removeAttribute("aria-checked");
 			}
 
 			this._oCurrentSelectedItem = vItem;
 
 			if (this._oCurrentSelectedItem) {
 				this._oCurrentSelectedItem.addStyleClass("sapFPSItemSelected");
-				this._oCurrentSelectedItem.$().attr("aria-checked", "true");
+				this._oCurrentSelectedItem.getDomRef().setAttribute("aria-checked", "true");
 			}
 		};
 

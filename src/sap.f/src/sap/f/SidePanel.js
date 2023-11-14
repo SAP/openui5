@@ -481,7 +481,7 @@ sap.ui.define([
 	SidePanel.prototype.oncontextmenu = function(oEvent) {
 		var bSplitterFocused = document.activeElement === this.getDomRef().querySelector(".sapFSPSplitterBar");
 
-		if (bSplitterFocused || oEvent.target.closest(".sapFSPSide.sapFSPResizable")) {
+		if (bSplitterFocused || oEvent.target.getDomRef?.().closest(".sapFSPSide.sapFSPResizable")) {
 			// show the resize context menu only if there is a keyboard call ([Shift]+[F10] or [Context menu] keys)
 			// from focused splitter bar or right click somewhere within the side panel
 			oEvent.preventDefault();
@@ -787,9 +787,9 @@ sap.ui.define([
 					oItemDomRef.setAttribute("tabindex", "-1");
 					aItemsDomRef.push(oItemDomRef);
 				}
-				oItem.$().css("display", "flex");
+				oItem.getDomRef().style.display = "flex";
 			} else {
-				oItem.$().css("display", "none");
+				oItem.getDomRef().style.display = "none";
 				oMenuItem = new MenuItem({
 					text: oItem.getText(),
 					icon: oItem.getIcon(),
@@ -801,12 +801,12 @@ sap.ui.define([
 		}.bind(this));
 
 		if (bShowOverflowItem) {
-			oOverflowItem.$().css("visibility", "visible");
+			oOverflowItem.getDomRef().style.visibility = "visible";
 			oItemDomRef = this._getFocusDomRef(oOverflowItem);
 			oItemDomRef.setAttribute("tabindex", "-1");
 			aItemsDomRef.push(oItemDomRef);
 		} else {
-			oOverflowItem.$().css("visibility", "hidden");
+			oOverflowItem.getDomRef().style.visibility = "hidden";
 		}
 
 		// create the ItemNavigation
@@ -945,7 +945,7 @@ sap.ui.define([
 		// set the text of the overflow item separately via framework without invalidation
 		// and then directly in the DOM element in order to achieve correct screen reader announcement
 		oOverflowItem.setText(sOverflowItemText, false);
-		oOverflowItem.$().find(".sapFSPItemText").text(sOverflowItemText);
+		oOverflowItem.getDomRef().querySelector(".sapFSPItemText").textContent = sOverflowItemText;
 	};
 
 	SidePanel.prototype._getAriaLabelText = function() {

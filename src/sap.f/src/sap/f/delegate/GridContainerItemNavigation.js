@@ -91,14 +91,14 @@ sap.ui.define([
 		// get the last focused element from the ItemNavigation
 		var aNavigationDomRefs = this.getItemDomRefs(),
 			iLastFocusedIndex = this.getFocusedIndex(),
-			$LastFocused = jQuery(aNavigationDomRefs[iLastFocusedIndex]),
+			lastFocusedDom = aNavigationDomRefs[iLastFocusedIndex],
 			Tabbables = [];
 
 		// Tabbable elements in wrapper
-		var $AllTabbables = $LastFocused.find(":sapTabbable");
+		var allTabbables = jQuery(lastFocusedDom).find(":sapTabbable");
 
 		// leave only real tabbable elements in the tab chain, GridContainer and List types have dummy areas
-		$AllTabbables.map(function(index, element) {
+		allTabbables.map(function(index, element) {
 			if (element.className.indexOf("DummyArea") === -1 && element.className.indexOf("sapMListUl") === -1) {
 				Tabbables.push(element);
 			}
@@ -149,18 +149,17 @@ sap.ui.define([
 	};
 
 	GridContainerItemNavigation.prototype.onmouseup = function(oEvent) {
-
-		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
+		var listItemDom = oEvent.target.getDomRef?.().closest('.sapFGridContainerItemWrapperNoVisualFocus'),
 			oControl;
 
-		if ($listItem.length) {
-			oControl = Element.closestTo($listItem.children()[0]);
+		if (listItemDom) {
+			oControl = Element.closestTo(listItemDom.children[0]);
 
 			// if the list item visual focus is displayed by the currently focused control,
 			// move the focus to the list item
 			if (oControl && oControl.getFocusDomRef() === document.activeElement) {
 				this._lastFocusedElement = null;
-				$listItem.trigger("focus");
+				jQuery(listItemDom).trigger("focus");
 				doVirtualFocusin(oControl);
 			}
 		}
@@ -208,11 +207,11 @@ sap.ui.define([
 			return;
 		}
 
-		var $listItem = jQuery(oEvent.target).closest('.sapFGridContainerItemWrapperNoVisualFocus'),
+		var listItemDom = oEvent.target.getDomRef?.().closest('.sapFGridContainerItemWrapperNoVisualFocus'),
 			oControl;
 
-		if ($listItem.length) {
-			oControl = Element.closestTo($listItem.children()[0]);
+		if (listItemDom) {
+			oControl = Element.closestTo(listItemDom.children[0]);
 
 			if (oControl) {
 				doVirtualFocusin(oControl);
@@ -221,7 +220,7 @@ sap.ui.define([
 				// move the focus to the list item
 				if (!this._bIsMouseDown && oControl.getFocusDomRef() === oEvent.target) {
 					this._lastFocusedElement = null;
-					$listItem.trigger("focus");
+					jQuery(listItemDom).trigger("focus");
 					return;
 				}
 			}

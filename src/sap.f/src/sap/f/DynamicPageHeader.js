@@ -173,7 +173,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._setShowPinBtn = function (bValue) {
-			this._getPinButton().$().toggleClass("sapUiHidden", !bValue);
+			this._getPinButton().toggleStyleClass("sapUiHidden", !bValue);
 		};
 
 		/**
@@ -214,9 +214,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._initARIAState = function () {
-			var $header = this.$();
-
-			$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
+			this.getDomRef()?.setAttribute?.(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
 		};
 
 		/**
@@ -224,11 +222,8 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._initPinButtonARIAState = function () {
-			var $pinButton;
-
-			if (this.getPinnable()) {
-				$pinButton = this._getPinButtonJQueryRef();
-				$pinButton.attr(DynamicPageHeader.ARIA.ARIA_CONTROLS, this.getId());
+			if (this.getPinnable() && this._getPinButton() && this._getPinButton().getDomRef()) {
+				this._getPinButton().getDomRef().setAttribute(DynamicPageHeader.ARIA.ARIA_CONTROLS, this.getId());
 			}
 		};
 
@@ -238,12 +233,11 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._updateARIAState = function (bExpanded) {
-			var $header = this.$();
+			var header = this.getDomRef();
+			var ariaLabel = bExpanded ? DynamicPageHeader.ARIA.LABEL_EXPANDED : DynamicPageHeader.ARIA.LABEL_COLLAPSED;
 
-			if (bExpanded) {
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_EXPANDED);
-			} else {
-				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_COLLAPSED);
+			if (header) {
+				header.setAttribute(DynamicPageHeader.ARIA.ARIA_LABEL, ariaLabel);
 			}
 		};
 
@@ -332,16 +326,7 @@ sap.ui.define([
 		 * @private
 		 */
 		DynamicPageHeader.prototype._focusPinButton = function () {
-			this._getPinButtonJQueryRef().trigger("focus");
-		};
-
-		/**
-		 * Returns the <code>DynamicPageHeader</code> pin/unpin button DOM Ref.
-		 * @return {jQuery}
-		 * @private
-		 */
-		DynamicPageHeader.prototype._getPinButtonJQueryRef = function () {
-			return this._getPinButton().$();
+			this._getPinButton().$().trigger("focus");
 		};
 
 		/**

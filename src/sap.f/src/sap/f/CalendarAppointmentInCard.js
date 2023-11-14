@@ -54,10 +54,10 @@ sap.ui.define([
 
 	CalendarAppointmentInCard.prototype._firePress = function() {
 		if (this.getClickable()) {
-			this.$().addClass("sapUiCalendarAppSel");
+			this.addStyleClass("sapUiCalendarAppSel");
 			setTimeout(function() {
 				// remove active state
-				this.$().removeClass("sapUiCalendarAppSel");
+				this.removeStyleClass("sapUiCalendarAppSel");
 			}.bind(this), 180);
 			this.firePress({});
 		}

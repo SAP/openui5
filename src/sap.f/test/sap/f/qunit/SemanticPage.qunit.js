@@ -1036,13 +1036,13 @@ function(
 			oPage.getScrollDelegate().scrollTo(0, 2000);
 
 			//Assert
-			assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), true, "Header is snapped on scroll bottom");
+			assert.equal(oPage.getTitle().$("expand-wrapper").hasClass("sapUiHidden"), true, "Header is snapped on scroll bottom");
 			assert.equal(oPage.getTitle()._bExpandedState, false, "Header is in snapped state on scroll bottom");
 			//Act
 			oPage.getScrollDelegate().scrollTo(0, 0);
 			setTimeout(function () {
 				//Assert
-				assert.equal(oPage.getTitle().$expandWrapper.hasClass("sapUiHidden"), false, "Header is expanded on scroll top");
+				assert.equal(oPage.getTitle().$("expand-wrapper").hasClass("sapUiHidden"), false, "Header is expanded on scroll top");
 				assert.equal(oPage.getTitle()._bExpandedState, true, "Header is in expanded state on scroll top");
 				done();
 			});

@@ -15,14 +15,13 @@ sap.ui.define([],
 		};
 
 		var fnIgnoreTitleActionsAggregation = function (oControl, sAggregationGetter) {
-			var $ControlDomRef;
 
 			if (!oControl) {
 				return true;
 			}
 
-			$ControlDomRef = oControl.$().find("sapFDynamicPageTitleActionsBar");
-			return !!($ControlDomRef.length > 0 && oControl[sAggregationGetter]().length > 0);
+			var oControlDomRef = oControl.getDomRef()?.querySelectorAll?.(".sapFDynamicPageTitleActionsBar") || [];
+			return !!(oControlDomRef.length > 0 && oControl[sAggregationGetter]().length > 0);
 		};
 
 		return {
@@ -327,7 +326,7 @@ sap.ui.define([],
 			},
 			{
 				domRef : function(oElement) {
-					return oElement.$("vertSB-sb").get(0);
+					return oElement.getDomRef("vertSB-sb");
 				}
 			}],
 			templates: {

@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Button",
 	"sap/ui/core/Core",
 	"sap/ui/core/ResizeHandler",
-	"sap/f/library"
+	"sap/f/library",
+	"sap/ui/thirdparty/jquery"
 ],
 function(
 	ControlBehavior,
@@ -21,7 +22,8 @@ function(
 	Button,
 	Core,
 	ResizeHandler,
-	library
+	library,
+	jQuery
 ) {
 	"use strict";
 
@@ -973,7 +975,7 @@ function(
 
 		// arrange
 		var fnDone = assert.async(),
-			oBeginColumn = this.oFCL._$columns["begin"],
+			oBeginColumn = jQuery(this.oFCL._columns["begin"]),
 			oBeginColumnDomRef = oBeginColumn.get(0),
 			oSuspendSpy = this.spy(ResizeHandler, "suspend"),
 			oResumeSpy = this.spy(ResizeHandler, "resume");
@@ -1101,7 +1103,7 @@ function(
 
 	QUnit.test("Conceal effect layout changes", function(assert) {
 		//arrange
-		var $endColumn = this.oFCL._$columns["end"],
+		var $endColumn = jQuery(this.oFCL._columns["end"]),
 		fnDone = assert.async();
 
 		this.stub(this.oFCL, "_getControlWidth").returns(parseInt(DESKTOP_SIZE));
@@ -1163,15 +1165,15 @@ function(
 		this.oFCL._oAnimationEndListener.waitForAllColumnsResizeEnd().then(function() {
 			// assert
 			assertColumnsVisibility(assert, this.oFCL, 0, 1, 0);
-			assert.ok(this.oFCL._$columns["begin"].hasClass('sapFFCLColumnHidden'));
-			assert.notOk(this.oFCL._$columns["mid"].hasClass('sapFFCLColumnHidden'));
-			assert.ok(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'));
+			assert.ok(jQuery(this.oFCL._columns["begin"]).hasClass('sapFFCLColumnHidden'));
+			assert.notOk(jQuery(this.oFCL._columns["mid"]).hasClass('sapFFCLColumnHidden'));
+			assert.ok(jQuery(this.oFCL._columns["end"]).hasClass('sapFFCLColumnHidden'));
 
 			// act
 			this.oFCL._afterColumnResize("end", 100);
 
 			// assert
-			assert.notOk(this.oFCL._$columns["end"].hasClass('sapFFCLColumnHidden'),
+			assert.notOk(jQuery(this.oFCL._columns["end"]).hasClass('sapFFCLColumnHidden'),
 				"When width is updated, 'sapFFCLColumnHidden' class should be removed");
 
 			fnDone();
@@ -1628,9 +1630,9 @@ function(
 					this.oFCL.detachColumnResize(fnCallback);
 					// assert
 					assert.equal(oResizeFunctionSpy.callCount, 3, "ResizeHandler.resume is called for all columns");
-					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['begin'].get(0)).calledOnce);
-					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['mid'].get(0)).calledOnce);
-					assert.ok(oResizeFunctionSpy.withArgs(this.oFCL._$columns['end'].get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(jQuery(this.oFCL._columns['begin']).get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(jQuery(this.oFCL._columns['mid']).get(0)).calledOnce);
+					assert.ok(oResizeFunctionSpy.withArgs(jQuery(this.oFCL._columns['end']).get(0)).calledOnce);
 					fnDone();
 				}
 			}.bind(this);
@@ -1839,7 +1841,7 @@ function(
 			this.oFCL.setLayout(sLayoutName);
 
 			FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumn) {
-				var oColumn = this.oFCL._$columns[sColumn],
+				var oColumn = jQuery(this.oFCL._columns[sColumn]),
 					iExpectedColumnWidth = parseInt(oColumn.css("width")),
 					iActualColumnWidth = this.oFCL._getColumnWidth(sColumn);
 				assert.strictEqual(iActualColumnWidth, iExpectedColumnWidth, "correct with for " + sColumn);
@@ -1861,7 +1863,7 @@ function(
 		});
 
 		FlexibleColumnLayout.COLUMN_ORDER.forEach(function(sColumn) {
-			var oColumn = this.oFCL._$columns[sColumn],
+			var oColumn = jQuery(this.oFCL._columns[sColumn]),
 				iExpectedColumnWidth = oColumn.width(),
 				iActualColumnWidth = this.oFCL._getColumnWidth(sColumn);
 			assert.strictEqual(iActualColumnWidth, iExpectedColumnWidth, "correct with for " + sColumn);

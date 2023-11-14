@@ -58,10 +58,13 @@ sap.ui.define([
 	 * Lifecycle event handler for ShellBar onAfterRendering event
 	 */
 	ResponsiveHandler.prototype.onAfterRendering = function () {
-
-		var bPhoneRange = Device.media.getCurrentRange("StdExt", this._oControl.$().outerWidth(true)).name === "Phone";
+		var oControlDom = this._oControl.getDomRef();
+		var oControlStyles = window.getComputedStyle(oControlDom);
+		var iControlMargins = parseFloat(oControlStyles['marginLeft']) + parseFloat(oControlStyles['marginRight']);
+		var iControlFullWidth = Math.ceil(oControlDom.offsetWidth + iControlMargins);
+		var bPhoneRange = Device.media.getCurrentRange("StdExt", iControlFullWidth).name === "Phone";
 		this._oButton = this._oControl._oMegaMenu && this._oControl._oMegaMenu.getAggregation("_button");
-		this._oDomRef = this._oControl.getDomRef(); // Cache DOM Reference
+		this._oDomRef = oControlDom; // Cache DOM Reference
 		this.bIsMegaMenuConfigured = this._oControl._oTitleControl &&
 		this._oControl._oTitleControl === this._oControl._oMegaMenu;
 
@@ -99,8 +102,8 @@ sap.ui.define([
 	ResponsiveHandler.prototype._handleResize = function () {
 		if (!this._oDomRef) {return;}
 
-		var $Control = this._oControl.$(),
-			iWidth = $Control.outerWidth(),
+		var control = this._oControl.getDomRef(),
+			iWidth = control.offsetWidth,
 			oCurrentRange = Device.media.getCurrentRange("StdExt", iWidth),
 			bPhoneRange;
 
@@ -109,10 +112,10 @@ sap.ui.define([
 		if (oCurrentRange) {
 			bPhoneRange = this.sCurrentRange === "Phone";
 
-			$Control.toggleClass("sapFShellBarSizeLargeDesktop", this.sCurrentRange === "LargeDesktop");
-			$Control.toggleClass("sapFShellBarSizeDesktop", this.sCurrentRange === "Desktop");
-			$Control.toggleClass("sapFShellBarSizeTablet", this.sCurrentRange === "Tablet");
-			$Control.toggleClass("sapFShellBarSizePhone", bPhoneRange);
+			control.classList.toggle("sapFShellBarSizeLargeDesktop", this.sCurrentRange === "LargeDesktop");
+			control.classList.toggle("sapFShellBarSizeDesktop", this.sCurrentRange === "Desktop");
+			control.classList.toggle("sapFShellBarSizeTablet", this.sCurrentRange === "Tablet");
+			control.classList.toggle("sapFShellBarSizePhone", bPhoneRange);
 		}
 
 		/**
@@ -293,7 +296,7 @@ sap.ui.define([
 			return;
 		}
 
-		iSearchWidth = oSearch.$().width();
+		iSearchWidth = oSearch.getDomRef()?.clientWidth || 0;
 
 		if (this._oControl._bSearchPlaceHolder){
 			if (iSearchWidth >= this._iMinSearchWidth) {
