@@ -10,7 +10,8 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				paths: {
 					"qunit/view": "./fixture",
 					"test/routing/target": "./fixture",
-					"testdata": "../testdata"
+					"testdata": "../testdata",
+					"qunit/router": "./fixture/router"
 				}
 			}
 		},
