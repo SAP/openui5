@@ -92,7 +92,6 @@ sap.ui.define([
 			aggregations: ["table"]
 		});
 
-		this._addPromise("listBinding");
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		this._oMResourceBundle = Library.getResourceBundleFor("sap.m");
 
@@ -191,7 +190,7 @@ sap.ui.define([
 
 
 		if ((!oListBinding || !bValueHelpDelegateInitialized)/* && (this.isContainerOpening() || this.isTypeahead())*/) {
-			oFilterApplicationPromise = Promise.all([this._retrievePromise("listBinding"), this.awaitValueHelpDelegate()]).then(applyAfterPromise);
+			oFilterApplicationPromise = Promise.all([this.awaitListBinding(), this.awaitValueHelpDelegate()]).then(applyAfterPromise);
 		}
 
 		if (!bValueHelpDelegateInitialized || (!this.isTypeahead() && !this.isContainerOpen() && oListBinding.isSuspended())) {
@@ -367,7 +366,7 @@ sap.ui.define([
 						this._oFilterBarVBox.addStyleClass("sapMdcValueHelpPanelFilterbar");
 						this._oFilterBarVBox._oWrapper = this;
 						this._oFilterBarVBox.getItems = function () {
-							return [this._oWrapper._getPriorityFilterBar.call(this._oWrapper)];
+							return [this._oWrapper.getActiveFilterBar.call(this._oWrapper)];
 						};
 
 						this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
@@ -405,7 +404,7 @@ sap.ui.define([
 
 					this.setAggregation("displayContent", this._oContentLayout);
 
-					const oFilterBar = this._getPriorityFilterBar();
+					const oFilterBar = this.getActiveFilterBar();
 					if (!oFilterBar) {
 						return this._createDefaultFilterBar().then(function () {
 							return this._oContentLayout;
@@ -535,7 +534,7 @@ sap.ui.define([
 	}
 
 	function _checkListBindingPending() {
-		return this._retrievePromise("listBinding").then(function (oListBinding) {
+		return this.awaitListBinding().then(function (oListBinding) {
 			const oDelegate = this.getValueHelpDelegate();
 			const oValueHelp = this.getValueHelpInstance();
 			const oListBindingInfo = this.getListBindingInfo();
@@ -821,7 +820,7 @@ sap.ui.define([
 				}.bind(this),
 				getFooter: function () {
 					return this._retrievePromise("footer", function () {
-						return this._retrievePromise("listBinding").then(function (oListBinding) {
+						return this.awaitListBinding().then(function (oListBinding) {
 							const oBindingInfo = this.getListBindingInfo();
 							const bDialogExist = this.getParent().hasDialog();
 
@@ -872,7 +871,7 @@ sap.ui.define([
 		}
 
 		if (oChanges.name === "items" && oChanges.mutation === "ready") {
-			this._resolvePromise("listBinding", oChanges.bindingInfo.binding);
+			this.resolveListBinding();
 		}
 
 		if (oChanges.name === "table") {
@@ -887,7 +886,7 @@ sap.ui.define([
 				this._oTable.detachUpdateFinished(this._handleUpdateFinished, this);
 				this._oTable = null;
 				this._removePromise("footer");
-				this._addPromise("listBinding");
+				this.resetListBinding();
 			} else {
 				this._oTable = oTable;
 				this._oTable.addStyleClass("sapMdcValueHelpMTable");
@@ -902,10 +901,7 @@ sap.ui.define([
 				};
 				oTable.addDelegate(this._oTableDelegate, true, this);
 
-				const oListBinding = oTable.getBinding("items");	// TODO: wait for binding ready??
-				if (oListBinding) {
-					this._resolvePromise("listBinding", oListBinding);
-				} else {
+				if (!this.resolveListBinding()) {
 					this._oObserver.observe(oChanges.child, {bindings: ["items"]});
 				}
 			}

@@ -135,7 +135,7 @@
 										delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 										<mdc:typeahead>
 											<mdcv:Popover title="Books">
-												<mdcvc:MTable keyPath="ID" descriptionPath="title" filterFields="$search">
+												<mdcvc:MTable keyPath="ID" descriptionPath="title" >
 													<Table id="mTable1_title" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 														<columns>
 															<Column>
@@ -163,7 +163,7 @@
 										</mdc:typeahead>
 										<mdc:dialog>
 											<mdcv:Dialog title="Title">
-												<mdcvc:MDCTable keyPath="ID" descriptionPath="title" filterFields="$search" forceBind="true">
+												<mdcvc:MDCTable keyPath="ID" descriptionPath="title"  forceBind="true">
 													<mdc:Table id="FH-Books--mdc--gridtable"
 														autoBindOnInit="false"
 														width="100%"

@@ -29,6 +29,7 @@
 					"view/Mountains.view.xml",
 					"delegate/JSONFilterBarDelegate.js",
 					"delegate/JSONTableDelegate.js",
+					"delegate/JSONValueHelpDelegate.js",
 					"delegate/JSONBaseDelegate.js",
 					"model/metadata/JSONPropertyInfo.js",
 					"view/fragment/NameValueHelp.fragment.xml",

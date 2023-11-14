@@ -1,17 +1,17 @@
+/* eslint-disable require-await */
 sap.ui.define([
 	"sap/ui/mdc/ValueHelpDelegate",
-	"sap/ui/mdc/p13n/StateUtil",
 	"sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function(
+	"sap/ui/model/FilterOperator",
+	"mdc/sample/delegate/JSONBaseDelegate"
+], function (
 	ValueHelpDelegate,
-	StateUtil,
-	Filter,
-	FilterOperator
-) {
+    Filter,
+    FilterOperator,
+    JSONBaseDelegate) {
 	"use strict";
 
-	const JSONValueHelpDelegate = Object.assign({}, ValueHelpDelegate);
+	const JSONValueHelpDelegate = Object.assign({}, ValueHelpDelegate, JSONBaseDelegate);
 
 	JSONValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
@@ -32,20 +32,6 @@ sap.ui.define([
 		return !!oValueHelp.getPayload()?.searchKeys;
 	};
 
-	// called when ValueHelp for one of the three FilterFields is called
-	JSONValueHelpDelegate.getFilterConditions = function (oValueHelp, oContent, oConfig) {
-		const oConditions = ValueHelpDelegate.getFilterConditions(oValueHelp, oContent, oConfig);
-		const oFilterBar = oValueHelp.getParent().getParent();
-		return StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {
-			oValueHelp.getPayload()?.filterConditions?.forEach((filterCondition) => {
-				oConditions[filterCondition.condition] = oState.filter[filterCondition.filter];
-			});
-			return oConditions;
-		});
-	};
 
 	return JSONValueHelpDelegate;
-
-}
-
-);
+}, /* bExport= */false);

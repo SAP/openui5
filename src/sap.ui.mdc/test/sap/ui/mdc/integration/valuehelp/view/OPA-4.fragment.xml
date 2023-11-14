@@ -29,7 +29,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
-						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template" forceBind="true">
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template" forceBind="true">
 							<mdc:Table autoBindOnInit="false"
 								id="mdcTable1"
 								width="100%"

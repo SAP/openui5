@@ -49,7 +49,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FH4-Pop" title="Title">
-										<mdcvc:MTable id="FH4-Pop-Cont" keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FH4-Pop-Cont" keyPath="title" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FH4-Pop-Table" items='{path : "/Books", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column>
@@ -71,7 +71,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH4-Dia" title="Title">
-										<mdcvc:MDCTable id="FH4-Dia-Cont" keyPath="title" descriptionPath="title" filterFields="$search" forceBind="true">
+										<mdcvc:MDCTable id="FH4-Dia-Cont" keyPath="title" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="FH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<vhfb:filterItems>
@@ -115,7 +115,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FH1-Pop" title="Author ID">
-										<mdcvc:MTable id="FH1-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FH1-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 											<Table id="FH1-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="5rem">
@@ -143,7 +143,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FH1-Dia" title="Author ID">
-										<mdcvc:MDCTable id="FH1-Dia-Cont" title="Author ID" keyPath="ID" descriptionPath="name" filterFields="$search" group="colsearch" forceBind="true">
+										<mdcvc:MDCTable id="FH1-Dia-Cont" title="Author ID" keyPath="ID" descriptionPath="name"  group="colsearch" forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="FH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}'>
 													<vhfb:filterItems>
@@ -194,7 +194,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FHLanguage-Pop" title="Langugages">
-										<mdcvc:MTable id="FHLanguage-Pop-Cont" keyPath="code" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FHLanguage-Pop-Cont" keyPath="code" descriptionPath="name"  useAsValueHelp="false">
 											<Table id="FHLanguage-Pop-Table" items='{path : "/Languages", length: 10}' width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="5rem">
@@ -222,7 +222,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FHLanguage-Dia" title="Languages">
-										<mdcvc:MDCTable id="FHLanguage-Dia-Cont" keyPath="code" descriptionPath="name" filterFields="$search" forceBind="true">
+										<mdcvc:MDCTable id="FHLanguage-Dia-Cont" keyPath="code" descriptionPath="name"  forceBind="true">
 											<mdc:Table id="FHLanguage-Dia-Table"
 												autoBindOnInit="false"
 												width="100%"
@@ -256,7 +256,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FHClassification-Pop" title="Classification">
-										<mdcvc:MTable id="FHClassification-Pop-Cont" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
+										<mdcvc:MTable id="FHClassification-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="true">
 											<Table id="FHClassification-Table" items='{path : "/Classification"}' width="30rem" mode="SingleSelectMaster">
 												<columns>
 													<Column width="10rem">
@@ -288,7 +288,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FHGenre-Pop" title="Genre">
-										<mdcvc:MTable id="FHGenre-Pop-Cont" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FHGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHGenre-Pop-Table" items='{path : "/Genres", length: 10, parameters: {$select: "classification_code"}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -322,7 +322,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FHGenre-Dia" title="Genre">
-										<mdcvc:MDCTable id="FHGenre-Dia-Cont" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
+										<mdcvc:MDCTable id="FHGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="FHGenre-Dia-FB" liveMode="false" expandFilterFields="true" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 													<vhfb:filterItems>
@@ -365,7 +365,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FHSubGenre-Pop" title="Sub Genre">
-										<mdcvc:MTable id="FHSubGenre-Pop-Cont" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FHSubGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHSubGenre-Pop-Table" items='{path: "/SubGenres", length: 10, parameters: {$select: ["classification_code", "genre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -405,7 +405,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FHSubGenre-Dia" title="Sub Genre">
-										<mdcvc:MDCTable id="FHSubGenre-Dia-Cont" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
+										<mdcvc:MDCTable id="FHSubGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="FHSubGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 													<vhfb:filterItems>
@@ -452,7 +452,7 @@
 								delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover id="FHDetailGenre-Pop" title="Detail Genre">
-										<mdcvc:MTable id="FHDetailGenre-Pop-Cont" keyPath="code" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+										<mdcvc:MTable id="FHDetailGenre-Pop-Cont" keyPath="code" descriptionPath="title"  useAsValueHelp="false">
 											<Table id="FHDetailGenre-Pop-Table" items='{path: "/DetailGenres", length: 10, parameters: {$select: ["classification_code", "genre_code", "subgenre_code"]}}' width="30rem" mode="MultiSelect">
 												<columns>
 													<Column width="10rem">
@@ -498,7 +498,7 @@
 								</mdc:typeahead>
 								<mdc:dialog>
 									<mdcv:Dialog id="FHDetailGenre-Dia" title="Detail Genre">
-										<mdcvc:MDCTable id="FHDetailGenre-Dia-Cont" keyPath="code" descriptionPath="title" filterFields="$search" forceBind="true">
+										<mdcvc:MDCTable id="FHDetailGenre-Dia-Cont" keyPath="code" descriptionPath="title"  forceBind="true">
 											<mdcvc:filterBar>
 												<vhfb:FilterBar id="FHDetailGenre-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 													<vhfb:filterItems>

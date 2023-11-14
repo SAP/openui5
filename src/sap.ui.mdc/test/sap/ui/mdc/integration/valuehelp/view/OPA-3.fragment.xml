@@ -31,7 +31,7 @@
 								delegate='\{"name": "sap/ui/v4demo/delegate/ValueHelp.delegate", "payload": \{\}\}'>
 								<mdc:typeahead>
 									<mdcv:Popover title="Title">
-										<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+										<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 											<Table id="mTable1_2_title" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" growingThreshold="20" width="50rem" mode="SingleSelectMaster">
 												<columns>
 													<Column>

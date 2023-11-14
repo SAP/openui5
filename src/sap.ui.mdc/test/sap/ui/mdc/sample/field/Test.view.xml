@@ -155,12 +155,11 @@
 				singleContainerFullSize="false" adjustLabelSpan="false">
 				<form:dependents>
 					<mdc:ValueHelp id="VH-IO1"
-						delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
+						delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["MatrId","Text"], "out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
 						<mdc:typeahead>
 							<mdcValueHelp:Popover id="VH-IO1-Pop">
 								<mdcValueHelpContent:MTable id="VH-IO1-Pop-MTable"
 									title="Material"
-									filterFields="*MatrId,Text*"
 									keyPath="MatrId"
 									descriptionPath="Text"
 									caseSensitive="true"
@@ -192,7 +191,6 @@
 							<mdcValueHelp:Dialog id="VH-IO1-Dialog" title="Material">
 								<mdcValueHelpContent:MTable id="VH-IO1-Dialog-MTable"
 									title="Material"
-									filterFields="*MatrId,Text*"
 									keyPath="MatrId"
 									descriptionPath="Text"
 									caseSensitive="true"
@@ -336,11 +334,10 @@
 				<m:Label text="mTable without dialog"/>
 				<mdc:Field id="F6-6" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" valueHelp="F6-6-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="F6-6-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6-H-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true">
@@ -377,11 +374,10 @@
 				<m:Label text="Grouped table"/>
 				<mdc:Field id="F6-6b" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" valueHelp="F6-6b-H">
 					<mdc:dependents>
-						<mdc:ValueHelp id="F6-6b-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="F6-6b-H" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="F6-6b-H-Pop">
 									<mdcValueHelpContent:MTable id="F6-6b-H-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true">
@@ -423,11 +419,10 @@
 					submit="handleSubmit"
 					valueHelp="VH1">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH1-Pop">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -458,7 +453,6 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
 									<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -523,12 +517,11 @@
 					valueHelp="VH2">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH2"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"VH2-Pop-MTable": "VH2-Pop-T", "VH2-Dialog-MTable": "VH2-Dialog-T"\}\}'
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["ProductId","Name"], "tables": \{"VH2-Pop-MTable": "VH2-Pop-T", "VH2-Dialog-MTable": "VH2-Dialog-T"\}\}\}'
 							validateInput="false">
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH2-Pop">
 									<mdcValueHelpContent:MTable id="VH2-Pop-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -540,7 +533,6 @@
 								<mdcValueHelp:Dialog id="VH2-Dialog">
 									<mdcValueHelpContent:MTable id="VH2-Dialog-MTable"
 										shortTitle="Product"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -599,13 +591,12 @@
 					submit="handleSubmit"
 					valueHelp="VH-7d">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7d" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH-7d" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-7d-Dialog">
 									<mdcValueHelpContent:MTable id="VH-7d-Dialog-MTable"
 										title="Product Help"
 										shortTitle="Product"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -648,11 +639,10 @@
 					submit="handleSubmit"
 					valueHelp="VH-7f">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-7f" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH-7f" validateInput="false" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-7f-Pop">
 									<mdcValueHelpContent:MTable id="VH-7f-Pop-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -705,20 +695,19 @@
 					change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
-					valueHelp="VH-DateAsDesctiption">
+					valueHelp="VH-DateAsDescription">
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH-DateAsDesctiption"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"VH-DateAsDesctiption-Pop-MTable": "VH-DateAsDesctiption-Pop-T", "VH-DateAsDesctiption-Dialog-MTable": "VH-DateAsDesctiption-Dialog-T"\}\}'
+						<mdc:ValueHelp id="VH-DateAsDescription"
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Date"], "tables": \{"VH-DateAsDescription-Pop-MTable": "VH-DateAsDescription-Pop-T", "VH-DateAsDescription-Dialog-MTable": "VH-DateAsDescription-Dialog-T"\}\}\}'
 							validateInput="true">
 							<mdc:typeahead>
-								<mdcValueHelp:Popover id="VH-DateAsDesctiption-Pop">
-									<mdcValueHelpContent:MTable id="VH-DateAsDesctiption-Pop-MTable"
-										filterFields="*ProductId,Date*"
+								<mdcValueHelp:Popover id="VH-DateAsDescription-Pop">
+									<mdcValueHelpContent:MTable id="VH-DateAsDescription-Pop-MTable"
 										keyPath="ProductId"
 										descriptionPath="Date"
 										caseSensitive="true"
 										useAsValueHelp="false">
-										<m:Table id="VH-DateAsDesctiption-Pop-T" items="{path: '/ProductCollection'}" width="26rem">
+										<m:Table id="VH-DateAsDescription-Pop-T" items="{path: '/ProductCollection'}" width="26rem">
 											<m:columns>
 												<m:Column>
 													<m:Label text="{/#Product/ProductId/@sap:label}"/>
@@ -738,15 +727,14 @@
 								</mdcValueHelp:Popover>
 							</mdc:typeahead>
 							<mdc:dialog>
-								<mdcValueHelp:Dialog id="VH-DateAsDesctiption-Dialog">
-									<mdcValueHelpContent:MTable id="VH-DateAsDesctiption-Dialog-MTable"
+								<mdcValueHelp:Dialog id="VH-DateAsDescription-Dialog">
+									<mdcValueHelpContent:MTable id="VH-DateAsDescription-Dialog-MTable"
 										shortTitle="Product"
-										filterFields="*ProductId,Date*"
 										keyPath="ProductId"
 										descriptionPath="Date"
 										caseSensitive="true"
 										useAsValueHelp="false">
-										<m:Table id="VH-DateAsDesctiption-Dialog-T" items="{path: '/ProductCollection'}">
+										<m:Table id="VH-DateAsDescription-Dialog-T" items="{path: '/ProductCollection'}">
 											<m:columns>
 												<m:Column width="10rem">
 													<m:Label text="{/#Product/ProductId/@sap:label}"/>
@@ -911,14 +899,13 @@
 					valueHelp="VH-WeightUnit3">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-WeightUnit3"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "value": 1\}]\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["unit","text"], "in": [\{"path": "MatrId", "value": 1\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit3-Pop">
 									<mdcValueHelpContent:MTable id="VH-WeightUnit3-Pop-MTable"
 										title="Units"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true"
 										useAsValueHelp="false">
 										<m:Table id="VH-WeightUnit3-Pop-Table" items="{/weightODataUnits}" width="16rem">
@@ -946,7 +933,6 @@
 										title="Units"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true"
 										useAsValueHelp="false">
 										<m:Table id="VH-WeightUnit3-Dialog-Table" items="{/weightODataUnits}">
@@ -1067,13 +1053,12 @@
 					fieldGroupIds="MyFieldGroup">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-WeightUnit4"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "source": "MatrId"\}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["unit","text"], "in": [\{"path": "MatrId", "source": "MatrId"\}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-WeightUnit4-Pop">
 									<mdcValueHelpContent:MTable id="VH-WeightUnit4-Pop-MTable"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true"
 										useAsValueHelp="false">
 										<m:Table id="VH-WeightUnit4-Pop-Table" items="{/weightODataUnits}" width="16rem">
@@ -1100,7 +1085,6 @@
 									<mdcValueHelpContent:MTable id="VH-WeightUnit4-Dialog-MTable"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true"
 										useAsValueHelp="false">
 										<m:Table id="VH-WeightUnit4-Dialog-Table" items="{/weightODataUnits}">
@@ -1159,11 +1143,10 @@
 					valueHelp="VH-Country">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Country"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["countryId","text"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Country-Pop">
 									<mdcValueHelpContent:MTable id="VH-Country-Pop-MTable"
-										filterFields="*countryId,text*"
 										keyPath="countryId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1190,7 +1173,6 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-Country-Dialog" title="Countries">
 									<mdcValueHelpContent:MTable id="VH-Country-Dialog-MTable"
-										filterFields="*countryId,text*"
 										keyPath="countryId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1230,11 +1212,10 @@
 					valueHelp="VH-Region">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Region"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "countryId", "source": "CountryId"\}], "out": [\{"path": "countryId", "target": "CountryId"\}, \{"target": "CityId", "fixedValue": ""\}]\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["regionId","countryId","text"], "in": [\{"path": "countryId", "source": "CountryId"\}], "out": [\{"path": "countryId", "target": "CountryId"\}, \{"target": "CityId", "fixedValue": ""\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Region-Pop">
 									<mdcValueHelpContent:MTable id="VH-Region-Pop-MTable"
-										filterFields="*regionId,countryId,text*"
 										keyPath="regionId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1265,7 +1246,6 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-Region-Dialog" title="Regions">
 									<mdcValueHelpContent:MTable id="VH-Region-Dialog-MTable"
-										filterFields="*regionId,countryId,text*"
 										keyPath="regionId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1325,12 +1305,12 @@
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-City"
 							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{
+								"searchKeys":["countryId","regionId","countryId","text"],
 								"in": [\{"path": "countryId", "source": "CountryId"\}, \{"path": "regionId", "source": "RegionId"\}, \{"path": "info", "source": "CityInfo", "initialValueFilterEmpty": true\}],
 								"out": [\{"path": "countryId", "target": "CountryId", "mode": "Always"\}, \{"path": "regionId", "target": "RegionId", "mode": "Always"\}, \{"path": "info", "target": "CityInfo", "mode": "Always"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-City-Pop">
 									<mdcValueHelpContent:MTable id="VH-City-Pop-MTable"
-										filterFields="*countryId,regionId,cityId,text*"
 										keyPath="cityId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1369,7 +1349,6 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-City-Dialog" title="Cities">
 									<mdcValueHelpContent:MTable id="VH-City-Dialog-MTable"
-										filterFields="*countryId,regionId,cityId,text*"
 										keyPath="cityId"
 										descriptionPath="text"
 										caseSensitive="true"
@@ -1460,11 +1439,11 @@
 					valueHelp="VH-CollSearch">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-CollSearch"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-CollSearch-Pop">
 									<mdcValueHelpContent:MTable id="VH-CollSearch-Pop-MTable"
-										filterFields="*ProductId,Name*"
+
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -1491,7 +1470,7 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH-CollSearch-Dialog" title="Product">
 									<mdcValueHelpContent:MTable id="VH-CollSearch-Dialog-MTable1"
-										filterFields="*ProductId,Name*"
+
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -1532,7 +1511,7 @@
 										</mdcValueHelpContent:filterBar>
 									</mdcValueHelpContent:MTable>
 									<mdcValueHelpContent:MTable id="VH-CollSearch-Dialog-MTable2"
-										filterFields="*ProductId,Name*"
+
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"

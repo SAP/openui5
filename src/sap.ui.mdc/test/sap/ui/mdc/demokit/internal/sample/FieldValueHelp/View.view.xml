@@ -56,7 +56,7 @@
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
 						<mdcv:Popover id="VH3-Pop" title="Author">
-							<mdcvc:MTable id="VH3-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
+							<mdcvc:MTable id="VH3-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="true">
 								<Table id="VH3-Pop-Table" items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
@@ -99,7 +99,7 @@
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
 						<mdcv:Popover id="VH4-Pop" title="Author">
-							<mdcvc:MTable id="VH4-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+							<mdcvc:MTable id="VH4-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<Table id="VH4-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
@@ -133,7 +133,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog id="VH4-Dia" title="Author">
-							<mdcvc:MTable id="VH4-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+							<mdcvc:MTable id="VH4-Dia-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="VH4-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 										<vhfb:filterItems>
@@ -195,7 +195,7 @@
 					delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 					<mdc:typeahead>
 						<mdcv:Popover id="VH5-Pop" title="Author">
-							<mdcvc:MTable id="VH5-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+							<mdcvc:MTable id="VH5-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 								<Table id="VH5-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 									<columns>
 										<Column width="5rem">
@@ -229,7 +229,7 @@
 					</mdc:typeahead>
 					<mdc:dialog>
 						<mdcv:Dialog id="VH5-Dia" title="Author">
-							<mdcvc:MDCTable id="VH5-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search">
+							<mdcvc:MDCTable id="VH5-Dia-Cont" keyPath="ID" descriptionPath="name" >
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="VH5-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 										<vhfb:filterItems>

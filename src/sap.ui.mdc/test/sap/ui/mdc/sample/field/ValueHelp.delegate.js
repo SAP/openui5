@@ -37,17 +37,20 @@ sap.ui.define([
 				fReject = fnReject;
 			});
 			setTimeout(function() {
-				for (var sId in oPayload) {
-					var iIndex = sContentId.indexOf(sId);
-					if (iIndex >= 0) {
-						var sView = sContentId.substr(0, iIndex);
-						var sTableId = sView + (oPayload && oPayload[sContentId.substr(iIndex)]);
-						var oTable = Element.getElementById(sTableId);
-						if (oTable) {
-							oContent.setTable(oTable);
-							fResolve();
+				const aTables = oPayload?.tables;
+				if (aTables) {
+					for (var sId in aTables) {
+						var iIndex = sContentId.indexOf(sId);
+						if (iIndex >= 0) {
+							var sView = sContentId.substr(0, iIndex);
+							var sTableId = sView + (aTables[sContentId.substr(iIndex)]);
+							var oTable = Element.getElementById(sTableId);
+							if (oTable) {
+								oContent.setTable(oTable);
+								fResolve();
+							}
+							break;
 						}
-						break;
 					}
 				}
 				if (!oContent.getTable()) {

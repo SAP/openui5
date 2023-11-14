@@ -1,19 +1,18 @@
 
 sap.ui.define([
-    "sap/ui/mdc/ValueHelpDelegate",
-    'sap/ui/mdc/odata/TypeMap'
+	"delegates/ValueHelpDelegate",
+	'sap/ui/mdc/odata/TypeMap'
 ], function(
-    MDCValueHelpDelegate,
-    ODataTypeMap
+	TestValueHelpDelegate,
+	ODataTypeMap
 ) {
-    "use strict";
+	"use strict";
 
-    var ValueHelpDelegate = Object.assign({}, MDCValueHelpDelegate);
+	var ValueHelpDelegate = Object.assign({}, TestValueHelpDelegate);
 
-    ValueHelpDelegate.getTypeMap = function (oValueHelp) {
-        return ODataTypeMap;
-    };
-
+	ValueHelpDelegate.getTypeMap = function (oValueHelp) {
+		return ODataTypeMap;
+	};
 
 	ValueHelpDelegate.executeFilter = function(oValueHelp, oListBinding, iRequestedItems) {
 		if (oListBinding.isA("sap.ui.model.odata.v2.ODataListBinding")) {
@@ -24,7 +23,7 @@ sap.ui.define([
 				});
 			});
 		}
-		return MDCValueHelpDelegate.executeFilter.apply(this, arguments);
+		return TestValueHelpDelegate.executeFilter.apply(this, arguments);
 	};
 
 	ValueHelpDelegate.checkListBindingPending = function(oValueHelp, oListBinding, iRequestedItems) {
