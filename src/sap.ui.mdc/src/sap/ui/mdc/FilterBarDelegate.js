@@ -142,9 +142,9 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate", "sap/ui/mdc/enums/FilterBar
 		 }
 
 		 if (mValidation.status === FilterBarValidationStatus.RequiredHasNoValue) {
-			 sErrorMessage = oFilterBar.getText("filterbar.REQUIRED_CONDITION_MISSING");
+			 sErrorMessage = oFilterBar.getResourceFileText("filterbar.REQUIRED_CONDITION_MISSING");
 		 } else if (mValidation.status === FilterBarValidationStatus.FieldInErrorState ) {
-			 sErrorMessage = oFilterBar.getText("filterbar.VALIDATION_ERROR");
+			 sErrorMessage = oFilterBar.getResourceFileText("filterbar.VALIDATION_ERROR");
 		 }
 
 		 if (oFilterBar.getShowMessages() && !oFilterBar._isLiveMode() && !oFilterBar._hasOpenMessageBox) {

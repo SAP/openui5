@@ -1,24 +1,30 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment",
+	"sap/base/i18n/Localization",
 	"sap/ui/mdc/flexibility/FilterBar.flexibility",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/changeHandler/common/ChangeCategories",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/mdc/FilterBarDelegate",
 	'sap/ui/mdc/FilterField',
 	"sap/ui/mdc/enums/OperatorName",
 	'sap/ui/model/odata/type/String',
+	"sap/ui/model/odata/type/DateTime",
 	"sap/ui/mdc/odata/TypeMap"
 ], function(createAppEnvironment,
+	Localization,
 	FilterBarFlexHandler,
 	ChangesWriteAPI,
+	ChangeCategories,
 	JsControlTreeModifier,
 	XMLTreeModifier,
 	FilterBarDelegate,
 	FilterField,
 	OperatorName,
 	StringType,
+	DateTimeType,
 	ODataTypeMap
 	) {
 	'use strict';
@@ -187,9 +193,9 @@ sap.ui.define([
 			this.oUiComponentContainer.destroy();
 		},
 		after: function() {
-			FilterBarFlexHandler.fetchProperties = this._fnFetchPropertiers;
-			FilterBarFlexHandler.addCondition = this._fnAddCondition;
-			FilterBarFlexHandler.addItem = this._fnAddItem;
+			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
+			FilterBarDelegate.addCondition = this._fnAddCondition;
+			FilterBarDelegate.addItem = this._fnAddItem;
 			this._fnFetchPropertiers = null;
 			this._fnAddCondition = null;
 			this._fnAddItem = null;
@@ -350,6 +356,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+
 	QUnit.test('addCondition - applyChange & revertChange on a js control tree with new format for in parameters', function(assert) {
 		const done = assert.async();
 		const oContent = createAddConditionChangeDefinitionNewFormat();
@@ -397,6 +404,7 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 	});
+
 
 	QUnit.test('addCondition - applyChange & revertChange on a js control tree with invalid conditions', function(assert) {
 		const done = assert.async();
@@ -686,5 +694,263 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Simulate RTA UI Visualisation", {
+		before: function() {
+			// Implement required Delgate APIs
+			this._fnFetchPropertiers = FilterBarDelegate.fetchProperties;
+			this._fnAddCondition = FilterBarDelegate.addCondition;
+			this._fnAddItem = FilterBarDelegate.addItem;
+			FilterBarDelegate.fetchProperties = fetchProperties;
+			FilterBarDelegate.addCondition = addCondition;
+			FilterBarDelegate.addItem = addItem;
+
+			this._sLanguage = Localization.getLanguage();
+			Localization.setLanguage("EN");
+		},
+
+		beforeEach: function() {
+			const sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/category}" propertyKey="category" maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			return createAppEnvironment(sFilterBarView, "FilterBar")
+			.then(function(mCreatedView){
+				this.oView = mCreatedView.view;
+				this.oUiComponentContainer = mCreatedView.container;
+				this.oFilterBar = this.oView.byId('myFilterBar');
+				this.oFilterItem = this.oView.byId('myFilterBar--field2');
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oUiComponentContainer.destroy();
+		},
+		after: function() {
+			FilterBarDelegate.fetchProperties = this._fnFetchPropertiers;
+			FilterBarDelegate.addCondition = this._fnAddCondition;
+			FilterBarDelegate.addItem = this._fnAddItem;
+			this._fnFetchPropertiers = null;
+			this._fnAddCondition = null;
+			this._fnAddItem = null;
+
+			this.oFilterBar.getPropertyHelper.reset();
+			Localization.setLanguage(this._sLanguage);
+		}
+	});
+
+	QUnit.test('condition change with change handler getChangeVisualizationInfo', function(assert) {
+		const done = assert.async(3);
+
+		const oAddChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+		const oRemoveChangeHandler = FilterBarFlexHandler["removeCondition"].changeHandler;
+
+		const oAppComponent = {
+			byId: function(s) { return this.oFilterBar; }.bind(this)
+		};
+
+		const aProperties = [{
+			name: "title", label: "Title", dataType: "Edm.String", maxConditions: 1,typeConfig: ODataTypeMap.getTypeConfig("Edm.String") },{
+			name: "createdAt", label: "Created At", dataType: "Edm.DateTimeOffset", maxConditions: -1, typeConfig: ODataTypeMap.getTypeConfig("Edm.DateTimeOffset") },{
+			name: "category", label: "Category", dataType: "Edm.String", maxConditions: 1, typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
+		}];
+
+		const oPropertyHelper = {
+			getProperty: function(s) { return aProperties.find((oEntry) => oEntry.name === s); }
+		};
+
+		sinon.stub(this.oFilterBar, "getPropertyHelper").returns(oPropertyHelper);
+
+
+		//------------ add CP, string
+		let oContent = {
+			"changeType": "addCondition",
+			"selector": {
+				"id": "myFilterBarView--myFilterBar"
+			},
+			"content": {
+				"name": "category",
+				"condition": { "operator": OperatorName.Contains, "values": ["12"] }
+			}
+		};
+		ChangesWriteAPI.create({
+			changeSpecificData: oContent,
+			selector: this.oFilterBar
+		}).then(function(oChange) {
+
+			oAddChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+				assert.ok(mMsg.descriptionPayload);
+				assert.equal(mMsg.descriptionPayload.category, ChangeCategories.ADD);
+				assert.equal(mMsg.descriptionPayload.description, "Condition \"contains (12)\" added for filter \"Category\"");
+
+				done();
+			});
+		});
+
+		//------------ remove BT string
+		oContent = {
+			"changeType": "removeCondition",
+			"selector": {
+				"id": "myFilterBarView--myFilterBar"
+			},
+			"content": {
+				"name": "title",
+				"condition": { "operator": OperatorName.BT, "values": ["a", "z"] }
+			}
+		};
+		ChangesWriteAPI.create({
+			changeSpecificData: oContent,
+			selector: this.oFilterBar
+		}).then(function(oChange) {
+
+			oRemoveChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+				assert.ok(mMsg.descriptionPayload);
+				assert.equal(mMsg.descriptionPayload.category, ChangeCategories.REMOVE);
+				assert.equal(mMsg.descriptionPayload.description, "Condition \"between (a ... z)\" removed for filter \"Title\"");
+
+				done();
+			});
+		});
+
+		//------------ add datetime EQ
+		oContent = {
+			"changeType": "addCondition",
+			"selector": {
+				"id": "myFilterBarView--myFilterBar"
+			},
+			"content": {
+				"name": "createdAt",
+				"condition": { "operator": OperatorName.EQ, "values": ["2023-11-27T08:22:05.0000000Z"] }
+			}
+		};
+		ChangesWriteAPI.create({
+			changeSpecificData: oContent,
+			selector: this.oFilterBar
+		}).then(function(oChange) {
+			oAddChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+				assert.ok(mMsg.descriptionPayload);
+				assert.equal(mMsg.descriptionPayload.category, ChangeCategories.ADD);
+				assert.equal(mMsg.descriptionPayload.description, "Condition \"equal to (2023-11-27T08:22:05.0000000Z)\" added for filter \"Created At\"");
+
+				done();
+			});
+		});
+	});
+
+	QUnit.test('filter item change with change handler getChangeVisualizationInfo', function(assert) {
+		const done = assert.async();
+
+		const oAppComponent = {
+			byId: function(s) { return this.oFilterBar; }.bind(this)
+		};
+
+		const aProperties = [{
+			name: "title", label: "Title", dataType: "Edm.String", maxConditions: 1, typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
+		}, {
+			name: "createdAt", label: "Created At", dataType: "Edm.DateTimeOffset", maxConditions: -1, typeConfig: ODataTypeMap.getTypeConfig("Edm.DateTimeOffset")
+		}, {
+			name: "category", label: "Category", dataType: "Edm.String", maxConditions: 1, typeConfig: ODataTypeMap.getTypeConfig("Edm.String")
+		}];
+
+		const oPropertyHelper = {
+			getProperty: function(s) { return aProperties.find((oEntry) => oEntry.name === s); },
+			getProperties: function() { return aProperties; }
+		};
+
+		sinon.stub(this.oFilterBar, "getPropertyHelper").returns(oPropertyHelper);
+
+		//------------ add item pos 0
+		let oContent = {
+			"changeType": "addFilter",
+			"selector": {
+				"id": "myFilterBarView--myFilterBar"
+			},
+			"content": {
+				"name": "title",
+				"index": 0
+			}
+		};
+		ChangesWriteAPI.create({
+			changeSpecificData: oContent,
+			selector: this.oFilterBar
+		}).then(function(oChange) {
+
+			let oChangeHandler = FilterBarFlexHandler["addFilter"].changeHandler;
+
+			oChangeHandler.applyChange(oChange, this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(function() {
+
+				oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+					assert.ok(mMsg.descriptionPayload);
+					assert.equal(mMsg.descriptionPayload.category, ChangeCategories.ADD);
+					assert.equal(mMsg.descriptionPayload.description, "Filter item \"Title\" added at position \"0\"");
+
+					//------------ move item pos 0
+					oContent = {
+						"changeType": "moveFilter",
+						"selector": {
+							"id": "myFilterBarView--myFilterBar"
+						},
+						"content": {
+							"name": "category",
+							"index": 0
+						}
+					};
+					ChangesWriteAPI.create({
+						changeSpecificData: oContent,
+						selector: this.oFilterBar
+					}).then(function(oChange) {
+
+						oChangeHandler = FilterBarFlexHandler["moveFilter"].changeHandler;
+
+						oChangeHandler.applyChange(oChange, this.oFilterBar, {
+							modifier: JsControlTreeModifier,
+							appComponent: this.oUiComponent,
+							view: this.oView
+						}).then(function() {
+
+							oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+								assert.ok(mMsg.descriptionPayload);
+								assert.equal(mMsg.descriptionPayload.category, ChangeCategories.MOVE);
+								assert.equal(mMsg.descriptionPayload.description, "Filter item \"Category\" moved from position \"1\" to position \"0\"");
+
+								//------------ remove item pos 0
+								oContent = {
+									"changeType": "removeFilter",
+									"selector": {
+										"id": "myFilterBarView--myFilterBar"
+									},
+									"content": {
+										"name": "category"
+									}
+								};
+								ChangesWriteAPI.create({
+									changeSpecificData: oContent,
+									selector: this.oFilterBar
+								}).then(function(oChange) {
+
+									oChangeHandler = FilterBarFlexHandler["removeFilter"].changeHandler;
+
+									oChangeHandler.applyChange(oChange, this.oFilterBar, {
+										modifier: JsControlTreeModifier,
+										appComponent: this.oUiComponent,
+										view: this.oView
+									}).then(function() {
+
+										oChangeHandler.getChangeVisualizationInfo(oChange, oAppComponent).then(function(mMsg) {
+											assert.ok(mMsg.descriptionPayload);
+											assert.equal(mMsg.descriptionPayload.category, ChangeCategories.REMOVE);
+											assert.equal(mMsg.descriptionPayload.description, "Filter item \"Category\" removed");
+
+											done();
+										});
+									});
+								}.bind(this));
+							}.bind(this));
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+
+	});
 
 });

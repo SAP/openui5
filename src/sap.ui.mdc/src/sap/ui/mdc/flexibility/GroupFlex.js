@@ -2,11 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/m/p13n/Engine",
-	"sap/ui/mdc/flexibility/Util",
+	"./Util",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/changeHandler/condenser/Classification"
-], function(Engine, Util, FLChangeHandlerBase, CondenserClassification) {
+	"sap/ui/fl/changeHandler/condenser/Classification",
+	"sap/ui/fl/changeHandler/common/ChangeCategories"
+], function(Util, FLChangeHandlerBase, CondenserClassification, ChangeCategories) {
 	"use strict";
 
 	const fFinalizeGroupChange = function (oChange, oControl, oGroupContent, bIsRevert) {
@@ -123,6 +123,42 @@ sap.ui.define([
 		});
 	};
 
+	const fGetChangeVisualizationInfo = function(oChange, oAppComponent) {
+		const oContent = oChange.getContent();
+		const oTable = oAppComponent.byId(oChange.getSelector().id);
+		let sKey;
+		const aArgs = [oContent.name];
+		const mVersionInfo = { descriptionPayload: {}};
+
+		if (oChange.getChangeType() === "addGroup") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.ADD;
+			sKey = "table.GROUP_ITEM_ADD_CHANGE";
+			aArgs.push(oContent.index);
+		} else if (oChange.getChangeType() === "removeGroup") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.REMOVE;
+			sKey = "table.GROUP_ITEM_DEL_CHANGE";
+		} else if (oChange.getChangeType() === "moveGroup") {
+			mVersionInfo.descriptionPayload.category = ChangeCategories.MOVE;
+			sKey = "table.GROUP_ITEM_MOVE_CHANGE";
+			aArgs.push(oChange.getRevertData().index);
+			aArgs.push(oContent.index);
+		}
+
+		if (oTable) {
+			const oProperty = oTable.getPropertyHelper()?.getProperty(oContent.name);
+			if (oProperty) {
+				aArgs.splice(0, 1, oProperty.label);
+			}
+		}
+
+		return Util.getMdcResourceText(sKey, aArgs).then(function(sText) {
+			mVersionInfo.descriptionPayload.description = sText;
+
+			mVersionInfo.updateRequired = true;
+			return mVersionInfo;
+		});
+	};
+
 	const Group = {};
 	Group.addGroup = Util.createChangeHandler({
 		apply: fAddGroup,
@@ -142,7 +178,8 @@ sap.ui.define([
 					return oChange.getContent().index;
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	Group.removeGroup = Util.createChangeHandler({
@@ -163,7 +200,8 @@ sap.ui.define([
 					oChange.setRevertData(oRevertData);
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	Group.moveGroup = Util.createChangeHandler({
@@ -192,7 +230,8 @@ sap.ui.define([
 					oChange.setRevertData(oRevertData);
 				}
 			};
-		}
+		},
+		getChangeVisualizationInfo: fGetChangeVisualizationInfo
 	});
 
 	return Group;
