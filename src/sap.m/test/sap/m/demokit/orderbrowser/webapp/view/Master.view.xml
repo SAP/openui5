@@ -2,8 +2,13 @@
 	controllerName="sap.ui.demo.orderbrowser.controller.Master"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns:semantic="sap.f.semantic">
-	<semantic:SemanticPage id="page">
+	<semantic:SemanticPage id="page"
+		core:require="{
+			formatMessage: 'sap/base/strings/formatMessage',
+			DateType: 'sap/ui/model/type/Date'
+		}">
 		<semantic:titleHeading>
 			<Title
 				id="masterHeaderTitle"
@@ -12,7 +17,7 @@
 						'i18n>masterTitleCount',
 						'masterView>/titleCount'
 					],
-					formatter: 'jQuery.sap.formatMessage'
+					formatter: 'formatMessage'
 			}"/>
 		</semantic:titleHeading>
 		<semantic:content>
@@ -86,11 +91,11 @@
 								'i18n>commonItemTitle',
 								'OrderID'
 							],
-							formatter: 'jQuery.sap.formatMessage'
+							formatter: 'formatMessage'
 						}"
 						number="{
 							path: 'OrderDate',
-							type: 'sap.ui.model.type.Date',
+							type: 'DateType',
 							formatOptions: { style: 'short' }
 						}">
 						<firstStatus>
@@ -118,7 +123,7 @@
 							<ObjectAttribute title="{i18n>commonItemShipped}"
 								text="{= ${ShippedDate}
 									? ${ path: 'ShippedDate',
-										 type: 'sap.ui.model.type.Date',
+										 type: 'DateType',
 										 formatOptions: { style: 'medium' } }
 									: ${i18n>commonItemNotYetShipped} }" />
 						</attributes>

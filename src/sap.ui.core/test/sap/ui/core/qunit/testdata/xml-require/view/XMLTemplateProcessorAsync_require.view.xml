@@ -18,7 +18,6 @@
 			<Button id="boxButton" text="Show Box" press="Box.show('Boxed')"/>
 			<Button id="helperButton" text="Formatter" press="OwnHelper.groupA.upperCase()"/>
 			<Button core:require="{Toast:'sap/m/MessageToast'}" id="toastButton" text="Show Toast" press="Toast.show(${$source>text})"/>
-			<Button core:require="{Toast:'sap/m/MessageToast'}" id="globalToastButton" text="Show Toast through Global" press="sap.m.MessageToast.show(${$source>text})"/>
 			<Button core:require="{NewBox:'sap/m/MessageBox'}" id="newBoxButton" text="Show Box re-required" press="Box.show('Boxed')"/>
 		</Page>
 		<Button id="outerButton" text="Show Busy Box" press="Box.show(100)"/>

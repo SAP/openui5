@@ -1,10 +1,12 @@
-/* global QUnit, sinon, testEventHandlerResolver, someGlobalMethodOnWindow */
+/* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/mvc/EventHandlerResolver",
-	"sap/base/Log"
-], function(Control, JSONModel, EventHandlerResolver, Log) {
+	"sap/base/Log",
+	"sap/ui/model/type/Integer",
+	"sap/ui/model/type/Date"
+], function(Control, JSONModel, EventHandlerResolver, Log, IntegerType, DateType) {
 	"use strict";
 
 	var oController;
@@ -78,10 +80,15 @@ sap.ui.define([
 		var fnController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod", oController)[0];
 		assert.equal(fnController, oController.fnControllerMethod, "Controller method should be found");
 
-		var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
-		assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			var fnGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController)[0];
+			assert.equal(fnGlobal, window.testEventHandlerResolver.subobject.someGlobalMethod, "Global method should be found");
+		})();
 
-		fnGlobal = EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
+		var fnGlobal = EventHandlerResolver.resolveEventHandler("ns.deepMethod", oController);
 		assert.strictEqual(fnGlobal, undefined, "Function name with deeper path shouldn't be searched in the controller");
 	});
 
@@ -96,15 +103,20 @@ sap.ui.define([
 		fnFromController2(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
 
-		sinon.spy(testEventHandlerResolver.subobject, "someGlobalMethod");
-		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
-		fnFromGlobal(oDummyEvent);
-		assert.equal(testEventHandlerResolver.subobject.someGlobalMethod.callCount, 1, "Global method should be called once");
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			sinon.spy(window.testEventHandlerResolver.subobject, "someGlobalMethod");
+			var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
+			fnFromGlobal(oDummyEvent);
+			assert.equal(window.testEventHandlerResolver.subobject.someGlobalMethod.callCount, 1, "Global method should be called once");
 
-		sinon.spy(window, "someGlobalMethodOnWindow");
-		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
-		fnFromGlobal(oDummyEvent);
-		assert.equal(someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
+			sinon.spy(window, "someGlobalMethodOnWindow");
+			fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+			fnFromGlobal(oDummyEvent);
+			assert.equal(window.someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
+		})();
 	});
 
 	QUnit.test("Handler resolution with local variables", function(assert) {
@@ -157,17 +169,22 @@ sap.ui.define([
 		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
 		thisContext = "wrong";
 
-		// global functions
-		vResolvedHandler = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController);
-		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
-		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when there's no parenthese");
-		thisContext = "wrong";
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			// global functions
+			vResolvedHandler = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod", oController);
+			vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+			assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when there's no parenthese");
+			thisContext = "wrong";
 
-		// global functions without dot
-		vResolvedHandler = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow", oController);
-		vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
-		assert.equal(thisContext, oController, "Global method without dot should be called with oController as 'this' context when there's no parenthese");
-		thisContext = "wrong";
+			// global functions without dot
+			vResolvedHandler = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow", oController);
+			vResolvedHandler[0].call(vResolvedHandler[1], oDummyEvent);
+			assert.equal(thisContext, oController, "Global method without dot should be called with oController as 'this' context when there's no parenthese");
+			thisContext = "wrong";
+		})();
 
 		// with local variables
 		vResolvedHandler = EventHandlerResolver.resolveEventHandler("Module.someMethod", oController, {Module: mLocals});
@@ -189,23 +206,28 @@ sap.ui.define([
 		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
 		thisContext = "wrong";
 
-		// global functions
-		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
-		fnFromGlobal(oDummyEvent);
-		assert.equal(thisContext, testEventHandlerResolver.subobject, "Global method should be called with testEventHandlerResolver.subobject as 'this' context");
-		thisContext = "wrong";
+		/**
+		 * @deprecated
+		 */
+		(() => {
+			// global functions
+			var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
+			fnFromGlobal(oDummyEvent);
+			assert.equal(thisContext, window.testEventHandlerResolver.subobject, "Global method should be called with testEventHandlerResolver.subobject as 'this' context");
+			thisContext = "wrong";
 
-		// global functions without dot
-		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
-		fnFromGlobal(oDummyEvent);
-		assert.equal(thisContext, undefined, "Global method without dot should be called with undefined as 'this' context");
-		thisContext = "wrong";
+			// global functions without dot
+			fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+			fnFromGlobal(oDummyEvent);
+			assert.equal(thisContext, undefined, "Global method without dot should be called with undefined as 'this' context");
+			thisContext = "wrong";
 
-		// global functions with .call()
-		fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
-		fnFromGlobal(oDummyEvent);
-		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
-		thisContext = "wrong";
+			// global functions with .call()
+			fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
+			fnFromGlobal(oDummyEvent);
+			assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
+			thisContext = "wrong";
+		})();
 
 		// with local variables
 		var fnFromModule = EventHandlerResolver.resolveEventHandler("Module.someMethod()", oController, {Module: mLocals})[0];
@@ -390,17 +412,21 @@ sap.ui.define([
 
 
 	QUnit.test("types", function(assert) {
+		var mLocals = {
+			IntegerType,
+			DateType
+		};
 		var spy = sinon.spy(oController, "fnControllerMethod");
 		var fnFromController;
 		var mTestSet = {
-			".fnControllerMethod(${path:'/someNumberProperty', type: 'sap.ui.model.type.Integer', targetType: 'int'})": 49,   // complex syntax with type
-			".fnControllerMethod(${path:'/someNumberProperty', type: 'sap.ui.model.type.Integer', targetType: 'string'})": "49",   // type conversion
-			".fnControllerMethod(${path:'/someDateProperty', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'dd.MM.yyyy',source: {pattern: 'yyyy-MM-dd'}}})": "29.10.2011"   // type with format options
+			".fnControllerMethod(${path:'/someNumberProperty', type: 'IntegerType', targetType: 'int'})": 49,   // complex syntax with type
+			".fnControllerMethod(${path:'/someNumberProperty', type: 'IntegerType', targetType: 'string'})": "49",   // type conversion
+			".fnControllerMethod(${path:'/someDateProperty', type: 'DateType', formatOptions: {pattern: 'dd.MM.yyyy',source: {pattern: 'yyyy-MM-dd'}}})": "29.10.2011"   // type with format options
 		};
 
 		for (var sTestString in mTestSet) {
 			spy.resetHistory();
-			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController)[0];
+			fnFromController = EventHandlerResolver.resolveEventHandler(sTestString, oController, mLocals)[0];
 			fnFromController(oDummyEvent);
 			assert.strictEqual(spy.args[0][0], mTestSet[sTestString], "Bound model property value should be correctly calculated for: " + sTestString);
 		}

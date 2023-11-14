@@ -1,4 +1,4 @@
-/*global sinon, QUnit, globalUtil */
+/*global sinon, QUnit*/
 sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/ObjectPath",
@@ -48,6 +48,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated
+	 */
 	window.globalUtil = {
 		formatMessage: function() { return ""; }
 	};
@@ -59,6 +62,9 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @deprecated
+	 */
 	window.module1 = {
 		globalHandler: function() { return this; }
 	};
@@ -138,11 +144,23 @@ sap.ui.define([
 			parseValue: [
 				{ input: '.handler', value: oController.handler, context: oController, compareMode: 'strict' },
 				{ input: '.nested.handler', value: oController.nested.handler, context: oController, compareMode: 'strict' },
-				{ input: 'globalUtil.formatMessage', value: globalUtil.formatMessage, context: oController, compareMode: 'strict' },
-				{ input: 'globalUtil.formatMessage', value: globalUtil.formatMessage, context: undefined, compareMode: 'strict' },
-				{ input: 'globalUtil.formatMessage', value: globalUtil.formatMessage, context: undefined, locals: mModules, compareMode: 'strict' },
+				/**
+				 * @deprecated
+				 */
+				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: oController, compareMode: 'strict' },
+				/**
+				 * @deprecated
+				 */
+				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: undefined, compareMode: 'strict' },
+				/**
+				 * @deprecated
+				 */
+				{ input: 'globalUtil.formatMessage', value: window.globalUtil.formatMessage, context: undefined, locals: mModules, compareMode: 'strict' },
 				{ input: 'module1.handler', context: oController, locals: mModules, thisContext: mModules.module1},
 				{ input: 'module1.handler', context: undefined, locals: mModules, thisContext: mModules.module1},
+				/**
+				 * @deprecated
+				 */
 				{ input: 'module1.globalHandler', value: window.module1.globalHandler, context: undefined, compareMode: 'strict'},
 				{ input: 'module1.globalHandler', value: ERROR, context: undefined, locals: mModules},
 				{ input: '.handler', value: oController.handler, context: oController, locals: mModules, compareMode: 'strict' },
