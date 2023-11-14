@@ -184,8 +184,14 @@ sap.ui.define([
 	 * @returns {sap.m.ComboBox} configured instance
 	 */
 	ComboBoxFilter.prototype._createComboBox = function () {
-		const oComboBox = new ComboBox();
 		const oConfig = this.getConfig();
+
+		const oComboBox = new ComboBox({
+			placeholder: oConfig.placeholder,
+			showSecondaryValues: true,
+			filterSecondaryValues: true
+		});
+
 		let sItemTemplateKey,
 			sItemTemplateText,
 			sItemTemplateAdditionalText,
@@ -227,9 +233,6 @@ sap.ui.define([
 			path: sItemsPath,
 			template: this._oItemTemplate
 		});
-
-		oComboBox.setShowSecondaryValues(true);
-		oComboBox.setFilterSecondaryValues(true);
 
 		ComboBoxHelper.setValueAndKey(
 			oComboBox,

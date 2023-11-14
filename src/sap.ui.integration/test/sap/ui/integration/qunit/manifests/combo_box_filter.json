@@ -22,6 +22,7 @@
 					"selectedKey": "FSM",
 					"type": "ComboBox",
 					"label": "Category",
+					"placeholder": "Test Placeholder",
 					"item": {
 						"path": "/",
 						"template": {
