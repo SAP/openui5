@@ -29,10 +29,8 @@ sap.ui.define([
 		beforeEach: function() {
 			Localization.setLanguage("en");
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
-			Core.setModel(oModel);
 		},
 		afterEach: function() {
-			Core.setModel(null);
 			oModel.destroy();
 			oModel = undefined;
 			Localization.setLanguage(sDefaultLanguage);
@@ -58,6 +56,7 @@ sap.ui.define([
 	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{TEST_TEXT}"});
 		oLabel.placeAt("qunit-fixture");
+		oLabel.setModel(oModel);
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 		assert.equal(oLabel.getText(), "A text en");
@@ -69,10 +68,8 @@ sap.ui.define([
 		beforeEach: function() {
 			Localization.setLanguage("en");
 			oModel = new ResourceModel({bundleName: "testdata.messages"});
-			Core.setModel(oModel, "i18n");
 		},
 		afterEach: function() {
-			Core.setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
 			Localization.setLanguage(sDefaultLanguage);
@@ -98,6 +95,7 @@ sap.ui.define([
 	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		oLabel.placeAt("qunit-fixture");
+		oLabel.setModel(oModel, "i18n");
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 		assert.equal(oLabel.getText(), "A text en");
@@ -109,10 +107,8 @@ sap.ui.define([
 			Localization.setLanguage("en");
 			this.stub(Supportability, "collectOriginInfo").returns(true);
 			oModel = new ResourceModel({bundleUrl: sMessagesProperties});
-			Core.setModel(oModel, "i18n");
 		},
 		afterEach: function() {
-			Core.setModel(null, "i18n");
 			oModel.destroy();
 			oModel = undefined;
 			Localization.setLanguage(sDefaultLanguage);
@@ -140,6 +136,7 @@ sap.ui.define([
 	QUnit.test("test model getProperty and via binding", function(assert) {
 		oLabel = new TestButton("myLabel", {text: "{i18n>TEST_TEXT}"});
 		oLabel.placeAt("qunit-fixture");
+		oLabel.setModel(oModel, "i18n");
 		var value = oModel.getProperty("TEST_TEXT");
 		assert.equal(value, "A text en");
 		assert.equal(oLabel.getText(), "A text en");
@@ -149,6 +146,7 @@ sap.ui.define([
 	QUnit.test("test composite bindings", function(assert) {
 		oLabel2 = new TestButton("myLabel2", {text: {parts: [{path: "i18n>TEST_TEXT"}, {path: "i18n>TEST_TEXT"}]}});
 		oLabel2.placeAt("qunit-fixture");
+		oLabel2.setModel(oModel, "i18n");
 
 		assert.ok(oLabel2, "Label with composite binding must be created");
 		assert.equal(oLabel2.getText(), "A text en A text en", "Text msut be: 'A text en A text en'");
@@ -319,8 +317,11 @@ sap.ui.define([
 				});
 			}
 
-			// localizationChange is only fired on models set to a ManagedObject or on the Core
-			Core.setModel(this.oModel, "i18n");
+			this.oButton = new TestButton({
+				text: "{i18n>TEST_TEXT}"
+			});
+			// localizationChange is only fired on models set to a ManagedObject
+			this.oButton.setModel(this.oModel, "i18n");
 
 			// Spy on "localizationChange" method
 			this.localizationChangeSpy = this.spy(this.oModel, "_handleLocalizationChange");
@@ -360,7 +361,7 @@ sap.ui.define([
 			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "Ein modifizierter Text", "Texts from enhancement are still in 'de'");
 		},
 		afterEach: function() {
-			Core.setModel(null, "i18n");
+			this.oButton.destroy();
 			this.oBundle = null;
 			if (this.oModel) {
 				this.oModel.destroy();
@@ -663,6 +664,9 @@ sap.ui.define([
 					async: true
 				});
 			}
+			this.oButton = new TestButton({
+				text: "{i18n>TEST_TEXT}"
+			});
 
 			return p.then(function (oBundle) {
 				this.oBundle = oBundle;
@@ -676,8 +680,8 @@ sap.ui.define([
 					});
 				}
 
-				// localizationChange is only fired on models set to a ManagedObject or on the Core
-				Core.setModel(this.oModel, "i18n");
+				// localizationChange is only fired on models set to a ManagedObject
+				this.oButton.setModel(this.oModel, "i18n");
 
 				// Spy on "localizationChange" method
 				this.localizationChangeSpy = this.spy(this.oModel, "_handleLocalizationChange");
@@ -739,7 +743,9 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oBundle = null;
-			Core.setModel(null, "i18n");
+			if (this.oButton) {
+				this.oButton.destroy();
+			}
 			if (this.oModel) {
 				this.oModel.destroy();
 				this.oModel = null;
@@ -835,8 +841,11 @@ sap.ui.define([
 			bundleLocale: "de"
 		});
 
-		// localizationChange is only fired on models set to a ManagedObject or on the Core
-		Core.setModel(oModel, "i18n");
+		const oButton = new TestButton({
+			text: "{i18n>TEST_TEXT}"
+		});
+		// localizationChange is only fired on models set to a ManagedObject
+		oButton.setModel(oModel, "i18n");
 
 		// Spy on "localizationChange" method
 		var localizationChangeSpy = this.spy(oModel, "_handleLocalizationChange");
@@ -861,6 +870,7 @@ sap.ui.define([
 		}).then(function (oModelBundle) {
 			assert.equal(oModelBundle, oBundle, "The passed bundle is still returned by the model");
 
+			oButton.destroy();
 			oModel.destroy();
 			Localization.setLanguage("en");
 		});
@@ -944,12 +954,10 @@ sap.ui.define([
 			oLabel2 = new TestButton("myLabel2", {text: "{async>TEST_TEXT}"});
 			oLabel2.placeAt("qunit-fixture");
 			oModel = new ResourceModel({bundleName: "testdata.messages", async: true});
-			Core.setModel(oModel, "async");
+			oLabel.setModel(oModel, "async");
+			oLabel2.setModel(oModel, "async");
 		},
 		afterEach: function() {
-			Core.setModel(null, "async");
-			Core.setModel(null, "async5");
-			Core.setModel(null, "sync5");
 			oModel.destroy();
 			oModel = undefined;
 			oLabel.destroy();
@@ -1072,7 +1080,7 @@ sap.ui.define([
 			bundleName: "testdata.messages",
 			async: true
 		});
-		Core.setModel(oAsyncModel, "async5");
+		oBtn.setModel(oAsyncModel, "async5");
 
 
 		var iChangeCount = 0;
@@ -1082,7 +1090,6 @@ sap.ui.define([
 				Localization.setLanguage("de");
 			} else {
 				assert.equal(oBtn.getText(), "Ein Text de", "Binding Change: Texts available after sync load");
-
 				oBtn.destroy();
 				oAsyncModel.destroy();
 				done();
@@ -1103,7 +1110,7 @@ sap.ui.define([
 			bundleName: "testdata.messages",
 			async: false
 		});
-		Core.setModel(oSyncModel, "sync5");
+		oBtn.setModel(oSyncModel, "sync5");
 
 		assert.equal(oBtn.getText(), "A text en", "Binding Change: Texts available after sync load");
 		Localization.setLanguage("de");
