@@ -304,6 +304,33 @@ function(
 	};
 
 	/**
+	 * Sets title control.
+	 *
+	 * Possible controls are Link, SmartLink, Text.
+	 * @param {sap.ui.core.Control} oTitleControl the control placed as title.
+	 * @returns {sap.m.ObjectIdentifier} <code>this</code> for chaining
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 */
+	ObjectIdentifier.prototype.setTitleControl = function(oTitleControl) {
+		this.setAggregation("_titleControl", oTitleControl);
+
+		return this;
+	};
+
+	/**
+	 * Returns the title control.
+	 *
+	 * Possible controls are Link, SmartLink, Text.
+	 * @returns {sap.ui.core.Control} oTitleControl the control placed as title.
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 */
+	ObjectIdentifier.prototype.getTitleControl = function(oTitleControl) {
+		return this._getTitleControl();
+	};
+
+	/**
 	 * Lazy loads _textControl aggregation.
 	 * @returns {sap.ui.core.Control} The control for the text
 	 * @private
