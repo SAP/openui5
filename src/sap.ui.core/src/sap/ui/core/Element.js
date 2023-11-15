@@ -495,20 +495,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * This triggers immediate rerendering of its parent and thus of itself and its children.
-		 *
-		 * As <code>sap.ui.core.Element</code> "bubbles up" the rerender, changes to
-		 * child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
-		 * @protected
-		 */
-		Element.prototype.rerender = function() {
-			if (this.oParent) {
-				this.oParent.rerender();
-			}
-		};
-
-
-		/**
 		 * Returns the UI area of this element, if any.
 		 *
 		 * @return {sap.ui.core.UIArea|null} The UI area of this element or <code>null</code>

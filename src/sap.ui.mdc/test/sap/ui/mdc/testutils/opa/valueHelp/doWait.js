@@ -74,7 +74,7 @@ sap.ui.define([
             forValueHelpDialogFilterBar: function (oConfig, sValueHelpId) {
                 return oWaiters.forValueHelp({success: function (oValueHelp) {
                     var oActiveValueHelpContent = _getActiveValueHelpContent(oValueHelp);
-                    var oFilterBar = oActiveValueHelpContent && oActiveValueHelpContent.getFilterBar && oActiveValueHelpContent._getPriorityFilterBar();
+                    var oFilterBar = oActiveValueHelpContent && oActiveValueHelpContent.getFilterBar && oActiveValueHelpContent.getActiveFilterBar();
 
                     return oScope.waitFor({
                         searchOpenDialogs: true,

@@ -88,7 +88,7 @@ sap.ui.define([
 
 			// Mock "isA" method on the instance
 			oControl.isA = function (aTypes) {
-				return aTypes.indexOf(sMockedControlType) >= 0;
+				return aTypes.indexOf(sMockedControlType) >= 0 || Control.prototype.isA.apply(this, arguments);
 			};
 
 			// Mock _suggestTitleId method on the instance

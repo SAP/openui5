@@ -47,7 +47,7 @@ sap.ui.define([
 				type: LinkType.Popover,
 				directLink: undefined
 			},
-			newLinkTypePromise: null
+			runtimeType: null
 		});
 	};
 

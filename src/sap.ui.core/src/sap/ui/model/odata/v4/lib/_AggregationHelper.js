@@ -406,14 +406,20 @@ sap.ui.define([
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
 		 * information for a recursive hierarchy. If no query options are given, only a symbolic
-		 * "$apply" is constructed to avoid timing issues with metadata. The property paths for
-		 * DistanceFromRootProperty, DrillStateProperty, LimitedDescendantCountProperty,
-		 * NodeProperty, and ParentNavigationProperty are stored at <code>oAggregation</code> using
-		 * a "$" prefix (if not already stored).
+		 * "$apply" is constructed to avoid timing issues with metadata. The paths for
+		 * DistanceFromRoot, DrillState, LimitedDescendantCount, LimitedRank, NodeProperty, and
+		 * ParentNavigationProperty are stored at <code>oAggregation</code> using a "$" prefix (if
+		 * not already stored).
 		 *
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for a recursive hierarchy; see
 		 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation}.
+		 * @param {function} [oAggregation.$fetchMetadata]
+		 *   Function which fetches metadata for a given meta path - NOT always available!
+		 * @param {string} [oAggregation.$metaPath]
+		 *   Meta path as set by {@link #setPath}
+		 * @param {string} [oAggregation.$path]
+		 *   Data path as set by {@link #setPath}
 		 * @param {string} [oAggregation.search]
 		 *   Like the value for a "$search" system query option (remember ODATA-1452); it is turned
 		 *   into the search expression parameter of an "ancestors()" transformation
@@ -452,7 +458,8 @@ sap.ui.define([
 						}
 
 						sPropertyPath = oAggregation["$" + sProperty]
-							= mRecursiveHierarchy[sProperty].$PropertyPath;
+							= mRecursiveHierarchy[sProperty + "Property"]?.$PropertyPath
+							?? mRecursiveHierarchy[sProperty]?.$Path;
 					}
 					mQueryOptions.$select.push(sPropertyPath);
 				}
@@ -521,13 +528,19 @@ sap.ui.define([
 						? ")" // "all levels"
 						: ",Levels=" + (oAggregation.expandTo || 1) + ")");
 				if (bAllLevels) {
-					select("DistanceFromRootProperty");
+					select("DistanceFromRoot");
 				} else if (oAggregation.expandTo > 1) {
-					select("DistanceFromRootProperty");
-					select("LimitedDescendantCountProperty");
+					select("DistanceFromRoot");
+					select("LimitedDescendantCount");
 				}
 			}
-			select("DrillStateProperty");
+			select("DrillState");
+			if (mRecursiveHierarchy && !oAggregation.$LimitedRank) {
+				oAggregation.$LimitedRank = mRecursiveHierarchy.LimitedRank?.$Path
+					?? oAggregation.$DrillState.slice(0,
+							oAggregation.$DrillState.lastIndexOf("/") + 1)
+						+ "LimitedRank";
+			}
 			mQueryOptions.$apply = sApply;
 
 			return mQueryOptions;

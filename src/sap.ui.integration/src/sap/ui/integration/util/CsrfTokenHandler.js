@@ -6,16 +6,21 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/base/util/isPlainObject",
 	"sap/base/util/merge",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"../cards/data/CsrfToken"
 ], function (
 	BaseObject,
 	isPlainObject,
 	merge,
-	JSONModel
+	JSONModel,
+	CsrfToken
 ) {
 	"use strict";
 
-	var rPattern = /\{\{csrfTokens.([^\}]+)/;
+	/**
+	 * @deprecated As of version 1.121.0
+	 */
+	var rPattern = /\{\{csrfTokens.([^\}]+)\}\}/;
 	var TOKEN_DEFAULT_HEADER = "X-CSRF-Token";
 
 	/**
@@ -31,8 +36,7 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @constructor
-	 * @param {sap.ui.integration.Host} oHost The Host which will be used for resolve CSRF tokens.
-	 * @param {object} oConfiguration The CSRF configuration from the manifest.
+	 * @param {object} mSettings Token handler settings
 	 * @private
 	 * @ui5-restricted sap.ui.integration
 	 * @alias sap.ui.integration.util.CsrfTokenHandler
@@ -46,102 +50,66 @@ sap.ui.define([
 
 			mSettings = mSettings || {};
 
+			this._mTokens = new Map();
+			this._oModel = mSettings.model;
+			/**
+			 * @deprecated As of version 1.121.0
+			 */
 			this._oHost = mSettings.host;
 			this._oConfiguration = mSettings.configuration;
+			this._oDataProviderFactory = mSettings.dataProviderFactory;
+
+			for (const [sTokenName, oTokenConfig] of Object.entries(mSettings.configuration)) {
+				this._mTokens.set(sTokenName, new CsrfToken(sTokenName, oTokenConfig, this));
+			}
 		}
 	});
 
-	/**
-	 * Map of all Promises which resolve to CSRF tokens. Keyed by the unique URL of each CSRF request. Shared by all cards.
-	 *
-	 * @static
-	 * @private
-	 */
-	CsrfTokenHandler._mTokens = new Map();
+	CsrfTokenHandler.prototype.getUsedToken = function (oDataConfig) {
+		const sTokenName = this._findTokenName(oDataConfig);
 
-	/**
-	 * Resolves CSRF placeholders to actual values within a data configuration object.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.integration
-	 * @param {object} oDataConfig Data configuration object
-	 * @returns {Promise<object>} A promise which resolves with the data configuration object containing resolved CSRF token values
-	 */
-	CsrfTokenHandler.prototype.resolveToken = function (oDataConfig) {
-		var oCsrfTokenContext,
-			oCsrfTokenConfig;
+		return this._mTokens.get(sTokenName);
+	};
 
+	CsrfTokenHandler.prototype.fetchValue = function (sTokenName, oTokenConfig) {
 		// clone the data configuration,
 		// so we won't change the original settings
-		oDataConfig = merge({}, oDataConfig);
+		oTokenConfig = merge({}, oTokenConfig);
 
-		oCsrfTokenContext = this._findCsrfPlaceholder(oDataConfig);
-
-		if (!oCsrfTokenContext) {
-			return Promise.resolve(oDataConfig);
-		}
-
-		oCsrfTokenConfig = this._getCsrfConfig(oCsrfTokenContext.tokenName);
-
-		if (this._oHost) {
-			return this._oHost.getCsrfToken(oCsrfTokenConfig)
-				.then(function (sTokenValue) {
-					if (!sTokenValue) {
-						return this._resolveTokenByUrl(oDataConfig, oCsrfTokenContext);
-					}
-
-					this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
-					return oDataConfig;
-				}.bind(this))
-				.catch(function (sError) {
-					return Promise.reject(sError);
-				});
-		}
-
-		return this._resolveTokenByUrl(oDataConfig, oCsrfTokenContext);
-	};
-
-	CsrfTokenHandler.prototype._resolveTokenByUrl = function (oDataConfig, oCsrfTokenContext) {
-		var sCsrfTokenName = oCsrfTokenContext.tokenName,
-			sCsrfUrl = this._getCsrfConfig(sCsrfTokenName).data.request.url;
-
-		if (CsrfTokenHandler._mTokens.has(sCsrfUrl)) {
-			return CsrfTokenHandler._mTokens.get(sCsrfUrl).then(function (sTokenValue) {
-				this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
-				return oDataConfig;
-			}.bind(this));
-		}
-
-		if (sCsrfTokenName) {
-			return this._requestToken(oDataConfig, oCsrfTokenContext);
-		}
-
-		return Promise.resolve(oDataConfig);
+		return this._requestToken(sTokenName, oTokenConfig.data);
 	};
 
 	/**
-	 * Saves a reference to the DataProviderFactory to create own data requests.
-	 * Those CSRF placeholders may contain destinations placeholders which need to be resolved prior to making the request.
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.integration
-	 * @param {sap.ui.integration.util.DataProviderFactory} oDataProviderFactory the factory
+	 * @deprecated As of version 1.121.0
 	 */
-	CsrfTokenHandler.prototype.setDataProviderFactory = function (oDataProviderFactory) {
-		this._oDataProviderFactory = oDataProviderFactory;
+	CsrfTokenHandler.prototype.fetchValueByHost = function (oTokenConfig) {
+		if (this._oHost) {
+			// clone the data configuration,
+			// so we won't change the original settings
+			oTokenConfig = merge({}, oTokenConfig);
+
+			return this._oHost.getCsrfToken(oTokenConfig);
+		}
+
+		return Promise.resolve();
+	};
+
+	CsrfTokenHandler.prototype.onTokenFetched = function (sTokenName, sTokenValue) {
+		this._setCsrfModelValue(sTokenName, sTokenValue);
 	};
 
 	/**
 	 * Sets the host which is used to resolve tokens.
 	 * @param {sap.ui.integration.Host} oHost The host.
+	 * @deprecated As of version 1.121.0
 	 */
 	CsrfTokenHandler.prototype.setHost = function (oHost) {
 		this._oHost = oHost;
 	};
 
 	/**
-	 * Checks if a response contains an expired CSRF Token.
-	 * @param {object} oResponse The response.
+	 * @param {Response} oResponse The response.
+	 * @returns {boolean} Whether the response contains an expired CSRF token
 	 */
 	CsrfTokenHandler.prototype.isExpiredToken = function (oResponse) {
 		if (!oResponse) {
@@ -153,62 +121,96 @@ sap.ui.define([
 	};
 
 	/**
-	 * Executes a CSRF token request based on the data configuration object which contains a CSRF placeholder in its headers property.
-	 *
-	 * @private
-	 * @param {object} oDataConfig Data configuration object
-	 * @returns {Promise} Promise which resolves with the CSRF token
+	 * @deprecated As of version 1.121.0
 	 */
-	CsrfTokenHandler.prototype._requestToken = function (oDataConfig, oCsrfTokenContext) {
-		var sCsrfTokenName = oCsrfTokenContext.tokenName,
-			oCsrfTokenConfig = this._getCsrfConfig(sCsrfTokenName);
-
-		if (!sCsrfTokenName || !oCsrfTokenConfig) {
-			return Promise.reject("CSRF definition is incorrect");
+	CsrfTokenHandler.prototype.replacePlaceholders = function (vData) {
+		if (!vData) {
+			return vData;
 		}
 
-		var pTokenValuePromise = new Promise(function (resolve, reject) {
-			var oCsrfTokenDataProvider = this._oDataProviderFactory.create(oCsrfTokenConfig.data);
-			oCsrfTokenDataProvider.getData().then(function (oData) {
-				var sTokenValue,
-					oModel;
-
-				if (oCsrfTokenConfig.data.path) {
-					oModel = new JSONModel(oData);
-					sTokenValue = oModel.getProperty(oCsrfTokenConfig.data.path);
-					oModel.destroy();
-				} else {
-					sTokenValue = oCsrfTokenDataProvider.getLastResponse().headers.get(TOKEN_DEFAULT_HEADER);
-				}
-
-				resolve(sTokenValue);
-			}).catch(function () {
-				reject("CSRF token cannot be resolved");
+		if (Array.isArray(vData)) {
+			return vData.map((vValue) => {
+				this.replacePlaceholders(vValue);
 			});
-		}.bind(this));
+		}
 
-		this._registerToken(oCsrfTokenConfig, pTokenValuePromise);
+		if (isPlainObject(vData)) {
+			const oItemCopy = {};
 
-		return pTokenValuePromise.then(function (sTokenValue) {
-			this._replaceCsrfPlaceholder(oCsrfTokenContext, sTokenValue);
-			return oDataConfig;
-		}.bind(this));
+			for (const sKey in vData) {
+				oItemCopy[sKey] = this.replacePlaceholders(vData[sKey]);
+			}
+
+			return oItemCopy;
+		}
+
+		if (typeof vData === "string") {
+			const oToken = this._mTokens.get(this._getTokenName(vData));
+
+			if (oToken) {
+				return vData.replace(rPattern, oToken.value);
+			}
+		}
+
+		return vData;
 	};
 
 	/**
-	 * Deletes a token based on a data configuration object which contains a CSRF placeholder in its headers property.
+	 * Executes a CSRF token request
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.integration
-	 * @param {object} oDataConfig Data configuration object
+	 * @param {string} sTokenName Token name in the current card
+	 * @param {object} oTokenDataConfig Token data configuration
+	 * @returns {Promise} Promise which resolves with the CSRF token
 	 */
-	CsrfTokenHandler.prototype.resetTokenByRequest = function (oDataConfig) {
-		var oCsrfTokenContext = this._findCsrfPlaceholder(oDataConfig);
-		if (!oCsrfTokenContext) {
+	CsrfTokenHandler.prototype._requestToken = function (sTokenName, oTokenDataConfig) {
+		if (!sTokenName || !oTokenDataConfig) {
+			return Promise.reject("CSRF definition is incorrect");
+		}
+
+		const oTokenDataProvider = this._oDataProviderFactory.create(oTokenDataConfig);
+		const pTokenValue = oTokenDataProvider.getData().then((oData) => {
+			var sTokenValue,
+				oModel;
+
+			if (oTokenDataConfig.path) {
+				oModel = new JSONModel(oData);
+				sTokenValue = oModel.getProperty(oTokenDataConfig.path);
+				oModel.destroy();
+			} else {
+				sTokenValue = oTokenDataProvider.getLastResponse().headers.get(TOKEN_DEFAULT_HEADER);
+			}
+
+			return sTokenValue;
+		}).catch(function () {
+			throw "CSRF token cannot be resolved";
+		});
+
+		/**
+		 * @deprecated As of version 1.121.0
+		 */
+		if (this._oHost) {
+			this._oHost.csrfTokenFetched(oTokenDataConfig, pTokenValue);
+		}
+
+		return pTokenValue;
+	};
+
+	CsrfTokenHandler.prototype.setExpiredTokenByRequest = function (oDataConfig) {
+		const sTokenName = this._findTokenName(oDataConfig);
+
+		if (!sTokenName) {
 			return;
 		}
 
-		this._deleteRegisteredToken(this._getCsrfConfig(oCsrfTokenContext.tokenName));
+		this._mTokens.get(sTokenName).setExpired();
+
+		/**
+		 * @deprecated As of version 1.121.0
+		 */
+		if (this._oHost) {
+			this._oHost.csrfTokenExpired(this._getTokenConfig(sTokenName));
+		}
 	};
 
 	/**
@@ -218,17 +220,17 @@ sap.ui.define([
 	 * @param {string} sCsrfTokenName The name of the CSRF object.
 	 * @returns {object} The CSRF configuration object.
 	 */
-	CsrfTokenHandler.prototype._getCsrfConfig = function (sCsrfTokenName) {
+	CsrfTokenHandler.prototype._getTokenConfig = function (sCsrfTokenName) {
 		return this._oConfiguration[sCsrfTokenName];
 	};
 
-	CsrfTokenHandler.prototype._replaceCsrfPlaceholder = function (oCsrfTokenContext, sTokenValue) {
-		var sPlaceholder = oCsrfTokenContext.object[oCsrfTokenContext.key];
-
-		oCsrfTokenContext.object[oCsrfTokenContext.key] = sPlaceholder.replace("{{csrfTokens." + oCsrfTokenContext.tokenName + "}}", sTokenValue);
+	CsrfTokenHandler.prototype._setCsrfModelValue = function (sTokenName, sTokenValue) {
+		this._oModel.setProperty(`/${sTokenName}`, {
+			value: sTokenValue
+		});
 	};
 
-	CsrfTokenHandler.prototype._findCsrfPlaceholder = function (oConfig) {
+	CsrfTokenHandler.prototype._findTokenName = function (oConfig) {
 		var vValue,
 			sKey,
 			sTokenName;
@@ -237,19 +239,15 @@ sap.ui.define([
 			vValue = oConfig[sKey];
 
 			if (typeof vValue === "string") {
-				sTokenName = this._getCsrfTokenName(vValue);
+				sTokenName = this._getTokenName(vValue);
 
 				if (sTokenName) {
-					return {
-						object: oConfig,
-						key: sKey,
-						tokenName: sTokenName
-					};
+					return sTokenName;
 				}
 			}
 
 			if (isPlainObject(vValue)) {
-				vValue = this._findCsrfPlaceholder(vValue);
+				vValue = this._findTokenName(vValue);
 
 				if (vValue) {
 					return vValue;
@@ -262,35 +260,28 @@ sap.ui.define([
 
 	/**
 	 * Returns the name from the CSRF placeholder.
-	 * For input of <code>{{csrfTokens.token1}}</code>, it will return <code>"token1"</code>
+	 * For input of <code>{csrfTokens>/token1}</code>, it will return <code>"token1"</code>
 	 *
 	 * @private
 	 * @param {string} sString the CSRF placeholder
 	 * @returns {string} The name of the placeholder or empty string
 	 */
-	CsrfTokenHandler.prototype._getCsrfTokenName = function (sString) {
-		var aMatches = sString.match(rPattern);
+	CsrfTokenHandler.prototype._getTokenName = function (sString) {
+		const rBinding = /\{csrfTokens\>\/([^\/]*).*}/;
+		let aMatches = sString.match(rBinding);
+
 		if (!aMatches) {
-			return "";
+			/**
+			 * @deprecated As of version 1.121.0
+			 */
+			aMatches = sString.match(rPattern);
+
+			if (!aMatches) {
+				return "";
+			}
 		}
 
 		return aMatches[1];
-	};
-
-	CsrfTokenHandler.prototype._registerToken = function (mCSRFTokenConfig, pTokenValuePromise) {
-		CsrfTokenHandler._mTokens.set(mCSRFTokenConfig.data.request.url, pTokenValuePromise);
-
-		if (this._oHost) {
-			this._oHost.csrfTokenFetched(mCSRFTokenConfig, pTokenValuePromise);
-		}
-	};
-
-	CsrfTokenHandler.prototype._deleteRegisteredToken = function (mCSRFTokenConfig) {
-		CsrfTokenHandler._mTokens.delete(mCSRFTokenConfig.data.request.url);
-
-		if (this._oHost) {
-			this._oHost.csrfTokenExpired(mCSRFTokenConfig);
-		}
 	};
 
 	return CsrfTokenHandler;

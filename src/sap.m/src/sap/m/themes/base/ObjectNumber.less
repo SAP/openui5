@@ -144,7 +144,7 @@ html[data-sap-ui-os^="Android"] {
 
 // focus
 
-.sapMObjectNumberActive {
+.sapMObjectNumberActive .sapMObjectNumberInner {
 	cursor: pointer;
 }
 
@@ -208,9 +208,9 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 }
 
 .sapMObjectNumberActive:not(.sapMObjectNumberInverted) {
-	&.sapMObjectNumberPressed,
-	&:hover,
-	&:active {
+	&.sapMObjectNumberPressed .sapMObjectNumberInner,
+	& .sapMObjectNumberInner:hover,
+	& .sapMObjectNumberInner:active {
 		* {
 			text-decoration: underline;
 		}

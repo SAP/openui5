@@ -160,9 +160,8 @@ sap.ui.define([
 	};
 
 	ColorSelect.prototype.setEnumValue = function (sValue) {
-		this.setProperty("enumValue", sValue, true);
+		this.setProperty("enumValue", sValue);
 		this._colorValue = mEnumColors[this.getColorEnum()][sValue];
-		this.invalidate();
 	};
 
 	// bind propeties to this._oControl

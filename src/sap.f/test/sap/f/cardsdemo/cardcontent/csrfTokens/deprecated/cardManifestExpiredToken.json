@@ -1,7 +1,7 @@
 {
 	"_version": "1.15.0",
 	"sap.app": {
-		"id": "sap.ui.CardCSRFToken.Card3",
+		"id": "sap.ui.CardCSRFTokenDeprecated.Card1.expiredToken",
 		"type": "card",
 		"title": "Cards with CSRF tokens used",
 		"subTitle": "",
@@ -40,7 +40,7 @@
 				"token1": {
 					"data": {
 						"request": {
-							"url": "{{destinations.ActivitiesMockServer}}/Tokens",
+							"url": "{{destinations.ActivitiesMockServer}}/ExpiredToken",
 							"method": "HEAD",
 							"headers": {
 								"X-CSRF-Token": "Fetch"
@@ -51,7 +51,7 @@
 			}
 		},
 		"header": {
-			"title": "Resolved by the Host"
+			"title": "Expired Token that Cannot be Renewed"
 		},
 		"content": {
 			"data": {

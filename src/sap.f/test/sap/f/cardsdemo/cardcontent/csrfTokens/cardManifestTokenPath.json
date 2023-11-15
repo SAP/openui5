@@ -57,7 +57,7 @@
 					"url": "{{destinations.ActivitiesMockServer}}/Activities",
 					"method": "GET",
 					"headers": {
-						"X-CSRF-Token": "{{csrfTokens.token1}}"
+						"X-CSRF-Token": "{csrfTokens>/token1/value}"
 					}
 				},
 				"path": "/data"

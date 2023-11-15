@@ -25,7 +25,11 @@
 				<Carousel
 					id="carouselSample"
 					loop="true"
-					class="sapUiContentPadding" />
+					class="sapUiContentPadding">
+					<customLayout>
+						<CarouselLayout/>
+					</customLayout>
+				</Carousel>	
 			</Panel>
 		</HBox>
 
@@ -78,6 +82,18 @@
 				value="3"
 				liveChange=".onNumberOfImagesChange"
 				width="320px" />
+
+			<Label text="Number of pages to display" />
+			<Input
+				type="Number"
+				value="1"
+				liveChange=".onNumberOfPages"
+				width="320px" />
+
+			<Label text="Scroll mode - visible pages" />
+			<Switch state="false"
+				tooltip="Toggles the scrollMode property of the carousel"
+				change=".OnScrollModeChange" />	
 		</f:SimpleForm>
 	</Page>
 </mvc:View>

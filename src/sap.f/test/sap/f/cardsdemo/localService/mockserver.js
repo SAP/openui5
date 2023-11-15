@@ -25,6 +25,10 @@ sap.ui.define([
 		]
 	};
 
+	let iCurrentExpiringTokenValue = 0;
+	let iExpectedExpiringTokenValue = 1;
+	const sActivitiesToken = "mynewToken";
+
 	return {
 
 		init: function () {
@@ -45,18 +49,48 @@ sap.ui.define([
 				method: "GET",
 				path: /.*Activities/,
 				response: function (oXhr, sQuery) {
-
-					var requestHeaders = oXhr.requestHeaders;
-					var headers = {
-
-					};
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
 					var respondStatus = 200;
 
-					if (requestHeaders["X-CSRF-Token"]) {
-						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
+					const acceptedTokens = [
+						sActivitiesToken,
+						"Token2340",
+						"mynewTokenADD",
+						"HostTokenValue"
+					];
+
+					if (!acceptedTokens.includes(requestHeaders.get("X-CSRF-Token"))) {
+						respondStatus = 403;
+						responseHeaders["X-CSRF-Token"] = "required";
 					}
 
-					oXhr.respondJSON(respondStatus, headers, activities);
+					oXhr.respondJSON(respondStatus, responseHeaders, activities);
+				}
+			});
+
+			aRequests.push({
+				method: "POST",
+				path: /.*Activities/,
+				response: function (oXhr, sQuery) {
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
+					var respondStatus = 200;
+
+					const acceptedTokens = [
+						sActivitiesToken,
+						"Token2340",
+						"mynewTokenADD",
+						"HostTokenValue"
+					];
+
+					// TODO: check if it is possible to have the token in the body
+					if (!acceptedTokens.includes(requestHeaders.get("X-CSRF-Token")) && !acceptedTokens.includes(oXhr.requestBody.get("X-CSRF-Token"))) {
+						respondStatus = 403;
+						responseHeaders["X-CSRF-Token"] = "required";
+					}
+
+					oXhr.respondJSON(respondStatus, responseHeaders, activities);
 				}
 			});
 
@@ -64,86 +98,93 @@ sap.ui.define([
 				method: "GET",
 				path: /.*ActivitiesExpiringToken/,
 				response: function (oXhr, sQuery) {
-
-					var requestHeaders = oXhr.requestHeaders;
-					var headers = {
-
-					};
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = { };
 					var respondStatus = 200;
 
-					if (requestHeaders["X-CSRF-Token"]) {
-						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
-					}
-
-					if (!this.firstTime) {
-						this.firstTime = true;
-					} else {
-						this.firstTime = false;
+					if (requestHeaders.get("X-CSRF-Token") !== `ExpiringToken${iExpectedExpiringTokenValue}`) {
 						respondStatus = 403;
-
-						headers["X-CSRF-Token"] = "required";
+						responseHeaders["X-CSRF-Token"] = "required";
+					} else {
+						iExpectedExpiringTokenValue++;
 					}
 
-					oXhr.respondJSON(respondStatus, headers, activities);
+					oXhr.respondJSON(respondStatus, responseHeaders, activities);
 				}
 			});
 
 			aRequests.push({
 				method: "POST",
-				path: /.*/,
+				path: /\/TokensPath/,
 				response: function (oXhr, sQuery) {
-					if (oXhr.url.indexOf("Tokens") > -1) {
-						oXhr.respondJSON(200, null, tokens);
-						return;
-					}
-
-					var requestHeaders = oXhr.requestHeaders;
-					var headers = {
-
-					};
-					var respondStatus = 200;
-
-					if (requestHeaders["X-CSRF-Token"]) {
-						headers["X-CSRF-Token"] = requestHeaders["X-CSRF-Token"];
-					}
-
-					if (oXhr.url.indexOf("ExpiringToken") !== -1) {
-						if (!this.firstTime) {
-							this.firstTime = true;
-						} else {
-							this.firstTime = false;
-							respondStatus = 403;
-
-							headers["X-CSRF-Token"] = "required";
-						}
-					}
-
-					oXhr.respondJSON(respondStatus, headers, activities);
+					oXhr.respondJSON(200, null, tokens);
 				}
 			});
 
 			aRequests.push({
 				method: "HEAD",
-				path: /.*/,
-				response: function (oXhr, sQuery) {
+				path: /\/ExpiringToken/,
+				response: function (oXhr) {
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
 
-					var requestHeaders = oXhr.requestHeaders;
-					var sXCSRFToken = "";
-					var headers = {
+					iCurrentExpiringTokenValue++;
 
-					};
-
-					if (requestHeaders["X-CSRF-Token"] === "Fetch") {
-						sXCSRFToken = "mynewToken";
-					} else if (requestHeaders["X-CSRF-Token"]) {
-						sXCSRFToken = requestHeaders["X-CSRF-Token"];
+					if (requestHeaders.get("X-CSRF-Token") === "Fetch") {
+						responseHeaders["X-CSRF-Token"] = `ExpiringToken${iCurrentExpiringTokenValue}`;
 					}
 
-					if (sXCSRFToken) {
-						headers["X-CSRF-Token"] = sXCSRFToken;
+					oXhr.respond(200, responseHeaders);
+				}
+			});
+
+			/**
+			 * @deprecated As of version 1.121.0
+			 */
+			aRequests.push({
+				method: "HEAD",
+				path: /\/ExpiringTokenDeprecated/,
+				response: function (oXhr) {
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
+
+					iCurrentExpiringTokenValue++;
+
+					if (requestHeaders.get("X-CSRF-Token") === "Fetch") {
+						responseHeaders["X-CSRF-Token"] = `ExpiringToken${iCurrentExpiringTokenValue}`;
 					}
 
-					oXhr.respond(200, headers);
+					oXhr.respond(200, responseHeaders);
+				}
+			});
+
+			aRequests.push({
+				method: "HEAD",
+				path: /\/ExpiredToken/,
+				response: function (oXhr) {
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
+
+					if (requestHeaders.get("X-CSRF-Token") === "Fetch") {
+						responseHeaders["X-CSRF-Token"] = "ExpiredToken";
+					}
+
+					oXhr.respond(200, responseHeaders);
+				}
+			});
+
+			aRequests.push({
+				method: "HEAD",
+				path: /\/Tokens/,
+				response: function (oXhr) {
+					var requestHeaders = new Headers(oXhr.requestHeaders);
+					var responseHeaders = {};
+
+					if (requestHeaders.get("X-CSRF-Token") === "Fetch") {
+						responseHeaders["X-CSRF-Token"] = sActivitiesToken;
+					}
+
+					oXhr.respond(200, responseHeaders);
 				}
 			});
 

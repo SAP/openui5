@@ -40,6 +40,13 @@ sap.ui.define([
 			library: "sap.ui.integration",
 			properties: {
 				/**
+				 * Data provider configuration from the manifest
+				 */
+				configuration: {
+					type: "object"
+				},
+
+				/**
 				 * Data settings.
 				 */
 				settings: {
@@ -108,6 +115,7 @@ sap.ui.define([
 
 	DataProvider.prototype.init = function () {
 		this._iCurrentRequestNumber = 0;
+		this._oDependencies = new Set();
 	};
 
 	/**
@@ -130,10 +138,10 @@ sap.ui.define([
 
 	/**
 	 * Sets a list of <code>sap.ui.integration.util.DataProvider</code> which will be considered dependencies of the current one.
-	 * @param {sap.ui.integration.util.DataProvider[]} aDependencies The list of dependencies.
+	 * @param {sap.ui.integration.util.DataProvider} oDependency The new dependency.
 	 */
-	DataProvider.prototype.setDependencies = function (aDependencies) {
-		this._aDependencies = aDependencies;
+	DataProvider.prototype.addDependency = function (oDependency) {
+		this._oDependencies.add(oDependency);
 	};
 
 	/**
@@ -186,6 +194,12 @@ sap.ui.define([
 		if (!this._pInitialRequestPromise) {
 			this._pInitialRequestPromise = pDataUpdate;
 		}
+
+		pDataUpdate.catch((e) => {
+			this.fireError({
+				message: e
+			});
+		});
 
 		return pDataUpdate;
 	};
@@ -261,7 +275,7 @@ sap.ui.define([
 		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
-	DataProvider.prototype.getInitialRequestPromise = function () {
+	DataProvider.prototype.load = function () {
 		return this._pInitialRequestPromise;
 	};
 
@@ -301,11 +315,10 @@ sap.ui.define([
 	 * @return {Promise} Promise which fulfills when all dependencies are ready.
 	 */
 	DataProvider.prototype._waitDependencies = function () {
-		var aDependencies = this._aDependencies || [],
-			aPromises = [];
+		const aPromises = [];
 
-		aDependencies.forEach(function (oDataProvider) {
-			aPromises.push(oDataProvider.getInitialRequestPromise());
+		this._oDependencies.forEach((oDependency) => {
+			aPromises.push(oDependency.load());
 		});
 
 		return Promise.all(aPromises);

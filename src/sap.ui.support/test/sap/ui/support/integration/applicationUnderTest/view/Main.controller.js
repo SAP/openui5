@@ -1,5 +1,11 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', "sap/m/Dialog", "sap/m/Button", "sap/m/Text", "sap/m/Input", "sap/m/Label"],
-function(Controller, Dialog, Button, Text, Input, Label) {
+sap.ui.define([
+	'sap/ui/core/mvc/Controller',
+	'sap/m/Dialog',
+	'sap/m/Button',
+	'sap/m/Text',
+	'sap/m/Input',
+	'sap/m/Label'
+], function (Controller, Dialog, Button, Text, Input, Label) {
 	'use strict';
 
 	var MainController = Controller.extend('appUnderTest.view.Main', {
@@ -19,8 +25,8 @@ function(Controller, Dialog, Button, Text, Input, Label) {
 					content: [
 						new Text({text: 'Hello'}),
 						new Button({icon: 'sap-icon://action'}),
-						new Input({id:"testInput2", placeholder:"Test input 2"}),
-						new Label({labelFor:"testInput2", text:"label for input"})
+						new Input({id: 'testInput2', placeholder: 'Test input 2'}),
+						new Label({labelFor: 'testInput2', text: 'label for input'})
 					]
 				});
 
@@ -28,6 +34,7 @@ function(Controller, Dialog, Button, Text, Input, Label) {
 				this.dialogWithErrors.open();
 			}
 		},
+
 		onSecondDialogPress: function () {
 			if (this.dialogWithoutErrors) {
 				this.dialogWithoutErrors.open();

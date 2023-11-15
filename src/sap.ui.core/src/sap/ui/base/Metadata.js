@@ -37,6 +37,7 @@ sap.ui.define([
 		assert(typeof sClassName === "string" && sClassName, "Metadata: sClassName must be a non-empty string");
 		assert(typeof oClassInfo === "object", "Metadata: oClassInfo must be empty or an object");
 
+		oClassInfo.metadata ??= {};
 		oClassInfo.metadata.__version = oClassInfo.metadata.__version || 2.0;
 		if ( !isFunction(oClassInfo.constructor) ) {
 			throw Error("constructor for class " + sClassName + " must have been declared before creating metadata for it");
@@ -68,19 +69,16 @@ sap.ui.define([
 			oPrototype;
 
 		if ( oStaticInfo.baseType ) {
-			var oParentClass;
-			if ( isFunction(oStaticInfo.baseType) ) {
+			var oParentClass,
+				bValidBaseType = isFunction(oStaticInfo.baseType);
+
+			if ( bValidBaseType ) {
 				oParentClass = oStaticInfo.baseType;
 				if ( !isFunction(oParentClass.getMetadata) ) {
 					throw new TypeError("baseType must be a UI5 class with a static getMetadata function");
 				}
-			} else {
-				// lookup base class by its name - same reasoning as above
-				oParentClass = ObjectPath.get(oStaticInfo.baseType); // legacy-relevant, code path not used by extend call
-				if ( !isFunction(oParentClass) ) {
-					Log.fatal("base class '" + oStaticInfo.baseType + "' does not exist");
-				}
 			}
+
 			// link metadata with base metadata
 			if ( oParentClass.getMetadata ) {
 				this._oParent = oParentClass.getMetadata();

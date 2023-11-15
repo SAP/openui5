@@ -20,24 +20,40 @@ sap.ui.define([
 				]
 			});
 
-			var MyHost = Host.extend("MyHost", { });
-
-			MyHost.prototype.getCsrfToken = function (mCSRFTokenConfig) {
-				if (mCSRFTokenConfig.data.request.url === "invalid") {
-					return Promise.reject("CSRF token could not be resolved by the host");
-				}
-
-				return Promise.resolve("HostTokenValue");
-			};
-
-			var oHostResolveToken = new MyHost();
-
 			this.getView().byId('card1').setHost(oHost);
 			this.getView().byId('card2').setHost(oHost);
 			this.getView().byId('card3').setHost(oHost);
-			this.getView().byId('card4').setHost(oHostResolveToken);
-			this.getView().byId('card5').setHost(oHostResolveToken);
+			this.getView().byId('card4').setHost(oHost);
+			this.getView().byId('card5').setHost(oHost);
 			this.getView().byId('card6').setHost(oHost);
+
+			/**
+			 * @deprecated As of version 1.121.0
+			 */
+			(function () {
+				var MyHost = Host.extend("MyHost", { });
+
+				MyHost.prototype.getCsrfToken = function (mCSRFTokenConfig) {
+					if (mCSRFTokenConfig.data.request.url === "invalid") {
+						return Promise.reject("CSRF token could not be resolved by the host");
+					}
+
+					return Promise.resolve("HostTokenValue");
+				};
+
+				var oHostResolveToken = new MyHost();
+
+				this.getView().byId('deprecatedHostFeat1').setHost(oHostResolveToken);
+				this.getView().byId('deprecatedHostFeat2').setHost(oHostResolveToken);
+				this.getView().byId('deprecatedCsrfCard1').setHost(oHost);
+				this.getView().byId('deprecatedCsrfCard2').setHost(oHost);
+				this.getView().byId('deprecatedCsrfCard3').setHost(oHost);
+				this.getView().byId('deprecatedCsrfCard4').setHost(oHostResolveToken);
+				this.getView().byId('deprecatedCsrfCard5').setHost(oHostResolveToken);
+				this.getView().byId('deprecatedCsrfCard6').setHost(oHost);
+				this.getView().byId('deprecatedCsrfCard7').setHost(oHost);
+				this.getView().byId('deprecatedCsrfCard8').setHost(oHost);
+			}.bind(this))();
 		}
 	});
 });

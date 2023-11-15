@@ -65,6 +65,8 @@ sap.ui.define([
 			var oFirstFilter = oFilterBar._getFilters()[0];
 			assert.strictEqual(oFirstFilter._getComboBox().getItems().length, 4, "The filter options are 4.");
 
+			assert.strictEqual(oFirstFilter._getComboBox().getPlaceholder(), "Test Placeholder", "The property placeholder is set");
+
 			oFirstFilter._getComboBox().getItems().forEach(function (oItem, iInd) {
 				assert.strictEqual(oItem.getKey(), aOptions[iInd].key, "Option at position " + iInd + " has a valid key.");
 				assert.strictEqual(oItem.getText(), aOptions[iInd].title, "Option at position " + iInd + " has a valid title.");

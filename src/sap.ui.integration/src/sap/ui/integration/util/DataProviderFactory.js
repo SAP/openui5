@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/integration/util/ExtensionDataProvider",
 	"sap/ui/integration/util/JSONBindingHelper",
 	"sap/ui/integration/util/BindingHelper",
-	"sap/ui/integration/util/CsrfTokenHandler"
+	"sap/ui/integration/util/CsrfTokenHandler",
+	"sap/ui/model/json/JSONModel"
 ], function (
 	EventProvider,
 	Log,
@@ -24,7 +25,8 @@ sap.ui.define([
 	ExtensionDataProvider,
 	JSONBindingHelper,
 	BindingHelper,
-	CsrfTokenHandler
+	CsrfTokenHandler,
+	JSONModel
 ) {
 	"use strict";
 
@@ -51,15 +53,20 @@ sap.ui.define([
 
 			this._oDestinations = mSettings.destinations;
 			this._oExtension = mSettings.extension;
-			this._oCsrfTokenHandler = mSettings.csrfTokenHandler;
 			this._oCard = mSettings.card;
 			this._oEditor = mSettings.editor;
 			this._oHost = mSettings.host;
 
 			if (mSettings.csrfTokensConfig) {
+				this._oCsrfTokensModel = new JSONModel();
 				this._oCsrfTokenHandler = new CsrfTokenHandler({
+					/**
+					 * @deprecated As of version 1.121.0
+					 */
 					host: mSettings.host,
-					configuration: mSettings.csrfTokensConfig
+					configuration: mSettings.csrfTokensConfig,
+					model: this._oCsrfTokensModel,
+					dataProviderFactory: this
 				});
 			}
 
@@ -152,20 +159,17 @@ sap.ui.define([
 			oDataProvider = new ExtensionDataProvider(oSettings, this._oExtension);
 		}
 
+		oDataProvider.setConfiguration(oDataConfiguration);
+
 		if (oCard) {
 			oDataProvider.setCard(oCard);
 			BindingHelper.propagateModels(oCard, oDataProvider);
 		} else if (oEditor) {
 			BindingHelper.propagateModels(oEditor, oDataProvider);
 		}
+
 		oDataProvider.bindObject("/");
-
 		oDataProvider.setDestinations(this._oDestinations);
-
-		if (this._oCsrfTokenHandler) {
-			oDataProvider.setCsrfTokenHandler(this._oCsrfTokenHandler);
-			this._oCsrfTokenHandler.setDataProviderFactory(this);
-		}
 
 		if (oDataProvider.isA("sap.ui.integration.util.IServiceDataProvider")) {
 			oDataProvider.createServiceInstances(oServiceManager);
@@ -173,10 +177,23 @@ sap.ui.define([
 
 		this._aDataProviders.push(oDataProvider);
 
+		if (this._oCsrfTokenHandler) {
+			const oToken = this._oCsrfTokenHandler.getUsedToken(oDataConfiguration);
+
+			if (oToken) {
+				oDataProvider.setCsrfTokenHandler(this._oCsrfTokenHandler);
+				oDataProvider.addDependency(oToken);
+				oDataProvider.setModel(this._oCsrfTokensModel, "csrfTokens");
+			}
+		}
+
 		if (bIsFilter) {
 			this._aFiltersProviders.push(oDataProvider);
 		} else {
-			oDataProvider.setDependencies(this._aFiltersProviders);
+			// TODO: check if the data provider uses filters before adding them to the dependency list
+			this._aFiltersProviders.forEach((oFilterDataProvider) => {
+				oDataProvider.addDependency(oFilterDataProvider);
+			});
 		}
 
 		return oDataProvider;
@@ -205,6 +222,9 @@ sap.ui.define([
 	DataProviderFactory.prototype.setHost = function (oHost) {
 		this._oHost = oHost;
 
+		/**
+		 * @deprecated As of version 1.121.0
+		 */
 		if (this._oCsrfTokenHandler) {
 			this._oCsrfTokenHandler.setHost(oHost);
 		}

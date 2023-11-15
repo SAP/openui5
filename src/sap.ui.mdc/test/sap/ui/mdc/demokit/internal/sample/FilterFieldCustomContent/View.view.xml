@@ -26,7 +26,7 @@
 				delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcValueHelp:Popover title="Title">
-						<mdcValueHelpContent:MTable id="VH-Title-MTable" keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="true">
+						<mdcValueHelpContent:MTable id="VH-Title-MTable" keyPath="title" descriptionPath="title"  useAsValueHelp="true">
 							<Table id="VH-Title-table" items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>

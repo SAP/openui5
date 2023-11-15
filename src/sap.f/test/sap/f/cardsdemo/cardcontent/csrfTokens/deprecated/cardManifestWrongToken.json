@@ -1,0 +1,75 @@
+{
+	"_version": "1.15.0",
+	"sap.app": {
+		"id": "sap.ui.CardCSRFTokenDeprecated.Card1.wrongToken",
+		"type": "card",
+		"title": "Cards with CSRF tokens used",
+		"subTitle": "",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Action",
+				"Host",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"icons": {
+			"icon": "sap-icon://action"
+		}
+	},
+	"sap.card": {
+		"type": "List",
+		"configuration" : {
+			"destinations": {
+				"ActivitiesMockServer": {
+					"name": "ActivitiesMockServer",
+					"label": "Activities Mock",
+					"defaultUrl": "/getData/"
+				}
+			},
+			"csrfTokens": {
+				"token1": {
+					"data": {
+						"request": {
+							"url": "someWrongTokenUrl/Tokens",
+							"method": "HEAD",
+							"headers": {
+								"X-CSRF-Token": "Fetch"
+							}
+						}
+					}
+				}
+			}
+		},
+		"header": {
+			"title": "Wrong Token Url"
+		},
+		"content": {
+			"data": {
+				"request": {
+					"url": "{{destinations.ActivitiesMockServer}}/Activities",
+					"method": "GET",
+					"headers": {
+						"X-CSRF-Token": "{{csrfTokens.token1}}"
+					}
+				},
+				"path": "/data"
+			},
+			"item": {
+				"icon": {
+					"src": "{icon}"
+				},
+				"title": "{Name}"
+			}
+		}
+	}
+}

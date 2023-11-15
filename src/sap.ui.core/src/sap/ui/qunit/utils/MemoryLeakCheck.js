@@ -116,6 +116,7 @@ QUnit.test("Control " + sControlName + " should not have any memory leaks", asyn
 		await nextUIUpdate();
 
 		oControl2.invalidate(); // just re-render again - this finds problems
+		await nextUIUpdate();
 	}
 
 	if (fnSomeAdditionalFunction) {

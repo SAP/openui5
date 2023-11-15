@@ -758,53 +758,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a clone of this view.
-	 *
-	 * Overrides the clone method to avoid conflicts between generic cloning of the content aggregation
-	 * and content creation as defined by the UI5 Model View Controller lifecycle.
-	 *
-	 * For more details see the {@link topic:a575619e25c2487f904bae71764e2350 View Cloning} section in
-	 * the documentation.
-	 *
-	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element IDs
-	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @returns {this} Reference to the newly created clone
-	 * @public
-	 */
-	View.prototype.clone = function(sIdSuffix, aLocalIds) {
-		var mSettings = {}, sKey, oClone;
-		//Clone properties (only those with non-default value)
-		for (sKey in this.mProperties  && !(this.isBound && this.isBound(sKey))) {
-			if (this.mProperties.hasOwnProperty(sKey)) {
-				mSettings[sKey] = this.mProperties[sKey];
-			}
-		}
-		oClone = Control.prototype.clone.call(this, sIdSuffix, aLocalIds, {cloneChildren:false, cloneBindings: true});
-
-		// If one of the clones event listeners is the template controller, change it to the views new controller
-		// This prevents the cloned view from firing events on the template views controller
-		var sEvent, aEventListeners, j;
-		for (sEvent in oClone.mEventRegistry) {
-			// ManagedObject already cloned mEventRegistry over to the new object, so we'll work on that
-			aEventListeners = oClone.mEventRegistry[sEvent];
-
-			for (j = aEventListeners.length - 1; j >= 0; j--) {
-				if (aEventListeners[j].oListener === this.getController()) {
-					aEventListeners[j] = {
-						oListener: oClone.getController(),
-						fFunction: aEventListeners[j].fFunction,
-						oData: aEventListeners[j].oData
-					};
-				}
-			}
-		}
-
-		oClone.applySettings(mSettings);
-
-		return oClone;
-	};
-
-	/**
 	 * Returns the preprocessors for this view instance.
 	 *
 	 * @returns {Object<string,sap.ui.core.mvc.View.Preprocessor[]>} A map containing the view preprocessors, keyed by their type

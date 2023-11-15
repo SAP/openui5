@@ -1990,12 +1990,6 @@ sap.ui.define([
 			}
 		}
 
-		// legacy validation for (unsupported) types that don't subclass BaseObject
-		oType = ObjectPath.get(oAggregation.type);
-		if ( typeof oType === "function" && oObject instanceof oType ) {
-			return oObject;
-		}
-
 		// TODO make this stronger again (e.g. for FormattedText)
 		msg = "\"" + oObject + "\" is not valid for aggregation \"" + sAggregationName + "\" of " + this;
 		if ( DataType.isInterfaceType(oAggregation.type) ) {

@@ -948,26 +948,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bReturnValueContext) {
-	[false, true].forEach(function (bRejected) {
-		var sTitle = "fetchIfChildCanUseCache: immutable cache, "
-				+ (bReturnValueContext ? "return value context, " : "")
-				+ "rejected=" + bRejected;
+	[false, true].forEach(function (bBrokenCache) {
+		[false, true].forEach(function (bRejected) {
+		var sTitle = "fetchIfChildCanUseCache: immutable cache"
+				+ (bReturnValueContext ? ", return value context, " : "")
+				+ ", broken cache=" + bBrokenCache + ", rejected=" + bRejected;
 
 		QUnit.test(sTitle, function (assert) {
 			var oCache = { // cache sent read request
-					hasSentRequest : function () { return true; },
-					setQueryOptions : function () {}
+					hasSentRequest : function () { return true; }
 				},
-				oCachePromise = bRejected
-					? SyncPromise.reject({}) // "Failed to create cache..."
-					: SyncPromise.resolve(Promise.resolve(oCache)), // it might become pending again
+				oCachePromise = bBrokenCache ? SyncPromise.reject({}) : SyncPromise.resolve(oCache),
 				oMetaModel = {
 					getReducedPath : function () {}
 				},
 				fnFetchMetadata = function () {},
 				oBinding = new ODataParentBinding({
 					bAggregatedQueryOptionsInitial : false,
-					oCache : bRejected ? undefined : oCache,
+					oCache : bBrokenCache ? undefined : oCache,
 					oCachePromise : oCachePromise,
 					doFetchOrGetQueryOptions : function () {},
 					oModel : {
@@ -999,53 +997,56 @@ sap.ui.define([
 			oHelperMock.expects("getMetaPath").withExactArgs("/resolved/child/path")
 				.returns("/resolved/child/metaPath");
 			oBindingMock.expects("doFetchOrGetQueryOptions").returns(undefined);
+			// Note: Usually fetchPropertyAndType does not reject, but return undefined
 			oHelperMock.expects("fetchPropertyAndType")
 				.withExactArgs(sinon.match.same(fnFetchMetadata), "/resolved/child/metaPath")
-				.returns(SyncPromise.resolve({$kind : "Property"}));
+				.returns(bRejected
+					? SyncPromise.reject("~oError~")
+					: SyncPromise.resolve({$kind : "Property"}));
 			oHelperMock.expects("clone").never();
 			oBindingMock.expects("selectKeyProperties").never();
 			oBindingMock.expects("getBaseForPathReduction")
 				.withExactArgs().returns("/base/path");
-			this.mock(oMetaModel).expects("getReducedPath")
+			this.mock(oMetaModel).expects("getReducedPath").exactly(bRejected ? 0 : 1)
 				.withExactArgs("/resolved/child/path", "/base/path")
 				.returns("/reduced/child/path");
-			oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
+			oHelperMock.expects("getMetaPath").exactly(bRejected ? 0 : 1)
+				.withExactArgs("/reduced/child/path")
 				.returns("/reduced/child/metapath");
-			oHelperMock.expects("getRelativePath")
+			oHelperMock.expects("getRelativePath").exactly(bRejected ? 0 : 1)
 				.withExactArgs("/reduced/child/metapath", "/Set")
 				.returns("reducedChildMetaPath");
-			oHelperMock.expects("wrapChildQueryOptions").returns({});
-			oBindingMock.expects("aggregateQueryOptions")
+			oHelperMock.expects("wrapChildQueryOptions").exactly(bRejected ? 0 : 1)
+				.returns({});
+			oBindingMock.expects("aggregateQueryOptions").exactly(bRejected ? 0 : 1)
 				.withExactArgs({}, "/Set", /*bIsCacheImmutable*/true, "~bIsProperty~")
 				.returns(false);
 			if (bRejected) {
 				this.mock(oBinding.oModel).expects("reportError")
 					.withExactArgs(oBinding + ": Failed to enhance query options for "
 						+ "auto-$expand/$select for child childPath", sClassName,
-						sinon.match.same(oCachePromise.getResult()));
-			} else {
-				this.mock(oCache).expects("setQueryOptions").never();
+						sinon.match.same("~oError~"));
 			}
 
 			// code under test
 			oPromise = oBinding.fetchIfChildCanUseCache(oContext, "childPath",
 				SyncPromise.resolve(mChildLocalQueryOptions), "~bIsProperty~");
 
+			assert.strictEqual(oBinding.oCachePromise, oCachePromise);
 			assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
 			assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath, oPromise);
 			assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), ["childPath"]);
-			return Promise.all([oPromise, !bRejected && oCachePromise]).then(function (aResults) {
-				var sReducedPath = aResults[0];
-
+			return oPromise.then(function (sReducedPath) {
+				assert.notOk(bRejected);
 				assert.strictEqual(sReducedPath, undefined);
-				if (!bRejected) {
-					assert.strictEqual(oBinding.oCachePromise.getResult(),
-						oCachePromise.getResult());
-				}
-				// ensure that oCachePromise remains rejected
-				assert.strictEqual(oBinding.oCachePromise.isRejected(),
-					oCachePromise.isRejected());
+			}, function (oError) {
+				assert.ok(bRejected);
+				assert.strictEqual(oError, "~oError~");
+			}).then(function () {
+				assert.strictEqual(oBinding.oCachePromise, oCachePromise);
 				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
+				oCachePromise.catch(function () { /* avoid "Uncaught (in Promise)"*/ });
+			});
 			});
 		});
 	});
@@ -1105,7 +1106,9 @@ sap.ui.define([
 		var oMetaModel = {
 				getReducedPath : function () {}
 			},
-			oCachePromise = SyncPromise.resolve(oFixture.cache),
+			oCachePromise = oFixture.cache === undefined
+				? SyncPromise.resolve(Promise.resolve(null))
+				: SyncPromise.resolve(oFixture.cache),
 			fnFetchMetadata = {/*function*/},
 			oBinding = new ODataParentBinding({
 				mAggregatedQueryOptions : {$select : "foo"},
@@ -1198,17 +1201,22 @@ sap.ui.define([
 			"~bIsProperty~");
 
 		assert.strictEqual(oBinding.aChildCanUseCachePromises[0], oPromise);
-		assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
+		if (oFixture.cacheImmutable) {
+			assert.strictEqual(oBinding.oCachePromise, oCachePromise);
+		} else {
+			assert.notStrictEqual(oBinding.oCachePromise, oCachePromise);
+		}
 		if (oFixture.cache === null) {
 			assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), []);
 		} else {
 			assert.strictEqual(oBinding.mCanUseCachePromiseByChildPath.childPath, oPromise);
 			assert.deepEqual(Object.keys(oBinding.mCanUseCachePromiseByChildPath), ["childPath"]);
 		}
-		return oBinding.oCachePromise.then(function (oCache0) {
-			assert.strictEqual(oPromise.getResult(),
-				oFixture.rejected ? undefined : "/reduced/child/path");
-			assert.strictEqual(oCache0, oFixture.cache);
+		return oPromise.then(function (sResult) {
+			assert.strictEqual(sResult, oFixture.rejected ? undefined : "/reduced/child/path");
+			if (oFixture.cache === undefined) {
+				assert.ok(oCachePromise.isFulfilled());
+			}
 		});
 	});
 });

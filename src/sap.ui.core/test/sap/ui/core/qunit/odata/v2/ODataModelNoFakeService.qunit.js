@@ -295,7 +295,6 @@ sap.ui.define([
 			sDeepPath = "~deepPath",
 			oEntityType = "{object} oEntityType",
 			fnError = {/*function*/},
-			sETag = "~etag",
 			oFilter = "{object} oFilter",
 			sFilterParams = "~$filter",
 			aFilters = "{sap.ui.model.Filter[]} aFilters",
@@ -307,7 +306,6 @@ sap.ui.define([
 				_createRequest : function () {},
 				_createRequestUrlWithNormalizedPath : function () {},
 				_getHeaders : function () {},
-				_getETag : function () {},
 				_getResourcePath : function () {},
 				_isCanonicalRequestNeeded : function () {},
 				_normalizePath : function () {},
@@ -353,7 +351,6 @@ sap.ui.define([
 			.returns(aUrlParams);
 		oModelMock.expects("_getHeaders").withExactArgs(mHeaders, true)
 			.returns(mGetHeaders);
-		oModelMock.expects("_getETag").withExactArgs(sPath, oContext).returns(sETag);
 		// inner function createReadRequest
 		oModelMock.expects("resolveDeep").withExactArgs(sPath, oContext).returns(sDeepPath);
 		oModelMock.expects("_getResourcePath")
@@ -375,7 +372,7 @@ sap.ui.define([
 				/*bUseBatch*/true)
 				.returns(sUrl);
 		oModelMock.expects("_createRequest")
-			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, /*oData*/null, sETag,
+			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, /*oData*/null, /*sETag*/undefined,
 				/*bAsync*/undefined, bUpdateAggregatedMessages, "~bSideEffects")
 			.returns(oRequest);
 		oModelMock.expects("_pushToRequestQueue")
@@ -3325,7 +3322,6 @@ sap.ui.define([
 								abort : fnAbort,
 								changeSetId : "~changeSetId",
 								error : fnError,
-								eTag : "~eTag",
 								groupId : "~groupId",
 								headers : mHeaders,
 								key : "~sNormalizedPath",
@@ -3373,8 +3369,7 @@ sap.ui.define([
 						// not strict equal, as it is a clone of oEntity
 						assert.deepEqual(oEntity0, oEntity);
 						return true;
-					}),
-					"~eTag")
+					}))
 				.returns(oRequest);
 
 			if (sExpand) {
@@ -3413,7 +3408,6 @@ sap.ui.define([
 				changeSetId : "~changeSetId",
 				context : "~context",
 				error : bWithCallbackHandlers ? oEventHandlers.fnError : undefined,
-				eTag : "~eTag",
 				expand : sExpand,
 				groupId : "~groupId",
 				headers : mHeadersInput,
@@ -3577,7 +3571,7 @@ sap.ui.define([
 				assert.strictEqual(oEntity0.__metadata.created.groupId, "~defaultGroupId");
 
 				return true;
-			}), undefined)
+			}))
 			.returns(oRequest);
 		this.mock(oModel).expects("getContext")
 			.withExactArgs("/~sKey", "~sDeepPath", sinon.match.object, undefined, undefined)
@@ -3912,8 +3906,7 @@ sap.ui.define([
 			.withExactArgs("/~sNormalizedPath", "~aUrlParams", undefined)
 			.returns("~sUrl");
 		this.mock(oModel).expects("_createRequest")
-			.withExactArgs("~sUrl", "~sDeepPath", "POST", {},
-				sinon.match.object/*aspect already tested*/, undefined)
+			.withExactArgs("~sUrl", "~sDeepPath", "POST", {}, sinon.match.object/*aspect already tested*/)
 			.returns(oRequest);
 		oMetadataMock.expects("loaded").withExactArgs()
 			.returns({then : function (fnFunc) {

@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Table",
 	"sap/m/Text",
+	"sap/m/Link",
 	"sap/m/Column",
 	"sap/m/Label",
 	"sap/m/ColumnListItem",
@@ -33,6 +34,7 @@ sap.ui.define([
 	JSONModel,
 	Table,
 	Text,
+	Link,
 	Column,
 	Label,
 	ColumnListItem,
@@ -148,6 +150,25 @@ sap.ui.define([
 		assert.strictEqual(oResult, oObjectIdentifier, "Should be able to chain");
 		assert.ok(!/.*<script>.*/.test(oObjectIdentifier.$().find(".sapMObjectIdentifierTitle").html()), "Did not contain an unescaped script tag");
 		assert.strictEqual(oObjectIdentifier.getTitle(), sTextToSet, "Did set the non encoded string as value");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("setTitleControl test", function(assert) {
+		// Arrange
+		var oControlToSet = new Link();
+
+		// System under Test
+		var oObjectIdentifier = new ObjectIdentifier().placeAt("qunit-fixture");
+		oCore.applyChanges();
+
+		// Act
+		oObjectIdentifier.setTitleControl(oControlToSet);
+		oCore.applyChanges();
+
+		// Assert
+		assert.strictEqual(oObjectIdentifier.getTitleControl(), oControlToSet, "sap.m.Link is set as control");
 
 		//Cleanup
 		oObjectIdentifier.destroy();

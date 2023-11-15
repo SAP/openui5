@@ -1585,6 +1585,25 @@ sap.ui.define([
 		assert.strictEqual(this.oCarousel.getActivePage(), oFirstPage.getId(), "Active page should be keyTestPage_1 and a loop should NOT have happened.");
 	});
 
+	QUnit.test("Scroll through view", function (assert) {
+		// arrange
+		this.oCarousel.setLoop(true);
+		this.oCarousel.setCustomLayout(new CarouselLayout({
+			visiblePagesCount: 2,
+			scrollMode: "VisiblePages"
+		}));
+		const oFirstPage = this.oCarousel.getPages()[0];
+		const oThirdPage = this.oCarousel.getPages()[2];
+		this.oCarousel.setActivePage(oFirstPage);
+		Core.applyChanges();
+
+		// act - press left arrow
+		pressArrowNext(this.oCarousel);
+
+		// assert
+		assert.strictEqual(this.oCarousel.getActivePage(), oThirdPage.getId(), "Active page should be keyTestPage_3, scrolled trough one view of 2 pages.");
+	});
+
 	QUnit.test("Simulate right arrow fast click twice", function (assert) {
 		// act
 		pressArrowNext(this.oCarousel);

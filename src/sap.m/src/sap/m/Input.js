@@ -1118,18 +1118,9 @@ function(
 				decorative: false,
 				noTabStop: true,
 				press: function (oEvent) {
-					var oParent = this.getParent(),
-						$input;
+					var oParent = this.getParent();
 
-					if (Device.support.touch) {
-						// prevent opening the soft keyboard
-						$input = oParent.$('inner');
-						$input.attr('readonly', 'readonly');
-						oParent.focus();
-						$input.removeAttr('readonly');
-					} else {
-						oParent.focus();
-					}
+					oParent.focus();
 
 					that.bValueHelpRequested = true;
 

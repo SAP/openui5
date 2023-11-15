@@ -5157,9 +5157,9 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.create = function(sPath, oData, mParameters) {
 		var oRequest, sUrl, oEntityMetadata,
-		oContext, fnSuccess, fnError, mUrlParams, mRequests,
-		mHeaders, aUrlParams, sEtag, sGroupId, sMethod, sChangeSetId, bRefreshAfterChange,
-		bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical;
+			oContext, fnSuccess, fnError, mUrlParams, mRequests,
+			mHeaders, aUrlParams, sGroupId, sMethod, sChangeSetId, bRefreshAfterChange,
+			bDeferred, that = this, sNormalizedPath, sDeepPath, bCanonical;
 
 		// The object parameter syntax has been used.
 		if (mParameters) {
@@ -5169,7 +5169,6 @@ sap.ui.define([
 			fnError    = mParameters.error;
 			sGroupId	= mParameters.groupId || mParameters.batchGroupId;
 			sChangeSetId	= mParameters.changeSetId;
-			sEtag		= mParameters.eTag;
 			mHeaders	= mParameters.headers;
 			bRefreshAfterChange = mParameters.refreshAfterChange;
 			bCanonical = mParameters.canonicalRequest;
@@ -5190,7 +5189,7 @@ sap.ui.define([
 
 		return this._processRequest(function(requestHandle) {
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oData, sEtag);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oData);
 			oRequest.created = true;
 
 			oEntityMetadata = that.oMetadata._getEntityTypeByPath(sNormalizedPath);
@@ -5746,7 +5745,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._read = function(sPath, mParameters, bSideEffects) {
-	   var bCanonical, oContext, fnError, sETag, aFilters, sGroupId, mHeaders, sMethod, oRequest,
+	   var bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, sMethod, oRequest,
 		   aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
 		   that = this;
 
@@ -5778,7 +5777,6 @@ sap.ui.define([
 	   mHeaders = this._getHeaders(mHeaders, true);
 
 	   sMethod = "GET";
-	   sETag = this._getETag(sPath, oContext);
 
 	   var oRequestHandle = {
 		   abort: function() {
@@ -5809,7 +5807,7 @@ sap.ui.define([
 
 		   sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
 			   that.bUseBatch);
-		   oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
+		   oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, /*sETag*/undefined,
 			   undefined, bUpdateAggregatedMessages, bSideEffects);
 
 		   mRequests = that.mRequests;
@@ -7045,7 +7043,7 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.createEntry = function (sPath, mParameters) {
 		var bCanonical, sChangeSetId, oContext, fnCreated, pCreate, fnCreatedPromiseResolve,
-			bDeepCreate, sDeepPath, oEntityMetadata, fnError, sETag, sExpand, sGroupId, mHeaders,
+			bDeepCreate, sDeepPath, oEntityMetadata, fnError, sExpand, sGroupId, mHeaders,
 			bInactive, bIsCollection, sKey, sNormalizedPath, vProperties, bRefreshAfterChange,
 			oRequest, mRequests, fnSuccess, sUrl, aUrlParams, mUrlParams,
 			oEntity = {},
@@ -7199,7 +7197,6 @@ sap.ui.define([
 				created : {
 					changeSetId : sChangeSetId,
 					error : fnError,
-					eTag : sETag,
 					groupId : sGroupId,
 					headers : mHeaders,
 					key : sNormalizedPath.substring(1), //store path for later POST
@@ -7235,7 +7232,7 @@ sap.ui.define([
 			});
 			oCreatedContext = addEntityToCacheAndCreateContext();
 			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity, sETag);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, oEntity);
 
 			if (sExpand) {
 				mExpandHeaders = that._getHeaders(undefined, true);
@@ -7289,7 +7286,6 @@ sap.ui.define([
 			fnSuccess = mParameters.success;
 			fnError   = mParameters.error;
 			fnCreated = mParameters.created;
-			sETag     = mParameters.eTag;
 			mHeaders  = mParameters.headers;
 			mUrlParams = mParameters.urlParameters;
 			bRefreshAfterChange = mParameters.refreshAfterChange;

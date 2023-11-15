@@ -31,7 +31,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Popover1" opensOnFocus="true">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name" >
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">
@@ -64,7 +64,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/openson/ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Popover2" opensOnFocus="true">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' mode="{= ${settings>/maxConditions} === -1 ? 'MultiSelect' : 'SingleSelectMaster'}" width="30rem">
 								<columns>
 									<Column width="5rem">

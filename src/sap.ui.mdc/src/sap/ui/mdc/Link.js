@@ -182,7 +182,7 @@ sap.ui.define([
 
 			if (oRuntimeLinkTypePromise && oRuntimeLinkTypePromise instanceof Promise) {
 				oRuntimeLinkTypePromise.then(function(oRuntimeLinkType) {
-					if (!this._oLinkType || oRuntimeLinkType.linkType !== this._oLinkType.linkType) {
+					if (!this._oLinkType || oRuntimeLinkType.type !== this._oLinkType.type) {
 						this._oLinkType = oRuntimeLinkType;
 						this.fireDataUpdate();
 					}

@@ -688,6 +688,21 @@
 			labelFor: oNumberOfPagesToBeShownInput
 		});
 
+		var oScrollModeLabel = new sap.m.Label({
+			text: "Scroll mode - visible pages:",
+			labelFor: oScrollModeSwitch
+		});
+		
+		var oScrollModeSwitch = new sap.m.Switch("scrollMode",{
+			state: false,
+			tooltip: "Toggles the scrollMode property of the carousel",
+			change: (oEvent) => {
+				const bScrollMode = oEvent.getParameter("state"),
+				 sScrollMode = bScrollMode ? "VisiblePages" : "SinglePage";
+				 sap.ui.getCore().byId("myCarousel").getCustomLayout()?.setScrollMode(sScrollMode);
+			}
+		});
+
 		// Slider with 5 values, used to shrink the container of the carousel
 
 		var oScreenSizes = [
@@ -770,7 +785,9 @@
 				oNumberOfImagesInputLabel,
 				oNumberOfImagesInput,
 				oNumberOfIPagesToBeShownLabel,
-				oNumberOfPagesToBeShownInput
+				oNumberOfPagesToBeShownInput,
+				oScrollModeLabel,
+				oScrollModeSwitch
 			]
 		});
 

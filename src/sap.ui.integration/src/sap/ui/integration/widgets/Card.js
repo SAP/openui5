@@ -662,7 +662,7 @@ sap.ui.define([
 	 */
 	Card.prototype._initReadyState = function () {
 		this._aReadyPromises = [];
-
+		const aReadyPromises = this._aReadyPromises;
 		this._awaitEvent("_dataReady");
 		this._awaitEvent("_dataPassedToContent");
 		this._awaitEvent("_headerReady");
@@ -670,7 +670,9 @@ sap.ui.define([
 		this._awaitEvent("_contentReady");
 
 		Promise.all(this._aReadyPromises).then(function () {
-			this._onReady();
+			if ( aReadyPromises === this._aReadyPromises ) {
+				this._onReady();
+			}
 		}.bind(this));
 
 		this.attachEventOnce("_dataReady", this._fnOnDataReady);
@@ -1340,7 +1342,6 @@ sap.ui.define([
 	 * Cleans up internal models and other before new manifest processing.
 	 */
 	Card.prototype._cleanupOldManifest = function() {
-		this._aReadyPromises = null;
 
 		if (this._fnOnModelChange) {
 			this.getModel().detachEvent("change", this._fnOnModelChange, this);

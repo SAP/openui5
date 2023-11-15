@@ -56,12 +56,11 @@
 					valueHelp="VH-Material">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Material"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["MatrId","Text"], "out": [\{"path": "defaultUnit", "target": "MatrUnit", "mode": "WhenEmpty"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Material-Pop">
 									<mdcValueHelpContent:MTable id="VH-Material-Pop-MTable"
 										title="{/#Product/MatrId/@sap:label}"
-										filterFields="*MatrId,Text*"
 										keyPath="MatrId"
 										descriptionPath="Text"
 										caseSensitive="true"
@@ -93,7 +92,6 @@
 								<mdcValueHelp:Dialog id="VH-Material-Dialog" title="Material">
 									<mdcValueHelpContent:MTable id="VH-Material-Dialog-MTable"
 										title="{/#Product/MatrId/@sap:label}"
-										filterFields="*MatrId,Text*"
 										keyPath="MatrId"
 										descriptionPath="Text"
 										caseSensitive="true">
@@ -133,13 +131,12 @@
 					valueHelp="VH-Quantity">
 					<mdc:dependents>
 						<mdc:ValueHelp id="VH-Quantity"
-							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"in": [\{"path": "MatrId", "source": "MatrId"}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
+							delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelp.delegate", "payload": \{"searchKeys":["unit","text"], "in": [\{"path": "MatrId", "source": "MatrId"}], "out": [\{"path": "MatrId", "target": "MatrId"\}]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH-Quantity-Pop">
 									<mdcValueHelpContent:MTable id="VH-Quantity-Pop-MTable"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true"
 										useAsValueHelp="false">
 										<m:Table id="VH-Quantity-Pop-Table" items="{/weightODataUnits}" width="16rem" mode="SingleSelectMaster">
@@ -170,7 +167,6 @@
 									<mdcValueHelpContent:MTable id="VH-Quantity-Dialog-MTable"
 										keyPath="unit"
 										descriptionPath="text"
-										filterFields="*unit,text*"
 										caseSensitive="true">
 										<m:Table id="VH-Quantity-Dialog-Table" items="{/weightODataUnits}" mode="SingleSelectMaster">
 											<m:columns>

@@ -24,7 +24,7 @@
 			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 			<mdc:typeahead>
 				<mdcv:Popover id="VH2-Pop" title="Title">
-					<mdcvc:MTable id="VH2-Pop-Cont" keyPath="title" descriptionPath="title" filterFields="$search" useAsValueHelp="false">
+					<mdcvc:MTable id="VH2-Pop-Cont" keyPath="title" descriptionPath="title"  useAsValueHelp="false">
 						<Table id="VH2-Pop-Table" items='{path : "/Books", length: 10}' width="20rem">
 							<columns>
 								<Column>
@@ -46,7 +46,7 @@
 			</mdc:typeahead>
 			<mdc:dialog>
 				<mdcv:Dialog id="VH2-Dia" title="Title">
-					<mdcvc:MDCTable id="VH2-Dia-Cont" keyPath="title" descriptionPath="title" filterFields="$search">
+					<mdcvc:MDCTable id="VH2-Dia-Cont" keyPath="title" descriptionPath="title" >
 						<mdcvc:filterBar>
 							<vhfb:FilterBar id="VH2-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": "Books"\}\}' >
 								<vhfb:filterItems>
@@ -88,7 +88,7 @@
 			delegate='\{"name": "delegates/odata/v4/ValueHelpDelegate", "payload": \{\}\}'>
 			<mdc:typeahead>
 				<mdcv:Popover id="VH1-Pop" title="Author ID">
-					<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+					<mdcvc:MTable id="VH1-Pop-Cont" keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 						<Table id="VH1-Pop-Table" items='{path : "/Authors", length: 10}' width="30rem">
 							<columns>
 								<Column width="5rem">
@@ -122,7 +122,7 @@
 			</mdc:typeahead>
 			<mdc:dialog>
 				<mdcv:Dialog id="VH1-Dia" title="Author ID">
-					<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="name" filterFields="$search">
+					<mdcvc:MDCTable id="VH1-Dia-Cont" keyPath="ID" descriptionPath="name" >
 						<mdcvc:filterBar>
 							<vhfb:FilterBar id="VH1-Dia-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{"collectionName": ""\}\}' >
 								<vhfb:basicSearchField>

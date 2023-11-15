@@ -5940,48 +5940,6 @@ sap.ui.define([
 			this.oModel.submitChanges();
 		}.bind(this));
 	});
-	QUnit.test("submit:check eTag", function(assert) {
-		var done = assert.async();
-		var that = this;
-		this.oModel.metadataLoaded().then(function() {
-			var oContext = this.oModel.createEntry("/Products", {properties: {Name: 'test'}, eTag: 'testEtag', urlParameters: {'Fail500': true, 'test-param':'test-param-value'}});
-			var oProduct = this.oModel.getProperty('', oContext);
-			assert.ok(oProduct, "Product created");
-			assert.ok(oProduct.__metadata.created, "Product flagged as created");
-			var fnCompl = function(oInfo) {
-				that.oModel.detachRequestCompleted(fnCompl);
-				assert.ok(!oInfo.getParameter('success'), "request should fail");
-				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
-			};
-			var fnFailed = function(oInfo) {
-				that.oModel.detachRequestFailed(fnFailed);
-				assert.ok(true, "request failed");
-				var oProduct = that.oModel.getProperty('', oContext);
-				assert.ok(oProduct, "Product still exists");
-				assert.ok(oProduct.__metadata.created, "Product still flagged as created");
-				assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
-				that.oModel.attachRequestFailed(function(oInfo) {
-					that.oModel.detachRequestFailed(fnFailed);
-					assert.ok(true, "request failed");
-					var oProduct = that.oModel.getProperty('', oContext);
-					assert.ok(oProduct, "Product still exists");
-					assert.ok(oProduct.__metadata.created, "Product still flagged as created");
-					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
-					done();
-				});
-				that.oModel.attachRequestCompleted(function(oInfo) {
-					that.oModel.detachRequestCompleted(fnCompl);
-					assert.ok(!oInfo.getParameter('success'), "request should fail");
-					assert.ok(oInfo.getParameter('headers')['If-Match'] === 'testEtag', 'header for eTag set correctly');
-				});
-
-				that.oModel.submitChanges();
-			};
-			this.oModel.attachRequestFailed(fnFailed);
-			this.oModel.attachRequestCompleted(fnCompl);
-			this.oModel.submitChanges();
-		}.bind(this));
-	});
 
 	/**
 	 * Calling a non existing function import should neither result in success nor in error handler since there has no request been created.

@@ -1169,7 +1169,6 @@ sap.ui.define([
 		}
 
 		oMenu.invalidate();
-		oMenu.invalidate();
 	};
 
 	Menu.prototype.focus = function(){

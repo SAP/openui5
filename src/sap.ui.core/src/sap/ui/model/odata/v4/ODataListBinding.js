@@ -2051,10 +2051,10 @@ sap.ui.define([
 	 *   entity type, identified via the <code>hierarchyQualifier</code> given to
 	 *   {@link #setAggregation}.
 	 *   <ul>
-	 *     <li> "$DistanceFromRootProperty" holds the path to the property which provides the raw
+	 *     <li> "$DistanceFromRoot" holds the path to the property which provides the raw
 	 *       value for "@$ui5.node.level" (minus one) and should be used only to interpret the
 	 *       response retrieved via {@link #getDownloadUrl}.
-	 *     <li> "$DrillStateProperty" holds the path to the property which provides the raw value
+	 *     <li> "$DrillState" holds the path to the property which provides the raw value
 	 *       for "@$ui5.node.isExpanded" and should be used only to interpret the response retrieved
 	 *       via {@link #getDownloadUrl}.
 	 *     <li> "$NodeProperty" holds the path to the property which provides the hierarchy node
@@ -2070,7 +2070,7 @@ sap.ui.define([
 	ODataListBinding.prototype.getAggregation = function (bVerbose) {
 		return _Helper.clone(this.mParameters.$$aggregation, function (sKey, vValue) {
 			return sKey[0] === "$"
-				&& !(bVerbose && ["$DistanceFromRootProperty", "$DrillStateProperty",
+				&& !(bVerbose && ["$DistanceFromRoot", "$DrillState",
 					"$NodeProperty"].includes(sKey))
 				? undefined
 				: vValue;
@@ -3082,6 +3082,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.isUnchangedParameter = function (sName, vOtherValue) {
 		if (sName === "$$aggregation") {
+			// Note: $fetchMetadata is lost here, but never mind - $apply does not matter, only
+			// normalization is needed
 			vOtherValue = _Helper.clone(vOtherValue); // avoid modification due to normalization
 			_AggregationHelper.buildApply(vOtherValue);
 

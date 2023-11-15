@@ -27,7 +27,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH1-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table id="mTable1" items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -55,7 +55,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH1-Dialog" title="Label of Field">
-						<mdcvc:MTable id="FB0-FH1-Dialog-MTable1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
+						<mdcvc:MTable id="FB0-FH1-Dialog-MTable1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FB0-FH1-Dialog-FB1" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -102,7 +102,7 @@
 								</items>
 							</Table>
 						</mdcvc:MTable>
-						<mdcvc:MTable id="FB0-FH1-Dialog-MTable2" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Search Template 1">
+						<mdcvc:MTable id="FB0-FH1-Dialog-MTable2" keyPath="ID" descriptionPath="name"  group="group1" title="Search Template 1">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FB0-FH1-Dialog-FB2" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -158,7 +158,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH1-1-multicombo-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="true">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="true">
 							<Table id="mTable1-1-multicombo" items='{path : "/Authors"}' growing="true" growingScrollToLoad="true" width="20rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -201,7 +201,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH1-10-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test1">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -229,7 +229,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with ui.Table">
-						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Default Search Template">
+						<mdcvc:MDCTable id="mdcTableContent1" keyPath="ID" descriptionPath="name"  group="group1" title="Default Search Template">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="mdcFilterbar1" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -273,7 +273,7 @@
 								</mdc:columns>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:MDCTable id="mdcTableContent2" keyPath="ID" descriptionPath="name" filterFields="$search" group="group1" title="Search Template 1">
+						<mdcvc:MDCTable id="mdcTableContent2" keyPath="ID" descriptionPath="name"  group="group1" title="Search Template 1">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="mdcFilterbar2" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -332,7 +332,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH1-11-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover title="Test2">
-						<mdcvc:MTable keyPath="ID" descriptionPath="name" filterFields="$search" useAsValueHelp="false">
+						<mdcvc:MTable keyPath="ID" descriptionPath="name"  useAsValueHelp="false">
 							<Table items='{path : "/Authors", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -360,7 +360,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog title="MDC Table with m.Table">
-							<mdcvc:MDCTable title="Authors" keyPath="ID" descriptionPath="name" filterFields="$search" group="tables">
+							<mdcvc:MDCTable title="Authors" keyPath="ID" descriptionPath="name"  group="tables">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="mdcFilterbar-listcollection-1" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 										<vhfb:basicSearchField>
@@ -401,7 +401,7 @@
 								</mdc:Table>
 							</mdcvc:MDCTable>
 
-							<mdcvc:MDCTable title="Authors by Country" keyPath="ID" descriptionPath="name" filterFields="$search"  group="tables">
+							<mdcvc:MDCTable title="Authors by Country" keyPath="ID" descriptionPath="name"   group="tables">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="mdcFilterbar-listcollection-2" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 										<vhfb:basicSearchField>
@@ -445,7 +445,7 @@
 								</mdc:Table>
 							</mdcvc:MDCTable>
 
-							<mdcvc:MDCTable title="Authors by Date of Birth" keyPath="ID" descriptionPath="name" filterFields="$search" group="tables">
+							<mdcvc:MDCTable title="Authors by Date of Birth" keyPath="ID" descriptionPath="name"  group="tables">
 								<mdcvc:filterBar>
 									<vhfb:FilterBar id="mdcFilterbar-listcollection-3" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 										<vhfb:basicSearchField>
@@ -551,7 +551,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH-Country-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-Country-Popover" title="Country">
-						<mdcvc:MTable id="FB0-FH-Country-Popover-MTable" keyPath="code" descriptionPath="descr" filterFields="$search" title="Country" useAsValueHelp="false">
+						<mdcvc:MTable id="FB0-FH-Country-Popover-MTable" keyPath="code" descriptionPath="descr"  title="Country" useAsValueHelp="false">
 							<Table id="mTable-country1" items="{path: '/Countries', length: 10}" width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>
@@ -573,7 +573,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH-Country-Dialog" title="Country">
-						<mdcvc:MTable id="FB0-FH-Country-Dialog-MTable" keyPath="code" descriptionPath="descr" filterFields="$search" title="Country">
+						<mdcvc:MTable id="FB0-FH-Country-Dialog-MTable" keyPath="code" descriptionPath="descr"  title="Country">
 							<Table id="mTable-country2" items="{path: '/Countries'}" width="100%" growing="true" growingScrollToLoad="true"	growingThreshold="20" mode="SingleSelectLeft">
 								<columns>
 									<Column>
@@ -599,7 +599,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH-Region-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-Region-Popover" title="Region">
-						<mdcvc:MTable  id="FB0-FH-Region-Popover-MTable" keyPath="code" descriptionPath="text" filterFields="$search" title="Region" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-Region-Popover-MTable" keyPath="code" descriptionPath="text"  title="Region" useAsValueHelp="false">
 							<Table id="mTable-region1" items="{path: '/Regions', length: 10}" width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>
@@ -625,7 +625,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH-Region-Dialog" title="Region">
-						<mdcvc:MTable id="FB0-FH-Region-Dialog-MTable" keyPath="code" descriptionPath="text" filterFields="$search" title="Region">
+						<mdcvc:MTable id="FB0-FH-Region-Dialog-MTable" keyPath="code" descriptionPath="text"  title="Region">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FB0-FH-Region-Dialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -672,7 +672,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FB0-FH-City-ValueHelp.delegate", "payload": \{\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover id="FB0-FH-City-Popover" title="City">
-						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text" filterFields="$search" title="City" useAsValueHelp="false">
+						<mdcvc:MTable  id="FB0-FH-City-Popover-MTable" keyPath="city" descriptionPath="text"  title="City" useAsValueHelp="false">
 							<Table id="mTable-City1" items="{path: '/Cities', length: 10, parameters: {$select:'country_code,region_code'}}" width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column>
@@ -694,7 +694,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FB0-FH-City-Dialog" title="Region">
-						<mdcvc:MDCTable id="FB0-FH-City-Dialog-MDCTable" keyPath="city" descriptionPath="text" filterFields="$search" >
+						<mdcvc:MDCTable id="FB0-FH-City-Dialog-MDCTable" keyPath="city" descriptionPath="text"  >
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FB0-FH-City-Dialog-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:basicSearchField>
@@ -750,7 +750,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate", "payload": \{"filter": "$search"\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover id="FH_Books1-Pop" title="Books">
-						<mdcvc:MTable id="FH_Books1-Typeahead" keyPath="ID" descriptionPath="title" filterFields="$search">
+						<mdcvc:MTable id="FH_Books1-Typeahead" keyPath="ID" descriptionPath="title" >
 							<Table id="FH_Books1-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -778,7 +778,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FH_Books1-Dialog" title="Books">
-						<mdcvc:MDCTable id="FH_Books1-MDCTable" keyPath="ID" descriptionPath="title" filterFields="$search" title="mdcTable">
+						<mdcvc:MDCTable id="FH_Books1-MDCTable" keyPath="ID" descriptionPath="title"  title="mdcTable">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FH_Books1-MDCTable-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:filterItems>
@@ -817,7 +817,7 @@
 								</mdc:type>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:MTable id="FH_Books1-MTable" keyPath="ID" descriptionPath="title" filterFields="$search" title="mTable">
+						<mdcvc:MTable id="FH_Books1-MTable" keyPath="ID" descriptionPath="title"  title="mTable">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FH_Books1-MTable-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:filterItems>
@@ -867,7 +867,7 @@
 				delegate='\{"name": "sap/ui/v4demo/delegate/FH-Books-ValueHelp.delegate", "payload": \{"filter": "*title,descr*"\}\}'>
 				<mdc:typeahead>
 					<mdcv:Popover id="FH_Books2-Pop" title="Books">
-						<mdcvc:MTable id="FH_Books2-Typeahead" keyPath="ID" descriptionPath="title" filterFields="*title,descr*">
+						<mdcvc:MTable id="FH_Books2-Typeahead" keyPath="ID" descriptionPath="title" >
 							<Table id="FH_Books2-Pop-mTable" items='{path : "/Books", length: 10}' width="30rem" mode="SingleSelectMaster">
 								<columns>
 									<Column width="5rem">
@@ -895,7 +895,7 @@
 				</mdc:typeahead>
 				<mdc:dialog>
 					<mdcv:Dialog id="FH_Books2-Dialog" title="Books">
-						<mdcvc:MDCTable id="FH_Books2-MDCTable" keyPath="ID" descriptionPath="title" filterFields="*title,descr*" title="mdcTable">
+						<mdcvc:MDCTable id="FH_Books2-MDCTable" keyPath="ID" descriptionPath="title"  title="mdcTable">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FH_Books2-MDCTable-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:filterItems>
@@ -934,7 +934,7 @@
 								</mdc:type>
 							</mdc:Table>
 						</mdcvc:MDCTable>
-						<mdcvc:MTable id="FH_Books2-MTable" keyPath="ID" descriptionPath="title" filterFields="*title,descr*" title="mTable">
+						<mdcvc:MTable id="FH_Books2-MTable" keyPath="ID" descriptionPath="title"  title="mTable">
 							<mdcvc:filterBar>
 								<vhfb:FilterBar id="FH_Books2-MTable-FB" liveMode="false" delegate='\{"name": "delegates/GenericVhFilterBarDelegate", "payload": \{\}\}'>
 									<vhfb:filterItems>

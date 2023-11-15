@@ -29,11 +29,10 @@
 					valueHelp="VH1">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH1" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH1-Pop" opensOnClick ="true" opensOnFocus="true">
 									<mdcValueHelpContent:MTable id="VH1-Pop-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -64,7 +63,6 @@
 							<mdc:dialog>
 								<mdcValueHelp:Dialog id="VH1-Dialog" title="Product">
 									<mdcValueHelpContent:MTable id="VH1-Dialog-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"
@@ -129,11 +127,10 @@
 					valueHelp="VH2">
 					<mdcField:MultiValueFieldItem key="{path: 'view>ProductId', type:'sap.ui.model.type.String'}" description="{view>Name}" />
 					<mdc:dependents>
-						<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate"\}'>
+						<mdc:ValueHelp id="VH2" delegate='\{"name": "sap/ui/mdc/sample/field/ValueHelpODataV2.delegate", "payload": \{"searchKeys":["ProductId","Name"]\}\}'>
 							<mdc:typeahead>
 								<mdcValueHelp:Popover id="VH2-Pop">
 									<mdcValueHelpContent:MTable id="VH2-Pop-MTable"
-										filterFields="*ProductId,Name*"
 										keyPath="ProductId"
 										descriptionPath="Name"
 										caseSensitive="true"

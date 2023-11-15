@@ -12,7 +12,8 @@ sap.ui.define([
 			name: "sap.f.cardsdemo",
 			settings: {
 				id: "cardsplayground"
-			}
+			},
+			manifest: true
 		}).placeAt("content");
 	});
 });

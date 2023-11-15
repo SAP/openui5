@@ -742,7 +742,7 @@ sap.ui.define([
 	 */
 	Container.prototype.isValueHelpDelegateInitialized = function () {
 		const oValueHelp = this.getParent();
-		return oValueHelp && oValueHelp.bDelegateInitialized;
+		return !!oValueHelp && oValueHelp.bDelegateInitialized;
 	};
 
 	/**

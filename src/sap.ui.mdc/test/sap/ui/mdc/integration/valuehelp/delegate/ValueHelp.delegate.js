@@ -12,8 +12,7 @@ sap.ui.define([
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/base/util/deepEqual',
 	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	"sap/ui/model/FilterType"
+	'sap/ui/model/FilterOperator'
 ], function(
 	Element,
 	BaseValueHelpDelegate,
@@ -24,8 +23,7 @@ sap.ui.define([
 	StateUtil,
 	deepEqual,
 	Filter,
-	FilterOperator,
-	FilterType
+	FilterOperator
 ) {
 	"use strict";
 

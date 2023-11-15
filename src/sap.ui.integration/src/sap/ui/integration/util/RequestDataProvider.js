@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/integration/util/DataProvider",
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/ODataUtils",
-	"sap/ui/core/Configuration",
 	"sap/base/util/fetch",
 	"sap/base/util/deepClone"
 ], function (
@@ -14,7 +13,6 @@ sap.ui.define([
 	DataProvider,
 	Log,
 	ODataUtils,
-	Configuration,
 	fetch,
 	deepClone
 ) {
@@ -105,6 +103,12 @@ sap.ui.define([
 		}
 	});
 
+	RequestDataProvider.prototype.init = function () {
+		DataProvider.prototype.init.apply(this, arguments);
+
+		this._retryDueExpiredToken = false;
+	};
+
 	RequestDataProvider.prototype.destroy = function () {
 		if (this._iRetryAfterTimeout) {
 			clearTimeout(this._iRetryAfterTimeout);
@@ -119,9 +123,6 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @private
-	 * @ui5-restricted sap.ui.integration, shell-toolkit
-	 * @returns {Promise} A promise resolved when the data is available and rejected in case of an error.
 	 */
 	RequestDataProvider.prototype.getData = function () {
 		var oRequestConfig = this.getSettings().request,
@@ -131,10 +132,11 @@ sap.ui.define([
 			pRequestChain = this._oDestinations.process(oRequestConfig);
 		}
 
+		/**
+		 * @deprecated As of version 1.121.0
+		 */
 		if (this._oCsrfTokenHandler) {
-			pRequestChain = pRequestChain.then(function (oRequest) {
-				return this._oCsrfTokenHandler.resolveToken(oRequest);
-			}.bind(this));
+			pRequestChain = pRequestChain.then(this._oCsrfTokenHandler.replacePlaceholders.bind(this._oCsrfTokenHandler));
 		}
 
 		pRequestChain = pRequestChain.then(this._fetch.bind(this));
@@ -147,16 +149,22 @@ sap.ui.define([
 	};
 
 	RequestDataProvider.prototype._handleExpiredToken = function (oError) {
-		if (this._oCsrfTokenHandler.isExpiredToken(this.getLastResponse())) {
-			// csrf token has expired, reset the token and retry this whole request
-			this._oCsrfTokenHandler.resetTokenByRequest(this.getSettings().request);
-
-			return this.getData().catch(function (oError) {
-				throw oError;
-			});
+		if (!this._oCsrfTokenHandler.isExpiredToken(this.getLastResponse())) {
+			throw oError;
 		}
 
-		throw oError;
+		// csrf token has expired, reset the token and retry this whole request
+		this._oCsrfTokenHandler.setExpiredTokenByRequest(this.getConfiguration().request);
+
+		if (this._retryDueExpiredToken) {
+			this._retryDueExpiredToken = false;
+			throw oError;
+		}
+
+		this._retryDueExpiredToken = true;
+		this._bActive = false; // prevents another triggerDataUpdate()
+
+		return this._waitDependencies().then(this.getData.bind(this));
 	};
 
 	RequestDataProvider.prototype._fetch = function (oRequestConfig) {
