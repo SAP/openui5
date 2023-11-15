@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/rta/qunit/RtaQunitUtils",
 	"sap/ui/core/Lib",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/api/FlexRuntimeInfoAPI",
 	"sap/ui/fl/initial/api/Version",
 	"sap/ui/fl/registry/Settings",
@@ -29,6 +30,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	Lib,
 	FlexState,
+	ManifestUtils,
 	FlexRuntimeInfoAPI,
 	Version,
 	Settings,
@@ -824,21 +826,21 @@ sap.ui.define([
 		});
 
 		QUnit.test("when being on a system with KeyUserConnector", function(assert) {
-			var sUrlSplit1 = "https:";
-			var sUrlSplit2 = "//example.com";
-			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
-				{connector: "KeyUserConnector", url: sUrlSplit1 + sUrlSplit2}
-			]);
+			sandbox.stub(FlexRuntimeInfoAPI, "getFeedbackInformation").returns({
+				appId: "someAppId",
+				appVersion: "someAppVersion",
+				connector: "KeyUserConnector",
+				version: "someVersion"
+			});
 			return createAndStartRTA.call(this)
-			.then(function() {
+			.then(async function() {
 				assert.ok(
 					this.oToolbar.getControl("feedback").getVisible(),
 					"then the feedback button is enabled"
 				);
-				return this.oToolbar.showFeedbackForm();
+				return await this.oToolbar.showFeedbackForm();
 			}.bind(this))
-			.then(async function() {
-				const oVersion = await VersionInfo.load();
+			.then(function() {
 				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());
 				assert.ok(
 					oIframeURL.pathname.endsWith("SV_4MANxRymEIl9K06"),
@@ -846,7 +848,7 @@ sap.ui.define([
 				);
 				assert.strictEqual(
 					oIframeURL.searchParams.get("version"),
-					oVersion.version,
+					"someVersion",
 					"then the proper version is passed"
 				);
 				assert.strictEqual(
@@ -854,22 +856,33 @@ sap.ui.define([
 					"BTP",
 					"then the proper platform is passed"
 				);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("appId"),
+					"someAppId",
+					"then the proper app id is passed"
+				);
+				assert.strictEqual(
+					oIframeURL.searchParams.get("appVersion"),
+					"someAppVersion",
+					"then the proper app version is passed"
+				);
 			}.bind(this));
 		});
 
 		QUnit.test("when being on a system with LrepConnector", function(assert) {
-			var sUrlSplit1 = "https:";
-			var sUrlSplit2 = "//example.com";
-			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([
-				{ connector: "LrepConnector", url: sUrlSplit1 + sUrlSplit2}
-			]);
+			sandbox.stub(FlexRuntimeInfoAPI, "getFeedbackInformation").returns({
+				appId: "someAppId",
+				appVersion: "someAppVersion",
+				connector: "LrepConnector",
+				version: "someVersion"
+			});
 			return createAndStartRTA.call(this)
-			.then(function() {
+			.then(async function() {
 				assert.ok(
 					this.oToolbar.getControl("feedback").getVisible(),
 					"then the feedback button is enabled"
 				);
-				return this.oToolbar.showFeedbackForm();
+				return await this.oToolbar.showFeedbackForm();
 			}.bind(this))
 			.then(function() {
 				var oIframeURL = new URL(this.oToolbar._oFeedbackDialog.getContent()[0].getBindingInfo("url").binding.getValue());

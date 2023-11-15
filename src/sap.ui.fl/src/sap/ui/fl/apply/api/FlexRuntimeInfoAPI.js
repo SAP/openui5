@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/VersionInfo"
 ], function(
 	includes,
 	Log,
@@ -25,7 +26,8 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	FlexControllerFactory,
 	Layer,
-	Utils
+	Utils,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -193,7 +195,31 @@ sap.ui.define([
 		 * @ui5-restricted sap.ushell
 		 */
 		getFlexVersion(mPropertyBag) {
-			return FlexInfoSession.getByReference(mPropertyBag.reference).version;
+			return FlexInfoSession.getByReference(mPropertyBag.reference)?.version;
+		},
+
+		/**
+		 * Returns the information needed for the rta feedback dialog
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.base.ManagedObject} mPropertyBag.rootControl - root control of the app
+		 * @returns {object[]} Flexibility services configuration
+		 *
+		 * @private
+		 * @ui5-restricted sap.ui.rta
+		 */
+		async getFeedbackInformation(mPropertyBag) {
+			const sConnector = this.getConfiguredFlexServices()[0].connector;
+			const oManifest = Utils.getAppDescriptor(mPropertyBag.rootControl);
+			const oVersion = await VersionInfo.load();
+			const sAppId = ManifestUtils.getAppIdFromManifest(oManifest);
+			const sAppVersion = ManifestUtils.getAppVersionFromManifest(oManifest);
+			return {
+				appId: sAppId,
+				appVersion: sAppVersion,
+				connector: sConnector,
+				version: oVersion.version
+			};
 		}
 	};
 

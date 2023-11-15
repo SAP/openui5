@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4",
-	"test-resources/sap/ui/fl/qunit/FlQUnitUtils"
+	"test-resources/sap/ui/fl/qunit/FlQUnitUtils",
+	"sap/ui/VersionInfo"
 ], function(
 	Control,
 	UIComponent,
@@ -27,7 +28,8 @@ sap.ui.define([
 	Layer,
 	Utils,
 	sinon,
-	FlQUnitUtils
+	FlQUnitUtils,
+	VersionInfo
 ) {
 	"use strict";
 
@@ -344,12 +346,36 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("no flex info session exists", function(assert) {
-			assert.equal(FlexRuntimeInfoAPI.getFlexVersion({reference: this.sReference}), undefined, "version not exists");
+			assert.equal(FlexRuntimeInfoAPI.getFlexVersion({reference: this.sReference}), undefined, "version doesn't exists");
 		});
 
 		QUnit.test("flex info session exists with version", function(assert) {
 			FlexInfoSession.setByReference({version: "1"}, this.sReference);
 			assert.equal(FlexRuntimeInfoAPI.getFlexVersion({reference: this.sReference}), "1", "version exists");
+		});
+	});
+
+	QUnit.module("getFeedbackInformation", {
+		afterEach() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("when called", async function(assert) {
+			const oExpectedReturnValue = {
+				appId: "someAppId",
+				appVersion: "someAppVersion",
+				connector: "someConnector",
+				version: "someVersion"
+			};
+			sandbox.stub(Utils, "getAppDescriptor").returns(undefined);
+			sandbox.stub(FlexRuntimeInfoAPI, "getConfiguredFlexServices").returns([{
+				connector: "someConnector"
+			}]);
+			sandbox.stub(VersionInfo, "load").returns({version: "someVersion"});
+			sandbox.stub(ManifestUtils, "getAppIdFromManifest").returns("someAppId");
+			sandbox.stub(ManifestUtils, "getAppVersionFromManifest").returns("someAppVersion");
+			const oReturnedValue = await FlexRuntimeInfoAPI.getFeedbackInformation({rootControl: "someRootControl"});
+			assert.deepEqual(oReturnedValue, oExpectedReturnValue, "the function returns the configured value");
 		});
 	});
 
