@@ -639,8 +639,6 @@ sap.ui.define([
 
 			this._setupOS();
 
-			this._setupLang();
-
 			this._setupAnimation();
 
 
@@ -978,24 +976,6 @@ sap.ui.define([
 		if (osCSS) {
 			html.classList.add(osCSS);
 		}
-	};
-
-	/**
-	 * Set the body's lang attribute and attach the localization change event
-	 * @private
-	 */
-	Core.prototype._setupLang = function() {
-		var html = document.documentElement;
-
-		// append the lang info to the document (required for ARIA support)
-		var fnUpdateLangAttr = function() {
-			var oLanguageTag = Localization.getLanguageTag();
-			oLanguageTag ? html.setAttribute("lang", oLanguageTag.toString()) : html.removeAttribute("lang");
-		};
-		fnUpdateLangAttr.call(this);
-
-		// listen to localization change event to update the lang info
-		this.attachLocalizationChanged(fnUpdateLangAttr, this);
 	};
 
 	/**
