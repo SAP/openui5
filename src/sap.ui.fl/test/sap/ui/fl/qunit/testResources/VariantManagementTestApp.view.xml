@@ -97,10 +97,8 @@
 										<vm:VariantManagement id="VariantManagement2" for="ObjectPageSubSection3" updateVariantInURL="true"></vm:VariantManagement>
 									</contentRight>
 								</Bar>
-								<html:div>
-									<Title id="TextTitle1" text="Text Title 1"></Title>
-									<Title id="TextTitle2" text="Text Title 2"></Title>
-								</html:div>
+								<Title id="TextTitle1" text="Text Title 1"></Title>
+								<Title id="TextTitle2" text="Text Title 2"></Title>
 							</l:Grid>
 						</uxap:ObjectPageSubSection>
 					</uxap:ObjectPageSection>
