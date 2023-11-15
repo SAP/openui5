@@ -5822,6 +5822,8 @@ sap.ui.define([
 	 * @namespace
 	 * @since 1.21.2
 	 * @public
+	 * @deprecated as of version 1.120. In case of SAPUI5, see demokit sample 'Smart Field with ValueList Annotation'.
+	 * In case of OpenUI5, see demokit sample 'Input - Suggestions - Dynamic'.
 	 */
 	thisLib.InputODataSuggestProvider = (function(){
 		var _fnSuggestionItemSelected = function(oEvent) {
