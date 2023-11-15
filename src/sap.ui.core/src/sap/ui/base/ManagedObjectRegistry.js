@@ -66,6 +66,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 *
 			 * @returns {int} Number of currently existing objects.
 			 * @private
+			 * @ui5-restricted sap.ui.core, sap.m.TablePersoController, sap.m.TablePersoDialog
 			 */
 			get size() {
 				return iInstancesCount;
@@ -84,6 +85,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 *
 			 * @returns {object} Object with all elements, keyed by their ID
 			 * @private
+			 * @ui5-restricted sap.ui.core, sap.m.TablePersoController, sap.m.TablePersoDialog
 			 */
 			all: function() {
 				var mResults = Object.create(null);
@@ -96,6 +98,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 * @param {sap.ui.core.ID|null|undefined} ID of the object to retrieve.
 			 * @returns {sap.ui.core.Element|undefined} Object with the given ID or <code>undefined</code>
 			 * @private
+			 * @ui5-restricted sap.ui.core, sap.m.TablePersoController, sap.m.TablePersoDialog
 			 */
 			get: function(id) {
 				assert(id == null || typeof id === "string", "id must be a string when defined");
@@ -124,6 +127,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 *        Context object to provide as <code>this</code> in each call of <code>callback</code>
 			 * @throws {TypeError} If <code>callback</code> is not a function
 			 * @private
+			 * @ui5-restricted sap.ui.core, sap.m.TablePersoController, sap.m.TablePersoDialog
 			 */
 			forEach: function(callback, thisArg) {
 				if (typeof callback !== "function") {
@@ -162,6 +166,7 @@ sap.ui.define(["sap/ui/base/ManagedObject", "sap/base/Log", "sap/base/assert"],
 			 *        Array of elements matching the predicate; order is undefined and might change in newer versions of UI5
 			 * @throws {TypeError} If <code>callback</code> is not a function
 			 * @private
+			 * @ui5-restricted sap.ui.core, sap.m.TablePersoController, sap.m.TablePersoDialog
 			 */
 			filter: function(callback, thisArg) {
 				if (typeof callback !== "function") {
