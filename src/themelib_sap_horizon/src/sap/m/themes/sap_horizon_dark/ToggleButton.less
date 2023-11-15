@@ -3,12 +3,41 @@
 /* Evening Horizon theme               */
 /* =================================== */
 
+html.sap-desktop .sapMToggleBtnPressed,
+.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
+	&.sapMBtnNegative {
+		background-color: @sapUiButtonRejectSelectedBackground;
+		border-color: @sapUiButtonRejectSelectedBorderColor;
+		color: @sapUiButtonRejectSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonRejectSelectedTextColor;
+		}
+	}
+	&.sapMBtnSuccess {
+		background-color: @sapUiButtonAcceptSelectedBackground;
+		border-color: @sapUiButtonAcceptSelectedBorderColor;
+		color: @sapUiButtonAcceptSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAcceptSelectedTextColor;
+		}
+	}
+	&.sapMBtnCritical {
+		background-color: @sapUiButtonAttentionSelectedBackground;
+		border-color: @sapUiButtonAttentionSelectedBorderColor;
+		color: @sapUiButtonAttentionSelectedTextColor;
+		& .sapUiIcon {
+			color: @sapUiButtonAttentionSelectedTextColor;
+		}
+	}
+}
+
 /* hover and down on toggled button */
 .sapMBtn:hover > .sapMBtnHoverable.sapMToggleBtnPressed:not(.sapMBtnActive),
 .sapMBtn .sapMBtnHoverable.sapMToggleBtnPressed:hover {
 	box-shadow: none;
 
-	&.sapMBtnReject {
+	&.sapMBtnReject,
+	&.sapMBtnNegative {
 		background-color: @sapUiButtonRejectSelectedHoverBackground;
 		border-color: @sapUiButtonRejectSelectedHoverBorderColor;
 		color: @sapUiButtonRejectSelectedTextColor;
@@ -16,7 +45,8 @@
 			color: @sapUiButtonRejectSelectedTextColor;
 		}
 	}
-	&.sapMBtnAccept {
+	&.sapMBtnAccept,
+	&.sapMBtnSuccess {
 		background-color: @sapUiButtonAcceptSelectedHoverBackground;
 		border-color: @sapUiButtonAcceptSelectedHoverBorderColor;
 		color: @sapUiButtonAcceptSelectedTextColor;
@@ -24,7 +54,8 @@
 			color: @sapUiButtonAcceptSelectedTextColor;
 		}
 	}
-	&.sapMBtnAttention {
+	&.sapMBtnAttention,
+	&.sapMBtnCritical {
 		background-color: @sapUiButtonAttentionSelectedHoverBackground;
 		border-color: @sapUiButtonAttentionSelectedHoverBorderColor;
 		color: @sapUiButtonAttentionSelectedTextColor;
@@ -32,6 +63,13 @@
 			color: @sapUiButtonAttentionSelectedTextColor;
 		}
 	}
+}
+
+.sapMBtn .sapMBtnCritical.sapMBtnInner,
+.sapMBtn .sapMBtnNegative.sapMBtnInner,
+.sapMBtn .sapMBtnSuccess.sapMBtnInner,
+.sapMBtn .sapMBtnNeutral.sapMBtnInner{
+	text-shadow: none;
 }
 
 /* Focus of toggled button */
@@ -87,6 +125,13 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMToggleBtnPressed.sapMFo
 	right: -0.0625rem;
 	bottom: -0.0625rem;
 	border-radius: 0.5rem;
+}
+
+html.sap-desktop .sapMBtn:focus > .sapMToggleBtnPressed.sapMBtnEmphasized.sapMFocusable:not(.sapMBtnActive):not(.sapMToggleBtnPressed):not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMToggleBtnPressed.sapMBtnCritical.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMToggleBtnPressed.sapMBtnNegative.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before,
+html.sap-desktop .sapMBtn:focus > .sapMToggleBtnPressed.sapMBtnSuccess.sapMFocusable:not(.sapMBtnActive):not(.sapMBadgeIndicator):before {
+	border: 0.125rem solid @sapUiContentFocusColor;
 }
 
 .sapUiSizeCompact .sapMBar-CTX .sapMBtnDefault.sapMBtnInner.sapMToggleBtnPressed:not(.sapMBtnDisabled) {
