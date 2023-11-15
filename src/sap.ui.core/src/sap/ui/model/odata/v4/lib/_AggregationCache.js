@@ -1532,7 +1532,7 @@ sap.ui.define([
 			+ this.oRequestor.buildQueryString(sMetaPath, mQueryOptions, false, true);
 		const oResult = await this.oRequestor.request("GET", sResourcePath, oGroupLock);
 
-		return parseInt(_Helper.drillDown(oResult, this.oAggregation.$LimitedRank));
+		return parseInt(_Helper.drillDown(oResult.value[0], this.oAggregation.$LimitedRank));
 	};
 
 	/**
