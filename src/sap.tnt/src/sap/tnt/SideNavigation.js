@@ -214,7 +214,7 @@ sap.ui.define([
 		}
 
 		let oListItemToSelect;
-		if (typeof selectedItem == "string") {
+		if (typeof vSelectedItem == "string") {
 			oListItemToSelect = Element.getElementById(vSelectedItem);
 		} else {
 			oListItemToSelect = vSelectedItem;
