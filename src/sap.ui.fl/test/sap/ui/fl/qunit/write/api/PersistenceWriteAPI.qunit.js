@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexObjects/FlexObjectFactory",
@@ -32,6 +33,7 @@ sap.ui.define([
 	UIComponent,
 	DescriptorChangeTypes,
 	FlexCustomData,
+	VariantManagementState,
 	FlexState,
 	ManifestUtils,
 	FlexObjectFactory,
@@ -182,6 +184,16 @@ sap.ui.define([
 			compEntities: {},
 			expectedResult: true
 		}, {
+			testName: "when the ChangePersistency has changes present in a higher layer, and VMS filters them",
+			persistencyChanges: [{
+				getLayer() {
+					return Layer.USER;
+				}
+			}],
+			compEntities: {},
+			expectedResult: false,
+			filterVariants: true
+		}, {
 			testName: "when hasHigherLayerChanges is called and the CompVariantState has changes present in a higher layer",
 			persistencyChanges: [],
 			compEntities: {
@@ -247,9 +259,17 @@ sap.ui.define([
 				mockChangePersistence(testSetup.persistencyChanges);
 				sandbox.stub(FlexState, "getCompVariantsMap").returns(testSetup.compEntities);
 				sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns(this.oAppComponent.getId());
+				const oVMSFilterStub = sandbox.stub(VariantManagementState, "filterHiddenFlexObjects").callsFake((aFlexObjects) => {
+					return testSetup.filterVariants ? [] : aFlexObjects;
+				});
 
 				return PersistenceWriteAPI.hasHigherLayerChanges(mPropertyBag)
 				.then(function(bHasHigherLayerChanges) {
+					assert.strictEqual(
+						oVMSFilterStub.callCount,
+						(testSetup.expectedResult || testSetup.filterVariants) ? 1 : 0,
+						"the VMS is only called if necessary"
+					);
 					assert.strictEqual(bHasHigherLayerChanges, testSetup.expectedResult, `it resolves with ${testSetup.expectedResult}`);
 				});
 			});

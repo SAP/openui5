@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/FlexCustomData",
 	"sap/ui/fl/apply/_internal/appVariant/DescriptorChangeTypes",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/condenser/Condenser",
@@ -28,6 +29,7 @@ sap.ui.define([
 	JsControlTreeModifier,
 	FlexCustomData,
 	DescriptorChangeTypes,
+	VariantManagementState,
 	ManifestUtils,
 	Settings,
 	Condenser,
@@ -116,7 +118,11 @@ sap.ui.define([
 			});
 		})
 		.then(function(aFilteredFlexObjects) {
-			return aFilteredFlexObjects.length > 0;
+			if (aFilteredFlexObjects.length === 0) {
+				return false;
+			}
+			// Hidden variants might be necessary for referenced variants, but are not relevant for this check
+			return VariantManagementState.filterHiddenFlexObjects(aFilteredFlexObjects, mPropertyBag.reference).length > 0;
 		});
 	};
 
