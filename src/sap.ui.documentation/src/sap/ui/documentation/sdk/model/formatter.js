@@ -322,7 +322,32 @@ sap.ui.define([
 			}
 
 			return true;
+		},
+
+		/**
+		 * Formats the version status based on the provided parameters.
+		 *
+		 * @param {boolean} bShowVersionSwitchButton - Determines if the version switch button is shown.
+		 * @param {boolean} isDevVersion - Indicates if the current version is a development version.
+		 * @param {string} version - The current version string.
+		 * @returns {string} The formatted version status.
+		 */
+		formatVersionStatus: function(bShowVersionSwitchButton, isDevVersion, version) {
+			var oResourceBundle = this.getModel("i18n").getResourceBundle();
+
+			if (bShowVersionSwitchButton) {
+				return "";
+			}
+
+			var versionStatus = oResourceBundle.getText("APP_VERSION_VERSION") + " " + version;
+
+			if (isDevVersion) {
+				versionStatus += " " + oResourceBundle.getText("APP_VERSION_IN_PROGRESS");
+			}
+
+			return versionStatus;
 		}
 	};
+
 	return merge(oFormatter, oStaticAPI);
 });
