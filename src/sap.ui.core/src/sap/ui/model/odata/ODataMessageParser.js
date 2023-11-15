@@ -20,7 +20,7 @@ var sClassName = "sap.ui.model.odata.ODataMessageParser",
 	// shortcuts for enums
 	MessageType = coreLibrary.MessageType,
 	// This map is used to translate back-end response severity values to the values defined in the
-	// enumeration sap.ui.core.MessageType
+	// enumeration sap.ui.core.message.MessageType
 	mSeverity2MessageType = {
 		"error" : MessageType.Error,
 		"info" : MessageType.Information,

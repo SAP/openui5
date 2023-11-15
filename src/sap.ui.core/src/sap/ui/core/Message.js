@@ -28,6 +28,7 @@ sap.ui.define(['./Element', './library', "./Theming", "sap/base/Log"],
 	 *
 	 * @public
 	 * @alias sap.ui.core.Message
+	 * @deprecated As of version 1.120. Please use {@link sap.ui.core.message.Message} instead.
 	 */
 	var Message = Element.extend("sap.ui.core.Message", /** @lends sap.ui.core.Message.prototype */ { metadata : {
 

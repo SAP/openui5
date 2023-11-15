@@ -41,7 +41,7 @@ sap.ui.define([
 	 * @param {string} [mParameters.description] The message description
 	 * @param {string} [mParameters.descriptionUrl] The message description url to get a more detailed message
 	 * @param {string} [mParameters.additionalText] The message additionalText
-	 * @param {sap.ui.core.MessageType} [mParameters.type=sap.ui.core.MessageType.None] The message type
+	 * @param {sap.ui.core.message.MessageType} [mParameters.type=sap.ui.core.message.MessageType.None] The message type
 	 * @param {string} [mParameters.code] The message code
 	 * @param {boolean} [mParameters.technical=false] If the message is set as technical message
 	 * @param {object} [mParameters.technicalDetails] An object containing technical details for a message
@@ -268,21 +268,21 @@ sap.ui.define([
 	/**
 	 * Set message type
 	 *
-	 * @param {sap.ui.core.MessageType} sType The Message type
+	 * @param {sap.ui.core.message.MessageType} sType The Message type
 	 * @public
 	 */
 	Message.prototype.setType = function(sType) {
 		if (sType in MessageType) {
 			this.type = sType;
 		} else {
-			Log.error("MessageType must be of type sap.ui.core.MessageType");
+			Log.error("MessageType must be of type sap.ui.core.message.MessageType");
 		}
 	};
 
 	/**
 	 * Returns the message type
 	 *
-	 * @returns {sap.ui.core.MessageType} type
+	 * @returns {sap.ui.core.message.MessageType} type
 	 * @public
 	 */
 	Message.prototype.getType = function() {
@@ -506,7 +506,7 @@ sap.ui.define([
 	 *   <code>0</code> if the message types are equal, a number smaller than <code>0</code> if the
 	 *   first message's type has higher severity, a number larger than <code>0</code> if the
 	 *   first message's type has lower severity and <code>NaN</code> in case one of the given
-	 *   messages has a type not defined in {@link sap.ui.core.MessageType}
+	 *   messages has a type not defined in {@link sap.ui.core.message.MessageType}
 	 * @private
 	 */
 	Message.compare = function (oMessage0, oMessage1) {

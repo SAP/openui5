@@ -2352,8 +2352,14 @@ sap.ui.define([
 	 * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
 	 * @borrows module:sap/ui/core/message/MessageType.Success as Success
 	 * @borrows module:sap/ui/core/message/MessageType.None as None
+	 * @deprecated As of version 1.120. Please use {@link sap.ui.core.message.MessageType} instead.
 	 */
 	thisLib.MessageType = MessageType;
+
+	/**
+	 * @deprecated As of version 1.120.
+	 */
+	DataType.registerEnum("sap.ui.core.MessageType", thisLib.MessageType);
 
 	/**
 	 * Specifies possible view types.
