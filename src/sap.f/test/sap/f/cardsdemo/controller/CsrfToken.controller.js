@@ -28,7 +28,7 @@ sap.ui.define([
 			this.getView().byId('card6').setHost(oHost);
 
 			/**
-			 * @deprecated As of version 1.121.0
+			 * @deprecated As of version 1.120.0
 			 */
 			(function () {
 				var MyHost = Host.extend("MyHost", { });
