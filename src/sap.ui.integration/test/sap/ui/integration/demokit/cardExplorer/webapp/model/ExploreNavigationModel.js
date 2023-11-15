@@ -1672,7 +1672,6 @@ sap.ui.define([
 							{
 								title: 'Using a CSRF Token',
 								key: 'csrf',
-								experimental: true,
 								mockServer: true,
 								files: [
 									{
