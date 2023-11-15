@@ -204,6 +204,13 @@ sap.ui.define([
 					language: "en"
 				}
 			},
+			"opa/input/SuggestionRowsPopoverOPA": {
+				title: "OPA Test Page for sap.m.Input with tabular suggestions",
+				ui5: {
+					libs: "sap.m",
+					language: "en"
+				}
+			},
 			/**
 			 * @deprecated As of version 1.50
 			 */
