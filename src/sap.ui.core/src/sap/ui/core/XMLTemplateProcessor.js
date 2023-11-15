@@ -762,6 +762,16 @@ function(
 			return bWrapped;
 		}
 
+		function scopedRunWithOwner(fnCreation) {
+			if (oView.fnScopedRunWithOwner) {
+				// We need to use the already created scoped runWithOwner function from the outer view instance.
+				// This way, the nested views are receiving the correct Owner component, across asynchronous calls.
+				return oView.fnScopedRunWithOwner(fnCreation);
+			} else {
+				return fnCreation();
+			}
+		}
+
 		/**
 		 * Requests the control class if not loaded yet.
 		 * If the View is set to async=true, an async XHR is sent, otherwise a sync XHR.
@@ -978,15 +988,11 @@ function(
 									containingView: oView._oContainingView,
 									processingMode: oView._sProcessingMode // add processing mode, so it can be propagated to subviews inside the HTML block
 								};
+
 								// running with owner component
-								if (oView.fnScopedRunWithOwner) {
-									return oView.fnScopedRunWithOwner(function () {
-										return new oViewClass(mViewParameters);
-									});
-								}
-								// no owner component
-								// (or fully sync path, which handles the owner propagation on a higher level)
-								return new oViewClass(mViewParameters);
+								return scopedRunWithOwner(function() {
+									return new oViewClass(mViewParameters);
+								});
 							};
 
 							return pRequireContext.then(function(oRequireContext) {
@@ -1077,7 +1083,7 @@ function(
 						});
 					}, undefined /* [targetControl] */, undefined /* [aggregationName] */, bAsync);
 
-					return SyncPromise.resolve(oView.fnScopedRunWithOwner ? oView.fnScopedRunWithOwner(fnExtensionPointFactory) : fnExtensionPointFactory());
+					return SyncPromise.resolve(scopedRunWithOwner(fnExtensionPointFactory));
 				}
 
 			} else {
@@ -1477,11 +1483,7 @@ function(
 								});
 							};
 
-							if (oView.fnScopedRunWithOwner) {
-								oView.fnScopedRunWithOwner(fnCreateStashedControl);
-							} else {
-								fnCreateStashedControl();
-							}
+							scopedRunWithOwner(fnCreateStashedControl);
 
 							// ...and mark the stashed node as invisible.
 							// The original visibility value is still scoped in the clone (visible could be bound, yet stashed controls are never visible)
@@ -1596,42 +1598,47 @@ function(
 						setId(oView, node);
 					}
 				} else if (!bViewRootNode && oClass.getMetadata().isA("sap.ui.core.mvc.View")) {
-					var fnCreateViewInstance = function () {
-						if (!oClass._sType && !mSettings.viewName) {
-							// Add module view name
-							mSettings.viewName = "module:" + oClass.getMetadata().getName().replace(/\./g, "/");
-						}
-
-						// If the view is owned by an async-component we can propagate the asynchronous creation behavior to the nested views
-						if (bIsAsyncComponent && bAsync) {
-							// legacy check: async=false is not supported with an async-component
-							if (mSettings.async === false) {
-								throw new Error(
-									"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
-									"Affected Component '" + oOwnerComponent.getMetadata().getComponentName() + "' and View '" + mSettings.viewName + "'."
-								);
-							}
-
-							mSettings.type = oClass._sType || sType;
-							pInstanceCreated = View.create(mSettings);
-						} else {
-							// Pass processingMode to nested XMLViews
-							if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode) {
-								mSettings.processingMode = oView._sProcessingMode;
-							}
-							return View._create(mSettings, undefined, oClass._sType || sType);
-						}
-					};
-
-					// for views having a factory function defined we use the factory function!
-					if (oView.fnScopedRunWithOwner) {
-						// We need to use the already created scoped runWithOwner function from the outer view instance.
-						// This way, the nested views are receiving the correct Owner component, across asynchronous calls.
-						vNewControlInstance = oView.fnScopedRunWithOwner(fnCreateViewInstance);
-					} else {
-						vNewControlInstance = fnCreateViewInstance();
+					if (!oClass._sType && !mSettings.viewName) {
+						// Add module view name
+						mSettings.viewName = "module:" + oClass.getMetadata().getName().replace(/\./g, "/");
 					}
 
+					mSettings.type = oClass._sType || sType;
+
+					// If the view is owned by an async-component we can propagate the asynchronous creation behavior to the nested views
+					if (bIsAsyncComponent && bAsync) {
+						// legacy check: async=false is not supported with an async-component
+						if (mSettings.async === false) {
+							throw new Error(
+								"A nested view contained in a Component implementing 'sap.ui.core.IAsyncContentCreation' is processed asynchronously by default and cannot be processed synchronously.\n" +
+								"Affected Component '" + oOwnerComponent.getMetadata().getComponentName() + "' and View '" + mSettings.viewName + "'."
+							);
+						}
+
+						pInstanceCreated = scopedRunWithOwner(function() {
+							return View.create(mSettings);
+						});
+					} else {
+						// Pass processingMode to nested XMLViews
+						if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode) {
+							mSettings.processingMode = oView._sProcessingMode;
+						}
+
+						var sViewClass = View._getViewClassName(mSettings, true /* skip error log*/);
+						if (bAsync && sViewClass) {
+							pInstanceCreated = new Promise(function(resolve, reject) {
+								sap.ui.require([sViewClass], resolve, reject);
+							}).then(function() {
+								return scopedRunWithOwner(function() {
+									return View._create(mSettings);
+								});
+							});
+						} else {
+							vNewControlInstance = scopedRunWithOwner(function() {
+								return View._create(mSettings);
+							});
+						}
+					}
 				} else if (oClass.getMetadata().isA("sap.ui.core.Fragment") && bAsync) {
 
 					// Pass processingMode to any fragments except JS
@@ -1685,14 +1692,12 @@ function(
 								}
 							}
 							oView.applySettings(mSettings);
-						} else if (oView.fnScopedRunWithOwner) {
+						} else {
 							// the scoped runWithOwner function is only during ASYNC processing!
-							oInstance = oView.fnScopedRunWithOwner(function () {
+							oInstance = scopedRunWithOwner(function () {
 								var oInstance = new oClass(mSettings);
 								return oInstance;
 							});
-						} else {
-							oInstance = new oClass(mSettings);
 						}
 
 						// check if we need to hand the ExtensionPoint info to the ExtensionProvider

@@ -862,41 +862,44 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("Async typed Views embedded in XMLView", function(assert) {
-		return XMLView.create({
+	QUnit.test("Async typed Views embedded in XMLView", async function(assert) {
+		const oXMLView = await XMLView.create({
 			viewName : "testdata.mvc.XMLViewEmbeddingTypedViews"
-		}).then(function(oXMLView) {
-			assert.expect(15);
-			assert.equal(this.oAfterInitSpy.callCount, 5, "AfterInit event fired before resolving");
+		});
 
-			var oPanel = oXMLView.getContent()[0];
-			var oTypedView1 = oPanel.getContent()[0];
-			assert.ok(oTypedView1, "embedded view without async=true flag has been created");
-			assert.ok(oTypedView1.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
-			assert.ok(oTypedView1.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+		const oPanel = oXMLView.getContent()[0];
+		const aViews = oPanel.getContent();
 
-			var oTypedView2 = oPanel.getContent()[1];
-			assert.ok(oTypedView2, "embedded view with async=false flag has been created");
-			assert.ok(oTypedView2.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
-			// Note: the async factory should wait for async child views
-			assert.ok(oTypedView2.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+		// wait all nested views to be processed first
+		await Promise.all(aViews.map((oView) => oView.loaded()));
 
-			var oTypedView3 = oPanel.getContent()[2];
-			assert.ok(oTypedView3, "embedded view with async=false flag has been created");
-			assert.ok(oTypedView3.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
-			assert.ok(oTypedView3.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+		assert.equal(this.oAfterInitSpy.callCount, 5, "AfterInit event fired before resolving");
 
-			var oTypedView4 = oPanel.getContent()[3];
-			assert.ok(oTypedView4, "embedded view with async=true flag has been created");
-			assert.ok(oTypedView4.isA("testdata.mvc.TypedViewWithRenderer"), "embedded view is a typed view");
-			assert.ok(oTypedView4.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
-			assert.equal(oTypedView4.getMetadata().getRendererName(), "testdata.mvc.TypedViewWithRendererRenderer", "Own Renderer set correctly");
-			assert.strictEqual(
-				oTypedView4.getMetadata().getRenderer(),
-				sap.ui.require("testdata/mvc/TypedViewWithRendererRenderer"),
-				"Own Renderer set correctly");
+		var oTypedView1 = oPanel.getContent()[0];
+		assert.ok(oTypedView1, "embedded view has been created");
+		assert.ok(oTypedView1.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
+		assert.ok(oTypedView1.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
 
-			oXMLView.destroy();
-		}.bind(this));
+		var oTypedView2 = oPanel.getContent()[1];
+		assert.ok(oTypedView2, "another embedded view has been created");
+		assert.ok(oTypedView2.isA("example.mvc.TypedView2"), "embedded view is a typed view");
+		assert.ok(oTypedView2.byId("Button1").isA("sap.m.Button"), "Content created successfully");
+
+		var oTypedView3 = oPanel.getContent()[2];
+		assert.ok(oTypedView3, "embedded view with its class name defined as tag name has been created");
+		assert.ok(oTypedView3.isA("testdata.mvc.TypedView"), "embedded view is a typed view");
+		assert.ok(oTypedView3.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+
+		var oTypedView4 = oPanel.getContent()[3];
+		assert.ok(oTypedView4, "embedded view with its class name defined as tag name has been created");
+		assert.ok(oTypedView4.isA("testdata.mvc.TypedViewWithRenderer"), "embedded view is a typed view");
+		assert.ok(oTypedView4.byId("myPanel").isA("sap.m.Panel"), "Content created successfully");
+		assert.equal(oTypedView4.getMetadata().getRendererName(), "testdata.mvc.TypedViewWithRendererRenderer", "Own Renderer set correctly");
+		assert.strictEqual(
+			oTypedView4.getMetadata().getRenderer(),
+			sap.ui.require("testdata/mvc/TypedViewWithRendererRenderer"),
+			"Own Renderer set correctly");
+
+		oXMLView.destroy();
 	});
 });
