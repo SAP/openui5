@@ -175,6 +175,7 @@ sap.ui.define([
         oControl._onModifications = function() {
             assert.ok(suppressSpy.callCount, 1, "Suspend has been called once");
             assert.ok(resumeSpy.callCount, 1, "Resume has been called once");
+            Engine.getInstance().waitForChanges.restore();
             done();
         };
 
@@ -193,6 +194,36 @@ sap.ui.define([
             getChangeType: function() {},
             getContent: function() {}
         }, oControl);
+
+    });
+
+    QUnit.test("Check that #fireStateChange is executed after change processing", function(assert){
+
+        const oControl = new Control();
+        oControl.placeAt("qunit-fixture");
+
+        sinon.stub(Engine.getInstance(), "waitForChanges").returns(Promise.resolve());
+        oControl._onModifications = function() { };
+
+        const stateChangeSpy = sinon.spy(Engine.getInstance(), "fireStateChange");
+
+        const oChangeHandler = Util.createChangeHandler({
+            apply: function() {
+                return Promise.resolve();
+            },
+            revert: function() {
+                return Promise.resolve();
+            }
+        });
+
+        return oChangeHandler.changeHandler.applyChange({
+            getChangeType: function() {},
+            getContent: function() {}
+        }, oControl)
+        .then(function(){
+            assert.ok(stateChangeSpy.calledOnce, "State change event has been triggered");
+            Engine.getInstance().waitForChanges.restore();
+        });
 
     });
 
