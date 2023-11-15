@@ -7,19 +7,16 @@ sap.ui.define([
 	"sap/ui/core/Fragment",
 	"sap/ui/core/Element",
 	"sap/ui/core/XMLTemplateProcessor",
-	"sap/m/Panel",
 	"sap/m/Button",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/core/mvc/View",
-	"sap/ui/core/mvc/XMLView",
-	"sap/ui/core/mvc/JSView",
-	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/ViewType",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/jquery"
-], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Panel, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, XMLView, JSView, Controller, LoaderExtensions, jQuery) {
+], function (Log, qutils, Core, Component, Fragment, Element, XMLTemplateProcessor, Button, HorizontalLayout, JSONModel, createAndAppendDiv, nextUIUpdate, View, ViewType, LoaderExtensions, jQuery) {
 	"use strict";
 
 	createAndAppendDiv(["content1", "content2", "content3", "content4", "binding"]);
@@ -52,6 +49,55 @@ sap.ui.define([
 				}
 			};
 		}
+	});
+
+	// Keep this test run as the first test in this file because it's needed to check whether the module
+	// "sap/ui/core/mvc/XMLView" is required correctly
+	//
+	// There are later further tests which load this module, therefore this test should run before the other tests.
+	QUnit.test("XML Fragment loaded from file with nested XMLView", function(assert) {
+		/**
+		 * @deprecated
+		 */
+		var oRequireSyncSpy = this.spy(sap.ui, "requireSync");
+		assert.notOk(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView module isn't loaded yet");
+		return Fragment.load({
+			fragmentName: "testdata.fragments.XMLTestFragmentWithXMLView",
+			controller: this.oDummyController
+		}).then(async function(oFragment) {
+			assert.ok(sap.ui.require("sap/ui/core/mvc/XMLView"), "XMLView module is loaded");
+			/**
+			 * @deprecated
+			 */
+			assert.notOk(oRequireSyncSpy.called, "sap.ui.requireSync shouldn't be called");
+
+			oFragment.placeAt("content1");
+			await nextUIUpdate();
+
+			var id = oFragment.getId();
+
+			assert.equal(id.substr(0, 8), "__layout", "Fragment ID should be generated");
+			assert.ok(document.getElementById(id), "XML Fragment should be rendered");
+
+			var aContent = oFragment.getContent();
+			var btn1 = aContent[0];
+			var btn2 = aContent[1];
+			assert.equal(btn1.getId(), "btn1InXmlFragment", "Button with given ID should have exactly this ID");
+			assert.equal(btn2.getId().substr(0, 8), "__button", "Button with no given ID should have a generated ID");
+
+			// Data binding
+			assert.equal(btn2.$().text(), DATABOUND_TEXT, "Second Button should have text from data binding");
+
+			// find controls by ID
+			var btn = Element.getElementById("btn1InXmlFragment");
+			assert.ok(btn, "Button should be found by ID");
+			assert.ok(btn instanceof Button, "Button should be found by ID");
+
+			var view = aContent[2];
+			assert.ok(view.isA("sap.ui.core.mvc.XMLView"), "XMLView instance is created");
+
+			oFragment.destroy();
+		});
 	});
 
 	QUnit.test("XML Fragment loaded from file", function(assert) {
@@ -254,8 +300,9 @@ sap.ui.define([
 	var DATABOUND_TEXT_IN_VIEW = "Text from Databinding in View";
 
 	QUnit.test("XMLView Rendering", function(assert) {
-		return XMLView.create({
-			viewName: "testdata.fragments.XMLViewWithFragments"
+		return View.create({
+			viewName: "testdata.fragments.XMLViewWithFragments",
+			type: ViewType.XML
 		}).then(async function(oResult) {
 			oXmlView = oResult;
 
@@ -509,9 +556,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Unnamed Model", function(assert) {
-		return XMLView.create({
+		return View.create({
 			id: "unnamedView",
-			viewName: "my.UnnamedView"
+			viewName: "my.UnnamedView",
+			type: ViewType.XML
 		}).then(async function(oView) {
 			oView.placeAt("binding");
 			await nextUIUpdate();
@@ -524,9 +572,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Named Model", function(assert) {
-		return XMLView.create({
+		return View.create({
 			id: "namedView",
-			viewName: "my.View"
+			viewName: "my.View",
+			type: ViewType.XML
 		}).then(async function(oView) {
 			oView.placeAt("binding");
 			await nextUIUpdate();
@@ -662,8 +711,9 @@ sap.ui.define([
 
 	QUnit.test("Load XML View from file with nested fragments of type 'JS' and 'XML'", function (assert) {
 		assert.expect(21);
-		return XMLView.create({
-			viewName: "testdata.fragments.nested.XMLViewWithFragments"
+		return View.create({
+			viewName: "testdata.fragments.nested.XMLViewWithFragments",
+			type: ViewType.XML
 		}).then(function (oView) {
 			return oView.loaded().then(function () {
 				assert.equal(this.loadTemplatePromiseSpy.callCount, 2, "XMLTemplateProcessor.loadTemplatePromise should be called two times (only for the nested XML fragments)");
