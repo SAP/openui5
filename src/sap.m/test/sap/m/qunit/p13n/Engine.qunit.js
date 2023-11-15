@@ -974,7 +974,7 @@ sap.ui.define([
 		var oHBox = new HBox();
 
 		oHBox.getFor = function() {
-			return [oControl.getId()];
+			return ["someOtherId", oControl.getId()];
 		};
 
 		oHBox.placeAt("qunit-fixture");

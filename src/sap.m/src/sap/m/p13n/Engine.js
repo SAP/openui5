@@ -1013,7 +1013,7 @@ sap.ui.define([
 			}
 			var aFor = oElement.getFor instanceof Function ? oElement.getFor() : [];
 			for (var n = 0; n < aFor.length; n++) {
-				if (aFor[n] === sControlId || this.hasControlAncestorWithId(sControlId, aFor[n])) {
+				if (aFor[n] === sControlId || oEngine.hasControlAncestorWithId(sControlId, aFor[n])) {
 					return true;
 				}
 			}
