@@ -204,7 +204,11 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Element", "sap/ui/core/Lib", "sap/ui
 			pressEvent: "press",
 			onActivate: function(oButton) {
 				if (!oButton.getText() && !oButton.getIcon() && !oButton.getTooltip_AsString()) {
-					oButton.setTooltip(Library.getResourceBundleFor("sap.m").getText("PASTEPROVIDER_PASTE"));
+					var sText = Library.getResourceBundleFor("sap.m").getText("PASTEPROVIDER_PASTE");
+					oButton.setTooltip(sText);
+					if (oButton.isA("sap.m.OverflowToolbarButton")) {
+						oButton.setText(sText);
+					}
 					oButton.setIcon("sap-icon://paste");
 				}
 			}
