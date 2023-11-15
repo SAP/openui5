@@ -89,18 +89,7 @@ sap.ui.define([
 			return UI5Date.getInstance.apply(null, aArgs);
 		}
 
-		switch (aArgs.length) {
-			case 0: return new clDate();
-			// new Date(new Date()) is officially not supported
-			// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/Date
-			case 1: return new clDate(aArgs[0] instanceof Date ? aArgs[0].getTime() : aArgs[0]);
-			case 2: return new clDate(aArgs[0], aArgs[1]);
-			case 3: return new clDate(aArgs[0], aArgs[1], aArgs[2]);
-			case 4: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3]);
-			case 5: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4]);
-			case 6: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5]);
-			case 7: return new clDate(aArgs[0], aArgs[1], aArgs[2], aArgs[3], aArgs[4], aArgs[5], aArgs[6]);
-		}
+		return new clDate(...aArgs);
 	};
 
 	/**
