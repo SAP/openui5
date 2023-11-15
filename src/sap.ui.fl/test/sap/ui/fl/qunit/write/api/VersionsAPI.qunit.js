@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/initial/api/Version",
+	"sap/ui/fl/initial/_internal/FlexInfoSession",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Versions",
 	"sap/ui/fl/write/_internal/Storage",
@@ -18,6 +19,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	Version,
+	FlexInfoSession,
 	Settings,
 	Versions,
 	Storage,
@@ -791,6 +793,7 @@ sap.ui.define([
 			};
 
 			var sReference = "com.sap.app";
+			FlexInfoSession.setByReference({saveChangeKeepSession: true}, sReference);
 			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("com.sap.app");
 			var oClearAndInitStub = sandbox.stub(FlexState, "clearAndInitialize").resolves();
 			var oDiscardStub = sandbox.stub(Versions, "discardDraft").resolves({backendChangesDiscarded: true, dirtyChangesDiscarded: true});
@@ -807,6 +810,7 @@ sap.ui.define([
 				var oCallingPropertyBag = oDiscardStub.getCall(0).args[0];
 				assert.equal(oCallingPropertyBag.reference, sReference, "the reference was passed");
 				assert.equal(oCallingPropertyBag.layer, mPropertyBag.layer, "the layer was passed");
+				assert.equal(FlexInfoSession.getByReference(sReference).saveChangeKeepSession, undefined, "saveChangeKeepSession is delete in flex info session");
 			});
 		});
 

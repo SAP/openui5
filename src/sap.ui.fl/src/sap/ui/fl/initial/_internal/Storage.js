@@ -47,7 +47,8 @@ sap.ui.define([
 				}
 			}
 			var bIsRtaStarting = !!window.sessionStorage.getItem(`sap.ui.rta.restart.${Layer.CUSTOMER}`);
-			if (!bIsRtaStarting) {
+			// save change, activate version and discard draft do not trigger a reload, need saveChangeKeepSession to keep values in the session
+			if (!bIsRtaStarting && !oFlexInfoSession.saveChangeKeepSession) {
 				delete oFlexInfoSession.version;
 				delete oFlexInfoSession.maxLayer;
 				FlexInfoSession.setByReference(oFlexInfoSession, mPropertyBag.reference);
