@@ -1437,6 +1437,7 @@ sap.ui.define([
 	 * @namespace sap.ui.core.UIArea.registry
 	 * @public
 	 * @since 1.107
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1446,6 +1447,7 @@ sap.ui.define([
 	 * @readonly
 	 * @name sap.ui.core.UIArea.registry.size
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1464,6 +1466,7 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.all
 	 * @function
 	 * @public
+ 	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1477,6 +1480,7 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.get
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1511,6 +1515,7 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.forEach
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1549,6 +1554,7 @@ sap.ui.define([
 	 * @name sap.ui.core.UIArea.registry.filter
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	_LocalizationHelper.registerForUpdate("UIAreas", UIArea.registry.all);
