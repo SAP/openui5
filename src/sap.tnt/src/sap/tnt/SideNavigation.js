@@ -83,6 +83,7 @@ sap.ui.define([
 					fixedItem: {type: 'sap.tnt.NavigationList', multiple: false},
 					/**
 					 * Defines the content inside the footer.
+					 * @deprecated Since version 1.120. Use the aggregation <code>fixedItem</code> instead.
 					 */
 					footer: {type: 'sap.tnt.NavigationList', multiple: false}
 				},
