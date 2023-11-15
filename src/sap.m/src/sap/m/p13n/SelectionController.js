@@ -25,7 +25,7 @@ sap.ui.define([
 	 * key by checking if there is an existing item with this id. This behaviour can be overruled by implementing this method which will
 	 * provide the according item of the <code>targetAggregation</code> to return the according key associated to this item.
 	 * @param {string} mSettings.targetAggregation The name of the aggregation that is now managed by this controller
-	 * @param {string} [mSettings.persistenceIdentifier] If multiple <code>SelectionController</code> controls exist for a Personalization use case, it must be added to uniquely identify a <code>SelectionController</code> control.
+	 * @param {string} [mSettings.persistenceIdentifier] If multiple <code>SelectionController</code> controls exist for a personalization use case, the <code>persistenceIdentifier</code> property must be added to uniquely identify a <code>SelectionController</code> control
 	 * @param {sap.m.p13n.MetadataHelper} [mSettings.helper] The <code>{@link sap.m.p13n.MetadataHelper MetadataHelper}</code> to provide metadata-specific information. It may be used to define more granular information for the selection of items.
 	 *
 	 * @class
