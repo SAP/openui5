@@ -31,7 +31,9 @@ sap.ui.define([
 
 	var oFakeMsgProcessor = {
 		_getFunctionImportMetadata: function(){},
-		_getReducedPath : function(){},
+		_getReducedPath : function (sPath) {
+			return sPath;
+		},
 		resolve: function(){},
 		_isCollection: function(){return false;}
 	};
