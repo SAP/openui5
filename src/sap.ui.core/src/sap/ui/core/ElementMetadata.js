@@ -101,7 +101,7 @@ sap.ui.define([
 		this._oRenderer = sap.ui.require(sRendererName.replace(/\./g, "/"));
 
 		/**
-		 * @deprecated As of Version 1.121
+		 * @deprecated
 		 */
 		(() => {
 			if (!this._oRenderer) {
@@ -160,7 +160,7 @@ sap.ui.define([
 			if ( (typeof vRenderer === "object" || typeof vRenderer === "function") && typeof vRenderer.render === "function" ) {
 				var oRenderer = sap.ui.require(this.getRendererName().replace(/\./g, "/"));
 				/**
-				 * @deprecated As of Version 1.121
+				 * @deprecated
 				 */
 				if (!oRenderer) {
 					oRenderer = ObjectPath.get(this.getRendererName());
@@ -174,7 +174,7 @@ sap.ui.define([
 					// the given renderer has an 'extend' method, so it most likely has been created by one of the
 					// extend methods and it is usable already; it just has to be exported globally
 					/**
-					 * @deprecated As of Version 1.121
+					 * @deprecated
 					 */
 					ObjectPath.set(this.getRendererName(), vRenderer);
 					this._oRenderer = vRenderer;
