@@ -5,12 +5,11 @@
 sap.ui.define([
 	"sap/base/i18n/Formatting",
 	'sap/ui/core/date/UniversalDate',
-	'sap/ui/core/Configuration',
 	'sap/ui/core/Locale',
 	'sap/ui/core/LocaleData',
 	'sap/base/assert'
 ],
-	function (Formatting, UniversalDate, Configuration, Locale, LocaleData, assert) {
+	function (Formatting, UniversalDate, Locale, LocaleData, assert) {
 		"use strict";
 
 		function clone(oUniversalDate) {
@@ -390,7 +389,7 @@ sap.ui.define([
 		 */
 		 UniversalDateUtils._getDateFromWeekStartByDayOffset = function (sCalendarWeekNumbering, iDaysToAdd) {
 			var sCalendarType = Formatting.getCalendarType(),
-				oLocale = Configuration.getFormatSettings().getFormatLocale(),
+				oLocale = Locale._getCoreLocale(Formatting.getLanguageTag()),
 				oUniversalDate = UniversalDateUtils.createNewUniversalDate(),
 				oWeekAndYear = oUniversalDate.getWeek(oLocale, sCalendarWeekNumbering),
 				oFirstDateOfWeek = UniversalDate.getFirstDateOfWeek(sCalendarType, oWeekAndYear.year, oWeekAndYear.week,
