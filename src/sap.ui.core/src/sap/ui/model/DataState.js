@@ -124,7 +124,7 @@ sap.ui.define([
 	 * Returns an array of all model and control messages, regardless of whether they are old or
 	 * new.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of all messages
+	 * @returns {sap.ui.core.message.Message[]} The array of all messages
 	 *
 	 * @public
 	 * @since 1.98.0
@@ -142,7 +142,7 @@ sap.ui.define([
 	 * Returns the array of this data state's current messages combining the model and control
 	 * messages. The array is sorted descendingly by message severity.
 	 *
-	 * @returns {sap.ui.core.Message[]} The sorted array of all messages
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of all messages
 	 *
 	 * @public
 	 */
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * Returns the array of this data state's old messages combining the model and control messages.
 	 * The array is sorted descendingly by message severity.
 	 *
-	 * @returns {sap.ui.core.Message[]} The sorted array of all old messages
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of all old messages
 	 * @private
 	 */
 	DataState.prototype._getOldMessages = function() {
@@ -167,8 +167,8 @@ sap.ui.define([
 	 *
 	 * @param {object} mProperties
 	 *   Object with properties <code>controlMessages</code> and <code>modelMessages</code> which
-	 *   are both arrays of <code>sap.ui.core.Message</code> objects
-	 * @returns {sap.ui.core.Message[]} The sorted array of messages
+	 *   are both arrays of <code>sap.ui.core.message.Message</code> objects
+	 * @returns {sap.ui.core.message.Message[]} The sorted array of messages
 	 * @private
 	 */
 	DataState.getMessagesForProperties = function (mProperties) {
@@ -186,7 +186,7 @@ sap.ui.define([
 	/**
 	 * Sets an array of model state messages.
 	 *
-	 * @param {sap.ui.core.Message[]} [aMessages=[]] The model messages for this data state.
+	 * @param {sap.ui.core.message.Message[]} [aMessages=[]] The model messages for this data state.
 	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -198,7 +198,7 @@ sap.ui.define([
 	/**
 	 * Returns the array of this data state's current model messages.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of messages of the model
+	 * @returns {sap.ui.core.message.Message[]} The array of messages of the model
 	 *
 	 * @public
 	 */
@@ -209,7 +209,7 @@ sap.ui.define([
 	/**
 	 * Sets an array of control state messages.
 	 *
-	 * @param {sap.ui.core.Message[]} aMessages - The control messages
+	 * @param {sap.ui.core.message.Message[]} aMessages - The control messages
 	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
@@ -221,7 +221,7 @@ sap.ui.define([
 	/**
 	 * Returns the array of this data state's current control messages.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of control messages
+	 * @returns {sap.ui.core.message.Message[]} The array of control messages
 	 *
 	 * @public
 	 */

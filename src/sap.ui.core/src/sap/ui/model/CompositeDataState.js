@@ -105,7 +105,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	/**
 	 * Returns the array of current state messages of the model.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of messages of the model
+	 * @returns {sap.ui.core.message.Message[]} The array of messages of the model
 	 *
 	 * @public
 	 */
@@ -116,7 +116,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	/**
 	 * Returns the array of current state messages of the control.
 	 *
-	 * @return {sap.ui.core.Message[]} The array of control messages
+	 * @return {sap.ui.core.message.Message[]} The array of control messages
 	 *
 	 * @public
 	 */
@@ -128,7 +128,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	 * Returns an array of all model and control messages of all parts of the composite binding,
 	 * regardless of whether they are old or new.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of all messages
+	 * @returns {sap.ui.core.message.Message[]} The array of all messages
 	 *
 	 * @public
 	 * @since 1.98.0
@@ -146,7 +146,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 	/**
 	 * Returns the array of all current state messages combining the model and control messages.
 	 *
-	 * @returns {sap.ui.core.Message[]} The array of all messages
+	 * @returns {sap.ui.core.message.Message[]} The array of all messages
 	 *
 	 * @public
 	 */
