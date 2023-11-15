@@ -23,7 +23,7 @@ sap.ui.define([
 	createAndAppendDiv('content');
 
 	/**
-	 * @deprecated As of Version 1.121
+	 * @deprecated
 	 */
 	var fnOrigRerender;
 	var iIncrement = 0;
@@ -35,7 +35,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated As of Version 1.121
+	 * @deprecated
 	 */
 	QUnit.module("Renderer", {
 		beforeEach: function(assert) {
@@ -73,7 +73,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated As of Version 1.121
+	 * @deprecated
 	 */
 	testRule({
 		executionScopeType: "global",
