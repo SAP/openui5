@@ -9,8 +9,10 @@ sap.ui.define([
 	"sap/ui/events/F6Navigation",
 	"sap/ui/core/mvc/XMLView",
 	"sap/uxap/AnchorBar",
+	"sap/uxap/ObjectPageSubSection",
+	"sap/ui/core/Core",
 	"sap/ui/dom/jquery/Focusable" /* jQuery Plugin "firstFocusableDomRef" */],
-function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar) {
+function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XMLView, AnchorBar, ObjectPageSubSection, oCore) {
 	"use strict";
 
 	var sAnchorSelector = ".sapUxAPAnchorBarScrollContainer .sapUxAPAnchorBarButton";
@@ -318,6 +320,14 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		var aSections = this.oObjectPage.getSections(),
 			aSubSections = aSections[8].getSubSections();
 
+		aSections.forEach(function(oSection) {
+			oSection.getSubSections().forEach(function(oSubSection) {
+				oSubSection._setColumnSpan(ObjectPageSubSection.COLUMN_SPAN.auto);
+			});
+		});
+
+		oCore.applyChanges();
+
 		// Section
 		aSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSections[0].sId, KeyCodes.ARROW_RIGHT);
@@ -327,10 +337,14 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 
 		// Subsection
 		aSubSections[0].$().trigger("focus");
-		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.ARROW_RIGHT);
-		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Next subsection should be focused after arrow right");
-		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[2].sId, "Next subsection should be focused after arrow down");
+		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.ARROW_UP);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "Same subsection should be focused after arrow up");
+
+		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.ARROW_DOWN);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[1].sId, "Next subsection should be focused after arrow down");
+
+		QUtils.triggerKeydown(aSubSections[1].sId, KeyCodes.ARROW_RIGHT);
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[2].sId, "Next subsection should be focused after arrow right");
 	});
 
 	QUnit.test("LEFT/UP", function (assert) {
@@ -368,7 +382,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		// Subsection
 		aSubSections[0].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[0].sId, KeyCodes.END);
-		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection should be focused after END key");
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[11].sId, "Last subsection should be focused after END key");
 		QUtils.triggerKeydown(aSubSections[9].sId, KeyCodes.HOME);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection should be focused after HOME key");
 
@@ -407,7 +421,7 @@ function(jQuery, Core, Configuration, KeyCodes, QUtils, Device, F6Navigation, XM
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "6th subsection up should be focused after PAGE UP");
 		aSubSections[7].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[7].sId, KeyCodes.PAGE_DOWN);
-		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[9].sId, "Last subsection down should be focused after PAGE DOWN");
+		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[11].sId, "Last subsection down should be focused after PAGE DOWN");
 		aSubSections[2].$().trigger("focus");
 		QUtils.triggerKeydown(aSubSections[2].sId, KeyCodes.PAGE_UP);
 		assert.equal(jQuery(document.activeElement).attr("id"), aSubSections[0].sId, "First subsection up should be focused after PAGE UP");

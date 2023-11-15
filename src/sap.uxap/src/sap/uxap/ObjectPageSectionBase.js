@@ -731,7 +731,10 @@ sap.ui.define([
 
 		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
 			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
-			oNextSibling = oTarget.parentElement.nextElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			var oParent = oTarget.parentElement;
+			if (oParent.nextElementSibling) {
+				oNextSibling = oParent.nextElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			}
 		}
 		this._handleFocusing(oEvent, oNextSibling);
 	};
@@ -772,7 +775,10 @@ sap.ui.define([
 
 		if (oTarget.classList.contains('sapUxAPObjectPageSubSection')) {
 			// each subsection is wrapped in a div, so we need the subsection inside the sibling wrapper
-			oPreviousSibling = oTarget.parentElement.previousElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			var oParent = oTarget.parentElement;
+			if (oParent.previousElementSibling) {
+				oPreviousSibling = oParent.previousElementSibling.querySelector(".sapUxAPObjectPageSubSection");
+			}
 		}
 		this._handleFocusing(oEvent, oPreviousSibling);
 	};
