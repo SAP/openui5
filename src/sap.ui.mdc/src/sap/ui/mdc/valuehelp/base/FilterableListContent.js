@@ -65,7 +65,7 @@ sap.ui.define([
 				 *
 				 * If it is empty, no suggestion is available.
 				 *
-				 * @deprecated since 1.121.0 - please see <code>{@link sap.ui.mdc.ValueHelpDelegate.isSearchSupported isSearchSupported}</code>
+				 * @deprecated since 1.120.2 - please see <code>{@link sap.ui.mdc.ValueHelpDelegate.isSearchSupported isSearchSupported}</code>
 				 */
 				filterFields: {
 					type: "string",
@@ -132,7 +132,7 @@ sap.ui.define([
 		});
 
 		/**
-		 *  @deprecated since 1.121.0
+		 *  @deprecated since 1.120.2
 		 */
 		this._oObserver.observe(this, {
 			properties: ["filterFields"]
@@ -331,7 +331,7 @@ sap.ui.define([
 			let sSearchPath = "$search";
 
 			/**
-			 *  @deprecated since 1.121.0
+			 *  @deprecated since 1.120.2
 			 */
 			if (!this.isPropertyInitial("filterFields")) {
 				sSearchPath = this.getFilterFields();
@@ -425,7 +425,7 @@ sap.ui.define([
 			}
 
 			/**
-			 *  @deprecated since 1.121.0
+			 *  @deprecated since 1.120.2
 			 */
 			if (oChanges.name === "filterFields") {
 				this._updateBasicSearchField();
@@ -523,7 +523,7 @@ sap.ui.define([
 	FilterableListContent.prototype.isSearchSupported = function () {
 
 		/**
-		 *  @deprecated since 1.121.0
+		 *  @deprecated since 1.120.2
 		 */
 		if (!this.isPropertyInitial("filterFields")) {
 			const sFilterFields = this.getFilterFields();
@@ -573,7 +573,7 @@ sap.ui.define([
 				if (oFilterBar) { // apply initial conditions to filterbar if existing
 					let sSearchPath = "$search";
 					/**
-					 *  @deprecated since 1.121.0
+					 *  @deprecated since 1.120.2
 					 */
 					if (!this.isPropertyInitial("filterFields")) {
 						sSearchPath = this.getFilterFields();

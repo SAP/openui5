@@ -118,7 +118,7 @@ sap.ui.define([
 		const oFilterBar = oContent.getActiveFilterBar();
 		const oConditions = oFilterBar ? oFilterBar.getConditions() : oContent._oInitialFilterConditions || {};
 		/**
-		 *  @deprecated since 1.121.0
+		 *  @deprecated since 1.120.2
 		 */
 		if (!oContent.isPropertyInitial("filterFields")) {
 			const sFilterFields = oContent.getFilterFields();

@@ -41,7 +41,7 @@ sap.ui.define([
 	ODataV4ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
 
 		/**
-		 *  @deprecated since 1.121.0
+		 *  @deprecated since 1.120.2
 		 */
 		if (!oContent.isPropertyInitial("filterFields")) {
 			const sFilterFields = oContent.getFilterFields();
@@ -55,7 +55,7 @@ sap.ui.define([
 		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
 
 		/**
-		 *  @deprecated since 1.121.0
+		 *  @deprecated since 1.120.2
 		 */
 		if (!oContent.isPropertyInitial("filterFields")) {
 			const sFilterFields = oContent.getFilterFields();
