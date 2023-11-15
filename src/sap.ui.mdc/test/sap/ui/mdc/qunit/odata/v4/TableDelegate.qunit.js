@@ -1834,7 +1834,7 @@ sap.ui.define([
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
-						assert.equal(oObject.expandTo, 999, sTableType + ": setAggregation called with expandTo: 999");
+						assert.equal(oObject.expandTo, Number.MAX_SAFE_INTEGER, sTableType + ": setAggregation called with expandTo: Number.MAX_SAFE_INTEGER");
 						assert.equal(oObject.test, "Test", sTableType + ": test property not changed");
 					},
 					getAggregation: function(oObject) {
@@ -1868,7 +1868,7 @@ sap.ui.define([
 			return pInit.then(function(oTable) {
 				sinon.stub(oTable, "getRowBinding").returns({
 					setAggregation: function(oObject) {
-						assert.equal(oObject.expandTo, 1, "setAggregation called with expandTo: 999");
+						assert.equal(oObject.expandTo, 1, "setAggregation called with expandTo: 1");
 						assert.equal(oObject.test, "Test", "test property not changed");
 					},
 					getAggregation: function(oObject) {
