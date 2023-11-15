@@ -1964,6 +1964,7 @@ sap.ui.define([
 	 * @namespace sap.ui.core.Element.registry
 	 * @public
 	 * @since 1.67
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1973,6 +1974,7 @@ sap.ui.define([
 	 * @readonly
 	 * @name sap.ui.core.Element.registry.size
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -1991,6 +1993,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Element.registry.all
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -2001,9 +2004,10 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.ID} id ID of the element to retrieve
 	 * @returns {sap.ui.core.Element|undefined} Element with the given ID or <code>undefined</code>
-	 * @name sap.ui.core.Element.getElementById
+	 * @name sap.ui.core.Element.registry.get
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -2037,6 +2041,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Element.registry.forEach
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -2074,6 +2079,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Element.registry.filter
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	Theming.attachApplied(function(oEvent) {

@@ -3773,6 +3773,7 @@ sap.ui.define([
 	 * @namespace sap.ui.core.Component.registry
 	 * @public
 	 * @since 1.67
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -3782,6 +3783,7 @@ sap.ui.define([
 	 * @readonly
 	 * @name sap.ui.core.Component.registry.size
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -3800,6 +3802,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.registry.all
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -3813,6 +3816,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.registry.get
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -3846,6 +3850,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.registry.forEach
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
@@ -3883,6 +3888,7 @@ sap.ui.define([
 	 * @name sap.ui.core.Component.registry.filter
 	 * @function
 	 * @public
+	 * @deprecated As of version 1.120
 	 */
 
 	/**
