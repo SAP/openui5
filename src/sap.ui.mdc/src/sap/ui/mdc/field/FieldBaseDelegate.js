@@ -101,7 +101,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Defines, if input of the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control is accepted, even if it
+	 * Defines if input of the {@link sap.ui.mdc.Field Field}, {@link sap.ui.mdc.FilterField FilterField}, or {@link sap.ui.mdc.MultiValueField MultiValueField} control is accepted, even if it
 	 * cannot be found in the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} or custom logic of {@link #getItemForValue}.
 	 * <br/>By default, this method checks if the {@link sap.ui.mdc.ValueHelp#validateInput validateInput} property of the assigned {@link sap.ui.mdc.ValueHelp ValueHelp} is set.
 	 *
