@@ -252,7 +252,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated As of version 1.121.0
+	 * @deprecated As of version 1.120.0
 	 */
 	QUnit.test("Get token by Host", function (assert) {
 		const done = assert.async();
@@ -308,7 +308,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * @deprecated As of version 1.121.0
+	 * @deprecated As of version 1.120.0
 	 */
 	QUnit.test("[Deprecated Syntax] Get token by Host", function (assert) {
 		const done = assert.async();

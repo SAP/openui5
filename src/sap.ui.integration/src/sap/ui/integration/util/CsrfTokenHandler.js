@@ -80,7 +80,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated As of version 1.121.0
+	 * @deprecated As of version 1.120.0
 	 */
 	CsrfTokenHandler.prototype.fetchValueByHost = function (oTokenConfig) {
 		if (this._oHost) {
@@ -187,7 +187,7 @@ sap.ui.define([
 		});
 
 		/**
-		 * @deprecated As of version 1.121.0
+		 * @deprecated As of version 1.120.0
 		 */
 		if (this._oHost) {
 			this._oHost.csrfTokenFetched(oTokenDataConfig, pTokenValue);
@@ -206,7 +206,7 @@ sap.ui.define([
 		this._mTokens.get(sTokenName).setExpired();
 
 		/**
-		 * @deprecated As of version 1.121.0
+		 * @deprecated As of version 1.120.0
 		 */
 		if (this._oHost) {
 			this._oHost.csrfTokenExpired(this._getTokenConfig(sTokenName));
