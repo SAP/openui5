@@ -20,8 +20,9 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/model/Sorter",
 	"sap/m/IllustratedMessageType",
-	"sap/ui/core/Core"
-], function(Element, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Element, jQuery, UploadSet, UploadSetItem, UploadSetRenderer, Uploader, Toolbar, Label, ListItemBaseRenderer, Dialog, Device, MessageBox, JSONModel, TestUtils, oCore, DragAndDrop, EventBase, Library, Sorter, IllustratedMessageType, Core, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -1386,12 +1387,13 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Marker is not displayed when the item is in edit mode", function(assert) {
+	QUnit.test("Marker is not displayed when the item is in edit mode", async function(assert) {
 		//Arrange
 		var oItem = this.oUploadSet.getItems()[0];
 		var oMarkerItem = oItem.getMarkers()[0];
 		oItem._getEditButton().firePress();
-		this.oUploadSet.rerender();
+		this.oUploadSet.invalidate();
+		await nextUIUpdate();
 		//Act
 		var oMarkerContainerItem = oMarkerItem.getDomRef().parentNode;
 		var sMarkerItemStyle = oMarkerContainerItem.getAttribute("style");
@@ -2010,7 +2012,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Test for adding Groups", function(assert) {
+	QUnit.test("Test for adding Groups", async function(assert) {
 		//Arrange
 		this.spy(this.oUploadSet._oList, "addItemGroup");
 		this.spy(this.oUploadSet, "getBindingInfo");
@@ -2018,7 +2020,8 @@ sap.ui.define([
 			aItems = aList.getItems();
 
 		//Act
-		this.oUploadSet.rerender();
+		this.oUploadSet.invalidate();
+		await nextUIUpdate();
 
 		//Assert
 		assert.ok(this.oUploadSet.getBindingInfo.calledWith("items"), "Model fetched from items binding to lookup for grouping keys");

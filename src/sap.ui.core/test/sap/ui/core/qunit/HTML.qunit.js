@@ -469,8 +469,9 @@ sap.ui.define([
 	/**
 	 * @deprecated As of 1.70
 	 */
-	QUnit.test("predefined content, rerender HTMLControl", function(assert) {
-		Element.getElementById("html4").rerender();
+	QUnit.test("predefined content, rerender HTMLControl", async function(assert) {
+		Element.getElementById("html4").invalidate();
+		await nextUIUpdate();
 		// rerender is not async -> check immediately
 		okFragment(assert, FRAGMENT_3, "uiAreaB", "UIArea contains expected HTML fragment");
 	});

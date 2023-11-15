@@ -711,12 +711,13 @@ sap.ui.define([
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function (assert) {
+	QUnit.test("properties", async function (assert) {
 		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
 
-		this.oWrapper.rerender();
+		this.oWrapper.invalidate();
+		await nextUIUpdate();
 
 		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");

@@ -82,8 +82,8 @@ sap.ui.define([
 						oControl2.placeAt("qunit-fixture");
 						await nextUIUpdate();
 
-						oControl1.rerender();
-						oControl2.rerender();
+						oControl1.invalidate();
+						oControl2.invalidate();
 						await nextUIUpdate();
 
 						assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");

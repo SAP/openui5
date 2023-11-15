@@ -11,8 +11,10 @@ sap.ui.define([
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
-], function(TableQUnitUtils, TableUtils, qutils, Table, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, jQuery, oCore) {
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(TableQUnitUtils, TableUtils, qutils, Table, CreationRow, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel,
+	jQuery, oCore, nextUIUpdate) {
 	"use strict";
 
 	var createTables = window.createTables;
@@ -474,7 +476,7 @@ sap.ui.define([
 		oTable.setModel(new JSONModel());
 	});
 
-	QUnit.test("Focus restoration and item navigation reinitialization", function(assert) {
+	QUnit.test("Focus restoration and item navigation reinitialization", async function(assert) {
 		initRowActions(oTable, 1, 1);
 		oCore.applyChanges();
 
@@ -497,12 +499,15 @@ sap.ui.define([
 		oKeyboardExtension._debug();
 		oInitItemNavigationSpy = sinon.spy(oKeyboardExtension._ExtensionHelper, "_initItemNavigation");
 
-		aTestElementIds.forEach(function(sId) {
+		await aTestElementIds.reduce(async function(acc, sId) {
+			await acc;
+
 			document.getElementById(sId).focus();
 
 			oInitItemNavigationSpy.resetHistory();
 			oOnFocusInSpy.resetHistory();
-			oTable.rerender();
+			oTable.invalidate();
+			await nextUIUpdate();
 
 			assert.ok(oInitItemNavigationSpy.calledOnce, "Re-rendered when focus was on " + sId + ": The item navigation was reinitialized");
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered when focus was on " + sId + ": The correct element is focused");
@@ -517,7 +522,7 @@ sap.ui.define([
 			assert.strictEqual(document.activeElement.id, sId, "Re-rendered rows when focus was on " + sId + ": The correct element is focused");
 			assert.ok(oOnFocusInSpy.callCount <= 1,
 				"Re-rendered rows when focus was on " + sId + ": The onfocusin event was not triggered more than once");
-		});
+		}, Promise.resolve());
 
 		// Focus a cell in the TreeTable to check if the Table steals the focus.
 		var oFocusedElement = getCell(0, 0, true, null, oTreeTable)[0];

@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ], function(
 	TableQUnitUtils,
 	qutils,
@@ -17,7 +18,8 @@ sap.ui.define([
 	TableUtils,
 	tableLibrary,
 	jQuery,
-	oCore
+	oCore,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -1179,10 +1181,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Row Hover Effect", {
-		beforeEach: function() {
+		beforeEach: async function() {
 			createTables();
 			oTable.setSelectionBehavior("Row");
-			oTable.rerender();
+			oTable.invalidate();
+			await nextUIUpdate();
 		},
 		afterEach: function() {
 			destroyTables();
@@ -1231,16 +1234,18 @@ sap.ui.define([
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 	});
 
-	QUnit.test("Row Hover Effect depending on SelectionMode and SelectionBehavior", function(assert) {
+	QUnit.test("Row Hover Effect depending on SelectionMode and SelectionBehavior", async function(assert) {
 		oTable.setSelectionMode("None");
-		oTable.rerender();
+		oTable.invalidate();
+		await nextUIUpdate();
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 		getCell(0, 2).trigger("mouseout");
 		oTable.setSelectionBehavior("RowOnly");
-		oTable.rerender();
+		oTable.invalidate();
+		await nextUIUpdate();
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(!getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on row header");
 		assert.ok(!getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "No hover effect on fixed part of row");
@@ -1248,14 +1253,16 @@ sap.ui.define([
 		getCell(0, 2).trigger("mouseout");
 		oTable.setSelectionMode("MultiToggle");
 		oTable.setSelectionBehavior("Row");
-		oTable.rerender();
+		oTable.invalidate();
+		await nextUIUpdate();
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
 		assert.ok(getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "Hover effect on scroll part of row");
 		getCell(0, 2).trigger("mouseout");
 		oTable.setSelectionBehavior("RowOnly");
-		oTable.rerender();
+		oTable.invalidate();
+		await nextUIUpdate();
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");
 		assert.ok(getCell(0, 0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on fixed part of row");
@@ -1263,7 +1270,8 @@ sap.ui.define([
 		getCell(0, 2).trigger("mouseout");
 		oTable.setSelectionMode("None");
 		oTable.setSelectionBehavior("RowSelector");
-		oTable.rerender();
+		oTable.invalidate();
+		await nextUIUpdate();
 		oTable.attachCellClick(function() {});
 		getCell(0, 2).trigger("mouseover");
 		assert.ok(getRowHeader(0).parent().hasClass("sapUiTableRowHvr"), "Hover effect on row header");

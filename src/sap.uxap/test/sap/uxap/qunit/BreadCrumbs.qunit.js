@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/Core",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/m/Link",
 	"sap/m/Text",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/m/Select",
 	"sap/ui/Device"
 ],
-function(Library, $, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
+function(Library, $, KeyCodes, Core, nextUIUpdate, QUtils, Link, Text, BreadCrumbs, Icon, Item, Select, Device) {
 	"use strict";
 
 	var	oFactory = {
@@ -211,10 +212,11 @@ function(Library, $, KeyCodes, Core, QUtils, Link, Text, BreadCrumbs, Icon, Item
 		this.baseCaseTests(assert);
 	});
 
-	QUnit.test("The control is rendered in overflow mode", function (assert) {
+	QUnit.test("The control is rendered in overflow mode", async function (assert) {
 		this.baseCaseTests(assert);
 		this.oBreadCrumbs._bUseOverflowSelect = true;
-		this.oBreadCrumbs.rerender();
+		this.oBreadCrumbs.invalidate();
+		await nextUIUpdate();
 
 		var $breadCrumbs = this.oBreadCrumbs.$(),
 			$overflowDots = $breadCrumbs.find("span.sapUxAPBreadCrumbsDots"),

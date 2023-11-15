@@ -79,7 +79,7 @@ sap.ui.define([
 
 			oControl.destroy();
 		});
-		QUnit.test("Propagate 'disabled' property to child - " + ControlClass.getMetadata().getName(), function(assert) {
+		QUnit.test("Propagate 'disabled' property to child - " + ControlClass.getMetadata().getName(), async function(assert) {
 			var oChildControl = new ControlClass();
 			var oParentControl = new CustomContainerControl();
 
@@ -101,7 +101,8 @@ sap.ui.define([
 			assert.equal(oChildControl.getEnabled(), true, "Child control is not disabled with the parent since EnabledPropagator is disabled for the child control");
 
 			oChildControl.useEnabledPropagator(true);
-			oParentControl.rerender();
+			oParentControl.invalidate();
+			await nextUIUpdate();
 			assert.equal(oChildControl.getEnabled(), false, "Child control is disabled since EnabledPropagator is active and the parent is disabled");
 
 			oParentControl.destroy();

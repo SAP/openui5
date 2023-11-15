@@ -578,7 +578,7 @@ sap.ui.define([
 		oDialog.open();
 		this.clock.tick(500);
 
-		oDialog._oToolbar.rerender();
+		oDialog._oToolbar.invalidate();
 		this.clock.tick(500);
 
 		var $toolbar = oDialog._oToolbar.$();

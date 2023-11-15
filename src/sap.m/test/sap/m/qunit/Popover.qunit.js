@@ -1513,7 +1513,7 @@ sap.ui.define([
 		assert.ok(oPopover.isOpen(), "Popover should be opened");
 		assert.ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button");
 
-		oButton.rerender();
+		oButton.invalidate();
 		// simulate a content resize
 		oPopover._onOrientationChange();
 		oPopover.close();
@@ -1604,7 +1604,8 @@ sap.ui.define([
 			assert.equal(domQuery[0].getAttribute("aria-hidden"), "true", "Aria-hidden should be added to the icon.");
 
 			this.oPopover.setResizable(false);
-			this.oPopover.rerender();
+			this.oPopover.invalidate();
+			this.clock.tick(0);
 
 			// Assert when not resizable
 			domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');

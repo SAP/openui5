@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/Core",
 	"sap/m/Panel",
-	"sap/m/GenericTile"
-], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile) {
+	"sap/m/GenericTile",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Localization, Element, jQuery, HeaderContainer, FlexBox, Label, VerticalLayout, Button, Device, Icon, coreLibrary, PseudoEvents, Mobile, mobileLibrary, Log, Text, oCore, Panel, GenericTile, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.BackgroundDesign
@@ -195,12 +196,13 @@ sap.ui.define([
 		oHeaderContainer.destroy();
 	});
 
-	QUnit.test("Correct CSS Class added in case of 'Solid'", function (assert) {
+	QUnit.test("Correct CSS Class added in case of 'Solid'", async function (assert) {
 		//arrange
 		var oBackgroundDesignDefault = this.oHeaderContainer.getBackgroundDesign();
 		//act
 		this.oHeaderContainer.setBackgroundDesign(BackgroundDesign.Solid);
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 		var oBackgroundDesignNew = this.oHeaderContainer.getBackgroundDesign();
 		var sCssClassNew = document.getElementById("headerContainer-scroll-area").className;
 		//assert
@@ -676,10 +678,11 @@ sap.ui.define([
 		assert.ok(this.oHeaderContainer.$().hasClass("sapMHrdrLeftPadding", "The left padding is added"));
 	});
 
-	QUnit.test("Top padding is removed when scrolling to top edge in vertical layout", function (assert) {
+	QUnit.test("Top padding is removed when scrolling to top edge in vertical layout", async function (assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		this.oHeaderContainer._oScrollCntr.scrollTo(0, 200, 0);
 		this.oHeaderContainer.$().addClass("sapMHrdrTopPadding");
@@ -689,10 +692,11 @@ sap.ui.define([
 		assert.notOk(this.oHeaderContainer.$().hasClass("sapMHrdrTopPadding"), "The top padding is removed");
 	});
 
-	QUnit.test("Bottom padding is removed and top padding is added, when scrolling directly from top edge to the bottom edge in vertical layout", function (assert) {
+	QUnit.test("Bottom padding is removed and top padding is added, when scrolling directly from top edge to the bottom edge in vertical layout", async function (assert) {
 		//Arrange
 		this.oHeaderContainer.setOrientation("Vertical");
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		this.oHeaderContainer.$().addClass("sapMHrdrBottomPadding");
 		this.oHeaderContainer._oScrollCntr.getDomRef().style.height = "300px"; // set the client height smaller than scroll width so that HeaderContainer is scrollable
@@ -1088,7 +1092,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Content deleted at the beginning.", function (assert) {
+	QUnit.test("Content deleted at the beginning.", async function (assert) {
 		var iCount = 5,
 			i;
 
@@ -1108,7 +1112,8 @@ sap.ui.define([
 
 		Element.getElementById("testID0").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1120,7 +1125,8 @@ sap.ui.define([
 
 		Element.getElementById("testID1").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1132,7 +1138,8 @@ sap.ui.define([
 
 		Element.getElementById("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
@@ -1144,7 +1151,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Content deleted at the end.", function (assert) {
+	QUnit.test("Content deleted at the end.", async function (assert) {
 		var iCount = 5,
 			i;
 
@@ -1164,7 +1171,8 @@ sap.ui.define([
 
 		Element.getElementById("testID4").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1176,7 +1184,8 @@ sap.ui.define([
 
 		Element.getElementById("testID3").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1188,7 +1197,8 @@ sap.ui.define([
 
 		Element.getElementById("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
@@ -1200,7 +1210,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("Content deleted at Random.", function (assert) {
+	QUnit.test("Content deleted at Random.", async function (assert) {
 		var iCount = 5,
 			i;
 
@@ -1220,7 +1230,8 @@ sap.ui.define([
 
 		Element.getElementById("testID0").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
@@ -1232,7 +1243,8 @@ sap.ui.define([
 
 		Element.getElementById("testID2").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
@@ -1244,7 +1256,8 @@ sap.ui.define([
 
 		Element.getElementById("testID4").destroy();
 
-		this.oHeaderContainer.rerender();
+		this.oHeaderContainer.invalidate();
+		await nextUIUpdate();
 
 		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
 		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");

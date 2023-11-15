@@ -143,7 +143,7 @@ sap.ui.define([
 		beforeEach: function() {
 			this.element = new SelectorControl("testId:that:_needs-escaping");
 			this.element.placeAt("content");
-			this.element.rerender();
+			this.element.invalidate();
 			return nextUIUpdate();
 		},
 		afterEach: function() {
