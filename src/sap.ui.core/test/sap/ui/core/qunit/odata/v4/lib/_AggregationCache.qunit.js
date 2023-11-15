@@ -4701,7 +4701,12 @@ make root = ${bMakeRoot}`;
 			}, false, true)
 			.returns("~queryString~");
 		this.mock(oCache.oRequestor).expects("request")
-			.withExactArgs("GET", "Foo~queryString~", "~oGroupLock~").resolves("~oResult~");
+			.withExactArgs("GET", "Foo~queryString~", "~oGroupLock~")
+			.resolves({
+				"@odata.context" : "n/a",
+				"@odata.metadataEtag" : "W/...",
+				value : ["~oResult~"]
+			});
 		this.mock(_Helper).expects("drillDown").withExactArgs("~oResult~", "~LimitedRank~")
 			.returns("42");
 

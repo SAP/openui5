@@ -30409,9 +30409,11 @@ make root = ${bMakeRoot}`;
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 				+ "&$select=_/" + sLimitedRank, {
-				_ : {
-					[sLimitedRank] : "4" // Edm.Int64
-				}
+				value : [{
+					_ : {
+						[sLimitedRank] : "4" // Edm.Int64
+					}
+				}]
 			});
 
 		// code under test
@@ -30546,9 +30548,11 @@ make root = ${bMakeRoot}`;
 					url : sBaseUrl + "&$filter=ArtistID eq '9' and IsActiveEntity eq false"
 						+ "&$select=_/" + sLimitedRank
 				}, {
-					_ : {
-						[sLimitedRank] : "10" // Edm.Int64
-					}
+					value : [{
+						_ : {
+							[sLimitedRank] : "10" // Edm.Int64
+						}
+					}]
 				});
 
 			await Promise.all([
@@ -31130,9 +31134,11 @@ make root = ${bMakeRoot}`;
 				url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 					+ "&$select=_/" + sLimitedRank
 			}, {
-				_ : {
-					[sLimitedRank] : "5" // Edm.Int64
-				}
+				value : [{
+					_ : {
+						[sLimitedRank] : "5" // Edm.Int64
+					}
+				}]
 			})
 			.expectRequest({
 				batchNo : 4,
@@ -31314,9 +31320,11 @@ make root = ${bMakeRoot}`;
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
 				+ "&$select=_/" + sLimitedRank, {
-				_ : {
-					[sLimitedRank] : "12" // Edm.Int64
-				}
+				value : [{
+					_ : {
+						[sLimitedRank] : "12" // Edm.Int64
+					}
+				}]
 			});
 
 		// code under test
@@ -31356,9 +31364,11 @@ make root = ${bMakeRoot}`;
 			})
 			.expectRequest(sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
 				+ "&$select=_/" + sLimitedRank, {
-				_ : {
-					[sLimitedRank] : "13" // Edm.Int64
-				}
+				value : [{
+					_ : {
+						[sLimitedRank] : "13" // Edm.Int64
+					}
+				}]
 			});
 
 		// code under test
@@ -31416,9 +31426,11 @@ make root = ${bMakeRoot}`;
 				url : sBaseUrl + "&$filter=ArtistID eq '10' and IsActiveEntity eq false"
 					+ "&$select=_/" + sLimitedRank
 			}, {
-				_ : { // Note: rank has not changed due to move
-					[sLimitedRank] : "12" // Edm.Int64
-				}
+				value : [{
+					_ : { // Note: rank has not changed due to move
+						[sLimitedRank] : "12" // Edm.Int64
+					}
+				}]
 			});
 
 		await Promise.all([
@@ -31455,9 +31467,11 @@ make root = ${bMakeRoot}`;
 				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
 					+ "&$select=_/" + sLimitedRank
 			}, {
-				_ : { // Note: rank has not changed due to move
-					[sLimitedRank] : "13" // Edm.Int64
-				}
+				value : [{
+					_ : { // Note: rank has not changed due to move
+						[sLimitedRank] : "13" // Edm.Int64
+					}
+				}]
 			});
 
 		await Promise.all([
@@ -31508,9 +31522,11 @@ make root = ${bMakeRoot}`;
 				url : sBaseUrl + "&$filter=ArtistID eq '10.1' and IsActiveEntity eq false"
 					+ "&$select=_/" + sLimitedRank
 			}, {
-				_ : { // Note: same rank on UI as on server
-					[sLimitedRank] : "1" // Edm.Int64
-				}
+				value : [{
+					_ : { // Note: same rank on UI as on server
+						[sLimitedRank] : "1" // Edm.Int64
+					}
+				}]
 			});
 
 		await Promise.all([
@@ -31573,9 +31589,11 @@ make root = ${bMakeRoot}`;
 					url : sBaseUrl + "&$filter=ArtistID eq '1' and IsActiveEntity eq false"
 						+ "&$select=_/" + sLimitedRank
 				}, {
-					_ : { // Note: 0, 8, or 10
-						[sLimitedRank] : "0" // Edm.Int64
-					}
+					value : [{
+						_ : { // Note: 0, 8, or 10
+							[sLimitedRank] : "0" // Edm.Int64
+						}
+					}]
 				});
 
 			await Promise.all([
