@@ -387,8 +387,8 @@ sap.ui.define([
 				return;
 			}
 
-			if (this._bPopupOpen && !oEvent.getParameter("keyboard")) {
-				this.getMenu().close();
+			if (oMenu.isOpen() && !oEvent.getParameter("keyboard")) {
+				oMenu.close();
 				this._bPopupOpen = false;
 				return;
 			}
