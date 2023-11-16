@@ -676,15 +676,14 @@ sap.ui.define([
 				activePages: this._aAllActivePagesIndexes
 			});
 		}
-
-		this._adjustArrowsVisibility();
-		this._updateItemsAttributes();
-		this._updatePageIndicator();
-
 		// focus the new page if the focus was in the carousel and is not on some of the page children
 		if (this.getDomRef().contains(document.activeElement) && !this.getFocusDomRef().contains(document.activeElement) || this._bPageIndicatorArrowPress) {
 			this.getFocusDomRef().focus({ preventScroll: true });
 		}
+
+		this._adjustArrowsVisibility();
+		this._updateItemsAttributes();
+		this._updatePageIndicator();
 	};
 
 	Carousel.prototype._updateItemsAttributes = function () {
