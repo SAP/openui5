@@ -77,9 +77,8 @@ sap.ui.define([
 				return false;
 			}
 
-			var oAppWindowJQuery = this._getApplicationWindow().jQuery;
-			var oStaticArea = this._getApplicationWindow().sap.ui.require("sap/ui/core/Core").getStaticAreaRef();
-			var bControlIsInStaticArea = oAppWindowJQuery.contains(oStaticArea, oControl.getDomRef());
+			var oAppWindowJQuery = this._getApplicationWindowJQuery();
+			var bControlIsInStaticArea = this._isInStaticArea(oControl.getDomRef());
 			var bOpenStaticBlockingLayer = oAppWindowJQuery("#sap-ui-blocklayer-popup").is(":visible");
 
 			if (!bControlIsInStaticArea && bOpenStaticBlockingLayer) {
