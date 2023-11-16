@@ -116,7 +116,7 @@ sap.ui.define([
 
 	SideNavigationRenderer.renderFooter = function (oRM, oControl) {
 		const oFooter = oControl.getAggregation("footer");
-		if (oFooter) {
+		if (!oFooter) {
 			return;
 		}
 
