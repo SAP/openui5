@@ -283,7 +283,7 @@ sap.ui.define([
 		 * The theme applied Event.
 		 *
 		 * @typedef {object} module:sap/ui/core/Theming$AppliedEvent
-		 * @property {string} theme The newly set language.
+		 * @property {string} theme The newly set theme.
 		 * @public
 		 * @since 1.118.0
 		 */
