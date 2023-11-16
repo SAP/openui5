@@ -33,6 +33,7 @@ sap.ui.define([
 				paths: {
 					"sap/ui/table/qunit": "test-resources/sap/ui/table/qunit/",
 					"sap/ui/core/qunit": "test-resources/sap/ui/core/qunit/",
+					"sap/ui/core/sample": "test-resources/sap/ui/core/demokit/sample",
 					"sap/ui/demo/mock": "test-resources/sap/ui/documentation/sdk/"
 				}
 			},
