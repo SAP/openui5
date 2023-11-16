@@ -1451,7 +1451,13 @@ sap.ui.define([
 				}
 			}
 
-        };
+		};
+
+		Chart.prototype.exit = function() {
+			Control.prototype.exit.apply(this, arguments);
+
+			this._oObserver?.destroy();
+		};
 
 		/**
 		 * @name sap.ui.mdc.Chart#addAction
