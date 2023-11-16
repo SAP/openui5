@@ -809,13 +809,17 @@ sap.ui.define([
 			});
 
 			this.oCarousel.placeAt(DOM_RENDER_LOCATION);
-
+			this.oButton = new Button("btn",{
+				text: "Text"
+			});
+			this.oButton.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 
 			this.oCarousel.getFocusDomRef().focus();
 		},
 		afterEach: function () {
 			this.oCarousel.destroy();
+			this.oButton.destroy();
 		}
 	});
 
@@ -1239,6 +1243,65 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(this.oCarousel.getActivePage(), "keyTestPage2", "active page is keyTestPage3");
+	});
+
+
+	QUnit.test("Arrow right should set the focus on the second element", function (assert) {
+		// arrange
+		const oFirstPage = this.oCarousel.getPages()[0];
+		this.oCarousel.setActivePage(oFirstPage);
+		this.oCarousel.onsapright({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "Focus is on the second element");
+	});
+
+	QUnit.test("Home button should focus the first element", function (assert) {
+		// arrange
+		const oSecondPage = this.oCarousel.getPages()[2];
+		this.oCarousel.setActivePage(oSecondPage);
+		this.oCarousel.onsaphome({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(document.activeElement, this.oCarousel.getFocusDomRef(), "Focus is on the first element");
+	});
+
+	QUnit.test("End button should focus the last element", function (assert) {
+		// arrange
+		const oSecondPage = this.oCarousel.getPages()[2];
+		this.oCarousel.setActivePage(oSecondPage);
+		this.oCarousel.onsapend({
+			target: this.oCarousel.getDomRef(this.oCarousel.getActivePage() + "-slide"),
+			preventDefault: function () {}
+		});
+		Core.applyChanges();
+
+		// assert
+		assert.ok(document.activeElement.contains(this.oCarousel.getFocusDomRef()), "Focus is on the last element");
+	});
+
+
+	QUnit.test("setActivePage should not change the focus of the application", function (assert) {
+		// arrange
+		var aPages = this.oCarousel.getPages();
+		this.oButton.focus();
+
+		// act
+		this.oCarousel.setActivePage(aPages[0]);
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(document.activeElement, this.oButton.getFocusDomRef(), "Focus should stay on the button");
+
+
 	});
 
 	//================================================================================
