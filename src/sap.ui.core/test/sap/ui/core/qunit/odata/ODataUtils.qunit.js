@@ -47,6 +47,7 @@ sap.ui.define([
 			{t: "Edm.DateTime", v: oDateTimeMs, r: "datetime'2015-05-30T13:47:26.253'", d: "datetime as object including milliseconds"},
 			{t: "Edm.DateTimeOffset", v: "May 30, 2015 1:47:26 PM UTC", r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as string"},
 			{t: "Edm.DateTimeOffset", v: oDateTime, r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as object"},
+			{t: "Edm.DateTimeOffset", v: oDateTimeMs, r: "datetimeoffset'2015-05-30T13:47:26.253Z'", d: "datetime as object"},
 			{t: "Edm.Guid", v: "936DA01F-9ABD-4D9D-80C7-02AF85C822A8", r: "guid'936DA01F-9ABD-4D9D-80C7-02AF85C822A8'", d: ""},
 			{t: "Edm.Decimal", v: 3.46 , r: "3.46m", d: ""},
 			{t: "Edm.Byte", v: 67, r: "67", d: ""},
@@ -133,7 +134,8 @@ sap.ui.define([
 				t: "Edm.DateTime",
 				d: "with ms"
 			},
-			{v: "datetimeoffset'2015-05-30T13:47:26Z'", r: oDateTime, t: "Edm.DateTimeOffset"}
+			{v: "datetimeoffset'2015-05-30T13:47:26Z'", r: oDateTime, t: "Edm.DateTimeOffset"},
+			{v: "datetimeoffset'2015-05-30T13:47:26.253Z'", r: oDateTimeMs, t: "Edm.DateTimeOffset"}
 			//TODO Edm.Binary with "X'"", should not occur due to normalization
 			//TODO Edm.Binary with case insensitive "bInAry'"
 			//TODO Edm.Boolean with "0"/"1" cannot be distingushed from number types without knowing
