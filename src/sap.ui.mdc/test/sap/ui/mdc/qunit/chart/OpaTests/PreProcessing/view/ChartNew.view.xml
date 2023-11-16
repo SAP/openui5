@@ -23,7 +23,7 @@
 				\}
 			\}' chartType="column" header="Remake Chart" height="400px" width="100%" propertyInfo='[\{
                     "name": "language_code",
-                    "propertyPath": "language_code",
+                    "path": "language_code",
                     "label": "Language",
                     "sortable": true,
                     "filterable": true,
@@ -38,7 +38,7 @@
             \},
             \{
                 "name": "averagemetricsWords",
-                "propertyPath": "metricsWords",
+                "path": "metricsWords",
                 "label": "Words (average)",
                 "sortable": true,
                 "filterable": true,
