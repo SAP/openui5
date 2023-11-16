@@ -119,6 +119,8 @@ sap.ui.define([
 					oTreeTable.setBusy(false);
 				});
 			}
+
+			this.initMessagePopover(sTreeTable === "N" ? "table" : "treeTable");
 		},
 
 		onMakeRoot : async function (oEvent) {
@@ -153,6 +155,10 @@ sap.ui.define([
 					.getProperty("ID");
 				const oParent = this._oNode.getBinding().getAllCurrentContexts()
 					.find((oNode) => oNode.getProperty("ID") === sParentId);
+				if (!oParent) {
+					throw new Error(`Parent ${sParentId} not yet loaded`);
+				}
+
 				await this._oNode.move({parent : oParent});
 
 				const oTable = this.byId(this._bInTreeTable ? "treeTable" : "table");
