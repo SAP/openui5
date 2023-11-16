@@ -445,7 +445,7 @@ sap.ui.define([
 
 	/**
 	 * Updates the binding info with the relevant filters.<br>
-	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link sap.ui.mdc.ValueHelpDelegate#getFilters getFilters}.
+	 * By default, this method updates a given {@link sap.ui.base.ManagedObject.AggregationBindingInfo AggregationBindingInfo} with the return value from the delegate's own {@link sap.ui.mdc.ChartDelegate#getFilters getFilters}.
 	 *
 	 * @param {sap.ui.mdc.Chart} oChart Reference to the chart
 	 * @param {sap.ui.base.ManagedObject.AggregationBindingInfo} oBindingInfo Binding info of the chart
