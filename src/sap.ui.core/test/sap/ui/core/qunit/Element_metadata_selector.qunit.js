@@ -2,9 +2,8 @@
 sap.ui.define([
 	'sap/ui/qunit/utils/createAndAppendDiv',
 	"sap/ui/qunit/utils/nextUIUpdate",
-	'sap/ui/core/Control',
-	"sap/ui/core/Core"
-], function(createAndAppendDiv, nextUIUpdate, Control, Core) {
+	'sap/ui/core/Control'
+], function(createAndAppendDiv, nextUIUpdate, Control) {
 	"use strict";
 
 	createAndAppendDiv("content");
@@ -145,7 +144,6 @@ sap.ui.define([
 			this.element = new SelectorControl("testId:that:_needs-escaping");
 			this.element.placeAt("content");
 			this.element.invalidate();
-			Core.applyChanges();
 			return nextUIUpdate();
 		},
 		afterEach: function() {

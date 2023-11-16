@@ -46,7 +46,7 @@
 		Success : "Success"
 
 	};
-	DataType.registerEnum("sap.ui.core.MessageType", MessageType);
+	DataType.registerEnum("sap.ui.core.message.MessageType", MessageType);
 
 	return MessageType;
 });

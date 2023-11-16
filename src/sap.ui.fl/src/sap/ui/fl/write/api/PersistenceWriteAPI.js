@@ -136,15 +136,22 @@ sap.ui.define([
 	 * @ui5-restricted
 	 */
 	PersistenceWriteAPI.save = function(mPropertyBag) {
+		// when save or activate a version in rta no reload is triggered but flex/data request is send and will delete version and maxLayer without saveChangeKeepSession
+		// after the request saveChangeKeepSession needs to be delete again
+		var oFlexInfoSession = FlexInfoSession.get(mPropertyBag.selector);
+		oFlexInfoSession.saveChangeKeepSession = true;
+		FlexInfoSession.set(oFlexInfoSession, mPropertyBag.selector);
 		return FlexObjectState.saveFlexObjects(mPropertyBag).then(function(oFlexObject) {
 			if (oFlexObject && oFlexObject.length !== 0) {
 				return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function(oResult) {
 					// other attributes like adaptationId, isEndUserAdaptation, init needs to be taken from flex info session if available
-					var oExistingFlexInfo = FlexInfoSession.get(mPropertyBag.selector);
-					FlexInfoSession.set(Object.assign(oExistingFlexInfo, oResult), mPropertyBag.selector);
+					delete oFlexInfoSession.saveChangeKeepSession;
+					FlexInfoSession.set(Object.assign(oFlexInfoSession, oResult), mPropertyBag.selector);
 					return oFlexObject;
 				});
 			}
+			delete oFlexInfoSession.saveChangeKeepSession;
+			FlexInfoSession.set(oFlexInfoSession, mPropertyBag.selector);
 			return oFlexObject;
 		});
 	};

@@ -266,49 +266,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves the value of a CSRF token.
-	 * Subclasses of Host can override this method to take over the default CSRF token resolving.
-	 * Applications must not call this method directly, it is called by the framework.
-	 *
-	 * @param {{data: object}} csrfTokenConfig The CSRF token configuration.
-	 * @experimental since 1.97
-	 * @returns {Promise<string>} A promise which resolves the CSRF token to its value.
-	 * @abstract
-	 * @protected
-	 * @deprecated As of version 1.121.0
-	 */
-	Host.prototype.getCsrfToken = function (csrfTokenConfig) {
-		return Promise.resolve();
-	};
-
-	/**
-	 * This function is called when a CSRF token is fetched.
-	 *
-	 * @param {{data: object}} mCSRFTokenConfig The CSRF token configuration.
-	 * @param {Promise<string>} pCSRFTokenValuePromise A promise which resolves the CSRF token to its value.
-	 * @experimental since 1.97
-	 * @abstract
-	 * @public
-	 * @deprecated As of version 1.121.0
-	 */
-	Host.prototype.csrfTokenFetched = function (mCSRFTokenConfig, pCSRFTokenValuePromise) {
-
-	};
-
-	/**
-	 * This function is called when a CSRF token has expired.
-	 *
-	 * @param {{data: object}} mCSRFTokenConfig The CSRF token configuration.
-	 * @experimental since 1.97
-	 * @abstract
-	 * @public
-	 * @deprecated As of version 1.121.0
-	 */
-	Host.prototype.csrfTokenExpired = function (mCSRFTokenConfig) {
-
-	};
-
-	/**
 	 * Resolves the value for a given path in the context of the host
 	 * Contexts can be used to configure Cards with information available in the host environment.
 	 *

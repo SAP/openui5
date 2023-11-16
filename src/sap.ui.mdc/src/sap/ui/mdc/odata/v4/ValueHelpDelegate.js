@@ -23,30 +23,11 @@ sap.ui.define([
 	};
 
 	ODataV4ValueHelpDelegate.isSearchSupported = function(oValueHelp, oContent, oListBinding) {
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		if (!oContent.isPropertyInitial("filterFields")) {
-			const sFilterFields = oContent.getFilterFields();
-			return sFilterFields === "$search" ? !!oListBinding?.changeParameters : !!sFilterFields;
-		}
-
 		return oListBinding ? !!oListBinding.changeParameters : true; // We are optimistic in case no binding is available
 	};
 
 	ODataV4ValueHelpDelegate.updateBindingInfo = function(oValueHelp, oContent, oBindingInfo) {
 		ValueHelpDelegate.updateBindingInfo(oValueHelp, oContent, oBindingInfo);
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		if (!oContent.isPropertyInitial("filterFields")) {
-			const sFilterFields = oContent.getFilterFields();
-			if (sFilterFields && sFilterFields !== "$search") {
-				return;
-			}
-		}
 
 		if (oContent.isSearchSupported()){
 			const sSearch = this.adjustSearch ? this.adjustSearch(oValueHelp, oContent.isTypeahead(), oContent.getSearch()) : oContent.getSearch();

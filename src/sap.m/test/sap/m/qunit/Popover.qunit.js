@@ -1501,7 +1501,6 @@ sap.ui.define([
 		assert.ok(oPopover.$().offset().top > oButton.$().offset().top, "Popover should be placed below the button");
 
 		oButton.invalidate();
-		oCore.applyChanges();
 		// simulate a content resize
 		oPopover._onOrientationChange();
 		oPopover.close();
@@ -1593,8 +1592,7 @@ sap.ui.define([
 
 			this.oPopover.setResizable(false);
 			this.oPopover.invalidate();
-
-			oCore.applyChanges();
+			this.clock.tick(0);
 
 			// Assert when not resizable
 			domQuery = this.oPopover.getDomRef().querySelectorAll('.sapMPopoverResizeHandle');

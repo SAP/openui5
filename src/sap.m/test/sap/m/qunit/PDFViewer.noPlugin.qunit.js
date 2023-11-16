@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/ui/Device",
 	"sap/m/library",
-	"sap/ui/core/Core"
-], function(jQuery, TestUtils, JSONModel, PDFViewerRenderer, Device, library, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, Device, library, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.PDFViewerDisplayType
@@ -53,7 +53,7 @@ sap.ui.define([
 			return jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
 		};
 
-		var checkSubstituteContent = function () {
+		var checkSubstituteContent = async function () {
 			assert.ok(oPdfViewer.$("overflowToolbar").length === 1, "Toolbar is displayed");
 			assert.ok(oPdfViewer.$("overflowToolbar-title").length === 1, "Title is displayed");
 
@@ -73,7 +73,7 @@ sap.ui.define([
 
 			oPdfViewer.setShowDownloadButton(false);
 			oPdfViewer.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Embedded);

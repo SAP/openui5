@@ -248,7 +248,16 @@ sap.ui.define([
 				case "remove":
 				case "add":
 				default:
-					/*TODO*/
+					var currentState = oModificationPayload.currentState;
+
+					//Adjust index after a remove happened for instance
+					currentState?.forEach((state, index) => {
+						if (oConfig.aggregations[sAggregationName].hasOwnProperty(state.key)) {
+							oConfig.aggregations[sAggregationName][state.key]["position"] = index;
+						}
+					});
+
+					//Note: consider aligning xConfig value handling between sap.m and sap.ui.mdc
 					if (vValue.hasOwnProperty("value")) {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue.value;
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey]["position"] = vValue.index;
@@ -258,8 +267,6 @@ sap.ui.define([
 					} else {
 						oConfig.aggregations[sAggregationName][sPropertyInfoKey][sAffectedProperty] = vValue;
 					}
-
-					/*TODO*/
 					break;
 			}
 

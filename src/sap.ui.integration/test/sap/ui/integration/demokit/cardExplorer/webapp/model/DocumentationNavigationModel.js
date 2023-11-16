@@ -126,8 +126,7 @@ sap.ui.define([
 					{
 						title: 'CSRF Tokens',
 						target: 'learnDetail',
-						key: 'csrfTokens',
-						experimental: true
+						key: 'csrfTokens'
 					},
 					{
 						title: 'Destinations',

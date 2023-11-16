@@ -1,10 +1,8 @@
 /*global QUnit*/
 sap.ui.define([
 	'sap/ui/core/Control',
-	'sap/ui/core/RenderManager',
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
-], function(Control, RenderManager, nextUIUpdate, Core) {
+	'sap/ui/core/RenderManager'
+], function(Control, RenderManager) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -47,7 +45,6 @@ sap.ui.define([
 
 			this.oParent.placeAt("content");
 			this.clock.tick(0);
-			return nextUIUpdate();
 		},
 		afterEach: function() {
 			this.oParent.destroy();
@@ -115,8 +112,7 @@ sap.ui.define([
 		oRootDomRef.setAttribute("data-sap-ui-preserve", oRootDomRef.id);
 		RenderManager.preserveContent(oRootDomRef, true);
 		this.oControl.invalidate();
-
-		Core.applyChanges();
+		this.clock.tick(0);
 
 		assert.ok(RenderManager.findPreservedContent(this.oControl.getId())[0] === this.oControl.getDomRef(), "Control DOM is in the preserved area");
 

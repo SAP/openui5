@@ -1,6 +1,7 @@
 /*global QUnit */
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
@@ -11,10 +12,10 @@ sap.ui.define([
 	"sap/m/StandardListItem",
 	"sap/m/List",
 	"sap/ui/model/json/JSONModel",
-	"sap/m/Button",
-	"sap/ui/core/Core"
+	"sap/m/Button"
 ], function(
 	createAndAppendDiv,
+	nextUIUpdate,
 	Log,
 	Device,
 	jQuery,
@@ -25,8 +26,7 @@ sap.ui.define([
 	StandardListItem,
 	List,
 	JSONModel,
-	Button,
-	Core
+	Button
 ) {
 	"use strict";
 
@@ -132,7 +132,6 @@ sap.ui.define([
 		text:"Rerender Page 1",
 		press: function() {
 			page1.invalidate();
-			Core.applyChanges();
 		}
 	});
 	var oRemovePageButton = new Button({
@@ -145,7 +144,6 @@ sap.ui.define([
 		text:"Rerender App",
 		press: function() {
 			app.invalidate();
-			Core.applyChanges();
 		}
 	});
 
@@ -195,10 +193,9 @@ sap.ui.define([
 
 
 	// known gap in IE
-	QUnit.test("Scroll position after rerendering page1", function(assert) {
+	QUnit.test("Scroll position after rerendering page1", async function(assert) {
 		page1.invalidate();
-
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 		assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
@@ -253,14 +250,12 @@ sap.ui.define([
 			}, 300);
 		};
 
-		var goBack = function() {
+		var goBack = async function() {
 			app.detachAfterNavigate(goBack);
 			app.attachAfterNavigate(test);
 
 			page1.invalidate();
-
-			Core.applyChanges();
-
+			await nextUIUpdate();
 			assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
 
 			window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
@@ -275,10 +270,9 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("Scroll position after rerendering the APP", function(assert) {
+	QUnit.test("Scroll position after rerendering the APP", async function(assert) {
 		app.invalidate();
-
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(getScrollPos(), -50, "Page should be scrolled to position 50");
 		assert.equal(Math.round(page1.getScrollDelegate().getScrollTop()), 50, "Internally stored y scrolling position should be 50");
@@ -303,8 +297,6 @@ sap.ui.define([
 			app.attachAfterNavigate(test);
 
 			app.invalidate();
-
-			Core.applyChanges();
 
 			window.setTimeout(function(){ // just to make sure the browser has settled down. Theoretically not required.
 				app.back();

@@ -220,11 +220,13 @@ sap.ui.define(["./PluginBase", "sap/base/Log", "sap/base/strings/formatMessage",
 	 */
 	CopyProvider.prototype.getCopyButton = function(mSettings) {
 		if (!this._oCopyButton) {
+			const sText = Library.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY");
 			this._oCopyButton = new OverflowToolbarButton({
 				icon: "sap-icon://copy",
 				enabled: this.getEnabled(),
 				visible: this._getEffectiveVisible(),
-				tooltip: Library.getResourceBundleFor("sap.m").getText("COPYPROVIDER_COPY"),
+				text: sText,
+				tooltip: sText,
 				press: this.copySelectionData.bind(this, true),
 				...mSettings
 			});

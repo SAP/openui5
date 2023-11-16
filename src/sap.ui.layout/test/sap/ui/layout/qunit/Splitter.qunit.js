@@ -94,6 +94,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Absolute Horizontal sizing", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
@@ -108,14 +109,16 @@ sap.ui.define([
 				assert.ok(aSizes[2] === 300, "Content size #3 is correct.");
 
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.test("Absolute vertical sizing", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("100px");
@@ -130,11 +133,12 @@ sap.ui.define([
 				assert.ok(aSizes[2] === 300, "Content size #3 is correct.");
 
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.test("Sizing with rems", function (assert) {
@@ -241,6 +245,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Automatic horizontal sizing ", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
@@ -255,14 +260,16 @@ sap.ui.define([
 				assert.ok(aSizes[1] >= aSizes[2] - 2 && aSizes[1] <= aSizes[2] + 2, "Content size #2 is correct.");
 				assert.ok(aSizes[2] >= aSizes[0] - 2 && aSizes[2] <= aSizes[0] + 2, "Content size #3 is correct.");
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.test("Automatic vertical sizing ", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("auto");
@@ -276,11 +283,12 @@ sap.ui.define([
 				assert.ok(aSizes[1] >= aSizes[2] - 2 && aSizes[1] <= aSizes[2] + 2, "Content size #2 is correct.");
 				assert.ok(aSizes[2] >= aSizes[0] - 2 && aSizes[2] <= aSizes[0] + 2, "Content size #3 is correct.");
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.module("% Area Sizes", {
@@ -348,6 +356,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Mixed horizontal sizing", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Horizontal);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
@@ -367,14 +376,16 @@ sap.ui.define([
 				// assert.ok(aSizes[1] >= iAutoSize - 1 && aSizes[1] <= iAutoSize + 1, "Content size #2 is correct.");
 
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.test("Mixed vertical sizing", function (assert) {
+		var done = assert.async();
 		var oSplitter = this.oSplitter;
 		oSplitter.setOrientation(Orientation.Vertical);
 		oSplitter.getContentAreas()[0].getLayoutData().setSize("10px");
@@ -394,11 +405,12 @@ sap.ui.define([
 				// assert.ok(aSizes[1] >= iAutoSize - 1 && aSizes[1] <= iAutoSize + 1, "Content size #2 is correct.");
 
 				oSplitter.removeDelegate(oDelegate);
+
+				done();
 			}
 		};
 		oSplitter.addDelegate(oDelegate);
 		oSplitter.invalidate();
-		oCore.applyChanges();
 	});
 
 	QUnit.module("Responsiveness", {
@@ -888,7 +900,6 @@ sap.ui.define([
 			});
 
 			oXMLView.invalidate();
-			oCore.applyChanges();
 		}.bind(this));
 	});
 

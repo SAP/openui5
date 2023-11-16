@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
 	"sap/ui/core/Element",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
-], function(TestBase, Utils, Element, nextUIUpdate, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(TestBase, Utils, Element, nextUIUpdate) {
 	"use strict";
 
 	 // asserts that both given maps have the same entries
@@ -102,7 +101,6 @@ sap.ui.define([
 
 							if (bFinalIteration) {
 								oControl.invalidate();  // just re-render again - this finds problems
-								Core.applyChanges();
 								await nextUIUpdate();
 							}
 						} else if (bFinalIteration) {

@@ -147,18 +147,30 @@ sap.ui.define([
 		 * Execute configured init module
 		 */
 		var _executeInitModule = function() {
-			var sOnInit = BaseConfig.get({
+			var vOnInit = BaseConfig.get({
 				name: "sapUiOnInit",
-				type: BaseConfig.Type.String
+				type: (vValue) => {
+					if (typeof vValue === "string" || typeof vValue === "function") {
+						return vValue;
+					} else {
+						throw new TypeError("unsupported value");
+					}
+				}
 			});
-			if (sOnInit) {
-				// determine onInit being a module name prefixed via module or a global name
-				var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(sOnInit);
-				if (aResult && aResult[1]) {
-					// ensure that the require is done async and the Core is finally booted!
-					setTimeout(sap.ui.require.bind(null, [aResult[1]]), 0);
+			if (vOnInit) {
+				if (typeof vValue === "string") {
+					// determine onInit being a module name prefixed via module or a global name
+					var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
+					if (aResult && aResult[1]) {
+						// ensure that the require is done async and the Core is finally booted!
+						setTimeout(sap.ui.require.bind(null, [aResult[1]]), 0);
+					} else if (typeof globalThis[vOnInit] === "function") {
+						globalThis[vOnInit]();
+					} else {
+						throw Error("Invalid init module " + vOnInit + " provided via config option 'sapUiOnInit'");
+					}
 				} else {
-					throw Error("Invalid init module " + sOnInit + " provided via config option 'sapUiOnInit'");
+					vOnInit();
 				}
 			}
 		};
@@ -461,8 +473,6 @@ sap.ui.define([
 				this._setupBrowser();
 
 				this._setupOS();
-
-				this._setupLang();
 
 				this._setupAnimation();
 
@@ -790,24 +800,6 @@ sap.ui.define([
 			if (osCSS) {
 				html.classList.add(osCSS);
 			}
-		};
-
-		/**
-		 * Set the body's lang attribute and attach the localization change event
-		 * @private
-		 */
-		Core.prototype._setupLang = function() {
-			var html = document.documentElement;
-
-			// append the lang info to the document (required for ARIA support)
-			var fnUpdateLangAttr = function() {
-				var oLanguageTag = Localization.getLanguageTag();
-				oLanguageTag ? html.setAttribute("lang", oLanguageTag.toString()) : html.removeAttribute("lang");
-			};
-			fnUpdateLangAttr.call(this);
-
-			// listen to localization change event to update the lang info
-			this.attachLocalizationChanged(fnUpdateLangAttr, this);
 		};
 
 		/**

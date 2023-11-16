@@ -7,8 +7,8 @@ sap.ui.define([
 	"sap/m/PDFViewerRenderer",
 	"sap/m/library",
 	"sap/ui/Device",
-	"sap/ui/core/Core"
-], function(jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (jQuery, TestUtils, JSONModel, PDFViewerRenderer, library, Device, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.PDFViewerDisplayType
@@ -227,7 +227,7 @@ sap.ui.define([
 			return jQuery(".sapMPDFViewerEmbeddedContent").length === 1;
 		};
 
-		var fnCheckControlStructure = function () {
+		var fnCheckControlStructure = async function () {
 			assert.equal(oPdfViewer.getDisplayType(), PDFViewerDisplayType.Auto, "Default value of displayType is Auto");
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Auto mode");
 			assert.ok(fnIsContentDisplayed(), "Content is displayed in Auto mode");
@@ -245,12 +245,12 @@ sap.ui.define([
 
 			oPdfViewer.setShowDownloadButton(false);
 			oPdfViewer.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.ok(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is displayed in Link mode always");
 
 			oPdfViewer.setDisplayType(PDFViewerDisplayType.Auto);
 			oPdfViewer.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.notOk(oPdfViewer.$("toolbarDownloadButton").length === 1, "Download button is not displayed in Auto mode");
 
 			Device.system.desktop = false;

@@ -32,13 +32,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Theming",
 	"sap/m/LinkTileContent",
+	"sap/ui/qunit/utils/nextUIUpdate",
 	/* jQuery custom selectors ":sapTabbable"*/
 	"sap/ui/dom/jquery/Selectors",
 	// used only indirectly
 	"sap/ui/events/jquery/EventExtension"
 ], function(Localization, Element, jQuery, GenericTile, TileContent, NumericContent, ImageContent, Device, IntervalTrigger, ResizeHandler, GenericTileLineModeRenderer,
 	Button, Text, ScrollContainer, FlexBox, GenericTileRenderer, library, isEmptyObject, KeyCodes, oCore, GridContainerItemLayoutData, GridContainerSettings,
-	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Core, Theming, LinkTileContent) {
+	GridContainer, FormattedText, NewsContent, Parameters, qutils, DragInfo, GridDropInfo, Core, Theming, LinkTileContent, nextUIUpdate) {
 	"use strict";
 
 	// shortcut for sap.m.Size
@@ -302,9 +303,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile border rendered - HCB", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_hcb", function() {
+		this.applyTheme("sap_hcb", async function() {
 			this.oGenericTile.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
 			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
@@ -317,9 +318,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile focus rendered - HCB", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_hcb", function() {
+		this.applyTheme("sap_hcb", async function() {
 			this.oGenericTile.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(document.getElementById("generic-tile-hover-overlay"), "Hover overlay div was rendered successfully");
 			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 			done();
@@ -328,9 +329,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile border rendered - Belize", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_belize", function() {
+		this.applyTheme("sap_belize", async function() {
 			this.oGenericTile.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			var $tile = this.oGenericTile.$();
 			// the complete property name should be written for test in 'ie' and 'firefox'
 			assert.equal($tile.css("border-bottom-style"), "solid", "Border bottom style was rendered successfully");
@@ -343,9 +344,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile focus and hover overlay rendered - Belize", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_belize", function() {
+		this.applyTheme("sap_belize", async function() {
 			this.oGenericTile.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
 			assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action is not triggered");
@@ -359,9 +360,9 @@ sap.ui.define([
 
 	QUnit.test("GenericTile focus and hover overlay rendered - Fiori 3", function(assert) {
 		var done = assert.async();
-		this.applyTheme("sap_fiori_3", function() {
+		this.applyTheme("sap_fiori_3", async function() {
 			this.oGenericTile.invalidate();
-			oCore.applyChanges();
+			await nextUIUpdate();
 			// hover overlay is used only in case of tiles with background image
 			assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 			assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
@@ -444,9 +445,9 @@ sap.ui.define([
 		assert.notOk(document.querySelector("#generic-tile .sapMGTCriticalBorder"), "Generic tile border was not rendered");
 	});
 
-	QUnit.test("GenericTile is dragged", function(assert) {
+	QUnit.test("GenericTile is dragged", async function(assert) {
 		this.oGenericTile.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		//Style class which gets added when Generic Tile when it is Dragged.
 		this.oGenericTile.addStyleClass("sapMGTPressActive");
 		this.oGenericTile.addStyleClass("sapUiDnDDragging");
@@ -2884,9 +2885,9 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("GenericTile press state is removed after Kep Up", function(assert) {
+	QUnit.test("GenericTile press state is removed after Kep Up", async function(assert) {
 		this.oGenericTile.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		assert.ok(document.getElementById("generic-tile-focus"), "Focus div was rendered successfully");
 		assert.ok(jQuery("#generic-tile-hover-overlay").hasClass("sapMGTWithoutImageHoverOverlay"), "Hover overlay was rendered successfully");
 		assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action is not triggered on GenericTile");
@@ -2908,11 +2909,12 @@ sap.ui.define([
 		this.oGenericTile.$().trigger(up);
 		assert.ok(!jQuery("#generic-tile").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile");
 		assert.ok(!jQuery("#generic-tile-hover-overlay").hasClass("sapMGTPressActive"), "Press action stopped and press active selector is removed from GenericTile hover overlay");
+
 	});
 
-	QUnit.test("Navigation using keyboard to other tiles disabled when a tile is clicked", function(assert){
+	QUnit.test("Navigation using keyboard to other tiles disabled when a tile is clicked", async function(assert){
 		this.oGenericTile.invalidate();
-		oCore.applyChanges();
+		await nextUIUpdate();
 		this.oGenericTile.$().trigger("focus");
 
 		//simulate space key press
@@ -3005,6 +3007,7 @@ sap.ui.define([
 
 		//Default event is not cancelled when no tile is selected
 		assert.ok(!tabDown.isDefaultPrevented(), "Navigation using TAB enabled since no tile is in selected state");
+
 	});
 
 	QUnit.test("Check the max line of header if footer exists", function(assert) {

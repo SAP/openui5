@@ -18,8 +18,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(Localization, Element, KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange, CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(Localization, Element, KeyCodes, qutils, CalendarDateInterval, CalendarType, Locale, LocaleData, DateFormat, DateRange, DateTypeRange, CalendarDate, CalendarWeekInterval, DatesRow, Device, jQuery, oCore, UI5Date, nextUIUpdate) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -290,21 +291,21 @@ sap.ui.define([
 		assert.equal(jQuery(aDays[1]).attr("tabindex"), "0", "Calendar1: second day still has focus");
 	});
 
-	QUnit.test("After Rerendering, last focused day is still focused", function(assert) {
+	QUnit.test("After Rerendering, last focused day is still focused", async function(assert) {
 		var $datesRow = this.oCal.getAggregation("month")[0].$();
 		var aDates = $datesRow.find(".sapUiCalItem");
 		aDates[1].focus();
 
 		//Act
 		this.oCal.invalidate();
-
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		_assertFocus(aDates[1], aDates[1].id, "Calendar: after rerendering  second day still has focus", assert);
 	});
 
-	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
+	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", async function(assert) {
+
 		//Prepare
 		var oCalendarDateInt = new CalendarDateInterval(),
 			oExternalControl = new CalendarDateInterval("extControl"),
@@ -323,8 +324,7 @@ sap.ui.define([
 
 		//Act
 		oCalendarDateInt.invalidate();
-
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		_assertFocus(oExternalControl.getDomRef(), sExpected, "After rerendering, the focus should stay on the 'extControl' (another MonthInterval)", assert);

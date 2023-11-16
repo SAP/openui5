@@ -123,10 +123,10 @@ sap.ui.define([
 							new MdcColumn({header: "Name", propertyKey : "name", template: new Text({text: "{path: 'name', type:'sap.ui.model.odata.type.String'}"})}),
 							new MdcColumn({header: "Date of Birth", propertyKey : "dateOfBirth", template: new Text({text: "{path: 'dateOfBirth', type:'sap.ui.model.odata.type.Date'}"})})
 						],
-						...bMultiSelect ? {
+						...(bMultiSelect ? {
 							dependents: [new CellSelector({rangeLimit: 200})],
 							copyProvider: [new CopyProvider()]
-						} : {}
+						} : {})
 					});
 					break;
 			}
@@ -141,7 +141,6 @@ sap.ui.define([
 	};
 
 	Delegate.determineSearchSupported = function(oValueHelp) {
-		oValueHelp.setFilterFields("$search");
 		return Promise.resolve();
 	};
 

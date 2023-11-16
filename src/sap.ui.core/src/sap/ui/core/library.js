@@ -121,7 +121,6 @@ sap.ui.define([
 		  "sap.ui.core.Item",
 		  "sap.ui.core.LayoutData",
 		  "sap.ui.core.ListItem",
-		  "sap.ui.core.Message",
 		  "sap.ui.core.SeparatorItem",
 		  "sap.ui.core.Title",
 		  "sap.ui.core.VariantLayoutData",
@@ -2316,20 +2315,6 @@ sap.ui.define([
 	 DataType.registerEnum("sap.ui.core.dnd.DropEffect", thisLib.dnd.DropEffect);
 
 	 thisLib.mvc = thisLib.mvc || {};
-
-	 /**
-	  * Specifies possible message types.
-	  *
-	  * @enum {string}
-	  * @public
-	  * @name sap.ui.core.MessageType
-	  * @borrows module:sap/ui/core/message/MessageType.Information as Information
-	  * @borrows module:sap/ui/core/message/MessageType.Error as Error
-	  * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
-	  * @borrows module:sap/ui/core/message/MessageType.Success as Success
-	  * @borrows module:sap/ui/core/message/MessageType.None as None
-	  */
-	 thisLib.MessageType = MessageType;
 
 	 /**
 	  * Specifies possible view types.

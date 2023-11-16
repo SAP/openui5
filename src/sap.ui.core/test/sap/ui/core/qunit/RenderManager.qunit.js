@@ -9,13 +9,14 @@ sap.ui.define([
 	"sap/ui/core/HTML",
 	"sap/ui/core/IconPool",
 	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/UIArea",
 	"sap/ui/thirdparty/jquery",
 	"sap/base/security/encodeXML",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/base/Log",
 	"sap/ui/core/Configuration"
-], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log, Configuration) {
+], function(Device, Control, Core, RenderManager, Element, HTML, IconPool, XMLView, UIArea, jQuery, encodeXML, createAndAppendDiv, nextUIUpdate, Log, Configuration) {
 	"use strict";
 
 	// prepare DOM
@@ -846,13 +847,11 @@ sap.ui.define([
 		await nextUIUpdate();
 
 		oCtrl1.doBeforeRendering = function() {
-			oCtrl2.invalidate();
-			Core.applyChanges();
+			UIArea.rerenderControl(oCtrl2);
 		};
 
 		oCtrl1.doAfterRendering = function() {
-			oCtrl2.invalidate();
-			Core.applyChanges();
+			UIArea.rerenderControl(oCtrl2);
 		};
 
 		var iCounter = 0;
@@ -862,8 +861,7 @@ sap.ui.define([
 		};
 
 		oCtrl1.invalidate();
-
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		assert.equal(iCounter, 0, "Number of rerenderings of Ctrl2");
 	});

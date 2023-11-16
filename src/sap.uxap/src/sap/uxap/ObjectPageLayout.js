@@ -4988,23 +4988,31 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the footer height, by either obtaining its DOM element height
-	 * or directly returning 0 if no visible footer
-	 * @returns {number}
+	 * Returns the footer height, including its margin bottom, by either obtaining its DOM
+	 * element height or directly returning 0 if footer is not present.
+	 * @returns {number} The footer height, including its margin bottom
 	 * @private
 	 */
 	ObjectPageLayout.prototype._getFooterHeight = function () {
 		if (this.getFooter() && this.getShowFooter()) {
-			return this._getDOMRefHeight(this.$("footerWrapper").get(0));
+
+			var footerDOMRef = this.$("footerWrapper").get(0),
+				footerHeight = this._getDOMRefHeight(footerDOMRef),
+				marginBottom = footerDOMRef ? parseFloat(getComputedStyle(footerDOMRef).marginBottom) : 0;
+
+			return footerHeight + marginBottom;
 		}
+
 		return 0;
 	};
 
-	/*
-	* Returns the <code>DOM reference</code> height, using the getBoundingClientRect method.
-	* Note: internally the method checks if the DOM reference has existing parent element
-	* to avoid errors, thrown in IE10 and IE11
-	*/
+	/**
+	 * Returns the <code>DOM reference</code> height, using the getBoundingClientRect method.
+	 * Note: internally the method checks if the DOM reference has existing parent element
+	 * to avoid errors, thrown in IE10 and IE11
+	 * @param {HTMLElement} oDOMRef - The DOM reference element
+	 * @returns {number} The height of the DOM reference element
+	 */
 	ObjectPageLayout.prototype._getDOMRefHeight = function (oDOMRef) {
 		return oDOMRef && oDOMRef.parentElement ? oDOMRef.getBoundingClientRect().height : 0;
 	};

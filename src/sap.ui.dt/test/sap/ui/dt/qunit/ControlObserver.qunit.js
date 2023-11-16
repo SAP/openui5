@@ -3,14 +3,12 @@
 sap.ui.define([
 	"sap/ui/dt/ControlObserver",
 	"sap/m/Button",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	ControlObserver,
 	Button,
-	nextUIUpdate,
-	Core
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -48,8 +46,6 @@ function(
 			});
 
 			this.oButton.invalidate();
-			this.oButton.invalidate();
-			Core.applyChanges();
 		});
 	});
 

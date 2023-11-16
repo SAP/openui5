@@ -6,9 +6,8 @@
 sap.ui.define([
 	"sap/ui/test/generic/TestBase",
 	"sap/ui/test/generic/Utils",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
-], function(TestBase, Utils, nextUIUpdate, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function (TestBase, Utils, nextUIUpdate) {
 	"use strict";
 
 	/**
@@ -84,9 +83,7 @@ sap.ui.define([
 						await nextUIUpdate();
 
 						oControl1.invalidate();
-						Core.applyChanges();
 						oControl2.invalidate();
-						Core.applyChanges();
 						await nextUIUpdate();
 
 						assert.ok(true, sControlName + " can be instantiated multiple times without duplicate ID errors.");

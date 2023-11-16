@@ -114,21 +114,8 @@ sap.ui.define([
 	 * @protected
 	 */
 	ValueHelpDelegate.getFilters = function(oValueHelp, oContent) {
-
 		const oFilterBar = oContent.getActiveFilterBar();
 		const oConditions = oFilterBar ? oFilterBar.getConditions() : oContent._oInitialFilterConditions || {};
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		if (!oContent.isPropertyInitial("filterFields")) {
-			const sFilterFields = oContent.getFilterFields();
-			const sFieldSearch = oContent.getSearch();
-			if (!oFilterBar && sFieldSearch && sFilterFields && sFilterFields !== "$search") {
-				// add condition for Search value
-				const oCondition = Condition.createCondition(OperatorName.Contains, [sFieldSearch], undefined, undefined, ConditionValidated.NotValidated);
-				oConditions[sFilterFields] = [oCondition];
-			}
-		}
 		const oConditionTypes = oConditions && this.getTypesForConditions(oValueHelp, oContent, oConditions);
 		const oFilter = oConditions && FilterConverter.createFilters( oConditions, oConditionTypes, undefined, oContent.getCaseSensitive());
 		return oFilter ? [oFilter] : [];

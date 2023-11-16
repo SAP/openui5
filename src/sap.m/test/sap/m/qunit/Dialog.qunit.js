@@ -567,6 +567,7 @@ sap.ui.define([
 	QUnit.module("Message dialog");
 
 	QUnit.test("Footer rendering", function (assert) {
+
 		var oDialog = new Dialog({
 			type: DialogType.Message,
 			buttons: [
@@ -578,7 +579,6 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		oDialog._oToolbar.invalidate();
-		Core.applyChanges();
 		this.clock.tick(500);
 
 		var $toolbar = oDialog._oToolbar.$();

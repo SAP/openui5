@@ -70,9 +70,10 @@
 
 					<OverflowToolbar class="sapUiDemoKitHeaderOTB" style="Clear">
 						<ObjectStatus
-							text="{= ${versionData>/isDevVersion} &amp;&amp; !${appView>/bShowVersionSwitchButton}
-								? [${i18n>APP_VERSION_VERSION}, ${versionData>/version}, ${i18n>APP_VERSION_IN_PROGRESS}].join(' ')
-								: '' }"
+							text="{ parts:
+								['appView>/bShowVersionSwitchButton', 'versionData>/isDevVersion', 'versionData>/version'],
+								formatter: '.formatter.formatVersionStatus'
+							}"
 							state="Information"
 							inverted="false"
 							visible="{= ${appView>/bDesktopSize} &amp;&amp; !${appView>/bSearchMode} }">

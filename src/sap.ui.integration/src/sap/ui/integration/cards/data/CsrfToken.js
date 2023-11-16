@@ -33,20 +33,6 @@ sap.ui.define([], () => {
 		}
 
 		async #fetchValue() {
-			/**
-			 * @deprecated As of version 1.121.0
-			 */
-			const hostValue = await this.#tokenHandler.fetchValueByHost(this.#config);
-
-			/**
-			 * @deprecated As of version 1.121.0
-			 */
-			if (hostValue) {
-				this.#tokenHandler.onTokenFetched(this.#name, hostValue);
-				this.value = hostValue;
-				return;
-			}
-
 			if (!tokensPromises.has(this.#key)) {
 				tokensPromises.set(this.#key, this.#tokenHandler.fetchValue(this.#name, this.#config));
 			}

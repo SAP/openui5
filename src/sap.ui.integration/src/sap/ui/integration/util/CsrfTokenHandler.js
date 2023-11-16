@@ -79,21 +79,6 @@ sap.ui.define([
 		return this._requestToken(sTokenName, oTokenConfig.data);
 	};
 
-	/**
-	 * @deprecated As of version 1.121.0
-	 */
-	CsrfTokenHandler.prototype.fetchValueByHost = function (oTokenConfig) {
-		if (this._oHost) {
-			// clone the data configuration,
-			// so we won't change the original settings
-			oTokenConfig = merge({}, oTokenConfig);
-
-			return this._oHost.getCsrfToken(oTokenConfig);
-		}
-
-		return Promise.resolve();
-	};
-
 	CsrfTokenHandler.prototype.onTokenFetched = function (sTokenName, sTokenValue) {
 		this._setCsrfModelValue(sTokenName, sTokenValue);
 	};
@@ -186,13 +171,6 @@ sap.ui.define([
 			throw "CSRF token cannot be resolved";
 		});
 
-		/**
-		 * @deprecated As of version 1.121.0
-		 */
-		if (this._oHost) {
-			this._oHost.csrfTokenFetched(oTokenDataConfig, pTokenValue);
-		}
-
 		return pTokenValue;
 	};
 
@@ -204,13 +182,6 @@ sap.ui.define([
 		}
 
 		this._mTokens.get(sTokenName).setExpired();
-
-		/**
-		 * @deprecated As of version 1.121.0
-		 */
-		if (this._oHost) {
-			this._oHost.csrfTokenExpired(this._getTokenConfig(sTokenName));
-		}
 	};
 
 	/**

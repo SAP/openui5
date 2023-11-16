@@ -393,7 +393,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Filtering using $search", function(assert) {
-
 		let iTypeaheadSuggested = 0;
 		let oCondition;
 		let sFilterValue;
@@ -417,7 +416,6 @@ sap.ui.define([
 		oListBinding.suspend(); // check for resuming
 
 		oMTable.setConditions(); // before filtering conditions should be cleared in typeahead for single-value
-		oMTable.setFilterFields("$search");
 		oMTable._bContentBound = true;
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
@@ -444,7 +442,6 @@ sap.ui.define([
 			ValueHelpDelegateV4.updateBinding.restore();
 			fnDone();
 		}, 0);
-
 	});
 
 	// Delegate seems to already be loaded in this test?
@@ -486,28 +483,22 @@ sap.ui.define([
 	});
 
 	QUnit.test("isSearchSupported using $search", function(assert) {
-
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
 		sinon.spy(ValueHelpDelegateV4, "isSearchSupported"); // returns false for non V4-ListBinding
 		const oListBinding = oTable.getBinding("items");
 		oListBinding.changeParameters = function(oParameters) {}; // just fake V4 logic
 
-		oMTable.setFilterFields("$search");
 		const bSupported = oMTable.isSearchSupported();
 		assert.ok(bSupported, "supported for $search");
 		assert.ok(ValueHelpDelegateV4.isSearchSupported.calledOnce, "ValueHelpDelegateV4.isSearchSupported called");
 
 		oContainer.getValueHelpDelegate.restore();
 		ValueHelpDelegateV4.isSearchSupported.restore();
-
 	});
 
 	QUnit.test("isSearchSupported - no search", function(assert) {
-
-		oMTable.setFilterFields();
 		const bSupported = oMTable.isSearchSupported();
 		assert.notOk(bSupported, "not supported if no FilterFields");
-
 	});
 
 	QUnit.test("getItemForValue: check for key - match", function(assert) {

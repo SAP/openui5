@@ -16,8 +16,9 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
-	"sap/ui/core/date/UI5Date"
-], function(BaseConfig, Formatting, Localization, Element, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date) {
+	"sap/ui/core/date/UI5Date",
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(BaseConfig, Formatting, Localization, Element, qutils, CalendarTimeInterval, CalendarLegend, CalendarLegendItem, DateRange, DateTypeRange, unifiedLibrary, DateFormat, KeyCodes, jQuery, oCore, UI5Date, nextUIUpdate) {
 	"use strict";
 
 	// set language to en-US, since we have specific language strings tested
@@ -389,7 +390,8 @@ sap.ui.define([
 		oCalendarTimeInt.destroy();
 	});
 
-	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", function(assert) {
+	QUnit.test("After Rerendering, the focus is not stolen from an external control (i.e. a button)", async function(assert) {
+
 		//Prepare
 		var oCalendarTimeInt = new CalendarTimeInterval(),
 			oExternalControl = new CalendarTimeInterval("extControl"),
@@ -407,8 +409,7 @@ sap.ui.define([
 
 		//Act
 		oCalendarTimeInt.invalidate();
-
-		oCore.applyChanges();
+		await nextUIUpdate();
 
 		//Assert
 		_assertFocus(oElementToFocus, "After rerendering, the focus should stay on the 'extControl' (TimeInterval)", assert);

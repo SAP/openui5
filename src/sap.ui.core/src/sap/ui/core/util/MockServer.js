@@ -1536,9 +1536,11 @@ sap.ui
 								switch (oEntitySet.props[sPropName].type) {
 									case "Edm.DateTime":
 									case "Edm.DateTimeOffset":
-										var oDate = new Date(oRecord[sPropName]);
-										if (!isNaN(oDate)) {
-											oRecord[sPropName] = "/Date(" + oDate.getTime() + ")/";
+										if (oRecord[sPropName] != null) {
+											var oDate = new Date(oRecord[sPropName]);
+											if (oDate && !isNaN(oDate)) {
+												oRecord[sPropName] = "/Date(" + oDate.getTime() + ")/";
+											}
 										}
 										break;
 									default:

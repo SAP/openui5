@@ -21,8 +21,7 @@ sap.ui.define([
 	"sap/ui/rta/toolbar/contextBased/SaveAsAdaptation",
 	"sap/ui/rta/toolbar/translation/Translation",
 	"sap/ui/rta/toolbar/versioning/Versioning",
-	"sap/ui/rta/Utils",
-	"sap/ui/VersionInfo"
+	"sap/ui/rta/Utils"
 ], function(
 	AdaptationRenderer,
 	Log,
@@ -42,8 +41,7 @@ sap.ui.define([
 	SaveAsAdaptation,
 	Translation,
 	Versioning,
-	Utils,
-	VersionInfo
+	Utils
 ) {
 	"use strict";
 
@@ -496,17 +494,19 @@ sap.ui.define([
 	};
 
 	Adaptation.prototype.showFeedbackForm = async function() {
-		// Get Connector Type
-		var sConnector = FlexRuntimeInfoAPI.getConfiguredFlexServices()[0].connector;
-
 		// Set URL
-		var sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";
-		var sURLPart2 = "SV_4MANxRymEIl9K06";
-		var sURL = sURLPart1 + sURLPart2;
-		var oUrlParams = new URLSearchParams();
-		const oVersion = await VersionInfo.load();
-		oUrlParams.set("version", oVersion.version);
-		oUrlParams.set("feature", (sConnector === "KeyUserConnector" ? "BTP" : "ABAP"));
+		const sURLPart1 = "https://sapinsights.eu.qualtrics.com/jfe/form/";
+		const sURLPart2 = "SV_4MANxRymEIl9K06";
+		const sURL = sURLPart1 + sURLPart2;
+		const oUrlParams = new URLSearchParams();
+		const mPropertyBag = {
+			rootControl: this.getRtaInformation().rootControl
+		};
+		const oFeedbackUrlParams = await FlexRuntimeInfoAPI.getFeedbackInformation(mPropertyBag);
+		oUrlParams.set("version", oFeedbackUrlParams.version);
+		oUrlParams.set("feature", (oFeedbackUrlParams.connector === "KeyUserConnector" ? "BTP" : "ABAP"));
+		oUrlParams.set("appId", oFeedbackUrlParams.appId);
+		oUrlParams.set("appVersion", oFeedbackUrlParams.appVersion);
 
 		var oFeedbackDialogModel = new JSONModel({
 			url: `${sURL}?${oUrlParams.toString()}`
@@ -520,9 +520,6 @@ sap.ui.define([
 			this._oFeedbackDialog.addStyleClass(Utils.getRtaStyleClassName());
 			this._oFeedbackDialog.setModel(oFeedbackDialogModel, "feedbackModel");
 			this._oFeedbackDialog.setModel(this.getModel("i18n"), "i18n");
-			this._oFeedbackDialog.attachEventOnce("afterClose", function() {
-				this._oFeedbackDialog.destroy();
-			}.bind(this));
 			this._oFeedbackDialog.open();
 		}.bind(this)).catch(function(oError) {
 			Log.error("Error loading fragment sap.ui.rta.toolbar.FeedbackDialog: ", oError);
@@ -532,6 +529,7 @@ sap.ui.define([
 	Adaptation.prototype.closeFeedbackForm = function() {
 		if (this._oFeedbackDialog) {
 			this._oFeedbackDialog.close();
+			this._oFeedbackDialog.destroy();
 		}
 	};
 

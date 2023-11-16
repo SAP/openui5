@@ -4646,8 +4646,6 @@ sap.ui.define([
 		// act
 		oMultiComboBox.invalidate();
 
-		oCore.applyChanges();
-
 		this.clock.tick(500);
 
 		// assertions

@@ -8334,6 +8334,7 @@ sap.ui.define([
 
 	// BCP 1570441294
 	QUnit.test("onfocusin it should correctly restore the selection of the text after re-rendering", function (assert) {
+
 		this.stub(Device, "system", {
 			desktop: true,
 			phone: false,
@@ -8363,7 +8364,6 @@ sap.ui.define([
 
 		// act
 		oComboBox.invalidate();
-		oCore.applyChanges();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() in the focusin event handler does not override the type ahead
 
 		// assert
@@ -10270,7 +10270,6 @@ sap.ui.define([
 			],
 			selectionChange: function onSelectionChange() {
 				oForm.invalidate();
-				oCore.applyChanges();
 			}
 		});
 		oComboBox.syncPickerContent();
@@ -10285,6 +10284,7 @@ sap.ui.define([
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[1]);
 		oComboBox._getList().fireItemPress({listItem: oListItem});
 		oComboBox._getList().fireSelectionChange({listItem: oListItem});
+		this.clock.tick(0);
 
 		assert.ok(oComboBox.getValue(), "ComboBox value to be filled in");
 		assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
@@ -11116,7 +11116,6 @@ sap.ui.define([
 	QUnit.test('Input text selection "with" re-rendering on selection change', function (assert) {
 		this.comboBox.attachEvent('selectionChange', function () {
 			this.comboBox.invalidate();
-			oCore.applyChanges();
 		}.bind(this));
 
 		this.comboBox._$input.trigger("focus").val("n").trigger("input");

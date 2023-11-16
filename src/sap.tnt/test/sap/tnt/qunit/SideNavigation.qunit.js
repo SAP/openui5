@@ -170,6 +170,21 @@ sap.ui.define([
 		assert.strictEqual(fixedListItem.$().hasClass('sapTntNLISelected'), false, 'The class "sapTntNLISelected" should be removed from the deselected item');
 	});
 
+	QUnit.test('Passing a string as "selectedItem" id should set the selected item', function (assert) {
+		// arrange
+		var listItem = new NavigationListItem({text: 'List Item'});
+		var fixedListItem = new NavigationListItem({text: 'Fixed List Item'});
+
+		// act
+		this.sideNavigation.getItem().addItem(listItem);
+		this.sideNavigation.getFixedItem().addItem(fixedListItem);
+		Core.applyChanges();
+
+		// assert
+		this.sideNavigation.setSelectedItem(listItem.getId());
+		assert.strictEqual(this.sideNavigation.getSelectedItem(), listItem.getId(), 'The correct item should be selected');
+	});
+
 	QUnit.test('Passing null on empty control (empty aggregations) should not throw error', function (assert) {
 		var oEmptySideNav = new SideNavigation();
 		oEmptySideNav.placeAt(DOM_RENDER_LOCATION);

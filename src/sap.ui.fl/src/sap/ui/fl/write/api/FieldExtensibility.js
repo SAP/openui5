@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @since 1.87
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted sap.ui.fl, sap.ui.rta
+	 * @ui5-restricted sap.ui.fl, sap.ui.rta, sap.ui.mdc
 	 */
 
 	var FieldExtensibility = {};

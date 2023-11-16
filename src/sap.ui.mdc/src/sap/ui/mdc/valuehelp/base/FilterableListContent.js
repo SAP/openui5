@@ -55,24 +55,6 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			properties:	{
 				/**
-				 * The fields based on which the table data is filtered. For filtering, the value of the <code>filterValue</code> property is used.
-				 *
-				 * If set to <code>$search</code>, and if the used binding supports search requests, a $search request is used for filtering.
-				 *
-				 * If set to one or more properties, the filters for these properties are used for filtering.
-				 * These filters are set on the <code>ListBinding</code> used.
-				 * The properties need to be separated by commas and enclosed by "*" characters. (<code>"*Property1,Property2*"</code>)
-				 *
-				 * If it is empty, no suggestion is available.
-				 *
-				 * @deprecated since 1.121.0 - please see <code>{@link sap.ui.mdc.ValueHelpDelegate.isSearchSupported isSearchSupported}</code>
-				 */
-				filterFields: {
-					type: "string",
-					defaultValue: ""
-				},
-
-				/**
 				 * The path of the key field in the content binding.
 				 * If a table is used as content, this is the binding path of the key of the items.
 				 */
@@ -129,13 +111,6 @@ sap.ui.define([
 		this._oResourceBundle = Library.getResourceBundleFor("sap.ui.mdc");
 		this._oObserver.observe(this, {
 			aggregations: ["_defaultFilterBar", "filterBar"]
-		});
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		this._oObserver.observe(this, {
-			properties: ["filterFields"]
 		});
 
 		Engine.getInstance().defaultProviderRegistry.attach(this, PersistenceMode.Transient);
@@ -330,14 +305,6 @@ sap.ui.define([
 			let bSearchSupported = this.isSearchSupported();
 			let sSearchPath = "$search";
 
-			/**
-			 *  @deprecated since 1.121.0
-			 */
-			if (!this.isPropertyInitial("filterFields")) {
-				sSearchPath = this.getFilterFields();
-				bSearchSupported = !!sSearchPath;
-			}
-
 			if (!oExistingBasicSearchField && bSearchSupported) {
 				if (!this._oSearchField) {
 					return loadModules([
@@ -422,13 +389,6 @@ sap.ui.define([
 						}
 					}
 				}
-			}
-
-			/**
-			 *  @deprecated since 1.121.0
-			 */
-			if (oChanges.name === "filterFields") {
-				this._updateBasicSearchField();
 			}
 		}
 		ListContent.prototype.observeChanges.apply(this, arguments);
@@ -521,17 +481,6 @@ sap.ui.define([
 	};
 
 	FilterableListContent.prototype.isSearchSupported = function () {
-
-		/**
-		 *  @deprecated since 1.121.0
-		 */
-		if (!this.isPropertyInitial("filterFields")) {
-			const sFilterFields = this.getFilterFields();
-			if (sFilterFields !== "$search") {
-				return !!sFilterFields;
-			}
-		}
-
 		return !!this.isValueHelpDelegateInitialized() && !!this.getValueHelpDelegate()?.isSearchSupported(this.getValueHelpInstance(), this, this.getListBinding());
 	};
 
@@ -570,14 +519,9 @@ sap.ui.define([
 				this._oInitialFilterConditions = oConditions;
 
 				const oFilterBar = this.getActiveFilterBar();
-				if (oFilterBar) { // apply initial conditions to filterbar if existing
+				if (oFilterBar) {
+					// apply initial conditions to filterbar if existing
 					let sSearchPath = "$search";
-					/**
-					 *  @deprecated since 1.121.0
-					 */
-					if (!this.isPropertyInitial("filterFields")) {
-						sSearchPath = this.getFilterFields();
-					}
 
 					const oNewConditions = merge({}, this._oInitialFilterConditions);
 					return Promise.resolve(!oNewConditions[sSearchPath] && StateUtil.retrieveExternalState(oFilterBar).then(function (oState) {

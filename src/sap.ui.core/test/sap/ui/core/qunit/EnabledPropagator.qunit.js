@@ -3,9 +3,8 @@
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
-], function(Control, EnabledPropagator, nextUIUpdate, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+	], function(Control, EnabledPropagator, nextUIUpdate) {
 	"use strict";
 
 	var CustomControl = Control.extend("CustomControl", {
@@ -80,7 +79,7 @@ sap.ui.define([
 
 			oControl.destroy();
 		});
-		QUnit.test("Propagate 'disabled' property to child - " + ControlClass.getMetadata().getName(), function(assert) {
+		QUnit.test("Propagate 'disabled' property to child - " + ControlClass.getMetadata().getName(), async function(assert) {
 			var oChildControl = new ControlClass();
 			var oParentControl = new CustomContainerControl();
 
@@ -103,7 +102,7 @@ sap.ui.define([
 
 			oChildControl.useEnabledPropagator(true);
 			oParentControl.invalidate();
-			Core.applyChanges();
+			await nextUIUpdate();
 			assert.equal(oChildControl.getEnabled(), false, "Child control is disabled since EnabledPropagator is active and the parent is disabled");
 
 			oParentControl.destroy();

@@ -72,14 +72,11 @@ sap.ui.define([
 				 * Defines the content inside the flexible part.
 				 */
 				item: { type: "sap.tnt.NavigationList", multiple: false, bindable: "bindable" },
+
 				/**
 				 * Defines the content inside the fixed part.
 				 */
-				fixedItem: { type: "sap.tnt.NavigationList", multiple: false },
-				/**
-				 * Defines the content inside the footer.
-				 */
-				footer: { type: "sap.tnt.NavigationList", multiple: false }
+				fixedItem: { type: "sap.tnt.NavigationList", multiple: false }
 			},
 			associations: {
 				/**
@@ -214,7 +211,7 @@ sap.ui.define([
 		}
 
 		let oListItemToSelect;
-		if (typeof selectedItem == "string") {
+		if (typeof vSelectedItem == "string") {
 			oListItemToSelect = Element.getElementById(vSelectedItem);
 		} else {
 			oListItemToSelect = vSelectedItem;

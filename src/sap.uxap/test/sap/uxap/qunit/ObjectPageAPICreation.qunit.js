@@ -23,7 +23,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/base/ManagedObject",
 	"sap/m/OverflowToolbar",
-	"sap/uxap/ObjectPageAccessibleLandmarkInfo"
+	"sap/uxap/ObjectPageAccessibleLandmarkInfo",
+	"sap/ui/qunit/utils/nextUIUpdate"
 ],
 function(
 	Element,
@@ -49,7 +50,8 @@ function(
 	XMLView,
 	ManagedObject,
 	OverflowToolbar,
-	ObjectPageAccessibleLandmarkInfo
+	ObjectPageAccessibleLandmarkInfo,
+	nextUIUpdate
 ) {
 	"use strict";
 
@@ -2294,9 +2296,9 @@ function(
 				]
 			}),
 			fnBrowserEventHandler = this.spy(),
-			fnOnDomReady = function() {
+			fnOnDomReady = async function() {
 				oObjectPage.invalidate();
-				Core.applyChanges();
+				await nextUIUpdate();
 				var event,
 					$buttonDomRef = Element.getElementById("btn1").getDomRef();
 				if (typeof Event === 'function') {
@@ -2926,7 +2928,7 @@ function(
 		});
 	});
 
-	QUnit.test("ObjectPage is not attached to MouseOut/MouseOver events of title on tablet/phone device", function (assert) {
+	QUnit.test("ObjectPage is not attached to MouseOut/MouseOver events of title on tablet/phone device", async function (assert) {
 		// Setup
 		helpers.toPhoneMode(this.oObjectPage);
 
@@ -2935,8 +2937,7 @@ function(
 
 		// Act
 		this.oObjectPage.invalidate();
-
-		Core.applyChanges();
+		await nextUIUpdate();
 
 		// Assert
 		assert.ok(oVisualIndicatorMouseoOverSpy.notCalled, "ObjectPage is not attached to MouseOut/MouseOver events of snap/expand button");
@@ -3033,7 +3034,6 @@ function(
 				assert.strictEqual(oToggleHeaderSpy.callCount, 0, "Toggle header is not called");
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnRerenderedDomReady2);
 				oObjectPage.invalidate();
-				Core.applyChanges();
 			},
 			fnOnRerenderedDomReady2 = function() {
 				// Assert

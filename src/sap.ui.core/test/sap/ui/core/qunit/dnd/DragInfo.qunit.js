@@ -7,9 +7,8 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/ElementMetadata",
 	"sap/base/Log",
-	"sap/ui/qunit/utils/nextUIUpdate",
-	"sap/ui/core/Core"
-], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate, Core) {
+	"sap/ui/qunit/utils/nextUIUpdate"
+], function(jQuery, TestControl, DragInfo, ManagedObject, ElementMetadata, Log, nextUIUpdate) {
 	"use strict";
 
 	QUnit.module("");
@@ -94,7 +93,7 @@ sap.ui.define([
 		oControl.isDragAllowed = function() { assert.equal(arguments[0], oDragInfo); return false; };
 		assert.notOk(oDragInfo.isDraggable(oControl), "Not Draggable: oControl.isDragAllowed method did not permit");
 		oControl.invalidate();
-		Core.applyChanges();
+		await nextUIUpdate();
 		assert.notOk(oControl.getDomRef().draggable, "Dom Not Draggable: oControl.isDragAllowed method did not permit");
 		delete oControl.isDragAllowed;
 
