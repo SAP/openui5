@@ -365,7 +365,7 @@ sap.ui.define([
 			this.fnOnBeforeDestroy = undefined;
 			fnOnBeforeDestroy();
 		}
-		this.oModel.getDependentBindings(this).forEach(function (oDependentBinding) {
+		this.oModel?.getDependentBindings(this).forEach(function (oDependentBinding) {
 			oDependentBinding.setContext(undefined);
 		});
 		this.oBinding = undefined;
