@@ -75,39 +75,50 @@ sap.ui.define([
 					: parseInt(sExpandTo || "3"),
 				hierarchyQualifier : "OrgChart"
 			};
+			const sTreeTable = oUriParameters.get("TreeTable");
 			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
 					"sap.ui.core.sample.odata.v4.RecursiveHierarchy.visibleRowCount")
 				|| oUriParameters.get("visibleRowCount");
 
 			const oTable = this.byId("table");
-			if (sVisibleRowCount) {
-				oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+			if (sTreeTable === "Y") {
+				oTable.unbindRows();
+				oTable.setVisible(false);
+			} else {
+				if (sVisibleRowCount) {
+					oTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
+				const oRowsBinding = oTable.getBinding("rows");
+				oRowsBinding.setAggregation(this._oAggregation);
+				oRowsBinding.resume();
+				oRowsBinding.attachCreateSent(() => {
+					oTable.setBusy(true);
+				});
+				oRowsBinding.attachCreateCompleted(() => {
+					oTable.setBusy(false);
+				});
 			}
-			const oRowsBinding = oTable.getBinding("rows");
-			oRowsBinding.setAggregation(this._oAggregation);
-			oRowsBinding.resume();
-			oRowsBinding.attachCreateSent(() => {
-				oTable.setBusy(true);
-			});
-			oRowsBinding.attachCreateCompleted(() => {
-				oTable.setBusy(false);
-			});
 
 			const oTreeTable = this.byId("treeTable");
-			// enable V4 tree table flag
-			oTreeTable._oProxy._bEnableV4 = true;
-			if (sVisibleRowCount) {
-				oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+			if (sTreeTable === "N") {
+				oTreeTable.unbindRows();
+				oTreeTable.setVisible(false);
+			} else {
+				// enable V4 tree table flag
+				oTreeTable._oProxy._bEnableV4 = true;
+				if (sVisibleRowCount) {
+					oTreeTable.getRowMode().setRowCount(parseInt(sVisibleRowCount));
+				}
+				const oTreeRowsBinding = oTreeTable.getBinding("rows");
+				oTreeRowsBinding.setAggregation(this._oAggregation);
+				oTreeRowsBinding.resume();
+				oTreeRowsBinding.attachCreateSent(() => {
+					oTreeTable.setBusy(true);
+				});
+				oTreeRowsBinding.attachCreateCompleted(() => {
+					oTreeTable.setBusy(false);
+				});
 			}
-			const oTreeRowsBinding = oTreeTable.getBinding("rows");
-			oTreeRowsBinding.setAggregation(this._oAggregation);
-			oTreeRowsBinding.resume();
-			oTreeRowsBinding.attachCreateSent(() => {
-				oTreeTable.setBusy(true);
-			});
-			oTreeRowsBinding.attachCreateCompleted(() => {
-				oTreeTable.setBusy(false);
-			});
 		},
 
 		onMakeRoot : async function (oEvent) {
