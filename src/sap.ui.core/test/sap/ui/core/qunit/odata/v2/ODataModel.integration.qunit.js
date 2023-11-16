@@ -6953,6 +6953,68 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 	});
 
 	//*********************************************************************************************
+	// Scenario: The key predicate of an entity contains an encoded * character (='%2A'). Ensure
+	// that the message targets (target and full target) are normalized in the same way as the
+	// enitity key.
+	// BCP: 2370146338
+	QUnit.test("Messages: normalize target and full target paths", function (assert) {
+		const oModel = createSalesOrdersModel();
+		const sView = '\
+<FlexBox id="flexbox">\
+	<Table id="table" growing="true" items="{ToLineItems}">\
+		<Text id="itemPosition" text="{ItemPosition}"/>\
+		<Input id="note" value="{Note}"/>\
+	</Table>\
+</FlexBox>';
+
+		return this.createView(assert, sView, oModel).then(() => {
+			this.expectHeadRequest()
+				.expectRequest({
+					deepPath : "/BusinessPartnerSet('4711')/ToSalesOrders('42')/ToLineItems",
+					method : "GET",
+					requestUri : "SalesOrderSet('42')/ToLineItems?$skip=0&$top=20"
+				}, {
+					results : [{
+						__metadata : {
+							uri : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='1%2A%30%2F')"
+						},
+						ItemPosition : "1*0/",
+						Note : "Position 10",
+						SalesOrderID : "42"
+					}]
+				}, {"sap-message" : getMessageHeader(this.createResponseMessage(
+					"(SalesOrderID='42',ItemPosition='1%2A%30%2F')/Note", "Foo"))})
+				.expectMessages([{
+					code : "code-0",
+					fullTarget : "/BusinessPartnerSet('4711')/ToSalesOrders('42')"
+						+ "/ToLineItems(SalesOrderID='42',ItemPosition='1*0%2F')/Note",
+					message : "Foo",
+					persistent : false,
+					target : "/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='1*0%2F')/Note",
+					technical : false,
+					type : "Error"
+				}])
+				.expectValue("itemPosition", ["1*0/"])
+				.expectValue("note", ["Position 10"]);
+
+			// code under test - relative binding context
+			this.oView.byId("flexbox").setBindingContext(new Context(oModel, "/SalesOrderSet('42')",
+				"/BusinessPartnerSet('4711')/ToSalesOrders('42')"));
+
+			return this.waitForChanges(assert);
+		}).then(() => {
+			const oInput = this.oView.byId("table").getItems()[0].getCells()[1];
+			this.expectValueState(oInput, "Error", "Foo");
+
+			assert.strictEqual(oInput.getBinding("value").oContext.getDeepPath(),
+				"/BusinessPartnerSet('4711')/ToSalesOrders('42')/ToLineItems(SalesOrderID='42',ItemPosition='1*0%2F')");
+			assert.strictEqual(oInput.getBinding("value").getResolvedPath(),
+				"/SalesOrderLineItemSet(SalesOrderID='42',ItemPosition='1*0%2F')/Note");
+			return this.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Function import parameters need to be encoded when creating the default target
 	// path for for a function import. Otherwise messages cannot be assigned properly and it might
 	// lead to duplicate messages.
