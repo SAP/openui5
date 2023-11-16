@@ -72,7 +72,7 @@ sap.ui.define([
 			this._oAggregation = {
 				expandTo : sExpandTo === "*"
 					? Number.MAX_SAFE_INTEGER
-					: parseInt(sExpandTo || "3"),
+					: parseFloat(sExpandTo || "3"), // Note: parseInt("1E16") === 1
 				hierarchyQualifier : "OrgChart"
 			};
 			const sVisibleRowCount = TestUtils.retrieveData( // controlled by OPA
