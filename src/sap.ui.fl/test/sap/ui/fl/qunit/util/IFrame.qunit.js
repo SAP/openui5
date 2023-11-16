@@ -396,7 +396,11 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("URL validation", function() {
+	QUnit.module("URL validation", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
 		QUnit.test("when providing a valid url", function(assert) {
 			assert.ok(IFrame.isValidUrl("https://example.com"));
 			assert.ok(IFrame.isValidUrl("someRelativeUrl.html"));
@@ -406,10 +410,13 @@ sap.ui.define([
 			assert.notOk(IFrame.isValidUrl("https://example."));
 		});
 
-		QUnit.test("when using a pseudo protocol", function(assert) {
-			assert.notOk(IFrame.isValidUrl("about:blank"));
+		QUnit.test("when embedding the javascript pseudo protocol", function(assert) {
 			// eslint-disable-next-line no-script-url
 			assert.notOk(IFrame.isValidUrl("javascript:someJs"));
+		});
+
+		QUnit.test("when embedding a protocol that is blocked by the URLListValidator", function(assert) {
+			assert.notOk(IFrame.isValidUrl("about:blank"));
 		});
 
 		QUnit.test("when allowing the javascript pseudo protocol", function(assert) {
@@ -417,6 +424,44 @@ sap.ui.define([
 			// eslint-disable-next-line no-script-url
 			assert.notOk(IFrame.isValidUrl("javascript:someJs"));
 			URLListValidator.clear();
+		});
+
+		QUnit.test("when allowing a non-critical protocol", function(assert) {
+			URLListValidator.add("about");
+			assert.ok(IFrame.isValidUrl("about:blank"));
+			URLListValidator.clear();
+		});
+
+		QUnit.test("when embedding http content from a https document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "https:",
+				href: "https://example.com"
+			});
+			assert.notOk(IFrame.isValidUrl("http://example.com"));
+		});
+
+		QUnit.test("when embedding https content from a https document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "https:",
+				href: "https://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("https://example.com"));
+		});
+
+		QUnit.test("when embedding http content from a http document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "http:",
+				href: "http://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("http://example.com"));
+		});
+
+		QUnit.test("when embedding https content from a http document", function(assert) {
+			sandbox.stub(IFrame, "_getDocumentLocation").returns({
+				protocol: "http:",
+				href: "http://example.com"
+			});
+			assert.ok(IFrame.isValidUrl("https://example.com"));
 		});
 	});
 

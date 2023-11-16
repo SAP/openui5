@@ -225,14 +225,31 @@ sap.ui.define([
 		renderer: IFrameRenderer
 	});
 
+	// Used for test stubbing
+	IFrame._getDocumentLocation = function() {
+		return document.location;
+	};
+
 	IFrame.isValidUrl = function(sUrl) {
-		// Make sure that pseudo protocols are not allowed as IFrame src
-		return (
-			!URLListValidator.entries().some(function(oValidatorEntry) {
-				return /javascript/i.test(oValidatorEntry.protocol);
-			})
-			&& URLListValidator.validate(sUrl)
-		);
+		try {
+			var oDocumentLocation = IFrame._getDocumentLocation();
+			var oUrl = new URL(sUrl, oDocumentLocation.href);
+			return (
+				// Forbid dangerous javascript pseudo protocol
+				!/javascript/i.test(oUrl.protocol)
+				&& (
+					// Forbid unsafe http embedding within https to conform with mixed content security restrictions
+					!/http(?!s)/.test(oUrl.protocol)
+					// Exception: Host is using http, no protocol downgrade happening
+					// Required for local testing and onPrem systems
+					|| /http(?!s)/.test(oDocumentLocation.protocol)
+				)
+				// Take further customer restrictions into account
+				&& URLListValidator.validate(sUrl)
+			);
+		} catch (oError) {
+			return false;
+		}
 	};
 
 	return IFrame;
