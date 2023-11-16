@@ -107,6 +107,16 @@ sap.ui.define([
 			assert.ok(timeoutWaiter.hasPending(), "There was a timeout");
 		});
 
+		QUnit.test("Should pass the callback parameters", function (assert) {
+			var fnDone = assert.async(),
+				fnSpy = sinon.spy(function () {
+					sinon.assert.calledWith(fnSpy, 1, 2, 3);
+					fnDone();
+				});
+
+			fnSetFunction(fnSpy, 0, 1, 2, 3);
+		});
+
 		QUnit.module("timeoutWaiter - multiple " + sFunctionUnderTest);
 
 		QUnit.test("Should handle 2 timeouts", function (assert) {
