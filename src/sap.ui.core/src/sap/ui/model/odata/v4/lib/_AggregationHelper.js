@@ -524,7 +524,7 @@ sap.ui.define([
 					+ (oAggregation.$path || "")
 					+ ",HierarchyQualifier='" + oAggregation.hierarchyQualifier
 					+ "',NodeProperty='" + sNodeProperty + "'"
-					+ (bAllLevels || oAggregation.expandTo >= Number.MAX_SAFE_INTEGER
+					+ (bAllLevels || oAggregation.expandTo >= 999
 						? ")" // "all levels"
 						: ",Levels=" + (oAggregation.expandTo || 1) + ")");
 				if (bAllLevels) {

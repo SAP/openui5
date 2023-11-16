@@ -198,7 +198,7 @@ sap.ui.define([
 		}
 
 		let iExpandTo = oListBinding.getAggregation().expandTo || 1;
-		if (iExpandTo >= Number.MAX_SAFE_INTEGER) {
+		if (iExpandTo >= 999) {
 			iExpandTo = 99; // avoid "Invalid array length" :-)
 		}
 		for (let i = 0; i <= iExpandTo; i += 1) {
@@ -25510,7 +25510,7 @@ sap.ui.define([
 			// code under test
 			// Note: overall count must not change here, just the "expansion state"
 			oListBinding.setAggregation({
-				expandTo : Number.MAX_SAFE_INTEGER,
+				expandTo : 999,
 				hierarchyQualifier : sHierarchyQualifier
 			});
 
@@ -25546,17 +25546,17 @@ sap.ui.define([
 			// no additional request for same aggregation data
 			// code under test (BCP: 2370045709)
 			oListBinding.setAggregation({
-				expandTo : Number.MAX_SAFE_INTEGER,
+				expandTo : 999,
 				hierarchyQualifier : sHierarchyQualifier
 			});
 			// code under test (BCP: 2370045709)
 			oListBinding.changeParameters({
 				$$aggregation : {
-					expandTo : Number.MAX_SAFE_INTEGER,
+					expandTo : 999,
 					hierarchyQualifier : sHierarchyQualifier
 				}
 			});
-			assert.strictEqual(oListBinding.getAggregation().expandTo, Number.MAX_SAFE_INTEGER);
+			assert.strictEqual(oListBinding.getAggregation().expandTo, 999);
 		});
 	});
 	});

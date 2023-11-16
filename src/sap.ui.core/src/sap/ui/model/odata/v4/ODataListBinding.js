@@ -3253,7 +3253,7 @@ sap.ui.define([
 		if (!oAggregation || !oAggregation.hierarchyQualifier) {
 			throw new Error("Missing recursive hierarchy");
 		}
-		if (oAggregation.expandTo > 1 && oAggregation.expandTo < Number.MAX_SAFE_INTEGER) {
+		if (oAggregation.expandTo > 1 && oAggregation.expandTo < 999) {
 			throw new Error("Unsupported $$aggregation.expandTo: " + oAggregation.expandTo);
 		} // Note: undefined is well allowed!
 

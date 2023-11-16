@@ -4211,7 +4211,7 @@ make root = ${bMakeRoot}`;
 	QUnit.test(sTitle, async function (assert) {
 		const oCache = _AggregationCache.create(this.oRequestor, "n/a", "", {}, {
 				$ParentNavigationProperty : "myParent",
-				expandTo : Number.MAX_SAFE_INTEGER,
+				expandTo : 999,
 				hierarchyQualifier : "X"
 			});
 		const oParentNode = bMakeRoot ? undefined : {
@@ -4320,7 +4320,7 @@ make root = ${bMakeRoot}`;
 
 		let iExpandTo; // Note: undefined is important to test defaulting!
 		if (bInFirstLevel) {
-			iExpandTo = bExpandAll ? Number.MAX_SAFE_INTEGER : 25;
+			iExpandTo = bExpandAll ? 999 : 25;
 		}
 		const oCache = _AggregationCache.create(this.oRequestor, "Foo", "", {}, {
 				$ParentNavigationProperty : "myParent",

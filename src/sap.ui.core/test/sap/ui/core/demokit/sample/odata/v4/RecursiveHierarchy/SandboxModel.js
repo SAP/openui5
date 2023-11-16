@@ -454,11 +454,36 @@ sap.ui.define([
 	 * @param {object} oRequest - Request object to get POST body from
 	 */
 	function buildPostResponse(_aMatches, oResponse, oRequest) {
+		function parseLastSegment(sId) {
+			if (sId.includes(".")) {
+				sId = sId.slice(sId.lastIndexOf(".") + 1);
+			}
+
+			return parseInt(sId);
+		}
+
+		// compares two hierarchical IDs according to the last(!) segment (numerically, ascending)
+		function compareByID(oNodeA, oNodeB) {
+			return parseLastSegment(oNodeA.ID) - parseLastSegment(oNodeB.ID);
+		}
+
+		function isChildID(sChildID, sParentId) {
+			return sChildID !== sParentId
+				&& (sParentId === "0"
+					? !sChildID.includes(".")
+					: sChildID.startsWith(sParentId)
+						&& !sChildID.slice(sParentId.length + 1).includes("."));
+		}
+
 		// {"EMPLOYEE_2_MANAGER@odata.bind" : "EMPLOYEES('0')"}
 		const oBody = JSON.parse(oRequest.requestBody);
 		const sParentId = oBody["EMPLOYEE_2_MANAGER@odata.bind"]
 			?.slice("EMPLOYEES('".length, -"')".length);
 		const oParent = mNodeById[sParentId];
+		if (sParentId && !oParent) {
+			throw new Error("Invalid parent ID: " + sParentId);
+		}
+
 		const oNewChild = { // same order of keys than for "old" nodes ;-)
 			AGE : 0, // see below
 			ID : "", // see below
@@ -469,23 +494,28 @@ sap.ui.define([
 			DescendantCount : 0
 		};
 
-		if (sParentId in mChildrenByParentId) {
-			// Note: "AGE determines sibling order (ascending)"
-			oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
-			//TODO use "largest" child ID which is hierarchical to parent? cf. move!
-			// .../c/openui5/+/5940246/6/src/sap.ui.core/test/sap/ui/core/demokit/sample/odata/v4/RecursiveHierarchy/SandboxModel.js#b302
-			const sLastChildID = mChildrenByParentId[sParentId].at(-1).ID;
-			if (sLastChildID.includes(".")) {
-				oNewChild.ID = sParentId + "."
-					+ (parseInt(sLastChildID.slice(sLastChildID.lastIndexOf(".") + 1)) + 1);
-			} else { // sParentId === "0"
-				oNewChild.ID = "" + (parseInt(sLastChildID) + 1);
+		if (sParentId) {
+			if (sParentId in mChildrenByParentId) {
+				// Note: "AGE determines sibling order (ascending)"
+				oNewChild.AGE = mChildrenByParentId[sParentId][0].AGE - 1;
+			} else { // parent not a leaf anymore
+				oParent.DrillState = "collapsed"; // @see #reset
+				mChildrenByParentId[sParentId] = [];
+				oNewChild.AGE = oParent.AGE - 1;
 			}
-		} else if (sParentId) { // parent not a leaf anymore
-			oParent.DrillState = "collapsed"; // @see #reset
-			mChildrenByParentId[sParentId] = [];
-			oNewChild.AGE = oParent.AGE - 1;
-			oNewChild.ID = sParentId + ".1";
+
+			// use "largest" child ID which is hierarchical to parent
+			const sLastChildID = aAllNodes
+				.filter((oChild) => isChildID(oChild.ID, sParentId))
+				.sort(compareByID)
+				.at(-1)?.ID;
+			if (sLastChildID === undefined) {
+				oNewChild.ID = sParentId + ".1";
+			} else if (sParentId === "0") {
+				oNewChild.ID = "" + (parseLastSegment(sLastChildID) + 1);
+			} else {
+				oNewChild.ID = sParentId + "." + (parseLastSegment(sLastChildID) + 1);
+			}
 		} else { // new root
 			const iRootCount = aAllNodes.filter((oNode) => oNode.MANAGER_ID === null).length;
 			oNewChild.AGE = 60 + iRootCount;
