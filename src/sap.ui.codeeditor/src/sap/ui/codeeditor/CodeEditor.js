@@ -239,7 +239,8 @@ sap.ui.define([
 		this._oEditor.setOptions({
 			enableBasicAutocompletion: true,
 			enableSnippets: true,
-			enableLiveAutocompletion: true
+			enableLiveAutocompletion: true,
+			enableKeyboardAccessibility: true
 		});
 
 		this._oEditor.textInput.getElement().id = this.getId() + "-editor-textarea";
@@ -358,14 +359,7 @@ sap.ui.define([
 
 		oDomRef.appendChild(this._oEditorDomRef);
 
-		var bEditable = this.getEditable();
-		this._oEditor.setReadOnly(!bEditable);
-		if (bEditable) {
-			this._oEditor.renderer.$cursorLayer.element.style.display = "";
-		} else {
-			//hide the cursor
-			this._oEditor.renderer.$cursorLayer.element.style.display = "none";
-		}
+		this._oEditor.setReadOnly(!this.getEditable());
 
 		this._oEditor.getSession().setMode("ace/mode/" + this.getType());
 		this._oEditor.setOption("maxLines", this.getMaxLines());
@@ -416,17 +410,6 @@ sap.ui.define([
 			ResizeHandler.deregister(this._iResizeListenerId);
 			this._iResizeListenerId = null;
 		}
-	};
-
-	/**
-	 * Sets the focus to the code editor
-	 * @returns {this} Returns <code>this</code> to allow method chaining
-	 * @public
-	 */
-	CodeEditor.prototype.focus = function() {
-		this._oEditor.focus();
-
-		return this;
 	};
 
 	/**
@@ -498,7 +481,8 @@ sap.ui.define([
 	/**
 	 * Pretty-prints the content of the editor.
 	 *
-	 * <b>Note:</b> Works well only for PHP. For other programming languages, the content might not be formatted well.
+	 * <b>Note:</b> Works well for PHP. For other editor types (modes),
+	 * the content might not be formatted well.
 	 * In such cases it is recommended to use your own formatting.
 	 * @public
 	 * @since 1.54.1
@@ -513,6 +497,10 @@ sap.ui.define([
 
 	CodeEditor.prototype.onfocusin = function () {
 		this._oEditor.getSession().setUseWorker(true);
+	};
+
+	CodeEditor.prototype.getFocusDomRef = function () {
+		return this.getDomRef().querySelector(".ace_scroller.ace_keyboard-focus");
 	};
 
 	return CodeEditor;
