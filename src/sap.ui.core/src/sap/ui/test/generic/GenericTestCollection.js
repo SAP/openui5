@@ -99,6 +99,7 @@ sap.ui.define([], function() {
 			 * Test ControlRenderer
 			 * @private
 			 * @ui5-restricted SAPUI5 Distribution Layer Libraries
+			 * @deprecated As of version 1.120
 			 */
 			ControlRenderer: "ControlRenderer",
 
