@@ -517,7 +517,7 @@ sap.ui.define([
 
 		const oRowBinding = oTable.getRowBinding();
 		if (oRowBinding) {
-			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: 999}));
+			oRowBinding.setAggregation(Object.assign(oRowBinding.getAggregation(), {expandTo: Number.MAX_SAFE_INTEGER}));
 		}
 	};
 

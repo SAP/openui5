@@ -58,13 +58,13 @@ sap.ui.define([
 	});
 
 	opaTest("Expand and collapse some rows", function(Given, When, Then) {
-		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 10);
+		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 6);
 
 		When.onTheAppUnderTestMDCTable.iClickOnCollapseAllRowsButton(sTableId);
 		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 1);
 
 		When.onTheAppUnderTestMDCTable.iClickOnExpandAllRowsButton(sTableId);
-		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 10);
+		Then.onTheAppUnderTestMDCTable.iCheckBindingLength(sTableId, 24);
 		// Teardown
 		Then.onTheAppUnderTestMDCTable.iTeardownMyAppFrame();
 	});
