@@ -42,11 +42,13 @@ sap.ui.define([
 
 
 	/**
-	 * Creates a GrowingEnablement delegate that can be attached to ListBase Controls requiring capabilities for growing
+	 * Creates a GrowingEnablement delegate that can be attached to ListBase Controls requiring capabilities for growing.
+	 *
+	 * <b>Note</b>: Do not extend this class.
 	 *
 	 * @extends sap.ui.base.Object
 	 * @alias sap.m.GrowingEnablement
-	 * @experimental Since 1.16. This class is experimental and provides only limited functionality. Also the API might be changed in future.
+	 * @since 1.16
 	 *
 	 * @param {sap.m.ListBase} oControl the ListBase control of which this Growing is the delegate
 	 *
