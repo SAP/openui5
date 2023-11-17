@@ -529,7 +529,7 @@ ODataMessageParser.prototype._createTarget = function (sODataTarget, mRequestInf
 	sODataTarget = sCanonicalTarget || sODataTarget;
 
 	return {
-		deepPath : this._metadata._getReducedPath(sDeepPath || sODataTarget),
+		deepPath : ODataUtils._normalizeKey(this._metadata._getReducedPath(sDeepPath || sODataTarget)),
 		target : ODataUtils._normalizeKey(sODataTarget)
 	};
 };
