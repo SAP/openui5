@@ -164,7 +164,6 @@ sap.ui.define([
 			table: oTable,
 			keyPath: "key",
 			descriptionPath: "text",
-			filterFields: "*text,additionalText*",
 			conditions: aConditions, // don't need to test the binding of Container here
 			config: { // don't need to test the binding of Container here
 				maxConditions: iMaxConditions,
@@ -328,12 +327,16 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated since 1.120.2
+	 */
 	QUnit.test("Filtering without $search", function(assert) {
 
 		const oListBinding = oTable.getBinding("items");
 		_fakeV4Binding(oListBinding);
 
 		sinon.spy(oListBinding, "filter");
+		oMTable.setFilterFields("*text,additionalText*");
 		oMTable.onBeforeShow(); // filtering should happen only if open
 		oMTable._bContentBound = true;
 
@@ -417,7 +420,6 @@ sap.ui.define([
 		oListBinding.suspend(); // check for resuming
 
 		oMTable.setConditions(); // before filtering conditions should be cleared in typeahead for single-value
-		oMTable.setFilterFields("$search");
 		oMTable._bContentBound = true;
 		oMTable.setFilterValue("X");
 		assert.ok(ValueHelpDelegateV4.updateBinding.called, "ValueHelpDelegateV4.updateBinding called");
@@ -478,13 +480,27 @@ sap.ui.define([
 
 	}); */
 
-	QUnit.test("isSearchSupported without $search", function(assert) {
+	QUnit.test("isSearchSupported", function(assert) {
+		const isSearchSupportedStub = sinon.stub(ValueHelpDelegate, "isSearchSupported").returns(false);
+		assert.notOk(oMTable.isSearchSupported(), "not supported for filtering");
+		isSearchSupportedStub.returns(true);
+		assert.ok(oMTable.isSearchSupported(), "supported for filtering");
+		isSearchSupportedStub.restore();
+	});
 
+	/**
+	 *  @deprecated since 1.120.2
+	 */
+	QUnit.test("isSearchSupported without $search", function(assert) {
+		oMTable.setFilterFields("*foo*");
 		const bSupported = oMTable.isSearchSupported();
 		assert.ok(bSupported, "supported for filtering");
 
 	});
 
+	/**
+	 *  @deprecated since 1.120.2
+	 */
 	QUnit.test("isSearchSupported using $search", function(assert) {
 
 		sinon.stub(oContainer, "getValueHelpDelegate").returns(ValueHelpDelegateV4);
@@ -502,6 +518,9 @@ sap.ui.define([
 
 	});
 
+	/**
+	 *  @deprecated since 1.120.2
+	 */
 	QUnit.test("isSearchSupported - no search", function(assert) {
 
 		oMTable.setFilterFields();
