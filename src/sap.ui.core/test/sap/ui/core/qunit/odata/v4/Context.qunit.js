@@ -1554,7 +1554,7 @@ sap.ui.define([
 			.returns([oBinding1, oBinding2]);
 		this.mock(oBinding1).expects("setContext").withExactArgs(undefined);
 		this.mock(oBinding2).expects("setContext").withExactArgs(undefined);
-		this.mock(BaseContext.prototype).expects("destroy").on(oContext).withExactArgs();
+		this.mock(BaseContext.prototype).expects("destroy").on(oContext).twice().withExactArgs();
 
 		// code under test
 		oContext.destroy();
@@ -1574,6 +1574,9 @@ sap.ui.define([
 		if (bfnOnBeforeDestroy) {
 			assert.ok(bCallbackCalled);
 		}
+
+		// code under test
+		oContext.destroy();
 	});
 });
 

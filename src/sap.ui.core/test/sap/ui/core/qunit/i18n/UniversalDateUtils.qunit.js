@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/base/i18n/Localization",
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Configuration",
+	"sap/ui/core/Locale",
 	"sap/ui/core/date/UI5Date",
 	"sap/ui/core/date/UniversalDate",
 	"sap/ui/core/date/UniversalDateUtils",
@@ -13,7 +14,7 @@ sap.ui.define([
 	"sap/ui/core/date/Islamic",
 	"sap/ui/core/date/Japanese",
 	"sap/ui/core/date/Persian"
-], function(Formatting, Localization, CalendarType, Configuration, UI5Date, UniversalDate, UniversalDateUtils) {
+], function(Formatting, Localization, CalendarType, Configuration, Locale, UI5Date, UniversalDate, UniversalDateUtils) {
 	"use strict";
 
 	const sLanguage = Localization.getLanguage();
@@ -574,13 +575,14 @@ sap.ui.define([
 			oUniversalDate = {getWeek: function () {}};
 
 		this.mock(Formatting).expects("getCalendarType").withExactArgs().returns("~CalendarType");
-		this.mock(Formatting).expects("getLanguageTag").withExactArgs().returns("~Locale");
+		this.mock(Formatting).expects("getLanguageTag").withExactArgs().returns("~sLanguageTag");
+		this.mock(Locale).expects("_getCoreLocale").withExactArgs("~sLanguageTag").returns("~oLocale");
 		this.mock(UniversalDateUtils).expects("createNewUniversalDate").withExactArgs().returns(oUniversalDate);
 		this.mock(oUniversalDate).expects("getWeek")
-			.withExactArgs("~Locale", "~sCalendarWeekNumbering")
+			.withExactArgs("~oLocale", "~sCalendarWeekNumbering")
 			.returns({week: "~week", year: "~year"});
 		this.mock(UniversalDate).expects("getFirstDateOfWeek")
-			.withExactArgs("~CalendarType", "~year", "~week", "~Locale", "~sCalendarWeekNumbering")
+			.withExactArgs("~CalendarType", "~year", "~week", "~oLocale", "~sCalendarWeekNumbering")
 			.returns({year: 2023, month: 0, day: 1});
 		// Mock implementation of constructor of UniversalDate
 		this.mock(UniversalDate).expects("getClass").withExactArgs().returns("~class");

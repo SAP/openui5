@@ -1,77 +1,15 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
-	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/qunit/TableQUnitUtils.ODataV4",
 	"sap/ui/table/plugins/MultiSelectionPlugin",
-	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/test/TestUtils",
 	"sap/ui/core/Core"
 ], function(
 	TableQUnitUtils,
 	MultiSelectionPlugin,
-	ODataModel,
-	TestUtils,
 	Core
 ) {
 	"use strict";
-
-	var iCount = 400;
-
-	function createData(iStartIndex, iLength) {
-		var aData = [];
-
-		if (iStartIndex + iLength > iCount) {
-			iLength = iCount - iStartIndex;
-		}
-
-		for (var i = iStartIndex; i < iStartIndex + iLength; i++) {
-			aData.push({
-				Name: "Test Product (" + i + ")"
-			});
-		}
-
-		return aData;
-	}
-
-	function createResponse(iStartIndex, iLength, iPageSize) {
-		var mResponse = {};
-		var bPageLimitReached = iPageSize != null && iPageSize > 0 && iLength > iPageSize;
-
-		if (bPageLimitReached) {
-			var sSkipTop = "$skip=" + iStartIndex + "&$top=" + iLength;
-			var sSkipToken = "&$skiptoken=" + iPageSize;
-			mResponse.message = {value: createData(iStartIndex, iPageSize)};
-			mResponse.message["@odata.nextLink"] = "http://localhost:8088/MyServiceWithPaging/Products?" + sSkipTop + sSkipToken;
-		} else {
-			mResponse.message = {value: createData(iStartIndex, iLength)};
-		}
-
-		return mResponse;
-	}
-
-	TestUtils.useFakeServer(sinon.sandbox.create(), "sap/ui/core/qunit/odata/v4/data", null, [{
-		regExp: /^GET \/MyService(WithPaging)?\/\$metadata$/,
-		response: {
-			source: "metadata_tea_busi_product.xml"
-		}
-	}, {
-		regExp: /^GET \/MyService(WithPaging)?\/Products\?(\$count=true&)?\$skip=(\d+)\&\$top=(\d+)$/,
-		response: {
-			buildResponse: function(aMatches, oResponse) {
-				var iPageSize = aMatches[1] ? 50 : 0;
-				var bWithCount = !!aMatches[2];
-				var iSkip = parseInt(aMatches[3]);
-				var iTop = parseInt(aMatches[4]);
-				var mResponse = createResponse(iSkip, iTop, iPageSize);
-
-				if (bWithCount) {
-					mResponse.message["@odata.count"] = iCount;
-				}
-
-				oResponse.message = JSON.stringify(mResponse.message);
-			}
-		}
-	}]);
 
 	TableQUnitUtils.setDefaultSettings({
 		dependents: [new MultiSelectionPlugin()],
@@ -82,13 +20,11 @@ sap.ui.define([
 			}
 		},
 		columns: TableQUnitUtils.createTextColumn({text: "Name", bind: true}),
-		models: new ODataModel({
-			serviceUrl: "/MyService/"
-		})
+		models: TableQUnitUtils.createModelForListDataService()
 	});
 
 	function assertAllContextsAvailable(assert, oTable) {
-		assert.equal(oTable.getBinding().getAllCurrentContexts().length, iCount, "All binding contexts are available");
+		assert.equal(oTable.getBinding().getAllCurrentContexts().length, 400, "All binding contexts are available");
 	}
 
 	function assertContextsAvailable(assert, oTable, iNumber) {
@@ -129,9 +65,7 @@ sap.ui.define([
 	QUnit.module("Load data with server-driven paging", {
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
-				models: new ODataModel({
-					serviceUrl: "/MyServiceWithPaging/"
-				})
+				models: TableQUnitUtils.createModelForListDataService({paging: true})
 			});
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
@@ -176,7 +110,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		return this.oMultiSelectionPlugin.selectAll().then(function() {
-			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < iCount,
+			assert.ok(this.oTable.getBinding().getAllCurrentContexts().length < 400,
 				"Not all binding contexts are available, but at least the Promise resolved");
 		}.bind(this));
 	});
@@ -189,23 +123,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Load data without count and short read", {
-		before: function() {
-			iCount = 180;
-		},
 		beforeEach: function() {
 			this.oTable = TableQUnitUtils.createTable({
 				rows: {
 					path: "/Products"
-				}
+				},
+				models: TableQUnitUtils.createModelForListDataService({count: 180})
 			});
 			this.oMultiSelectionPlugin = this.oTable.getDependents()[0];
 			return this.oTable.qunit.whenBindingChange().then(this.oTable.qunit.whenRenderingFinished);
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-		},
-		after: function() {
-			iCount = 200;
 		}
 	});
 

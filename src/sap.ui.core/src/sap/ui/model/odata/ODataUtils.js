@@ -23,15 +23,12 @@ sap.ui.define([
 ], function(assert, Log, encodeURL, each, CalendarType, DateFormat, FilterProcessor, Sorter) {
 	"use strict";
 
-	var oDateTimeFormat,
-		oDateTimeFormatMs,
-		oDateTimeOffsetFormat,
-		rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
-		// URL might be encoded, "(" becomes %28
-		rSegmentAfterCatalogService = /\/(Annotations|ServiceNames|ServiceCollection)(\(|%28)/,
-		oTimeFormat,
-		rTrailingDecimal = /\.$/,
-		rTrailingZeroes = /0+$/;
+	let oDateTimeFormat, oDateTimeFormatMs, oDateTimeOffsetFormat, oDateTimeOffsetFormatMs, oTimeFormat;
+	const rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/;
+	// URL might be encoded, "(" becomes %28
+	const rSegmentAfterCatalogService = /\/(Annotations|ServiceNames|ServiceCollection)(\(|%28)/;
+	const rTrailingDecimal = /\.$/;
+	const rTrailingZeroes = /0+$/;
 
 	function setDateTimeFormatter () {
 		// Lazy creation of format objects
@@ -46,6 +43,10 @@ sap.ui.define([
 			});
 			oDateTimeOffsetFormat = DateFormat.getDateInstance({
 				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''",
+				calendarType: CalendarType.Gregorian
+			});
+			oDateTimeOffsetFormatMs = DateFormat.getDateInstance({
+				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss.SSS'Z'''",
 				calendarType: CalendarType.Gregorian
 			});
 			oTimeFormat = DateFormat.getTimeInstance({
@@ -549,7 +550,11 @@ sap.ui.define([
 			case "Edm.DateTimeOffset":
 				// no need to use UI5Date.getInstance as only the UTC timestamp is used
 				oDate = vValue instanceof Date ? vValue : new Date(vValue);
-				sValue = oDateTimeOffsetFormat.format(oDate, true);
+				if (oDate.getMilliseconds() > 0) {
+					sValue = oDateTimeOffsetFormatMs.format(oDate, true);
+				} else {
+					sValue = oDateTimeOffsetFormat.format(oDate, true);
+				}
 				break;
 			case "Edm.Guid":
 				sValue = "guid'" + vValue + "'";
@@ -601,13 +606,13 @@ sap.ui.define([
 				ms : oTimeFormat.parse(sValue, true).getTime()
 			};
 		} else if (sValue.startsWith("datetime'")) { // Edm.DateTime
-			if (sValue.indexOf(".") === -1) {
-				return oDateTimeFormat.parse(sValue, true);
-			} else { // Edm.DateTime with ms
-				return oDateTimeFormatMs.parse(sValue, true);
-			}
+			return sValue.includes(".")
+				? oDateTimeFormatMs.parse(sValue, true)
+				: oDateTimeFormat.parse(sValue, true);
 		} else if (sValue.startsWith("datetimeoffset'")) { // Edm.DateTimeOffset
-			return oDateTimeOffsetFormat.parse(sValue, true);
+			return sValue.includes(".")
+				? oDateTimeOffsetFormatMs.parse(sValue, true)
+				: oDateTimeOffsetFormat.parse(sValue, true);
 		} else if (sValue.startsWith("guid'")) { // Edm.Guid
 			return sValue.slice(5, -1);
 		} else if (sValue === "null") { // null

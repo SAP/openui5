@@ -11,10 +11,11 @@ sap.ui.define([
 	/**
 	 *
 	 * @typedef {sap.ui.mdc.util.PropertyInfo} sap.ui.mdc.filterbar.PropertyInfo
-	 * @property {string} path
-	 *   The identifier of the property
-	 * @property {string} [name]
-	 *   The alternative identifier of the property. Either <code>path</code> or <code>name</code> property can be used. The <code>path</code> is the preferred property.
+	 * @property {string} name
+	 *   Unique, stable key for the property. It must only contain characters allowed for IDs, see {@link sap.ui.core.ID}. Does not have to be an
+	 *   existing attribute in the data model or the technical name of an attribute in the data model
+	 * @property {string} [path]
+	 *   The technical path for a data source property
 	 * @property {string} label
 	 *   The label of the identifier
 	 * @property {string} [tooltip]

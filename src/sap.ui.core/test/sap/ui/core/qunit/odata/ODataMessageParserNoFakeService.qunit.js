@@ -568,15 +568,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~canonicalTarget")
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			sODataTarget, mRequestInfo, bIsTechnical, /*bODataTransition*/ false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 	});
@@ -638,15 +638,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~deepPath/~target")
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			sODataTarget, mRequestInfo, oFixture.isTechnical, /*bODataTransition*/ false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 	});
@@ -699,15 +699,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~canonicalTarget")
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			oFixture.sODataTarget, mRequestInfo, true, oFixture.bODataTransition);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 });
@@ -745,15 +745,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~deepPath/~target")
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			"~target", mRequestInfo, false, /*bODataTransition*/ false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
@@ -815,15 +815,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~deepPath/" + oFixture.target)
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs(oFixture.targetToNormalize)
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs(oFixture.targetToNormalize).returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			oFixture.target, mRequestInfo, false, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 });
@@ -865,14 +865,15 @@ sap.ui.define([
 			.withExactArgs("/~functionTarget/~target", undefined, true).returns("~canonicalTarget");
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs(sDeepPath ? "/~deepPath/~target" : "/~target").returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey").withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			"~target", mRequestInfo, false, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 });
@@ -911,14 +912,15 @@ sap.ui.define([
 			.withExactArgs("/~parsedUrl/~target", undefined, true).returns("~canonicalTarget");
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("/~deepPath/~target").returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey").withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			"~target", mRequestInfo, false, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
@@ -961,15 +963,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~deepPath~target") // collection -> no / between path and target
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			"~target", mRequestInfo, false, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 
@@ -1012,15 +1014,15 @@ sap.ui.define([
 		this.mock(oODataMessageParser._metadata).expects("_getReducedPath")
 			.withExactArgs("~deepPath") // collection -> no / between path and target
 			.returns("~reducedPath");
-		this.mock(ODataUtils).expects("_normalizeKey")
-			.withExactArgs("~canonicalTarget")
-			.returns("~normalizedTarget");
+		const oODataUtilsMock = this.mock(ODataUtils);
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~reducedPath").returns("~normalizedReducedPath");
+		oODataUtilsMock.expects("_normalizeKey").withExactArgs("~canonicalTarget").returns("~normalizedTarget");
 
 		// code under test
 		oTargetInfo = ODataMessageParser.prototype._createTarget.call(oODataMessageParser,
 			/*sTarget*/ undefined, mRequestInfo, true, false);
 
-		assert.strictEqual(oTargetInfo.deepPath, "~reducedPath");
+		assert.strictEqual(oTargetInfo.deepPath, "~normalizedReducedPath");
 		assert.strictEqual(oTargetInfo.target, "~normalizedTarget");
 	});
 

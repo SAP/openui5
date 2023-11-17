@@ -90,15 +90,11 @@ sap.ui.define([
 				 * This event is fired after the user presses the Next button in the Wizard,
 				 * or on <code>nextStep</code> method call from the app developer.
 				 */
-				complete: {
-					parameters: {}
-				},
+				complete: {},
 				/**
 				 * This event is fired on next step activation from the Wizard.
 				 */
-				activate: {
-					parameters: {}
-				}
+				activate: {}
 			},
 			defaultAggregation: "content",
 			aggregations: {

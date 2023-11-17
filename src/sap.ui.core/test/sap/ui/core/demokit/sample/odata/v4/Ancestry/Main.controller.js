@@ -104,7 +104,7 @@ sap.ui.define([
 			this._oAggregation = {
 				expandTo : sExpandTo === "*"
 					? Number.MAX_SAFE_INTEGER
-					: parseInt(sExpandTo || "2"),
+					: parseFloat(sExpandTo || "2"), // Note: parseInt("1E16") === 1
 				hierarchyQualifier : "SADL_V_RS_Ancestry_Hier"
 			};
 			oRowsBinding.setAggregation(this._oAggregation);

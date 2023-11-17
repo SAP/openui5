@@ -158,7 +158,7 @@ sap.ui.define([
 				}
 			});
 			if (vOnInit) {
-				if (typeof vValue === "string") {
+				if (typeof vOnInit === "string") {
 					// determine onInit being a module name prefixed via module or a global name
 					var aResult = /^module\:((?:[_$.\-a-zA-Z0-9]+\/)*[_$.\-a-zA-Z0-9]+)$/.exec(vOnInit);
 					if (aResult && aResult[1]) {

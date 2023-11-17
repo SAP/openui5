@@ -4,6 +4,11 @@
 		<title>Opa tests for Demokit 2.0</title>
 		<meta charset="utf-8">
 		<base href="/resources"/>
+		<style type="text/css">
+			.sapUiOpaComponent {
+				position: relative;
+			}
+		</style>
 		<!-- The namespace sap.ui.demo.cart.test.arrangement.Arrangement is used to run the IFrame or the component without changes to the test code -->
 		<script id="sap-ui-bootstrap"
 				src="/resources/sap-ui-core.js"
@@ -11,8 +16,9 @@
 				data-sap-ui-libs='sap.m'
 				data-sap-ui-animation="false"
 				data-sap-ui-compatVersion="edge"
-				data-sap-ui-theme="sap_horizon";
+				data-sap-ui-theme="sap_horizon"
 				data-sap-ui-resourceroots='{
+					"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/",
 					"sap.ui.documentation.sdk.test": "/test-resources/sap/ui/documentation/sdk/integration",
 					"sap.ui.documentation.sdk.test.arrangement.Arrangement": "/test-resources/sap/ui/documentation/sdk/integration/arrangement/component/Arrangement"
 				}'>
@@ -25,16 +31,26 @@
 		<script>
 			// we want to be able to load our tests asynchronously - pause QUnit until we loaded everything
 			QUnit.config.autostart = false;
+			// Demo Kit in static navigation mode
+			window['sap-ui-documentation-static'] = true;
+			window['sap-ui-documentation-config'] = {
+				apiInfoRoot: '/test-resources/sap/ui/documentation/sdk/integration/mock/docs/api/api-index.json'
+			};
 
 			sap.ui.getCore().attachInit(function () {
 				"use strict";
 
 				sap.ui.require([
 					"sap/ui/documentation/sdk/test/configureOpa",
-					"sap/ui/documentation/sdk/test/AllJourneys"
-				], function () {
+					"sap/ui/documentation/sdk/test/AllJourneys",
+					"sap/ui/documentation/sdk/controller/util/APIInfo",
+
+				], function (configureOpa, AllJourneys, APIInfo) {
 					// configuration has been applied and the tests in the journeys have been loaded - start QUnit
+
+					APIInfo._setRoot('/test-resources/sap/ui/documentation/sdk/integration/mock');
 					QUnit.start();
+
 				});
 			});
 		</script>

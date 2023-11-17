@@ -2317,6 +2317,22 @@ sap.ui.define([
 	 thisLib.mvc = thisLib.mvc || {};
 
 	 /**
+	  * Specifies possible message types.
+	  *
+	  * @enum {string}
+	  * @public
+	  * @name sap.ui.core.MessageType
+	  * @borrows module:sap/ui/core/message/MessageType.Information as Information
+	  * @borrows module:sap/ui/core/message/MessageType.Error as Error
+	  * @borrows module:sap/ui/core/message/MessageType.Warning as Warning
+	  * @borrows module:sap/ui/core/message/MessageType.Success as Success
+	  * @borrows module:sap/ui/core/message/MessageType.None as None
+	  */
+	 thisLib.MessageType = MessageType;
+
+	 DataType.registerEnum("sap.ui.core.MessageType", thisLib.MessageType);
+
+	 /**
 	  * Specifies possible view types.
 	  *
 	  * @enum {string}

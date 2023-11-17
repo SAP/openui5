@@ -175,27 +175,21 @@ sap.ui.define([
 
 	QUnit.test("determineType with Gregorian calendar", function (assert) {
 		this.oStubCalendarType.returns(CalendarType.Gregorian);
-		const spy = this.spy(sap.ui.core.date, 'Gregorian');
 		const oUniversalDate = new UniversalDate();
-		assert.ok(1, spy.callCount, "sap.ui.core.date.Gregorian must be instantiated just ones");
 		assert.ok(oUniversalDate instanceof Gregorian, "Date object must be instance of Gregorian");
 		assert.equal(oUniversalDate.getCalendarType(), CalendarType.Gregorian, "Universal date must report correct calendarType");
 	});
 
 	QUnit.test("determineType with Islamic calendar", function (assert) {
 		this.oStubCalendarType.returns(CalendarType.Islamic);
-		const spy = this.spy(sap.ui.core.date, 'Islamic');
 		const oUniversalDate = new UniversalDate();
-		assert.ok(1, spy.callCount, "sap.ui.core.date.Islamic must be instantiated just ones");
 		assert.ok(oUniversalDate instanceof Islamic, "Date object must be instance of Islamic");
 		assert.equal(oUniversalDate.getCalendarType(), CalendarType.Islamic, "Universal date must report correct calendarType");
 	});
 
 	QUnit.test("determineType with Japanese calendar", function (assert) {
 		this.oStubCalendarType.returns(CalendarType.Japanese);
-		const spy = this.spy(sap.ui.core.date, 'Japanese');
 		const oUniversalDate = new UniversalDate();
-		assert.ok(1, spy.callCount, "sap.ui.core.date.Japanese must be instantiated just ones");
 		assert.ok(oUniversalDate instanceof Japanese, "Date object must be instance of Japanese");
 		assert.equal(oUniversalDate.getCalendarType(), CalendarType.Japanese, "Universal date must report correct calendarType");
 	});
