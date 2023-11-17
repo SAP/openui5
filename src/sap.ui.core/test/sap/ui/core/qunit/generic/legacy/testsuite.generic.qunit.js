@@ -29,6 +29,9 @@ sap.ui.define(function() {
 			ControlMemoryLeaks: {
 				title: "QUnit Page for memory leak detection in UI5 controls"
 			},
+			/**
+			 * @deprecated As of version 1.120
+			 */
 			ControlRenderer: {
 				title: "QUnit Page for memory leak detection in UI5 controls"
 			},
