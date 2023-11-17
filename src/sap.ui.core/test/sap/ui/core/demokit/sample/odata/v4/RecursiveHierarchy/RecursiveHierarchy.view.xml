@@ -184,4 +184,10 @@
 			<m:StandardListItem title="{ID} ({Name})" type="Active" />
 		</m:SelectDialog>
 	</mvc:dependents>
+
+	<m:FormattedText htmlText="&lt;em>Available URL parameters:&lt;/em>
+		&lt;ul>
+			&lt;li> &lt;code>expandTo&lt;/code> Either * for 'expand all' or a number; default 3
+			&lt;li> &lt;code>visibleRowCount&lt;/code> A number; default 5
+			&lt;li> &lt;code>TreeTable&lt;/code> 'Y' for yes, 'N' for no; default both tables"/>
 </mvc:View>
