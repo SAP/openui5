@@ -62,6 +62,8 @@ sap.ui.define([
 				 * The properties need to be separated by commas and enclosed by "*" characters. (<code>"*Property1,Property2*"</code>)
 				 *
 				 * If it is empty, no suggestion is available.
+				 *
+				 * @deprecated since 1.120.2 - replaced in future version by {@link sap.ui.mdc.ValueHelpDelegate.isSearchSupported isSearchSupported}
 				 */
 				filterFields: {
 					type: "string",
