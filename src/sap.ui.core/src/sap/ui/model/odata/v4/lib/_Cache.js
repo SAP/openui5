@@ -1947,7 +1947,11 @@ sap.ui.define([
 			this.iLimit += 1; // this doesn't change Infinity
 		}
 		_Helper.addToCount(this.mChangeListeners, sPath, aElements, 1);
-		aElements.splice(iIndex, 0, oElement);
+		if (iIndex >= aElements.length) { // Note: #splice ignores iIndex then!
+			aElements[iIndex] = oElement;
+		} else {
+			aElements.splice(iIndex, 0, oElement);
+		}
 		aElements.$byPredicate[_Helper.getPrivateAnnotation(oElement, "predicate")] = oElement;
 	};
 
