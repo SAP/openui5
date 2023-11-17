@@ -205,12 +205,12 @@ sap.ui.define([
 					firstDayOfWeek: 1,
 					appointments: [
 						new CalendarAppointment({
-							startDate: o2Aug2018_00_00,
-							endDate: o2Aug2018_18_00
-						}),
-						new CalendarAppointment({
 							startDate: UI5Date.getInstance(i30Jul2018_00_00_UTC_Timestamp),
 							endDate: o2Aug2018_00_00
+						}),
+						new CalendarAppointment({
+							startDate: o2Aug2018_00_00,
+							endDate: o2Aug2018_18_00
 						}),
 						new CalendarAppointment({
 							startDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp),
@@ -249,23 +249,38 @@ sap.ui.define([
 
 		QUnit.test("Appointment sorting", function(assert) {
 			// arrange
-			var aAppointmentNodes;
-			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp),
-				endDate: UI5Date.getInstance(i9Sep2018_00_00_UTC_Timestamp)
-			}));
-			this.oSPC.addAppointment(new CalendarAppointment({
-				startDate: o2Aug2018_00_00,
-				endDate: o2Aug2018_18_00
-			}));
+			this.oSPC.destroyAppointments();
+			var aCalculatedAppointments,
+				aSortedAppointments = [
+					new CalendarAppointment("sorting-0", {
+						startDate: UI5Date.getInstance(2018, 6, 30),
+						endDate: UI5Date.getInstance(2018, 7, 1)
+					}),
+					new CalendarAppointment("sorting-1", {
+						startDate: UI5Date.getInstance(2018, 7, 1, 10, 30),
+						endDate: UI5Date.getInstance(2018, 7, 1, 14, 30)
+					}),
+					new CalendarAppointment("sorting-2", {
+						startDate: UI5Date.getInstance(2018, 7, 1, 13, 45),
+						endDate: UI5Date.getInstance(2018, 7, 1, 16)
+					}),
+					new CalendarAppointment("sorting-3", {
+						startDate: UI5Date.getInstance(2018, 7, 1, 14),
+						endDate: UI5Date.getInstance(2018, 7, 1, 15, 30)
+					})
+				];
+
+			// add appointments out of order
+			this.oSPC.addAppointment(aSortedAppointments[3]);
+			this.oSPC.addAppointment(aSortedAppointments[1]);
+			this.oSPC.addAppointment(aSortedAppointments[2]);
+			this.oSPC.addAppointment(aSortedAppointments[0]);
 
 			// act
-			aAppointmentNodes = this.oSPC._calculateAppointmentsNodes(this.oSPC.getStartDate());
+			aCalculatedAppointments = this.oSPC._calculateAppointmentsNodes(this.oSPC.getStartDate()).map((node) => node.data);
 
 			// assert
-			assert.ok(aAppointmentNodes[0].start.valueOf() <= aAppointmentNodes[1].start.valueOf(), "appointments are sorted");
-			assert.ok(aAppointmentNodes[1].start.valueOf() <= aAppointmentNodes[2].start.valueOf(), "appointments are sorted");
-			assert.ok(aAppointmentNodes[2].start.valueOf() <= aAppointmentNodes[3].start.valueOf(), "appointments are sorted");
+			assert.deepEqual(aCalculatedAppointments, aSortedAppointments, "appointments are correctly ordered by start date");
 		});
 
 		QUnit.test("Appointment levels", function(assert) {
