@@ -9,7 +9,7 @@ sap.ui.define([
 		TableDelegate.updateBindingInfo.apply(this, arguments);
 		oBindingInfo.parameters.$count = false;
 		oBindingInfo.parameters.$$aggregation = {
-			expandTo: 999,
+			expandTo: 2,
 			hierarchyQualifier: 'OrgChart'
 		};
 	};

@@ -15,7 +15,7 @@ Contained in: src/sap.m/src/sap/m/_thirdparty/purify.js
 
 Library: sap.ui.codeeditor:
 
-Component: Ace (Ajax.org Cloud9 Editor), version: 1.4.13
+Component: Ace (Ajax.org Cloud9 Editor), version: 1.31.1
 Copyright: 2010, Ajax.org B.V.
 License: BSD-3-Clause
 License Text: https://github.com/SAP/openui5/blob/master/LICENSES/BSD-3-Clause.txt

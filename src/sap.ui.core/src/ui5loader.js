@@ -1008,7 +1008,8 @@
 		 */
 		dependsOn(oDependantModule) {
 			const dependant = oDependantModule.name,
-				visited = Object.create(null);
+				visited = Object.create(null),
+				stack = log.isLoggable() ? [this.name, dependant] : undefined;
 
 			// log.debug("checking for a cycle between", this.name, "and", dependant);
 			function visit(mod) {
@@ -1016,13 +1017,22 @@
 					// log.debug("  ", mod);
 					visited[mod] = true;
 					const pending = mModules[mod]?.pending;
-					return Array.isArray(pending) &&
-						(pending.indexOf(dependant) >= 0 || pending.some(visit));
+					if (Array.isArray(pending) &&
+						(pending.includes(dependant) || pending.some(visit)) ) {
+						stack?.push(mod);
+						return true;
+					}
 				}
 				return false;
 			}
 
-			return this.name === dependant || visit(this.name);
+			const result = this.name === dependant || visit(this.name);
+			if ( result && stack ) {
+				log.error("Dependency cycle detected: ",
+					stack.reverse().map((entry, idx) => `${"".padEnd(idx)} -> ${entry}`).join("\n").slice(4)
+				);
+			}
+			return result;
 		}
 
 		/**
