@@ -1029,7 +1029,7 @@ sap.ui.define([
 		}
 
 		return new Promise(function(resolve, reject) {
-			 var sViewClass = getViewClassName(mParameters);
+			 var sViewClass = View._getViewClassName(mParameters);
 			 sap.ui.require([sViewClass], function(ViewClass){
 				 resolve(ViewClass);
 			 }, reject);
@@ -1131,17 +1131,25 @@ sap.ui.define([
 			}
 		}
 
-		var sViewClass = getViewClassName(oView);
+		var sViewClass = View._getViewClassName(oView);
 		view = createView(sViewClass, oView);
 		return view;
 	}
 
-	function getViewClassName(oViewSettings) {
+	/**
+	 * Extract the class name from the given view settings object
+	 *
+	 * @param {object} oViewSettings Settings object as given to the view factory
+	 * @param {boolean} [bSkipLog=false] Whether to skip the logging
+	 * @returns {string|undefined} Name of the view class (in sap.ui.define syntax)
+	 * @private
+	 */
+	View._getViewClassName = function(oViewSettings, bSkipLog) {
 		var sViewClass = View._getModuleName(oViewSettings);
 
 		// view creation
 		if (sViewClass) {
-			if (oViewSettings.type) {
+			if (oViewSettings.type && !bSkipLog) {
 				Log.error("When using the view factory, the 'type' setting must be omitted for typed views. When embedding typed views in XML, don't use the <JSView> tag, use the <View> tag instead.");
 			}
 			return sViewClass;
@@ -1160,7 +1168,7 @@ sap.ui.define([
 		}
 
 		return sViewClass;
-	}
+	};
 
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
