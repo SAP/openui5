@@ -234,5 +234,43 @@
         ]
       }
     ]
+  },
+  "1.114.12": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "3350956893a83c66c4f6977e9b3ba6aeba0c1f67",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.odata4analytics.FilterExpression#renderUI5FilterArray: fix sorting of filters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500009851762023"
+          }
+        ]
+      },
+      {
+        "id": "effad56638cc990287c4ed0a4aedff2c4b6635d0",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      },
+      {
+        "id": "3dc0de76fdcc71a0725194536b85e355e8058dc4",
+        "type": "FIX",
+        "text": " Stabilize QUnit test for BeaconRequest",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370118287"
+          }
+        ]
+      }
+    ]
   }
 }

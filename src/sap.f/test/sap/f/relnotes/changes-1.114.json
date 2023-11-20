@@ -99,5 +99,21 @@
         ]
       }
     ]
+  },
+  "1.114.12": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "effad56638cc990287c4ed0a4aedff2c4b6635d0",
+        "type": "FIX",
+        "text": " core/Shortcut: trigger \"blur\" within a timeout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007245922023"
+          }
+        ]
+      }
+    ]
   }
 }
