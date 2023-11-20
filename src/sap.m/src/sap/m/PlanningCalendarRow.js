@@ -214,10 +214,10 @@ sap.ui.define([
 			/**
 			 * Holds the header content of the row.
 			 *
-			 * <b>Note:</b> If the <code>headerContent</code> aggregation is added, then the set icon, description, title
-			 * and tooltip are ignored.
+			 * <b>Note:</b> <li>If the <code>headerContent</code> aggregation is added, then the set icon, description, title
+			 * and tooltip are ignored.</li>
+			 * <li>The application developer has to ensure, that the size of the content conforms with the size of the header.</li>
 			 * @since 1.67
-			 * @experimental Since 1.67, providing only limited functionality. Also, the API might be changed in the future.
 			 */
 			headerContent : {type : "sap.ui.core.Control", multiple : true, singularName : "headerContent",
 				forwarding: {

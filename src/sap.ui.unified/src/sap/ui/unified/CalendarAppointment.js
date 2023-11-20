@@ -118,7 +118,6 @@ sap.ui.define([
 			 * </ul>
 			 *
 			 * @since 1.93.0
-			 * @experimental Since 1.93, providing only limited functionality. Also, the API might be changed in the future.
 			 */
 			customContent: { type: "sap.ui.core.Control", multiple: true }
 		}
