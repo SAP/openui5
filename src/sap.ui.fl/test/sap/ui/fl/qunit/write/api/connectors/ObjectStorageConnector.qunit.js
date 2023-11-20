@@ -283,6 +283,57 @@ sap.ui.define([
 					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
 				});
 			});
+
+			QUnit.test("when condense is called with a single update", function(assert) {
+				var oNewChange1 = {
+					creation: "2022-05-05T12:57:32.229Z",
+					fileName: "oChange5",
+					fileType: "change",
+					reference: "sap.ui.fl.test",
+					layer: Layer.CUSTOMER,
+					selector: {
+						id: "selector1"
+					},
+					changeType: "type1"
+				};
+				var aFlexObjects = [
+					oNewChange1
+				].map(function(oChangeJson) {
+					return FlexObjectFactory.createFromFileContent(oChangeJson);
+				});
+				var mPropertyBag = {
+					layer: Layer.CUSTOMER,
+					reference: "sap.ui.fl.test",
+					allChanges: aFlexObjects,
+					condensedChanges: aFlexObjects,
+					flexObjects: {
+						namespace: "",
+						layer: "",
+						update: {
+							change: [
+								{
+									oChange5: oNewChange1
+								}
+							]
+						}
+					}
+				};
+
+				return oConnector.condense(mPropertyBag)
+
+				.then(function() {
+					return oConnector.loadFlexData({reference: "sap.ui.fl.test", version: "0"});
+				})
+				.then(function(aResponses) {
+					var aFlexObjectsFileContent = aResponses[0].changes;
+					assert.strictEqual(aFlexObjectsFileContent.length, 1, "there is one more change in the storage as draft");
+
+					var aIds = aFlexObjectsFileContent.map(function(oFlexObjectFileContent) {
+						return oFlexObjectFileContent.fileName;
+					});
+					assert.ok(aIds.indexOf("oChange5") > -1, "the change was added");
+				});
+			});
 		});
 
 		QUnit.module(`Given some changes in a ${sStorage}`, {

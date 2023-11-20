@@ -362,7 +362,9 @@ sap.ui.define([
 			if (
 				mFeatures.isVersioningEnabled
 				&& mPropertyBag.layer === Layer.CUSTOMER
-				&& Object.keys(oCondenseInformation.create).length !== 0
+				&& ((oCondenseInformation.create && Object.keys(oCondenseInformation.create).length !== 0)
+				|| (oCondenseInformation.update && Object.keys(oCondenseInformation.update).length !== 0)
+				|| (oCondenseInformation.reorder && Object.keys(oCondenseInformation.reorder).length !== 0))
 			) {
 				// the reference for the versions have to be determined by a flex object
 				sDraftVersionId = await this.versions.getDraftId.call(this, mPropertyBag);
