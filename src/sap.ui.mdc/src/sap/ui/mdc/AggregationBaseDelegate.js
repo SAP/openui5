@@ -92,7 +92,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
 	 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 	 *
-	 * @public
+	 * @private
 	 */
 	AggregationBaseDelegate.validateState = function(oControl, oState) {
 
@@ -125,7 +125,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * //TODO: available validation states? Only FilterBar relevant?
 	 *
 	 * @abstract
-	 * @public
+	 * @private
 	 */
 	AggregationBaseDelegate.determineValidationState = function(oControl) {
 		return -1;
@@ -138,7 +138,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 	 * @param {object} [mValidation] Object Describing the validation result
 	 *
 	 * @abstract
-	 * @public
+	 * @private
 	 */
 	AggregationBaseDelegate.visualizeValidationState = function(oControl, mValidation) {
 	};
