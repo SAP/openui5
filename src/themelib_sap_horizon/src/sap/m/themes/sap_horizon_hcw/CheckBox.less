@@ -177,7 +177,8 @@
 		padding-left: 2.0625rem; // to have right gap between checkbox and label
 	}
 
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before,
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus:before {
 		left: -0.25rem; /* more is not possible as this would cut off the focus border */
 	}
 }
