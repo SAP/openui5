@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/security/encodeXML",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/format/DateFormat",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/rta/Utils"
 ], function(
+	encodeXML,
 	GroupHeaderListItem,
 	ManagedObject,
 	DateFormat,
@@ -109,8 +111,11 @@ sap.ui.define([
 		if (sType === Version.Type.Draft) {
 			return this.oTextResources.getText("TIT_DRAFT");
 		}
-
-		return sTitle || this.oTextResources.getText("TIT_VERSION_1");
+		// Version title is a string and should be displayed exactly the same as what the keyuser entered
+		// The back end do not encoded it but the FeedListItem supports text with html formatted tags
+		// So it need to be encoded before passing to control to make sure it is displayed correctly
+		// In addition, it also helps to avoid XSS security thread
+		return sTitle ? encodeXML(sTitle) : this.oTextResources.getText("TIT_VERSION_1");
 	}
 
 	function formatVersionTimeStamp(sActivatedAtTimeStamp, sImportedAtTimeStamp) {

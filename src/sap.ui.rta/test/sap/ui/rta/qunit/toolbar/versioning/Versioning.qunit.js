@@ -35,6 +35,8 @@ sap.ui.define([
 	var {MessageType} = coreLibrary;
 	var DRAFT_ACCENT_COLOR = "sapUiRtaDraftVersionAccent";
 	var ACTIVE_ACCENT_COLOR = "sapUiRtaActiveVersionAccent";
+	var VERSION_TITLE = "Title_with_special_chars &<>\"'";
+	var VERSION_TITLE_ENCODED = "Title_with_special_chars&#x20;&amp;&lt;&gt;&quot;&#x27;";
 
 	async function initializeToolbar() {
 		var aVersions = [{
@@ -43,7 +45,7 @@ sap.ui.define([
 			isPublished: false
 		}, {
 			version: "1",
-			title: "Version Title",
+			title: VERSION_TITLE,
 			type: Version.Type.Active,
 			isPublished: true,
 			importedAt: "2022-05-09 15:00:00.000"
@@ -149,7 +151,7 @@ sap.ui.define([
 				var oOriginalAppList = this.oToolbar.getControl("versionHistoryDialog--originalVersionList");
 
 				assert.strictEqual(oVersionList.getItems()[0].getText(), oTextResources.getText("TIT_DRAFT"), "the draft text is shown");
-				assert.strictEqual(oVersionList.getItems()[1].getText(), "Version Title", "the version name is shown");
+				assert.strictEqual(oVersionList.getItems()[1].getText(), VERSION_TITLE_ENCODED, "the version name is shown");
 				assert.strictEqual(oVersionList.getItems()[2].getText(), oTextResources.getText("TIT_VERSION_1"), "the fallback version name is shown");
 				assert.strictEqual(oVersionList.getItems()[0].getHighlight(), MessageType.Warning, "the correct highlighting is shown");
 				assert.strictEqual(oVersionList.getItems()[1].getHighlight(), MessageType.Success, "the correct highlighting is shown");
@@ -298,7 +300,7 @@ sap.ui.define([
 		QUnit.test("for an active version with a title", function(assert) {
 			this.oToolbar.getModel("versions").setProperty("/displayedVersion", "1");
 			checkFormatting.call(this, assert, {
-				versionText: "Version Title",
+				versionText: VERSION_TITLE,
 				bActiveStyleClass: true,
 				bDraft: false,
 				bPublish: false
