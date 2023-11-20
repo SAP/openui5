@@ -89,5 +89,21 @@
         ]
       }
     ]
+  },
+  "1.117.4": {
+    "date": "November 2023",
+    "notes": [
+      {
+        "id": "57133d28f738d723f86acfd7ddda6ea76627eb8d",
+        "type": "FIX",
+        "text": " Field: not possible to enter multiple lines",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2370128724"
+          }
+        ]
+      }
+    ]
   }
 }
