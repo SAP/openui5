@@ -5,13 +5,13 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/RenderManager",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/core/UIComponent",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/qunit/utils/nextUIUpdate"
-], function(ComponentContainer, Control, Element, HTML, RenderManager, UIArea, UIComponent, VerticalLayout, TestButton, jQuery, nextUIUpdate) {
+], function(ComponentContainer, Control, Element, HTML, RenderManager, UIAreaRegistry, UIComponent, VerticalLayout, TestButton, jQuery, nextUIUpdate) {
 	"use strict";
 
 	var normalize = (function() {
@@ -266,7 +266,7 @@ sap.ui.define([
 
 	QUnit.test("content property + preferDOM, initial rendering", async function(assert) {
 		//Cleanup UIArea because placeAt only adds new control to UIArea
-		UIArea.registry.get("uiAreaA").removeAllContent();
+		UIAreaRegistry.get("uiAreaA").removeAllContent();
 		new VerticalLayout({
 			content: [
 				new HTML("html3", {
@@ -406,7 +406,7 @@ sap.ui.define([
 		var oldDomRef = jQuery("#html3")[0];
 
 		// remove from control tree and rerender
-		UIArea.registry.get("uiAreaA").removeAllContent();
+		UIAreaRegistry.get("uiAreaA").removeAllContent();
 		await nextUIUpdate();
 
 		// check that DOM still exists
@@ -488,7 +488,7 @@ sap.ui.define([
 	// multiple roots test
 	QUnit.test("content property, multiple roots", async function(assert) {
 		// Cleanup UIArea because placeAt only adds new control to UIArea
-		UIArea.registry.get("uiAreaA").removeAllContent();
+		UIAreaRegistry.get("uiAreaA").removeAllContent();
 		new HTML("html6", {
 			content : "<div style='width:200px;height:64px;background-color:rgb(0, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 0, 0);'></div><div style='width:200px;height:64px;background-color:rgb(255, 255, 0);'></div>"
 		}).placeAt("uiAreaA");

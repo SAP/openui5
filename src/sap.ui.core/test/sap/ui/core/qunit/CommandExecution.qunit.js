@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/CommandExecution",
 	"sap/ui/core/Component",
+	"sap/ui/core/ComponentRegistry",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Control",
 	"sap/ui/core/Shortcut",
@@ -16,6 +17,7 @@ sap.ui.define([
 	ManagedObject,
 	CommandExecution,
 	Component,
+	ComponentRegistry,
 	ComponentContainer,
 	Control,
 	Shortcut,
@@ -179,7 +181,7 @@ sap.ui.define([
 				}
 			},
 			getExtensionComponent: function() {
-				return Component.registry.filter(function(oComponent) {
+				return ComponentRegistry.filter(function(oComponent) {
 					return oComponent.getManifestEntry("/sap.app/id") === "my.command.constructor";
 				})[0] || this;
 			}

@@ -6,12 +6,13 @@ sap.ui.define([
 	"sap/ui/core/Element",
 	"sap/ui/core/HTML",
 	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/qunit/utils/nextUIUpdate",
 	"sap/ui/testlib/TestButton",
 	"sap/ui/test/actions/Press",
 	"sap/ui/thirdparty/jquery"
-], function(Log, Control, Element, HTML, UIArea, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
+], function(Log, Control, Element, HTML, UIArea, UIAreaRegistry, createAndAppendDiv, nextUIUpdate, TestButton, Press, jQuery) {
 	"use strict";
 
 	createAndAppendDiv("uiArea1");
@@ -60,7 +61,7 @@ sap.ui.define([
 	 * UIArea must be empty after the rendering
 	 */
 	QUnit.test("removeAllContent", async function(assert) {
-		UIArea.registry.get("uiArea1").removeAllContent();
+		UIAreaRegistry.get("uiArea1").removeAllContent();
 		await nextUIUpdate();
 		assert.equal(jQuery("#uiArea1").children().length, 0, "no more content");
 		assert.ok(Element.getElementById("text1"), "remove must not destroy child 1");
@@ -87,7 +88,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(1)).text(), "Text 1", "first span shows first text");
 		assert.equal(jQuery($currentDom.get(2)).text(), "Text 2", "second span shows second text");
 
-		UIArea.registry.get("uiArea2").removeAllContent();
+		UIAreaRegistry.get("uiArea2").removeAllContent();
 		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 1, "initial DOM still exists in UIArea");
@@ -127,7 +128,7 @@ sap.ui.define([
 		assert.equal(jQuery($currentDom.get(4)).text(), "After", "last span shows dynamically added end");
 
 		// now remove controls, check that the remainigs are as expected
-		UIArea.registry.get("uiArea2").removeAllContent();
+		UIAreaRegistry.get("uiArea2").removeAllContent();
 		await nextUIUpdate();
 		$currentDom = jQuery("#uiArea2").children();
 		assert.equal($currentDom.length, 3, "initial DOM still exists in UIArea");
@@ -180,7 +181,7 @@ sap.ui.define([
 		// ---- aspect 3: remove all content must not delete the preserved dOM ----
 
 		// remove content and rerender
-		UIArea.registry.get("uiArea1").removeAllContent();
+		UIAreaRegistry.get("uiArea1").removeAllContent();
 		await nextUIUpdate();
 
 		// check that UIArea is empoty, but preserved content still exists
@@ -296,7 +297,7 @@ sap.ui.define([
 		beforeEach: function() {
 			new Control().placeAt("uiArea1").destroy();
 			var oControl = new Control();
-			UIArea.registry.get("uiArea1").addDependent(oControl);
+			UIAreaRegistry.get("uiArea1").addDependent(oControl);
 			this.uiArea = oControl.getUIArea();
 			this.uiArea.addDependent(new Control());
 			this.spy(this.uiArea, "invalidate");
