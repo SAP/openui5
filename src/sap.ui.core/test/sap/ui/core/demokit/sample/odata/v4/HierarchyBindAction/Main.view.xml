@@ -64,11 +64,6 @@
 		</Column>
 		<Column width="4em">
 			<template>
-				<m:Button id="cut" icon="sap-icon://scissors" press=".onCut" tooltip="Cut"/>
-			</template>
-		</Column>
-		<Column width="4em">
-			<template>
 				<m:Button id="move" icon="sap-icon://move" press=".onMove" tooltip="Move"/>
 			</template>
 		</Column>

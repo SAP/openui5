@@ -43,22 +43,6 @@ sap.ui.define([
 			}
 		},
 
-		onCut : function (oEvent) {
-			try {
-				const oNode = oEvent.getSource().getBindingContext();
-				oNode.delete("noSubmit");
-				MessageBox.confirm("Restore again (undo cut)", {
-					actions : MessageBox.Action.OK,
-					emphasizedAction : MessageBox.Action.OK,
-					onClose : function () {
-						oNode.resetChanges();
-					}
-				});
-			} catch (oError) {
-				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
-			}
-		},
-
 		onDelete : async function (oEvent) {
 			try {
 				await oEvent.getSource().getBindingContext().delete();
@@ -94,6 +78,8 @@ sap.ui.define([
 
 			this.byId("selectHierarchy").getBinding("items")
 				.attachEventOnce("dataReceived", this.onChangeHierarchy.bind(this));
+
+			this.initMessagePopover("table");
 		},
 
 		onMakeRoot : async function (oEvent) {
@@ -126,6 +112,10 @@ sap.ui.define([
 				const sParentId = oEvent.getParameter("selectedItem").getTitle();
 				const oParent = this.oNode.getBinding().getAllCurrentContexts()
 					.find((oNode) => oNode.getProperty("Id") === sParentId);
+				if (!oParent) {
+					throw new Error(`Parent ${sParentId} not yet loaded`);
+				}
+
 				await this.oNode.move({parent : oParent});
 			} catch (oError) {
 				MessageBox.alert(oError.message, {icon : MessageBox.Icon.ERROR, title : "Error"});
