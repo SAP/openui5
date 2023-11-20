@@ -3,9 +3,9 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/DeclarativeSupport",
 	"sap/ui/core/Element",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/model/json/JSONModel"
-], function(jQuery, DeclarativeSupport, Element, UIArea, JSONModel) {
+], function(jQuery, DeclarativeSupport, Element, UIAreaRegistry, JSONModel) {
 	"use strict";
 	QUnit.config.reorder = false;
 	QUnit.module("Basic");
@@ -144,7 +144,7 @@ sap.ui.define([
 
 	QUnit.test("UIArea", function(assert) {
 		assert.expect(7);
-		var oUIArea = UIArea.registry.get("uiAreaSimple");
+		var oUIArea = UIAreaRegistry.get("uiAreaSimple");
 		assert.equal(!!oUIArea, false, 'No control with id "uiAreaSimple" found.');
 
 		var oButton1 = Element.getElementById("uiAreaSimpleButton2");
@@ -155,7 +155,7 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#ui-area-simple"));
 
-		var oUIArea = UIArea.registry.get("uiAreaSimple");
+		var oUIArea = UIAreaRegistry.get("uiAreaSimple");
 		assert.ok(!!oUIArea, 'UIArea with id "uiAreaSimple" found.');
 
 		var oButton1 = Element.getElementById("uiAreaSimpleButton2");
@@ -170,7 +170,7 @@ sap.ui.define([
 
 	QUnit.test("Complex Declaration", function(assert) {
 		assert.expect(8);
-		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
+		var oUIArea = UIAreaRegistry.get("complexDeclarationUIArea");
 		assert.equal(!!oUIArea, false, 'No UIArea with id "complexDeclarationUIArea" found.');
 
 		var oPanel1 = Element.getElementById("complexDeclarationPanel1");
@@ -188,7 +188,7 @@ sap.ui.define([
 
 		DeclarativeSupport.compile(jQuery("#complex-declaration"));
 
-		var oUIArea = UIArea.registry.get("complexDeclarationUIArea");
+		var oUIArea = UIAreaRegistry.get("complexDeclarationUIArea");
 		assert.ok(!!oUIArea, 'UIArea with id "complexDeclarationUIArea" found.');
 
 		var oPanel1 = Element.getElementById("complexDeclarationPanel1");

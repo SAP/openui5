@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/core/Element',
 	'sap/ui/core/ElementMetadata',
 	'sap/ui/core/UIArea',
+	'sap/ui/core/UIAreaRegistry',
 	'sap/ui/core/mvc/View',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/model/Binding',
@@ -40,6 +41,7 @@ sap.ui.define([
 	Element,
 	ElementMetadata,
 	UIArea,
+	UIAreaRegistry,
 	View,
 	XMLView,
 	Binding,
@@ -1243,7 +1245,7 @@ sap.ui.define([
 							mViews = oViewSerializer.serializeToXML();
 						}
 					} else {
-						var oUIArea = UIArea.registry.get(oEvent.getParameter("controlID"));
+						var oUIArea = UIAreaRegistry.get(oEvent.getParameter("controlID"));
 						var aContent = oUIArea.getContent();
 						for ( var i = 0; i < aContent.length; i++) {
 							oView.addContent(aContent[i]);
@@ -1407,7 +1409,7 @@ sap.ui.define([
 				return mElement;
 			}
 
-			each(UIArea.registry.all(), function(iIndex, oUIArea) {
+			each(UIAreaRegistry.all(), function(iIndex, oUIArea) {
 				var mElement = serializeElement(oUIArea);
 				aControlTree.push(mElement);
 			});
@@ -1476,7 +1478,7 @@ sap.ui.define([
 
 			var oControl = Element.getElementById(sId);
 
-			if (!oControl && UIArea.registry.get(sId)) {
+			if (!oControl && UIAreaRegistry.get(sId)) {
 
 				aControlProps.push({
 					control: "sap.ui.core.UIArea",

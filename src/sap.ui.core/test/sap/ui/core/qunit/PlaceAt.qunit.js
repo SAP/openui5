@@ -5,9 +5,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/Element",
 	"sap/ui/core/StaticArea",
-	"sap/ui/core/UIArea",
+	"sap/ui/core/UIAreaRegistry",
 	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Panel, Button, oCore, Element, StaticArea, UIArea, createAndAppendDiv) {
+], function(Panel, Button, oCore, Element, StaticArea, UIAreaRegistry, createAndAppendDiv) {
 	"use strict";
 
 	createAndAppendDiv(["uiArea1", "uiArea2", "uiArea3", "uiArea4"]);
@@ -34,7 +34,7 @@ sap.ui.define([
 				oControl.placeAt(oContainerRef);
 			}
 
-			var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.getElementById(sContainerId);
+			var oCont = bIsUiArea ? UIAreaRegistry.get(sContainerId) : Element.getElementById(sContainerId);
 			return [oControl.getId(), oCont];
 		}
 
@@ -57,7 +57,7 @@ sap.ui.define([
 	QUnit.module("sap.ui.core.Control.placeAt");
 
 	QUnit.test("Deferred call", function(assert) {
-		doCheckPlaceAtResult(assert, ["myPanel", UIArea.registry.get("uiArea1")], 1, 0, "deferred call");
+		doCheckPlaceAtResult(assert, ["myPanel", UIAreaRegistry.get("uiArea1")], 1, 0, "deferred call");
 	});
 
 	QUnit.test("UIArea via ID", function(assert) {
@@ -105,7 +105,7 @@ sap.ui.define([
 			function setRoot() {
 				var oControl = new Button();
 				oCore.setRoot(oContainerRef, oControl);
-				var oCont = bIsUiArea ? UIArea.registry.get(sContainerId) : Element.getElementById(sContainerId);
+				var oCont = bIsUiArea ? UIAreaRegistry.get(sContainerId) : Element.getElementById(sContainerId);
 				return [oControl.getId(), oCont];
 			}
 
@@ -118,7 +118,7 @@ sap.ui.define([
 		QUnit.module("sap.ui.core.Core.setRoot");
 
 		QUnit.test("Deferred call", function(assert) {
-			doCheckSetRootResult(assert, ["myPanel2", UIArea.registry.get("uiArea3")]);
+			doCheckSetRootResult(assert, ["myPanel2", UIAreaRegistry.get("uiArea3")]);
 		});
 
 		QUnit.test("UIArea via ID", function(assert) {

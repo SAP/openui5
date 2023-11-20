@@ -3,10 +3,11 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/Fragment',
 	'sap/ui/core/Element',
+	'sap/ui/core/ElementRegistry',
 	'sap/ui/core/mvc/XMLView',
 	'sap/ui/core/mvc/Controller',
 	'sap/base/Log'
-], function(Component, Fragment, Element, XMLView, Controller, Log) {
+], function(Component, Fragment, Element, ElementRegistry, XMLView, Controller, Log) {
 	"use strict";
 
 	QUnit.module("Controller.create API");
@@ -70,7 +71,7 @@ sap.ui.define([
 
 	// helper function to check if a view fully destroys itself
 	function checkForDanglingControls(assert, oView) {
-		var aDangling = Element.registry.filter(function(o) {
+		var aDangling = ElementRegistry.filter(function(o) {
 			return o.getId().startsWith(oView.getId());
 		});
 

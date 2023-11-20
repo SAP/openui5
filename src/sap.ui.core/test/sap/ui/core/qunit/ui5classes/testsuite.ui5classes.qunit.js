@@ -54,6 +54,9 @@ sap.ui.define(function() {
 			ManagedObjectRegistry: {
 				title: "sap.ui.base.ManagedObjectRegistry"
 			},
+			ManagedObjectRegistry_legacyAPIs: {
+				title: "sap.ui.base.ManagedObjectRegistry_legacyAPIs"
+			},
 			ManagedObjectMetadata: {
 				title: "sap.ui.base.ManagedObjectMetadata",
 				sinon: {

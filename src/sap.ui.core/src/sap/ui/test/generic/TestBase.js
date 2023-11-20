@@ -7,9 +7,9 @@ sap.ui.define([
 	"sap/ui/base/Object",
 	"sap/ui/test/generic/Utils",
 	"sap/ui/dom/includeStylesheet",
-	"sap/ui/core/Element",
+	"sap/ui/core/ElementRegistry",
 	"require"
-], function(BaseObject, Utils, includeStylesheet, Element, require) {
+], function(BaseObject, Utils, includeStylesheet, ElementRegistry, require) {
 	"use strict";
 
 	var globalSetOfUndestroyableIDs = new Set();
@@ -130,7 +130,7 @@ sap.ui.define([
 			}).then(function(aClassInfo) {
 				QUnit.module(this.getMetadata().getName() + " Tests - " + this._sLibName, {
 					afterEach: function(assert) {
-						Element.registry.forEach(function(oElement, sId) {
+						ElementRegistry.forEach(function(oElement, sId) {
 							try {
 								oElement.destroy();
 							} catch (error) {
