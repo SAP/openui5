@@ -52,7 +52,7 @@ sap.ui.define([
 	Theming
 ) {
 	"use strict";
-
+	var frameTypes = library.FrameType;
 	var GenericTileScope = library.GenericTileScope,
 		LoadState = library.LoadState,
 		CSSColor = coreLibrary.CSSColor,
@@ -2020,6 +2020,25 @@ GenericTile.prototype._isNavigateActionEnabled = function() {
 		oEvent.preventDefault();
 		var sURL = oEvent.getSource().getParent().getUrl();
 		URLHelper.redirect(sURL, true);
+	};
+
+	/**
+	* Function to apply CSS class when the footer property of TileContent is applied later
+	* @param {sap.m.TileContent} oTileContent The tileContent object
+	* @private
+	*/
+	GenericTile.prototype._applyCssStyle = function(oTileContent) {
+		var isFooterPresent = this._checkFooter(oTileContent, this) && (oTileContent.getFooter() ||  oTileContent.getUnit());
+		var frameType = this.getFrameType();
+		if (this.getSystemInfo() || this.getAppShortcut()) {
+			if (isFooterPresent && frameType !== frameTypes.OneByHalf) {
+			        this.getDomRef("content").classList.add("appInfoWithFooter");
+			        this.getDomRef("content").classList.remove("appInfoWithoutFooter");
+                        } else if (!isFooterPresent){
+                                this.getDomRef("content").classList.add("appInfoWithoutFooter");
+				this.getDomRef("content").classList.remove("appInfoWithFooter");
+                       }
+		}
 	};
 
 	/**
