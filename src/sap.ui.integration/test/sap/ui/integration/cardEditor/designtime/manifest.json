@@ -22,6 +22,26 @@
 		"type": "List",
 		"configuration": {
 			"editor": "dt",
+			"filters": {
+                "country": {
+                    "value": "FR",
+                    "type": "Select",
+                    "label": "Country",
+                    "placeholder": "Country",
+                    "data": {
+                        "request": {
+                            "url": "../countries.json"
+                        }
+                    },
+                    "item": {
+                        "path": "/",
+                        "template": {
+                            "key": "{key}",
+                            "title": "{text}"
+                        }
+                    }
+                }
+            },
 			"parameters": {
 				"parameterSyntaxInValue": {
 					"value": "New title: {{parameters.stringWithTranslatedValueIni18nFormat}}"
@@ -362,13 +382,14 @@
 				}
 			}
 		},
-		"data1": {
+		"data": {
 			"extension": {
-				"method": "getData"
+				"method": "getData",
+				"args": ["{filters>/country/value}"]
 			},
 			"path": "/values"
 		},
-		"data": {
+		"data1": {
 			"request": {
 				"url": "{{destinations.northwind}}/Customers",
 				"parameters": {
@@ -378,14 +399,14 @@
 			"path": "/value"
 		},
 		"content": {
-			"item": {
+			"item1": {
 				"title": "{CustomerID}",
 				"description": "Trainer: {CompanyName}",
 				"info": {
 					"value": "Location: {Country} - {City} - {Address}"
 				}
 			},
-			"item1": {
+			"item": {
 				"title": "{title}",
 				"description": "Trainer: {trainer}",
 				"info": {

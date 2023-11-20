@@ -181,16 +181,37 @@ sap.ui.define([
 		},
 		"sap.card": {
 			"extension": "DataExtensionImpl",
-			"designtime": "designtime/extension",
 			"type": "List",
 			"header": {},
 			"data": {
 				"extension": {
-					"method": "getData"
+					"method": "getData",
+					"args": ["{filters>/country/value}"]
 				},
 				"path": "/values"
 			},
 			"configuration": {
+				"editor": "designtime/extension",
+				"filters": {
+					"country": {
+						"value": "FR",
+						"type": "Select",
+						"label": "Country",
+						"placeholder": "Country",
+						"data": {
+							"request": {
+								"url": "../countries.json"
+							}
+						},
+						"item": {
+							"path": "/",
+							"template": {
+								"key": "{key}",
+								"title": "{text}"
+							}
+						}
+					}
+				},
 				"parameters": {
 					"DataGotFromExtensionRequest": {
 						"value": ""
@@ -235,16 +256,37 @@ sap.ui.define([
 		},
 		"sap.card": {
 			"extension": "module:sap/ui/integration/cardeditor/test/testLib/SharedExtension",
-			"designtime": "designtime/extension",
 			"type": "List",
 			"header": {},
 			"data": {
 				"extension": {
-					"method": "getData"
+					"method": "getData",
+					"args": ["{filters>/country/value}"]
 				},
 				"path": "/values"
 			},
 			"configuration": {
+				"editor": "designtime/extension",
+				"filters": {
+					"country": {
+						"value": "FR",
+						"type": "Select",
+						"label": "Country",
+						"placeholder": "Country",
+						"data": {
+							"request": {
+								"url": "../countries.json"
+							}
+						},
+						"item": {
+							"path": "/",
+							"template": {
+								"key": "{key}",
+								"title": "{text}"
+							}
+						}
+					}
+				},
 				"parameters": {
 					"DataGotFromExtensionRequest": {
 						"value": ""
